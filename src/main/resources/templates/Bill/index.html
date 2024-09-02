@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Male_Fashion Template">
+    <meta name="keywords" content="Male_Fashion, unica, creative, html">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Male-Fashion | Template</title>
+
+
+</head>
+
+<body>
+<main>
+    <article class="container-xxl bd-gutter mt-5 my-md-4 bd-layout">
+        <!-- conten -->
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="bill-tab" data-bs-toggle="tab" data-bs-target="#bill-tab-pane"
+                        type="button" role="tab" aria-controls="bill-tab-pane" aria-selected="true">
+                    Hóa đơn
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="all-bill-tab" data-bs-toggle="tab" data-bs-target="#all-bill-tab-pane"
+                        type="button" role="tab" aria-controls="all-bill-tab-pane" aria-selected="false">
+                    Danh sách hóa đơn
+                </button>
+            </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="bill-tab-pane" role="tabpanel" aria-labelledby="bill-tab"
+                 tabindex="0">
+                <!-- nút ấn để thêm mới nhanh hóa đơn  -->
+                <div class="m-3">
+                    <a href="" class="btn btn-success">Thêm mới</a>
+                </div>
+
+                <!-- danh sách hóa đơn mới tạo -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <p class="mb-0 me-2">
+                                Giỏ hàng
+                            </p>
+                            <div class="d-flex ms-auto">
+                                <button type="button" class="btn btn-warning me-2" data-bs-target="#product-modal"
+                                        data-bs-toggle="modal">
+                                    Thêm sản phẩm
+                                </button>
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                        data-bs-target="#camera-Modal" id="startCamera">
+                                    Quét QR sản phẩm
+                                </button>
+                            </div>
+                        </div>
+
+                        <ul class="nav nav-underline">
+                            <li class="nav-item">
+                                <a class="nav-link text-dark active" href="#" onclick="setActive(this)">HD00003</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" href="#" onclick="setActive(this)">HD00004</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" href="#" onclick="setActive(this)">HD00005</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" href="#" onclick="setActive(this)">HD00006</a>
+                            </li>
+                        </ul>
+                        <!-- bang san pham muon mua  -->
+                        <table class="table table-bordered mt-2">
+                            <thead>
+                            <tr>
+                                <th scope="col">STT</th>
+                                <th scope="col">Ảnh</th>
+                                <th scope="col">Sản phẩm</th>
+                                <th scope="col">Giá</th>
+                                <th scope="col">Số lượng</th>
+                                <th scope="col">Tổng tiền</th>
+                                <th scope="col">Hành động</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <th scope="row">1</th>
+                                <td>
+                                    <img src="https://res.cloudinary.com/dfy4umpja/image/upload/v1724526670/Screenshot%202024-07-24%20160719.png"
+                                         alt="Lỗi ảnh" style="width: auto; height: 100px;">
+                                </td>
+                                <td>
+                                    sản phẩm 6
+                                </td>
+                                <td>
+                                    100000
+                                </td>
+                                <td>
+                                    2
+                                </td>
+                                <td>
+                                    200000
+                                </td>
+                                <td>
+                                    <a href="" class="btn btn-danger">Xóa bỏ</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">2</th>
+                                <td>
+                                    <img src="https://res.cloudinary.com/dfy4umpja/image/upload/v1724526670/Screenshot%202024-07-24%20160719.png"
+                                         alt="Lỗi ảnh" style="width: auto; height: 100px;">
+                                </td>
+                                <td>
+                                    sản phẩm 3
+                                </td>
+                                <td>
+                                    500000
+                                </td>
+                                <td>
+                                    2
+                                </td>
+                                <td>
+                                    1000000
+                                </td>
+                                <td>
+                                    <a href="" class="btn btn-danger">Xóa bỏ</a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+                <!-- noi lay thong tin nguoi dat hang  -->
+                <div class="card mt-2">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <p class="mb-0 me-2">
+                                Thông tin khách hàng
+                            </p>
+                            <div class="d-flex ms-auto">
+                                <input type="text" class="form-control me-2 w-auto" placeholder="tìm theo sđt...">
+                                <button class="btn btn-success" data-bs-toggle="modal"
+                                        data-bs-target="#client-Modal">Thêm mới khách hàng</button>
+                            </div>
+                        </div>
+                        <!-- neu khach hang ko ton tai hoac la khach qua duong -->
+                        <p class="border border-dark rounded p-2 text-white bg-dark d-inline-block mt-2">
+                            Khách lẻ
+                        </p>
+                        <!-- neu khach hang da ton tai -->
+                        <!-- <p >
+                            Họ tên            : Bùi Văn Thiết.<br>
+                            Email             : thietzero909@gmail.com.<br>
+                            Số điện thoại     : 0976591256.
+                        </p> -->
+                    </div>
+                </div>
+
+                <!-- Thông tin thanh toán  -->
+                <div class="card mt-2">
+                    <div class="card-body">
+                        <p>Thông tin thanh toán</p>
+                        <div class="row">
+                            <!-- nếu mà nút switch được bật thì ẩn ảnh đi, hiện form thông tin khách hàng -->
+                            <div id="dynamic-content" class="col-6">
+                                <!-- Nội dung sẽ thay đổi ở đây -->
+                                <div class="d-flex justify-content-center align-items-center position-relative">
+                                    <div class="d-flex position-relative" style="width: 90%; padding-top: 90%;">
+                                        <img src="https://res.cloudinary.com/dfy4umpja/image/upload/v1724526670/Screenshot%202024-07-24%20160719.png"
+                                             alt="Lỗi ảnh" class="img-fluid position-absolute top-0 start-0 w-100 h-100" style="object-fit: cover;">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-6">
+                                <!-- neu la khach le thi phai ẩn di  -->
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+                                    <label class="form-check-label" for="flexSwitchCheckDefault">Giao hàng</label>
+                                </div>
+
+                                <div class="input-group mb-3">
+                                    <button class="btn btn-outline-secondary" type="button" id="button-addon1" data-bs-target="#voucher-modal" data-bs-toggle="modal">
+                                        Mã giảm giá voucher
+                                    </button>
+                                    <input type="text" class="form-control" placeholder=""
+                                           aria-label="Example text with button addon" aria-describedby="button-addon1">
+                                </div>
+
+                                <div class="mb-3">
+                                    <div class="mb-3 d-flex justify-content-between">
+                                        <span>Tạm tính</span>
+                                        <span>100,000 VNĐ</span>
+                                    </div>
+                                    <!-- khi nào có phiếu giảm giá áp dụng vào mới đưuọc hiện  -->
+                                    <div class="mb-3">
+                                        <div class="card position-relative">
+                                            <button type="button" class="btn-close position-absolute top-0 end-0 m-2"
+                                                    aria-label="Close"></button>
+                                            <div class="card-body">
+                                                Phiếu giảm giá A
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 d-flex justify-content-between">
+                                        <span>Giảm giá</span>
+                                        <span>10,000 VNĐ</span>
+                                    </div>
+                                    <div class="mb-3 d-flex justify-content-between">
+                                        <span>Tổng tiền</span>
+                                        <span>90,000 VNĐ</span>
+                                    </div>
+                                </div>
+                                <!-- khi nào chọn phương thức thanh toán ms được hiện ô này, nếu ấn tiền mặt và ấn cả tiền mặt lẫn tài khoản mới được hiện -->
+                                <!-- nếu mà nút switch được bật thì ẩn đi các nút thanh toán -->
+                                <div class="mb-3">
+                                    <label class="form-label">Tiền Khách đưa</label>
+                                    <input type="text" class="form-control">
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-6 mb-3">
+                                        <button class="btn btn-warning col-12">Tiền mặt</button>
+                                    </div>
+                                    <div class="col-6 mb-3">
+                                        <button class="btn btn-warning col-12">Chuyển khoản</button>
+                                    </div>
+                                    <div class="col-12 mb-3">
+                                        <button type="button" class="btn btn-warning col-12">
+                                            Cả tiền mặt lẫn tiền khoản
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <p>Ghi chú:</p>
+                                    <textarea class="form-control"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <button type="button" class="btn btn-warning col-12"
+                                            data-bs-target="#confirm-create-bill-modal" data-bs-toggle="modal">
+                                        Tạo hóa đơn
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                Trang hóa đơn
+            </div>
+            <div class="tab-pane fade" id="all-bill-tab-pane" role="tabpanel" aria-labelledby="all-bill-tab"
+                 tabindex="0">
+                <div class="card mt-2 mb-2">
+                    <div class="card-body">
+                        Tìm kiếm:
+                        <input type="text" class="form-control" placeholder="tìm theo tên khách hàng, mã hóa đơn, số điện thoại...">
+                    </div>
+                </div>
+                <ul class="nav nav-underline">
+                    <li class="nav-item">
+                        <a class="nav-link text-dark active" href="#" onclick="setActive(this)">Tất cả</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" href="#" onclick="setActive(this)">Chờ xác nhận</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" href="#" onclick="setActive(this)">Chờ giao</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" href="#" onclick="setActive(this)">Hoàn thành</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" href="#" onclick="setActive(this)">Đã hủy</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" href="#" onclick="setActive(this)">Trả hàng</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" href="#" onclick="setActive(this)">Đổi hàng</a>
+                    </li>
+                </ul>
+                <table class="table table-bordered mt-2 mb-2">
+                    <thead>
+                    <tr>
+                        <th scope="col">STT</th>
+                        <th scope="col">Mã hóa đơn</th>
+                        <th scope="col">Khách hàng</th>
+                        <th scope="col">Số điện thoại</th>
+                        <th scope="col">Tổng tiền</th>
+                        <th scope="col">Loại đơn hàng</th>
+                        <th scope="col">Ngày tạo</th>
+                        <th scope="col">hành động</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th scope="row">1</th>
+                        <td>HD00001</td>
+                        <td>Bùi Văn Thiết</td>
+                        <td>0976591257</td>
+                        <td>100000</td>
+                        <td>Tại quầy</td>
+                        <td>20-12-2022</td>
+                        <td>
+                            <a href="" class="btn btn-primary">Xem chi tiết</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">2</th>
+                        <td>HD00002</td>
+                        <td>Bùi Thị Trang</td>
+                        <td>0976597654</td>
+                        <td>200000</td>
+                        <td>Giao hàng</td>
+                        <td>01-12-2022</td>
+                        <td>
+                            <a href="" class="btn btn-primary">Xem chi tiết</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                trang danh sách hóa đơn
+            </div>
+        </div>
+
+        <!-- phần modal -->
+        <!-- modal phần nút thêm sản phẩm  -->
+        <div class="modal fade" id="product-modal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="productModalLabel">
+                            Danh sách sản phẩm
+                        </h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                Bo loc thuoc tinh
+                            </div>
+                        </div>
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th scope="col">STT</th>
+                                <th scope="col">Ảnh</th>
+                                <th scope="col">Sản phẩm</th>
+                                <th scope="col">Số lượng</th>
+                                <th scope="col">Giá</th>
+                                <th scope="col">Hành động</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <th scope="row">1</th>
+                                <td>
+                                    <img src="https://res.cloudinary.com/dfy4umpja/image/upload/v1724526670/Screenshot%202024-07-24%20160719.png"
+                                         alt="Lỗi ảnh" style="width: auto; height: 100px;">
+                                </td>
+                                <td>
+                                    sản phẩm 6
+                                </td>
+                                <td>
+                                    256
+                                </td>
+                                <td>
+                                    100000
+                                </td>
+                                <td>
+                                    <a href="" class="btn btn-success">Mua</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">1</th>
+                                <td>
+                                    <img src="https://res.cloudinary.com/dfy4umpja/image/upload/v1724526670/Screenshot%202024-07-24%20160719.png"
+                                         alt="Lỗi ảnh" style="width: auto; height: 100px;">
+                                </td>
+                                <td>
+                                    sản phẩm 2
+                                </td>
+                                <td>
+                                    21
+                                </td>
+                                <td>
+                                    500000
+                                </td>
+                                <td>
+                                    <a href="" class="btn btn-success">Mua</a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- modal phần nút quét sản phẩm  -->
+        <div class="modal fade" id="camera-Modal" tabindex="-1" aria-labelledby="cameraModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="cameraModalLabel">
+                            Quét QR sản phẩm
+                        </h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text text-center">
+                        <video id="video" width="300" height="200" autoplay></video>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- phần thêm mới khách hàng nếu khách muốn thêm nhanh  -->
+        <div class="modal fade" id="client-Modal" tabindex="-1" aria-labelledby="clientModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="clientModalLabel">
+                            Thêm mới khách hàng
+                        </h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-3">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <label for="upload" class="btn btn">
+                                            Chọn ảnh
+                                        </label>
+                                        <input type="file" id="upload" class="form-control d-none" accept="image/*"
+                                               onchange="previewImage(event)">
+                                        <div class="mt-3" id="image-preview">
+                                            <!-- Hình ảnh sẽ được hiển thị ở đây sau khi chọn -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-8">
+                                <div class="row">
+                                    <div class="col-6 mb-3">
+                                        <label class="form-label">Họ và tên:</label>
+                                        <input type="text" class="form-control" placeholder="nhập họ và tên...">
+                                    </div>
+                                    <div class="col-6 mb-3">
+                                        <label class="form-label">Số điện thoại:</label>
+                                        <input type="text" class="form-control" placeholder="nhập số điện thoại...">
+                                    </div>
+                                    <div class="col-6 mb-3">
+                                        <label class="form-label">Ngày sinh:</label>
+                                        <input type="date" class="form-control">
+                                    </div>
+                                    <div class="col-6 mb-3">
+                                        <label class="form-label">Email:</label>
+                                        <input type="text" class="form-control" placeholder="nhập email...">
+                                    </div>
+                                    <div class="col-4 mb-3">
+                                        <label class="form-label">Tỉnh/Thành Phố:</label>
+                                        <select class="form-select" aria-label="Default select example">
+                                            <option selected>Open this select menu</option>
+                                            <option value="1">One</option>
+                                            <option value="2">Two</option>
+                                            <option value="3">Three</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-4 mb-3">
+                                        <label class="form-label">Quận/Huyện:</label>
+                                        <select class="form-select" aria-label="Default select example">
+                                            <option selected>Open this select menu</option>
+                                            <option value="1">One</option>
+                                            <option value="2">Two</option>
+                                            <option value="3">Three</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-4 mb-3">
+                                        <label class="form-label">Xã/Phường/Thị Trấn:</label>
+                                        <select class="form-select" aria-label="Default select example">
+                                            <option selected>Open this select menu</option>
+                                            <option value="1">One</option>
+                                            <option value="2">Two</option>
+                                            <option value="3">Three</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-12 mb-3">
+                                        <label class="form-label">Địa chỉ chi tiết:</label>
+                                        <textarea class="form-control" rows="3"></textarea>
+                                    </div>
+                                    <div class="col-12 mb-3">
+                                        <label class="form-label">Giới tính:</label>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="flexRadioDefault"
+                                                   id="flexRadioDefault1">
+                                            <label class="form-check-label" for="flexRadioDefault1">
+                                                Nam
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="flexRadioDefault"
+                                                   id="flexRadioDefault2" checked>
+                                            <label class="form-check-label" for="flexRadioDefault2">
+                                                Nữ
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success">Thêm mới</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- xác nhận khi ấn tạo hóa đơn hiển thị xác nhaaj  -->
+        <div class="modal fade" id="confirm-create-bill-modal" tabindex="-1"
+             aria-labelledby="confirmCreateBillModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="confirmCreateBillModalLabel">
+                            Xác nhận tạo hóa đơn
+                        </h1>
+                    </div>
+                    <div class="modal-body">
+                        Bạn muốn tạo hóa đươn này?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Không</button>
+                        <button type="button" class="btn btn-success">Vâng</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- phần hiện các mã giảm giá có thể sử dụng được  -->
+        <div class="modal fade" id="voucher-modal" tabindex="-1"
+             aria-labelledby="voucherModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="voucherModalLabel">
+                            Mã giảm giá
+                        </h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                Tìm kiếm:
+                                <input type="text" class="form-control" placeholder="Tìm theo tên, theo mã...">
+                            </div>
+                        </div>
+
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <span>Voucher mua hè</span>
+                                    <span>
+                                <a href="" class="btn btn-success">chọn</a>
+                            </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                            </ul>
+                        </nav>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- end -->
+    </article>
+
+</main>
+</body>
+
+</html>

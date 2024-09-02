@@ -1,0 +1,32 @@
+.dropdown-item:hover {
+    color: black !important;
+}
+
+.dropdown-divider {
+    background-color: white;
+}
+
+
+.offcanvas-body p:hover {
+    color: black;
+    background-color: rgba(4, 0, 244, 0.756);
+    /* Màu nền trắng dậm */
+    margin-left: -5%;
+    /* Lề bên trái tăng khi hover */
+    margin-right: -5%;
+    /* Lề bên phải tăng khi hover */
+    transition: background-color 3s, margin-left 0.5s, margin-right 0.5s;
+    /* Hiệu ứng chuyển đổi */
+}
+
+.offcanvas-body p {
+    background-color: transparent;
+    /* Màu nền trong suốt ban đầu */
+    transition: background-color 3s, margin-left 0.5s, margin-right 0.5s;
+    /* Hiệu ứng chuyển đổi */
+}
+
+.offcanvas-body a {
+    padding-left: 5px;
+    /* Cách biên trái 5px */
+}
