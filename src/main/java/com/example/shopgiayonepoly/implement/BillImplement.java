@@ -22,4 +22,6 @@ public interface BillImplement {
     List<Bill> findAll(Sort sort);
 
     Page<Bill> findAll(Pageable pageable);
+
+    List<Bill> getBillByStatusNew();
 }
