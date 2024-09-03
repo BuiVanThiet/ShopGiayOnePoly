@@ -51,4 +51,8 @@ public class BillService implements BillImplement {
     public Page<Bill> findAll(Pageable pageable) {
         return billRepository.findAll(pageable);
     }
+    @Override
+    public List<Bill> getBillByStatusNew() {
+        return billRepository.getBillByStatusNew();
+    }
 }

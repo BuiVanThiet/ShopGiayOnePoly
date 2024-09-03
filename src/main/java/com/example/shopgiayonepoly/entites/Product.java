@@ -35,9 +35,9 @@ public class Product extends Base {
     @ManyToMany
     @JoinTable(
             name ="category_product",
-            joinColumns = @JoinColumn(name = "id_product"),
-            inverseJoinColumns = @JoinColumn(name = "id_category")
+            joinColumns = @JoinColumn(name = "id_category"),
+            inverseJoinColumns = @JoinColumn(name = "id_product")
     )
-    @JsonBackReference
+//    @JsonBackReference
     private List<Category> categories;
 }

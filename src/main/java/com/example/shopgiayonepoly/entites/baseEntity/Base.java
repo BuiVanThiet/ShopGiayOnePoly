@@ -25,7 +25,7 @@ public class Base {
     private Date updateDate;
     @Column(name = "status")
     @NotBlank(message = "Mời bạn chọn trạng thái!")
-    private String status;
+    private Integer status;
     @PrePersist
     public void setDate(){
         this.createDate = new Date();
