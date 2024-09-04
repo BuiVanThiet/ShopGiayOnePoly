@@ -1,5 +1,6 @@
 package com.example.shopgiayonepoly.controller;
 
+import com.example.shopgiayonepoly.implement.BillDetailImplement;
 import com.example.shopgiayonepoly.implement.BillImplement;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,8 @@ import java.util.List;
 public class BillController {
     @Autowired
     BillImplement billImplement;
+    @Autowired
+    BillDetailImplement billDetailImplement;
     @GetMapping("/")
     public String getForm(ModelMap modelMap) {
         modelMap.addAttribute("page","/Bill/index");
@@ -25,9 +28,11 @@ public class BillController {
     public String getBillDetail(@PathVariable("idBill") Integer idBill, ModelMap modelMap, HttpSession session) {
         if (idBill != null) {
             session.setAttribute("IdBill", idBill);
+            System.out.println(session.getId());
         } else {
             System.out.println("idBill là null, không thể lưu vào session.");
         }
+//        modelMap.addAttribute("listBillDetail",this.billDetailImplement.getBillDetailByIdBill(idBill));
         modelMap.addAttribute("page","/Bill/index");
         return "Home/home";
     }

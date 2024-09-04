@@ -75,7 +75,7 @@
                         <table class="table table-bordered mt-2">
                             <thead>
                             <tr>
-<!--                                <th scope="col">STT</th>-->
+                                <th scope="col">STT</th>
                                 <th scope="col">Ảnh</th>
                                 <th scope="col">Sản phẩm</th>
                                 <th scope="col">Giá</th>
@@ -85,52 +85,30 @@
                             </tr>
                             </thead>
                             <tbody id="tableBillDetail">
-                            <tr>
-                                <th scope="row">1</th>
-                                <td>
-                                    <img src="https://res.cloudinary.com/dfy4umpja/image/upload/v1724526670/Screenshot%202024-07-24%20160719.png"
-                                         alt="Lỗi ảnh" style="width: auto; height: 100px;">
-                                </td>
-                                <td>
-                                    sản phẩm 6
-                                </td>
-                                <td>
-                                    100000
-                                </td>
-                                <td>
-                                    2
-                                </td>
-                                <td>
-                                    200000
-                                </td>
-                                <td>
-                                    <a href="" class="btn btn-danger">Xóa bỏ</a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row">2</th>
-                                <td>
-                                    <img src="https://res.cloudinary.com/dfy4umpja/image/upload/v1724526670/Screenshot%202024-07-24%20160719.png"
-                                         alt="Lỗi ảnh" style="width: auto; height: 100px;">
-                                </td>
-                                <td>
-                                    sản phẩm 3
-                                </td>
-                                <td>
-                                    500000
-                                </td>
-                                <td>
-                                    2
-                                </td>
-                                <td>
-                                    1000000
-                                </td>
-                                <td>
-                                    <a href="" class="btn btn-danger">Xóa bỏ</a>
-                                </td>
-                            </tr>
+<!--                            <tr th:each="billDetail, iterStat : ${listBillDetail}">-->
+<!--                                <th scope="row" th:text="${iterStat.count}">1</th>-->
+<!--                                <td>-->
+<!--                                    <div style="width: auto; height: 100px;" id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">-->
+<!--                                        <div class="carousel-inner" style="width: auto; height: 100px;">-->
+<!--                                            &lt;!&ndash; Sử dụng th:each để lặp qua danh sách ảnh &ndash;&gt;-->
+<!--                                            <div style="width: auto; height: 100px;" th:each="image, imgStat : ${billDetail.productDetail.product.images}"-->
+<!--                                                 th:classappend="${imgStat.index == 0} ? 'active' : ''" class="carousel-item">-->
+<!--                                                <img style="width: auto; height: 100px;" th:src="@{'https://res.cloudinary.com/dfy4umpja/image/upload/f_auto,q_auto/'+${image.nameImage}}" class="d-block w-100" alt="Lỗi ảnh">-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </td>-->
+<!--                                <td th:text="${billDetail.productDetail.product.nameProduct}">sản phẩm</td>-->
+<!--                                <td th:text="${billDetail.price}">100000</td>-->
+<!--                                <td th:text="${billDetail.quantity}">2</td>-->
+<!--                                <td th:text="${billDetail.totalAmount}">200000</td>-->
+<!--                                <td>-->
+<!--                                    <a href="#" class="btn btn-danger">Xóa bỏ</a>-->
+<!--                                </td>-->
+<!--                            </tr>-->
                             </tbody>
                         </table>
+
                         <nav aria-label="Page navigation example">
                             <ul class="pagination justify-content-center">
                                 <li class="page-item"><a class="page-link" href="#">Previous</a></li>

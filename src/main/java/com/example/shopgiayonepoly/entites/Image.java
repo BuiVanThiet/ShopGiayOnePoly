@@ -19,6 +19,7 @@ import java.util.List;
 public class Image extends Base {
     @ManyToOne
     @JoinColumn(name = "id_product")
+    @JsonBackReference
     private Product product;
     @Column(name = "name_image")
     private String nameImage;
