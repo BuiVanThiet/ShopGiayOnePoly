@@ -40,4 +40,6 @@ public class Product extends Base {
     )
 //    @JsonBackReference
     private List<Category> categories;
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Image> images;
 }

@@ -18,16 +18,20 @@ public class BillRestController {
     BillImplement billImplement;
     @Autowired
     BillDetailImplement billDetailImplement;
+
     @GetMapping("/all")
     public List<Bill> getAll() {
         return billImplement.findAll();
     }
+
     @GetMapping("/all-new")
     public List<Bill> getAllNew() {
         return billImplement.getBillByStatusNew();
     }
+
     @GetMapping("/bill-detail-by-id-bill")
     public List<BillDetail> getBillDetail(HttpSession session) {
+        System.out.println("sesion la" + session.getAttribute("IdBill"));
         return this.billDetailImplement.getBillDetailByIdBill((Integer) session.getAttribute("IdBill"));
     }
 
