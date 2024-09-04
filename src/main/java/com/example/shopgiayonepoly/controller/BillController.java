@@ -23,16 +23,11 @@ public class BillController {
     }
     @GetMapping("/bill-detail/{idBill}")
     public String getBillDetail(@PathVariable("idBill") Integer idBill, ModelMap modelMap, HttpSession session) {
-        System.out.println("id bill vua con la: " + idBill);
         if (idBill != null) {
             session.setAttribute("IdBill", idBill);
-            System.out.println("idBill đã được lưu vào session: " + session.getAttribute("IdBill"));
-            System.out.println("session get id controller: "+session.getId());
         } else {
             System.out.println("idBill là null, không thể lưu vào session.");
         }
-
-
         modelMap.addAttribute("page","/Bill/index");
         return "Home/home";
     }
