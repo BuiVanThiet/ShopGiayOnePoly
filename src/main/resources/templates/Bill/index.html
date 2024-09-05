@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html  lang="en" xmlns:th="http://www.thymeleaf.org"
+       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+       layout:decorate="~{Home/home}">
 
 <head>
     <meta charset="UTF-8">
@@ -7,13 +9,15 @@
     <meta name="keywords" content="Male_Fashion, unica, creative, html">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Male-Fashion | Template</title>
+    <title>Shop Giày Onepoly</title>
 
 
 </head>
 
 <body>
 <main>
+    <div layout:fragment="content">
+
     <article class="container-xxl bd-gutter mt-5 my-md-4 bd-layout">
         <!-- conten -->
         <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -35,7 +39,7 @@
                  tabindex="0">
                 <!-- nút ấn để thêm mới nhanh hóa đơn  -->
                 <div class="m-3">
-                    <a href="" class="btn btn-success">Thêm mới</a>
+                    <a href="/bill/create" class="btn btn-success">Thêm mới</a>
                 </div>
 
                 <!-- danh sách hóa đơn mới tạo -->
@@ -58,21 +62,14 @@
                         </div>
 
                         <ul class="nav nav-underline" id="billBody">
-<!--                            <li class="nav-item">-->
-<!--                                <a class="nav-link text-dark active" href="#" onclick="setActive(this)">HD00003</a>-->
-<!--                            </li>-->
-<!--                            <li class="nav-item">-->
-<!--                                <a class="nav-link text-dark" href="#" onclick="setActive(this)">HD00004</a>-->
-<!--                            </li>-->
-<!--                            <li class="nav-item">-->
-<!--                                <a class="nav-link text-dark" href="#" onclick="setActive(this)">HD00005</a>-->
-<!--                            </li>-->
-<!--                            <li class="nav-item">-->
-<!--                                <a class="nav-link text-dark" href="#" onclick="setActive(this)">HD00006</a>-->
-<!--                            </li>-->
+
                         </ul>
                         <!-- bang san pham muon mua  -->
-                        <table class="table table-bordered mt-2">
+                        <div id="noDataContainer" style="display:none; text-align:center;">
+                            <!-- Ảnh sẽ được hiển thị ở đây nếu không có dữ liệu -->
+                        </div>
+
+                        <table class="table table-bordered mt-2" style="display:none;">
                             <thead>
                             <tr>
                                 <th scope="col">STT</th>
@@ -85,29 +82,45 @@
                             </tr>
                             </thead>
                             <tbody id="tableBillDetail">
-<!--                            <tr th:each="billDetail, iterStat : ${listBillDetail}">-->
-<!--                                <th scope="row" th:text="${iterStat.count}">1</th>-->
-<!--                                <td>-->
-<!--                                    <div style="width: auto; height: 100px;" id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">-->
-<!--                                        <div class="carousel-inner" style="width: auto; height: 100px;">-->
-<!--                                            &lt;!&ndash; Sử dụng th:each để lặp qua danh sách ảnh &ndash;&gt;-->
-<!--                                            <div style="width: auto; height: 100px;" th:each="image, imgStat : ${billDetail.productDetail.product.images}"-->
-<!--                                                 th:classappend="${imgStat.index == 0} ? 'active' : ''" class="carousel-item">-->
-<!--                                                <img style="width: auto; height: 100px;" th:src="@{'https://res.cloudinary.com/dfy4umpja/image/upload/f_auto,q_auto/'+${image.nameImage}}" class="d-block w-100" alt="Lỗi ảnh">-->
-<!--                                            </div>-->
-<!--                                        </div>-->
-<!--                                    </div>-->
-<!--                                </td>-->
-<!--                                <td th:text="${billDetail.productDetail.product.nameProduct}">sản phẩm</td>-->
-<!--                                <td th:text="${billDetail.price}">100000</td>-->
-<!--                                <td th:text="${billDetail.quantity}">2</td>-->
-<!--                                <td th:text="${billDetail.totalAmount}">200000</td>-->
-<!--                                <td>-->
-<!--                                    <a href="#" class="btn btn-danger">Xóa bỏ</a>-->
-<!--                                </td>-->
-<!--                            </tr>-->
+                            <!-- Dữ liệu sẽ được tải ở đây -->
                             </tbody>
                         </table>
+<!--                        <table class="table table-bordered mt-2">-->
+<!--                            <thead>-->
+<!--                            <tr>-->
+<!--                                <th scope="col">STT</th>-->
+<!--                                <th scope="col">Ảnh</th>-->
+<!--                                <th scope="col">Sản phẩm</th>-->
+<!--                                <th scope="col">Giá</th>-->
+<!--                                <th scope="col">Số lượng</th>-->
+<!--                                <th scope="col">Tổng tiền</th>-->
+<!--                                <th scope="col">Hành động</th>-->
+<!--                            </tr>-->
+<!--                            </thead>-->
+<!--                            <tbody id="tableBillDetail">-->
+<!--&lt;!&ndash;                            <tr th:each="billDetail, iterStat : ${listBillDetail}">&ndash;&gt;-->
+<!--&lt;!&ndash;                                <th scope="row" th:text="${iterStat.count}">1</th>&ndash;&gt;-->
+<!--&lt;!&ndash;                                <td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <div style="width: auto; height: 100px;" id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <div class="carousel-inner" style="width: auto; height: 100px;">&ndash;&gt;-->
+<!--&lt;!&ndash;                                            &lt;!&ndash; Sử dụng th:each để lặp qua danh sách ảnh &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;                                            <div style="width: auto; height: 100px;" th:each="image, imgStat : ${billDetail.productDetail.product.images}"&ndash;&gt;-->
+<!--&lt;!&ndash;                                                 th:classappend="${imgStat.index == 0} ? 'active' : ''" class="carousel-item">&ndash;&gt;-->
+<!--&lt;!&ndash;                                                <img style="width: auto; height: 100px;" th:src="@{'https://res.cloudinary.com/dfy4umpja/image/upload/f_auto,q_auto/'+${image.nameImage}}" class="d-block w-100" alt="Lỗi ảnh">&ndash;&gt;-->
+<!--&lt;!&ndash;                                            </div>&ndash;&gt;-->
+<!--&lt;!&ndash;                                        </div>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    </div>&ndash;&gt;-->
+<!--&lt;!&ndash;                                </td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                <td th:text="${billDetail.productDetail.product.nameProduct}">sản phẩm</td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                <td th:text="${billDetail.price}">100000</td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                <td th:text="${billDetail.quantity}">2</td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                <td th:text="${billDetail.totalAmount}">200000</td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                <td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <a href="#" class="btn btn-danger">Xóa bỏ</a>&ndash;&gt;-->
+<!--&lt;!&ndash;                                </td>&ndash;&gt;-->
+<!--&lt;!&ndash;                            </tr>&ndash;&gt;-->
+<!--                            </tbody>-->
+<!--                        </table>-->
 
                         <nav aria-label="Page navigation example">
                             <ul class="pagination justify-content-center">
@@ -581,10 +594,12 @@
                 </div>
             </div>
         </div>
-
+        <input type="hidden" id="toastMessage" th:value="${message}">
+        <input type="hidden" id="toastCheck" th:value="${check}">
         <!-- end -->
     </article>
 
+    </div>
 </main>
 </body>
 

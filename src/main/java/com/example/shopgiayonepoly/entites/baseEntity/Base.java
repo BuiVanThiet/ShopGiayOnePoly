@@ -2,6 +2,7 @@ package com.example.shopgiayonepoly.entites.baseEntity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -24,12 +25,13 @@ public class Base {
     @Column(name = "update_date")
     private Date updateDate;
     @Column(name = "status")
-    @NotBlank(message = "Mời bạn chọn trạng thái!")
+    @NotNull(message = "Mời bạn chọn trạng thái!")
     private Integer status;
     @PrePersist
     public void setDate(){
         this.createDate = new Date();
         this.updateDate = new Date();
+
     }
     @PreUpdate
     public void setDoiDate(){
