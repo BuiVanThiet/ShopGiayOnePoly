@@ -57,7 +57,7 @@ public class BillDetailService implements BillDetailImplement {
         return billDetailRepository.findAll(pageable);
     }
     @Override
-    public List<BillDetail> getBillDetailByIdBill(Integer idBill) {
-        return billDetailRepository.getBillDetailByIdBill(idBill);
+    public List<BillDetail> getBillDetailByIdBill(Integer idBill, Pageable pageable) {
+        return billDetailRepository.getBillDetailByIdBill(idBill,pageable);
     }
 }

@@ -24,54 +24,61 @@ $(document).ready(function () {
         $.ajax({
             type: "GET",
             url: "/bill-api/bill-detail-by-id-bill",
-            success: function (response) {
+            success: function(response) {
                 var tbody = $('#tableBillDetail');
+                var noDataContainer = $('#noDataContainer');
                 tbody.empty(); // Xóa các dòng cũ
 
-                response.forEach(function (billDetail, index) {
-                    var imagesHtml = '';
+                if (response.length === 0) {
+                    // Nếu không có dữ liệu, hiển thị ảnh
+                    noDataContainer.html(`
+                        <img src="https://res.cloudinary.com/dfy4umpja/image/upload/v1725477250/jw3etgwdqqxtkevcxisq.png"
+                             alt="Lỗi ảnh" style="width: auto; height: 100px;">
+                             <p class="text-center">Không có sản phẩm nào!</p>
+                    `);
+                    noDataContainer.show();
+                    tbody.closest('table').hide(); // Ẩn table nếu không có dữ liệu
+                } else {
+                    noDataContainer.hide(); // Ẩn phần chứa ảnh nếu có dữ liệu
+                    tbody.closest('table').show(); // Hiển thị lại table nếu có dữ liệu
 
-                    billDetail.productDetail.product.images.forEach(function (image, imgIndex) {
-                        imagesHtml += `
-                        <div class="carousel-item ${imgIndex === 0 ? 'active' : ''}">
-                            <img src="https://res.cloudinary.com/dfy4umpja/image/upload/f_auto,q_auto/${image.nameImage}" class="d-block w-100" alt="Lỗi ảnh">
-                        </div>`;
+                    response.forEach(function(billDetail, index) {
+                        var imagesHtml = '';
+
+                        billDetail.productDetail.product.images.forEach(function(image, imgIndex) {
+                            imagesHtml += `
+                            <div class="carousel-item ${imgIndex === 0 ? 'active' : ''}" style="width: auto; height: 100px;">
+                                <img src="https://res.cloudinary.com/dfy4umpja/image/upload/f_auto,q_auto/${image.nameImage}" class="d-block w-100" alt="Lỗi ảnh" style="width: auto; height: 100px;">
+                            </div>`;
+                        });
+
+                        tbody.append(`
+                        <tr>
+                            <th scope="row">${index + 1}</th>
+                            <td>
+                                <div id="carouselExampleAutoplaying${index}" class="carousel slide" data-bs-ride="carousel">
+                                    <div class="carousel-inner" style="width: auto; height: 100px;">
+                                        ${imagesHtml}
+                                    </div>
+                                </div>
+                            </td>
+                            <td>${billDetail.productDetail.product.nameProduct}</td>
+                            <td>${billDetail.price}</td>
+                            <td>${billDetail.quantity}</td>
+                            <td>${billDetail.totalAmount}</td>
+                            <td>
+                                <a href="#" class="btn btn-danger">Xóa bỏ</a>
+                            </td>
+                        </tr>`);
                     });
 
-                    tbody.append(`
-                    <tr>
-                        <th scope="row">${index + 1}</th>
-                        <td>
-                            <div id="carouselExampleAutoplaying${index}" class="carousel slide" data-bs-ride="carousel">
-                                <div class="carousel-inner">
-                                    ${imagesHtml}
-                                </div>
-                                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying${index}" data-bs-slide="prev">
-                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                    <span class="visually-hidden">Previous</span>
-                                </button>
-                                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying${index}" data-bs-slide="next">
-                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                    <span class="visually-hidden">Next</span>
-                                </button>
-                            </div>
-                        </td>
-                        <td>${billDetail.productDetail.product.nameProduct}</td>
-                        <td>${billDetail.price}</td>
-                        <td>${billDetail.quantity}</td>
-                        <td>${billDetail.totalAmount}</td>
-                        <td>
-                            <a href="#" class="btn btn-danger">Xóa bỏ</a>
-                        </td>
-                    </tr>`);
-                });
-
-                // Khởi tạo lại tất cả các carousel sau khi cập nhật DOM
-                $('.carousel').each(function() {
-                    $(this).carousel(); // Khởi tạo carousel cho từng phần tử
-                });
+                    // Khởi tạo lại tất cả các carousel sau khi cập nhật DOM
+                    $('.carousel').each(function() {
+                        $(this).carousel(); // Khởi tạo carousel cho từng phần tử
+                    });
+                }
             },
-            error: function (xhr) {
+            error: function(xhr) {
                 console.error("Lỗi khi hiển thị chi tiết hóa đơn: " + xhr.responseText);
             }
         });
