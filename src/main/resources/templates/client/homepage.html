@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{base::layout(~{::section})}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+</head>
+<body>
+<section>
+    <!--Start slider-->
+    <div id="carouselExample" class="carousel slide">
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="/img/category/banner-2.jpg" class="d-block w-100" alt="..." height="500px">
+            </div>
+            <div class="carousel-item">
+                <img src="/img/category/Banner_1.png" class="d-block w-100" alt="..." height="500px">
+            </div>
+            <div class="carousel-item">
+                <img src="/img/category/banner_3.png" class="d-block w-100" alt="..." height="500px">
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+    <!--End slider-->
+    <div style="background-color: #e4e6ec; width: 100%; height: 30px; line-height: 30px">
+        <marquee behavior="" direction="" class="fst-italic">Chào mừng bạn đến với OnePoly Store, hãy trải nghiệm tuyệt vời tại đây nhé!</marquee>
+    </div>
+    <div class="container-fluid">
+        <!-- First Row -->
+        <div class="row d-flex justify-content-center" style="gap: 1px; margin-top: 30px">
+            <!-- First Product -->
+            <div class="col-3">
+                <div class="shadow-sm bg-body-tertiary rounded position-relative">
+                    <div class="text-center">
+                        <img src="/img/Homepage/banner_all_product.jpeg" alt="" style="width: 100%; height: 220px;">
+                    </div>
+                    <div class="position-absolute bottom-0 start-50 translate-middle-x text-white fw-bold p-2"
+                         style="font-size: 1.2rem; white-space: nowrap;">
+                        TOÀN BỘ SẢN PHẨM
+                    </div>
+                </div>
+            </div>
+            <!-- Second Product -->
+            <div class="col-5">
+                <div class="shadow-sm bg-body-tertiary rounded position-relative">
+                    <div class="text-center">
+                        <img src="/img/Homepage/adidas_boost.jpg" alt="" style="width: 100%; height: 220px;">
+                    </div>
+                    <div class="position-absolute bottom-0 start-50 translate-middle-x text-white fw-bold p-2"
+                         style="font-size: 1.2rem;">
+                        ADIDAS
+                    </div>
+                </div>
+            </div>
+            <!-- Third Product -->
+            <div class="col-3">
+                <div class="shadow-sm bg-body-tertiary rounded position-relative">
+                    <div class="text-center">
+                        <img src="/img/Homepage/nike_pegarus.jpg" alt="" style="width: 100%; height: 220px;">
+                    </div>
+                    <div class="position-absolute bottom-0 start-50 translate-middle-x text-white fw-bold p-2"
+                         style="font-size: 1.2rem;">
+                        NIKE
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Second Row -->
+        <div class="row d-flex justify-content-center" style="gap: 2px; margin-top: 10px">
+            <!-- Second Product -->
+            <div class="col-5">
+                <div class="shadow-sm bg-body-tertiary rounded position-relative">
+                    <div class="text-center">
+                        <img src="/img/Homepage/adidas_boost.jpg" alt="" style="width: 100%; height: 220px;">
+                    </div>
+                    <div class="position-absolute bottom-0 start-50 translate-middle-x text-white fw-bold p-2"
+                         style="font-size: 1.2rem;">
+                        ADIDAS
+                    </div>
+                </div>
+            </div>
+            <!-- First Product -->
+            <div class="col-3">
+                <div class="shadow-sm bg-body-tertiary rounded position-relative">
+                    <div class="text-center">
+                        <img src="/img/Homepage/banner_all_product.jpeg" alt="" style="width: 100%; height: 220px;">
+                    </div>
+                    <div class="position-absolute bottom-0 start-50 translate-middle-x text-white fw-bold p-2"
+                         style="font-size: 1.2rem; white-space: nowrap;">
+                        TOÀN BỘ SẢN PHẨM
+                    </div>
+                </div>
+            </div>
+            <!-- Third Product -->
+            <div class="col-3">
+                <div class="shadow-sm bg-body-tertiary rounded position-relative">
+                    <div class="text-center">
+                        <img src="/img/Homepage/nike_pegarus.jpg" alt="" style="width: 100%; height: 220px;">
+                    </div>
+                    <div class="position-absolute bottom-0 start-50 translate-middle-x text-white fw-bold p-2"
+                         style="font-size: 1.2rem;">
+                        NIKE
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row d-flex justify-content-center" style="gap: 2px; margin-top: 10px">
+            <!-- Second Product -->
+            <div class="col-6">
+                <div class="shadow-sm bg-body-tertiary rounded position-relative">
+                    <div class="text-center">
+                        <img src="/img/Homepage/adidas_boost.jpg" alt="" style="width: 100%; height: 220px;">
+                    </div>
+                    <div class="position-absolute bottom-0 start-50 translate-middle-x text-white fw-bold p-2"
+                         style="font-size: 1.2rem;">
+                        ADIDAS
+                    </div>
+                </div>
+            </div>
+            <!-- First Product -->
+            <div class="col-5">
+                <div class="shadow-sm bg-body-tertiary rounded position-relative">
+                    <div class="text-center">
+                        <img src="/img/Homepage/ultra-boost_2.jpeg" alt="" style="width: 100%; height: 220px;">
+                    </div>
+                    <div class="position-absolute bottom-0 start-50 translate-middle-x text-white fw-bold p-2"
+                         style="font-size: 1.2rem; white-space: nowrap;">
+                        TOÀN BỘ SẢN PHẨM
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End Lastest Products Module -->
+    </div>
+</section>
+</body>
+</html>
