@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{base::layout(~{::section})}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap and Bootstrap Icons Demo</title>
+</head>
+<body>
+<section>
+    <div class="container card-sh" style="margin-top: 80px">
+        <div class="row">
+            <div class="col-6 p-5">
+                <div class="col-6">
+                    <img src="/img/category/iphone.jpeg" style="margin-left: 200px" width="330px" height="400px"
+                         alt="iPhone">
+                </div>
+            </div>
+            <div class="col-6 mt-5 p-2">
+                <p class="fs-3">iPhone</p>
+                <p>
+                    <span class="fw-bold">Description: </span><br>
+                    15, 1T, 6.7 inch
+                </p>
+                <p>
+                    <span class="fw-bold">Product details: </span><br>
+                    Status: <span class="badge bg-success">Available</span>
+                    <span class="badge bg-warning">Out of stock</span><br>
+                    Category: Laptop <br>
+                    Policy: 7 Day replacement & return
+                </p>
+                <p class="d-flex">
+                    Price:&nbsp;&nbsp;&nbsp;&nbsp; 5000$
+                    <span style="margin-left: 10px" class="fs-6 text-decoration-line-through text-secondary">10000$</span>
+                    <span style="margin-left: 10px" class="fs-6 text-white badge bg-success">50% off</span>
+                </p>
+                <div class="row">
+                    <div class="col-4 text-success text-center p-2">
+                        <i class="bi bi-cash"></i>
+                        <p>Cash On Delivery?</p>
+                    </div>
+                    <div class="col-4 text-danger text-center p-2">
+                        <i class="bi bi-arrow-return-left"></i>
+                        <p>Return available?</p>
+                    </div>
+                    <div class="col-4 text-primary text-center p-2">
+                        <i class="bi bi-truck"></i>
+                        <p>Free shipping?</p>
+                    </div>
+                </div>
+                <a href="" class="btn btn-danger col-12">Add To Cart</a>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>
