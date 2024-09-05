@@ -1,0 +1,120 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+.header {
+    background-color: #333;
+    color: #fff;
+    padding: 15px;
+    text-align: center;
+}
+
+.container {
+    margin-top: 20px;
+}
+
+.search-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.search-section select,
+.search-section input {
+    width: 20%;
+    padding: 10px;
+    margin-right: 10px;
+}
+
+.search-section button {
+    padding: 10px 20px;
+}
+
+.btn-add {
+    background-color: #28a745;
+    color: #fff;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.table {
+    table-layout: auto;
+    width: 100%;
+}
+
+.table thead th, .table tbody td {
+    width: auto;
+    padding: 10px;
+    text-align: center;
+}
+
+.table thead th:nth-child(1), .table tbody td:nth-child(1) {
+    width: 10%;
+}
+
+.table thead th:nth-child(2), .table tbody td:nth-child(2) {
+    width: 15%;
+}
+
+.table thead th:nth-child(3), .table tbody td:nth-child(3) {
+    width: 10%;
+}
+
+.table thead th:nth-child(4), .table tbody td:nth-child(4) {
+    width: 10%;
+}
+
+.table thead th:nth-child(5), .table tbody td:nth-child(5) {
+    width: 10%;
+}
+
+.table thead th:nth-child(6), .table tbody td:nth-child(6) {
+    width: 20%;
+}
+
+.table thead th:nth-child(7), .table tbody td:nth-child(7) {
+    width: 10%;
+}
+
+.table thead th:nth-child(8), .table tbody td:nth-child(8) {
+    width: 10%;
+}
+
+.table thead th:nth-child(9), .table tbody td:nth-child(9) {
+    width: 5%;
+}
+
+.table thead th:nth-child(10), .table tbody td:nth-child(10) {
+    width: 10%;
+}
+
+.status-active {
+    color: #28a745;
+    font-weight: bold;
+}
+
+.status-inactive {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+.icon-edit {
+    color: #007bff;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.icon-delete {
+    color: #dc3545;
+    cursor: pointer;
+}
+
+.footer {
+    background-color: #333;
+    color: #fff;
+    padding: 15px;
+    text-align: center;
+    margin-top: 20px;
+}
