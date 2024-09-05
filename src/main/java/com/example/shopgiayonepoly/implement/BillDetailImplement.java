@@ -25,5 +25,5 @@ public interface BillDetailImplement {
 
     Page<BillDetail> findAll(Pageable pageable);
 
-    List<BillDetail> getBillDetailByIdBill(Integer idBill);
+    List<BillDetail> getBillDetailByIdBill(Integer idBill, Pageable pageable);
 }
