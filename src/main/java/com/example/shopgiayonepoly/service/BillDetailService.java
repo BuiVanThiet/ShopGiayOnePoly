@@ -1,6 +1,7 @@
 package com.example.shopgiayonepoly.service;
 
 import com.example.shopgiayonepoly.entites.BillDetail;
+import com.example.shopgiayonepoly.entites.ProductDetail;
 import com.example.shopgiayonepoly.implement.BillDetailImplement;
 import com.example.shopgiayonepoly.repositores.BillDetailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,4 +61,14 @@ public class BillDetailService implements BillDetailImplement {
     public List<BillDetail> getBillDetailByIdBill(Integer idBill, Pageable pageable) {
         return billDetailRepository.getBillDetailByIdBill(idBill,pageable);
     }
+
+    @Override
+    public List<ProductDetail> getAllProductDetail() {
+        return this.billDetailRepository.getAllProductDetail();
+    }
+    @Override
+    public ProductDetail getProductDetailById(Integer id) {
+        return this.billDetailRepository.getProductDetailById(id);
+    }
+
 }

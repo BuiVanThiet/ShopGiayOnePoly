@@ -64,10 +64,16 @@ $(document).ready(function () {
                             </td>
                             <td>${billDetail.productDetail.product.nameProduct}</td>
                             <td>${billDetail.price}</td>
-                            <td>${billDetail.quantity}</td>
+                            <td>
+                               <div class="input-group mb-3 custom-number-input" style="width: 130px;" data-id="${billDetail.id}">
+                                    <button class="input-group-text btn-decrement">-</button>
+                                    <input type="text" class="form-control" value="${billDetail.quantity}" readonly />
+                                    <button class="input-group-text btn-increment">+</button>
+                               </div>
+                            </td>
                             <td>${billDetail.totalAmount}</td>
                             <td>
-                                <a href="#" class="btn btn-danger">Xóa bỏ</a>
+                                <a href="/bill-api/deleteBillDetail/${billDetail.id}" class="btn btn-danger">Xóa bỏ</a>
                             </td>
                         </tr>`);
                     });
@@ -84,6 +90,51 @@ $(document).ready(function () {
         });
     }
 
+    // Xử lý sự kiện tăng/giảm số lượng
+    $(document).on('click', '.btn-increment', function () {
+        var $input = $(this).siblings('input');
+        var value = parseInt($input.val(), 10);
+        $input.val(value + 1);
+
+        // Cập nhật giá trị mới trên server
+        updateQuantity($(this).closest('.custom-number-input').data('id'), $input.val());
+    });
+
+    $(document).on('click', '.btn-decrement', function () {
+        var $input = $(this).siblings('input');
+        var value = parseInt($input.val(), 10);
+        if (value > 0) {
+            $input.val(value - 1);
+
+            // Cập nhật giá trị mới trên server
+            updateQuantity($(this).closest('.custom-number-input').data('id'), $input.val());
+        }
+    });
+
+    // Hàm cập nhật số lượng lên server
+    function updateQuantity(id, quantity) {
+        $.ajax({
+            type: "POST",
+            url: "/bill-api/updateBillDetail", // URL API của bạn
+            contentType: "application/json", // Chuyển thành JSON
+            data: JSON.stringify({
+                id: id,
+                quantity: quantity
+            }),
+            success: function (response) {
+                console.log('Cập nhật thành công: ' + response);
+                loadBillNew(); // Tải lại danh sách bill mới
+                loadBillDetail(); // Tải lại chi tiết bill
+            },
+            error: function (xhr) {
+                console.error('Lỗi khi cập nhật: ' + xhr.responseText);
+            }
+        });
+    }
+
+    // Gọi các hàm tải dữ liệu ban đầu
     loadBillNew();
     loadBillDetail();
+
+
 });

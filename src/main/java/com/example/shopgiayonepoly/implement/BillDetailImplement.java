@@ -1,6 +1,7 @@
 package com.example.shopgiayonepoly.implement;
 
 import com.example.shopgiayonepoly.entites.BillDetail;
+import com.example.shopgiayonepoly.entites.ProductDetail;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -26,4 +27,8 @@ public interface BillDetailImplement {
     Page<BillDetail> findAll(Pageable pageable);
 
     List<BillDetail> getBillDetailByIdBill(Integer idBill, Pageable pageable);
+
+    List<ProductDetail> getAllProductDetail();
+
+    ProductDetail getProductDetailById(Integer id);
 }
