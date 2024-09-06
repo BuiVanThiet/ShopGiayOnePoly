@@ -10,9 +10,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
@@ -25,9 +24,9 @@ public class BillController {
     BillDetailImplement billDetailImplement;
     String mess = "";
     String colorMess = "";
-//    Integer pageNumber = 0;
+    //    Integer pageNumber = 0;
 //    String nameSearch = "";
-    @GetMapping("/")
+    @GetMapping("/home")
     public String getForm(ModelMap modelMap) {
         modelMap.addAttribute("message",mess);
         modelMap.addAttribute("check",colorMess);
@@ -53,11 +52,11 @@ public class BillController {
         Pageable pageable = PageRequest.of(0,5);
         List<Bill> listB = this.billImplement.getBillByStatusNew(pageable);
         System.out.println(listB.size());
-//        if(listB.size() >= 4) {
-//            this.mess = "Thêm bill thất bại, chỉ đợc tồn tại 5 bill mới!";
-//            this.colorMess = "3";
-//            return "redirect:/bill/";
-//        }
+        if(listB.size() >= 4) {
+            this.mess = "Thêm bill thất bại, chỉ đợc tồn tại 5 bill mới!";
+            this.colorMess = "3";
+            return "redirect:/bill/home";
+        }
         Bill billSave = new Bill();
         billSave.setPaymentStatus(0);
         billSave.setStatus(0);
@@ -69,6 +68,9 @@ public class BillController {
         this.billImplement.save(bill);
         this.mess = "Thêm bill thành công!";
         this.colorMess = "1";
-        return "redirect:/bill/";
+        return "redirect:/bill/home";
     }
+
+    //them san pham bang qr
+
 }
