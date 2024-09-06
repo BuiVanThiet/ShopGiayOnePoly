@@ -1,6 +1,13 @@
 // Biến toàn cục để lưu đối tượng codeReader
 let codeReader = null;
-
+let idBill = null;
+// Lấy IdBill từ session thông qua API
+fetch('/bill-api/get-idbill')
+    .then(response => response.json())
+    .then(data => {
+        idBill = data; // Lưu giá trị IdBill vào biến toàn cục
+    })
+    .catch(error => console.error('Error fetching IdBill:', error));
 // Lắng nghe sự kiện click trên nút "Use Camera"
 document.getElementById('startCamera').addEventListener('click', () => {
     // Tạo một đối tượng BrowserQRCodeReader từ thư viện ZXing
@@ -21,7 +28,7 @@ document.getElementById('startCamera').addEventListener('click', () => {
 
                     // Gửi dữ liệu QR code đến server
                     //   cần để ý thay đổi phần rest api này '/qr/scan'
-                    fetch('/qr/scan', {
+                    fetch('/bill-api/addProductByQr', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -32,7 +39,7 @@ document.getElementById('startCamera').addEventListener('click', () => {
                             if (response.ok) {
                                 // Chuyển hướng đến trang hiển thị sau khi gửi dữ liệu thành công
                                 //cần để ý để thay đổi cả đường dẫn trang
-                                window.location.href = '/qr/info';
+                                window.location.href = '/bill/bill-detail/'+idBill;
                             } else {
                                 console.error('Failed to send QR data.');
                             }
