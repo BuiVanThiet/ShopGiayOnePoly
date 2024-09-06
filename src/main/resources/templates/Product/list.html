@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{Home/home_manege}">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Product Management Page">
+    <meta name="keywords" content="ecommerce, product management, online store">
+    <title>Product Management | Male Fashion</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="styles.css"> <!-- Custom CSS file -->
+    <link rel="stylesheet" href="/Product/styleProduct.css" type="text/css">
+</head>
+
+<body>
+
+
+<main class="container">
+    <div layout:fragment="content">
+        <article class="container-xxl bd-gutter mt-5 my-md-4 bd-layout">
+            <h1 class="center">Danh sách sản phẩm</h1>
+
+            <div class="search-section">
+                <div class="search-bar">
+                    <input type="text" placeholder="Nhập từ khóa tìm kiếm">
+                    <button class="btn btn-primary">Tìm kiếm</button>
+                    <a href="/product/create" class="btn-add">Thêm sản phẩm</a>
+                </div>
+                <div class="filter-section">
+                    <select>
+                        <option value="">Chất liệu</option>
+                        <option value="Leather">Da</option>
+                        <option value="Cotton">Vải</option>
+                        <option value="Wool">Nhựa</option>
+                    </select>
+
+                    <select>
+                        <option value="">Hãng</option>
+                        <option value="Brand X">Brand X</option>
+                        <option value="Brand Y">Brand Y</option>
+                        <option value="Brand Z">Brand Z</option>
+                    </select>
+
+                    <select>
+                        <option value="">Xuất sứ</option>
+                        <option value="Active">Việt Nam</option>
+                        <option value="Inactive">Mỹ</option>
+                    </select>
+
+                    <select>
+                        <option value="">Trạng thái</option>
+                        <option value="Active">Đang bán</option>
+                        <option value="Inactive">Ngừng bán</option>
+                    </select>
+                </div>
+            </div>
+
+
+            <table class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                    <th>Mã sản phẩm</th>
+                    <th>Tên sản phẩm</th>
+                    <th>Chất liệu</th>
+                    <th>Hãng</th>
+                    <th>Xuất sứ</th>
+                    <th>Mô tả</th>
+                    <th>Ngày tạo</th>
+                    <th>Ngày sửa</th>
+                    <th>Trạng thái</th>
+                    <th>Hành động</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- Example Product Row -->
+                <tr>
+                    <td>12345</td>
+                    <td>Stylish Sneakers</td>
+                    <td>Leather</td>
+                    <td>Brand X</td>
+                    <td>USA</td>
+                    <td>A comfortable pair of sneakers for daily wear.</td>
+                    <td>2024-09-01</td>
+                    <td>2024-08-15</td>
+                    <td class="status-active">Active</td>
+                    <td>
+                        <a href="gfgfd"><i class="icon-edit fas fa-edit" title="Edit"></i></a>
+                        <a href="vf"><i class="icon-detail  fas fa-bars"></i></a>
+                        <a href="hgf"><i class="icon-delete fas fa-trash" title="Delete"></i></a>
+                    </td>
+                </tr>
+                <!-- Add more product rows here -->
+                </tbody>
+            </table>
+        </article>
+    </div>
+</main>
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>
+
