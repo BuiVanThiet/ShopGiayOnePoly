@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{Home/home_manege}">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Product Management Page">
+    <meta name="keywords" content="ecommerce, product management, online store">
+    <title>Quản lý xuất sứ</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="styles.css"> <!-- Custom CSS file -->
+    <link rel="stylesheet" href="/Product/styleProduct.css" type="text/css">
+</head>
+
+<body>
+
+
+<main class="container">
+    <div layout:fragment="content">
+        <article class="container-xxl bd-gutter mt-5 my-md-4 bd-layout">
+            <h1 class="center">Quản lý màu sắc</h1>
+
+            <div class="search-section">
+                <div class="search-bar">
+                    <input type="text" placeholder="Mã màu sắc">
+                    <input type="text" placeholder="Tên màu sắc">
+                    <a href="/product/create" class="btn-add">Thêm màu sắc</a>
+                </div>
+
+            </div>
+
+
+            <table class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                    <th>Mã màu sắc</th>
+                    <th>Tên màu sắc</th>
+                    <th>Ngày tạo</th>
+                    <th>Ngày sửa</th>
+                    <th>Trạng thái</th>
+                    <th>Hành động</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- Example Product Row -->
+                <tr>
+                    <td>12345</td>
+                    <td>Đen</td>
+                    <td>2024-09-01</td>
+                    <td>2024-08-15</td>
+                    <td class="status-active">Active</td>
+                    <td>
+                        <a href="gfgfd"><i class="icon-edit fas fa-edit" title="Edit"></i></a>
+                        <i class="fa-solid  fas fa-bars"></i>
+                        <a href="hgf"><i class="icon-delete fas fa-trash" title="Delete"></i></a>
+                    </td>
+                </tr>
+                <!-- Add more product rows here -->
+                </tbody>
+            </table>
+        </article>
+    </div>
+</main>
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>
+

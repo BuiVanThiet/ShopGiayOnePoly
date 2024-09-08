@@ -11,8 +11,8 @@
     <title>Product Management | Male Fashion</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="styles.css"> <!-- Custom CSS file -->
     <link rel="stylesheet" href="/Product/styleProduct.css" type="text/css">
+    <script src="/Product/list.js"></script>
 </head>
 
 <body>
@@ -21,7 +21,7 @@
 <main class="container">
     <div layout:fragment="content">
         <article class="container-xxl bd-gutter mt-5 my-md-4 bd-layout">
-            <h1 class="center">Danh sách sản phẩm</h1>
+            <h1 class="center"><b>Danh sách sản phẩm</b></h1>
 
             <div class="search-section">
                 <div class="search-bar">
@@ -57,8 +57,6 @@
                     </select>
                 </div>
             </div>
-
-
             <table class="table table-bordered table-striped">
                 <thead>
                 <tr>
@@ -75,26 +73,53 @@
                 </tr>
                 </thead>
                 <tbody>
-                <!-- Example Product Row -->
-                <tr>
-                    <td>12345</td>
-                    <td>Stylish Sneakers</td>
-                    <td>Leather</td>
-                    <td>Brand X</td>
-                    <td>USA</td>
-                    <td>A comfortable pair of sneakers for daily wear.</td>
-                    <td>2024-09-01</td>
-                    <td>2024-08-15</td>
-                    <td class="status-active">Active</td>
+                <tr th:each="product : ${productList}">
                     <td>
-                        <a href="gfgfd"><i class="icon-edit fas fa-edit" title="Edit"></i></a>
-                        <a href="vf"><i class="icon-detail  fas fa-bars"></i></a>
+                        <span th:text="${product.codeProduct}"></span>
+                        <textarea style="display:none; width: 100%; box-sizing: border-box;">[[${product.codeProduct}]]</textarea>
+                    </td>
+                    <td>
+                        <span th:text="${product.nameProduct}"></span>
+                        <textarea style="display:none; width: 100%; box-sizing: border-box;">[[${product.nameProduct}]]</textarea>
+                    </td>
+                    <td>
+                        <span th:text="${product.material.nameMaterial}"></span>
+                        <textarea style="display:none; width: 100%; box-sizing: border-box;">[[${product.material.nameMaterial}]]</textarea>
+                    </td>
+                    <td>
+                        <span th:text="${product.manufacturer.nameManufacturer}"></span>
+                        <textarea style="display:none; width: 100%; box-sizing: border-box;">[[${product.manufacturer.nameManufacturer}]]</textarea>
+                    </td>
+                    <td>
+                        <span th:text="${product.origin.nameOrigin}"></span>
+                        <textarea style="display:none; width: 100%; box-sizing: border-box;">[[${product.origin.nameOrigin}]]</textarea>
+                    </td>
+                    <td>
+                        <span th:text="${product.describe}"></span>
+                        <textarea style="display:none; width: 100%; box-sizing: border-box;">[[${product.describe}]]</textarea>
+                    </td>
+                    <td th:text="${product.createDate}"></td>
+                    <td th:text="${product.updateDate}"></td>
+                    <td>
+                        <span th:if="${product.status == 0}">
+                            <i style="color: #006aff" class="fa-light fas fa-toggle-off"></i> <!-- Icon toggle off -->
+                        </span>
+                        <span th:if="${product.status == 1}">
+                            <i style="color: #006aff" class="fas fa-toggle-on"></i> <!-- Icon toggle on -->
+                        </span>
+                        <textarea style="display:none; width: 100%; box-sizing: border-box;">[[${product.status}]]</textarea>
+                    </td>
+
+                    <td>
+                        <a href="#" class="edit-icon" onclick="enableEditing(this); return false;"><i class="fas fa-edit" title="Edit"></i></a>
+                        <a href="#" class="save-icon" style="display:none;" onclick="saveChanges(this); return false;"><i class="fas fa-save" title="Save"></i></a>
+                        <a href="vf"><i class="icon-detail fas fa-bars"></i></a>
                         <a href="hgf"><i class="icon-delete fas fa-trash" title="Delete"></i></a>
                     </td>
                 </tr>
-                <!-- Add more product rows here -->
                 </tbody>
             </table>
+
         </article>
     </div>
 </main>
