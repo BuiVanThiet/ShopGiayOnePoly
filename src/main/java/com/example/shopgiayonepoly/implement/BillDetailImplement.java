@@ -2,35 +2,75 @@ package com.example.shopgiayonepoly.implement;
 
 import com.example.shopgiayonepoly.entites.BillDetail;
 import com.example.shopgiayonepoly.entites.ProductDetail;
+import com.example.shopgiayonepoly.repositores.BillDetailRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface BillDetailImplement {
-    List<BillDetail> findAll();
+@Service
+public class BillDetailImplement implements com.example.shopgiayonepoly.service.BillDetailService {
+    @Autowired
+    BillDetailRepository billDetailRepository;
 
-    <S extends BillDetail> S save(S entity);
+    @Override
+    public List<BillDetail> findAll() {
+        return billDetailRepository.findAll();
+    }
 
-    Optional<BillDetail> findById(Integer integer);
+    @Override
+    public <S extends BillDetail> S save(S entity) {
+        return billDetailRepository.save(entity);
+    }
 
-    long count();
+    @Override
+    public Optional<BillDetail> findById(Integer integer) {
+        return billDetailRepository.findById(integer);
+    }
 
-    void deleteById(Integer integer);
+    @Override
+    public long count() {
+        return billDetailRepository.count();
+    }
 
-    void delete(BillDetail entity);
+    @Override
+    public void deleteById(Integer integer) {
+        billDetailRepository.deleteById(integer);
+    }
 
-    List<BillDetail> findAll(Sort sort);
+    @Override
+    public void delete(BillDetail entity) {
+        billDetailRepository.delete(entity);
+    }
 
-    Page<BillDetail> findAll(Pageable pageable);
+    @Override
+    public List<BillDetail> findAll(Sort sort) {
+        return billDetailRepository.findAll(sort);
+    }
 
-    List<BillDetail> getBillDetailByIdBill(Integer idBill, Pageable pageable);
+    @Override
+    public Page<BillDetail> findAll(Pageable pageable) {
+        return billDetailRepository.findAll(pageable);
+    }
+    @Override
+    public List<BillDetail> getBillDetailByIdBill(Integer idBill, Pageable pageable) {
+        return billDetailRepository.getBillDetailByIdBill(idBill,pageable);
+    }
 
-    List<ProductDetail> getAllProductDetail();
-
-    ProductDetail getProductDetailById(Integer id);
-
-    Integer getBillDetailExist(Integer idBill, Integer idPDT);
+    @Override
+    public List<ProductDetail> getAllProductDetail() {
+        return this.billDetailRepository.getAllProductDetail();
+    }
+    @Override
+    public ProductDetail getProductDetailById(Integer id) {
+        return this.billDetailRepository.getProductDetailById(id);
+    }
+    @Override
+    public Integer getBillDetailExist(Integer idBill, Integer idPDT) {
+        return this.billDetailRepository.getBillDetailExist(idBill,idPDT);
+    }
 }
