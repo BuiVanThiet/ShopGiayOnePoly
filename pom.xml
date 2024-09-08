@@ -124,12 +124,12 @@
 			<artifactId>javase</artifactId>
 			<version>3.5.2</version>
 		</dependency>
-<!--		&lt;!&ndash; Dependency for JavaFX &ndash;&gt;-->
-<!--		<dependency>-->
-<!--			<groupId>org.openjfx</groupId>-->
-<!--			<artifactId>javafx-controls</artifactId>-->
-<!--			<version>20.0.1</version>-->
-<!--		</dependency>-->
+		<!-- Dependency for JavaFX -->
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-controls</artifactId>
+			<version>20.0.1</version>
+		</dependency>
 
 		<!-- Dependency for webcam capture -->
 		<dependency>
