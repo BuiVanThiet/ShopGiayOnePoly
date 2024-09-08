@@ -14,10 +14,12 @@ public class StaffService implements UserDetailsService {
     @Autowired
     StaffRepository staffRepository;
     @Override
-    public UserDetails loadUserByUsername(String acount) throws UsernameNotFoundException {
-        Staff staff = staffRepository.findByAcount(acount);
+    public UserDetails loadUserByUsername(String acountOrEmail) throws UsernameNotFoundException {
+        Staff staff = staffRepository.findByAcountOrEmail(acountOrEmail, acountOrEmail);
         if(staff != null){
-            var springStaff = User.withUsername(staff.getAcount())
+            String username = (staff.getAcount() != null) ? staff.getAcount() : staff.getEmail();
+
+            var springStaff = User.withUsername(username)
                     .password(staff.getPassword())
                     .roles(staff.getRole().getNameRole())
                     .build();

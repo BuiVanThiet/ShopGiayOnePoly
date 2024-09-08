@@ -8,6 +8,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+
+import java.util.Arrays;
 
 
 @Configuration
@@ -17,9 +20,9 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .authorizeHttpRequests( auth -> auth
-                        .requestMatchers("/bill/").permitAll()
-                        .requestMatchers("/contact").permitAll()
-                        .requestMatchers("/store/**").permitAll()
+                        .requestMatchers("/bill/**").permitAll()
+                        .requestMatchers("/").permitAll()
+                        .requestMatchers("/bill-api/**").permitAll()
                         .requestMatchers("/register").permitAll()
                         .requestMatchers("/login").permitAll()
                         .requestMatchers("/logout").permitAll()
@@ -27,7 +30,7 @@ public class SecurityConfig {
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .defaultSuccessUrl("/bill/", true)
+                        .defaultSuccessUrl("/bill/home", true)
                 )
                 .logout(config -> config.logoutSuccessUrl("/"))
                 .build();

@@ -9,4 +9,5 @@ public class HomeManagerController {
     public String home(){
         return "Home/home_manege";
     }
+
 }
