@@ -1,9 +1,8 @@
 package com.example.shopgiayonepoly.controller;
 
 import com.example.shopgiayonepoly.entites.Bill;
-import com.example.shopgiayonepoly.entites.ProductDetail;
-import com.example.shopgiayonepoly.implement.BillDetailImplement;
-import com.example.shopgiayonepoly.implement.BillImplement;
+import com.example.shopgiayonepoly.service.BillDetailService;
+import com.example.shopgiayonepoly.service.BillService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -11,7 +10,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
@@ -19,9 +17,9 @@ import java.util.List;
 @RequestMapping("/bill")
 public class BillController {
     @Autowired
-    BillImplement billImplement;
+    BillService billService;
     @Autowired
-    BillDetailImplement billDetailImplement;
+    BillDetailService billDetailService;
     String mess = "";
     String colorMess = "";
     //    Integer pageNumber = 0;
@@ -50,7 +48,7 @@ public class BillController {
     @GetMapping("/create")
     public String getCreateBill(ModelMap modelMap) {
         Pageable pageable = PageRequest.of(0,5);
-        List<Bill> listB = this.billImplement.getBillByStatusNew(pageable);
+        List<Bill> listB = this.billService.getBillByStatusNew(pageable);
         System.out.println(listB.size());
         if(listB.size() >= 4) {
             this.mess = "Thêm bill thất bại, chỉ đợc tồn tại 5 bill mới!";
@@ -60,12 +58,12 @@ public class BillController {
         Bill billSave = new Bill();
         billSave.setPaymentStatus(0);
         billSave.setStatus(0);
-        Bill bill = this.billImplement.save(billSave);
+        Bill bill = this.billService.save(billSave);
         System.out.printf(bill.toString());
         bill.setCodeBill("HD"+bill.getId().toString());
         bill.setUpdateDate(bill.getUpdateDate());
         bill.setCreateDate(bill.getCreateDate());
-        this.billImplement.save(bill);
+        this.billService.save(bill);
         this.mess = "Thêm bill thành công!";
         this.colorMess = "1";
         return "redirect:/bill/home";
