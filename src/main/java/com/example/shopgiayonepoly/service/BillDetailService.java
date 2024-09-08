@@ -70,5 +70,8 @@ public class BillDetailService implements BillDetailImplement {
     public ProductDetail getProductDetailById(Integer id) {
         return this.billDetailRepository.getProductDetailById(id);
     }
-
+    @Override
+    public Integer getBillDetailExist(Integer idBill, Integer idPDT) {
+        return this.billDetailRepository.getBillDetailExist(idBill,idPDT);
+    }
 }

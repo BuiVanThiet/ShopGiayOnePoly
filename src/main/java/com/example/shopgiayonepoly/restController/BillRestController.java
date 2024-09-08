@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -49,11 +50,24 @@ public class BillRestController {
     }
     //cai nay dung de lam nut tang gia, so luong
     @PostMapping("/updateBillDetail")
-    public ResponseEntity<?> getUpdateBillDetail(@RequestBody BillDetailAjax billDetailAjax) {
+    public ResponseEntity<Map<String,String>> getUpdateBillDetail(@RequestBody BillDetailAjax billDetailAjax) {
+        Map<String,String> thongBao = new HashMap<>();
         BillDetail billDetail = this.billDetailImplement.findById(billDetailAjax.getId()).orElse(new BillDetail());
         System.out.println("id billdetail la: " + billDetail.getId());
         System.out.println("so luong moi la: " + billDetailAjax.getQuantity());
-        return ResponseEntity.ok("Cap nhat thanh cong!");
+        ProductDetail productDetail   = this.billDetailImplement.getProductDetailById(billDetail.getProductDetail().getId());
+        if(productDetail.getStatus() == 0 || productDetail.getStatus() == 2 || productDetail.getProduct().getStatus() == 0 || productDetail.getProduct().getStatus() == 2) {
+            System.out.println("San pham nay tren he thong da ngung ban hoax bi xoa!");
+            thongBao.put("message","Sản phẩm đã bị xóa hoặc ngừng bán trên hệ thống!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+        thongBao.put("message","Sửa số lượng sản phẩm thành công!");
+        thongBao.put("check","1");
+        billDetail.setQuantity(billDetailAjax.getQuantity());
+        billDetail.setTotalAmount(billDetail.getPrice().multiply(BigDecimal.valueOf(billDetail.getQuantity())));
+        this.billDetailImplement.save(billDetail);
+        return ResponseEntity.ok(thongBao);
     }
     //THEM BSP BANG QR
     @PostMapping("/addProductByQr")
@@ -65,19 +79,29 @@ public class BillRestController {
 
             ProductDetail productDetail = this.billDetailImplement.getProductDetailById(Integer.parseInt(dataId));
 
-            BillDetail billDetail = new BillDetail();
-            billDetail.setBill(billById);
-            billDetail.setProductDetail(productDetail);
-            billDetail.setQuantity(1);
-            billDetail.setPrice(productDetail.getPrice());
-            billDetail.setTotalAmount(billDetail.getPrice().multiply(BigDecimal.valueOf(billDetail.getQuantity())));
-            billDetail.setStatus(1);
+            BillDetail billDetail;
+
+            Integer idBillDetail = this.billDetailImplement.getBillDetailExist(billById.getId(),productDetail.getId());
+            if(idBillDetail != null) {
+                billDetail = this.billDetailImplement.findById(idBillDetail).orElse(new BillDetail());
+                billDetail.setQuantity(billDetail.getQuantity()+1);
+                billDetail.setTotalAmount(billDetail.getPrice().multiply(BigDecimal.valueOf(billDetail.getQuantity())));
+            }else {
+                billDetail = new BillDetail();
+                billDetail.setBill(billById);
+                billDetail.setProductDetail(productDetail);
+                billDetail.setQuantity(1);
+                billDetail.setPrice(productDetail.getPrice());
+                billDetail.setTotalAmount(billDetail.getPrice().multiply(BigDecimal.valueOf(billDetail.getQuantity())));
+                billDetail.setStatus(1);
+            }
             this.billDetailImplement.save(billDetail);
             return new ModelAndView("redirect:/bill/home");
         }else {
             return new ModelAndView("error");
         }
     }
+
 
     @GetMapping("/allProductDetail")
     public List<ProductDetail> getAllProductDetail() {

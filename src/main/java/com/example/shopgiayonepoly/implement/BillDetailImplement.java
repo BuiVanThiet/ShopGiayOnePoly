@@ -31,4 +31,6 @@ public interface BillDetailImplement {
     List<ProductDetail> getAllProductDetail();
 
     ProductDetail getProductDetailById(Integer id);
+
+    Integer getBillDetailExist(Integer idBill, Integer idPDT);
 }
