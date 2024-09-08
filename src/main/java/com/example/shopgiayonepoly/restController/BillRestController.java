@@ -25,6 +25,8 @@ public class BillRestController {
     @Autowired
     BillDetailService billDetailService;
     String idProductDetail = null;
+    String idProductDetail2 = null;
+
     @GetMapping("/get-idbill")
     @ResponseBody
     public Integer getIdBillFromSession(HttpSession session) {
