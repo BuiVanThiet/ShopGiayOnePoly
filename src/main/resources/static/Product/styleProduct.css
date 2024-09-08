@@ -49,7 +49,6 @@ body {
 .filter-section {
     display: flex;
     gap: 10px;
-
 }
 
 .filter-section select {
@@ -154,5 +153,17 @@ body {
 
 
 .btn-primary:hover {
+    transform: translateY(-2px);
+}
+
+.btn-primary {
+    height: 44px;
+}
+
+.btn-add {
+    height: 44px;
+}
+
+.btn-add:hover {
     transform: translateY(-2px);
 }
