@@ -1,4 +1,4 @@
-package com.example.shopgiayonepoly.service;
+package com.example.shopgiayonepoly.implement;
 
 import com.example.shopgiayonepoly.entites.Staff;
 import com.example.shopgiayonepoly.repositores.StaffRepository;
@@ -10,7 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
     e
 @Service
-public class StaffService implements UserDetailsService {
+public class StaffSecuritiImplement implements UserDetailsService {
     @Autowired
     StaffRepository staffRepository;
     @Override

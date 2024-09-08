@@ -19,4 +19,7 @@ public interface BillDetailRepository extends JpaRepository<BillDetail,Integer> 
     List<ProductDetail> getAllProductDetail();
     @Query("select pdt from ProductDetail pdt where pdt.id = :idCheck")
     ProductDetail getProductDetailById(@Param("idCheck") Integer idCheck);
+
+    @Query("select bdt.id from BillDetail bdt where bdt.bill.id = :idBillCheck and bdt.productDetail.id = :idPDTCheck")
+    Integer getBillDetailExist(@Param("idBillCheck") Integer idBillCheck, @Param("idPDTCheck") Integer idPDTCheck);
 }

@@ -123,6 +123,7 @@ $(document).ready(function () {
             }),
             success: function (response) {
                 console.log('Cập nhật thành công: ' + response);
+                showToast(response.message,response.check)
                 loadBillNew(); // Tải lại danh sách bill mới
                 loadBillDetail(); // Tải lại chi tiết bill
             },
