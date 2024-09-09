@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    function loadBillNew() {
+    window.loadBillNew = function () {
         $.ajax({
             type: "GET",
             url: "/bill-api/all-new",
@@ -20,7 +20,7 @@ $(document).ready(function () {
         });
     }
 
-    function loadBillDetail() {
+    window.loadBillDetail = function () {
         $.ajax({
             type: "GET",
             url: "/bill-api/bill-detail-by-id-bill",
@@ -65,10 +65,10 @@ $(document).ready(function () {
                             <td>${billDetail.productDetail.product.nameProduct}</td>
                             <td>${billDetail.price}</td>
                             <td>
-                               <div class="input-group mb-3 custom-number-input" style="width: 130px;" data-id="${billDetail.id}">
-                                    <button class="input-group-text btn-decrement">-</button>
-                                    <input type="text" class="form-control" value="${billDetail.quantity}" readonly />
-                                    <button class="input-group-text btn-increment">+</button>
+                                <div class="pagination mb-3 custom-number-input" style="width: 130px;" data-id="${billDetail.id}">
+                                    <button class="button btn-decrement">-</button>
+                                    <div class="number" id="pageNumber">${billDetail.quantity}</div>
+                                    <button class="button btn-increment">+</button>
                                </div>
                             </td>
                             <td>${billDetail.totalAmount}</td>
@@ -90,24 +90,44 @@ $(document).ready(function () {
         });
     }
 
+    // window.pageNumber = function () {
+    //     $.ajax({
+    //         type: "GET",
+    //         url: "/bill-api/page",
+    //         success: function (response) {
+    //             var ul = $('#pageNumber');
+    //             ul.empty();
+    //             for (var i = 1; i <= response; i++) {
+    //                 ul.append(`
+    //                 <li class="page-item"><a class="page-link" href="/bill-api/bill-detail-page/${i}">${i}</a></li>
+    //             `);
+    //             }
+    //         },
+    //         error: function (xhr) {
+    //             console.error("Lỗi hiển thị trang: " + xhr.responseText);
+    //         }
+    //     });
+    // }
+
+
     // Xử lý sự kiện tăng/giảm số lượng
     $(document).on('click', '.btn-increment', function () {
-        var $input = $(this).siblings('input');
-        var value = parseInt($input.val(), 10);
-        $input.val(value + 1);
+        var $numberDiv = $(this).siblings('.number');
+        var value = parseInt($numberDiv.text(), 10);
+        $numberDiv.text(value + 1);
 
         // Cập nhật giá trị mới trên server
-        updateQuantity($(this).closest('.custom-number-input').data('id'), $input.val());
+        updateQuantity($(this).closest('.custom-number-input').data('id'), $numberDiv.text());
     });
 
     $(document).on('click', '.btn-decrement', function () {
-        var $input = $(this).siblings('input');
-        var value = parseInt($input.val(), 10);
+        var $numberDiv = $(this).siblings('.number');
+        var value = parseInt($numberDiv.text(), 10);
         if (value > 0) {
-            $input.val(value - 1);
+            $numberDiv.text(value - 1);
 
             // Cập nhật giá trị mới trên server
-            updateQuantity($(this).closest('.custom-number-input').data('id'), $input.val());
+            updateQuantity($(this).closest('.custom-number-input').data('id'), $numberDiv.text());
         }
     });
 
@@ -126,6 +146,7 @@ $(document).ready(function () {
                 showToast(response.message,response.check)
                 loadBillNew(); // Tải lại danh sách bill mới
                 loadBillDetail(); // Tải lại chi tiết bill
+                // pageNumber();
             },
             error: function (xhr) {
                 console.error('Lỗi khi cập nhật: ' + xhr.responseText);
@@ -136,6 +157,6 @@ $(document).ready(function () {
     // Gọi các hàm tải dữ liệu ban đầu
     loadBillNew();
     loadBillDetail();
-
+    // pageNumber();
 
 });

@@ -57,7 +57,7 @@ public class BillDetailImplement implements com.example.shopgiayonepoly.service.
         return billDetailRepository.findAll(pageable);
     }
     @Override
-    public List<BillDetail> getBillDetailByIdBill(Integer idBill, Pageable pageable) {
+    public Page<BillDetail> getBillDetailByIdBill(Integer idBill, Pageable pageable) {
         return billDetailRepository.getBillDetailByIdBill(idBill,pageable);
     }
 
@@ -72,5 +72,14 @@ public class BillDetailImplement implements com.example.shopgiayonepoly.service.
     @Override
     public Integer getBillDetailExist(Integer idBill, Integer idPDT) {
         return this.billDetailRepository.getBillDetailExist(idBill,idPDT);
+    }
+    @Override
+    public List<BillDetail> getBillDetailByIdBill(Integer idBill) {
+        return billDetailRepository.getBillDetailByIdBill(idBill);
+    }
+
+    @Override
+    public Integer getFirstBillDetailIdByIdBill(Integer idBill) {
+       return   this.billDetailRepository.getFirstBillDetailIdByIdBill(idBill);
     }
 }
