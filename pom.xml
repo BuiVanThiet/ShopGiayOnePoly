@@ -125,11 +125,11 @@
 			<version>3.5.2</version>
 		</dependency>
 		<!-- Dependency for JavaFX -->
-		<dependency>
-			<groupId>org.openjfx</groupId>
-			<artifactId>javafx-controls</artifactId>
-			<version>20.0.1</version>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.openjfx</groupId>-->
+<!--			<artifactId>javafx-controls</artifactId>-->
+<!--			<version>20.0.1</version>-->
+<!--		</dependency>-->
 
 		<!-- Dependency for webcam capture -->
 		<dependency>

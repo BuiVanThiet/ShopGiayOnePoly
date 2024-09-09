@@ -27,7 +27,6 @@ document.getElementById('startCamera').addEventListener('click', () => {
                     console.log('QR code detected: ', qrData);
 
                     // Gửi dữ liệu QR code đến server
-                    //   cần để ý thay đổi phần rest api này '/qr/scan'
                     fetch('/bill-api/addProductByQr', {
                         method: 'POST',
                         headers: {
@@ -37,11 +36,28 @@ document.getElementById('startCamera').addEventListener('click', () => {
                     })
                         .then(response => {
                             if (response.ok) {
-                                // Chuyển hướng đến trang hiển thị sau khi gửi dữ liệu thành công
-                                //cần để ý để thay đổi cả đường dẫn trang
-                                window.location.href = '/bill/bill-detail/'+idBill;
+                                return response.json();  // Chuyển phản hồi thành JSON
                             } else {
                                 console.error('Failed to send QR data.');
+                                throw new Error('Failed to send QR data');
+                            }
+                        })
+                        .then(data => {
+                            // data sẽ chứa các giá trị từ Map trả về (message và check)
+                            console.log('Response from server:', data);
+                            // Hiển thị thông báo thành công với message và check
+                            showToast(data.message, data.check);
+                            // Cập nhật lại bảng hóa đơn
+                            window.loadBillNew();
+                            window.loadBillDetail();
+                            // Đóng modal sau khi xử lý thành công
+                            const modalElement = document.getElementById('camera-Modal');
+                            const bootstrapModal = bootstrap.Modal.getInstance(modalElement);
+                            bootstrapModal.hide(); // Tắt modal
+                            // Tắt camera và giải phóng tài nguyên
+                            if (codeReader) {
+                                codeReader.reset(); // Dừng camera
+                                codeReader = null;
                             }
                         })
                         .catch(error => console.error('Error:', error));
@@ -55,7 +71,6 @@ document.getElementById('startCamera').addEventListener('click', () => {
         }
     }).catch(err => console.error(err));
 });
-
 // Dừng camera khi modal bị đóng
 const modalElement = document.getElementById('camera-Modal');
 modalElement.addEventListener('hidden.bs.modal', () => {

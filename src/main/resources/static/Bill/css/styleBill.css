@@ -20,3 +20,41 @@
     max-height: 100%;
     object-fit: contain; /* Đảm bảo ảnh không bị kéo dài */
 }
+
+/*danh cho tang giam so luogn*/
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 24px;
+}
+
+.pagination button {
+    background-color: #f0f0f0;
+    border: none;
+    border-radius: 50%; /* Làm cho nút tròn */
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease;
+}
+
+.pagination button:hover {
+    background-color: #d0d0d0; /* Hiệu ứng hover */
+}
+
+.pagination button:focus {
+    outline: none;
+}
+
+.pagination .number {
+    font-size: 24px;
+    min-width: 30px;
+    text-align: center;
+}

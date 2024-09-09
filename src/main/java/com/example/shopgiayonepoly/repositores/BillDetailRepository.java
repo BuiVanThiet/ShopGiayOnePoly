@@ -3,6 +3,7 @@ package com.example.shopgiayonepoly.repositores;
 import com.example.shopgiayonepoly.entites.Bill;
 import com.example.shopgiayonepoly.entites.BillDetail;
 import com.example.shopgiayonepoly.entites.ProductDetail;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -14,7 +15,7 @@ import java.util.List;
 @Repository
 public interface BillDetailRepository extends JpaRepository<BillDetail,Integer> {
     @Query("select bdt from BillDetail bdt where bdt.bill.id = :idBill order by bdt.createDate desc ")
-    List<BillDetail> getBillDetailByIdBill(@Param("idBill") Integer idBills, Pageable pageable);
+    Page<BillDetail> getBillDetailByIdBill(@Param("idBill") Integer idBills, Pageable pageable);
     @Query("select pdt from ProductDetail pdt")
     List<ProductDetail> getAllProductDetail();
     @Query("select pdt from ProductDetail pdt where pdt.id = :idCheck")
@@ -22,4 +23,10 @@ public interface BillDetailRepository extends JpaRepository<BillDetail,Integer> 
 
     @Query("select bdt.id from BillDetail bdt where bdt.bill.id = :idBillCheck and bdt.productDetail.id = :idPDTCheck")
     Integer getBillDetailExist(@Param("idBillCheck") Integer idBillCheck, @Param("idPDTCheck") Integer idPDTCheck);
+    @Query("select bdt from BillDetail bdt where bdt.bill.id = :idBill")
+    List<BillDetail> getBillDetailByIdBill(@Param("idBill") Integer idBills);
+
+    @Query("select bdt.id from BillDetail bdt where bdt.bill.id = :idBill order by bdt.createDate desc")
+    Integer getFirstBillDetailIdByIdBill(@Param("idBill") Integer idBill);
+
 }

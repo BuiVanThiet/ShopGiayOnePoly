@@ -26,11 +26,15 @@ public interface BillDetailService {
 
     Page<BillDetail> findAll(Pageable pageable);
 
-    List<BillDetail> getBillDetailByIdBill(Integer idBill, Pageable pageable);
+    Page<BillDetail> getBillDetailByIdBill(Integer idBill, Pageable pageable);
 
     List<ProductDetail> getAllProductDetail();
 
     ProductDetail getProductDetailById(Integer id);
 
     Integer getBillDetailExist(Integer idBill, Integer idPDT);
+
+    List<BillDetail> getBillDetailByIdBill(Integer idBill);
+
+    Integer getFirstBillDetailIdByIdBill(Integer idBill);
 }
