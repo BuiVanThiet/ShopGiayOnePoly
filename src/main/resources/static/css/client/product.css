@@ -1,0 +1,112 @@
+.filter-menu {
+    display: none;
+    position: fixed;
+    top: 50px;
+    left: 0;
+    margin-top: 25px;
+    background-color: white;
+    border: 1px solid #ddd;
+    padding: 15px;
+    z-index: 1000;
+    width: 400px;
+    height: 100%;
+}
+#filterButton {
+    z-index: 999;
+}
+.sale-badge {
+    position: absolute;
+    top: 10px;
+    left: 1px;
+    background-color: #ff0000;
+    color: #fff;
+    padding: 5px 10px;
+    font-size: 12px;
+    border-radius: 3px;
+    z-index: 999;
+}
+.filter-menu .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    font-size: 24px;
+}
+#slider-range {
+    width: 100%;
+    margin: 20px 0;
+}
+.filter-options {
+    display: none;
+}
+
+.filter-options.show {
+    display: block;
+}
+
+#priceFilter, #brandFilter, #sizeFilter,#colorFilter {
+    margin-top: 10px;
+}
+#priceFilter .row {
+    display: flex;
+    align-items: center;
+}
+
+#priceFilter .col {
+    flex: 1;
+}
+
+#priceFilter input {
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+#slider-range {
+    margin-top: 10px;
+}
+
+.ui-slider {
+    height: 8px;
+    background: #ddd;
+    border-radius: 5px;
+}
+
+.ui-slider .ui-slider-range {
+    background: #007bff;
+    border-radius: 5px;
+}
+
+.ui-slider .ui-slider-handle {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #007bff;
+    border: 2px solid #fff;
+    cursor: pointer;
+}
+
+.ui-slider .ui-slider-handle:focus {
+    outline: none;
+}
+
+.filter-options{
+    margin-top: 20px;
+}
+
+.info-product {
+    width: 100%;
+}
+
+.jus {
+    width: 95%;
+    transition: transform 0.3s ease;
+}
+
+.jus:hover {
+    transform: scale(1.02);
+}
+
+.custom-row {
+    row-gap: 20px;
+}

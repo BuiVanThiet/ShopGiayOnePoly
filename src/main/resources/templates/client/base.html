@@ -15,6 +15,7 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" th:href="@{/css/client/homepage.css}" type="text/css">
     <link rel="stylesheet" th:href="@{/css/client/base.css}" type="text/css">
+    <link rel="stylesheet" th:href="@{/css/client/product.css}" type="text/css">
 </head>
 <body> <!-- Nền tổng thể màu be -->
 <!-- Start navbar -->
@@ -95,7 +96,7 @@
     <div class="row d-flex" style="align-items: stretch;">
         <!-- Cột 1: Liên hệ -->
         <div class="col-md-3 mb-2 d-flex">
-            <div class="p-2 rounded w-100" style="background-color: #484848;">
+            <div class="p-2 w-100 text-dark">
                 <label class="fw-bold d-block">Liên hệ</label>
                 <p class="mb-2">
                     <i class="bi bi-telephone-fill"></i> Mua hàng: <span class="fw-bold">0374441985</span>
@@ -114,7 +115,7 @@
 
         <!-- Cột 2: Chính sách -->
         <div class="col-md-3 mb-2 d-flex">
-            <div class="p-2 rounded w-100" style="background-color: #484848;">
+            <div class="p-2 w-100 text-dark">
                 <label class="fw-bold d-block">Chính sách</label>
                 <p class="mb-2">
                     <i class="bi bi-arrow-repeat"></i> Đổi trả
@@ -127,7 +128,7 @@
 
         <!-- Cột 3: Giới thiệu -->
         <div class="col-md-3 mb-2 d-flex">
-            <div class="p-2 rounded w-100" style="background-color: #484848;">
+            <div class="p-2 w-100 text-dark">
                 <label class="fw-bold d-block">Giới thiệu</label>
                 <p class="mb-2">
                     <i class="bi bi-info-circle-fill"></i> Về OnePoly
@@ -137,18 +138,22 @@
 
         <!-- Cột 4: Hình ảnh -->
         <div class="col-md-3 d-flex justify-content-center align-items-center">
-            <img src="/img/Logo.png" alt="OnePoly Store Image" style="margin-left: 80px" class="img-fluid rounded" width="150px" height="150px">
+            <img src="/img/Logo.png" alt="OnePoly Store Image" style="margin-left: 80px" class="img-fluid rounded"
+                 width="150px" height="150px">
         </div>
     </div>
 </div>
-<div style="width: 100%;height: 20px;background-color: #333380">
+<div style="width: 100%;height: 10px;background-color:black">
 
 </div>
 <!-- End Footer -->
-<!-- Bootstrap JavaScript -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/smoothness/jquery-ui.css">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
+<script src="/js/client/product.js"></script>
 </body>
 </html>
 
