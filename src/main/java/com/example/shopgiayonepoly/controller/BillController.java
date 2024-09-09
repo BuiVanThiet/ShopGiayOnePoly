@@ -24,10 +24,25 @@ public class BillController {
     String colorMess = "";
     //    Integer pageNumber = 0;
 //    String nameSearch = "";
+    Integer currentPage = 1;
     @GetMapping("/home")
-    public String getForm(ModelMap modelMap) {
+    public String getForm(ModelMap modelMap, HttpSession session) {
         modelMap.addAttribute("message",mess);
         modelMap.addAttribute("check",colorMess);
+        Pageable pageable = PageRequest.of(0,5);
+        List<Bill> billList =  billService.getBillByStatusNew(pageable);
+        Bill bill = billList.stream().reduce(billList.get(0),(max,id)->{
+            if(id.getId() > max.getId()) {
+                return id;
+            }
+            return max;
+        });
+        session.setAttribute("IdBill", bill.getId());
+
+        Integer pageNumber = (int) Math.ceil((double) this.billDetailService.getBillDetailByIdBill(bill.getId()).size() / 2);
+        modelMap.addAttribute("pageNumber", pageNumber);
+
+        session.setAttribute("numberPage",0);
         this.mess = "";
         this.colorMess = "";
         modelMap.addAttribute("page","/Bill/index");
@@ -35,13 +50,11 @@ public class BillController {
     }
     @GetMapping("/bill-detail/{idBill}")
     public String getBillDetail(@PathVariable("idBill") Integer idBill, ModelMap modelMap, HttpSession session) {
-        if (idBill != null) {
-            session.setAttribute("IdBill", idBill);
-            System.out.println(session.getId());
-        } else {
-            System.out.println("idBill là null, không thể lưu vào session.");
-        }
-//        modelMap.addAttribute("listBillDetail",this.billDetailImplement.getBillDetailByIdBill(idBill));
+        session.setAttribute("IdBill", idBill);
+        Integer pageNumber = (int) Math.ceil((double) this.billDetailService.getBillDetailByIdBill(idBill).size() / 2);
+        modelMap.addAttribute("pageNumber", pageNumber);
+        modelMap.addAttribute("currentPage",currentPage);
+        currentPage = 1;
         modelMap.addAttribute("page","/Bill/index");
         return "Bill/index";
     }
@@ -69,6 +82,18 @@ public class BillController {
         return "redirect:/bill/home";
     }
 
-    //them san pham bang qr
-
+    //phan trang
+    @GetMapping("/page-bill-detail/{number}")
+    public String getPageBillDetail(@PathVariable("number") Integer number, HttpSession session,ModelMap modelMap) {
+        session.setAttribute("numberPage",number);
+        System.out.println("da con trang " + session.getAttribute("numberPage"));
+        this.currentPage = number;
+        return "redirect:/bill/bill-detail/"+(Integer) session.getAttribute("IdBill");
+    }
+//    @ModelAttribute("pageNumber")
+//    public Integer pageNumber(HttpSession session){
+//        Integer pageNumber = (int) Math.ceil((double) this.billDetailService.getBillDetailByIdBill(this.idBillUpdate).size() / 2);
+//        System.out.println("so trang la " + pageNumber);
+//        return pageNumber;
+//    }
 }
