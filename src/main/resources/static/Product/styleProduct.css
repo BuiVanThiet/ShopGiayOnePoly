@@ -69,6 +69,7 @@ body {
     width: auto;
     padding: 10px;
     text-align: center;
+    vertical-align: middle;
 }
 
 .table thead th:nth-child(1), .table tbody td:nth-child(1) {

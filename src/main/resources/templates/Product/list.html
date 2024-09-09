@@ -59,17 +59,17 @@
             </div>
             <table class="table table-bordered table-striped">
                 <thead>
-                <tr>
-                    <th>Mã sản phẩm</th>
-                    <th>Tên sản phẩm</th>
-                    <th>Chất liệu</th>
-                    <th>Hãng</th>
-                    <th>Xuất sứ</th>
-                    <th>Mô tả</th>
-                    <th>Ngày tạo</th>
-                    <th>Ngày sửa</th>
-                    <th>Trạng thái</th>
-                    <th>Hành động</th>
+                <tr >
+                    <th style="background-color: lightskyblue">Mã sản phẩm</th>
+                    <th style="background-color: lightskyblue">Tên sản phẩm</th>
+                    <th style="background-color: lightskyblue">Chất liệu</th>
+                    <th style="background-color: lightskyblue">Hãng</th>
+                    <th style="background-color: lightskyblue">Xuất sứ</th>
+                    <th style="background-color: lightskyblue">Mô tả</th>
+                    <th style="background-color: lightskyblue">Ngày tạo</th>
+                    <th style="background-color: lightskyblue">Ngày sửa</th>
+                    <th style="background-color: lightskyblue">Trạng thái</th>
+                    <th style="background-color: lightskyblue">Hành động</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -114,7 +114,7 @@
                         <a href="#" class="edit-icon" onclick="enableEditing(this); return false;"><i class="fas fa-edit" title="Edit"></i></a>
                         <a href="#" class="save-icon" style="display:none;" onclick="saveChanges(this); return false;"><i class="fas fa-save" title="Save"></i></a>
                         <a href="vf"><i class="icon-detail fas fa-bars"></i></a>
-                        <a href="hgf"><i class="icon-delete fas fa-trash" title="Delete"></i></a>
+                        <a th:href="@{/product/delete/{id}(id=${product.id})}" onclick="return confirm('Are you sure you want to delete this product?')"><i class="icon-delete fas fa-trash" title="Delete"></i></a>
                     </td>
                 </tr>
                 </tbody>
