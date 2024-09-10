@@ -367,10 +367,16 @@
                         <div class="modal-body">
                             <div class="card mb-3">
                                 <div class="card-body">
-                                    Bo loc thuoc tinh
+                                    <div class="row">
+
+                                    </div>
                                 </div>
                             </div>
-                            <table class="table table-bordered">
+                            <div id="noDataProductDetail" style="display:none; text-align:center;">
+                                <!-- Ảnh sẽ được hiển thị ở đây nếu không có dữ liệu -->
+                            </div>
+
+                            <table class="table table-bordered mt-2" style="display:none;">
                                 <thead>
                                 <tr>
                                     <th scope="col">STT</th>
@@ -381,45 +387,8 @@
                                     <th scope="col">Hành động</th>
                                 </tr>
                                 </thead>
-                                <tbody>
-                                <tr>
-                                    <th scope="row">1</th>
-                                    <td>
-                                        <img src="https://res.cloudinary.com/dfy4umpja/image/upload/v1724526670/Screenshot%202024-07-24%20160719.png"
-                                             alt="Lỗi ảnh" style="width: auto; height: 100px;">
-                                    </td>
-                                    <td>
-                                        sản phẩm 6
-                                    </td>
-                                    <td>
-                                        256
-                                    </td>
-                                    <td>
-                                        100000
-                                    </td>
-                                    <td>
-                                        <a href="" class="btn btn-success">Mua</a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">1</th>
-                                    <td>
-                                        <img src="https://res.cloudinary.com/dfy4umpja/image/upload/v1724526670/Screenshot%202024-07-24%20160719.png"
-                                             alt="Lỗi ảnh" style="width: auto; height: 100px;">
-                                    </td>
-                                    <td>
-                                        sản phẩm 2
-                                    </td>
-                                    <td>
-                                        21
-                                    </td>
-                                    <td>
-                                        500000
-                                    </td>
-                                    <td>
-                                        <a href="" class="btn btn-success">Mua</a>
-                                    </td>
-                                </tr>
+                                <tbody id="tableProductDetailSell">
+                                <!-- Dữ liệu sẽ được tải ở đây -->
                                 </tbody>
                             </table>
                             <nav aria-label="Page navigation example">

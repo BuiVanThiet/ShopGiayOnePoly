@@ -1,5 +1,6 @@
 package com.example.shopgiayonepoly.implement;
 
+import com.example.shopgiayonepoly.dto.request.ProductDetailCheckRequest;
 import com.example.shopgiayonepoly.entites.BillDetail;
 import com.example.shopgiayonepoly.entites.ProductDetail;
 import com.example.shopgiayonepoly.repositores.BillDetailRepository;
@@ -81,5 +82,31 @@ public class BillDetailImplement implements com.example.shopgiayonepoly.service.
     @Override
     public Integer getFirstBillDetailIdByIdBill(Integer idBill) {
        return   this.billDetailRepository.getFirstBillDetailIdByIdBill(idBill);
+    }
+
+    @Override
+    public Page<ProductDetail> getProductDetailSale(ProductDetailCheckRequest productDetailCheckRequest, Pageable pageable) {
+        return this.billDetailRepository.getProductDetailSale(
+                productDetailCheckRequest.getNameProduct(),
+                productDetailCheckRequest.getIdColor(),
+                productDetailCheckRequest.getIdSize(),
+                productDetailCheckRequest.getIdMaterial(),
+                productDetailCheckRequest.getIdManufacturer(),
+                productDetailCheckRequest.getIdOrigin(),
+                productDetailCheckRequest.getIdCategories(),
+                pageable
+                );
+    }
+    @Override
+    public Integer getProductDetailSale(ProductDetailCheckRequest productDetailCheckRequest) {
+        return this.billDetailRepository.getProductDetailSale(
+                productDetailCheckRequest.getNameProduct(),
+                productDetailCheckRequest.getIdColor(),
+                productDetailCheckRequest.getIdSize(),
+                productDetailCheckRequest.getIdMaterial(),
+                productDetailCheckRequest.getIdManufacturer(),
+                productDetailCheckRequest.getIdOrigin(),
+                productDetailCheckRequest.getIdCategories()
+        );
     }
 }
