@@ -14,8 +14,8 @@ public class ClientController {
     public String getFormProduct(){
         return "client/product";
     }
-    @GetMapping("/test")
+    @GetMapping("/product_detail")
     public String testMenu(){
-        return "client/test";
+        return "client/product_detail";
     }
 }
