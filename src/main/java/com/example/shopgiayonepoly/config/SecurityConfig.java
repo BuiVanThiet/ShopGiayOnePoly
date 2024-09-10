@@ -2,6 +2,8 @@ package com.example.shopgiayonepoly.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
@@ -16,7 +18,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .authorizeHttpRequests( auth -> auth
-                        .requestMatchers("/bill/**").permitAll()
+                        .requestMatchers("/login-api/**").permitAll()
+                        .requestMatchers("/ajax/**", "/css/**", "/img/**", "/js/**", "/loading/**", "/toast/**").permitAll()
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/store").permitAll()
                         .requestMatchers("/register").permitAll()
@@ -28,8 +31,9 @@ public class SecurityConfig {
                         .loginPage("/login")
                         .defaultSuccessUrl("/bill/home", true)
                 )
-                .logout(config -> config.logoutSuccessUrl("/"))
-                .build();
+                .logout(config -> config
+                        .logoutSuccessUrl("/"))
+                        .build();
     }
 
     @Bean
