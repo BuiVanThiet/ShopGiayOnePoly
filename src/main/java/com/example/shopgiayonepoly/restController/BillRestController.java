@@ -1,11 +1,13 @@
 package com.example.shopgiayonepoly.restController;
 
 import com.example.shopgiayonepoly.dto.request.BillDetailAjax;
+import com.example.shopgiayonepoly.dto.request.ProductDetailCheckRequest;
 import com.example.shopgiayonepoly.entites.*;
 import com.example.shopgiayonepoly.service.BillDetailService;
 import com.example.shopgiayonepoly.service.BillService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -174,5 +176,12 @@ public class BillRestController {
 //        System.out.println("trang dc chon la " + session.getAttribute("numberPage"));
 //        System.out.println("id bill " + session.getAttribute("IdBill"));
 //    }
-
+    @GetMapping("/productDetail-sell")
+    public List<ProductDetail> getProductDetailSell() {
+        Pageable pageable = PageRequest.of(0,50);
+//        if(productDetailCheckRequest == null) {
+            ProductDetailCheckRequest productDetailCheckRequest = new ProductDetailCheckRequest("",null,null,null,null,null,null);
+//        }
+        return this.billDetailService.getProductDetailSale(productDetailCheckRequest,pageable).getContent();
+    }
 }
