@@ -1,18 +1,15 @@
 package com.example.shopgiayonepoly.controller;
 
 import com.example.shopgiayonepoly.entites.Bill;
-import com.example.shopgiayonepoly.entites.ProductDetail;
-import com.example.shopgiayonepoly.implement.BillDetailImplement;
-import com.example.shopgiayonepoly.implement.BillImplement;
+import com.example.shopgiayonepoly.service.BillDetailService;
+import com.example.shopgiayonepoly.service.BillService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,17 +17,32 @@ import java.util.List;
 @RequestMapping("/bill")
 public class BillController {
     @Autowired
-    BillImplement billImplement;
+    BillService billService;
     @Autowired
-    BillDetailImplement billDetailImplement;
+    BillDetailService billDetailService;
     String mess = "";
     String colorMess = "";
-//    Integer pageNumber = 0;
+    //    Integer pageNumber = 0;
 //    String nameSearch = "";
-    @GetMapping("/")
-    public String getForm(ModelMap modelMap) {
+    Integer currentPage = 1;
+    @GetMapping("/home")
+    public String getForm(ModelMap modelMap, HttpSession session) {
         modelMap.addAttribute("message",mess);
         modelMap.addAttribute("check",colorMess);
+        Pageable pageable = PageRequest.of(0,5);
+        List<Bill> billList =  billService.getBillByStatusNew(pageable);
+        Bill bill = billList.stream().reduce(billList.get(0),(max,id)->{
+            if(id.getId() > max.getId()) {
+                return id;
+            }
+            return max;
+        });
+        session.setAttribute("IdBill", bill.getId());
+
+        Integer pageNumber = (int) Math.ceil((double) this.billDetailService.getBillDetailByIdBill(bill.getId()).size() / 2);
+        modelMap.addAttribute("pageNumber", pageNumber);
+
+        session.setAttribute("numberPage",0);
         this.mess = "";
         this.colorMess = "";
         modelMap.addAttribute("page","/Bill/index");
@@ -38,37 +50,50 @@ public class BillController {
     }
     @GetMapping("/bill-detail/{idBill}")
     public String getBillDetail(@PathVariable("idBill") Integer idBill, ModelMap modelMap, HttpSession session) {
-        if (idBill != null) {
-            session.setAttribute("IdBill", idBill);
-            System.out.println(session.getId());
-        } else {
-            System.out.println("idBill là null, không thể lưu vào session.");
-        }
-//        modelMap.addAttribute("listBillDetail",this.billDetailImplement.getBillDetailByIdBill(idBill));
+        session.setAttribute("IdBill", idBill);
+        Integer pageNumber = (int) Math.ceil((double) this.billDetailService.getBillDetailByIdBill(idBill).size() / 2);
+        modelMap.addAttribute("pageNumber", pageNumber);
+        modelMap.addAttribute("currentPage",currentPage);
+        currentPage = 1;
         modelMap.addAttribute("page","/Bill/index");
         return "Bill/index";
     }
     @GetMapping("/create")
     public String getCreateBill(ModelMap modelMap) {
         Pageable pageable = PageRequest.of(0,5);
-        List<Bill> listB = this.billImplement.getBillByStatusNew(pageable);
+        List<Bill> listB = this.billService.getBillByStatusNew(pageable);
         System.out.println(listB.size());
-//        if(listB.size() >= 4) {
-//            this.mess = "Thêm bill thất bại, chỉ đợc tồn tại 5 bill mới!";
-//            this.colorMess = "3";
-//            return "redirect:/bill/";
-//        }
+        if(listB.size() >= 4) {
+            this.mess = "Thêm bill thất bại, chỉ đợc tồn tại 5 bill mới!";
+            this.colorMess = "3";
+            return "redirect:/bill/home";
+        }
         Bill billSave = new Bill();
         billSave.setPaymentStatus(0);
         billSave.setStatus(0);
-        Bill bill = this.billImplement.save(billSave);
+        Bill bill = this.billService.save(billSave);
         System.out.printf(bill.toString());
         bill.setCodeBill("HD"+bill.getId().toString());
         bill.setUpdateDate(bill.getUpdateDate());
         bill.setCreateDate(bill.getCreateDate());
-        this.billImplement.save(bill);
+        this.billService.save(bill);
         this.mess = "Thêm bill thành công!";
         this.colorMess = "1";
-        return "redirect:/bill/";
+        return "redirect:/bill/home";
     }
+
+    //phan trang
+    @GetMapping("/page-bill-detail/{number}")
+    public String getPageBillDetail(@PathVariable("number") Integer number, HttpSession session,ModelMap modelMap) {
+        session.setAttribute("numberPage",number);
+        System.out.println("da con trang " + session.getAttribute("numberPage"));
+        this.currentPage = number;
+        return "redirect:/bill/bill-detail/"+(Integer) session.getAttribute("IdBill");
+    }
+//    @ModelAttribute("pageNumber")
+//    public Integer pageNumber(HttpSession session){
+//        Integer pageNumber = (int) Math.ceil((double) this.billDetailService.getBillDetailByIdBill(this.idBillUpdate).size() / 2);
+//        System.out.println("so trang la " + pageNumber);
+//        return pageNumber;
+//    }
 }
