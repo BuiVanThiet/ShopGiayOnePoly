@@ -22,6 +22,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests( auth -> auth
                         .requestMatchers("/bill/**").permitAll()
                         .requestMatchers("/").permitAll()
+                        .requestMatchers("/login-api/**").permitAll()
+                        .requestMatchers("/ajax/**", "/css/**", "/img/**", "/js/**", "/loading/**", "/toast/**").permitAll()
                         .requestMatchers("/bill-api/**").permitAll()
                         .requestMatchers("/register").permitAll()
                         .requestMatchers("/login").permitAll()
