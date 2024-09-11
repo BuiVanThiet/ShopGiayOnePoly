@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -30,12 +31,18 @@ public class SecurityConfig {
                         .requestMatchers("/logout").permitAll()
                         .anyRequest().authenticated()
                 )
+                .csrf(csrf -> csrf.disable())
+                .httpBasic(basic -> basic.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(
+                        SessionCreationPolicy.STATELESS
+                ))
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .defaultSuccessUrl("/bill/home", true)
+                        .defaultSuccessUrl("/", true)
                 )
-                .logout(config -> config.logoutSuccessUrl("/"))
-                .build();
+                .logout(config -> config
+                        .logoutSuccessUrl("/"))
+                        .build();
     }
 
     @Bean
