@@ -81,7 +81,7 @@ public class BillDetailImplement implements com.example.shopgiayonepoly.service.
 
     @Override
     public Integer getFirstBillDetailIdByIdBill(Integer idBill) {
-       return   this.billDetailRepository.getFirstBillDetailIdByIdBill(idBill);
+        return   this.billDetailRepository.getFirstBillDetailIdByIdBill(idBill);
     }
 
     @Override
@@ -95,7 +95,7 @@ public class BillDetailImplement implements com.example.shopgiayonepoly.service.
                 productDetailCheckRequest.getIdOrigin(),
                 productDetailCheckRequest.getIdCategories(),
                 pageable
-                );
+        );
     }
     @Override
     public Integer getProductDetailSale(ProductDetailCheckRequest productDetailCheckRequest) {

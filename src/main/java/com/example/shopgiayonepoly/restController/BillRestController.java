@@ -2,6 +2,7 @@ package com.example.shopgiayonepoly.restController;
 
 import com.example.shopgiayonepoly.dto.request.BillDetailAjax;
 import com.example.shopgiayonepoly.dto.request.ProductDetailCheckRequest;
+import com.example.shopgiayonepoly.dto.request.SearchClientRequest;
 import com.example.shopgiayonepoly.entites.*;
 import com.example.shopgiayonepoly.service.BillDetailService;
 import com.example.shopgiayonepoly.service.BillService;
@@ -116,31 +117,31 @@ public class BillRestController {
     public ResponseEntity<Map<String,String>> addProductDetailBuQr(@RequestBody Map<String, String> requestData, HttpSession session) {
         String dataId = requestData.get("id"); // Lấy giá trị từ JSON
         Map<String,String> thongBao = new HashMap<>();
-            Bill billById = this.billService.findById((Integer) session.getAttribute("IdBill")).orElse(new Bill());
+        Bill billById = this.billService.findById((Integer) session.getAttribute("IdBill")).orElse(new Bill());
 
-            ProductDetail productDetail = this.billDetailService.getProductDetailById(Integer.parseInt(dataId));
+        ProductDetail productDetail = this.billDetailService.getProductDetailById(Integer.parseInt(dataId));
 
-            BillDetail billDetail;
+        BillDetail billDetail;
 
-            Integer idBillDetail = this.billDetailService.getBillDetailExist(billById.getId(),productDetail.getId());
-            if(idBillDetail != null) {
-                billDetail = this.billDetailService.findById(idBillDetail).orElse(new BillDetail());
-                billDetail.setQuantity(billDetail.getQuantity()+1);
-                billDetail.setTotalAmount(billDetail.getPrice().multiply(BigDecimal.valueOf(billDetail.getQuantity())));
-                thongBao.put("message","Sửa số lượng sản phẩm thành công!");
-                thongBao.put("check","1");
-            }else {
-                billDetail = new BillDetail();
-                billDetail.setBill(billById);
-                billDetail.setProductDetail(productDetail);
-                billDetail.setQuantity(1);
-                billDetail.setPrice(productDetail.getPrice());
-                billDetail.setTotalAmount(billDetail.getPrice().multiply(BigDecimal.valueOf(billDetail.getQuantity())));
-                billDetail.setStatus(1);
-                thongBao.put("message","Thêm sản phẩm thành công!");
-                thongBao.put("check","1");
-            }
-            this.billDetailService.save(billDetail);
+        Integer idBillDetail = this.billDetailService.getBillDetailExist(billById.getId(),productDetail.getId());
+        if(idBillDetail != null) {
+            billDetail = this.billDetailService.findById(idBillDetail).orElse(new BillDetail());
+            billDetail.setQuantity(billDetail.getQuantity()+1);
+            billDetail.setTotalAmount(billDetail.getPrice().multiply(BigDecimal.valueOf(billDetail.getQuantity())));
+            thongBao.put("message","Sửa số lượng sản phẩm thành công!");
+            thongBao.put("check","1");
+        }else {
+            billDetail = new BillDetail();
+            billDetail.setBill(billById);
+            billDetail.setProductDetail(productDetail);
+            billDetail.setQuantity(1);
+            billDetail.setPrice(productDetail.getPrice());
+            billDetail.setTotalAmount(billDetail.getPrice().multiply(BigDecimal.valueOf(billDetail.getQuantity())));
+            billDetail.setStatus(1);
+            thongBao.put("message","Thêm sản phẩm thành công!");
+            thongBao.put("check","1");
+        }
+        this.billDetailService.save(billDetail);
         return ResponseEntity.ok(thongBao);
     }
 
@@ -180,8 +181,18 @@ public class BillRestController {
     public List<ProductDetail> getProductDetailSell() {
         Pageable pageable = PageRequest.of(0,50);
 //        if(productDetailCheckRequest == null) {
-            ProductDetailCheckRequest productDetailCheckRequest = new ProductDetailCheckRequest("",null,null,null,null,null,null);
+        ProductDetailCheckRequest productDetailCheckRequest = new ProductDetailCheckRequest("",null,null,null,null,null,null);
 //        }
         return this.billDetailService.getProductDetailSale(productDetailCheckRequest,pageable).getContent();
+    }
+
+
+
+
+    //goi khach hang
+    @GetMapping("/client")
+    public List<Client> getClient() {
+        Pageable pageable = PageRequest.of(0,5);
+        return this.billService.getClientNotStatus0();
     }
 }

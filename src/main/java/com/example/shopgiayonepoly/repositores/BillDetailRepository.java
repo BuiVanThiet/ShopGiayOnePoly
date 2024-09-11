@@ -44,7 +44,7 @@ public interface BillDetailRepository extends JpaRepository<BillDetail,Integer> 
             "and (:manufacturer is null or pdt.product.manufacturer.id = :manufacturer) " +
             "and (:origin is null or pdt.product.origin.id = :origin) " +
             "and (:categories is null or pdt.product.categories.size in (:categories))" +
-            "and pdt.status <> 2 and pdt.product.status <> 2")
+            "and pdt.status <> 0 and pdt.product.status <> 0")
     Page<ProductDetail> getProductDetailSale(@Param("product") String nameProduct,
                                              @Param("color") Integer idColor,
                                              @Param("size") Integer idSize,
@@ -67,12 +67,13 @@ public interface BillDetailRepository extends JpaRepository<BillDetail,Integer> 
             "and (:material is null or m.id = :material) " +
             "and (:manufacturer is null or mf.id = :manufacturer) " +
             "and (:origin is null or o.id = :origin) " +
-            "and (:categories is null or cat.id in (:categories))")
+            "and (:categories is null or cat.id in (:categories))"+
+            "and pdt.status <> 0 and pdt.product.status <> 0")
     Integer getProductDetailSale(@Param("product") String nameProduct,
-                                             @Param("color") Integer idColor,
-                                             @Param("size") Integer idSize,
-                                             @Param("material") Integer idMaterial,
-                                             @Param("manufacturer") Integer idManufacturer,
-                                             @Param("origin") Integer idOrigin,
-                                             @Param("categories") List<Integer> idCategory);
+                                 @Param("color") Integer idColor,
+                                 @Param("size") Integer idSize,
+                                 @Param("material") Integer idMaterial,
+                                 @Param("manufacturer") Integer idManufacturer,
+                                 @Param("origin") Integer idOrigin,
+                                 @Param("categories") List<Integer> idCategory);
 }

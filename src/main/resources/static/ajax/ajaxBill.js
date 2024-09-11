@@ -1,3 +1,50 @@
+function loadClientsIntoSelect() {
+    $.ajax({
+        type: "GET",
+        url: "/bill-api/client",
+        success: function(response) {
+            const selectElement = document.getElementById("clientSelect");
+
+            // Xóa tất cả tùy chọn hiện tại
+            selectElement.innerHTML = "";
+
+            // Tạo các thẻ <option> mới từ dữ liệu nhận được
+            response.forEach(item => {
+                const option = document.createElement("option");
+                option.value = item.id; // Thay đổi theo cấu trúc dữ liệu nhận được
+                option.textContent = item.fullName + ' - ' + item.numberPhone; // Thay đổi theo cấu trúc dữ liệu nhận được
+                selectElement.appendChild(option);
+            });
+
+            // Khởi tạo MultiSelectTag sau khi dữ liệu đã được thêm vào
+            if (typeof MultiSelectTag === 'function') {
+                // Kiểm tra nếu MultiSelectTag đã được khởi tạo
+                if (!selectElement.classList.contains('multi-select-initialized')) {
+                    new MultiSelectTag(selectElement.id, {
+                        rounded: true,
+                        shadow: true,
+                        placeholder: 'Search',
+                        tagColor: {
+                            textColor: '#327b2c',
+                            borderColor: '#92e681',
+                            bgColor: '#eaffe6',
+                        },
+                        onChange: function(values) {
+                            console.log(`${selectElement.id} selected values:`, values);  // Log ra ID của dropdown và các giá trị đã chọn
+                        }
+                    });
+                    selectElement.classList.add('multi-select-initialized');
+                }
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Error fetching data:', error);
+        }
+    });
+}
+
+
+
 function loadProduct() {
     $.ajax({
         type: "GET",
@@ -20,7 +67,6 @@ function loadProduct() {
             } else {
                 noDataContainer.hide(); // Ẩn phần chứa ảnh nếu có dữ liệu
                 tbody.closest('table').show(); // Hiển thị lại table nếu có dữ liệu
-
                 response.forEach(function(productDetail, index) {
                     var imagesHtml = '';
 
@@ -59,10 +105,10 @@ function loadProduct() {
                                 <br>
                                 Tên size: ${productDetail.size.nameSize}
                                 </div>
-                        
+
                             </td>
                             <td>
-                                ${quantityProduct}                         
+                                ${quantityProduct}
                             </td>
                             <td>${productDetail.price}</td>
                             <td>
@@ -82,21 +128,39 @@ function loadProduct() {
         }
     });
 }
+
+
 $(document).ready(function () {
     window.loadBillNew = function () {
+        var idBill = $('#idBill').val();
         $.ajax({
             type: "GET",
             url: "/bill-api/all-new",
             success: function (response) {
                 var ul = $('#billBody');
+                var noDataBill = $('#noDataBill');
                 ul.empty();
-                response.forEach(function (url) {
-                    ul.append(
-                        '<li class="nav-item">' +
-                        '<a class="nav-link text-dark" href="' + '/bill/bill-detail/' + url.id + '">' + url.codeBill + '</a>' +
-                        '</li>'
-                    );
-                });
+
+                if (response && response.length > 0) {
+                    noDataBill.hide()
+                    // Có dữ liệu, hiển thị danh sách bill
+                    response.forEach(function (url) {
+                        var isActive = (url.id == idBill) ? 'active' : ''; // So sánh với idBill
+                        ul.append(
+                            '<li class="nav-item">' +
+                            '<a class="nav-link text-dark ' + isActive + '" href="' + '/bill/bill-detail/' + url.id + '">' + url.codeBill + '</a>' +
+                            '</li>'
+                        );
+                    });
+                }else {
+                    // Không có dữ liệu, hiển thị thông báo và hình ảnh
+                    noDataBill.html(`
+                        <img src="https://res.cloudinary.com/dfy4umpja/image/upload/v1725477250/jw3etgwdqqxtkevcxisq.png"
+                             alt="Lỗi ảnh" style="width: auto; height: 100px;">
+                             <p class="text-center">Không có hóa đơn nào!</p>
+                    `);
+                    noDataBill.show()
+                }
             },
             error: function (xhr) {
                 console.error("Lỗi hiển thị bill: " + xhr.responseText);
@@ -245,6 +309,7 @@ $(document).ready(function () {
     loadBillNew();
     loadBillDetail();
     loadProduct();
+    loadClientsIntoSelect();
     // pageNumber();
 
 });

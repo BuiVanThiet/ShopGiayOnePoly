@@ -1,6 +1,7 @@
 package com.example.shopgiayonepoly.controller;
 
 import com.example.shopgiayonepoly.entites.Bill;
+import com.example.shopgiayonepoly.entites.Client;
 import com.example.shopgiayonepoly.service.BillDetailService;
 import com.example.shopgiayonepoly.service.BillService;
 import jakarta.servlet.http.HttpSession;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -31,18 +33,30 @@ public class BillController {
         modelMap.addAttribute("check",colorMess);
         Pageable pageable = PageRequest.of(0,5);
         List<Bill> billList =  billService.getBillByStatusNew(pageable);
-        Bill bill = billList.stream().reduce(billList.get(0),(max,id)->{
-            if(id.getId() > max.getId()) {
-                return id;
+        if(billList.size() > 0) {
+            Bill bill = billList.stream().reduce(billList.get(0),(max,id)->{
+                if(id.getId() > max.getId()) {
+                    return id;
+                }
+                return max;
+            });
+            session.setAttribute("IdBill", bill.getId());
+            if(bill.getClient() != null){
+                session.setAttribute("IdClient", bill.getClient().getId());
+            }else {
+                session.setAttribute("IdClient", null);
             }
-            return max;
-        });
-        session.setAttribute("IdBill", bill.getId());
+            Integer pageNumber = (int) Math.ceil((double) this.billDetailService.getBillDetailByIdBill(bill.getId()).size() / 2);
+            modelMap.addAttribute("pageNumber", pageNumber);
+        }else {
+            session.setAttribute("IdBill", null);
+            modelMap.addAttribute("IdClient",null);
 
-        Integer pageNumber = (int) Math.ceil((double) this.billDetailService.getBillDetailByIdBill(bill.getId()).size() / 2);
-        modelMap.addAttribute("pageNumber", pageNumber);
 
+        }
         session.setAttribute("numberPage",0);
+        modelMap.addAttribute("bill",(Integer)session.getAttribute("IdBill"));
+        modelMap.addAttribute("client",(Integer)session.getAttribute("IdClient"));
         this.mess = "";
         this.colorMess = "";
         modelMap.addAttribute("page","/Bill/index");
@@ -51,15 +65,28 @@ public class BillController {
     @GetMapping("/bill-detail/{idBill}")
     public String getBillDetail(@PathVariable("idBill") Integer idBill, ModelMap modelMap, HttpSession session) {
         session.setAttribute("IdBill", idBill);
+        Bill bill = this.billService.findById(idBill).orElse(null);
+        if(bill.getClient() != null){
+            session.setAttribute("IdClient", bill.getClient().getId());
+        }else {
+            session.setAttribute("IdClient", null);
+        }
         Integer pageNumber = (int) Math.ceil((double) this.billDetailService.getBillDetailByIdBill(idBill).size() / 2);
         modelMap.addAttribute("pageNumber", pageNumber);
         modelMap.addAttribute("currentPage",currentPage);
         currentPage = 1;
-        modelMap.addAttribute("page","/Bill/index");
+        modelMap.addAttribute("bill",(Integer)session.getAttribute("IdBill"));
+        modelMap.addAttribute("client",(Integer)session.getAttribute("IdClient"));
+
+        modelMap.addAttribute("message",mess);
+        modelMap.addAttribute("check",colorMess);
+        System.out.println("mes hien len la " + mess);
+//        this.mess = "";
+//        this.colorMess  = "";
         return "Bill/index";
     }
     @GetMapping("/create")
-    public String getCreateBill(ModelMap modelMap) {
+    public String getCreateBill(ModelMap modelMap,HttpSession session) {
         Pageable pageable = PageRequest.of(0,5);
         List<Bill> listB = this.billService.getBillByStatusNew(pageable);
         System.out.println(listB.size());
@@ -77,6 +104,8 @@ public class BillController {
         bill.setUpdateDate(bill.getUpdateDate());
         bill.setCreateDate(bill.getCreateDate());
         this.billService.save(bill);
+        session.setAttribute("IdBill",bill.getId());
+        session.setAttribute("IdClient",null);
         this.mess = "Thêm bill thành công!";
         this.colorMess = "1";
         return "redirect:/bill/home";
@@ -96,4 +125,33 @@ public class BillController {
 //        System.out.println("so trang la " + pageNumber);
 //        return pageNumber;
 //    }
+
+    @GetMapping("/addClientInBill/{idClient}")
+    public String getAddClientInBill(@PathVariable("idClient") Integer idClient, HttpSession session) {
+        Bill bill = this.billService.findById((Integer) session.getAttribute("IdBill")).orElse(new Bill());
+        bill.setUpdateDate(new Date());
+        Client client = new Client();
+        client.setId(idClient);
+        bill.setClient(client);
+        this.billService.save(bill);
+        this.mess = "Thêm khách hàng thành công!";
+        this.colorMess = "1";
+        System.out.println("Them thanh cong khach hang co id la "+idClient+" tai hoa don " + session.getAttribute("IdBill"));
+        return "redirect:/bill/bill-detail/"+(Integer) session.getAttribute("IdBill");
+    }
+
+    @GetMapping("/removeClientInBill/{idClient}")
+    public String getRemoveClientInBill(@PathVariable("idClient") Integer idClient, HttpSession session) {
+        Bill bill = this.billService.findById((Integer) session.getAttribute("IdBill")).orElse(new Bill());
+        bill.setUpdateDate(new Date());
+//        Client client = new Client();
+//        client.setId(idClient);
+        bill.setClient(null);
+        this.billService.save(bill);
+        this.mess = "Xóa khách hàng thành công!";
+        this.colorMess = "1";
+        System.out.println("Xoa thanh cong khach hang co id la "+idClient+" tai hoa don " + session.getAttribute("IdBill"));
+        return "redirect:/bill/bill-detail/"+(Integer) session.getAttribute("IdBill");
+    }
+
 }
