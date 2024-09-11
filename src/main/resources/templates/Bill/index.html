@@ -60,7 +60,9 @@
                                     </button>
                                 </div>
                             </div>
-
+                            <div id="noDataBill" style="display:none; text-align:center;">
+                                <!-- Ảnh sẽ được hiển thị ở đây nếu không có dữ liệu -->
+                            </div>
                             <ul class="nav nav-underline" id="billBody">
 
                             </ul>
@@ -85,48 +87,7 @@
                                 <!-- Dữ liệu sẽ được tải ở đây -->
                                 </tbody>
                             </table>
-                            <!--                        <table class="table table-bordered mt-2">-->
-                            <!--                            <thead>-->
-                            <!--                            <tr>-->
-                            <!--                                <th scope="col">STT</th>-->
-                            <!--                                <th scope="col">Ảnh</th>-->
-                            <!--                                <th scope="col">Sản phẩm</th>-->
-                            <!--                                <th scope="col">Giá</th>-->
-                            <!--                                <th scope="col">Số lượng</th>-->
-                            <!--                                <th scope="col">Tổng tiền</th>-->
-                            <!--                                <th scope="col">Hành động</th>-->
-                            <!--                            </tr>-->
-                            <!--                            </thead>-->
-                            <!--                            <tbody id="tableBillDetail">-->
-                            <!--&lt;!&ndash;                            <tr th:each="billDetail, iterStat : ${listBillDetail}">&ndash;&gt;-->
-                            <!--&lt;!&ndash;                                <th scope="row" th:text="${iterStat.count}">1</th>&ndash;&gt;-->
-                            <!--&lt;!&ndash;                                <td>&ndash;&gt;-->
-                            <!--&lt;!&ndash;                                    <div style="width: auto; height: 100px;" id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">&ndash;&gt;-->
-                            <!--&lt;!&ndash;                                        <div class="carousel-inner" style="width: auto; height: 100px;">&ndash;&gt;-->
-                            <!--&lt;!&ndash;                                            &lt;!&ndash; Sử dụng th:each để lặp qua danh sách ảnh &ndash;&gt;&ndash;&gt;-->
-                            <!--&lt;!&ndash;                                            <div style="width: auto; height: 100px;" th:each="image, imgStat : ${billDetail.productDetail.product.images}"&ndash;&gt;-->
-                            <!--&lt;!&ndash;                                                 th:classappend="${imgStat.index == 0} ? 'active' : ''" class="carousel-item">&ndash;&gt;-->
-                            <!--&lt;!&ndash;                                                <img style="width: auto; height: 100px;" th:src="@{'https://res.cloudinary.com/dfy4umpja/image/upload/f_auto,q_auto/'+${image.nameImage}}" class="d-block w-100" alt="Lỗi ảnh">&ndash;&gt;-->
-                            <!--&lt;!&ndash;                                            </div>&ndash;&gt;-->
-                            <!--&lt;!&ndash;                                        </div>&ndash;&gt;-->
-                            <!--&lt;!&ndash;                                    </div>&ndash;&gt;-->
-                            <!--&lt;!&ndash;                                </td>&ndash;&gt;-->
-                            <!--&lt;!&ndash;                                <td th:text="${billDetail.productDetail.product.nameProduct}">sản phẩm</td>&ndash;&gt;-->
-                            <!--&lt;!&ndash;                                <td th:text="${billDetail.price}">100000</td>&ndash;&gt;-->
-                            <!--&lt;!&ndash;                                <td th:text="${billDetail.quantity}">2</td>&ndash;&gt;-->
-                            <!--&lt;!&ndash;                                <td th:text="${billDetail.totalAmount}">200000</td>&ndash;&gt;-->
-                            <!--&lt;!&ndash;                                <td>&ndash;&gt;-->
-                            <!--&lt;!&ndash;                                    <a href="#" class="btn btn-danger">Xóa bỏ</a>&ndash;&gt;-->
-                            <!--&lt;!&ndash;                                </td>&ndash;&gt;-->
-                            <!--&lt;!&ndash;                            </tr>&ndash;&gt;-->
-                            <!--                            </tbody>-->
-                            <!--                        </table>-->
 
-<!--                            <nav aria-label="Page navigation example">-->
-<!--                                <ul id="pageNumber" class="pagination justify-content-center">-->
-<!--                                    -->
-<!--                                </ul>-->
-<!--                            </nav>-->
                             <nav th:if="${pageNumber > 0}" aria-label="Page navigation example">
                                 <ul class="pagination justify-content-center">
                                     <!-- Previous Page -->
@@ -158,11 +119,10 @@
                                 <p class="mb-0 me-2">
                                     Thông tin khách hàng
                                 </p>
-                                <div class="d-flex ms-auto">
-                                    <input type="text" class="form-control me-2 w-auto" placeholder="tìm theo sđt...">
-                                    <button class="btn btn-success" data-bs-toggle="modal"
-                                            data-bs-target="#client-Modal">Thêm mới khách hàng
-                                    </button>
+                                <div class="d-flex ms-auto" style="width: 350px;">
+                                    <select  name="client" id="clientSelect" class="multi-select-dropdown">
+
+                                    </select>
                                 </div>
                             </div>
                             <!-- neu khach hang ko ton tai hoac la khach qua duong -->
@@ -594,6 +554,8 @@
             </div>
             <input type="hidden" id="toastMessage" th:value="${message}">
             <input type="hidden" id="toastCheck" th:value="${check}">
+            <input type="hidden" id="idBill" th:value="${bill}">
+            <input type="hidden" id="idClient" th:value="${client}">
             <!-- end -->
         </article>
 
