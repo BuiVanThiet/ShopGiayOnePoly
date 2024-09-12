@@ -3,6 +3,7 @@ package com.example.shopgiayonepoly.restController;
 import com.example.shopgiayonepoly.dto.request.BillDetailAjax;
 import com.example.shopgiayonepoly.dto.request.ProductDetailCheckRequest;
 import com.example.shopgiayonepoly.dto.request.SearchClientRequest;
+import com.example.shopgiayonepoly.dto.response.BillTotalInfornationResponse;
 import com.example.shopgiayonepoly.entites.*;
 import com.example.shopgiayonepoly.service.BillDetailService;
 import com.example.shopgiayonepoly.service.BillService;
@@ -16,9 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/bill-api")
@@ -43,7 +42,7 @@ public class BillRestController {
 
     @GetMapping("/all-new")
     public List<Bill> getAllNew() {
-        Pageable pageable = PageRequest.of(0,5);
+        Pageable pageable = PageRequest.of(0,10);
         return billService.getBillByStatusNew(pageable);
     }
 
@@ -91,16 +90,15 @@ public class BillRestController {
             thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }
-        if(billDetailAjax.getQuantity() < billDetail.getQuantity()) {
-            thongBao.put("message","Sửa số lượng sản phẩm thành công!");
-            thongBao.put("check","1");
-            billDetail.setQuantity(billDetailAjax.getQuantity());
-            billDetail.setTotalAmount(billDetail.getPrice().multiply(BigDecimal.valueOf(billDetail.getQuantity())));
-            this.billDetailService.save(billDetail);
-            return ResponseEntity.ok(thongBao);
-        }
+//        if(billDetailAjax.getQuantity() < billDetail.getQuantity()) {
+//            thongBao.put("message","Sửa số lượng sản phẩm thành công!");
+//            thongBao.put("check","1");
+//            billDetail.setQuantity(billDetailAjax.getQuantity());
+//            billDetail.setTotalAmount(billDetail.getPrice().multiply(BigDecimal.valueOf(billDetail.getQuantity())));
+//            this.billDetailService.save(billDetail);
+//            return ResponseEntity.ok(thongBao);
+//        }
         if(productDetail.getStatus() == 0 || productDetail.getStatus() == 2 || productDetail.getProduct().getStatus() == 0 || productDetail.getProduct().getStatus() == 2) {
-            System.out.println("San pham nay tren he thong da ngung ban hoax bi xoa!");
             thongBao.put("message","Sản phẩm đã bị xóa hoặc ngừng bán trên hệ thống!");
             thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
@@ -110,6 +108,9 @@ public class BillRestController {
         billDetail.setQuantity(billDetailAjax.getQuantity());
         billDetail.setTotalAmount(billDetail.getPrice().multiply(BigDecimal.valueOf(billDetail.getQuantity())));
         this.billDetailService.save(billDetail);
+
+        this.setTotalAmount(billDetail.getBill());
+
         return ResponseEntity.ok(thongBao);
     }
     //THEM BSP BANG QR
@@ -142,6 +143,9 @@ public class BillRestController {
             thongBao.put("check","1");
         }
         this.billDetailService.save(billDetail);
+
+        this.setTotalAmount(billDetail.getBill());
+
         return ResponseEntity.ok(thongBao);
     }
 
@@ -157,6 +161,16 @@ public class BillRestController {
     public ModelAndView getDeleteProductDetail(@PathVariable("id") Integer id, HttpSession session) {
         BillDetail billDetail = this.billDetailService.findById(id).orElse(new BillDetail());
         this.billDetailService.delete(billDetail);
+        Bill bill = this.billService.findById((Integer) session.getAttribute("IdBill")).orElse(null);
+        BigDecimal total = this.billDetailService.getTotalAmountByIdBill(bill.getId());
+        bill.setUpdateDate(new Date());
+        if(total != null) {
+            bill.setTotalAmount(total);
+        }else {
+            bill.setTotalAmount(BigDecimal.valueOf(0));
+        }
+
+        this.billService.save(bill);
         return new ModelAndView("redirect:/bill/bill-detail/"+session.getAttribute("IdBill"));
     }
     //PhanTrang
@@ -195,4 +209,22 @@ public class BillRestController {
         Pageable pageable = PageRequest.of(0,5);
         return this.billService.getClientNotStatus0();
     }
+
+    @GetMapping("/payment-information")
+    public BillTotalInfornationResponse billTotalInfornationResponse(HttpSession session) {
+        return this.billService.findBillVoucherById((Integer) session.getAttribute("IdBill"));
+    }
+
+    public void setTotalAmount(Bill bill) {
+        BigDecimal total = this.billDetailService.getTotalAmountByIdBill(bill.getId());
+        if(total != null) {
+            bill.setUpdateDate(new Date());
+            bill.setTotalAmount(total);
+        }else {
+            bill.setUpdateDate(new Date());
+            bill.setTotalAmount(BigDecimal.valueOf(0));
+        }
+        this.billService.save(bill);
+    }
+
 }

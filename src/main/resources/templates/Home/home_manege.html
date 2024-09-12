@@ -159,16 +159,16 @@
                 </a>
             </p>
 
-            <div class="text-center">
-                <a class="text-decoration-none text-white fs-3 bg-transparent" th:if="${#authorization.expression('isAuthenticated()')}"
-                   th:href="@{/logout}">
-                    Đăng xuất
-                </a>
-                <a class="text-decoration-none text-white fs-3 bg-transparent" th:if="${#authorization.expression('!isAuthenticated()')}"
-                   th:href="@{/login}">
-                    Đăng nhập
-                </a>
-            </div>
+<!--            <div class="text-center">-->
+<!--                <a class="text-decoration-none text-white fs-3 bg-transparent" th:if="${#authorization.expression('isAuthenticated()')}"-->
+<!--                   th:href="@{/logout}">-->
+<!--                    Đăng xuất-->
+<!--                </a>-->
+<!--                <a class="text-decoration-none text-white fs-3 bg-transparent" th:if="${#authorization.expression('!isAuthenticated()')}"-->
+<!--                   th:href="@{/login}">-->
+<!--                    Đăng nhập-->
+<!--                </a>-->
+<!--            </div>-->
 
         </div>
     </div>

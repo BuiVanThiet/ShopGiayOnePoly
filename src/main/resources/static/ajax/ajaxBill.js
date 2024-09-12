@@ -1,8 +1,35 @@
+function updatePaymentInformation() {
+    $.ajax({
+        type: 'GET',
+        url: '/bill-api/payment-information',
+        success: function(response) {
+            console.log(response)
+            // Cập nhật thông tin vào các phần tử HTML
+            $('#subTotal').text(response.totalAmount + ' VNĐ');
+            $('#discountAmount').text(response.discount + ' VNĐ');
+            $('#totalAmount').text(response.finalAmount + ' VNĐ');
+
+            if (response.voucherId) {
+                $('#voucherName').text(response.nameVoucher);
+                $('#textVoucher').text(response.nameVoucher);
+                $('#discountContainer').show();
+            } else {
+                $('#discountContainer').hide();
+            }
+        },
+        error: function(error) {
+            console.error('Lỗi khi lấy thông tin thanh toán:', error);
+        }
+    });
+}
+
+
+
 function loadClientsIntoSelect() {
     $.ajax({
         type: "GET",
         url: "/bill-api/client",
-        success: function(response) {
+        success: function (response) {
             const selectElement = document.getElementById("clientSelect");
 
             // Xóa tất cả tùy chọn hiện tại
@@ -29,7 +56,7 @@ function loadClientsIntoSelect() {
                             borderColor: '#92e681',
                             bgColor: '#eaffe6',
                         },
-                        onChange: function(values) {
+                        onChange: function (values) {
                             console.log(`${selectElement.id} selected values:`, values);  // Log ra ID của dropdown và các giá trị đã chọn
                         }
                     });
@@ -297,6 +324,7 @@ $(document).ready(function () {
                 loadBillNew(); // Tải lại danh sách bill mới
                 loadBillDetail(); // Tải lại chi tiết bill
                 loadProduct();
+                updatePaymentInformation();
                 // pageNumber();
             },
             error: function (xhr) {
@@ -310,6 +338,7 @@ $(document).ready(function () {
     loadBillDetail();
     loadProduct();
     loadClientsIntoSelect();
+    updatePaymentInformation();
     // pageNumber();
 
 });
