@@ -1,5 +1,6 @@
 package com.example.shopgiayonepoly.controller;
 
+import com.example.shopgiayonepoly.dto.response.BillTotalInfornationResponse;
 import com.example.shopgiayonepoly.entites.Bill;
 import com.example.shopgiayonepoly.entites.Client;
 import com.example.shopgiayonepoly.service.BillDetailService;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -31,7 +33,7 @@ public class BillController {
     public String getForm(ModelMap modelMap, HttpSession session) {
         modelMap.addAttribute("message",mess);
         modelMap.addAttribute("check",colorMess);
-        Pageable pageable = PageRequest.of(0,5);
+        Pageable pageable = PageRequest.of(0,10);
         List<Bill> billList =  billService.getBillByStatusNew(pageable);
         if(billList.size() > 0) {
             Bill bill = billList.stream().reduce(billList.get(0),(max,id)->{
@@ -41,6 +43,7 @@ public class BillController {
                 return max;
             });
             session.setAttribute("IdBill", bill.getId());
+            modelMap.addAttribute("clientInformation",bill.getClient());
             if(bill.getClient() != null){
                 session.setAttribute("IdClient", bill.getClient().getId());
             }else {
@@ -50,7 +53,7 @@ public class BillController {
             modelMap.addAttribute("pageNumber", pageNumber);
         }else {
             session.setAttribute("IdBill", null);
-            modelMap.addAttribute("IdClient",null);
+           session.setAttribute("IdClient",null);
 
 
         }
@@ -59,6 +62,7 @@ public class BillController {
         modelMap.addAttribute("client",(Integer)session.getAttribute("IdClient"));
         this.mess = "";
         this.colorMess = "";
+
         modelMap.addAttribute("page","/Bill/index");
         return "Bill/index";
     }
@@ -77,6 +81,7 @@ public class BillController {
         currentPage = 1;
         modelMap.addAttribute("bill",(Integer)session.getAttribute("IdBill"));
         modelMap.addAttribute("client",(Integer)session.getAttribute("IdClient"));
+        modelMap.addAttribute("clientInformation",bill.getClient());
 
         modelMap.addAttribute("message",mess);
         modelMap.addAttribute("check",colorMess);
@@ -87,17 +92,23 @@ public class BillController {
     }
     @GetMapping("/create")
     public String getCreateBill(ModelMap modelMap,HttpSession session) {
-        Pageable pageable = PageRequest.of(0,5);
+        Pageable pageable = PageRequest.of(0,10);
         List<Bill> listB = this.billService.getBillByStatusNew(pageable);
         System.out.println(listB.size());
-        if(listB.size() >= 4) {
-            this.mess = "Thêm bill thất bại, chỉ đợc tồn tại 5 bill mới!";
+        if(listB.size() >= 10) {
+            this.mess = "Thêm bill thất bại, chỉ đợc tồn tại 10 bill mới!";
             this.colorMess = "3";
             return "redirect:/bill/home";
         }
         Bill billSave = new Bill();
         billSave.setPaymentStatus(0);
         billSave.setStatus(0);
+        billSave.setShippingPrice(BigDecimal.valueOf(0));
+        billSave.setCash(BigDecimal.valueOf(0));
+        billSave.setAcountMoney(BigDecimal.valueOf(0));
+        billSave.setTotalAmount(BigDecimal.valueOf(0));
+        billSave.setPaymentStatus(0);
+        billSave.setShippingPrice(BigDecimal.valueOf(0));
         Bill bill = this.billService.save(billSave);
         System.out.printf(bill.toString());
         bill.setCodeBill("HD"+bill.getId().toString());
@@ -153,5 +164,6 @@ public class BillController {
         System.out.println("Xoa thanh cong khach hang co id la "+idClient+" tai hoa don " + session.getAttribute("IdBill"));
         return "redirect:/bill/bill-detail/"+(Integer) session.getAttribute("IdBill");
     }
+
 
 }

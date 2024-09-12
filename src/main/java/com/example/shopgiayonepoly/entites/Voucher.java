@@ -24,7 +24,7 @@ public class Voucher extends Base {
     @Column(name = "name_voucher")
     private String nameVoucher;
     @Column(name = "discount_type")
-    private String discountType;
+    private Integer discountType;
     @Column(name = "price_reduced")
     private BigDecimal priceReduced;
     @Column(name = "prices_apply")
