@@ -17,3 +17,9 @@ function changeColor(color){
 function changeSize(size){
     document.getElementById("selected-size").innerText= size;
 }
+$("#describeProductDetailLabel").on("click",function (){
+    $("#describeProductDetailFilter").toggleClass("show");
+});
+$("#returnPolicyLabel").on("click",function (){
+    $("#returnPolicyFilter").toggleClass("show");
+});

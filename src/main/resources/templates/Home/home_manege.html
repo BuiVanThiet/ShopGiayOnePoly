@@ -41,7 +41,8 @@
 
         <div class="offcanvas-header d-flex justify-content-between align-items-center border-bottom">
             <a href="#" class="offcanvas-title text-decoration-none text-white fs-3" id="offcanvasExampleLabel">
-                <span>Xin chào, Bùi Văn Thiết</span>
+                <span th:text="'Xin chào, ' + ${fullName}"></span>
+                <span th:text="'Vai trò: ' + ${roleName}"></span>
                 <br>
                 <span>Chúc bạn một ngày tốt lành!</span>
             </a>
@@ -159,17 +160,17 @@
                 </a>
             </p>
 
-<!--            <div class="text-center">-->
-<!--                <a class="text-decoration-none text-white fs-3 bg-transparent" th:if="${#authorization.expression('isAuthenticated()')}"-->
-<!--                   th:href="@{/logout}">-->
-<!--                    Đăng xuất-->
-<!--                </a>-->
-<!--                <a class="text-decoration-none text-white fs-3 bg-transparent" th:if="${#authorization.expression('!isAuthenticated()')}"-->
-<!--                   th:href="@{/login}">-->
-<!--                    Đăng nhập-->
-<!--                </a>-->
-<!--            </div>-->
-
+            <p class="border-bottom">
+                <a class="text-decoration-none text-white fs-3 bg-transparent"
+                   th:if="${#authorization.expression('isAuthenticated()')}" th:href="@{/logout}">
+                    Đăng xuất
+                </a>
+                <!-- Hiển thị nút Đăng nhập nếu người dùng chưa đăng nhập -->
+                <a class="text-decoration-none text-white fs-3 bg-transparent"
+                   th:if="${#authorization.expression('!isAuthenticated()')}" th:href="@{/login}">
+                    Đăng nhập
+                </a>
+            </p>
         </div>
     </div>
 </div>

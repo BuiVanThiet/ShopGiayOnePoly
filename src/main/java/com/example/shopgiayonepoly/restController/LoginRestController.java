@@ -4,12 +4,10 @@ import com.example.shopgiayonepoly.dto.request.loginRequest;
 import com.example.shopgiayonepoly.entites.Staff;
 
 import com.example.shopgiayonepoly.repositores.StaffSecurityRepository;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,11 +17,12 @@ public class LoginRestController {
     private StaffSecurityRepository staffRepository;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody loginRequest loginRequest) {
+    public ResponseEntity<?> login(@RequestBody loginRequest loginRequest, HttpSession session) {
         Staff staff = staffRepository.findByAcountOrEmail(loginRequest.getAcount(), loginRequest.getAcount());
 
         if (staff != null && loginRequest.getPassword().equals(staff.getPassword())) {
-            // Đăng nhập thành công
+            // Đăng nhập thành công, lưu thông tin vào session
+            session.setAttribute("loggedInUser", staff);
             return ResponseEntity.ok("Login thành công");
         } else {
             // Đăng nhập thất bại
@@ -31,13 +30,14 @@ public class LoginRestController {
         }
     }
 
-    @GetMapping("/status")
-    public String checkStatus() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getName())) {
-            return "User is logged in as " + authentication.getName();
+    @GetMapping("/check-login")
+    public ResponseEntity<String> checkLoginStatus(HttpSession session) {
+        Staff staff = (Staff) session.getAttribute("loggedInUser");
+
+        if (staff != null) {
+            return ResponseEntity.ok("Đăng nhập thành công với: " + staff.getFullName() + " - Vai trò: " + (staff.getRole() != null ? staff.getRole().getNameRole() : "No role"));
         } else {
-            return "User is not logged in";
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Đăng nhập thất bại");
         }
     }
 }
