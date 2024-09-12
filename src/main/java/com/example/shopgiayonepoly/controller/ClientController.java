@@ -11,8 +11,12 @@ public class ClientController {
         return "client/homepage";
     }
     @GetMapping("/products")
-    public String getFormProduct(){
+    public String getFormProduct() {
         return "client/product";
+    }
+    @GetMapping("/address")
+    public String getPriceByGHN() {
+        return "client/address";
     }
     @GetMapping("/product_detail")
     public String testMenu(){
