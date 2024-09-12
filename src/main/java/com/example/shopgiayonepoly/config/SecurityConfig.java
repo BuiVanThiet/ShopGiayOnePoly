@@ -33,15 +33,17 @@ public class SecurityConfig {
                 )
                 .csrf(csrf -> csrf.disable())
                 .httpBasic(basic -> basic.disable())
-                .sessionManagement(session -> session.sessionCreationPolicy(
-                        SessionCreationPolicy.STATELESS
-                ))
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                )
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .defaultSuccessUrl("/", true)
+                        .loginProcessingUrl("/login")
+                        .defaultSuccessUrl("/bill/home", true)
                 )
                 .logout(config -> config
-                        .logoutSuccessUrl("/"))
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login?logout"))
                         .build();
     }
 
