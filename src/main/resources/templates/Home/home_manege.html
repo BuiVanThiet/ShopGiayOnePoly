@@ -12,6 +12,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="/loading/styleHomeManege.css" type="text/css">
     <link rel="stylesheet" href="/css/bill/styleBill.css" type="text/css">
+    <link rel="stylesheet" href="/css/Security/noAccess.css">
     <link rel="stylesheet" th:href="@{/toast/styleToast.css}" type="text/css">
     <link rel="stylesheet" th:href="@{/css/bill/styleSelect2Tag.css}" type="text/css">
 
@@ -185,7 +186,22 @@
 <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
     <!-- Đây là container nơi toast sẽ xuất hiện -->
 </div>
-
+<div class="modal fade" id="accessDeniedModal" tabindex="-1" aria-labelledby="accessDeniedModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="accessDeniedModalLabel">Quyền truy cập bị từ chối</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Bạn không có quyền truy cập vào trang này. Vui lòng liên hệ với quản trị viên nếu bạn nghĩ đây là lỗi.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
 <!--scriploading-->
 <script src="/loading/actionLoading.js"></script>
 
@@ -199,7 +215,7 @@
 <script src="/js/bill/checkSwitch.js"></script>
 <!--cai nay de set moi khi chon thi duoc active-->
 <script src="/js/bill/setActive.js"></script>
-
+<script src="/js/Security/noAccess.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"

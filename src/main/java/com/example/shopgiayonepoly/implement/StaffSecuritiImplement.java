@@ -20,10 +20,11 @@ public class StaffSecuritiImplement implements UserDetailsService {
         Staff staff = staffRepository.findByAcountOrEmail(acountOrEmail, acountOrEmail);
         if(staff != null){
             String username = (staff.getAcount() != null) ? staff.getAcount() : staff.getEmail();
+            String role = staff.getRole() != null ? staff.getRole().getNameRole() : "USER";
 
             var springStaff = User.withUsername(username)
                     .password(this.passwordEncoder().encode(staff.getPassword()))
-                    .roles(staff.getRole().getNameRole())
+                    .roles(role)
                     .build();
             return springStaff;
         }

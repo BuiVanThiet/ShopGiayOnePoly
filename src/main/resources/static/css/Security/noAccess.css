@@ -1,0 +1,29 @@
+
+.modal-dialog-login {
+    margin: 0 auto; /* Căn giữa modal theo chiều ngang */
+    position: fixed; /* Đặt vị trí của modal cố định để căn giữa theo chiều dọc */
+    top: 35%; /* Đặt top của modal tại giữa chiều cao của trang */
+    left: 35%; /* Đặt left của modal tại giữa chiều ngang của trang */
+    transform: translate(-50%, -50%); /* Căn giữa modal theo cả hai chiều */
+}
+
+
+.modal-dialog-login.modal-lg-login {
+    max-width: 800px; /* Điều chỉnh kích thước tối đa của modal */
+}
+
+
+.modal-dialog-login.modal-sm-login {
+    max-width: 300px; /* Điều chỉnh kích thước tối thiểu của modal nếu cần */
+}
+
+.modal-content-login {
+    background-color: #fff; /* Đặt màu nền cho modal */
+    border-radius: 0.5rem; /* Làm tròn các góc của modal */
+}
+
+
+.modal-header-login {
+    background-color: #003366; /* Thay đổi màu nền của header */
+    color: #fff; /* Thay đổi màu chữ của tiêu đề */
+}
