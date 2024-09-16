@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{Home/home_manege}">
+<head>
+    <title>Voucher</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container-xxl bd-gutter mt-5 my-md-4 bd-layout">
+        <div class="text-center">
+            <p class="fs-4 mt-2">QUẢN LÝ PHIẾU GIẢM GIÁ</p>
+        </div>
+        <div class="row p-2">
+            <div class="col-4" style="border: 1px solid #bbb8b8">
+                <div class="mb-3 text-center p-3 text-white" style="background-color: #28a745">
+                    Thêm mới phiếu giảm giá
+                </div>
+                <hr>
+                <div class="row p-3">
+                    <div class="col-12 mb-3">
+                        <label class="label-control" for="code">Mã giảm giá</label>
+                        <input type="text" id="code" name="code" class="form-control mt-1" required>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <label class="label-control" for="name">Tên giảm giá</label>
+                        <input type="text" id="name" name="name" class="form-control mt-1" required>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <label class="label-control" for="discountType">Loại giảm giá</label>
+                        <select id="discountType" name="discountType" class="form-select mt-1" required>
+                            <option value="0">%</option>
+                            <option value="1">Tiền mặt</option>
+                        </select>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <label class="label-control" for="value">Giá trị</label>
+                        <input type="number" id="value" name="value" class="form-control mt-1" required min="0">
+                    </div>
+                    <div class="col-6 mb-3">
+                        <label class="label-control" for="applyValue">Giá trị áp dụng</label>
+                        <input type="number" id="applyValue" name="applyValue" class="form-control mt-1" required
+                               min="0">
+                    </div>
+                    <div class="col-6 mb-3">
+                        <label class="label-control" for="maxDiscount">Giảm tối đa</label>
+                        <input type="number" id="maxDiscount" name="maxDiscount" class="form-control mt-1" required
+                               min="0">
+                    </div>
+                    <div class="col-6 mb-3">
+                        <label class="label-control" for="note">Ghi chú</label>
+                        <textarea id="note" name="note" class="form-control mt-1"></textarea>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <label class="label-control" for="startDate">Ngày bắt đầu</label>
+                        <input type="date" id="startDate" name="startDate" class="form-control mt-1" required>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <label class="label-control" for="endDate">Ngày kết thúc</label>
+                        <input type="date" id="endDate" name="endDate" class="form-control mt-1" required>
+                    </div>
+                    <button class="btn btn-success mt-3">Thêm</button>
+                </div>
+            </div>
+            <div class="col-8">
+                <div class="row" style="border: 1px solid #a6a1a1; height: auto">
+                    <div class="text-center">Tìm kiếm</div>
+                    <div class="col-12 mb-3 p-1">
+                        <form action="">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Tìm kiếm...">
+                                <button class="btn btn-light text-dark ms-1">
+                                    <i class="bi bi-search"></i> Search
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-6 mb-3 p-1">
+                        <label class="label-control" for="searchStartDate">Ngày bắt đầu</label>
+                        <input type="date" id="searchStartDate" name="searchStartDate" class="form-control mt-1">
+                    </div>
+                    <div class="col-6 mb-3 p-1">
+                        <label class="label-control" for="searchEndDate">Ngày kết thúc</label>
+                        <input type="date" id="searchEndDate" name="searchEndDate" class="form-control mt-1">
+                    </div>
+                    <div class="col-12 mb-3">
+                        <label class="label-control" for="searchDiscountType">Loại giảm giá</label>
+                        <select id="searchDiscountType" name="searchDiscountType" class="form-select mt-1" required>
+                            <option value="0">%</option>
+                            <option value="1">Tiền mặt</option>
+                        </select>
+                    </div>
+                    <hr>
+                    <div class="col-12">
+                        <table class="table table-hover">
+                            <thead class="bg-primary text-white">
+                            <tr>
+                                <th>Mã</th>
+                                <th>Tên</th>
+                                <th>Loại</th>
+                                <th>Giá trị</th>
+                                <th>Giá trị áp dụng</th>
+                                <th>Giảm tối đa</th>
+                                <th>Bắt đầu</th>
+                                <th>Kết thúc</th>
+                                <th>Mô tả</th>
+                                <th colspan="2">Thao tác</th>
+                            </tr>
+                            </thead>
+                            <tbody th:each="voucher : ${pageVoucher.content}">
+                            <tr>
+                                <td th:text="${voucher.codeVoucher}">Mã</td>
+                                <td th:text="${voucher.nameVoucher}">Tên</td>
+                                <td th:text="${voucher.discountType == 0 ? '%' : 'Tiền mặt'}">Loại</td>
+                                <td th:text="${voucher.priceReduced}">Giá trị</td>
+                                <td th:text="${voucher.pricesApply}">Giá trị áp dụng</td>
+                                <td th:text="${voucher.pricesMax}">Giảm tối đa</td>
+                                <td th:text="${voucher.startDate}">Bắt đầu</td>
+                                <td th:text="${voucher.endDate}">Kết thúc</td>
+                                <td th:text="${voucher.describe}">Mô tả</td>
+                                <td>
+                                    <a th:href="@{/edit/{id}(id=${voucher.id})}" class="btn btn-primary">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                </td>
+                                <td>
+                                    <a th:href="@{/delete/{id}(id=${voucher.id})}" class="btn btn-danger"
+                                       onclick="return confirm('Bạn có chắc chắn muốn xóa không?');">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div>
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination">
+                                    <!-- Trang trước -->
+                                    <li class="page-item"
+                                        th:classappend="${pageVoucher.hasPrevious()} ? '' : 'disabled'">
+                                        <a class="page-link" th:href="@{/page(pageNumber=${pageVoucher.number - 1})}"
+                                           aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+
+                                    <!-- Số trang -->
+                                    <li class="page-item" th:each="i : ${#numbers.sequence(1, pageVoucher.totalPages)}"
+                                        th:classappend="${pageVoucher.number + 1 == i} ? 'active' : ''">
+                                        <a class="page-link" th:href="@{/page(pageNumber=${i})}" th:text="${i}">1</a>
+                                    </li>
+
+                                    <!-- Trang sau -->
+                                    <li class="page-item" th:classappend="${pageVoucher.hasNext()} ? '' : 'disabled'">
+                                        <a class="page-link" th:href="@{/page(pageNumber=${pageVoucher.number + 1})}"
+                                           aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
