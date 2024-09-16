@@ -48,10 +48,12 @@ document.getElementById('startCamera').addEventListener('click', () => {
                             // Hiển thị thông báo thành công với message và check
                             showToast(data.message, data.check);
                             // Cập nhật lại bảng hóa đơn
-                            window.loadBillNew();
-                            window.loadBillDetail();
-                            updatePaymentInformation();
+                            loadBillNew();
+                            loadBillDetail();
+                            // uploadPayMethod();
                             // Đóng modal sau khi xử lý thành công
+                            paymentInformation();
+                            document.getElementById('cashClient').value = '';
                             const modalElement = document.getElementById('camera-Modal');
                             const bootstrapModal = bootstrap.Modal.getInstance(modalElement);
                             bootstrapModal.hide(); // Tắt modal
@@ -59,6 +61,7 @@ document.getElementById('startCamera').addEventListener('click', () => {
                             if (codeReader) {
                                 codeReader.reset(); // Dừng camera
                                 codeReader = null;
+
                             }
                         })
                         .catch(error => console.error('Error:', error));

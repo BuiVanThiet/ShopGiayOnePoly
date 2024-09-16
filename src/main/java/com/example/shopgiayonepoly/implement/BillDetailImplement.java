@@ -94,20 +94,20 @@ public class BillDetailImplement implements com.example.shopgiayonepoly.service.
                 productDetailCheckRequest.getIdMaterial(),
                 productDetailCheckRequest.getIdManufacturer(),
                 productDetailCheckRequest.getIdOrigin(),
-                productDetailCheckRequest.getIdCategories(),
+//                productDetailCheckRequest.getIdCategories(),
                 pageable
         );
     }
     @Override
-    public Integer getProductDetailSale(ProductDetailCheckRequest productDetailCheckRequest) {
+    public Integer countProductDetailSale(ProductDetailCheckRequest productDetailCheckRequest) {
         return this.billDetailRepository.countProductDetailSale(
                 productDetailCheckRequest.getNameProduct(),
                 productDetailCheckRequest.getIdColor(),
                 productDetailCheckRequest.getIdSize(),
                 productDetailCheckRequest.getIdMaterial(),
                 productDetailCheckRequest.getIdManufacturer(),
-                productDetailCheckRequest.getIdOrigin(),
-                productDetailCheckRequest.getIdCategories()
+                productDetailCheckRequest.getIdOrigin()
+//                productDetailCheckRequest.getIdCategories()
         );
     }
 

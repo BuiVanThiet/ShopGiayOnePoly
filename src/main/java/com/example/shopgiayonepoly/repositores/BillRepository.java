@@ -1,8 +1,9 @@
 package com.example.shopgiayonepoly.repositores;
 
 import com.example.shopgiayonepoly.dto.response.BillTotalInfornationResponse;
+import com.example.shopgiayonepoly.dto.response.ClientBillInformationResponse;
 import com.example.shopgiayonepoly.entites.Bill;
-import com.example.shopgiayonepoly.entites.Client;
+import com.example.shopgiayonepoly.entites.Customer;
 import com.example.shopgiayonepoly.entites.Voucher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,16 +12,14 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 @Repository
 public interface BillRepository extends JpaRepository<Bill,Integer> {
     //ngay 3thang9
     @Query("select b from Bill b where b.status = 0 order by b.createDate desc")
     List<Bill> getBillByStatusNew(Pageable pageable);
-    @Query("select client from Client client where client.status <> 0")
-    List<Client> getClientNotStatus0();
+    @Query("select client from Customer client where client.status <> 0")
+    List<Customer> getClientNotStatus0();
 
     @Query("""
     select new com.example.shopgiayonepoly.dto.response.BillTotalInfornationResponse(
@@ -54,7 +53,8 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
                 b.totalAmount - v.priceReduced
             else 
                 b.totalAmount
-        end
+        end,
+        b.note
     )
     from Bill b 
     left join b.voucher v 
@@ -62,7 +62,14 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
 """)
     BillTotalInfornationResponse findBillVoucherById(@Param("billId") Integer billId);
 
-    @Query("select v from Voucher v")
-    List<Voucher> getVouCherByBill();
+    @Query("SELECT v FROM Voucher v " +
+            "WHERE (SELECT b.totalAmount FROM Bill b WHERE b.id = :idBill) >= v.pricesApply " +
+            "AND v.status <> 0 " +
+            "AND ((SELECT b.voucher.id FROM Bill b WHERE b.id = :idBill) IS NULL " +
+            "OR (SELECT b.voucher.id FROM Bill b WHERE b.id = :idBill) <> v.id)")
+    List<Voucher> getVouCherByBill(@Param("idBill") Integer idBill);
+
+    @Query("select new com.example.shopgiayonepoly.dto.response.ClientBillInformationResponse(addRess.customer.fullName,addRess.customer.numberPhone,addRess.specificAddress,addRess.specificAddress,addRess.specificAddress,addRess.specificAddress) from AddressShip addRess where addRess.customer.id = :idClient")
+    List<ClientBillInformationResponse> getClientBillInformationResponse(@Param("idClient") Integer idBill);
 
  }

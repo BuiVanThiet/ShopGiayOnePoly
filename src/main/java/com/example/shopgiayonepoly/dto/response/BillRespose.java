@@ -1,12 +1,6 @@
 package com.example.shopgiayonepoly.dto.response;
 
 import com.example.shopgiayonepoly.dto.base.BaseDTO;
-import com.example.shopgiayonepoly.entites.Client;
-import com.example.shopgiayonepoly.entites.Staff;
-import com.example.shopgiayonepoly.entites.Voucher;
-import jakarta.persistence.Column;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

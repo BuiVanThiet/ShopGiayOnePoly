@@ -1,15 +1,16 @@
 package com.example.shopgiayonepoly.restController;
 
+import com.beust.ah.A;
 import com.example.shopgiayonepoly.dto.request.BillDetailAjax;
+import com.example.shopgiayonepoly.dto.request.PayMethodRequest;
 import com.example.shopgiayonepoly.dto.request.ProductDetailCheckRequest;
-import com.example.shopgiayonepoly.dto.request.SearchClientRequest;
 import com.example.shopgiayonepoly.dto.response.BillTotalInfornationResponse;
+import com.example.shopgiayonepoly.dto.response.ClientBillInformationResponse;
 import com.example.shopgiayonepoly.entites.*;
 import com.example.shopgiayonepoly.service.BillDetailService;
 import com.example.shopgiayonepoly.service.BillService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -22,12 +23,13 @@ import java.util.*;
 @RestController
 @RequestMapping("/bill-api")
 public class BillRestController {
+    ProductDetailCheckRequest productDetailCheckRequest;
     @Autowired
     BillService billService;
     @Autowired
     BillDetailService billDetailService;
-    String idProductDetail = null;
-    String idProductDetail2 = null;
+
+    Integer pageProduct = 0;
 
     @GetMapping("/get-idbill")
     @ResponseBody
@@ -90,6 +92,18 @@ public class BillRestController {
             thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }
+        if(billDetailAjax.getQuantity() > billDetail.getProductDetail().getQuantity()) {
+            System.out.println("Số lượng mua không được quá số lượng trong hệ thống!");
+            thongBao.put("message","Số lượng mua không được quá số lượng trong hệ thống!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+        if(billDetailAjax.getQuantity() > 10) {
+            System.out.println("Hiện tại cửa hàng chỉ bán mỗi sản phẩm số lượng không quá 10!");
+            thongBao.put("message","Hiện tại cửa hàng chỉ bán mỗi sản phẩm số lượng không quá 10!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
 //        if(billDetailAjax.getQuantity() < billDetail.getQuantity()) {
 //            thongBao.put("message","Sửa số lượng sản phẩm thành công!");
 //            thongBao.put("check","1");
@@ -143,8 +157,9 @@ public class BillRestController {
             thongBao.put("check","1");
         }
         this.billDetailService.save(billDetail);
+        System.out.println("Thong tin bill: " + billDetail.getBill().toString());
 
-        this.setTotalAmount(billDetail.getBill());
+        this.setTotalAmount(billById);
 
         return ResponseEntity.ok(thongBao);
     }
@@ -156,23 +171,6 @@ public class BillRestController {
     }
 
     //
-
-    @GetMapping("/deleteBillDetail/{id}")
-    public ModelAndView getDeleteProductDetail(@PathVariable("id") Integer id, HttpSession session) {
-        BillDetail billDetail = this.billDetailService.findById(id).orElse(new BillDetail());
-        this.billDetailService.delete(billDetail);
-        Bill bill = this.billService.findById((Integer) session.getAttribute("IdBill")).orElse(null);
-        BigDecimal total = this.billDetailService.getTotalAmountByIdBill(bill.getId());
-        bill.setUpdateDate(new Date());
-        if(total != null) {
-            bill.setTotalAmount(total);
-        }else {
-            bill.setTotalAmount(BigDecimal.valueOf(0));
-        }
-
-        this.billService.save(bill);
-        return new ModelAndView("redirect:/bill/bill-detail/"+session.getAttribute("IdBill"));
-    }
     //PhanTrang
 //    @GetMapping("/page")
 //    public Integer numberPage(HttpSession session) {
@@ -191,21 +189,43 @@ public class BillRestController {
 //        System.out.println("trang dc chon la " + session.getAttribute("numberPage"));
 //        System.out.println("id bill " + session.getAttribute("IdBill"));
 //    }
-    @GetMapping("/productDetail-sell")
-    public List<ProductDetail> getProductDetailSell() {
-        Pageable pageable = PageRequest.of(0,50);
-//        if(productDetailCheckRequest == null) {
-        ProductDetailCheckRequest productDetailCheckRequest = new ProductDetailCheckRequest("",null,null,null,null,null,null);
-//        }
-        return this.billDetailService.getProductDetailSale(productDetailCheckRequest,pageable).getContent();
+    @GetMapping("/productDetail-sell/{pageNumber}")
+    public List<ProductDetail> getProductDetailSell(@PathVariable("pageNumber") Integer pageNumber, HttpSession session) {
+        this.pageProduct = pageNumber - 1;
+        Pageable pageable = PageRequest.of(pageProduct,5);
+        if(this.productDetailCheckRequest == null) {
+//            ArrayList<Integer> categoryList = new ArrayList<>();
+//            categoryList.add(1);
+//            categoryList.add(4);
+            this.productDetailCheckRequest = new ProductDetailCheckRequest("",null,null,null,null,null);
+        }
+        List<ProductDetail> productDetails = this.billDetailService.getProductDetailSale(this.productDetailCheckRequest,pageable).getContent();
+        Integer maxPageProduct = (int) Math.ceil((double) this.billDetailService.countProductDetailSale(this.productDetailCheckRequest) / 5);
+        return productDetails;
     }
 
-
-
+    @GetMapping("/page-max-product")
+    public Integer getMaxPageProduct() {
+        if(this.productDetailCheckRequest == null) {
+//            ArrayList<Integer> categoryList = new ArrayList<>();
+//            categoryList.add(1);
+//            categoryList.add(4);
+            this.productDetailCheckRequest = new ProductDetailCheckRequest("",null,null,null,null,null);
+        }
+        Integer maxPageProduct = (int) Math.ceil((double) this.billDetailService.countProductDetailSale(this.productDetailCheckRequest) / 5);
+        System.out.println("so trang cua san pham " + maxPageProduct);
+        return maxPageProduct;
+    }
+    @PostMapping("/filter-product-deatail")
+    public ResponseEntity<?> getFilterProduct(@RequestBody ProductDetailCheckRequest productDetailCheckRequest2, HttpSession session) {
+        this.productDetailCheckRequest = productDetailCheckRequest2;
+        System.out.println("Thong tin loc " + this.productDetailCheckRequest.toString());
+        return ResponseEntity.ok("Done");
+    }
 
     //goi khach hang
     @GetMapping("/client")
-    public List<Client> getClient() {
+    public List<Customer> getClient() {
         Pageable pageable = PageRequest.of(0,5);
         return this.billService.getClientNotStatus0();
     }
@@ -214,6 +234,35 @@ public class BillRestController {
     public BillTotalInfornationResponse billTotalInfornationResponse(HttpSession session) {
         return this.billService.findBillVoucherById((Integer) session.getAttribute("IdBill"));
     }
+
+    @GetMapping("/client-bill-information")
+    public ClientBillInformationResponse getClientBillInformation(HttpSession session) {
+        List<ClientBillInformationResponse> clientBillInformationResponses = this.billService.getClientBillInformationResponse((Integer) session.getAttribute("IdClient"));
+        ClientBillInformationResponse clientBillInformationResponse = clientBillInformationResponses.get(0);
+        String getAddRessDetail = clientBillInformationResponse.getAddressDetail();
+        String[] part = getAddRessDetail.split(",\\s*");
+        clientBillInformationResponse.setCommune(part[0]);
+        clientBillInformationResponse.setDistrict(part[1]);
+        clientBillInformationResponse.setCity(part[2]);
+        clientBillInformationResponse.setAddressDetail(String.join(", ", java.util.Arrays.copyOfRange(part, 3, part.length)));
+        return clientBillInformationResponse;
+    }
+
+    @PostMapping("/uploadPaymentMethod")
+    public Bill getUploadBillPay(@RequestBody PayMethodRequest payMethodRequest,HttpSession session) {
+        Bill bill = this.billService.findById((Integer) session.getAttribute("IdBill")).orElse(new Bill());
+        bill.setPaymentMethod(payMethodRequest.getPayMethod());
+        bill.setUpdateDate(new Date());
+        return this.billService.save(bill);
+    }
+
+    @GetMapping("/voucher/{page}")
+    public List<Voucher> getVouCherList(@PathVariable("page") Integer pageNumber,HttpSession session) {
+        Pageable pageable = PageRequest.of(pageNumber-1,5);
+        return this.billService.getVouCherByBill((Integer) session.getAttribute("IdBill"));
+    }
+
+
 
     public void setTotalAmount(Bill bill) {
         BigDecimal total = this.billDetailService.getTotalAmountByIdBill(bill.getId());
@@ -224,6 +273,8 @@ public class BillRestController {
             bill.setUpdateDate(new Date());
             bill.setTotalAmount(BigDecimal.valueOf(0));
         }
+        System.out.println("Thong tin bill: " + bill.toString());
+
         this.billService.save(bill);
     }
 
