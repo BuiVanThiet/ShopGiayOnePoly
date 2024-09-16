@@ -42,7 +42,7 @@ public interface BillDetailService {
 
     Page<ProductDetail> getProductDetailSale(ProductDetailCheckRequest productDetailCheckRequest, Pageable pageable);
 
-    Integer getProductDetailSale(ProductDetailCheckRequest productDetailCheckRequest);
+    Integer countProductDetailSale(ProductDetailCheckRequest productDetailCheckRequest);
 
     BigDecimal getTotalAmountByIdBill(Integer id);
 }

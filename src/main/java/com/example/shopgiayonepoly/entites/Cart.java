@@ -18,8 +18,8 @@ import lombok.Setter;
 @Table(name = "cart")
 public class Cart extends Base {
     @ManyToOne
-    @JoinColumn(name = "id_client")
-    private Client client;
+    @JoinColumn(name = "id_customer")
+    private Customer customer;
     @ManyToOne
     @JoinColumn(name = "id_product_detail")
     private ProductDetail productDetail;

@@ -175,11 +175,15 @@ function MultiSelectTag(el, customs = { shadow: false, rounded: true }) {
                     method: 'GET'
                 })
                     .then(response => {
-                        if (response.redirected) {
-                            window.location.href = response.url; // Điều hướng đến URL mới
+                        if (response.ok) {
+                            return response.text(); // Nhận phản hồi dạng text
                         } else {
-                            console.error('Yêu cầu không thành công');
+                            throw new Error('Yêu cầu không thành công');
                         }
+                    })
+                    .then(data => {
+                        console.log(data); // Xóa khách hàng thành công!
+                        window.location.href = `/bill/bill-detail/${document.getElementById('idBill').value}`; // Chuyển hướng trang nếu cần
                     })
                     .catch(error => console.error('Lỗi:', error));
             }
@@ -202,7 +206,6 @@ function MultiSelectTag(el, customs = { shadow: false, rounded: true }) {
         // Display only 5 options if there are more
         let displayedCount = 0;
         for (var option of filteredOptions) {
-            if (displayedCount < 5) {
                 // Check if the option should be selected by default
                 const isSelected = hiddenInputValue.split(',').includes(option.value);
                 createElementInSelectList(option, isSelected);
@@ -211,7 +214,7 @@ function MultiSelectTag(el, customs = { shadow: false, rounded: true }) {
                     createTag(option); // Create tag for the selected option
                 }
                 displayedCount++;
-            }
+
         }
     }
 
@@ -237,6 +240,7 @@ function MultiSelectTag(el, customs = { shadow: false, rounded: true }) {
             </svg>`, 'image/svg+xml').documentElement;
 
         itemClose.addEventListener('click', (e) => {
+
             const unselectOption = options.find((op) => op.value == option.value);
             unselectOption.selected = false;
             inputContainer.innerHTML = ''; // Clear the selected tag
@@ -244,13 +248,18 @@ function MultiSelectTag(el, customs = { shadow: false, rounded: true }) {
                 method: 'GET'
             })
                 .then(response => {
-                    if (response.redirected) {
-                        window.location.href = response.url; // Điều hướng đến URL mới
+                    if (response.ok) {
+                        return response.text(); // Nhận phản hồi dạng text
                     } else {
-                        console.error('Yêu cầu không thành công');
+                        throw new Error('Yêu cầu không thành công');
                     }
                 })
+                .then(data => {
+                    console.log(data); // Xóa khách hàng thành công!
+                    window.location.href = `/bill/bill-detail/${document.getElementById('idBill').value}`; // Chuyển hướng trang nếu cần
+                })
                 .catch(error => console.error('Lỗi:', error));
+
             initOptions();
             setValues();
         });

@@ -17,8 +17,8 @@ public class Bill extends Base {
     @Column(name = "code_bill")
     private String codeBill;
     @ManyToOne
-    @JoinColumn(name = "id_client")
-    private Client client;
+    @JoinColumn(name = "id_customer")
+    private Customer customer;
     @ManyToOne
     @JoinColumn(name = "id_staff")
     private Staff staff;
@@ -43,4 +43,6 @@ public class Bill extends Base {
     private Integer billType;
     @Column(name = "payment_status")
     private Integer paymentStatus;
+    @Column(name = "surplus_money")
+    private BigDecimal surplusMoney;
 }

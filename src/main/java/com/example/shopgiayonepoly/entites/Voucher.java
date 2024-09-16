@@ -37,4 +37,6 @@ public class Voucher extends Base {
     private LocalDate endDate;
     @Column(name = "describe")
     private String describe;
+    @Column(name = "quantity")
+    private Integer quantity;
 }

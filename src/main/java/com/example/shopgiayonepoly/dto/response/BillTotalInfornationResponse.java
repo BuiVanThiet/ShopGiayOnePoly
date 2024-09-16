@@ -21,6 +21,7 @@ public class BillTotalInfornationResponse {
     private String nameVoucher;
     private BigDecimal discount;
     private BigDecimal finalAmount;
+    private String note;
 
 
 }

@@ -16,8 +16,8 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "client")
-public class Client extends Base {
+@Table(name = "customer")
+public class Customer extends Base {
     @Column(name = "full_name")
     private String fullName;
     @Column(name = "number_phone")
