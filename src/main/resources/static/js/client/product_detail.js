@@ -10,3 +10,16 @@ document.querySelector('#carouselExample').addEventListener('slid.bs.carousel', 
 });
 
 thumbnails[0].classList.add('thumbnail-active');
+
+function changeColor(color){
+    document.getElementById("selected-color").innerText= color;
+}
+function changeSize(size){
+    document.getElementById("selected-size").innerText= size;
+}
+$("#describeProductDetailLabel").on("click",function (){
+    $("#describeProductDetailFilter").toggleClass("show");
+});
+$("#returnPolicyLabel").on("click",function (){
+    $("#returnPolicyFilter").toggleClass("show");
+});

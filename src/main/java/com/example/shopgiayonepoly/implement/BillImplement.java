@@ -1,6 +1,8 @@
 package com.example.shopgiayonepoly.implement;
 
+import com.example.shopgiayonepoly.dto.response.BillTotalInfornationResponse;
 import com.example.shopgiayonepoly.entites.Bill;
+import com.example.shopgiayonepoly.entites.Client;
 import com.example.shopgiayonepoly.repositores.BillRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -53,5 +55,15 @@ public class BillImplement implements com.example.shopgiayonepoly.service.BillSe
     @Override
     public List<Bill> getBillByStatusNew(Pageable pageable) {
         return billRepository.getBillByStatusNew(pageable);
+    }
+
+    @Override
+    public List<Client> getClientNotStatus0() {
+        return this.billRepository.getClientNotStatus0();
+    }
+
+    @Override
+    public BillTotalInfornationResponse findBillVoucherById(Integer id) {
+        return this.billRepository.findBillVoucherById(id);
     }
 }

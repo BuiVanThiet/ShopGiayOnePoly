@@ -50,6 +50,7 @@ document.getElementById('startCamera').addEventListener('click', () => {
                             // Cập nhật lại bảng hóa đơn
                             window.loadBillNew();
                             window.loadBillDetail();
+                            updatePaymentInformation();
                             // Đóng modal sau khi xử lý thành công
                             const modalElement = document.getElementById('camera-Modal');
                             const bootstrapModal = bootstrap.Modal.getInstance(modalElement);

@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -81,12 +82,12 @@ public class BillDetailImplement implements com.example.shopgiayonepoly.service.
 
     @Override
     public Integer getFirstBillDetailIdByIdBill(Integer idBill) {
-       return   this.billDetailRepository.getFirstBillDetailIdByIdBill(idBill);
+        return   this.billDetailRepository.getFirstBillDetailIdByIdBill(idBill);
     }
 
     @Override
     public Page<ProductDetail> getProductDetailSale(ProductDetailCheckRequest productDetailCheckRequest, Pageable pageable) {
-        return this.billDetailRepository.getProductDetailSale(
+        return this.billDetailRepository.findProductDetailSale(
                 productDetailCheckRequest.getNameProduct(),
                 productDetailCheckRequest.getIdColor(),
                 productDetailCheckRequest.getIdSize(),
@@ -95,11 +96,11 @@ public class BillDetailImplement implements com.example.shopgiayonepoly.service.
                 productDetailCheckRequest.getIdOrigin(),
                 productDetailCheckRequest.getIdCategories(),
                 pageable
-                );
+        );
     }
     @Override
     public Integer getProductDetailSale(ProductDetailCheckRequest productDetailCheckRequest) {
-        return this.billDetailRepository.getProductDetailSale(
+        return this.billDetailRepository.countProductDetailSale(
                 productDetailCheckRequest.getNameProduct(),
                 productDetailCheckRequest.getIdColor(),
                 productDetailCheckRequest.getIdSize(),
@@ -108,5 +109,10 @@ public class BillDetailImplement implements com.example.shopgiayonepoly.service.
                 productDetailCheckRequest.getIdOrigin(),
                 productDetailCheckRequest.getIdCategories()
         );
+    }
+
+    @Override
+    public BigDecimal getTotalAmountByIdBill(Integer id) {
+        return this.billDetailRepository.getTotalAmountByIdBill(id);
     }
 }
