@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,28 +27,24 @@ public class LoginController {
     public String showLoginForm() {
         return "login/login";
     }
+    @GetMapping("/home_manage")
+    public String homeManage(Model model, Principal principal) {
+        if (principal != null) {
+            String username = principal.getName(); // Tài khoản hoặc email
+            Staff staff = staffSecurityRepository.findByAcountOrEmail(username, username);
 
-    @PostMapping("/login")
-    public String login(@RequestParam("username") String username,
-                        @RequestParam("password") String password,
-                        HttpSession session,
-                        Model model) {
-        Staff staff = staffSecurityRepository.findByAcountOrEmail(username, username);
-
-        if (staff != null && password.equals(staff.getPassword())) {
-            // Đăng nhập thành công, lưu thông tin vào session
-            session.setAttribute("loggedInUser", staff);
-
-            // Thêm thông tin vào mô hình để hiển thị trên trang
-            model.addAttribute("fullName", staff.getFullName());
-            model.addAttribute("roleName", staff.getRole() != null ? staff.getRole().getNameRole() : "No role");
-
-            return "Home/home_manage"; // Chuyển hướng đến trang home/manage.html
+            if (staff != null) {
+                model.addAttribute("fullName", staff.getFullName());
+                model.addAttribute("roleName", staff.getRole() != null ? staff.getRole().getNameRole() : "Không có vai trò");
+            } else {
+                model.addAttribute("fullName", "Lỗi");
+                model.addAttribute("roleName", "Không có vai trò");
+            }
         } else {
-            // Đăng nhập thất bại, quay lại trang đăng nhập với thông báo lỗi
-            model.addAttribute("error", "Tài khoản hoặc mật khẩu không đúng");
-            return "login"; // Quay lại trang đăng nhập
+            model.addAttribute("fullName", "Lỗi");
+            model.addAttribute("roleName", "Không có vai trò");
         }
+        return "Home/home_manege";
     }
     @GetMapping("/logout")
     public String logout(HttpSession session) {

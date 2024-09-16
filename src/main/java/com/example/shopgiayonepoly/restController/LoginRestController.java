@@ -18,7 +18,7 @@ public class LoginRestController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody loginRequest loginRequest, HttpSession session) {
-        Staff staff = staffRepository.findByAcountOrEmail(loginRequest.getAcount(), loginRequest.getAcount());
+        Staff staff = staffRepository.findByAcountOrEmail(loginRequest.getAccount(), loginRequest.getAccount());
 
         if (staff != null && loginRequest.getPassword().equals(staff.getPassword())) {
             // Đăng nhập thành công, lưu thông tin vào session
