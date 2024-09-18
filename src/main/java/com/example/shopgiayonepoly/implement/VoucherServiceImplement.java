@@ -20,12 +20,12 @@ public class VoucherServiceImplement implements VoucherService {
 
     @Override
     public Page<Voucher> getAllVoucherByPage(Pageable pageable) {
-        return voucherRepository.findAll(pageable);
+        return voucherRepository.getAllVoucherByPage(pageable);
     }
 
     @Override
     public List<Voucher> getAll() {
-        return voucherRepository.findAll();
+        return voucherRepository.getAllVoucher();
     }
 
     @Override
@@ -40,11 +40,10 @@ public class VoucherServiceImplement implements VoucherService {
         Voucher voucher = new Voucher();
         BeanUtils.copyProperties(voucherRequest, voucher);
         voucherRepository.save(voucher);
-
     }
 
     @Override
     public void deleteVoucher(Integer id) {
-        voucherRepository.deleteById(id);
+        voucherRepository.deleteBySetStatus(id);
     }
 }

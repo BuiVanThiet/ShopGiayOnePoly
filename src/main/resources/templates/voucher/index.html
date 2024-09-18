@@ -1,7 +1,9 @@
+
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{Home/home_manege}">
+      layout:decorate="~{Home/home_manege}" xmlns:form="http://www.thymeleaf.org">
+
 <head>
     <title>Voucher</title>
 </head>
@@ -11,56 +13,78 @@
         <div class="text-center">
             <p class="fs-4 mt-2">QUẢN LÝ PHIẾU GIẢM GIÁ</p>
         </div>
+        <div th:if="${mes != null}" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <img src="..." class="rounded me-2" alt="...">
+                <strong class="me-auto">Thông báo</strong>
+                <small>vài giây trước</small>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                <span th:text="${mes}"></span>
+            </div>
+        </div>
+
         <div class="row p-2">
             <div class="col-4" style="border: 1px solid #bbb8b8">
                 <div class="mb-3 text-center p-3 text-white" style="background-color: #28a745">
                     Thêm mới phiếu giảm giá
                 </div>
                 <hr>
-                <div class="row p-3">
-                    <div class="col-12 mb-3">
-                        <label class="label-control" for="code">Mã giảm giá</label>
-                        <input type="text" id="code" name="code" class="form-control mt-1" required>
+                <form th:action="@{/voucher/create}" th:object="${voucher}" method="post">
+                    <div class="row p-3">
+                        <div class="col-12 mb-3">
+                            <label class="label-control" for="codeVoucher">Mã giảm giá</label>
+                            <input type="text" id="codeVoucher" th:field="*{codeVoucher}" class="form-control mt-1"/>
+                            <div class="text-danger" th:errors="*{codeVoucher}"></div>
+                        </div>
+
+                        <div class="col-6 mb-3">
+                            <label class="label-control" for="name">Tên giảm giá</label>
+                            <input type="text" id="name" th:field="*{nameVoucher}" class="form-control mt-1"/>
+                        </div>
+
+                        <div class="col-6 mb-3">
+                            <label class="label-control" for="discountType">Loại giảm giá</label>
+                            <select id="discountType" th:field="*{discountType}" class="form-select mt-1">
+                                <option value="0">%</option>
+                                <option value="1">Tiền mặt</option>
+                            </select>
+                        </div>
+
+                        <div class="col-6 mb-3">
+                            <label class="label-control" for="value">Giá trị</label>
+                            <input type="number" id="value" th:field="*{priceReduced}" class="form-control mt-1" min="0"/>
+                        </div>
+
+                        <div class="col-6 mb-3">
+                            <label class="label-control" for="applyValue">Giá trị áp dụng</label>
+                            <input type="number" id="applyValue" th:field="*{pricesApply}" class="form-control mt-1" min="0"/>
+                        </div>
+
+                        <div class="col-6 mb-3">
+                            <label class="label-control" for="maxDiscount">Giảm tối đa</label>
+                            <input type="number" id="maxDiscount" th:field="*{pricesMax}" class="form-control mt-1" min="0"/>
+                        </div>
+
+                        <div class="col-6 mb-3">
+                            <label class="label-control" for="note">Ghi chú</label>
+                            <textarea id="note" th:field="*{describe}" class="form-control mt-1"></textarea>
+                        </div>
+
+                        <div class="col-6 mb-3">
+                            <label class="label-control" for="startDate">Ngày bắt đầu</label>
+                            <input type="date" id="startDate" th:field="*{startDate}" class="form-control mt-1"/>
+                        </div>
+
+                        <div class="col-6 mb-3">
+                            <label class="label-control" for="endDate">Ngày kết thúc</label>
+                            <input type="date" id="endDate" th:field="*{endDate}" class="form-control mt-1"/>
+                        </div>
+
+                        <button class="btn btn-success mt-3">Thêm</button>
                     </div>
-                    <div class="col-6 mb-3">
-                        <label class="label-control" for="name">Tên giảm giá</label>
-                        <input type="text" id="name" name="name" class="form-control mt-1" required>
-                    </div>
-                    <div class="col-6 mb-3">
-                        <label class="label-control" for="discountType">Loại giảm giá</label>
-                        <select id="discountType" name="discountType" class="form-select mt-1" required>
-                            <option value="0">%</option>
-                            <option value="1">Tiền mặt</option>
-                        </select>
-                    </div>
-                    <div class="col-6 mb-3">
-                        <label class="label-control" for="value">Giá trị</label>
-                        <input type="number" id="value" name="value" class="form-control mt-1" required min="0">
-                    </div>
-                    <div class="col-6 mb-3">
-                        <label class="label-control" for="applyValue">Giá trị áp dụng</label>
-                        <input type="number" id="applyValue" name="applyValue" class="form-control mt-1" required
-                               min="0">
-                    </div>
-                    <div class="col-6 mb-3">
-                        <label class="label-control" for="maxDiscount">Giảm tối đa</label>
-                        <input type="number" id="maxDiscount" name="maxDiscount" class="form-control mt-1" required
-                               min="0">
-                    </div>
-                    <div class="col-6 mb-3">
-                        <label class="label-control" for="note">Ghi chú</label>
-                        <textarea id="note" name="note" class="form-control mt-1"></textarea>
-                    </div>
-                    <div class="col-6 mb-3">
-                        <label class="label-control" for="startDate">Ngày bắt đầu</label>
-                        <input type="date" id="startDate" name="startDate" class="form-control mt-1" required>
-                    </div>
-                    <div class="col-6 mb-3">
-                        <label class="label-control" for="endDate">Ngày kết thúc</label>
-                        <input type="date" id="endDate" name="endDate" class="form-control mt-1" required>
-                    </div>
-                    <button class="btn btn-success mt-3">Thêm</button>
-                </div>
+                </form>
             </div>
             <div class="col-8">
                 <div class="row" style="border: 1px solid #a6a1a1; height: auto">
@@ -124,7 +148,7 @@
                                     </a>
                                 </td>
                                 <td>
-                                    <a th:href="@{/delete/{id}(id=${voucher.id})}" class="btn btn-danger"
+                                    <a th:href="@{/voucher/delete/{id}(id=${voucher.id})}" class="btn btn-danger"
                                        onclick="return confirm('Bạn có chắc chắn muốn xóa không?');">
                                         <i class="bi bi-trash"></i>
                                     </a>
@@ -132,33 +156,27 @@
                             </tr>
                             </tbody>
                         </table>
-                        <div>
-                            <nav aria-label="Page navigation">
-                                <ul class="pagination">
-                                    <!-- Trang trước -->
-                                    <li class="page-item"
-                                        th:classappend="${pageVoucher.hasPrevious()} ? '' : 'disabled'">
-                                        <a class="page-link" th:href="@{/page(pageNumber=${pageVoucher.number - 1})}"
-                                           aria-label="Previous">
-                                            <span aria-hidden="true">&laquo;</span>
-                                        </a>
-                                    </li>
+                        <div class="text-center m-3">
+                            <div class="d-flex justify-content-center">
+                                <a href="/voucher/list?page=0" class="btn btn-secondary mx-1">First</a>
 
-                                    <!-- Số trang -->
-                                    <li class="page-item" th:each="i : ${#numbers.sequence(1, pageVoucher.totalPages)}"
-                                        th:classappend="${pageVoucher.number + 1 == i} ? 'active' : ''">
-                                        <a class="page-link" th:href="@{/page(pageNumber=${i})}" th:text="${i}">1</a>
-                                    </li>
+                                <a th:href="@{/voucher/list(page=${pageVoucher.first ? 0 : pageVoucher.number - 1})}"
+                                   class="btn btn-secondary mx-1">Previous</a>
 
-                                    <!-- Trang sau -->
-                                    <li class="page-item" th:classappend="${pageVoucher.hasNext()} ? '' : 'disabled'">
-                                        <a class="page-link" th:href="@{/page(pageNumber=${pageVoucher.number + 1})}"
-                                           aria-label="Next">
-                                            <span aria-hidden="true">&raquo;</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </nav>
+                                <div th:if="${pageVoucher.totalPages > 0}" class="d-flex">
+                                    <div th:each="pageNumber : ${#numbers.sequence(0, pageVoucher.totalPages - 1)}"
+                                         class="mx-1">
+                                        <a th:href="@{/voucher/list(page=${pageNumber})}" class="btn btn-primary"
+                                           th:text="${pageNumber + 1}"></a>
+                                    </div>
+                                </div>
+
+                                <a th:href="@{/voucher/list(page=${pageVoucher.last ? pageVoucher.totalPages - 1 : pageVoucher.number + 1})}"
+                                   class="btn btn-secondary mx-1">Next</a>
+
+                                <a th:href="@{/voucher/list(page=${pageVoucher.totalPages - 1})}"
+                                   class="btn btn-secondary mx-1">Last</a>
+                            </div>
                         </div>
                     </div>
                 </div>
