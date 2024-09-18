@@ -57,11 +57,10 @@ function loadBillDetail()  {
                             </td>
                             <td>${billDetail.totalAmount.toLocaleString('en-US') + 'VNĐ'}</td>
                             <td>
-                                <a href="/bill/deleteBillDetail/${billDetail.id}" class="btn btn-danger" id="deleteproduct">Xóa bỏ</a>
+                                <a href="/bill/deleteBillDetail/${billDetail.id}" class="btn btn-outline-danger" id="deleteproduct"><i class="bi bi-x-lg"></i> Xóa bỏ</a>
                             </td>
                         </tr>`);
                 });
-                loadVoucherByBill(1);
                 cashClient.value='';
                 formErorrCash.style.display = 'block';
                 erorrCash.innerText = 'Mời nhập đủ giá!';
@@ -129,12 +128,11 @@ function loadClientsIntoSelect() {
                 option.textContent = item.fullName + ' - ' + item.numberPhone; // Thay đổi theo cấu trúc dữ liệu nhận được
                 selectElement.appendChild(option);
             });
-
             // Khởi tạo MultiSelectTag sau khi dữ liệu đã được thêm vào
-            if (typeof MultiSelectTag === 'function') {
+            if (typeof OneSelectTag === 'function') {
                 // Kiểm tra nếu MultiSelectTag đã được khởi tạo
                 if (!selectElement.classList.contains('multi-select-initialized')) {
-                    new MultiSelectTag(selectElement.id, {
+                    new OneSelectTag(selectElement.id, {
                         rounded: true,
                         shadow: true,
                         placeholder: 'Search',
@@ -289,13 +287,13 @@ function updateProductTable(response) {
                 btn = `<span class="text-danger">Hết hàng</span>`;
             } else {
                 btn = `
-                        <button class="btn btn-success" 
+                        <button class="btn btn-outline-success" 
                             data-bs-target="#exampleQuantity" 
                             data-bs-toggle="modal"
                             data-name="${productDetail.product.nameProduct}" 
                             data-id="${productDetail.id}" 
                             data-quantity="${productDetail.quantity}">
-                            Mua
+                           <i class="bi bi-cart-plus"></i> Mua
                         </button>`;
             }
 
@@ -317,7 +315,9 @@ function updateProductTable(response) {
                         </div>
                     </td>
                     <td>
+                        <div class="fs-4">
                         ${productDetail.product.nameProduct}
+                        </div>
                         <div class="fs-6">
                         Tên màu: ${productDetail.color.nameColor}
                         <br>
@@ -336,7 +336,7 @@ function updateProductTable(response) {
         });
 
         // Lắng nghe sự kiện khi mở modal
-        $(document).on('click', '.btn-success', function() {
+        $(document).on('click', '.btn-outline-success', function() {
             var nameProduct = $(this).data('name');
             var idProductDetail = $(this).data('id');
             var quantityProduct = $(this).data('quantity');
@@ -362,23 +362,67 @@ function filterProduct() {
         contentType: 'application/json',
         data: JSON.stringify({
             nameProduct: $('#nameSearch').val(),
-            idColor: parseInt($('#colorSearch').val()),
-            idSize: parseInt($('#sizeSearch').val()),
-            idMaterial: parseInt($('#materialSearch').val()),
-            idManufacturer: parseInt($('#manufacturerSearch').val()),
-            idOrigin: parseInt($('#originSearch').val())
-        }), // Định dạng dữ liệu JSON
+            idColor: parseInt($('#colorSearch').val()) || null, // Sử dụng || null để xử lý trường hợp không có giá trị
+            idSize: parseInt($('#sizeSearch').val()) || null,
+            idMaterial: parseInt($('#materialSearch').val()) || null,
+            idManufacturer: parseInt($('#manufacturerSearch').val()) || null,
+            idOrigin: parseInt($('#originSearch').val()) || null,
+            idCategories: $('#categorySearch').val().split(',').map(Number)  // Chuyển đổi giá trị của danh mục
+        }),
         success: function (response) {
-            loadProduct(1);
-            getMaxPageProduct()
+            loadProduct(1); // Gọi hàm để tải sản phẩm với trang đầu tiên
+            getMaxPageProduct(); // Gọi hàm để lấy số trang tối đa
 
-            console.log('du lieu truyen ve la: ', response);
+            console.log('Dữ liệu truyền về là:', response);
         },
         error: function (xhr) {
-            console.log('loi filter: ' + xhr.responseText)
+            console.log('Lỗi filter: ' + xhr.responseText);
         }
-    })
+    });
 }
+
+
+function loadCategoryIntoSelect() {
+    $.ajax({
+        type: "GET",
+        url: "/bill-api/categoryAll",
+        success: function (response) {
+            const selectElement = $('#categores');
+            selectElement.empty(); // Xóa các option cũ nếu có
+
+            // Giả định response là một mảng các đối tượng client
+            response.forEach(cate => {
+                const option = $('<option>', {
+                    value: cate.id, // giá trị của option
+                    text: cate.nameCategory // tên hiển thị trong option
+                });
+                selectElement.append(option);
+            });
+
+            // Gọi hàm MultiSelectTag sau khi đã nạp dữ liệu
+            new MultiSelectTag('categores', {
+                rounded: true,
+                shadow: true,
+                placeholder: 'Search',
+                tagColor: {
+                    textColor: '#327b2c',
+                    borderColor: '#92e681',
+                    bgColor: '#eaffe6',
+                },
+                onChange: function (values) {
+                    let selectedValues = values.map(item => item.value).join(',');
+                    document.getElementById('categorySearch').value = selectedValues;
+                    console.log("Selected values: ", selectedValues);
+                }
+            });
+            clearAllSelections()
+        },
+        error: function(xhr, status, error) {
+            console.error('Error fetching data:', error);
+        }
+    });
+}
+
 
 document.getElementById('resetFilter').addEventListener('click', function () {
     document.getElementById('nameSearch').value='';
@@ -387,7 +431,8 @@ document.getElementById('resetFilter').addEventListener('click', function () {
     document.getElementById('materialSearch').selectedIndex = 0;
     document.getElementById('manufacturerSearch').selectedIndex = 0;
     document.getElementById('originSearch').selectedIndex = 0;
-    document.getElementById('categorieSearch').selectedIndex = 0;
+    document.getElementById('categores').selectedIndex = 0;
+    clearAllSelections();
     filterProduct();
 });
 
@@ -417,7 +462,11 @@ function getMaxPageProduct() {
     });
 }
 
+
+
 // Lấy tất cả các phần tử span.page-link
+
+
 
 function updateQuantity(id, quantity) {
     $.ajax({
@@ -475,12 +524,34 @@ function loadVoucherByBill(page) {
     });
 }
 
+function searchVoucher() {
+    $.ajax({
+        type: "POST",
+        url: "/bill-api/voucher-search",
+        contentType: "application/json",
+        data: JSON.stringify({ keyword: $('#textVoucherSearch').val() }),  // Gửi dữ liệu dạng JSON
+        success: function(response) {
+            loadVoucherByBill(1);
+        },
+        error: function(xhr) {
+            console.error('Loi tim voucher ' + xhr.responseText);
+        }
+    });
+}
+
+
+
+
+
 $(document).ready(function () {
     $('#formFilterProduct').submit(function (event) {
         event.preventDefault();
         filterProduct();
     })
-
+    $('#formSearchVoucher').submit(function (event) {
+        event.preventDefault();
+        searchVoucher()
+    })
     // Xử lý sự kiện tăng/giảm số lượng
     $(document).on('click', '.btn-increment', function () {
         var $numberDiv = $(this).siblings('.number');
@@ -511,6 +582,9 @@ $(document).ready(function () {
     loadClientsIntoSelect();
     paymentInformation();
     getMaxPageProduct();
+    loadCategoryIntoSelect()
+    loadVoucherByBill(1);
+
     // pageNumber();
 
 });

@@ -2,9 +2,7 @@ package com.example.shopgiayonepoly.implement;
 
 import com.example.shopgiayonepoly.dto.response.BillTotalInfornationResponse;
 import com.example.shopgiayonepoly.dto.response.ClientBillInformationResponse;
-import com.example.shopgiayonepoly.entites.Bill;
-import com.example.shopgiayonepoly.entites.Customer;
-import com.example.shopgiayonepoly.entites.Voucher;
+import com.example.shopgiayonepoly.entites.*;
 import com.example.shopgiayonepoly.repositores.BillRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -75,7 +73,8 @@ public class BillImplement implements com.example.shopgiayonepoly.service.BillSe
     }
 
     @Override
-    public List<Voucher> getVouCherByBill(Integer idBill) {
-        return billRepository.getVouCherByBill(idBill);
+    public Page<Voucher> getVouCherByBill(Integer idBill,String keyword, Pageable pageable) {
+        return billRepository.getVoucherByBill(idBill,keyword,pageable);
     }
+
 }

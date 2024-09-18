@@ -2,9 +2,8 @@ package com.example.shopgiayonepoly.repositores;
 
 import com.example.shopgiayonepoly.dto.response.BillTotalInfornationResponse;
 import com.example.shopgiayonepoly.dto.response.ClientBillInformationResponse;
-import com.example.shopgiayonepoly.entites.Bill;
-import com.example.shopgiayonepoly.entites.Customer;
-import com.example.shopgiayonepoly.entites.Voucher;
+import com.example.shopgiayonepoly.entites.*;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -65,9 +64,10 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
     @Query("SELECT v FROM Voucher v " +
             "WHERE (SELECT b.totalAmount FROM Bill b WHERE b.id = :idBill) >= v.pricesApply " +
             "AND v.status <> 0 " +
-            "AND ((SELECT b.voucher.id FROM Bill b WHERE b.id = :idBill) IS NULL " +
-            "OR (SELECT b.voucher.id FROM Bill b WHERE b.id = :idBill) <> v.id)")
-    List<Voucher> getVouCherByBill(@Param("idBill") Integer idBill);
+            "AND (v.id <> (SELECT b.voucher.id FROM Bill b WHERE b.id = :idBill) OR (SELECT b.voucher.id FROM Bill b WHERE b.id = :idBill) IS NULL) " +
+            "and concat(v.nameVoucher+v.codeVoucher) LIKE %:keyword%")
+    Page<Voucher> getVoucherByBill(@Param("idBill") Integer idBill, @Param("keyword") String keyword, Pageable pageable);
+
 
     @Query("select new com.example.shopgiayonepoly.dto.response.ClientBillInformationResponse(addRess.customer.fullName,addRess.customer.numberPhone,addRess.specificAddress,addRess.specificAddress,addRess.specificAddress,addRess.specificAddress) from AddressShip addRess where addRess.customer.id = :idClient")
     List<ClientBillInformationResponse> getClientBillInformationResponse(@Param("idClient") Integer idBill);

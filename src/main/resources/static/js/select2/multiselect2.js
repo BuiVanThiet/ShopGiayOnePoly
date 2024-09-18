@@ -1,4 +1,7 @@
-function OneSelectTag(el, customs = { shadow: false, rounded: true }) {
+// Author: Habib Mhamadi
+// Email: habibmhamadi@gmail.com
+
+function MultiSelectTag(el, customs = { shadow: false, rounded: true }) {
     // Initialize variables
     var element = null,
         options = null,
@@ -15,9 +18,9 @@ function OneSelectTag(el, customs = { shadow: false, rounded: true }) {
 
     // Customize tag colors
     var tagColor = customs.tagColor || {};
-    tagColor.textColor = "#0372B2";
-    tagColor.borderColor = "#0372B2";
-    tagColor.bgColor = "#C0E6FC";
+    tagColor.textColor = tagColor.textColor || "#FF5D29";
+    tagColor.borderColor = tagColor.borderColor || "#FF5D29";
+    tagColor.bgColor = tagColor.bgColor || "#FFE9E2";
 
     // Initialize DOM Parser
     var domParser = new DOMParser();
@@ -29,14 +32,14 @@ function OneSelectTag(el, customs = { shadow: false, rounded: true }) {
         // DOM element initialization
         element = document.getElementById(el);
         createElements();
-        initOptions();  // Populate options
+        initOptions();
         enableItemSelection();
         setValues(false);
 
         // Event listeners
         button.addEventListener('click', () => {
             if (drawer.classList.contains('hidden')) {
-                initOptions();  // Populate options
+                initOptions();
                 enableItemSelection();
                 drawer.classList.remove('hidden');
                 input.focus();
@@ -46,7 +49,7 @@ function OneSelectTag(el, customs = { shadow: false, rounded: true }) {
         });
 
         input.addEventListener('keyup', (e) => {
-            initOptions(e.target.value);  // Update options based on search
+            initOptions(e.target.value);
             enableItemSelection();
         });
 
@@ -150,84 +153,64 @@ function OneSelectTag(el, customs = { shadow: false, rounded: true }) {
         }
     }
 
-    function createElementInSelectList(option, selected = false) {
-        // Tạo một phần tử <li> trong danh sách dropdown
+    function createElementInSelectList(option, val, selected = false) {
+        // Create a <li> element in the drop-down list
         const li = document.createElement('li');
-        li.innerHTML = option.label;
+        li.innerHTML = "<input type='checkbox' style='margin:0 0.5em 0 0' class='input_checkbox'>"; // Add the checkbox at the left of the <li>
+        li.innerHTML += option.label;
         li.dataset.value = option.value;
-        li.dataset.idClient = option.value; // Thêm thuộc tính data-id
+        const checkbox = li.firstChild;
+        checkbox.dataset.value = option.value;
 
-        // Thay đổi màu nền nếu đã chọn
-        if (selected) {
-            li.style.backgroundColor = tagColor.bgColor;
+        // For search
+        if (val && option.label.toLowerCase().startsWith(val.toLowerCase())) {
+            ul.appendChild(li);
+        } else if (!val) {
+            ul.appendChild(li);
         }
 
-        // Thêm sự kiện click vào thẻ <li>
-        li.addEventListener('click', (e) => {
-            const idClient = e.target.dataset.idClient;
-            if (idClient) {
-                // Thực hiện yêu cầu GET đến endpoint
-                fetch(`/bill/addClientInBill/${idClient}`, {
-                    method: 'GET'
-                })
-                    .then(response => {
-                        if (response.ok) {
-                            return response.text(); // Nhận phản hồi dạng text
-                        } else {
-                            throw new Error('Yêu cầu không thành công');
-                        }
-                    })
-                    .then(data => {
-                        console.log(data); // Xóa khách hàng thành công!
-                        window.location.href = `/bill/bill-detail/${document.getElementById('idBill').value}`; // Chuyển hướng trang nếu cần
-                    })
-                    .catch(error => console.error('Lỗi:', error));
-            }
-        });
-
-        ul.appendChild(li);
+        // Change background color and check the checkbox if selected
+        if (selected) {
+            li.style.backgroundColor = tagColor.bgColor;
+            checkbox.checked = true;
+        }
+        // Apply border-radius if rounded is true
+        if (customs.rounded) {
+            li.style.borderRadius = '8px'; // Adjust the value as needed
+        }
     }
 
     function initOptions(val = null) {
         ul.innerHTML = '';
-        // Get value from hidden input
-        const hiddenInputValue = document.getElementById('idClient').value;
+        for (var option of options) {
+            // If option already selected
+            if (option.selected) {
+                !isTagSelected(option.value) && createTag(option);
 
-        // Filter and display only the options that match the search query
-        let filteredOptions = options.filter(option =>
-            val ? option.label.toLowerCase().includes(val.toLowerCase()) : true
-        );
-
-        // Display only 5 options if there are more
-        let displayedCount = 0;
-        for (var option of filteredOptions) {
-            // Check if the option should be selected by default
-            const isSelected = hiddenInputValue.split(',').includes(option.value);
-            createElementInSelectList(option, isSelected);
-            if (isSelected) {
-                option.selected = true;
-                createTag(option); // Create tag for the selected option
+                // Create an option in the list with different color
+                createElementInSelectList(option, val, true);
+            } else {
+                createElementInSelectList(option, val);
             }
-            displayedCount++;
         }
     }
 
     function createTag(option) {
-        // Create and show selected item as tag
-        inputContainer.innerHTML = ''; // Clear previous tags
+        // Create and show selected item as a tag
         const itemDiv = document.createElement('div');
         itemDiv.classList.add('item-container');
         itemDiv.style.color = tagColor.textColor || '#2c7a7b';
         itemDiv.style.borderColor = tagColor.borderColor || '#81e6d9';
         itemDiv.style.background = tagColor.bgColor || '#e6fffa';
-        itemDiv.style.borderRadius = '4px'; // Add border-radius for tags
+        // Apply border-radius if rounded is true
+        if (customs.rounded) {
+            itemDiv.style.borderRadius = '4px'; // Adjust the value as needed
+        }
         const itemLabel = document.createElement('div');
         itemLabel.classList.add('item-label');
         itemLabel.style.color = tagColor.textColor || '#2c7a7b';
         itemLabel.innerHTML = option.label;
         itemLabel.dataset.value = option.value;
-        console.log('kh hang chon co id la ' + option.value)
-
         const itemClose = domParser.parseFromString(
             `<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="item-close-svg">
                 <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -237,23 +220,7 @@ function OneSelectTag(el, customs = { shadow: false, rounded: true }) {
         itemClose.addEventListener('click', (e) => {
             const unselectOption = options.find((op) => op.value == option.value);
             unselectOption.selected = false;
-            inputContainer.innerHTML = ''; // Clear the selected tag
-            fetch(`/bill/removeClientInBill/${itemLabel.dataset.value}`, {
-                method: 'GET'
-            })
-                .then(response => {
-                    if (response.ok) {
-                        return response.text(); // Nhận phản hồi dạng text
-                    } else {
-                        throw new Error('Yêu cầu không thành công');
-                    }
-                })
-                .then(data => {
-                    console.log(data); // Xóa khách hàng thành công!
-                    window.location.href = `/bill/bill-detail/${document.getElementById('idBill').value}`; // Chuyển hướng trang nếu cần
-                })
-                .catch(error => console.error('Lỗi:', error));
-
+            removeTag(option.value);
             initOptions();
             setValues();
         });
@@ -267,13 +234,42 @@ function OneSelectTag(el, customs = { shadow: false, rounded: true }) {
         // Add click listener to the list items
         for (var li of ul.children) {
             li.addEventListener('click', (e) => {
-                options.forEach((op) => op.selected = false); // Deselect all options
-                options.find((o) => o.value == e.target.dataset.value).selected = true; // Select the clicked option
-                input.value = null;
-                initOptions();
-                setValues();
-                createTag(options.find((o) => o.value == e.target.dataset.value)); // Create tag for the selected option
+                if (options.find((o) => o.value == e.target.dataset.value).selected === false) {
+                    // If the option is not selected, select it
+                    options.find((o) => o.value == e.target.dataset.value).selected = true;
+                    input.value = null;
+                    initOptions();
+                    setValues();
+                    // input.focus() // Brings up the list to the input
+                } else {
+                    // If it's already selected, deselect it
+                    options.find((o) => o.value == e.target.dataset.value).selected = false;
+                    input.value = null;
+                    initOptions();
+                    setValues();
+                    // input.focus() // Brings up the list on the input
+                    removeTag(e.target.dataset.value);
+                }
             });
+        }
+    }
+
+    function isTagSelected(val) {
+        // If the item is already selected
+        for (var child of inputContainer.children) {
+            if (!child.classList.contains('input-body') && child.firstChild.dataset.value == val) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function removeTag(val) {
+        // Remove selected item
+        for (var child of inputContainer.children) {
+            if (!child.classList.contains('input-body') && child.firstChild.dataset.value == val) {
+                inputContainer.removeChild(child);
+            }
         }
     }
 
@@ -283,18 +279,16 @@ function OneSelectTag(el, customs = { shadow: false, rounded: true }) {
         for (var i = 0; i < options.length; i++) {
             element.options[i].selected = options[i].selected;
             if (options[i].selected) {
-                selected_values.push(options[i].value);
+                selected_values.push({ label: options[i].label, value: options[i].value });
             }
         }
-
-        if (fireEvent) {
-            let event = new Event('change', { bubbles: true });
-            element.dispatchEvent(event);
+        if (fireEvent && customs.hasOwnProperty('onChange')) {
+            customs.onChange(selected_values);
         }
     }
 
     function getOptions() {
-        // Get options from the original <select> element
+        // Map element options
         return [...element.options].map((op) => {
             return {
                 value: op.value,
@@ -304,11 +298,10 @@ function OneSelectTag(el, customs = { shadow: false, rounded: true }) {
         });
     }
 
-    function removeTag(value) {
-        // Remove tag for the given value
-        const tagToRemove = inputContainer.querySelector(`.item-label[data-value="${value}"]`);
-        if (tagToRemove) {
-            tagToRemove.parentElement.remove();
-        }
+    window.clearAllSelections = function () {
+        inputContainer.innerHTML = ''; // Xóa tất cả các thẻ đã chọn
+        options.forEach(option => option.selected = false); // Đặt tất cả các tùy chọn thành không được chọn
+        setValues(); // Cập nhật giá trị của select element
+        initOptions(); // Làm mới danh sách tùy chọn
     }
 }
