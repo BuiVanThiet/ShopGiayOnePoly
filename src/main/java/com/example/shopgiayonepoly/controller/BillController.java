@@ -1,13 +1,17 @@
 package com.example.shopgiayonepoly.controller;
 
+import com.example.shopgiayonepoly.dto.request.VoucherRequest;
 import com.example.shopgiayonepoly.dto.response.BillTotalInfornationResponse;
 import com.example.shopgiayonepoly.dto.response.ClientBillInformationResponse;
+import com.example.shopgiayonepoly.dto.response.VoucherResponse;
 import com.example.shopgiayonepoly.entites.*;
 import com.example.shopgiayonepoly.service.BillDetailService;
 import com.example.shopgiayonepoly.service.BillService;
 import com.example.shopgiayonepoly.service.VNPayService;
+import com.example.shopgiayonepoly.service.VoucherService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +36,8 @@ public class BillController {
     BillDetailService billDetailService;
     @Autowired
     VNPayService vnPayService;
+    @Autowired
+    VoucherService voucherService;
 
     Bill billPay;
     String mess = "";
@@ -231,9 +237,15 @@ public class BillController {
             System.out.println("Thong tin bill bang tien mat " + bill.toString());
             bill.setPaymentStatus(1);
             bill.setUpdateDate(new Date());
-//            this.billService.save(bill);
+            this.billService.save(bill);
+            if(bill.getVoucher() != null) {
+                this.getSubtractVoucher(bill.getVoucher());
+            }
             return "Bill/successBill";
         }else if (bill.getPaymentMethod() == 2) {
+            if(bill.getNote().length() < 0 || bill.getNote() == null) {
+                bill.setNote("chuyen khoan");
+            }
             bill.setCash(BigDecimal.valueOf(0));
             bill.setSurplusMoney(BigDecimal.valueOf(0));
             String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
@@ -249,9 +261,13 @@ public class BillController {
                 bill.setUpdateDate(new Date());
                 System.out.println("Do nhap qua so tien mat nen khong the tao thanh toan online");
                 System.out.println("Thong tin Bill thanh toan bang tien va tk(1)" + this.billPay.toString());
-//                this.billService.save(bill);
+                this.billService.save(bill);
+                this.billService = null;
                 return "Bill/successBill";
             }else {
+                if(bill.getNote().length() < 0 || bill.getNote() == null) {
+                    bill.setNote("chuyen khoan");
+                }
                 String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
                 String vnpayUrl = vnPayService.createOrder(Integer.parseInt(cashAccount), note, baseUrl);
                 bill.setSurplusMoney(BigDecimal.valueOf(0));
@@ -287,6 +303,10 @@ public class BillController {
         System.out.println("Thong tin thanh toan bang the " + this.billPay.toString());
         if(paymentStatus == 1) {
             this.billService.save(this.billPay);
+            if(this.billPay.getVoucher() != null) {
+                this.getSubtractVoucher(this.billPay.getVoucher());
+            }
+            this.billService = null;
             return "Bill/successBill" ;
         }else {
             return "Bill/errorBill";
@@ -374,7 +394,7 @@ public class BillController {
     }
 
 
-
+    //tính tổng tiền cho hóa đơn
     public void setTotalAmount(Bill bill) {
         BigDecimal total = this.billDetailService.getTotalAmountByIdBill(bill.getId());
         if(total != null) {
@@ -388,6 +408,16 @@ public class BillController {
 
         this.billService.save(bill);
     }
+
+    //trừ đi voucher cua hóa đơn
+    public void getSubtractVoucher(Voucher voucher) {
+            voucher.setQuantity(voucher.getQuantity() - 1);
+            voucher.setUpdateDate(new Date());
+            VoucherRequest voucherRequest = new VoucherRequest();
+            BeanUtils.copyProperties(voucher,voucherRequest);
+            this.voucherService.createNewVoucher(voucherRequest);
+    }
+
 
 
 

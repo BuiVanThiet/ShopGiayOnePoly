@@ -26,6 +26,13 @@ var payMethodChecked = parseInt(payMethod.value);
 if(payMethodChecked == 2){
     btnCreateBill.disabled = false;
 }
+
+if(payMethodChecked === 1 || payMethodChecked === 3) {
+    document.getElementById('formAtTheSpot').style.display = 'block';
+}else {
+    document.getElementById('formAtTheSpot').style.display = 'none';
+}
+
 if (cashClient.value.trim() === "") {
     formErorrCash.style.display = 'block';
     erorrCash.innerText = 'Mời nhập đủ giá!';
@@ -107,6 +114,8 @@ function validate(cash) {
          }
     }
 }
+
+
 
 function validateAll() {
     if (payMethodChecked != 2) {

@@ -1,0 +1,48 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
+.pagination-custom ul{
+    display: flex;
+    flex-wrap: wrap;
+    background: #fff;
+    padding: 8px;
+    border-radius: 50px;
+}
+.pagination-custom ul li{
+    color: #000000;
+    list-style: none;
+    line-height: 45px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.3s ease;
+}
+.pagination-custom ul li.numb{
+    list-style: none;
+    height: 45px;
+    width: 45px;
+    margin: 0 3px;
+    line-height: 45px;
+    border-radius: 50%;
+}
+.pagination-custom ul li.numb.first{
+    margin: 0px 3px 0 -5px;
+}
+.pagination-custom ul li.numb.last{
+    margin: 0px -5px 0 3px;
+}
+.pagination-custom ul li.dots{
+    font-size: 22px;
+    cursor: default;
+}
+.pagination-custom ul li.btn{
+    padding: 0 20px;
+    border-radius: 50px;
+}
+.pagination-custom li.active,
+.pagination-custom ul li.numb:hover,
+.pagination-custom ul li:first-child:hover,
+.pagination-custom ul li:last-child:hover{
+    color: #000000;
+    background: #FAFAD2;
+}

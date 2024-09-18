@@ -1,5 +1,6 @@
 package com.example.shopgiayonepoly.dto.request;
 
+import com.example.shopgiayonepoly.entites.Category;
 import lombok.*;
 
 import java.util.List;
@@ -16,5 +17,5 @@ public class ProductDetailCheckRequest {
     private Integer idMaterial;
     private Integer idManufacturer;
     private Integer idOrigin;
-//    private List<Integer> idCategories;
+    private List<Integer> idCategories;
 }

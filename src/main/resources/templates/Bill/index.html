@@ -39,7 +39,7 @@
                      tabindex="0">
                     <!-- nút ấn để thêm mới nhanh hóa đơn  -->
                     <div class="m-3">
-                        <a href="/bill/create" class="btn btn-success">Thêm mới</a>
+                        <a href="/bill/create" class="btn btn-outline-success"><i class="bi bi-bag-plus"></i> Thêm mới</a>
                     </div>
 
                     <!-- danh sách hóa đơn mới tạo -->
@@ -50,13 +50,13 @@
                                     Giỏ hàng
                                 </p>
                                 <div class="d-flex ms-auto" th:if="${bill.id != null}">
-                                    <button type="button" class="btn btn-warning me-2" data-bs-target="#product-modal"
+                                    <button type="button" class="btn btn-outline-info me-2" data-bs-target="#product-modal"
                                             data-bs-toggle="modal">
-                                        Thêm sản phẩm
+                                        <i class="bi bi-basket"></i> Thêm sản phẩm
                                     </button>
-                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"
                                             data-bs-target="#camera-Modal" id="startCamera">
-                                        Quét QR sản phẩm
+                                        <i class="bi bi-qr-code-scan"></i> Quét QR sản phẩm
                                     </button>
                                 </div>
                             </div>
@@ -167,7 +167,7 @@
                                     <div class="input-group mb-3">
                                         <button class="btn btn-outline-secondary" type="button" id="button-addon1"
                                                 data-bs-target="#voucher-modal" data-bs-toggle="modal">
-                                            Mã giảm giá voucher
+                                            <i class="bi bi-dash"></i><i class="bi bi-currency-dollar"></i> Mã giảm giá voucher
                                         </button>
                                         <input type="text" class="form-control" placeholder=""
                                                aria-label="Example text with button addon"
@@ -216,7 +216,7 @@
                                         <input type="hidden" name="cashAccount" id="cashAccount" value="0.00">
                                         <input type="hidden" name="cash" id="cashClientText" value="0.00">
 
-                                        <div class="mb-3" th:if="${bill.paymentMethod == 1 || bill.paymentMethod == 3}">
+                                        <div class="mb-3" id="formAtTheSpot">
                                         <div id="formMoney">
                                             <label class="form-label">Tiền Khách đưa</label>
                                             <input type="text" class="form-control" id="cashClient">
@@ -262,7 +262,7 @@
                                     <div class="mb-3">
                                         <button id="createBill" type="button" class="btn btn-warning col-12"
                                                 data-bs-target="#confirm-create-bill-modal" data-bs-toggle="modal" disabled>
-                                            Tạo hóa đơn
+                                            <i class="bi bi-check2-square"></i> Tạo hóa đơn
                                         </button>
                                     </div>
 
@@ -386,8 +386,7 @@
                         <div class="modal-body">
                             <div class="card mb-3">
                                 <div class="card-body">
-                                    <div class="row">
-                                        <form id="formFilterProduct" class="col-12 row">
+                                        <form id="formFilterProduct" class="row">
                                             <div class="col-12">
                                                 <div class="mb-3">
                                                     <label class="form-label">Tên sản phẩm tìm:</label>
@@ -458,18 +457,24 @@
                                             <div class="col-4">
                                                 <div class="mb-3">
                                                     <label class="form-label">Danh mục</label>
-                                                    <select id="categorieSearch" class="form-select">
-                                                        <option selected>--Tất cả--</option>
-                                                        <option value="1">One</option>
-                                                        <option value="2">Two</option>
-                                                        <option value="3">Three</option>
+                                                    <select  name="categores" id="categores" class="multi-select-dropdown">
+
                                                     </select>
                                                 </div>
                                             </div>
-                                            <button type="submit" id="filterSubmit" class="btn btn-warning mb-3">Gửi</button>
+                                            <input type="hidden" id="categorySearch" value="">
+
+                                            <div class="d-flex justify-content-center">
+                                                <button type="submit" id="filterSubmit" class="btn btn-outline-warning mb-3 me-2">
+                                                    <i class="bi bi-search"></i> Gửi
+                                                </button>
+                                                <button class="btn btn-outline-primary mb-3" id="resetFilter">
+                                                    <i class="bi bi-arrow-counterclockwise"></i> Làm mới
+                                                </button>
+                                            </div>
+
+
                                         </form>
-                                        <button class="btn btn-primary col-12" id="resetFilter">Làm mới</button>
-                                    </div>
                                 </div>
                             </div>
                             <div id="noDataProductDetail" style="display:none; text-align:center;">
@@ -496,6 +501,13 @@
 
                                 </ul>
                             </nav>
+                            <div class="col-12 d-flex justify-content-center">
+                                <div class="pagination-custom">
+                                    <ul class="pagination-custom"> <!-- Pages or li are added dynamically from JavaScript --> </ul>
+                                </div>
+                            </div>
+
+                            <input type="hidden" id="pageProductDetail">
                         </div>
                     </div>
                 </div>
@@ -531,7 +543,7 @@
                                     </div>
 
                                     <div class="col-auto">
-                                        <button disabled type="submit" class="btn btn-primary col-auto" id="btnBuy">Xác nhận</button>
+                                        <button disabled type="submit" class="btn btn-outline-primary col-auto" id="btnBuy"><i class="bi bi-plus"></i> Xác nhận</button>
                                     </div>
 
                                     <div class="col-12" id="errorCard">
@@ -547,7 +559,7 @@
                         </div>
 
                         <div class="modal-footer">
-                            <button class="btn btn-secondary" data-bs-target="#product-modal" data-bs-toggle="modal" id="comeBackProduct">Quay lại</button>
+                            <button class="btn btn-outline-secondary" data-bs-target="#product-modal" data-bs-toggle="modal" id="comeBackProduct"><i class="bi bi-arrow-counterclockwise"></i> Quay lại</button>
                         </div>
                     </div>
                 </div>
@@ -691,8 +703,15 @@
                         <div class="modal-body">
                             <div class="card mb-3">
                                 <div class="card-body">
-                                    Tìm kiếm:
-                                    <input type="text" class="form-control" placeholder="Tìm theo tên, theo mã...">
+                                    <form id="formSearchVoucher">
+                                        Tìm kiếm:
+                                        <div class="input-group">
+                                            <input type="text" id="textVoucherSearch" class="form-control" placeholder="Tìm theo tên, theo mã...">
+                                            <button type="submit"  class="btn btn-outline-warning">
+                                                <i class="bi bi-search"></i> Gửi
+                                            </button>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
 

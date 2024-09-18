@@ -2,6 +2,8 @@ package com.example.shopgiayonepoly.implement;
 
 import com.example.shopgiayonepoly.dto.request.ProductDetailCheckRequest;
 import com.example.shopgiayonepoly.entites.BillDetail;
+import com.example.shopgiayonepoly.entites.Category;
+import com.example.shopgiayonepoly.entites.Product;
 import com.example.shopgiayonepoly.entites.ProductDetail;
 import com.example.shopgiayonepoly.repositores.BillDetailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,33 +88,24 @@ public class BillDetailImplement implements com.example.shopgiayonepoly.service.
     }
 
     @Override
-    public Page<ProductDetail> getProductDetailSale(ProductDetailCheckRequest productDetailCheckRequest, Pageable pageable) {
+    public List<ProductDetail> getProductDetailSale(ProductDetailCheckRequest productDetailCheckRequest) {
         return this.billDetailRepository.findProductDetailSale(
                 productDetailCheckRequest.getNameProduct(),
-                productDetailCheckRequest.getIdColor(),
                 productDetailCheckRequest.getIdSize(),
+                productDetailCheckRequest.getIdColor(),
                 productDetailCheckRequest.getIdMaterial(),
                 productDetailCheckRequest.getIdManufacturer(),
                 productDetailCheckRequest.getIdOrigin(),
-//                productDetailCheckRequest.getIdCategories(),
-                pageable
+                productDetailCheckRequest.getIdCategories()
         );
     }
-    @Override
-    public Integer countProductDetailSale(ProductDetailCheckRequest productDetailCheckRequest) {
-        return this.billDetailRepository.countProductDetailSale(
-                productDetailCheckRequest.getNameProduct(),
-                productDetailCheckRequest.getIdColor(),
-                productDetailCheckRequest.getIdSize(),
-                productDetailCheckRequest.getIdMaterial(),
-                productDetailCheckRequest.getIdManufacturer(),
-                productDetailCheckRequest.getIdOrigin()
-//                productDetailCheckRequest.getIdCategories()
-        );
-    }
-
     @Override
     public BigDecimal getTotalAmountByIdBill(Integer id) {
         return this.billDetailRepository.getTotalAmountByIdBill(id);
+    }
+
+    @Override
+    public List<Category> getAllCategores() {
+        return this.billDetailRepository.getAllCategores();
     }
 }

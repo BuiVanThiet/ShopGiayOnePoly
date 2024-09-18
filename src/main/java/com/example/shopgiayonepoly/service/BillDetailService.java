@@ -2,6 +2,8 @@ package com.example.shopgiayonepoly.service;
 
 import com.example.shopgiayonepoly.dto.request.ProductDetailCheckRequest;
 import com.example.shopgiayonepoly.entites.BillDetail;
+import com.example.shopgiayonepoly.entites.Category;
+import com.example.shopgiayonepoly.entites.Product;
 import com.example.shopgiayonepoly.entites.ProductDetail;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -40,9 +42,9 @@ public interface BillDetailService {
 
     Integer getFirstBillDetailIdByIdBill(Integer idBill);
 
-    Page<ProductDetail> getProductDetailSale(ProductDetailCheckRequest productDetailCheckRequest, Pageable pageable);
-
-    Integer countProductDetailSale(ProductDetailCheckRequest productDetailCheckRequest);
+    List<ProductDetail> getProductDetailSale(ProductDetailCheckRequest productDetailCheckRequest);
 
     BigDecimal getTotalAmountByIdBill(Integer id);
+
+    List<Category> getAllCategores();
 }

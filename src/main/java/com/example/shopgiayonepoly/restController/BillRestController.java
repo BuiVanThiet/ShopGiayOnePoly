@@ -1,6 +1,5 @@
 package com.example.shopgiayonepoly.restController;
 
-import com.beust.ah.A;
 import com.example.shopgiayonepoly.dto.request.BillDetailAjax;
 import com.example.shopgiayonepoly.dto.request.PayMethodRequest;
 import com.example.shopgiayonepoly.dto.request.ProductDetailCheckRequest;
@@ -11,11 +10,12 @@ import com.example.shopgiayonepoly.service.BillDetailService;
 import com.example.shopgiayonepoly.service.BillService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -30,6 +30,7 @@ public class BillRestController {
     BillDetailService billDetailService;
 
     Integer pageProduct = 0;
+    String keyVoucher = "";
 
     @GetMapping("/get-idbill")
     @ResponseBody
@@ -191,34 +192,40 @@ public class BillRestController {
 //    }
     @GetMapping("/productDetail-sell/{pageNumber}")
     public List<ProductDetail> getProductDetailSell(@PathVariable("pageNumber") Integer pageNumber, HttpSession session) {
-        this.pageProduct = pageNumber - 1;
-        Pageable pageable = PageRequest.of(pageProduct,5);
+        Pageable pageable = PageRequest.of(pageNumber-1,5);
         if(this.productDetailCheckRequest == null) {
-//            ArrayList<Integer> categoryList = new ArrayList<>();
-//            categoryList.add(1);
-//            categoryList.add(4);
-            this.productDetailCheckRequest = new ProductDetailCheckRequest("",null,null,null,null,null);
+            this.productDetailCheckRequest = new ProductDetailCheckRequest("",null,null,null,null,null,null);
         }
-        List<ProductDetail> productDetails = this.billDetailService.getProductDetailSale(this.productDetailCheckRequest,pageable).getContent();
-        Integer maxPageProduct = (int) Math.ceil((double) this.billDetailService.countProductDetailSale(this.productDetailCheckRequest) / 5);
+        List<ProductDetail> productDetails = this.billDetailService.getProductDetailSale(this.productDetailCheckRequest);
+        System.out.println("Số lượng 1 trang la " + productDetails.size());
+        return convertListToPage(productDetails,pageable).getContent();
+    }
+
+    @GetMapping("/productDetail-sell-demo")
+    public List<ProductDetail> getProductDetailSell_demo(@RequestBody ProductDetailCheckRequest productDetailCheckRequest, HttpSession session) {
+        System.out.println("Thong tin loc " + productDetailCheckRequest.toString());
+        List<ProductDetail> productDetails = this.billDetailService.getProductDetailSale(productDetailCheckRequest);
+        System.out.println("Số lượng 1 trang la " + productDetails.size());
         return productDetails;
     }
+
 
     @GetMapping("/page-max-product")
     public Integer getMaxPageProduct() {
         if(this.productDetailCheckRequest == null) {
-//            ArrayList<Integer> categoryList = new ArrayList<>();
-//            categoryList.add(1);
-//            categoryList.add(4);
-            this.productDetailCheckRequest = new ProductDetailCheckRequest("",null,null,null,null,null);
+            this.productDetailCheckRequest = new ProductDetailCheckRequest("",null,null,null,null,null,null);
         }
-        Integer maxPageProduct = (int) Math.ceil((double) this.billDetailService.countProductDetailSale(this.productDetailCheckRequest) / 5);
+        Integer maxPageProduct = (int) Math.ceil((double) this.billDetailService.getProductDetailSale(this.productDetailCheckRequest).size() / 5);
         System.out.println("so trang cua san pham " + maxPageProduct);
         return maxPageProduct;
     }
     @PostMapping("/filter-product-deatail")
     public ResponseEntity<?> getFilterProduct(@RequestBody ProductDetailCheckRequest productDetailCheckRequest2, HttpSession session) {
+        if(productDetailCheckRequest2.getIdCategories().get(0) == 0) {
+            productDetailCheckRequest2.setIdCategories(null);
+        }
         this.productDetailCheckRequest = productDetailCheckRequest2;
+
         System.out.println("Thong tin loc " + this.productDetailCheckRequest.toString());
         return ResponseEntity.ok("Done");
     }
@@ -259,9 +266,23 @@ public class BillRestController {
     @GetMapping("/voucher/{page}")
     public List<Voucher> getVouCherList(@PathVariable("page") Integer pageNumber,HttpSession session) {
         Pageable pageable = PageRequest.of(pageNumber-1,5);
-        return this.billService.getVouCherByBill((Integer) session.getAttribute("IdBill"));
+        System.out.println("da loc duoc " + this.keyVoucher);
+        System.out.println(session.getAttribute("IdBill"));
+        return this.billService.getVouCherByBill((Integer) session.getAttribute("IdBill"),keyVoucher,pageable).getContent();
     }
 
+    @PostMapping("/voucher-search")
+    public ResponseEntity<?> getSearchVoucher(@RequestBody Map<String, String> voucherSearch) {
+        String keyword = voucherSearch.get("keyword");
+        this.keyVoucher = keyword;
+        System.out.println("du lieu loc vc " + voucherSearch);
+        return ResponseEntity.ok("Done v");
+    }
+
+    @GetMapping("/categoryAll")
+    public List<Category> getAllCategory() {
+        return this.billDetailService.getAllCategores();
+    }
 
 
     public void setTotalAmount(Bill bill) {
@@ -276,6 +297,14 @@ public class BillRestController {
         System.out.println("Thong tin bill: " + bill.toString());
 
         this.billService.save(bill);
+    }
+//    Phân trang cho product
+    public Page<ProductDetail> convertListToPage(List<ProductDetail> list, Pageable pageable) {
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), list.size());
+        List<ProductDetail> sublist = list.subList(start, end);
+
+        return new PageImpl<>(sublist, pageable, list.size());
     }
 
 }
