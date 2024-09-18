@@ -161,17 +161,17 @@
                 </a>
             </p>
 
-<!--            <p class="border-bottom">-->
-<!--                <a class="text-decoration-none text-white fs-3 bg-transparent"-->
-<!--                   th:if="${#authorization.expression('isAuthenticated()')}" th:href="@{/logout}">-->
-<!--                    Đăng xuất-->
-<!--                </a>-->
-<!--                &lt;!&ndash; Hiển thị nút Đăng nhập nếu người dùng chưa đăng nhập &ndash;&gt;-->
-<!--                <a class="text-decoration-none text-white fs-3 bg-transparent"-->
-<!--                   th:if="${#authorization.expression('!isAuthenticated()')}" th:href="@{/login}">-->
-<!--                    Đăng nhập-->
-<!--                </a>-->
-<!--            </p>-->
+            <p class="border-bottom">
+                <a class="text-decoration-none text-white fs-3 bg-transparent"
+                   th:if="${#authorization.expression('isAuthenticated()')}" th:href="@{/logout}">
+                    Đăng xuất
+                </a>
+                <!-- Hiển thị nút Đăng nhập nếu người dùng chưa đăng nhập -->
+                <a class="text-decoration-none text-white fs-3 bg-transparent"
+                   th:if="${#authorization.expression('!isAuthenticated()')}" th:href="@{/login}">
+                    Đăng nhập
+                </a>
+            </p>
         </div>
     </div>
 </div>
