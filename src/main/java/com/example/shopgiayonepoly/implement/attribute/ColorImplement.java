@@ -52,5 +52,10 @@ public class ColorImplement implements ColorSevice {
         return colorRepository.findAll(pageable);
     }
 
+    @Override
+    public List<Color> getClientNotStatus0() {
+        return this.colorRepository.getClientNotStatus0();
+    }
+
 
 }

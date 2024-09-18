@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Product Management Page">
     <meta name="keywords" content="ecommerce, product management, online store">
-    <title>Quản lý màu sắc</title>
+    <title>Quản lý nguồn gốc</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="/css/attribute/attribute.css">
@@ -18,14 +18,14 @@
 <body>
 <div layout:fragment="content">
     <article class="container-xxl mt-5">
-        <h1>Quản lý màu sắc</h1>
+        <h1>Quản lý nguồn gốc</h1>
 
-        <form th:object="${colorAdd}" method="post" action="/attribute/color/add">
+        <form th:object="${originAdd}" method="post" action="/attribute/origin/add">
             <div class="search-section">
                 <div class="search-bar">
-                    <input th:field="*{codeColor}" type="text" placeholder="Mã màu sắc" required/>
-                    <input th:field="*{nameColor}" type="text" placeholder="Tên màu sắc" required/>
-                    <button type="submit" class="btn-add">Thêm màu sắc</button>
+                    <input th:field="*{codeOrigin}" type="text" placeholder="Mã nguồn gốc" required/>
+                    <input th:field="*{nameOrigin}" type="text" placeholder="Tên nguồn gốc" required/>
+                    <button type="submit" class="btn-add">Thêm nguồn gốc</button>
                 </div>
             </div>
         </form>
@@ -33,8 +33,8 @@
         <table class="table table-bordered table-striped table-hover">
             <thead>
             <tr>
-                <th>Mã màu sắc</th>
-                <th>Tên màu sắc</th>
+                <th>Mã nguồn gốc</th>
+                <th>Tên nguồn gốc</th>
                 <th>Ngày tạo</th>
                 <th>Ngày sửa</th>
                 <th>Trạng thái</th>
@@ -42,19 +42,19 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="color, iterStat : ${colorList}" th:id="'row-' + ${iterStat.index}">
+            <tr th:each="origin, iterStat : ${originList}" th:id="'row-' + ${iterStat.index}">
                 <td>
-                    <span th:text="${color.codeColor}" th:id="'code-text-' + ${iterStat.index}"></span>
-                    <input type="text" th:value="${color.codeColor}" th:id="'code-input-' + ${iterStat.index}" style="display:none;">
+                    <span th:text="${origin.codeOrigin}" th:id="'code-text-' + ${iterStat.index}"></span>
+                    <input type="text" th:value="${origin.codeOrigin}" th:id="'code-input-' + ${iterStat.index}" style="display:none;">
                 </td>
                 <td>
-                    <span th:text="${color.nameColor}" th:id="'name-text-' + ${iterStat.index}"></span>
-                    <input type="text" th:value="${color.nameColor}" th:id="'name-input-' + ${iterStat.index}" style="display:none;">
+                    <span th:text="${origin.nameOrigin}" th:id="'name-text-' + ${iterStat.index}"></span>
+                    <input type="text" th:value="${origin.nameOrigin}" th:id="'name-input-' + ${iterStat.index}" style="display:none;">
                 </td>
-                <td>[[${color.createDate}]]</td>
-                <td>[[${color.updateDate}]]</td>
+                <td>[[${origin.createDate}]]</td>
+                <td>[[${origin.updateDate}]]</td>
                 <td>
-                    <i class="status-icon fas" th:classappend="${color.status == 1 ? 'fa-toggle-on' : 'fa-toggle-off'}" th:data-status="${color.status}" th:data-index="${iterStat.index}" onclick="toggleStatus(this)" title="Toggle Status"></i>
+                    <i class="status-icon fas" th:classappend="${origin.status == 1 ? 'fa-toggle-on' : 'fa-toggle-off'}" th:data-status="${origin.status}" th:data-index="${iterStat.index}" onclick="toggleStatus(this)" title="Toggle Status"></i>
                 </td>
                 <td>
                     <a href="#" th:onclick="'editRow(' + ${iterStat.index} + ')'" th:id="'edit-btn-' + ${iterStat.index}"><i class="icon-edit fas fa-edit" title="Edit"></i></a>
@@ -62,6 +62,8 @@
                     <a href="#"><i class="icon-delete fas fa-trash" title="Delete"></i></a>
                 </td>
             </tr>
+
+
             </tbody>
         </table>
     </article>
