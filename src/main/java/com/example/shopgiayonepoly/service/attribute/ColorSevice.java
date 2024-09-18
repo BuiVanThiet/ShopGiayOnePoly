@@ -1,7 +1,6 @@
 package com.example.shopgiayonepoly.service.attribute;
 
 import com.example.shopgiayonepoly.entites.Color;
-import com.example.shopgiayonepoly.entites.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -24,5 +23,6 @@ public interface ColorSevice {
 
     Page<Color> findAll(Pageable pageable);
 
+    List<Color> getClientNotStatus0();
 
 }

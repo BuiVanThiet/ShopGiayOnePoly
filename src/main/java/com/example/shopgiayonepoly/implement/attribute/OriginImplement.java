@@ -1,10 +1,7 @@
 package com.example.shopgiayonepoly.implement.attribute;
 
-import com.example.shopgiayonepoly.entites.Material;
 import com.example.shopgiayonepoly.entites.Origin;
-import com.example.shopgiayonepoly.repositores.attribute.MaterialRepository;
 import com.example.shopgiayonepoly.repositores.attribute.OriginRepository;
-import com.example.shopgiayonepoly.service.attribute.MaterialSevice;
 import com.example.shopgiayonepoly.service.attribute.OriginSevice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -55,5 +52,8 @@ public class OriginImplement implements OriginSevice {
         return originRepository.findAll(pageable);
     }
 
-
+    @Override
+    public List<Origin> getClientNotStatus0() {
+        return this.originRepository.getClientNotStatus0();
+    }
 }

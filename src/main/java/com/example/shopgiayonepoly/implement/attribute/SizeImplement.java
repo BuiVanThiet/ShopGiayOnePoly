@@ -52,5 +52,8 @@ public class SizeImplement implements SizeSevice {
         return sizeRepository.findAll(pageable);
     }
 
-
+    @Override
+    public List<Size> getClientNotStatus0() {
+        return this.sizeRepository.getClientNotStatus0();
+    }
 }

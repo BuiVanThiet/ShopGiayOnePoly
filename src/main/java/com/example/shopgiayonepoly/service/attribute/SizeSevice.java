@@ -1,7 +1,5 @@
 package com.example.shopgiayonepoly.service.attribute;
 
-import com.example.shopgiayonepoly.entites.Manufacturer;
-import com.example.shopgiayonepoly.entites.Origin;
 import com.example.shopgiayonepoly.entites.Size;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,5 +23,5 @@ public interface SizeSevice {
 
     Page<Size> findAll(Pageable pageable);
 
-
+    List<Size> getClientNotStatus0();
 }

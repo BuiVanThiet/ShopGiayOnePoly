@@ -1,7 +1,6 @@
 package com.example.shopgiayonepoly.implement.attribute;
 
 import com.example.shopgiayonepoly.entites.Manufacturer;
-import com.example.shopgiayonepoly.entites.Material;
 import com.example.shopgiayonepoly.repositores.attribute.ManufacturerRepository;
 import com.example.shopgiayonepoly.service.attribute.ManufacturerSevice;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +50,11 @@ public class ManufacturerImplement implements ManufacturerSevice {
     @Override
     public Page<Manufacturer> findAll(Pageable pageable) {
         return manufacturerRepository.findAll(pageable);
+    }
+
+    @Override
+    public List<Manufacturer> getClientNotStatus0() {
+        return this.manufacturerRepository.getClientNotStatus0();
     }
 
 

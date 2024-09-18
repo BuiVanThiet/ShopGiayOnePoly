@@ -1,8 +1,6 @@
 package com.example.shopgiayonepoly.service.attribute;
 
-import com.example.shopgiayonepoly.entites.Manufacturer;
 import com.example.shopgiayonepoly.entites.Material;
-import com.example.shopgiayonepoly.entites.Origin;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -25,5 +23,6 @@ public interface MaterialSevice {
 
     Page<Material> findAll(Pageable pageable);
 
+    List<Material> getClientNotStatus0();
 
 }
