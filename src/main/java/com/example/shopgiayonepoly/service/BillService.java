@@ -33,4 +33,6 @@ public interface BillService {
     List<ClientBillInformationResponse> getClientBillInformationResponse(Integer idClient);
 
     Page<Voucher> getVouCherByBill(Integer idBill,String keyword, Pageable pageable);
+
+    List<Voucher> getVoucherByBill(Integer idBill, String keyword);
 }

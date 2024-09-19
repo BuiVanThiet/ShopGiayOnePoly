@@ -3,10 +3,8 @@ package com.example.shopgiayonepoly.dto.request;
 import com.example.shopgiayonepoly.dto.base.BaseDTO;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -14,6 +12,7 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class VoucherRequest extends BaseDTO {
     @NotBlank
     private String codeVoucher;

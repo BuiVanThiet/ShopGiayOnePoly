@@ -4,6 +4,7 @@ import com.example.shopgiayonepoly.dto.response.BillTotalInfornationResponse;
 import com.example.shopgiayonepoly.dto.response.ClientBillInformationResponse;
 import com.example.shopgiayonepoly.entites.*;
 import com.example.shopgiayonepoly.repositores.BillRepository;
+import com.example.shopgiayonepoly.service.BillService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class BillImplement implements com.example.shopgiayonepoly.service.BillService {
+public class BillImplement implements BillService {
     @Autowired
     BillRepository billRepository;
 
@@ -75,6 +76,11 @@ public class BillImplement implements com.example.shopgiayonepoly.service.BillSe
     @Override
     public Page<Voucher> getVouCherByBill(Integer idBill,String keyword, Pageable pageable) {
         return billRepository.getVoucherByBill(idBill,keyword,pageable);
+    }
+
+    @Override
+    public List<Voucher> getVoucherByBill(Integer idBill, String keyword) {
+        return billRepository.getVoucherByBill(idBill,keyword);
     }
 
 }

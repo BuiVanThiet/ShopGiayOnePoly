@@ -42,16 +42,13 @@ public class BillController {
     Bill billPay;
     String mess = "";
     String colorMess = "";
-    //    Integer pageNumber = 0;
-//    String nameSearch = "";
-    Integer currentPage = 1;
     @GetMapping("/home")
     public String getForm(ModelMap modelMap, HttpSession session) {
         modelMap.addAttribute("message",mess);
         modelMap.addAttribute("check",colorMess);
         Pageable pageable = PageRequest.of(0,10);
         List<Bill> billList =  billService.getBillByStatusNew(pageable);
-        if(billList.size() > 0) {
+        if(billList != null && !billList.isEmpty()) {
             Bill bill = billList.stream().reduce(billList.get(0),(max,id)->{
                 if(id.getId() > max.getId()) {
                     return id;
@@ -94,9 +91,6 @@ public class BillController {
             session.setAttribute("IdClient", null);
         }
         Integer pageNumber = (int) Math.ceil((double) this.billDetailService.getBillDetailByIdBill(idBill).size() / 2);
-        modelMap.addAttribute("pageNumber", pageNumber);
-        modelMap.addAttribute("currentPage",currentPage);
-        currentPage = 1;
         modelMap.addAttribute("bill",this.billService.findById((Integer)session.getAttribute("IdBill")).orElse(new Bill()));
         modelMap.addAttribute("client",(Integer)session.getAttribute("IdClient"));
         modelMap.addAttribute("clientInformation",bill.getCustomer());
@@ -147,13 +141,11 @@ public class BillController {
     }
 
     //phan trang
-    @GetMapping("/page-bill-detail/{number}")
-    public String getPageBillDetail(@PathVariable("number") Integer number, HttpSession session,ModelMap modelMap) {
-        session.setAttribute("numberPage",number);
-        System.out.println("da con trang " + session.getAttribute("numberPage"));
-        this.currentPage = number;
-        return "redirect:/bill/bill-detail/"+(Integer) session.getAttribute("IdBill");
-    }
+//    @GetMapping("/page-bill-detail/{number}")
+//    public String getPageBillDetail(@PathVariable("number") Integer number, HttpSession session,ModelMap modelMap) {
+//        System.out.println("da con trang " + session.getAttribute("numberPage"));
+//        return "redirect:/bill/bill-detail/"+(Integer) session.getAttribute("IdBill");
+//    }
 //    @ModelAttribute("pageNumber")
 //    public Integer pageNumber(HttpSession session){
 //        Integer pageNumber = (int) Math.ceil((double) this.billDetailService.getBillDetailByIdBill(this.idBillUpdate).size() / 2);
@@ -208,14 +200,10 @@ public class BillController {
         Bill bill = this.billService.findById(id).orElse(null);
 
         if(bill.getCustomer() != null) {
-            bill.setStatus(4);
             List<ClientBillInformationResponse> clientBillInformationResponses = this.billService.getClientBillInformationResponse(bill.getCustomer().getId());
             ClientBillInformationResponse clientBillInformationResponse = clientBillInformationResponses.get(0);
             bill.setAddRess(clientBillInformationResponse.getAddressDetail());
-        }else {
-            bill.setStatus(4);
         }
-
 
         BillTotalInfornationResponse billTotalInfornationResponse = this.billService.findBillVoucherById(bill.getId());
         BigDecimal cashAll = bill.getCash().add(bill.getAcountMoney().add(bill.getShippingPrice()));
@@ -237,20 +225,21 @@ public class BillController {
             System.out.println("Thong tin bill bang tien mat " + bill.toString());
             bill.setPaymentStatus(1);
             bill.setUpdateDate(new Date());
+            bill.setStatus(4);
             this.billService.save(bill);
             if(bill.getVoucher() != null) {
                 this.getSubtractVoucher(bill.getVoucher());
             }
             return "Bill/successBill";
         }else if (bill.getPaymentMethod() == 2) {
-            if(bill.getNote().length() < 0 || bill.getNote() == null) {
+            if(bill.getNote().length() < 0 || bill.getNote() == null || bill.getNote().trim().equals("")) {
                 bill.setNote("chuyen khoan");
             }
             bill.setCash(BigDecimal.valueOf(0));
             bill.setSurplusMoney(BigDecimal.valueOf(0));
-            String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
-            String vnpayUrl = vnPayService.createOrder(Integer.parseInt(cashAccount), note, baseUrl);
             this.billPay = bill;
+            String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
+            String vnpayUrl = vnPayService.createOrder(Integer.parseInt(cashAccount), bill.getNote(), baseUrl);
             return "redirect:" + vnpayUrl;
         }else {
             this.billPay = bill;
@@ -262,16 +251,15 @@ public class BillController {
                 System.out.println("Do nhap qua so tien mat nen khong the tao thanh toan online");
                 System.out.println("Thong tin Bill thanh toan bang tien va tk(1)" + this.billPay.toString());
                 this.billService.save(bill);
-                this.billService = null;
                 return "Bill/successBill";
             }else {
-                if(bill.getNote().length() < 0 || bill.getNote() == null) {
-                    bill.setNote("chuyen khoan");
+                if(bill.getNote().length() < 0 || bill.getNote() == null || bill.getNote().trim().equals("")) {
+                    bill.setNote("chuyen khoan va tien mat");
                 }
-                String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
-                String vnpayUrl = vnPayService.createOrder(Integer.parseInt(cashAccount), note, baseUrl);
                 bill.setSurplusMoney(BigDecimal.valueOf(0));
                 this.billPay = bill;
+                String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
+                String vnpayUrl = vnPayService.createOrder(Integer.parseInt(cashAccount), bill.getNote(), baseUrl);
                 System.out.println("Thong tin Bill thanh toan bang tien va tk(2)" + this.billPay.toString());
                 return "redirect:" + vnpayUrl;
             }
@@ -294,19 +282,21 @@ public class BillController {
         model.addAttribute("paymentTime", paymentTime);
         model.addAttribute("transactionId", transactionId);
 
+        System.out.println("tien tai khoan " + totalPrice);
         BigDecimal accountMoney = new BigDecimal(totalPrice);
-        this.billPay.setAcountMoney(accountMoney);
+        this.billPay.setAcountMoney(accountMoney.divide(BigDecimal.valueOf(100)));
         this.billPay.setPaymentStatus(1);
         this.billPay.setSurplusMoney(BigDecimal.valueOf(0.00));
         this.billPay.setUpdateDate(new Date());
         this.billPay.setStatus(4);
         System.out.println("Thong tin thanh toan bang the " + this.billPay.toString());
         if(paymentStatus == 1) {
+            this.billPay.setStatus(4);
             this.billService.save(this.billPay);
             if(this.billPay.getVoucher() != null) {
                 this.getSubtractVoucher(this.billPay.getVoucher());
             }
-            this.billService = null;
+
             return "Bill/successBill" ;
         }else {
             return "Bill/errorBill";
@@ -411,11 +401,14 @@ public class BillController {
 
     //trừ đi voucher cua hóa đơn
     public void getSubtractVoucher(Voucher voucher) {
-            voucher.setQuantity(voucher.getQuantity() - 1);
+//            voucher.setQuantity(voucher.getQuantity() - 1);
             voucher.setUpdateDate(new Date());
             VoucherRequest voucherRequest = new VoucherRequest();
             BeanUtils.copyProperties(voucher,voucherRequest);
-            this.voucherService.createNewVoucher(voucherRequest);
+            System.out.println(voucherRequest.toString());
+            System.out.println(voucherRequest.getId() + "" + voucherRequest.getCreateDate() + "" + voucherRequest.getUpdateDate());
+            System.out.println(voucher.getId() + "" + voucher.getCreateDate() + "" + voucher.getUpdateDate());
+//            this.voucherService.updateVoucher(voucherRequest);
     }
 
 
