@@ -88,28 +88,13 @@
                                 </tbody>
                             </table>
 
-                            <nav th:if="${pageNumber > 0}" aria-label="Page navigation example">
-                                <ul class="pagination justify-content-center">
-                                    <!-- Previous Page -->
-                                    <!--                                    <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">-->
-                                    <!--                                        <a class="page-link" th:href="@{/bill-detail/{idBill}(idBill=${IdBill})}?page=${currentPage - 1}" aria-label="Previous">-->
-                                    <!--                                            <span aria-hidden="true">&laquo;</span>-->
-                                    <!--                                        </a>-->
-                                    <!--                                    </li>-->
+                            <div class="pagination-section">
+                                <!-- Phân trang 2 -->
+                                <div class="pagination-custom d-flex justify-content-center">
+                                    <ul id="billDetailPageMax" class="pagination"></ul>
+                                </div>
+                            </div>
 
-                                    <!-- Dynamic Page Numbers -->
-                                    <li class="page-item" th:each="i : ${#numbers.sequence(1, pageNumber)}">
-                                        <a class="page-link" th:classappend="${i == currentPage} ? 'active'" th:href="@{'/bill/page-bill-detail/'+${i}}" th:text="${i}"></a>
-                                    </li>
-
-                                    <!-- Next Page -->
-                                    <!--                                    <li class="page-item" th:classappend="${currentPage == pageNumber - 1} ? 'disabled'">-->
-                                    <!--                                        <a class="page-link" th:href="@{/bill-detail/{idBill}(idBill=${IdBill})}?page=${currentPage + 1}" aria-label="Next">-->
-                                    <!--                                            <span aria-hidden="true">&raquo;</span>-->
-                                    <!--                                        </a>-->
-                                    <!--                                    </li>-->
-                                </ul>
-                            </nav>
                         </div>
                     </div>
                     <!-- noi lay thong tin nguoi dat hang  -->
@@ -210,11 +195,7 @@
 
                                     <!-- khi nào chọn phương thức thanh toán ms được hiện ô này, nếu ấn tiền mặt và ấn cả tiền mặt lẫn tài khoản mới được hiện -->
                                     <!-- nếu mà nút switch được bật thì ẩn đi các nút thanh toán -->
-                                    <form th:action="${'/bill/pay-ment/'+bill.id}" method="post" id="formPay">
-                                        <input type="hidden" name="shipMoney" id="moneyTransport" value="0.00">
-                                        <input type="hidden" name="surplusMoney" id="textSurplusMoney" value="0.00">
-                                        <input type="hidden" name="cashAccount" id="cashAccount" value="0.00">
-                                        <input type="hidden" name="cash" id="cashClientText" value="0.00">
+
 
                                         <div class="mb-3" id="formAtTheSpot">
                                         <div id="formMoney">
@@ -255,13 +236,18 @@
                                             </button>
                                         </div>
                                     </div>
+                                    <form th:action="${'/bill/pay-ment/'+bill.id}" method="post" id="formPay">
+                                        <input type="hidden" name="shipMoney" id="moneyTransport" value="0.00">
+                                        <input type="hidden" name="surplusMoney" id="textSurplusMoney" value="0.00">
+                                        <input type="hidden" name="cashAccount" id="cashAccount" value="0.00">
+                                        <input type="hidden" name="cash" id="cashClientText" value="0.00">
                                     <div class="mb-3">
                                         <p>Ghi chú:</p>
                                         <textarea name="note" class="form-control" id="notePayment"></textarea>
                                     </div>
                                     <div class="mb-3">
                                         <button id="createBill" type="button" class="btn btn-warning col-12"
-                                                data-bs-target="#confirm-create-bill-modal" data-bs-toggle="modal" disabled>
+                                                data-bs-target="#confirm-create-bill-modal" data-bs-toggle="modal">
                                             <i class="bi bi-check2-square"></i> Tạo hóa đơn
                                         </button>
                                     </div>
@@ -496,18 +482,16 @@
                                 <!-- Dữ liệu sẽ được tải ở đây -->
                                 </tbody>
                             </table>
-                            <nav aria-label="Page navigation example">
-                                <ul class="pagination justify-content-center" id="pageProduct">
 
-                                </ul>
-                            </nav>
-                            <div class="col-12 d-flex justify-content-center">
-                                <div class="pagination-custom">
-                                    <ul class="pagination-custom"> <!-- Pages or li are added dynamically from JavaScript --> </ul>
+                            <div class="pagination-section">
+                                <!-- Phân trang 2 -->
+                                <div class="pagination-custom d-flex justify-content-center">
+                                    <ul id="productPageMax" class="pagination"></ul>
                                 </div>
+                                <input type="hidden" id="totalPages2" value="20"> <!-- Phân trang 2 có 20 trang -->
                             </div>
 
-                            <input type="hidden" id="pageProductDetail">
+
                         </div>
                     </div>
                 </div>
@@ -733,6 +717,13 @@
 
                                 </ul>
                             </nav>
+
+                            <div class="pagination-section">
+                                <!-- Phân trang 2 -->
+                                <div class="pagination-custom d-flex justify-content-center">
+                                    <ul id="voucherPageMax" class="pagination"></ul>
+                                </div>
+                            </div>
 
                         </div>
                     </div>

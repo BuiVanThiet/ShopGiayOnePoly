@@ -9,31 +9,30 @@ var formPayMethod = document.getElementById('formPay');
 var surplusMoney = document.getElementById('surplusMoney');
 var surplusMoneySpan = document.getElementById('surplusMoneySpan');
 var textSurplusMoney = document.getElementById('textSurplusMoney');
-
+//
 var cashClientText = document.getElementById('cashClientText');
 var cashAccount = document.getElementById('cashAccount');
 function formatNumber(number) {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
-
+//
 function parseNumber(value) {
     // Xóa tất cả dấu phân cách và chuyển thành số
     return parseFloat(value.replace(/,/g, '')) || 0;
 }
-
+//
 var payMethodChecked = parseInt(payMethod.value);
-
-if(payMethodChecked == 2){
-    btnCreateBill.disabled = false;
-}
-
+//
+//
 if(payMethodChecked === 1 || payMethodChecked === 3) {
     document.getElementById('formAtTheSpot').style.display = 'block';
 }else {
+    console.log(payMethodChecked)
+    btnCreateBill.disabled = false;
     document.getElementById('formAtTheSpot').style.display = 'none';
 }
 
-if (cashClient.value.trim() === "") {
+if (cashClient.value.trim() === "" && payMethodChecked === 1 || payMethodChecked === 3) {
     formErorrCash.style.display = 'block';
     erorrCash.innerText = 'Mời nhập đủ giá!';
     btnCreateBill.disabled = true;
@@ -136,14 +135,14 @@ cashClient.addEventListener('input', function () {
 });
 
 // Xử lý sự kiện khi form được gửi
-document.getElementById('formPay').addEventListener('submit', function(event) {
-    var cashClientValue = cashClient.value.replace(/,/g, ''); // Xóa dấu phẩy hiện tại
-    var totalAmountNumber = parseNumber(totalAmount.value);
-    var cashClientNumber = parseNumber(cashClientValue);
-
-    if (cashClientValue === '' || isNaN(cashClientNumber) || cashClientNumber < 500 || (cashClientNumber < totalAmountNumber && parseInt(payMethod.value) === 1)) {
-        event.preventDefault(); // Ngăn chặn gửi form nếu có lỗi
-        validate(cashClientValue); // Hiển thị lỗi nếu cần thiết
-    }
-});
+// document.getElementById('formPay').addEventListener('submit', function(event) {
+//     var cashClientValue = cashClient.value.replace(/,/g, ''); // Xóa dấu phẩy hiện tại
+//     var totalAmountNumber = parseNumber(totalAmount.value);
+//     var cashClientNumber = parseNumber(cashClientValue);
+//
+//     if (cashClientValue === '' || isNaN(cashClientNumber) || cashClientNumber < 500 || (cashClientNumber < totalAmountNumber && parseInt(payMethod.value) === 1)) {
+//         event.preventDefault(); // Ngăn chặn gửi form nếu có lỗi
+//         validate(cashClientValue); // Hiển thị lỗi nếu cần thiết
+//     }
+// });
 
