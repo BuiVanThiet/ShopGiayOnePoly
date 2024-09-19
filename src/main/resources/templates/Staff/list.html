@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="./list.css">
+    <link rel="stylesheet" href="/css/staff/list.css" type="text/css">
     <title>Nhan vien</title>
 </head>
 
@@ -50,49 +50,12 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="staff : ${staffList}">
+                <tr th:each="staff, index : ${staffList}">
                     <td>
-                        <span th:text="${staff.image}"></span>
-                        <textarea style="display:none; width: 100%; box-sizing: border-box;">[[${staff.image}]]</textarea>
-                    </td>
-                    <td>
-                        <span th:text="${staff.codeStaff}"></span>
-                        <textarea style="display:none; width: 100%; box-sizing: border-box;">[[${staff.codeStaff}]]</textarea>
-                    </td>
-                    <td>
-                        <span th:text="${staff.fullName}"></span>
-                        <textarea style="display:none; width: 100%; box-sizing: border-box;">[[${staff.fullName}]]</textarea>
-                    </td>
-                    <td>
-                        <span th:text="${staff.gender}"></span>
-                        <textarea style="display:none; width: 100%; box-sizing: border-box;">[[${staff.gender}]]</textarea>
-                    </td>
-                    <td>
-                        <span th:text="${staff.birthDay}"></span>
-                        <textarea style="display:none; width: 100%; box-sizing: border-box;">[[${staff.birthDay}]]</textarea>
-                    </td>
-                    <td>
-                        <span th:text="${staff.numberPhone}"></span>
-                        <textarea style="display:none; width: 100%; box-sizing: border-box;">[[${staff.numberPhone}]]</textarea>
-                    </td>
-                    <td>
-                        <span th:text="${staff.email}"></span>
-                        <textarea style="display:none; width: 100%; box-sizing: border-box;">[[${staff.email}]]</textarea>
-                    </td>
-                    <td>
-                        <span th:text="${staff.address}"></span>
-                        <textarea style="display:none; width: 100%; box-sizing: border-box;">[[${staff.address}]]</textarea>
-                    </td>
-                    <td>
-                        <span th:text="${staff.role.nameRole}"></span>
-                        <textarea style="display:none; width: 100%; box-sizing: border-box;">[[${staff.address}]]</textarea>
-                    </td>
-                    <td>Giám đốc</td>
-                    <td>Hoạt động</td>
-                    <td>
-                        <a href="gfgfd"><i class="icon-edit fas fa-edit" title="Edit"></i></a>
-                        <a href="vf"><i class="icon-detail  fas fa-bars"></i></a>
-                        <a href="hgf"><i class="icon-delete fas fa-trash" title="Delete"></i></a>
+                        <a href="#" class="edit-icon" onclick="enableEditing(this); return false;"><i class="fas fa-edit" title="Edit"></i></a>
+                        <a href="#" class="save-icon" style="display:none;" onclick="saveChanges(this); return false;"><i class="fas fa-save" title="Save"></i></a>
+                        <a href="vf"><i class="icon-detail fas fa-bars"></i></a>
+                        <a th:href="@{/staff/delete/{id}(id=${staff.id})}" onclick="return confirm('Bạn có chắc chắn muốn xóa nhân viên?')"><i class="icon-delete fas fa-trash" title="Delete"></i></a>
                     </td>
                 </tr>
 

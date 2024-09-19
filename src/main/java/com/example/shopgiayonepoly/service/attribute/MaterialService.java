@@ -8,7 +8,7 @@ import org.springframework.data.domain.Sort;
 import java.util.List;
 import java.util.Optional;
 
-public interface MaterialSevice {
+public interface MaterialService {
     List<Material> findAll();
 
     <S extends Material> S save(S entity);

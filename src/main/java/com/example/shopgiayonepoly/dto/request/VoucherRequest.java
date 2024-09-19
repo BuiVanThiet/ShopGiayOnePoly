@@ -3,6 +3,7 @@ package com.example.shopgiayonepoly.dto.request;
 import com.example.shopgiayonepoly.dto.base.BaseDTO;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -32,6 +33,8 @@ public class VoucherRequest extends BaseDTO {
     private LocalDate endDate;
     @NotBlank
     private String describe;
+    @NotNull
+    private Integer quantity;
 
 
 }
