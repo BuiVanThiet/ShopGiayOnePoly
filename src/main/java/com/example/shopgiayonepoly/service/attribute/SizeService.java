@@ -8,7 +8,7 @@ import org.springframework.data.domain.Sort;
 import java.util.List;
 import java.util.Optional;
 
-public interface SizeSevice {
+public interface SizeService {
     List<Size> findAll();
 
     <S extends Size> S save(S entity);

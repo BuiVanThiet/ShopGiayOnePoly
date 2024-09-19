@@ -1,7 +1,7 @@
 package com.example.shopgiayonepoly.controller.attribute;
 
 import com.example.shopgiayonepoly.entites.Origin;
-import com.example.shopgiayonepoly.service.attribute.OriginSevice;
+import com.example.shopgiayonepoly.service.attribute.OriginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class OriginController {
 
     @Autowired
-    OriginSevice originSevice;
+    OriginService originSevice;
 
     @GetMapping("/origin")
     public String list(Model model) {

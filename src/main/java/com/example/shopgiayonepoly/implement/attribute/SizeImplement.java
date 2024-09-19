@@ -2,7 +2,7 @@ package com.example.shopgiayonepoly.implement.attribute;
 
 import com.example.shopgiayonepoly.entites.Size;
 import com.example.shopgiayonepoly.repositores.attribute.SizeRepository;
-import com.example.shopgiayonepoly.service.attribute.SizeSevice;
+import com.example.shopgiayonepoly.service.attribute.SizeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class SizeImplement implements SizeSevice {
+public class SizeImplement implements SizeService {
     @Autowired
     SizeRepository sizeRepository;
 

@@ -2,7 +2,7 @@ package com.example.shopgiayonepoly.implement.attribute;
 
 import com.example.shopgiayonepoly.entites.Manufacturer;
 import com.example.shopgiayonepoly.repositores.attribute.ManufacturerRepository;
-import com.example.shopgiayonepoly.service.attribute.ManufacturerSevice;
+import com.example.shopgiayonepoly.service.attribute.ManufacturerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class ManufacturerImplement implements ManufacturerSevice {
+public class ManufacturerImplement implements ManufacturerService {
     @Autowired
     ManufacturerRepository manufacturerRepository;
 
