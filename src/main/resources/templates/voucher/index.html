@@ -42,46 +42,75 @@
                         <div class="col-6 mb-3">
                             <label class="label-control" for="name">Tên giảm giá</label>
                             <input type="text" id="name" th:field="*{nameVoucher}" class="form-control mt-1"/>
+                            <div class="text-danger" th:errors="*{nameVoucher}"></div>
+
                         </div>
 
                         <div class="col-6 mb-3">
                             <label class="label-control" for="discountType">Loại giảm giá</label>
                             <select id="discountType" th:field="*{discountType}" class="form-select mt-1">
-                                <option value="0">%</option>
-                                <option value="1">Tiền mặt</option>
+                                <option value="1">%</option>
+                                <option value="2">Tiền mặt</option>
                             </select>
+                            <div class="text-danger" th:errors="*{discountType}"></div>
                         </div>
 
                         <div class="col-6 mb-3">
                             <label class="label-control" for="value">Giá trị</label>
                             <input type="number" id="value" th:field="*{priceReduced}" class="form-control mt-1" min="0"/>
+                            <div class="text-danger" th:errors="*{priceReduced}"></div>
                         </div>
 
                         <div class="col-6 mb-3">
                             <label class="label-control" for="applyValue">Giá trị áp dụng</label>
                             <input type="number" id="applyValue" th:field="*{pricesApply}" class="form-control mt-1" min="0"/>
+                            <div class="text-danger" th:errors="*{pricesApply}"></div>
                         </div>
 
                         <div class="col-6 mb-3">
                             <label class="label-control" for="maxDiscount">Giảm tối đa</label>
                             <input type="number" id="maxDiscount" th:field="*{pricesMax}" class="form-control mt-1" min="0"/>
+                            <div class="text-danger" th:errors="*{pricesMax}"></div>
                         </div>
 
                         <div class="col-6 mb-3">
                             <label class="label-control" for="note">Ghi chú</label>
                             <textarea id="note" th:field="*{describe}" class="form-control mt-1"></textarea>
+                            <div class="text-danger" th:errors="*{describe}"></div>
                         </div>
 
                         <div class="col-6 mb-3">
                             <label class="label-control" for="startDate">Ngày bắt đầu</label>
                             <input type="date" id="startDate" th:field="*{startDate}" class="form-control mt-1"/>
+                            <div class="text-danger" th:errors="*{startDate}"></div>
                         </div>
 
                         <div class="col-6 mb-3">
                             <label class="label-control" for="endDate">Ngày kết thúc</label>
                             <input type="date" id="endDate" th:field="*{endDate}" class="form-control mt-1"/>
+                            <div class="text-danger" th:errors="*{endDate}"></div>
                         </div>
-
+                        <div class="col-6 mb-3">
+                            <label class="label-control" for="quantity">Số lượng</label>
+                            <input type="number" id="quantity" th:field="*{quantity}" class="form-control mt-1"/>
+                            <div class="text-danger" th:errors="*{quantity}"></div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <label class="label-control" for="quantity"></label>Trạng thái
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+                                <label class="form-check-label" for="flexRadioDefault1">
+                                    Hoạt động
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
+                                <label class="form-check-label" for="flexRadioDefault2">
+                                    Không hoạt động
+                                </label>
+                            </div>
+                            <div class="text-danger" th:errors="*{quantity}"></div>
+                        </div>
                         <button class="btn btn-success mt-3">Thêm</button>
                     </div>
                 </form>
