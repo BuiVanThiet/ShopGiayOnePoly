@@ -8,7 +8,7 @@ import org.springframework.data.domain.Sort;
 import java.util.List;
 import java.util.Optional;
 
-public interface ColorSevice {
+public interface ColorService {
     List<Color> findAll();
 
     <S extends Color> S save(S entity);
@@ -17,12 +17,16 @@ public interface ColorSevice {
 
     long count();
 
-    void deleteById(Integer integer);
+    void deleteByID(int id);
 
     List<Color> findAll(Sort sort);
 
     Page<Color> findAll(Pageable pageable);
 
     List<Color> getClientNotStatus0();
+
+    void updateStatus(int id, int status);
+
+    void updateColor(int id, String codeColor, String nameColor);
 
 }
