@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{Home/home_manege}">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="./list.css">
+    <title>Nhan vien</title>
+</head>
+
+<body>
+
+<main class="container">
+    <div layout:fragment="content">
+        <article class="container-xxl bd-gutter mt-4 my-md-3 bd-layout">
+            <h2>Thêm nhân viên</h2>
+            <!-- <form action="/product/save" method="post" enctype="multipart/form-data"> -->
+            <div class="form-nab">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-6">
+                            <!-- <div class="form-group">
+                            <label for="staffImage">Ảnh nhân viên</label>
+                            <input type="file" id="staffImage" name="staffImage" class="form-control-file" required>
+                        </div> -->
+                            <p>Ảnh nhân viên (3x4)</p>
+                            <div class="upload-container">
+                                <label for="file-upload" class="custom-file-upload">
+                                    <img id="image-preview" src="path_to_default_image.png" alt="Ảnh nhân viên" />
+                                </label>
+                                <input id="file-upload" type="file" accept="image/*" />
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="codeStaff">Mã nhân viên</label>
+                                    <input type="text" id="codeStaff" name="codeStaff" class="form-control"
+                                           placeholder="Enter staff code" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="fullName">Tên nhân viên</label>
+                                    <input type="text" id="fullName" name="fullName" class="form-control"
+                                           placeholder="Enter staff name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="gender">Giới tính</label>
+                                    <div class="radio-group">
+                                        <div class="radio-item">
+                                            <input type="radio" name="gender" value="0" checked />Nam
+                                        </div>
+                                        <div class="radio-item">
+                                            <input type="radio" name="gender" value="1" />Nữ
+                                        </div>
+                                        <div class="radio-item">
+                                            <input type="radio" name="gender" value="2" />Khác
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SDT/Ngày sinh/Email -->
+            <div class="form-row">
+                <div class="row">
+                    <div class="col-4">
+                        <div class="form-group">
+                            <label for="numberPhone">Số điện thoại</label>
+                            <input type="number" id="numberPhone" name="numberPhone" class="form-control"
+                                   placeholder="Enter staff numberPhone" required>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="form-group">
+                            <label for="birthDay">Ngày sinh</label>
+                            <input type="date" id="birthDay" name="birthDay" class="form-control"
+                                   placeholder="Enter staff birthDay" required>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="text" id="email" name="email" class="form-control"
+                                   placeholder="Enter staff email" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Địa chỉ -->
+            <div class="form-row">
+                <div class="row">
+                    <div class="col-4">
+                        <label for="city">Tỉnh/Thành phố</label>
+                        <select>
+                            <option value="">Small select</option>
+                            <option value="">Small select</option>
+                            <option value="">Small select</option>
+                        </select>
+                    </div>
+                    <div class="col-4">
+                        <label for="district">Quận/Huyện</label>
+                        <select>
+                            <option value="">Small select</option>
+                        </select>
+                    </div>
+                    <div class="col-4">
+                        <label for="commune">Xã/Phường/Thị trấn</label>
+                        <select>
+                            <option value="">Small select</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Địa chỉ cụ thể -->
+            <div class="form-row">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label for="address">Địa chi chi tiết</label>
+                            <input type="text" id="address" name="address" class="form-control"
+                                   placeholder="Enter staff address" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chức vụ/ Trạng thái -->
+            <div class="form-row">
+                <div class="row">
+                    <div class="col-8">
+                        <div class="form-group">
+                            <label for="position">Chức vụ</label>
+                            <select>
+                                <option value="0">Nhân viên</option>
+                                <option value="1">Quản lý</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <!-- <div class="form-group">
+                            <label for="status">Trạng thái</label>
+                            <select>
+                                <option value="0">Hoạt động</option>
+                                <option value="1">Ngừng họat động</option>
+                            </select>
+                        </div> -->
+                        <div class="form-group">
+                            <label for="status">Trạng thái</label>
+                            <div class="radio-group">
+                                <div class="radio-item">
+                                    <input type="radio" name="status" value="0" checked />Hoạt động
+                                </div>
+                                <div class="radio-item">
+                                    <input type="radio" name="status" value="1" />Ngừng hoạt động
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Thêm nhân viên</button>
+            <!-- </form> -->
+        </article>
+    </div>
+</main>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>
