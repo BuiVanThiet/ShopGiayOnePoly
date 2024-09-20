@@ -49,30 +49,10 @@ public class BillRestController {
         return billService.getBillByStatusNew(pageable);
     }
 
-    @GetMapping("/bill-detail-by-id-bill")
-    public List<BillDetail> getBillDetail(HttpSession session) {
-        // Lấy IdBill từ session
+    @GetMapping("/bill-detail-by-id-bill/{numberPage}")
+    public List<BillDetail> getBillDetail(@PathVariable("numberPage") Integer pageNumber,HttpSession session) {
         Integer idBill = (Integer) session.getAttribute("IdBill");
-        System.out.println("id duoc chon luc o home la " + idBill);
-        if (idBill == null) {
-
-//            throw new IllegalArgumentException("IdBill không thể là null");
-        }
-        System.out.println("Session IdBill là: " + idBill);
-
-        // Lấy số trang từ session
-        Integer numberPage = (Integer) session.getAttribute("numberPage");
-        System.out.println("Số trang từ session là: " + numberPage);
-
-        // Kiểm tra và điều chỉnh số trang
-        if (numberPage == null || numberPage < 1) {
-            numberPage = 1; // Đặt giá trị mặc định cho số trang
-        }
-        System.out.println("Số trang sau điều chỉnh là: " + numberPage);
-
-        // Tạo Pageable với chỉ số trang bắt đầu từ 0
-        Pageable pageable = PageRequest.of(numberPage - 1, 2);
-
+        Pageable pageable = PageRequest.of(pageNumber - 1, 2);
         // Lấy danh sách BillDetail
         List<BillDetail> billDetailList = this.billDetailService.getBillDetailByIdBill(idBill, pageable).getContent();
 
@@ -105,14 +85,6 @@ public class BillRestController {
             thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }
-//        if(billDetailAjax.getQuantity() < billDetail.getQuantity()) {
-//            thongBao.put("message","Sửa số lượng sản phẩm thành công!");
-//            thongBao.put("check","1");
-//            billDetail.setQuantity(billDetailAjax.getQuantity());
-//            billDetail.setTotalAmount(billDetail.getPrice().multiply(BigDecimal.valueOf(billDetail.getQuantity())));
-//            this.billDetailService.save(billDetail);
-//            return ResponseEntity.ok(thongBao);
-//        }
         if(productDetail.getStatus() == 0 || productDetail.getStatus() == 2 || productDetail.getProduct().getStatus() == 0 || productDetail.getProduct().getStatus() == 2) {
             thongBao.put("message","Sản phẩm đã bị xóa hoặc ngừng bán trên hệ thống!");
             thongBao.put("check","3");
@@ -173,17 +145,13 @@ public class BillRestController {
 
     //
     //PhanTrang
-//    @GetMapping("/page")
-//    public Integer numberPage(HttpSession session) {
-//        Integer idBill = (Integer) session.getAttribute("IdBill");
-//        if (idBill == null) {
-//            // Nếu không có IdBill trong session, trả về số trang bằng 0 hoặc lỗi phù hợp
-//            return 0;
-//        }
-//        Integer pageNumber = (int) Math.ceil((double) this.billDetailService.getBillDetailByIdBill(idBill).size() / 2);
-//        System.out.println("Số trang là: " + pageNumber);
-//        return pageNumber;
-//    }
+    @GetMapping("/max-page-billdetail")
+    public Integer numberPage(HttpSession session) {
+        Integer idBill = (Integer) session.getAttribute("IdBill");
+        Integer pageNumber = (int) Math.ceil((double) this.billDetailService.getBillDetailByIdBill(idBill).size() / 2);
+        System.out.println("Số trang là: " + pageNumber);
+        return pageNumber;
+    }
 //    @GetMapping("/bill-detail-page/{number}")
 //    public void getPageBillDetail(@PathVariable("number") Integer number,HttpSession session) {
 //        session.setAttribute("numberPage",number-1);
@@ -200,15 +168,6 @@ public class BillRestController {
         System.out.println("Số lượng 1 trang la " + productDetails.size());
         return convertListToPage(productDetails,pageable).getContent();
     }
-
-    @GetMapping("/productDetail-sell-demo")
-    public List<ProductDetail> getProductDetailSell_demo(@RequestBody ProductDetailCheckRequest productDetailCheckRequest, HttpSession session) {
-        System.out.println("Thong tin loc " + productDetailCheckRequest.toString());
-        List<ProductDetail> productDetails = this.billDetailService.getProductDetailSale(productDetailCheckRequest);
-        System.out.println("Số lượng 1 trang la " + productDetails.size());
-        return productDetails;
-    }
-
 
     @GetMapping("/page-max-product")
     public Integer getMaxPageProduct() {
@@ -277,6 +236,14 @@ public class BillRestController {
         this.keyVoucher = keyword;
         System.out.println("du lieu loc vc " + voucherSearch);
         return ResponseEntity.ok("Done v");
+    }
+
+    @GetMapping("/max-page-voucher")
+    public Integer getMaxPageVoucher(HttpSession session) {
+        System.out.println("ID BILL LA" +session.getAttribute("IdBill"));
+        Integer maxPage = (int) Math.ceil((double) this.billService.getVoucherByBill((Integer) session.getAttribute("IdBill"), this.keyVoucher).size() / 5);
+        System.out.println("so tramg toi da cua voucher " + maxPage);
+        return maxPage;
     }
 
     @GetMapping("/categoryAll")

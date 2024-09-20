@@ -2,6 +2,11 @@ const shipSpan = document.getElementById('shipSpan'); // Xác định thẻ div 
 
 shipSpan.style.display = 'none'; // Ẩn thẻ div khi checkbox được chọn
 
+if(payMethodChecked == 2) {
+    btnCreateBill.disabled = false;
+}else {
+    btnCreateBill.disabled = true;
+}
 document.getElementById('flexSwitchCheckDefault').addEventListener('change', function() {
     const dynamicContent = document.getElementById('dynamic-content');
     const shipSpan = document.getElementById('shipSpan'); // Xác định thẻ div cần ẩn/hiện
@@ -73,7 +78,9 @@ document.getElementById('flexSwitchCheckDefault').addEventListener('change', fun
     } else {
         formErorrCash.style.display = 'block';
         erorrCash.innerText = 'Mời nhập đủ giá!';
-        btnCreateBill.disabled = true;
+        if(payMethodChecked === 1 || payMethodChecked === 3){
+            btnCreateBill.disabled = true;
+        }
         document.getElementById('formMoney').style.display = 'block';
         document.getElementById('moneyTransport').value = 0.00;
         shipSpan.style.display = 'none'; // Hiển thị lại thẻ div khi checkbox không được chọn

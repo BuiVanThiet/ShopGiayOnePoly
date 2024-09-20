@@ -22,6 +22,7 @@ public class VoucherResponse extends BaseDTO {
     private LocalDate startDate;
     private LocalDate endDate;
     private String describe;
+    private Integer quantity;
 
 
 }
