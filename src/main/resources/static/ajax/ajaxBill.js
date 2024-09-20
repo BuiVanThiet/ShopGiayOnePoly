@@ -106,6 +106,9 @@ function paymentInformation() {
             $('#subTotal').text(response.totalAmount.toLocaleString('en-US') + ' VNĐ');
             $('#discountAmount').text(response.discount.toLocaleString('en-US') + ' VNĐ');
             $('#totalAmount').text(response.finalAmount.toLocaleString('en-US') + ' VNĐ');
+
+            totalBill = response.finalAmount;
+
             $('#notePayment').text(response.note);
             $('#cashAccount').val(response.finalAmount);
             var totalCash = document.getElementById('totalCash');
@@ -561,7 +564,19 @@ function maxPageVoucher() {
     })
 }
 
-
+//goi api giao hang nhanh
+function getCityShip() {
+    $.ajax({
+        type: "GET",
+        url: "https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/province?token=4ad62142-6630-11ef-8e53-0a00184fe694",
+        success: function (response) {
+            var select = '';
+        },
+        error:  function (xhr) {
+            console.error('loi hien thi thanh pho' + xhr.responseText)
+        }
+    })
+}
 
 
 

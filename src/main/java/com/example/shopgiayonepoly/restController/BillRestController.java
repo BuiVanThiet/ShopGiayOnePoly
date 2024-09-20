@@ -211,6 +211,7 @@ public class BillRestController {
         clientBillInformationResponse.setDistrict(part[1]);
         clientBillInformationResponse.setCity(part[2]);
         clientBillInformationResponse.setAddressDetail(String.join(", ", java.util.Arrays.copyOfRange(part, 3, part.length)));
+        System.out.println(clientBillInformationResponse.toString());
         return clientBillInformationResponse;
     }
 
