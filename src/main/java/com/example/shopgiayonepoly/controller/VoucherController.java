@@ -43,10 +43,18 @@ public class VoucherController {
         return "redirect:/voucher/list";
     }
 
+    @GetMapping("/detail/{id}")
+    public String getFormUpdate(Model model,@PathVariable("id")Integer id){
+        Voucher voucher= voucherService.getOne(id);
+        model.addAttribute("voucher",voucher);
+        model.addAttribute("title","UPDATE VOUCHER WITH ID: "+id);
+        return "voucher/update";
+    }
+
     @PostMapping("/update")
     public String updateVoucher(Model model,@Valid VoucherRequest voucherRequest, BindingResult result){
         if(result.hasErrors()){
-            return "";
+            return "voucher/update";
         }
         voucherService.updateVoucher(voucherRequest);
         model.addAttribute("mes","Update voucher successfully with ID: "+voucherRequest.getId());
