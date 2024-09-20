@@ -98,18 +98,18 @@
                         <div class="col-6 mb-3">
                             <label class="label-control" for="quantity"></label>Trạng thái
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+                                <input class="form-check-input" value="1" type="radio" th:field="*{status}" id="flexRadioDefault1">
                                 <label class="form-check-label" for="flexRadioDefault1">
                                     Hoạt động
                                 </label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
+                                <input class="form-check-input" value="2" type="radio" th:field="*{status}" id="flexRadioDefault2" checked>
                                 <label class="form-check-label" for="flexRadioDefault2">
                                     Không hoạt động
                                 </label>
                             </div>
-                            <div class="text-danger" th:errors="*{quantity}"></div>
+                            <div class="text-danger" th:errors="*{status}"></div>
                         </div>
                         <button class="btn btn-success mt-3">Thêm</button>
                     </div>
@@ -172,7 +172,7 @@
                                 <td th:text="${voucher.endDate}">Kết thúc</td>
                                 <td th:text="${voucher.describe}">Mô tả</td>
                                 <td>
-                                    <a th:href="@{/edit/{id}(id=${voucher.id})}" class="btn btn-primary">
+                                    <a th:href="@{/voucher/detail/{id}(id=${voucher.id})}" class="btn btn-primary">
                                         <i class="bi bi-pencil"></i>
                                     </a>
                                 </td>
