@@ -67,7 +67,12 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
             "AND (v.id <> (SELECT b.voucher.id FROM Bill b WHERE b.id = :idBill) OR (SELECT b.voucher.id FROM Bill b WHERE b.id = :idBill) IS NULL) " +
             "and concat(v.nameVoucher+v.codeVoucher) LIKE %:keyword%")
     Page<Voucher> getVoucherByBill(@Param("idBill") Integer idBill, @Param("keyword") String keyword, Pageable pageable);
-
+    @Query("SELECT v FROM Voucher v " +
+            "WHERE (SELECT b.totalAmount FROM Bill b WHERE b.id = :idBill) >= v.pricesApply " +
+            "AND v.status <> 0 " +
+            "AND (v.id <> (SELECT b.voucher.id FROM Bill b WHERE b.id = :idBill) OR (SELECT b.voucher.id FROM Bill b WHERE b.id = :idBill) IS NULL) " +
+            "and concat(v.nameVoucher+v.codeVoucher) LIKE %:keyword%")
+    List<Voucher> getVoucherByBill(@Param("idBill") Integer idBill, @Param("keyword") String keyword);
 
     @Query("select new com.example.shopgiayonepoly.dto.response.ClientBillInformationResponse(addRess.customer.fullName,addRess.customer.numberPhone,addRess.specificAddress,addRess.specificAddress,addRess.specificAddress,addRess.specificAddress) from AddressShip addRess where addRess.customer.id = :idClient")
     List<ClientBillInformationResponse> getClientBillInformationResponse(@Param("idClient") Integer idBill);

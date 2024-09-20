@@ -2,7 +2,7 @@ package com.example.shopgiayonepoly.implement.attribute;
 
 import com.example.shopgiayonepoly.entites.Origin;
 import com.example.shopgiayonepoly.repositores.attribute.OriginRepository;
-import com.example.shopgiayonepoly.service.attribute.OriginSevice;
+import com.example.shopgiayonepoly.service.attribute.OriginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class OriginImplement implements OriginSevice {
+public class OriginImplement implements OriginService {
     @Autowired
     OriginRepository originRepository;
 

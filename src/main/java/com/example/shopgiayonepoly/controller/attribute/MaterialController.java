@@ -1,7 +1,7 @@
 package com.example.shopgiayonepoly.controller.attribute;
 
 import com.example.shopgiayonepoly.entites.Material;
-import com.example.shopgiayonepoly.service.attribute.MaterialSevice;
+import com.example.shopgiayonepoly.service.attribute.MaterialService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class MaterialController {
 
     @Autowired
-    MaterialSevice materialSevice;
+    MaterialService materialSevice;
 
     @GetMapping("/material")
     public String list(Model model) {

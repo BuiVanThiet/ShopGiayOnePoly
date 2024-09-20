@@ -1,14 +1,19 @@
+
 package com.example.shopgiayonepoly.restController;
 
+import com.example.shopgiayonepoly.dto.request.RegisterRequest;
 import com.example.shopgiayonepoly.dto.request.loginRequest;
 import com.example.shopgiayonepoly.dto.response.loginReponse;
+import com.example.shopgiayonepoly.entites.Role;
 import com.example.shopgiayonepoly.entites.Staff;
 
 import com.example.shopgiayonepoly.repositores.StaffSecurityRepository;
+import com.example.shopgiayonepoly.repositores.roleReponsitory;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -53,4 +58,6 @@ public class LoginRestController {
 
         return ResponseEntity.ok(userInfo);
     }
+
 }
+

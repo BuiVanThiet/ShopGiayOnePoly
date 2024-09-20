@@ -27,15 +27,16 @@ public class SecurityConfig {
                         .requestMatchers("/login-api/**").permitAll()
                         .requestMatchers("/ajax/**", "/css/**", "/img/**", "/js/**", "/loading/**", "/toast/**").permitAll()
                         .requestMatchers("/bill-api/**").permitAll()
+                        .requestMatchers("/register-api/**").permitAll()
                         .requestMatchers("/register").permitAll()
-                        .requestMatchers("/login","/home_manage").permitAll()
+                        .requestMatchers("/login").permitAll()
                         .requestMatchers("/logout").permitAll()
                         .anyRequest().authenticated()
                 )
                 .csrf(csrf -> csrf.disable())
                 .httpBasic(basic -> basic.disable())
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 )
                 .formLogin(form -> form
                         .loginPage("/login")

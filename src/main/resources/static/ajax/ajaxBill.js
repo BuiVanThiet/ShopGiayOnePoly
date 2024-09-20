@@ -1,10 +1,11 @@
-
 //hien thi bill detail
-function loadBillDetail()  {
+var pageBillDetail = 1;
+function loadBillDetail(page)  {
     $.ajax({
         type: "GET",
-        url: "/bill-api/bill-detail-by-id-bill",
+        url: "/bill-api/bill-detail-by-id-bill/"+page,
         success: function(response) {
+            pageBillDetail = page;
 
             var tbody = $('#tableBillDetail');
             var noDataContainer = $('#noDataContainer');
@@ -64,7 +65,9 @@ function loadBillDetail()  {
                 cashClient.value='';
                 formErorrCash.style.display = 'block';
                 erorrCash.innerText = 'Mời nhập đủ giá!';
-                btnCreateBill.disabled = true;
+                if(payMethodChecked === 1 || payMethodChecked === 3) {
+                    btnCreateBill.disabled = true;
+                }
 
                 // Khởi tạo lại tất cả các carousel sau khi cập nhật DOM
                 $('.carousel').each(function() {
@@ -76,6 +79,19 @@ function loadBillDetail()  {
             console.error("Lỗi khi hiển thị chi tiết hóa đơn: " + xhr.responseText);
         }
     });
+}
+
+function maxPageBillDetailByIdBill() {
+    $.ajax({
+        type: "GET",
+        url:"/bill-api/max-page-billdetail",
+        success: function (response) {
+            createPagination('billDetailPageMax', response, 1); // Phân trang 1
+        },
+        error: function (xhr) {
+            console.error('loi phan trang cho bill deatil' + xhr.responseText)
+        }
+    })
 }
 
 //Thong tin bill
@@ -182,11 +198,11 @@ function uploadPayMethod() {
         contentType: "application/json",
         data: JSON.stringify({ payMethod: payMethodUpLoad }),
         success: function (respon) {
-            loadBillNew();
-            // loadBillDetail();
-            loadProduct();
-            loadClientsIntoSelect();
-            paymentInformation();
+            // loadBillNew();
+            // // loadBillDetail();
+            // loadProduct();
+            // loadClientsIntoSelect();
+            // paymentInformation();
             var idBill = document.getElementById('idBill').value;
             payMethodUpLoad = 0;
             var newUrl = 'http://localhost:8080/bill/bill-detail/' + idBill;
@@ -442,26 +458,14 @@ function getMaxPageProduct() {
         type: "GET",
         url: "/bill-api/page-max-product",
         success: function(response) {
-            var ul = $('#pageProduct');
-            ul.empty();
-            for (var i = 1; i <= response; i++) {
-                ul.append(`
-                    <li class="page-item"><span class="page-link">${i}</span></li>
-                `);
-            }
+            createPagination('productPageMax', response, 1); // Phân trang 1
 
-            // Gắn sự kiện click bằng cách sử dụng delegation
-            $('#pageProduct').on('click', '.page-link', function () {
-                var pageNumber = $(this).text();
-                loadProduct(pageNumber);      // Gọi hàm để lấy dữ liệu trang tương ứng
-            });
         },
         error: function (xhr) {
             console.error('loi o tao page ' + xhr.responseText);
         }
     });
 }
-
 
 
 // Lấy tất cả các phần tử span.page-link
@@ -481,7 +485,7 @@ function updateQuantity(id, quantity) {
             console.log('Cập nhật thành công: ' + response);
             showToast(response.message,response.check)
             loadBillNew(); // Tải lại danh sách bill mới
-            loadBillDetail(); // Tải lại chi tiết bill
+            loadBillDetail(pageBillDetail); // Tải lại chi tiết bill
             loadProduct();
             paymentInformation();
             // pageNumber();
@@ -495,7 +499,7 @@ function updateQuantity(id, quantity) {
 function loadVoucherByBill(page) {
     $.ajax({
        type: "GET",
-       url: "/bill-api/voucher/"+parseInt(page),
+       url: "/bill-api/voucher/"+page,
         success: function (response) {
             var load = $('#loadVoucher');
             load.empty();
@@ -517,6 +521,8 @@ function loadVoucherByBill(page) {
                     </div>
                 `);
             });
+            maxPageVoucher();
+
         },
         error: function (xhr) {
             console.error('loi ne phan voucher ' + xhr.responseText)
@@ -532,11 +538,27 @@ function searchVoucher() {
         data: JSON.stringify({ keyword: $('#textVoucherSearch').val() }),  // Gửi dữ liệu dạng JSON
         success: function(response) {
             loadVoucherByBill(1);
+            maxPageVoucher();
+
         },
         error: function(xhr) {
             console.error('Loi tim voucher ' + xhr.responseText);
         }
     });
+}
+
+function maxPageVoucher() {
+
+    $.ajax({
+        type: "GET",
+        url:"/bill-api/max-page-voucher",
+        success: function (response) {
+            createPagination('voucherPageMax', response, 1); // Phân trang 1
+        },
+        error: function (xhr) {
+            console.error('loi phan trang cho bill deatil' + xhr.responseText)
+        }
+    })
 }
 
 
@@ -577,14 +599,14 @@ $(document).ready(function () {
 
     // Gọi các hàm tải dữ liệu ban đầu
     loadBillNew();
-    loadBillDetail();
+    loadBillDetail(1);
     loadProduct(1)
     loadClientsIntoSelect();
     paymentInformation();
     getMaxPageProduct();
     loadCategoryIntoSelect()
     loadVoucherByBill(1);
-
+    maxPageBillDetailByIdBill();
     // pageNumber();
 
 });

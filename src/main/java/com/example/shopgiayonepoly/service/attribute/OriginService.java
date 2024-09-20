@@ -8,7 +8,7 @@ import org.springframework.data.domain.Sort;
 import java.util.List;
 import java.util.Optional;
 
-public interface OriginSevice {
+public interface OriginService {
     List<Origin> findAll();
 
     <S extends Origin> S save(S entity);

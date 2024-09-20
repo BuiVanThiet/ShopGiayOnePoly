@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="/css/attribute/attribute.css">
     <script src="/js/attribute/attribute.js"></script>
+    <script src="/ajax/ajaxAttribute.js"></script>
 </head>
 
 <body>
@@ -23,14 +24,14 @@
         <form th:object="${colorAdd}" method="post" action="/attribute/color/add">
             <div class="search-section">
                 <div class="search-bar">
-                    <input th:field="*{codeColor}" type="text" placeholder="Mã màu sắc" required/>
-                    <input th:field="*{nameColor}" type="text" placeholder="Tên màu sắc" required/>
+                    <input id="codeColorInput" th:field="*{codeColor}" type="text" placeholder="Mã màu sắc" required/>
+                    <input id="nameColorInput" th:field="*{nameColor}" type="text" placeholder="Tên màu sắc" required/>
                     <button type="submit" class="btn-add">Thêm màu sắc</button>
                 </div>
             </div>
         </form>
 
-        <table class="table table-bordered table-striped table-hover">
+        <table id="colorTable" class="table table-bordered table-striped table-hover">
             <thead>
             <tr>
                 <th>Mã màu sắc</th>
@@ -42,28 +43,46 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="color, iterStat : ${colorList}" th:id="'row-' + ${iterStat.index}">
+            <tr th:each="color, iterStat : ${colorList}" th:id="'row-' + ${iterStat.index}" th:data-id="${color.id}">
                 <td>
                     <span th:text="${color.codeColor}" th:id="'code-text-' + ${iterStat.index}"></span>
-                    <input type="text" th:value="${color.codeColor}" th:id="'code-input-' + ${iterStat.index}" style="display:none;">
+                    <input type="text" th:value="${color.codeColor}" th:id="'code-input-' + ${iterStat.index}"
+                           style="display:none;">
                 </td>
                 <td>
                     <span th:text="${color.nameColor}" th:id="'name-text-' + ${iterStat.index}"></span>
-                    <input type="text" th:value="${color.nameColor}" th:id="'name-input-' + ${iterStat.index}" style="display:none;">
+                    <input type="text" th:value="${color.nameColor}" th:id="'name-input-' + ${iterStat.index}"
+                           style="display:none;">
                 </td>
                 <td>[[${color.createDate}]]</td>
                 <td>[[${color.updateDate}]]</td>
                 <td>
-                    <i class="status-icon fas" th:classappend="${color.status == 1 ? 'fa-toggle-on' : 'fa-toggle-off'}" th:data-status="${color.status}" th:data-index="${iterStat.index}" onclick="toggleStatus(this)" title="Toggle Status"></i>
+                    <i class="status-icon fas"
+                       th:classappend="${color.status == 1 ? 'fa-toggle-on' : (color.status == 2 ? 'fa-toggle-off' : '')}"
+                       th:data-status="${color.status}"
+                       th:data-index="${iterStat.index}"
+                       onclick="toggleStatus(this)"
+                       title="Toggle Status"></i>
                 </td>
+
                 <td>
-                    <a href="#" th:onclick="'editRow(' + ${iterStat.index} + ')'" th:id="'edit-btn-' + ${iterStat.index}"><i class="icon-edit fas fa-edit" title="Edit"></i></a>
-                    <a href="#" th:onclick="'saveRow(' + ${iterStat.index} + ')'" style="display:none;" th:id="'save-btn-' + ${iterStat.index}"><i class="icon-save fas fa-save" title="Save"></i></a>
-                    <a href="#"><i class="icon-delete fas fa-trash" title="Delete"></i></a>
+                    <a href="#" th:onclick="'editRow(' + ${iterStat.index} + ')'"
+                       th:id="'edit-btn-' + ${iterStat.index}">
+                        <i class="icon-edit fas fa-edit" title="Edit"></i>
+                    </a>
+                    <a href="#" th:onclick="'saveRow(' + ${iterStat.index} + ')'" style="display:none;"
+                       th:id="'save-btn-' + ${iterStat.index}">
+                        <i class="icon-save fas fa-save" title="Save"></i>
+                    </a>
+                    <a href="#" th:data-index="${iterStat.index}" onclick="deleteByID(this)">
+                        <i class="icon-delete fas fa-trash" title="Delete"></i>
+                    </a>
                 </td>
             </tr>
             </tbody>
         </table>
+        <input type="hidden" id="colorMessage" th:value="${message}">
+        <input type="hidden" id="colorCheck" th:value="${check}">
     </article>
 </div>
 

@@ -1,242 +1,244 @@
-    <!doctype html>
-    <!--<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">-->
-    <html xmlns:th="http://www.thymeleaf.org"
-          xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Shop Giày Onepoly</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-              integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <link rel="stylesheet" href="/loading/styleHomeManege.css" type="text/css">
-        <link rel="stylesheet" href="/css/bill/styleBill.css" type="text/css">
-        <link rel="stylesheet" href="/css/Security/noAccess.css">
-        <link rel="stylesheet" th:href="@{/toast/styleToast.css}" type="text/css">
-        <link rel="stylesheet" th:href="@{/css/bill/styleSelect2Tag.css}" type="text/css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
-        <link rel="stylesheet" th:href="@{/pagination/stylePagination.css}" type="text/css">
+<!doctype html>
+<!--<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">-->
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Shop Giày Onepoly</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="/loading/styleHomeManege.css" type="text/css">
+    <link rel="stylesheet" href="/css/bill/styleBill.css" type="text/css">
+    <link rel="stylesheet" href="/css/Security/noAccess.css">
+    <link rel="stylesheet" th:href="@{/toast/styleToast.css}" type="text/css">
+    <link rel="stylesheet" th:href="@{/css/bill/styleSelect2Tag.css}" type="text/css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+    <link rel="stylesheet" th:href="@{/pagination/stylePagination.css}" type="text/css">
 
-    </head>
-    <body>
+</head>
+<body>
 
 
 
-    <nav class="navbar"
-         style="background: linear-gradient(to top, black, #006aff); position: fixed; top: 0; width: 100%; z-index: 1000;">
-        <div class="container-fluid">
-            <i class="bi bi-box-seam" style="font-size: 300%; color: rgb(255, 255, 255);" data-bs-toggle="offcanvas"
-               data-bs-target="#offcanvasExample" aria-controls="offcanvasExample"></i>
-            <a class="navbar-brand text-white" href="#">Sneaker Onepoly</a>
-        </div>
-    </nav>
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="spinner-grow text-center" role="status" style="width: 200px; height: 200px;">
-            <img src="/img/Logo.png" alt="Loading" class="loading-image">
-        </div>
+<nav class="navbar border-bottom border-3 border-dark"
+     style="background: #FFF8DC; position: fixed; top: 0; width: 100%; z-index: 1000;">
+    <div class="container-fluid">
+        <i class="bi bi-box-seam" style="font-size: 300%; color: rgb(0,0,0);" data-bs-toggle="offcanvas"
+           data-bs-target="#offcanvasExample" aria-controls="offcanvasExample"></i>
+        <a class="navbar-brand" href="#">Sneaker Onepoly</a>
     </div>
-    <!-- tab -->
-    <div>
-        <div style="background-color: rgba(22, 48, 134, 0.445); color: white;"
-             class="offcanvas offcanvas-start border-end" tabindex="-1" id="offcanvasExample"
-             aria-labelledby="offcanvasExampleLabel">
-            <div class="offcanvas-header d-flex justify-content-between align-items-center border-bottom">
+</nav>
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner-grow text-center" role="status" style="width: 200px; height: 200px;">
+        <img src="/img/Logo.png" alt="Loading" class="loading-image">
+    </div>
+</div>
+<!-- tab -->
+<div>
+    <div style="background-color: rgba(22, 48, 134, 0.445); color: white;"
+         class="offcanvas offcanvas-start border-end" tabindex="-1" id="offcanvasExample"
+         aria-labelledby="offcanvasExampleLabel">
 
-                <a href="#" class="offcanvas-title text-decoration-none text-white fs-3" id="offcanvasExampleLabel">
-                    <div id="user-info">
-                        <p><span>Họ và tên: </span> <span id="fullName"></span></p>
-                        <p><span>Chức vụ:</span> <span id="roleName"></span></p>
-                    </div>
+        <div class="offcanvas-header d-flex justify-content-between align-items-center border-bottom">
+            <a href="#" class="offcanvas-title text-decoration-none text-white fs-3" id="offcanvasExampleLabel">
+                <div id="user-info">
+                    <p><span>Họ và tên: </span> <span id="fullName"></span></p>
+                    <p><span>Chức vụ:</span> <span id="roleName"></span></p>
+                </div>
+                <br>
+                <span>Chúc bạn một ngày tốt lành!</span>
+            </a>
+            <i class="bi bi-x-square" style="font-size: 300%; color: white;" data-bs-dismiss="offcanvas"
+               aria-label="Close"></i>
+        </div>
 
-                    <span>Chúc bạn một ngày tốt lành!</span>
+        <div class="offcanvas-body text-start">
+
+            <p class="border-bottom">
+                <a class="text-decoration-none text-white fs-3 bg-transparent" data-bs-toggle="collapse"
+                   href="#sanPham" role="button" aria-expanded="false" aria-controls="collapseExample">
+                    Quản lý sản phẩm
                 </a>
-                <i class="bi bi-x-square" style="font-size: 300%; color: white;" data-bs-dismiss="offcanvas"
-                   aria-label="Close"></i>
-            </div>
+            </p>
 
-            <div class="offcanvas-body text-start">
-
-                <p class="border-bottom">
-                    <a class="text-decoration-none text-white fs-3 bg-transparent" data-bs-toggle="collapse"
-                       href="#sanPham" role="button" aria-expanded="false" aria-controls="collapseExample">
-                        Quản lý sản phẩm
+            <div class="collapse" id="sanPham">
+                <div class="card card-body" style="background-color: rgba(255, 255, 255, 0.445); color: white;">
+                    <a class="dropdown-item text-decoration-none text-white fs-6 bg-transparent" href="/product/">
+                        Sản phẩm
                     </a>
-                </p>
-
-                <div class="collapse" id="sanPham">
-                    <div class="card card-body" style="background-color: rgba(255, 255, 255, 0.445); color: white;">
-                        <a class="dropdown-item text-decoration-none text-white fs-6 bg-transparent" href="/product/">
-                            Sản phẩm
+                    <!-- Thuộc tính sản phẩm -->
+                    <a class="dropdown-item text-decoration-none text-white fs-6 bg-transparent" data-bs-toggle="collapse" href="#thuocTinh" role="button" aria-expanded="false" aria-controls="thuocTinh">
+                        Thuộc tính sản phẩm
+                    </a>
+                    <hr>
+                    <!-- Các tùy chọn con (ẩn/hiện khi bấm vào Thuộc tính sản phẩm) -->
+                    <div class="collapse" id="thuocTinh">
+                        <a class="dropdown-item text-decoration-none text-white fs-6 bg-transparent sub-option" href="#">
+                            Hãng
                         </a>
-                        <!-- Thuộc tính sản phẩm -->
-                        <a class="dropdown-item text-decoration-none text-white fs-6 bg-transparent" data-bs-toggle="collapse" href="#thuocTinh" role="button" aria-expanded="false" aria-controls="thuocTinh">
-                            Thuộc tính sản phẩm
+                        <a class="dropdown-item text-decoration-none text-white fs-6 bg-transparent sub-option" href="#">
+                            Chất liệu
                         </a>
-                        <hr>
-                        <!-- Các tùy chọn con (ẩn/hiện khi bấm vào Thuộc tính sản phẩm) -->
-                        <div class="collapse" id="thuocTinh">
-                            <a class="dropdown-item text-decoration-none text-white fs-6 bg-transparent sub-option" href="#">
-                                Hãng
-                            </a>
-                            <a class="dropdown-item text-decoration-none text-white fs-6 bg-transparent sub-option" href="#">
-                                Chất liệu
-                            </a>
-                            <a class="dropdown-item text-decoration-none text-white fs-6 bg-transparent sub-option" href="#">
-                                Xuất xứ
-                            </a>
-                            <a class="dropdown-item text-decoration-none text-white fs-6 bg-transparent sub-option" href="#">
-                                Danh mục
-                            </a>
-                        </div>
+                        <a class="dropdown-item text-decoration-none text-white fs-6 bg-transparent sub-option" href="#">
+                            Xuất xứ
+                        </a>
+                        <a class="dropdown-item text-decoration-none text-white fs-6 bg-transparent sub-option" href="#">
+                            Danh mục
+                        </a>
                     </div>
                 </div>
+            </div>
 
 
-                <!-- tab2 -->
-                <p class=" border-bottom">
-                    <a class="text-decoration-none text-white fs-3 bg-transparent" data-bs-toggle="collapse"
-                       href="#user" role="button" aria-expanded="false" aria-controls="collapseExample">
-                        Quản lý người dùng
-                    </a>
-                </p>
+            <!-- tab2 -->
+            <p class=" border-bottom">
+                <a class="text-decoration-none text-white fs-3 bg-transparent" data-bs-toggle="collapse"
+                   href="#user" role="button" aria-expanded="false" aria-controls="collapseExample">
+                    Quản lý người dùng
+                </a>
+            </p>
 
-                <div class="collapse" id="user">
-                    <div class="card card-body" style="background-color: rgba(255, 255, 255, 0.445); color: white;">
+            <div class="collapse" id="user">
+                <div class="card card-body" style="background-color: rgba(255, 255, 255, 0.445); color: white;">
 
-                        <p class="d-inline-flex gap-1">
-                            <a class="dropdown-item text-decoration-none text-white fs-5 bg-transparent"
-                               data-bs-toggle="collapse" href="#kh" role="button" aria-expanded="false"
-                               aria-controls="collapseExample">
-                                Quản lý khách hàng
-                            </a>
-                        </p>
+                    <p class="d-inline-flex gap-1">
+                        <a class="dropdown-item text-decoration-none text-white fs-5 bg-transparent"
+                           data-bs-toggle="collapse" href="#kh" role="button" aria-expanded="false"
+                           aria-controls="collapseExample">
+                            Quản lý khách hàng
+                        </a>
+                    </p>
 
-                        <div class="collapse" id="kh">
-                            <div class="card card-body"
-                                 style="background-color: rgba(255, 255, 255, 0.445); color: white;">
-                                <a class="dropdown-item text-white " href="">Danh sách khách hàng</a>
-                                <a class="dropdown-item text-white " href="">Thêm mới khách hàng</a>
-                            </div>
+                    <div class="collapse" id="kh">
+                        <div class="card card-body"
+                             style="background-color: rgba(255, 255, 255, 0.445); color: white;">
+                            <a class="dropdown-item text-white " href="">Danh sách khách hàng</a>
+                            <a class="dropdown-item text-white " href="">Thêm mới khách hàng</a>
                         </div>
-
-                        <p class="d-inline-flex gap-1">
-                            <a class="dropdown-item text-decoration-none text-white fs-5 bg-transparent"
-                               data-bs-toggle="collapse" href="#nv" role="button" aria-expanded="false"
-                               aria-controls="collapseExample">
-                                Quản lý Nhân viên
-                            </a>
-                        </p>
-
-                        <div class="collapse" id="nv">
-                            <div class="card card-body"
-                                 style="background-color: rgba(255, 255, 255, 0.445); color: white;">
-                                <a class="dropdown-item text-white " href="">Danh sách Nhân viên</a>
-                                <a class="dropdown-item text-white " href="">Thêm mới Nhân viên</a>
-                            </div>
-                        </div>
-
-                        <p class="d-inline-flex gap-1">
-                            <a class="dropdown-item text-decoration-none text-white fs-5 bg-transparent"
-                               data-bs-toggle="collapse" href="#chucVu" role="button" aria-expanded="false"
-                               aria-controls="collapseExample">
-                                Quản lý chức vụ
-                            </a>
-                        </p>
-
-                        <div class="collapse" id="chucVu">
-                            <div class="card card-body"
-                                 style="background-color: rgba(255, 255, 255, 0.445); color: white;">
-                                <a class="dropdown-item text-white " href="">Danh sách chức vụ</a>
-                                <a class="dropdown-item text-white " href="">Thêm mới chức vụ</a>
-                            </div>
-                        </div>
-
                     </div>
+
+                    <p class="d-inline-flex gap-1">
+                        <a class="dropdown-item text-decoration-none text-white fs-5 bg-transparent"
+                           data-bs-toggle="collapse" href="#nv" role="button" aria-expanded="false"
+                           aria-controls="collapseExample">
+                            Quản lý Nhân viên
+                        </a>
+                    </p>
+
+                    <div class="collapse" id="nv">
+                        <div class="card card-body"
+                             style="background-color: rgba(255, 255, 255, 0.445); color: white;">
+                            <a class="dropdown-item text-white " href="">Danh sách Nhân viên</a>
+                            <a class="dropdown-item text-white " href="">Thêm mới Nhân viên</a>
+                        </div>
+                    </div>
+
+                    <p class="d-inline-flex gap-1">
+                        <a class="dropdown-item text-decoration-none text-white fs-5 bg-transparent"
+                           data-bs-toggle="collapse" href="#chucVu" role="button" aria-expanded="false"
+                           aria-controls="collapseExample">
+                            Quản lý chức vụ
+                        </a>
+                    </p>
+
+                    <div class="collapse" id="chucVu">
+                        <div class="card card-body"
+                             style="background-color: rgba(255, 255, 255, 0.445); color: white;">
+                            <a class="dropdown-item text-white " href="">Danh sách chức vụ</a>
+                            <a class="dropdown-item text-white " href="">Thêm mới chức vụ</a>
+                        </div>
+                    </div>
+
                 </div>
+            </div>
 
-                <!-- tab3 -->
+            <!-- tab3 -->
 
 
-                <!-- tab4 -->
-                <p class="border-bottom">
-                    <a href="" class="text-decoration-none text-white fs-3 bg-transparent">
-                        Bán hàng
-                    </a>
-                </p>
+            <!-- tab4 -->
+            <p class="border-bottom">
+                <a href="/bill/home" class="text-decoration-none text-white fs-3 bg-transparent">
+                    Bán hàng
+                </a>
+            </p>
 
-                <p class="border-bottom">
-                    <a class="text-decoration-none text-white fs-3 bg-transparent"
-                       th:if="${#authorization.expression('isAuthenticated()')}" th:href="@{/logout}">
-                        Đăng xuất
-                    </a>
-                    <!-- Hiển thị nút Đăng nhập nếu người dùng chưa đăng nhập -->
-                    <a class="text-decoration-none text-white fs-3 bg-transparent"
-                       th:if="${#authorization.expression('!isAuthenticated()')}" th:href="@{/login}">
-                        Đăng nhập
-                    </a>
-                </p>
+            <p class="border-bottom">
+                <a class="text-decoration-none text-white fs-3 bg-transparent"
+                   th:if="${#authorization.expression('isAuthenticated()')}" th:href="@{/logout}">
+                    Đăng xuất
+                </a>
+                <!-- Hiển thị nút Đăng nhập nếu người dùng chưa đăng nhập -->
+                <a class="text-decoration-none text-white fs-3 bg-transparent"
+                   th:if="${#authorization.expression('!isAuthenticated()')}" th:href="@{/login}">
+                    Đăng nhập
+                </a>
+            </p>
+        </div>
+    </div>
+</div>
+<!-- Nội dung trang bắt đầu sau navbar -->
+<div class="mb-4" style="padding-top: 80px;">
+    <!-- Nội dung khác của trang -->
+    <!--    <th:block th:replace="~{${'/Bill/index'}}"></th:block>-->
+    <div layout:fragment="content">
+
+    </div>
+</div>
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    <!-- Đây là container nơi toast sẽ xuất hiện -->
+</div>
+<div class="modal fade" id="accessDeniedModal" tabindex="-1" aria-labelledby="accessDeniedModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="accessDeniedModalLabel">Quyền truy cập bị từ chối</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Bạn không có quyền truy cập vào trang này. Vui lòng liên hệ với quản trị viên nếu bạn nghĩ đây là lỗi.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
             </div>
         </div>
     </div>
-    <!-- Nội dung trang bắt đầu sau navbar -->
-    <div class="mb-4" style="padding-top: 80px;">
-        <!-- Nội dung khác của trang -->
-        <!--    <th:block th:replace="~{${'/Bill/index'}}"></th:block>-->
-        <div layout:fragment="content">
+</div>
+<!--scriploading-->
+<script src="/loading/actionLoading.js"></script>
 
-        </div>
-    </div>
-    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
-        <!-- Đây là container nơi toast sẽ xuất hiện -->
-    </div>
-    <div class="modal fade" id="accessDeniedModal" tabindex="-1" aria-labelledby="accessDeniedModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="accessDeniedModalLabel">Quyền truy cập bị từ chối</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    Bạn không có quyền truy cập vào trang này. Vui lòng liên hệ với quản trị viên nếu bạn nghĩ đây là lỗi.
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!--scriploading-->
-    <script src="/loading/actionLoading.js"></script>
+<!-- đây là scrip bên màn tạo mới hóa đơn  -->
+<!-- scrip thu vien cua cau hình QR -->
+<script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.18.1/umd/index.js"></script>
+<script src="/js/bill/setupQr.js"></script>
+<!-- đây là scrip hien thi anh len  -->
+<script src="/js/bill/previewImage.js"></script>
+<!-- đây là scrip bắt sự kiện nút ấn giao hàng  -->
+<script src="/js/bill/checkSwitch.js"></script>
+<!--cai nay de set moi khi chon thi duoc active-->
+<script src="/js/bill/setActive.js"></script>
+<script src="/js/Security/noAccess.js"></script>
 
-    <!-- đây là scrip bên màn tạo mới hóa đơn  -->
-    <!-- scrip thu vien cua cau hình QR -->
-    <script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.18.1/umd/index.js"></script>
-    <script src="/js/bill/setupQr.js"></script>
-    <!-- đây là scrip hien thi anh len  -->
-    <script src="/js/bill/previewImage.js"></script>
-    <!-- đây là scrip bắt sự kiện nút ấn giao hàng  -->
-    <script src="/js/bill/checkSwitch.js"></script>
-    <!--cai nay de set moi khi chon thi duoc active-->
-    <script src="/js/bill/setActive.js"></script>
-    <script src="/js/Security/noAccess.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script th:src="@{/js/select2/multiselect2.js}" type="text/javascript"></script>
+<!--cai nay la ajax cua hien thi bill moi -->
+<!--ngay 3  thang 9-->
+<script src="/ajax/ajaxBill.js"></script>
+<script src="/ajax/Security/Login.js"></script>
+<script src="/ajax/Security/Register.js"></script>
+<script th:src="@{/toast/action.js}" type="text/javascript"></script>
+<!--<script src="/toast/action.js"></script>-->
+<!--select 2 js-->
+<script th:src="@{/js/bill/actionSelect2tag.js}" type="text/javascript"></script>
+<script th:src="@{/js/bill/validateCash.js}" type="text/javascript"></script>
+<script th:src="@{/js/bill/validateQuantityWrite.js}" type="text/javascript"></script>
+<script th:src="@{/pagination/actionPagination.js}" type="text/javascript"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-            crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script th:src="@{/js/select2/multiselect2.js}" type="text/javascript"></script>
-    <!--cai nay la ajax cua hien thi bill moi -->
-    <!--ngay 3  thang 9-->
-    <script src="/ajax/ajaxBill.js"></script>
-    <script src="/ajax/Login/Login.js"></script>
-    <script th:src="@{/toast/action.js}" type="text/javascript"></script>
-    <!--<script src="/toast/action.js"></script>-->
-    <!--select 2 js-->
-    <script th:src="@{/js/bill/actionSelect2tag.js}" type="text/javascript"></script>
-    <script th:src="@{/js/bill/validateCash.js}" type="text/javascript"></script>
-    <script th:src="@{/js/bill/validateQuantityWrite.js}" type="text/javascript"></script>
-    <script th:src="@{/pagination/actionPagination.js}" type="text/javascript"></script>
 
-    </body>
-    </html>
+</body>
+</html>
