@@ -25,7 +25,6 @@ public class Base {
     @Column(name = "update_date")
     private Date updateDate;
     @Column(name = "status")
-    @NotNull(message = "Mời bạn chọn trạng thái!")
     private Integer status;
     @PrePersist
     public void setDate(){
