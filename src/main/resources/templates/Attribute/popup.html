@@ -4,60 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Popup Notification</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-        }
-
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background-color: #28a745;
-            color: white;
-            padding: 15px;
-            border-radius: 5px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            opacity: 0;
-            transition: opacity 0.5s ease-in-out;
-            z-index: 1000;
-        }
-
-        .notification.visible {
-            opacity: 1;
-        }
-
-        .hidden {
-            display: none;
-        }
-    </style>
+    <link rel="stylesheet" href="/css/popup/popup.css">
 </head>
 <body>
 
 <button id="notifyBtn">Show Notification</button>
 
 <div id="notification" class="notification hidden">
-    This is a notification!
+    <div class="icon">🔔</div>
+    <div class="message">Vinh đẹp trai</div>
 </div>
-
-<script>
-    document.getElementById('notifyBtn').addEventListener('click', function() {
-        var notification = document.getElementById('notification');
-        notification.classList.remove('hidden');
-        notification.classList.add('visible');
-
-        setTimeout(function() {
-            notification.classList.remove('visible');
-            setTimeout(function() {
-                notification.classList.add('hidden');
-            }, 500); // Đợi 0.5s để ẩn hoàn toàn sau khi hiệu ứng fade out kết thúc
-        }, 3000); // Hiển thị thông báo trong 3 giây
-    });
-</script>
+<script src="/js/popup/popup.js"></script>
 </body>
 </html>
