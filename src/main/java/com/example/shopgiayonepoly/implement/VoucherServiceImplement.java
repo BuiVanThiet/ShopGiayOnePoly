@@ -32,6 +32,7 @@ public class VoucherServiceImplement implements VoucherService {
     public void createNewVoucher(VoucherRequest voucherRequest) {
         Voucher voucher = new Voucher();
         BeanUtils.copyProperties(voucherRequest, voucher);
+        System.out.println("Voucher....Status ."+voucher.toString());
         voucherRepository.save(voucher);
     }
 
@@ -40,6 +41,11 @@ public class VoucherServiceImplement implements VoucherService {
         Voucher voucher = new Voucher();
         BeanUtils.copyProperties(voucherRequest, voucher);
         voucherRepository.save(voucher);
+    }
+
+    @Override
+    public Voucher getOne(Integer integer) {
+        return voucherRepository.findById(integer).get();
     }
 
     @Override
