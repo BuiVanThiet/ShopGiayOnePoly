@@ -29,6 +29,11 @@ public class ColorController {
         return "Attribute/color";
     }
 
+    @GetMapping("/popup")
+    public String popup(Model model) {
+        return "Attribute/popup";
+    }
+
     @RequestMapping("/color/add")
     public String add(@ModelAttribute("colorAdd") Color color) {
         color.setStatus(1);

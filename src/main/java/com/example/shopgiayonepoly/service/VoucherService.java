@@ -12,5 +12,6 @@ public interface VoucherService {
     public List<Voucher> getAll();
     public void  createNewVoucher(VoucherRequest voucherRequest);
     public void updateVoucher(VoucherRequest voucherRequest);
+    public Voucher getOne(Integer integer);
     public void deleteVoucher(Integer id);
 }
