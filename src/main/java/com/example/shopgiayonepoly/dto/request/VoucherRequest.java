@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -21,15 +22,16 @@ public class VoucherRequest extends BaseDTO {
     private String nameVoucher;
     @NotNull(message = "Hãy chọn loại phiếu giảm giá!")
     private Integer discountType;
-    @NotNull(message = "Giá trị giảm không được để trống!")
     private BigDecimal priceReduced;
     @NotNull(message = "Giảm tối thiểu không được giảm giá!")
     private BigDecimal pricesApply;
     @NotNull(message = "Giá trị giảm tối đa không được để trống!")
     private BigDecimal pricesMax;
-    @NotNull(message = "Ngày bắt đầu không được để trống!")
+
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate startDate;
-    @NotNull(message = "Ngày kết thúc không được để trống!")
+
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate endDate;
     @NotBlank(message = "Mô tả không được để trống!")
     private String describe;

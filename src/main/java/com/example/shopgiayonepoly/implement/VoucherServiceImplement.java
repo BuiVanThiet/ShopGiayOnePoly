@@ -29,10 +29,19 @@ public class VoucherServiceImplement implements VoucherService {
     }
 
     @Override
+    public Page<Voucher> getAllVoucherDeleteByPage(Pageable pageable) {
+        return voucherRepository.getVoucherDeleteByPage(pageable);
+    }
+
+    @Override
+    public List<Voucher> getAllVoucherDelete() {
+        return voucherRepository.getAllVoucherDelete();
+    }
+
+    @Override
     public void createNewVoucher(VoucherRequest voucherRequest) {
         Voucher voucher = new Voucher();
         BeanUtils.copyProperties(voucherRequest, voucher);
-        System.out.println("Voucher....Status ."+voucher.toString());
         voucherRepository.save(voucher);
     }
 
@@ -51,5 +60,15 @@ public class VoucherServiceImplement implements VoucherService {
     @Override
     public void deleteVoucher(Integer id) {
         voucherRepository.deleteBySetStatus(id);
+    }
+
+    @Override
+    public void restoreStatusVoucher(Integer id) {
+        voucherRepository.restoreStatusVoucher(id);
+    }
+
+    @Override
+    public Page<Voucher> searchVoucherByKeyword(String key, Pageable pageable) {
+        return voucherRepository.searchVoucherByKeyword(key, pageable);
     }
 }
