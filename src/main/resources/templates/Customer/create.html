@@ -9,8 +9,9 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="/css/staff/create.css" type="text/css">
-    <title>Them nhan vien</title>
+    <link rel="stylesheet" href="/css/customer/create.css" type="text/css">
+
+    <title>Them khach hang</title>
 </head>
 
 <body>
@@ -18,16 +19,16 @@
 <main class="container">
     <div layout:fragment="content">
         <article class="container-xxl bd-gutter mt-4 my-md-3 bd-layout">
-            <h2>Thêm nhân viên</h2>
+            <h2>Thêm khách hàng</h2>
             <!-- <form action="/product/save" method="post" enctype="multipart/form-data"> -->
             <div class="form-nab">
                 <div class="container">
                     <div class="row">
                         <div class="col-6">
-                            <p>Ảnh nhân viên (3x4)</p>
+                            <p>Ảnh khách hàng (3x4)</p>
                             <div class="upload-container">
                                 <label for="file-upload" class="custom-file-upload">
-                                    <img id="image-preview" src="path_to_default_image.png" alt="Ảnh nhân viên" />
+                                    <img id="image-preview" src="path_to_default_image.png" alt="Ảnh khách hàng" />
                                 </label>
                                 <input id="file-upload" type="file" accept="image/*" />
                             </div>
@@ -35,14 +36,9 @@
                         <div class="col-6">
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label for="codeStaff">Mã nhân viên</label>
-                                    <input type="text" id="codeStaff" name="codeStaff" class="form-control"
-                                           placeholder="Enter staff code" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="fullName">Tên nhân viên</label>
-                                    <input type="text" id="fullName" name="fullName" class="form-control"
-                                           placeholder="Enter staff name" required>
+                                    <label for="customerName">Tên khách hàng</label>
+                                    <input type="text" id="customerName" name="customerName" class="form-control"
+                                           placeholder="Enter customer name" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="gender">Giới tính</label>
@@ -58,6 +54,17 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="form-group">
+                                    <label for="status">Trạng thái</label>
+                                    <div class="radio-group">
+                                        <div class="radio-item">
+                                            <input type="radio" name="status" value="0" checked />Hoạt động
+                                        </div>
+                                        <div class="radio-item">
+                                            <input type="radio" name="status" value="1" />Ngừng hoạt động
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -69,23 +76,23 @@
                 <div class="row">
                     <div class="col-4">
                         <div class="form-group">
-                            <label for="numberPhone">Số điện thoại</label>
-                            <input type="number" id="numberPhone" name="numberPhone" class="form-control"
-                                   placeholder="Enter staff numberPhone" required>
+                            <label for="phoneNumber">Số điện thoại</label>
+                            <input type="number" id="phoneNumber" name="phoneNumber" class="form-control"
+                                   placeholder="Enter customer phoneNumber" required>
                         </div>
                     </div>
                     <div class="col-4">
                         <div class="form-group">
-                            <label for="birthDay">Ngày sinh</label>
-                            <input type="date" id="birthDay" name="birthDay" class="form-control"
-                                   placeholder="Enter staff birthDay" required>
+                            <label for="dateOfBirth">Ngày sinh</label>
+                            <input type="date" id="dateOfBirth" name="dateOfBirth" class="form-control"
+                                   placeholder="Enter customer dateOfBirth" required>
                         </div>
                     </div>
                     <div class="col-4">
                         <div class="form-group">
                             <label for="email">Email</label>
                             <input type="text" id="email" name="email" class="form-control"
-                                   placeholder="Enter staff email" required>
+                                   placeholder="Enter customer email" required>
                         </div>
                     </div>
                 </div>
@@ -122,50 +129,15 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="form-group">
-                            <label for="address">Địa chi chi tiết</label>
-                            <input type="text" id="address" name="address" class="form-control"
-                                   placeholder="Enter staff address" required>
+                            <label for="specificAddress">Địa chi chi tiết</label>
+                            <input type="text" id="specificAddress" name="specificAddress" class="form-control"
+                                   placeholder="Enter customer specificAddress" required>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Chức vụ/ Trạng thái -->
-            <div class="form-row">
-                <div class="row">
-                    <div class="col-8">
-                        <div class="form-group">
-                            <label for="position">Chức vụ</label>
-                            <select>
-                                <option value="0">Nhân viên</option>
-                                <option value="1">Quản lý</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-4">
-                        <!-- <div class="form-group">
-                            <label for="status">Trạng thái</label>
-                            <select>
-                                <option value="0">Hoạt động</option>
-                                <option value="1">Ngừng họat động</option>
-                            </select>
-                        </div> -->
-                        <div class="form-group">
-                            <label for="status">Trạng thái</label>
-                            <div class="radio-group">
-                                <div class="radio-item">
-                                    <input type="radio" name="status" value="0" checked />Hoạt động
-                                </div>
-                                <div class="radio-item">
-                                    <input type="radio" name="status" value="1" />Ngừng hoạt động
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <button type="submit" class="btn btn-primary">Thêm nhân viên</button>
+            <button type="submit" class="btn btn-primary">Them khach hang</button>
             <!-- </form> -->
         </article>
     </div>
