@@ -27,8 +27,9 @@ public class SecurityConfig {
                         .requestMatchers("/login-api/**").permitAll()
                         .requestMatchers("/ajax/**", "/css/**", "/img/**", "/js/**", "/loading/**", "/toast/**").permitAll()
                         .requestMatchers("/bill-api/**").permitAll()
+                        .requestMatchers("/register-api/**").permitAll()
                         .requestMatchers("/register").permitAll()
-                        .requestMatchers("/login","/home_manage").permitAll()
+                        .requestMatchers("/login").permitAll()
                         .requestMatchers("/logout").permitAll()
                         .anyRequest().authenticated()
                 )
@@ -40,7 +41,7 @@ public class SecurityConfig {
                 .formLogin(form -> form
                         .loginPage("/login")
                         .loginProcessingUrl("/login")
-                        .defaultSuccessUrl("/bill/home", true)
+                        .defaultSuccessUrl("/", true)
                 )
 
                 .logout(config -> config

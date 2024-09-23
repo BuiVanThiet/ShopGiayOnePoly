@@ -3,6 +3,7 @@ package com.example.shopgiayonepoly.controller;
 import com.example.shopgiayonepoly.dto.request.loginRequest;
 import com.example.shopgiayonepoly.entites.Staff;
 import com.example.shopgiayonepoly.repositores.StaffSecurityRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -28,24 +29,20 @@ public class LoginController {
         return "login/login";
     }
     @GetMapping("/home_manage")
-    public String homeManage(Model model, Principal principal) {
-        if (principal != null) {
-            String username = principal.getName(); // Tài khoản hoặc email
-            Staff staff = staffSecurityRepository.findByAcountOrEmail(username, username);
+    public String homePage(HttpSession session) {
+        // Lấy dữ liệu từ session đã lưu sau khi đăng nhập thành công
+        String fullName = (String) session.getAttribute("fullName");
+        String roleName = (String) session.getAttribute("roleName");
 
-            if (staff != null) {
-                model.addAttribute("fullName", staff.getFullName());
-                model.addAttribute("roleName", staff.getRole() != null ? staff.getRole().getNameRole() : "Không có vai trò");
-            } else {
-                model.addAttribute("fullName", "Lỗi");
-                model.addAttribute("roleName", "Không có vai trò");
-            }
-        } else {
-            model.addAttribute("fullName", "Lỗi");
-            model.addAttribute("roleName", "Không có vai trò");
+        // Kiểm tra nếu thông tin không tồn tại trong session thì có thể xử lý phù hợp, ví dụ chuyển hướng về trang đăng nhập
+        if (fullName == null || roleName == null) {
+            return "redirect:/login"; // Chuyển hướng về trang login nếu không có thông tin trong session
         }
-        return "Home/home_manege";
+
+        // Hiển thị trang home manage
+        return "Home/home_manege"; // Đảm bảo tên template đúng
     }
+
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         // Xóa thông tin khỏi session khi đăng xuất
