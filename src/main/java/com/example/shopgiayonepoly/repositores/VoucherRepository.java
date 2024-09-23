@@ -13,13 +13,30 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface VoucherRepository extends JpaRepository<Voucher,Integer> {
+public interface VoucherRepository extends JpaRepository<Voucher, Integer> {
     @Query("select v from Voucher v where v.status =1")
     public Page<Voucher> getAllVoucherByPage(Pageable pageable);
+
     @Query("select v from Voucher v where v.status =1")
     public List<Voucher> getAllVoucher();
+
+    @Query("select v from Voucher v where v.status =2")
+    public Page<Voucher> getVoucherDeleteByPage(Pageable pageable);
+
+    @Query("select v from Voucher v where v.status =2")
+    public List<Voucher> getAllVoucherDelete();
+
     @Modifying
     @Transactional
-    @Query(value = "update voucher set status =0 where id=:id",nativeQuery = true)
-    public void deleteBySetStatus(@Param("id")Integer id);
+    @Query(value = "update Voucher set status =2 where id=:id")
+    public void deleteBySetStatus(@Param("id") Integer id);
+
+    @Modifying
+    @Transactional
+    @Query("update Voucher set status=1 where  id =:id")
+    public void restoreStatusVoucher(@Param("id") Integer id);
+
+    @Query("select v from Voucher v where v.nameVoucher like %:key% or v.codeVoucher like %:key% or v.priceReduced = :key or v.quantity = :key")
+    public Page<Voucher> searchVoucherByKeyword(@Param("key") String key, Pageable pageable);
+
 }
