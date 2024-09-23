@@ -1,5 +1,6 @@
 package com.example.shopgiayonepoly.repositores;
 
+import com.example.shopgiayonepoly.dto.response.BillResponseManage;
 import com.example.shopgiayonepoly.dto.response.BillTotalInfornationResponse;
 import com.example.shopgiayonepoly.dto.response.ClientBillInformationResponse;
 import com.example.shopgiayonepoly.entites.*;
@@ -10,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -71,10 +73,43 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
             "WHERE (SELECT b.totalAmount FROM Bill b WHERE b.id = :idBill) >= v.pricesApply " +
             "AND v.status <> 0 " +
             "AND (v.id <> (SELECT b.voucher.id FROM Bill b WHERE b.id = :idBill) OR (SELECT b.voucher.id FROM Bill b WHERE b.id = :idBill) IS NULL) " +
-            "and concat(v.nameVoucher+v.codeVoucher) LIKE %:keyword%")
+            "and concat(v.nameVoucher,v.codeVoucher) LIKE %:keyword%")
     List<Voucher> getVoucherByBill(@Param("idBill") Integer idBill, @Param("keyword") String keyword);
 
     @Query("select new com.example.shopgiayonepoly.dto.response.ClientBillInformationResponse(addRess.customer.fullName,addRess.customer.numberPhone,addRess.specificAddress,addRess.specificAddress,addRess.specificAddress,addRess.specificAddress) from AddressShip addRess where addRess.customer.id = :idClient")
     List<ClientBillInformationResponse> getClientBillInformationResponse(@Param("idClient") Integer idBill);
+    // phan nay danh cho quan ly hoa don
+    @Query("""
+        select 
+        new com.example.shopgiayonepoly.dto.response.BillResponseManage(
+            bill.id, bill.codeBill, bill.customer, bill.staff, bill.addRess, bill.voucher, 
+            bill.shippingPrice, bill.cash, bill.acountMoney, bill.note, bill.totalAmount, 
+            bill.paymentMethod, bill.billType, bill.paymentStatus, bill.surplusMoney, 
+            bill.createDate, bill.updateDate, bill.status) 
+        from Bill bill 
+        LEFT JOIN bill.customer customer
+        LEFT JOIN bill.staff staff
+        LEFT JOIN bill.voucher voucher
+        where 
+        (concat(COALESCE(bill.codeBill, ''), COALESCE(bill.customer.fullName, ''), COALESCE(bill.customer.numberPhone, '')) like %:nameCheck%)
+         and (:statusCheck is null or (bill.status = :statusCheck and bill.status <> 0))
+    """)
+    Page<BillResponseManage> getAllBillByStatusDiss0(@Param("nameCheck") String nameCheck, @Param("statusCheck") Integer statusCheck, Pageable pageable);
 
+    @Query("""
+        select 
+        new com.example.shopgiayonepoly.dto.response.BillResponseManage(
+            bill.id, bill.codeBill, bill.customer, bill.staff, bill.addRess, bill.voucher, 
+            bill.shippingPrice, bill.cash, bill.acountMoney, bill.note, bill.totalAmount, 
+            bill.paymentMethod, bill.billType, bill.paymentStatus, bill.surplusMoney, 
+            bill.createDate, bill.updateDate, bill.status) 
+        from Bill bill 
+        LEFT JOIN bill.customer customer
+        LEFT JOIN bill.staff staff
+        LEFT JOIN bill.voucher voucher
+        where 
+         (concat(COALESCE(bill.codeBill, ''), COALESCE(bill.customer.fullName, ''), COALESCE(bill.customer.numberPhone, '')) like %:nameCheck%)
+         and (:statusCheck is null or (bill.status = :statusCheck and bill.status <> 0))
+    """)
+    List<BillResponseManage> getAllBillByStatusDiss0(@Param("nameCheck") String nameCheck, @Param("statusCheck") Integer statusCheck);
  }

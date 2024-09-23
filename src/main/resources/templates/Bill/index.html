@@ -180,22 +180,20 @@
                                             <span>Giảm giá</span>
                                             <span id="discountAmount">10,000 VNĐ</span>
                                         </div>
+                                        <div class="mb-3 d-flex justify-content-between">
+                                            <span>Tổng tiền</span>
+                                            <span id="totalAmount"></span>
+                                        </div>
                                         <div id="shipSpan">
                                             <div class="mb-3 d-flex justify-content-between">
                                                 <span>Phí vận chuyển:</span>
                                                 <span id="shipMoney"></span>
                                             </div>
                                         </div>
-                                        <div class="mb-3 d-flex justify-content-between">
-                                            <span>Tổng tiền</span>
-                                            <span id="totalAmount"></span>
-                                        </div>
                                     </div>
-
 
                                     <!-- khi nào chọn phương thức thanh toán ms được hiện ô này, nếu ấn tiền mặt và ấn cả tiền mặt lẫn tài khoản mới được hiện -->
                                     <!-- nếu mà nút switch được bật thì ẩn đi các nút thanh toán -->
-
 
                                         <div class="mb-3" id="formAtTheSpot">
                                         <div id="formMoney">
@@ -284,34 +282,52 @@
                      tabindex="0">
                     <div class="card mt-2 mb-2">
                         <div class="card-body">
-                            Tìm kiếm:
-                            <input type="text" class="form-control"
-                                   placeholder="tìm theo tên khách hàng, mã hóa đơn, số điện thoại...">
+                            <form id="formSubmitFilterBill">
+                                Tìm kiếm:
+                                <input type="text" class="form-control" id="keywordBillManage"
+                                       placeholder="tìm theo tên khách hàng, mã hóa đơn, số điện thoại...">
+                                <div class="d-flex justify-content-center">
+                                    <button type="submit" id="filterSubmitBillManage" class="btn btn-outline-warning mb-3 me-2">
+                                        <i class="bi bi-search"></i> Gửi
+                                    </button>
+                                    <button class="btn btn-outline-primary mb-3" id="resetFilterBillManage">
+                                        <i class="bi bi-arrow-counterclockwise"></i> Làm mới
+                                    </button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                     <ul class="nav nav-underline">
                         <li class="nav-item">
-                            <a class="nav-link text-dark active" href="#" onclick="setActive(this)">Tất cả</a>
+                            <button class="nav-link text-dark active" onclick="setActive(this,999)">Tất cả</button>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" href="#" onclick="setActive(this)">Chờ xác nhận</a>
+                            <button class="nav-link text-dark" onclick="setActive(this,1)">Chờ xác nhận</button>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" href="#" onclick="setActive(this)">Chờ giao</a>
+                            <button class="nav-link text-dark" onclick="setActive(this,2)">Đã xác nhận</button>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" href="#" onclick="setActive(this)">Hoàn thành</a>
+                            <button class="nav-link text-dark" onclick="setActive(this,3)">Chờ giao</button>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" href="#" onclick="setActive(this)">Đã hủy</a>
+                            <button class="nav-link text-dark" onclick="setActive(this,4)">Hoàn thành</button>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" href="#" onclick="setActive(this)">Trả hàng</a>
+                            <button class="nav-link text-dark" onclick="setActive(this,5)">Đã hủy</button>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" href="#" onclick="setActive(this)">Đổi hàng</a>
-                        </li>
+<!--                        <li class="nav-item">-->
+<!--                            <a class="nav-link text-dark" href="#" onclick="setActive(this)">Trả hàng</a>-->
+<!--                        </li>-->
+<!--                        <li class="nav-item">-->
+<!--                            <a class="nav-link text-dark" href="#" onclick="setActive(this)">Đổi hàng</a>-->
+<!--                        </li>-->
                     </ul>
+
+                    <div id="nodataBillManage" style="display:none; text-align:center;">
+
+                    </div>
+
                     <table class="table table-bordered mt-2 mb-2">
                         <thead>
                         <tr>
@@ -325,7 +341,7 @@
                             <th scope="col">hành động</th>
                         </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="billManage">
                         <tr>
                             <th scope="row">1</th>
                             <td>HD00001</td>
@@ -353,7 +369,13 @@
                         </tbody>
                     </table>
 
-                    trang danh sách hóa đơn
+                    <div class="pagination-section">
+                        <!-- Phân trang 2 -->
+                        <div class="pagination-custom d-flex justify-content-center">
+                            <ul id="billManagePageMax" class="pagination"></ul>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 

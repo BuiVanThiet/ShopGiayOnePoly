@@ -55,6 +55,8 @@ function handlePageClick(pageNumber, elementId, totalPages) {
         loadBillDetail(pageNumber);
     }else if (elementId == 'voucherPageMax') {
         loadVoucherByBill(pageNumber);
+    }else if (elementId == 'billManagePageMax') {
+        getAllBilByStatus(pageNumber);
     }
 
     createPagination(elementId, totalPages, pageNumber); // Cập nhật phân trang

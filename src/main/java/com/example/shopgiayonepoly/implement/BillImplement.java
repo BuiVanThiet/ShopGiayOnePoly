@@ -1,5 +1,6 @@
 package com.example.shopgiayonepoly.implement;
 
+import com.example.shopgiayonepoly.dto.response.BillResponseManage;
 import com.example.shopgiayonepoly.dto.response.BillTotalInfornationResponse;
 import com.example.shopgiayonepoly.dto.response.ClientBillInformationResponse;
 import com.example.shopgiayonepoly.entites.*;
@@ -81,6 +82,16 @@ public class BillImplement implements BillService {
     @Override
     public List<Voucher> getVoucherByBill(Integer idBill, String keyword) {
         return billRepository.getVoucherByBill(idBill,keyword);
+    }
+
+    @Override
+    public Page<BillResponseManage> getAllBillByStatusDiss0(String nameCheck, Integer status, Pageable pageable) {
+        return this.billRepository.getAllBillByStatusDiss0(nameCheck,status,pageable);
+    }
+
+    @Override
+    public List<BillResponseManage> getAllBillByStatusDiss0(String nameCheck, Integer status) {
+        return this.billRepository.getAllBillByStatusDiss0(nameCheck,status);
     }
 
 }

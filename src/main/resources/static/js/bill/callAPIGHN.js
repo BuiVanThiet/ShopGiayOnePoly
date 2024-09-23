@@ -28,6 +28,7 @@ function initializeLocationDropdowns(provinceSelectId, districtSelectId, wardSel
             provinceSelect.addEventListener('change', function() {
                 const selectedProvinceID = this.value;
                 $('#shipMoney').text('0' + ' VNĐ');
+                $('#moneyTransport').val(0.00)
 
                 provinceTransport = this.value;
 
@@ -58,6 +59,7 @@ function initializeLocationDropdowns(provinceSelectId, districtSelectId, wardSel
                             districtSelect.addEventListener('change', function() {
                                 const selectedDistrictID = this.value;
                                 $('#shipMoney').text('0' + ' VNĐ');
+                                $('#moneyTransport').val(0.00)
 
                                 districtTransport = this.value;
 
@@ -99,6 +101,8 @@ function initializeLocationDropdowns(provinceSelectId, districtSelectId, wardSel
                                     });
                                 } else {
                                     $('#shipMoney').text(0 + ' VNĐ');
+                                    $('#moneyTransport').val(0.00)
+
                                     wardTransport = null;
                                     wardSelectContainer.style.display = 'none';
                                 }
@@ -152,6 +156,8 @@ function initializeLocationDropdowns(provinceSelectId, districtSelectId, wardSel
                     });
                 } else {
                     $('#shipMoney').text('0' + ' VNĐ');
+                    $('#moneyTransport').val(0.00)
+
                     districtTransport = null;
                     wardTransport = null;
                     districtSelectContainer.style.display = 'none';
@@ -283,6 +289,7 @@ function totalShip(province, district, ward) {
                         success: function (response) {
                             console.log(response.data);
                             $('#shipMoney').text(response.data.total.toLocaleString('en-US') + ' VNĐ');
+                            $('#moneyTransport').val(response.data.total)
                         },
                         error: function (xhr) {
                             console.log('Lỗi tính tiền ship: ' + xhr.responseText);
