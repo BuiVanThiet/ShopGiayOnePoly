@@ -1,4 +1,3 @@
-
 package com.example.shopgiayonepoly.restController;
 
 import com.example.shopgiayonepoly.dto.request.RegisterRequest;
@@ -9,16 +8,6 @@ import com.example.shopgiayonepoly.entites.Staff;
 
 import com.example.shopgiayonepoly.repositores.StaffSecurityRepository;
 import com.example.shopgiayonepoly.repositores.roleReponsitory;
-import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-
-import java.security.Principal;
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/login-api")
@@ -35,6 +24,7 @@ public class LoginRestController {
             session.setAttribute("loggedInUser", staff);
             loginReponse response = new loginReponse(staff.getFullName(), staff.getRole() != null ? staff.getRole().getNameRole() : "No role");
             return ResponseEntity.ok(response);
+
         } else {
             // Đăng nhập thất bại
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login thất bại");
@@ -55,7 +45,7 @@ public class LoginRestController {
         Map<String, String> userInfo = new HashMap<>();
         userInfo.put("fullName", staff.getFullName());
         userInfo.put("roleName", staff.getRole().getNameRole());
-
+      
         return ResponseEntity.ok(userInfo);
     }
 

@@ -1,12 +1,9 @@
 const shipSpan = document.getElementById('shipSpan'); // Xác định thẻ div cần ẩn/hiện
 
 shipSpan.style.display = 'none'; // Ẩn thẻ div khi checkbox được chọn
-
-if(payMethodChecked == 2) {
-    btnCreateBill.disabled = false;
-}else {
-    btnCreateBill.disabled = true;
-}
+var provinceID;
+var districtID;
+var wardID;
 document.getElementById('flexSwitchCheckDefault').addEventListener('change', function() {
     const dynamicContent = document.getElementById('dynamic-content');
     const shipSpan = document.getElementById('shipSpan'); // Xác định thẻ div cần ẩn/hiện
@@ -24,52 +21,54 @@ document.getElementById('flexSwitchCheckDefault').addEventListener('change', fun
             url: '/bill-api/client-bill-information', // URL của endpoint
             method: 'GET',
             success: function(client) {
+
+                provinceID  = parseInt(client.city);
+                districtID = parseInt(client.district);
+                wardID = parseInt(client.commune);
+
+                console.log(provinceID + '-' + districtID + '-' + wardID)
+
                 dynamicContent.innerHTML = `
-                    <div class="">
-                        <div class="row">
-                            <div class="col-12">
-                                <label class="form-label">Tên khách hàng</label>
-                                <input type="text" class="form-control" value="${client.name}">
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label">Số điện thoại</label>
-                                <input type="text" class="form-control" value="${client.numberPhone}">
-                            </div>
-                            <!-- Các phần khác của form -->
-                            <div class="col-4">
-                                <label class="form-label">Tỉnh/Thành phố</label>
-                                <select class="form-select">
-                                    <option selected>Open this select menu</option>
-                                    <option value="1">One</option>
-                                    <option value="2">Two</option>
-                                    <option value="3">Three</option>
-                                </select>
-                            </div>
-                            <div class="col-4">
-                                <label class="form-label">Quận/Huyện</label>
-                                <select class="form-select">
-                                    <option selected>Open this select menu</option>
-                                    <option value="1">One</option>
-                                    <option value="2">Two</option>
-                                    <option value="3">Three</option>
-                                </select>
-                            </div>
-                            <div class="col-4">
-                                <label class="form-label">Xã/Phường/Thị Trấn</label>
-                                <select class="form-select">
-                                    <option selected>Open this select menu</option>
-                                    <option value="1">One</option>
-                                    <option value="2">Two</option>
-                                    <option value="3">Three</option>
-                                </select>
-                            </div>
-                            <div class="mb-12">
-                                <p>Địa chỉ cụ thể: </p>
-                                <textarea class="form-control">${client.addressDetail}</textarea>
-                            </div>
-                        </div>
+            <div class="">
+                <div class="row">
+                    <div class="col-12">
+                        <label class="form-label">Tên khách hàng</label>
+                        <input type="text" class="form-control" value="${client.name}">
                     </div>
-                `;
+                    <div class="col-12">
+                        <label class="form-label">Số điện thoại</label>
+                        <input type="text" class="form-control" value="${client.numberPhone}">
+                    </div>
+                    <!-- Các phần khác của form -->
+                    <div class="col-4">
+                        <label class="form-label">Tỉnh/Thành phố</label>
+                        <select class="form-select" id="provinceSelect-transport">
+                            <option selected>Chọn tỉnh/thành phố</option>
+                        </select>
+                    </div>
+                    <div class="col-4" id="districtSelectContainer-transport" style="display: none;">
+                        <label class="form-label">Quận/Huyện</label>
+                        <select class="form-select" id="districtSelect-transport">
+                            <option selected>Chọn quận/huyện</option>
+                        </select>
+                    </div>
+                    <div class="col-4" id="wardSelectContainer-transport" style="display: none;">
+                        <label class="form-label">Xã/Phường/Thị Trấn</label>
+                        <select class="form-select" id="wardSelect-transport">
+                            <option selected>Chọn xã/phường/thị trấn</option>
+                        </select>
+                    </div>
+                    <div class="mb-12">
+                        <p>Địa chỉ cụ thể: </p>
+                        <textarea class="form-control">${client.addressDetail}</textarea>
+                    </div>
+                </div>
+            </div>
+        `;
+                initializeLocationDropdowns('provinceSelect-transport','districtSelect-transport','wardSelect-transport','districtSelectContainer-transport','wardSelectContainer-transport',provinceID,districtID,wardID)
+
+                console.log('Thong tin sau khi chon api ' + provinceTransport + '-' + districtTransport + '-' + wardTransport)
+
             },
             error: function() {
                 alert('Lỗi khi lấy thông tin khách hàng.');
@@ -95,3 +94,6 @@ document.getElementById('flexSwitchCheckDefault').addEventListener('change', fun
         `;
     }
 });
+
+
+
