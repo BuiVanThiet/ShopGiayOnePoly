@@ -196,6 +196,7 @@ public class BillController {
 
         BigDecimal cashNumber = new BigDecimal(cash.replaceAll(",", ""));
         BigDecimal surplusMoneyNumber = new BigDecimal(surplusMoney);
+        BigDecimal shipMoneyNumber = new BigDecimal(shipMoney);
 
         Bill bill = this.billService.findById(id).orElse(null);
 
@@ -220,13 +221,14 @@ public class BillController {
 
         bill.setCash(cashNumber.setScale(2,RoundingMode.FLOOR));
         bill.setSurplusMoney(surplusMoneyNumber.setScale(2,RoundingMode.FLOOR));
+        bill.setShippingPrice(shipMoneyNumber);
 
-        if(bill.getPaymentMethod() == 1) {
-            System.out.println("Thong tin bill bang tien mat " + bill.toString());
+        if(bill.getPaymentMethod() == 1 || bill.getBillType() == 2) {
             bill.setPaymentStatus(1);
             bill.setUpdateDate(new Date());
             bill.setStatus(4);
-            this.billService.save(bill);
+            System.out.println("Thong tin bill(TM)" + bill.toString());
+//            this.billService.save(bill);
             if(bill.getVoucher() != null) {
                 this.getSubtractVoucher(bill.getVoucher());
             }
@@ -239,7 +241,7 @@ public class BillController {
             bill.setSurplusMoney(BigDecimal.valueOf(0));
             this.billPay = bill;
             String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
-            String vnpayUrl = vnPayService.createOrder(Integer.parseInt(cashAccount), bill.getNote(), baseUrl);
+            String vnpayUrl = vnPayService.createOrder((Integer.parseInt(cashAccount)+Integer.parseInt(shipMoney)), bill.getNote(), baseUrl);
             return "redirect:" + vnpayUrl;
         }else {
             this.billPay = bill;
@@ -250,7 +252,7 @@ public class BillController {
                 bill.setUpdateDate(new Date());
                 System.out.println("Do nhap qua so tien mat nen khong the tao thanh toan online");
                 System.out.println("Thong tin Bill thanh toan bang tien va tk(1)" + this.billPay.toString());
-                this.billService.save(bill);
+//                this.billService.save(bill);
                 return "Bill/successBill";
             }else {
                 if(bill.getNote().length() < 0 || bill.getNote() == null || bill.getNote().trim().equals("")) {
@@ -259,7 +261,7 @@ public class BillController {
                 bill.setSurplusMoney(BigDecimal.valueOf(0));
                 this.billPay = bill;
                 String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
-                String vnpayUrl = vnPayService.createOrder(Integer.parseInt(cashAccount), bill.getNote(), baseUrl);
+                String vnpayUrl = vnPayService.createOrder((Integer.parseInt(cashAccount)+Integer.parseInt(shipMoney)), bill.getNote(), baseUrl);
                 System.out.println("Thong tin Bill thanh toan bang tien va tk(2)" + this.billPay.toString());
                 return "redirect:" + vnpayUrl;
             }
@@ -288,17 +290,26 @@ public class BillController {
         this.billPay.setPaymentStatus(1);
         this.billPay.setSurplusMoney(BigDecimal.valueOf(0.00));
         this.billPay.setUpdateDate(new Date());
-        this.billPay.setStatus(4);
         System.out.println("Thong tin thanh toan bang the " + this.billPay.toString());
         if(paymentStatus == 1) {
             this.billPay.setStatus(4);
-            this.billService.save(this.billPay);
+//            this.billService.save(this.billPay);
             if(this.billPay.getVoucher() != null) {
                 this.getSubtractVoucher(this.billPay.getVoucher());
             }
 
             return "Bill/successBill" ;
         }else {
+            Bill bill = this.billPay;
+            bill.setShippingPrice(BigDecimal.valueOf(0));
+            bill.setCash(BigDecimal.valueOf(0));
+            bill.setAcountMoney(BigDecimal.valueOf(0));
+            bill.setBillType(1);
+            bill.setPaymentStatus(0);
+            bill.setSurplusMoney(BigDecimal.valueOf(0));
+//            bill.setStatus(0);
+            bill.setUpdateDate(new Date());
+//            this.billService.save(bill);
             return "Bill/errorBill";
         }
     }

@@ -17,7 +17,7 @@
     <link rel="stylesheet" th:href="@{/css/bill/styleSelect2Tag.css}" type="text/css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
     <link rel="stylesheet" th:href="@{/pagination/stylePagination.css}" type="text/css">
-    <link rel="stylesheet" th:href="@{/css/attribute/attribute.css}" type="text/css">
+<!--    <link rel="stylesheet" th:href="@{/css/attribute/attribute.css}" type="text/css">-->
 </head>
 <body>
 
@@ -42,7 +42,7 @@
          class="offcanvas offcanvas-start border-end" tabindex="-1" id="offcanvasExample"
          aria-labelledby="offcanvasExampleLabel">
 
-        <div class="offcanvas-header d-flex justify-content-between align-items-center border-bottom">
+        <div class="offcanvas-header d-flex justify-content-between align-items-center border-bottom position-relative">
             <a href="#" class="offcanvas-title text-decoration-none text-white fs-3" id="offcanvasExampleLabel">
                 <div id="user-info">
                     <p><span>Họ và tên: </span> <span id="fullName"></span></p>
@@ -53,10 +53,12 @@
 <!--                <p th:text="${message}"></p>-->
                 <br>
                 <span>Chúc bạn một ngày tốt lành!</span>
+
             </a>
-            <i class="bi bi-x-square" style="font-size: 300%; color: white;" data-bs-dismiss="offcanvas"
-               aria-label="Close"></i>
+            <i class="bi bi-x-square position-absolute m-2" style="font-size: 300%; color: white; top: 0; right: 0;" data-bs-dismiss="offcanvas" aria-label="Close"></i>
         </div>
+
+
 
         <div class="offcanvas-body text-start">
 

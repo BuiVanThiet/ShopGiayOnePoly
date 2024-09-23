@@ -380,13 +380,13 @@ function filterProduct() {
         url: '/bill-api/filter-product-deatail',  // Endpoint xử lý
         contentType: 'application/json',
         data: JSON.stringify({
-            nameProduct: $('#nameSearch').val(),
-            idColor: parseInt($('#colorSearch').val()) || null, // Sử dụng || null để xử lý trường hợp không có giá trị
-            idSize: parseInt($('#sizeSearch').val()) || null,
-            idMaterial: parseInt($('#materialSearch').val()) || null,
-            idManufacturer: parseInt($('#manufacturerSearch').val()) || null,
-            idOrigin: parseInt($('#originSearch').val()) || null,
-            idCategories: $('#categorySearch').val().split(',').map(Number)  // Chuyển đổi giá trị của danh mục
+            nameProduct: $('#nameSearch').val().trim(),
+            idColor: parseInt($('#colorSearch').val().trim()) || null, // Sử dụng || null để xử lý trường hợp không có giá trị
+            idSize: parseInt($('#sizeSearch').val().trim()) || null,
+            idMaterial: parseInt($('#materialSearch').val().trim()) || null,
+            idManufacturer: parseInt($('#manufacturerSearch').val().trim()) || null,
+            idOrigin: parseInt($('#originSearch').val().trim()) || null,
+            idCategories: $('#categorySearch').val().trim().split(',').map(Number)  // Chuyển đổi giá trị của danh mục
         }),
         success: function (response) {
             loadProduct(1); // Gọi hàm để tải sản phẩm với trang đầu tiên
@@ -538,7 +538,7 @@ function searchVoucher() {
         type: "POST",
         url: "/bill-api/voucher-search",
         contentType: "application/json",
-        data: JSON.stringify({ keyword: $('#textVoucherSearch').val() }),  // Gửi dữ liệu dạng JSON
+        data: JSON.stringify({ keyword: $('#textVoucherSearch').val().trim() }),  // Gửi dữ liệu dạng JSON
         success: function(response) {
             loadVoucherByBill(1);
             maxPageVoucher();
@@ -550,8 +550,22 @@ function searchVoucher() {
     });
 }
 
-function maxPageVoucher() {
+function getUpdateTypeBill(type) {
+    $.ajax({
+        type: "POST",
+        url: "/bill-api/update-bill-type",
+        contentType: "application/json",
+        data: JSON.stringify({ typeBill: type }),
+        success: function (response) {
+            console.log("done type bill")
+        },
+        error: function (xhr) {
+            console.error('loi update bill type ' + xhr.responseText);
+        }
+    })
+}
 
+function maxPageVoucher() {
     $.ajax({
         type: "GET",
         url:"/bill-api/max-page-voucher",
@@ -564,21 +578,112 @@ function maxPageVoucher() {
     })
 }
 
-//goi api giao hang nhanh
-function getCityShip() {
+//ben trang quan ly hoa don
+function getAllBilByStatus(value) {
     $.ajax({
         type: "GET",
-        url: "https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/province?token=4ad62142-6630-11ef-8e53-0a00184fe694",
+        url: "/bill-api/manage-bill/"+value,
         success: function (response) {
-            var select = '';
+            var tableBillManage = $('#billManage');
+            var nodataBillManage = $('#nodataBillManage');
+            if (response.length === 0) {
+                // Nếu không có dữ liệu, hiển thị ảnh
+                nodataBillManage.html(`
+                <img src="https://res.cloudinary.com/dfy4umpja/image/upload/v1725477250/jw3etgwdqqxtkevcxisq.png"
+                     alt="Lỗi ảnh" style="width: auto; height: 100px;">
+                     <p class="text-center">Không có hóa đơn nào!</p>
+            `);
+                nodataBillManage.show();
+                tableBillManage.closest('table').hide(); // Ẩn table nếu không có dữ liệu
+            } else {
+                nodataBillManage.hide(); // Ẩn phần chứa ảnh nếu có dữ liệu
+                tableBillManage.closest('table').show();
+                tableBillManage.empty()
+                response.forEach(function (bill,index) {
+
+                    // Chuyển đổi chuỗi createDate thành đối tượng Date
+                    const createDate = new Date(bill.createDate);
+
+                    // Định dạng ngày theo "dd/MM/yyyy"
+                    const formattedDate = `${('0' + createDate.getDate()).slice(-2)}/${('0' + (createDate.getMonth() + 1)).slice(-2)}/${createDate.getFullYear()}`;
+
+                    // Định dạng thời gian theo "HH:mm"
+                    const formattedTime = `${('0' + createDate.getHours()).slice(-2)}:${('0' + createDate.getMinutes()).slice(-2)}`;
+
+                    // Kết hợp cả thời gian và ngày tháng
+                    const formattedDateTime = `${formattedTime} ${formattedDate}`;
+
+                    tableBillManage.append(`
+                     <tr>
+                            <th scope="row">${index+1}</th>
+                            <td>${bill.codeBill}</td>
+                            <td>${bill.customer == null ? 'Khách lẻ' : bill.customer.fullName}</td>
+                            <td>${bill.customer == null ? 'Không có' : bill.customer.numberPhone}</td> 
+                            <td>${bill.finalAmount}</td>
+                            <td>${bill.billType == 1 ? 'Tại quầy' : 'Giao hàng'}</td>
+                            <td>${formattedDateTime}</td>
+                            <td>
+                                <a href="" class="btn btn-primary">Xem chi tiết</a>
+                            </td>
+                        </tr>
+                    `);
+                })
+            }
         },
-        error:  function (xhr) {
-            console.error('loi hien thi thanh pho' + xhr.responseText)
+        error: function (xhr) {
+            console.error('Hien thi loi phan chon bill ' + xhr.responseText);
         }
     })
 }
 
+function getMaxPageBillManage() {
+    $.ajax({
+        type: "GET",
+        url: "/bill-api/manage-bill-max-page",
+        success: function (response) {
+            createPagination('billManagePageMax', response, 1); // Phân trang 1
+        },
+        error: function (xhr) {
+            console.error('loi max page bill manage' + xhr.responseText)
+        }
+    })
+}
 
+function clickStatusBillManager(status) {
+    $.ajax({
+        type: "GET",
+        url: "/bill-api/status-bill-manage/"+status,
+        success: function (response) {
+            getMaxPageBillManage();
+            getAllBilByStatus(1);
+        },
+        error: function (xhr) {
+            console.error('loi chon trang thai ' + xhr.responseText);
+        }
+    })
+}
+
+function searchBillManage() {
+    $.ajax({
+        type: "POST",
+        url: "/bill-api/bill-manage-search",
+        contentType: "application/json",
+        data: JSON.stringify({ keywordBill: $('#keywordBillManage').val().trim() }),  // Gửi dữ liệu dạng JSON
+        success: function(response) {
+            getMaxPageBillManage();
+            getAllBilByStatus(1);
+            // clickStatusBillManager(999);
+        },
+        error: function(xhr) {
+            console.error('Loi tim voucher ' + xhr.responseText);
+        }
+    });
+}
+
+document.getElementById('resetFilterBillManage').addEventListener('click', function () {
+    document.getElementById('keywordBillManage').value='';
+    searchBillManage()
+});
 
 $(document).ready(function () {
     $('#formFilterProduct').submit(function (event) {
@@ -588,6 +693,10 @@ $(document).ready(function () {
     $('#formSearchVoucher').submit(function (event) {
         event.preventDefault();
         searchVoucher()
+    })
+    $('#formSubmitFilterBill').submit(function (event) {
+        event.preventDefault();
+        searchBillManage();
     })
     // Xử lý sự kiện tăng/giảm số lượng
     $(document).on('click', '.btn-increment', function () {
@@ -622,6 +731,8 @@ $(document).ready(function () {
     loadCategoryIntoSelect()
     loadVoucherByBill(1);
     maxPageBillDetailByIdBill();
+    getAllBilByStatus(1);
+    getMaxPageBillManage();
     // pageNumber();
 
 });

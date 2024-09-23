@@ -39,7 +39,7 @@ if (cashClient.value.trim() === "" && payMethodChecked === 1 || payMethodChecked
     surplusMoneySpan.style.display = 'none';
     surplusMoney.innerText = '';
     textSurplusMoney.value = '0.00';
-    cashClientText.value = cashClient.value;
+    cashClientText.value = '0.00';
 }
 
 function validate(cash) {
@@ -54,7 +54,7 @@ function validate(cash) {
         surplusMoneySpan.style.display = 'none';
         surplusMoney.innerText = '';
         textSurplusMoney.value = '0.00';
-        cashClientText.value = cashClient.value;
+        cashClientText.value = '0.00';
 
         return;
     }
@@ -70,7 +70,7 @@ function validate(cash) {
         surplusMoneySpan.style.display = 'none';
         surplusMoney.innerText = '';
         textSurplusMoney.value = '0.00';
-        cashClientText.value = cashClient.value;
+        cashClientText.value = cashClientValue;
 
     } else {
         console.log('Neu la so thi vao day');
@@ -89,7 +89,7 @@ function validate(cash) {
             surplusMoneySpan.style.display = 'none';
             surplusMoney.innerText = '';
              textSurplusMoney.value = '0.00';
-             cashClientText.value = cashClient.value;
+             cashClientText.value = cashClientValue;
 
          }else if (cashClientNumber > totalAmountNumber ) {
             formErorrCash.style.display = 'none';
@@ -98,7 +98,7 @@ function validate(cash) {
             surplusMoneySpan.style.display = 'block';
             surplusMoney.innerText = formatNumber(cashClientNumber - totalAmountNumber);
              textSurplusMoney.value = cashClientNumber - totalAmountNumber;
-             cashClientText.value = cashClient.value;
+             cashClientText.value = cashClientNumber;
              cashAccount.value = '0.00'
         } else {
             formErorrCash.style.display = 'none';
@@ -107,7 +107,7 @@ function validate(cash) {
             surplusMoneySpan.style.display = 'none';
             surplusMoney.innerText = '';
             textSurplusMoney.value = '0.00';
-            cashClientText.value = cashClient.value;
+            cashClientText.value = cashClientNumber;
             cashAccount.value = totalAmountNumber - cashClientNumber;
 
          }

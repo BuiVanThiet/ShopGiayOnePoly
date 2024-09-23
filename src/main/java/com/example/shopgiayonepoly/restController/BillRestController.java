@@ -3,11 +3,13 @@ package com.example.shopgiayonepoly.restController;
 import com.example.shopgiayonepoly.dto.request.BillDetailAjax;
 import com.example.shopgiayonepoly.dto.request.PayMethodRequest;
 import com.example.shopgiayonepoly.dto.request.ProductDetailCheckRequest;
+import com.example.shopgiayonepoly.dto.response.BillResponseManage;
 import com.example.shopgiayonepoly.dto.response.BillTotalInfornationResponse;
 import com.example.shopgiayonepoly.dto.response.ClientBillInformationResponse;
 import com.example.shopgiayonepoly.entites.*;
 import com.example.shopgiayonepoly.service.BillDetailService;
 import com.example.shopgiayonepoly.service.BillService;
+import com.example.shopgiayonepoly.service.attribute.*;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,9 +30,22 @@ public class BillRestController {
     BillService billService;
     @Autowired
     BillDetailService billDetailService;
+    //Atribute filter
+    @Autowired
+    ColorService colorService;
+    @Autowired
+    SizeService sizeService;
+    @Autowired
+    MaterialService materialService;
+    @Autowired
+    ManufacturerService manufacturerService;
+    @Autowired
+    OriginService originService;
 
     Integer pageProduct = 0;
     String keyVoucher = "";
+    Integer statusBillCheck = null;
+    String keyBillmanage = "";
 
     @GetMapping("/get-idbill")
     @ResponseBody
@@ -45,6 +60,8 @@ public class BillRestController {
 
     @GetMapping("/all-new")
     public List<Bill> getAllNew() {
+        keyVoucher = "";
+        productDetailCheckRequest = new ProductDetailCheckRequest("",null,null,null,null,null,null);
         Pageable pageable = PageRequest.of(0,10);
         return billService.getBillByStatusNew(pageable);
     }
@@ -53,6 +70,8 @@ public class BillRestController {
     public List<BillDetail> getBillDetail(@PathVariable("numberPage") Integer pageNumber,HttpSession session) {
         Integer idBill = (Integer) session.getAttribute("IdBill");
         Pageable pageable = PageRequest.of(pageNumber - 1, 2);
+        keyVoucher = "";
+        productDetailCheckRequest = new ProductDetailCheckRequest("",null,null,null,null,null,null);
         // Lấy danh sách BillDetail
         List<BillDetail> billDetailList = this.billDetailService.getBillDetailByIdBill(idBill, pageable).getContent();
 
@@ -189,6 +208,31 @@ public class BillRestController {
         return ResponseEntity.ok("Done");
     }
 
+    @GetMapping("/filter-color")
+    public List<Color> getFilterColor() {
+        return this.colorService.getClientNotStatus0();
+    }
+
+    @GetMapping("/filter-size")
+    public List<Size> getFilterSize() {
+        return this.sizeService.getClientNotStatus0();
+    }
+
+    @GetMapping("/filter-material")
+    public List<Material> getFilterMaterial() {
+        return this.materialService.getClientNotStatus0();
+    }
+
+    @GetMapping("/filter-manufacturer")
+    public List<Manufacturer> getFilterManufacturer() {
+        return this.manufacturerService.getClientNotStatus0();
+    }
+
+    @GetMapping("/filter-origin")
+    public List<Origin> getFilterOrigin() {
+        return this.originService.getClientNotStatus0();
+    }
+
     //goi khach hang
     @GetMapping("/client")
     public List<Customer> getClient() {
@@ -252,6 +296,47 @@ public class BillRestController {
         return this.billDetailService.getAllCategores();
     }
 
+    @PostMapping("/update-bill-type")
+    public ResponseEntity<?> getUpdateBillType(@RequestBody Map<String, String> map,HttpSession session) {
+        Bill bill = this.billService.findById((Integer) session.getAttribute("IdBill")).orElse(new Bill());
+        bill.setUpdateDate(new Date());
+        bill.setBillType(Integer.parseInt(map.get("typeBill")));
+        this.billService.save(bill);
+        return ResponseEntity.ok("Done");
+    }
+
+    //danh cho phan quan ly bill
+
+    @GetMapping("/manage-bill/{page}")
+    public List<BillResponseManage> getAllBillDistStatus0(@PathVariable("page") Integer page) {
+        Pageable pageable = PageRequest.of(page-1,5);
+        return this.billService.getAllBillByStatusDiss0(keyBillmanage,statusBillCheck,pageable).getContent();
+    }
+
+    @GetMapping("/manage-bill-max-page")
+    public Integer getMaxPageBillManage() {
+        Integer page = (int) Math.ceil((double) this.billService.getAllBillByStatusDiss0(keyBillmanage,statusBillCheck).size() / 5);
+        System.out.println("so trang toi da cua quan ly hoa don " + page);
+        return page;
+    }
+
+    @GetMapping("/status-bill-manage/{status}")
+    public ResponseEntity<?> getClickStatusBill(@PathVariable("status") Integer status) {
+        if(status == 999){
+            status = null;
+        }
+        this.statusBillCheck = status;
+        return ResponseEntity.ok("done");
+    }
+
+    @PostMapping("/bill-manage-search")
+    public ResponseEntity<?> getSearchBillManage(@RequestBody Map<String, String> billSearch) {
+        String keyword = billSearch.get("keywordBill");
+        this.keyBillmanage = keyword;
+        System.out.println("du lieu loc vc " + keyword);
+        return ResponseEntity.ok("done");
+    }
+//
 
     public void setTotalAmount(Bill bill) {
         BigDecimal total = this.billDetailService.getTotalAmountByIdBill(bill.getId());
