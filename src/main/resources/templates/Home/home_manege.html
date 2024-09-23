@@ -44,10 +44,13 @@
 
         <div class="offcanvas-header d-flex justify-content-between align-items-center border-bottom">
             <a href="#" class="offcanvas-title text-decoration-none text-white fs-3" id="offcanvasExampleLabel">
-                <div id="user-info">
-                    <p><span>Họ và tên: </span> <span id="fullName"></span></p>
-                    <p><span>Chức vụ:</span> <span id="roleName"></span></p>
-                </div>
+<!--                <div id="user-info">-->
+<!--                    <p><span>Họ và tên: </span> <span id="fullName"></span></p>-->
+<!--                    <p><span>Chức vụ:</span> <span id="roleName"></span></p>-->
+<!--                </div>-->
+                <span th:text="${username}">Người dùng</span>
+                <span th:text="${nameRole}">Chức vụ</span>
+                <p th:text="${message}"></p>
                 <br>
                 <span>Chúc bạn một ngày tốt lành!</span>
             </a>

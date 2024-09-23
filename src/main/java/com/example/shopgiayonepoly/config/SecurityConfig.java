@@ -29,7 +29,7 @@ public class SecurityConfig {
                         .requestMatchers("/bill-api/**").permitAll()
                         .requestMatchers("/register-api/**").permitAll()
                         .requestMatchers("/register").permitAll()
-                        .requestMatchers("/login").permitAll()
+                        .requestMatchers("/login","/checkSession").permitAll()
                         .requestMatchers("/logout").permitAll()
                         .anyRequest().authenticated()
                 )

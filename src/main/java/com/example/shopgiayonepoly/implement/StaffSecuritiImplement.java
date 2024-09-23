@@ -19,7 +19,7 @@ public class StaffSecuritiImplement implements UserDetailsService {
     public UserDetails loadUserByUsername(String acountOrEmail) throws UsernameNotFoundException {
         Staff staff = staffRepository.findByAcountOrEmail(acountOrEmail, acountOrEmail);
         if(staff != null){
-            String username = (staff.getAcount() != null) ? staff.getAcount() : staff.getEmail();
+            String username = (staff.getAcount() != null && !staff.getAcount().isEmpty()) ? staff.getAcount() : staff.getEmail();
             String role = staff.getRole() != null ? staff.getRole().getNameRole() : "USER";
 
             var springStaff = User.withUsername(username)
