@@ -30,6 +30,9 @@ public class Product extends Base {
     @ManyToOne
     @JoinColumn(name = "id_origin")
     private Origin origin;
+    @ManyToOne
+    @JoinColumn(name = "id_sole")
+    private Sole sole;
     @Column(name = "describe")
     private String describe;
     @ManyToMany

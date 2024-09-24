@@ -1,9 +1,9 @@
-body {
+.body-attribute {
     background-color: #f0f2f5;
     font-family: 'Poppins', sans-serif;
 }
 
-h1 {
+.h1-attribute {
     font-size: 2.8rem;
     font-weight: 700;
     text-align: center;
@@ -11,7 +11,7 @@ h1 {
     color: #3b3f5c;
 }
 
-.search-section {
+.search-section-attribute {
     background-color: #ffffff;
     padding: 25px;
     border-radius: 15px;
@@ -20,17 +20,17 @@ h1 {
     transition: box-shadow 0.3s ease-in-out;
 }
 
-.search-section:hover {
+.search-section-attribute:hover {
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
 }
 
-.search-bar {
+.search-bar-attribute {
     display: flex;
     justify-content: space-between;
     gap: 1.5rem;
 }
 
-.search-bar input {
+.search-bar-attribute input {
     flex: 1;
     padding: 12px;
     border-radius: 8px;
@@ -38,13 +38,13 @@ h1 {
     transition: all 0.3s ease;
 }
 
-.search-bar input:focus {
+.search-bar-attribute input:focus {
     border-color: #007bff;
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
     outline: none;
 }
 
-.btn-add {
+.btn-add-attribute {
     background-image: linear-gradient(45deg, #007bff, #00bfff);
     color: white;
     padding: 12px 20px;
@@ -53,91 +53,91 @@ h1 {
     transition: background-image 0.3s ease, transform 0.3s ease;
 }
 
-.btn-add:hover {
+.btn-add-attribute:hover {
     background-image: linear-gradient(45deg, #0056b3, #0099ff);
     transform: translateY(-3px);
 }
 
-.table {
+.table-attribute {
     background-color: #fff;
     border-radius: 15px;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
     overflow: hidden;
 }
 
-.table th {
+.table-attribute th {
     background-color: #007bff;
-    color: white;
+    color: #ffffff;
     text-align: center;
     font-weight: 600;
 }
 
-.table td {
+.table-attribute td {
     text-align: center;
     vertical-align: middle;
     padding: 15px;
 }
 
-.table-striped tbody tr:nth-of-type(odd) {
-    background-color: #f8f9fa;
-}
+/*.table-striped tbody tr:nth-of-type(odd) {*/
+/*    background-color: #f8f9fa;*/
+/*}*/
 
-.table tbody tr:hover {
+.table-attribute tbody tr:hover {
     background-color: #e2e6ea;
     transition: background-color 0.3s ease;
 }
 
-.icon-edit, .icon-delete, .icon-save {
+.icon-edit-attribute, .icon-delete-attribute, .icon-save-attribute {
     cursor: pointer;
     font-size: 1.2rem;
     margin-right: 15px;
     transition: color 0.3s ease, transform 0.3s ease;
 }
 
-.icon-edit {
+.icon-edit-attribute {
     color: #28a745;
 }
 
-.icon-edit:hover {
+.icon-edit-attribute:hover {
     color: #218838;
     transform: scale(1.2);
 }
 
-.icon-save:hover {
+.icon-save-attribute:hover {
     color: #218838;
     transform: scale(1.2);
 }
 
-.icon-delete {
+.icon-delete-attribute {
     color: #dc3545;
 }
 
-.icon-delete:hover {
+.icon-delete-attribute:hover {
     color: #c82333;
     transform: scale(1.2);
 }
 
 @media (max-width: 768px) {
-    .search-bar {
+    .search-bar-attribute {
         flex-direction: column;
     }
 }
 /* CSS cho biểu tượng trạng thái */
-.status-icon {
+.status-icon-attribute {
     font-size: 24px;
     cursor: pointer;
     color: #007bff; /* Màu cho trạng thái bật */
 }
 
-.status-icon.fa-toggle-on {
+.status-icon-attribute.fa-toggle-on {
     color: #28a745; /* Màu cho biểu tượng bật */
 }
 
-.status-icon.fa-toggle-off {
+.status-icon-attribute.fa-toggle-off {
     color: #dc3545; /* Màu cho biểu tượng tắt */
 }
 
-.status-icon:hover {
+.status-icon-attribute:hover {
     color: #0056b3; /* Màu khi di chuột qua */
 }
 
@@ -154,8 +154,7 @@ h1 {
     transform: translateX(100%);
     transition: all 0.5s ease-in-out;
     z-index: 1000;
-    display: flex;
-    align-items: center;
+    display: flex;align-items: center;
     gap: 10px;
 }
 
