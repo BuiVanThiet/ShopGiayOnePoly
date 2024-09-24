@@ -37,32 +37,27 @@
                 Staff staff = staffSecurityRepository.findByAcountOrEmail(userDetails.getUsername(), userDetails.getUsername());
                 if (staff != null) {
                     HttpSession session = request.getSession();
-                    session.setAttribute("loggedInUser", staff);
-                    return "redirect:/info";
+                    session.setAttribute("loggedInUser", staff); // Lưu thông tin vào session
+                    return "redirect:/info"; // Chuyển hướng đến trang thông tin
                 }
             }
             model.addAttribute("message", "Đăng nhập không thành công");
-            return "login";
+            return "Login/login"; // Trả về trang đăng nhập nếu không thành công
         }
 
         @GetMapping("/info")
         public String getHomePage(ModelMap modelMap, HttpSession session) {
             // Lấy thông tin người dùng từ session
             Staff loggedInUser = (Staff) session.getAttribute("loggedInUser");
-            System.out.println(loggedInUser);
             if (loggedInUser != null) {
                 modelMap.addAttribute("username", loggedInUser.getFullName());
-                modelMap.addAttribute("nameRole", loggedInUser.getRole().getNameRole());
-                session.setAttribute("IdStaff", loggedInUser.getId());
+                modelMap.addAttribute("nameRole", loggedInUser.getRole() != null ? loggedInUser.getRole().getNameRole() : "No role");
             } else {
                 modelMap.addAttribute("message", "Chưa có người dùng đăng nhập.");
-                session.setAttribute("IdStaff", null);
             }
-
-            // Tiếp tục xử lý khác nếu cần
-            modelMap.addAttribute("page", "/index");
-            return "index";  // Trang quản lý của bạn
+            return "Home/home_manege";
         }
+
 
 
         @GetMapping("/logout")
