@@ -36,7 +36,8 @@ public interface VoucherRepository extends JpaRepository<Voucher, Integer> {
     @Query("update Voucher set status=1 where  id =:id")
     public void restoreStatusVoucher(@Param("id") Integer id);
 
-    @Query("select v from Voucher v where v.nameVoucher like %:key% or v.codeVoucher like %:key% or v.priceReduced = :key or v.quantity = :key")
+    @Query("select v from Voucher v where v.nameVoucher like %:key% or v.codeVoucher like %:key%")
     public Page<Voucher> searchVoucherByKeyword(@Param("key") String key, Pageable pageable);
+
 
 }

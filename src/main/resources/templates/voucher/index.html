@@ -150,7 +150,6 @@
                         <div class="text-center">Tìm kiếm</div>
                     </div>
                     <div class="card-body">
-                        <form action="">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="searchStartDate">Ngày bắt đầu</label>
@@ -170,15 +169,16 @@
                                     </select>
                                 </div>
                                 <div class="col-md-12">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" placeholder="Tìm kiếm...">
-                                        <button class="btn btn-light text-dark ms-1">
-                                            <i class="bi bi-search"></i> Search
-                                        </button>
-                                    </div>
+                                    <form action="/voucher/search" method="get">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" name="key" placeholder="Tìm theo tên, mã giảm giá">
+                                            <button class="btn btn-light text-dark ms-1">
+                                                <i class="bi bi-search"></i> Search
+                                            </button>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
-                        </form>
                     </div>
                 </div>
 
