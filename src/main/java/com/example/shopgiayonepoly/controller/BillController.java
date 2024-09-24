@@ -191,6 +191,7 @@ public class BillController {
             @RequestParam("shipMoney") String shipMoney,
             @RequestParam("surplusMoney") String surplusMoney,
             @RequestParam("cashAccount") String cashAccount,
+            @RequestParam("customerShip") String customerShip,
             HttpSession session,
             HttpServletRequest request) {
 
@@ -200,11 +201,12 @@ public class BillController {
 
         Bill bill = this.billService.findById(id).orElse(null);
 
-        if(bill.getCustomer() != null) {
-            List<ClientBillInformationResponse> clientBillInformationResponses = this.billService.getClientBillInformationResponse(bill.getCustomer().getId());
-            ClientBillInformationResponse clientBillInformationResponse = clientBillInformationResponses.get(0);
-            bill.setAddRess(clientBillInformationResponse.getAddressDetail());
-        }
+//        if(bill.getCustomer() != null) {
+//            List<ClientBillInformationResponse> clientBillInformationResponses = this.billService.getClientBillInformationResponse(bill.getCustomer().getId());
+//            ClientBillInformationResponse clientBillInformationResponse = clientBillInformationResponses.get(0);
+//            bill.setAddRess(clientBillInformationResponse.getAddressDetail());
+//        }
+        bill.setAddRess(customerShip.trim());
 
         BillTotalInfornationResponse billTotalInfornationResponse = this.billService.findBillVoucherById(bill.getId());
         BigDecimal cashAll = bill.getCash().add(bill.getAcountMoney().add(bill.getShippingPrice()));
@@ -226,7 +228,11 @@ public class BillController {
         if(bill.getPaymentMethod() == 1 || bill.getBillType() == 2) {
             bill.setPaymentStatus(1);
             bill.setUpdateDate(new Date());
-            bill.setStatus(4);
+            if(bill.getBillType() == 2) {
+                bill.setStatus(1);
+            }else {
+                bill.setStatus(4);
+            }
             System.out.println("Thong tin bill(TM)" + bill.toString());
 //            this.billService.save(bill);
             if(bill.getVoucher() != null) {

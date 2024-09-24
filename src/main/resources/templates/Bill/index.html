@@ -239,6 +239,7 @@
                                         <input type="hidden" name="surplusMoney" id="textSurplusMoney" value="0.00">
                                         <input type="hidden" name="cashAccount" id="cashAccount" value="0.00">
                                         <input type="hidden" name="cash" id="cashClientText" value="0.00">
+                                        <input type="hidden" name="customerShip" id="customerShip" value="Không có">
                                     <div class="mb-3">
                                         <p>Ghi chú:</p>
                                         <textarea name="note" class="form-control" id="notePayment"></textarea>
@@ -280,13 +281,13 @@
                 </div>
                 <div class="tab-pane fade" id="all-bill-tab-pane" role="tabpanel" aria-labelledby="all-bill-tab"
                      tabindex="0">
-                    <div class="card mt-2 mb-2">
+                    <div class="card mt-2">
                         <div class="card-body">
                             <form id="formSubmitFilterBill">
                                 Tìm kiếm:
                                 <input type="text" class="form-control" id="keywordBillManage"
                                        placeholder="tìm theo tên khách hàng, mã hóa đơn, số điện thoại...">
-                                <div class="d-flex justify-content-center">
+                                <div class="d-flex justify-content-center mt-3">
                                     <button type="submit" id="filterSubmitBillManage" class="btn btn-outline-warning mb-3 me-2">
                                         <i class="bi bi-search"></i> Gửi
                                     </button>
@@ -299,22 +300,22 @@
                     </div>
                     <ul class="nav nav-underline">
                         <li class="nav-item">
-                            <button class="nav-link text-dark active" onclick="setActive(this,999)">Tất cả</button>
+                            <button class="nav-link text-dark nav-link-custom active" onclick="setActive(this,999)">Tất cả</button>
                         </li>
                         <li class="nav-item">
-                            <button class="nav-link text-dark" onclick="setActive(this,1)">Chờ xác nhận</button>
+                            <button class="nav-link text-dark nav-link-custom" onclick="setActive(this,1)">Chờ xác nhận</button>
                         </li>
                         <li class="nav-item">
-                            <button class="nav-link text-dark" onclick="setActive(this,2)">Đã xác nhận</button>
+                            <button class="nav-link text-dark nav-link-custom" onclick="setActive(this,2)">Đã xác nhận</button>
                         </li>
                         <li class="nav-item">
-                            <button class="nav-link text-dark" onclick="setActive(this,3)">Chờ giao</button>
+                            <button class="nav-link text-dark nav-link-custom" onclick="setActive(this,3)">Chờ giao</button>
                         </li>
                         <li class="nav-item">
-                            <button class="nav-link text-dark" onclick="setActive(this,4)">Hoàn thành</button>
+                            <button class="nav-link text-dark nav-link-custom" onclick="setActive(this,4)">Hoàn thành</button>
                         </li>
                         <li class="nav-item">
-                            <button class="nav-link text-dark" onclick="setActive(this,5)">Đã hủy</button>
+                            <button class="nav-link text-dark nav-link-custom" onclick="setActive(this,5)">Đã hủy</button>
                         </li>
 <!--                        <li class="nav-item">-->
 <!--                            <a class="nav-link text-dark" href="#" onclick="setActive(this)">Trả hàng</a>-->
