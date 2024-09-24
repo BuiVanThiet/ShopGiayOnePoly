@@ -22,14 +22,14 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .authorizeHttpRequests( auth -> auth
-                        .requestMatchers("/bill/**").hasRole("Quản trị viên")
+                        .requestMatchers("/bill/**").permitAll()
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/login-api/**").permitAll()
                         .requestMatchers("/ajax/**", "/css/**", "/img/**", "/js/**", "/loading/**", "/toast/**").permitAll()
                         .requestMatchers("/bill-api/**").permitAll()
                         .requestMatchers("/register-api/**").permitAll()
                         .requestMatchers("/register").permitAll()
-                        .requestMatchers("/login","/checkSession").permitAll()
+                        .requestMatchers("/login").permitAll()
                         .requestMatchers("/logout").permitAll()
                         .anyRequest().authenticated()
                 )
@@ -42,8 +42,8 @@ public class SecurityConfig {
                         .loginPage("/login")
                         .loginProcessingUrl("/login")
                         .defaultSuccessUrl("/", true)
+                        .failureUrl("/login?error=true")
                 )
-
                 .logout(config -> config
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login?logout"))

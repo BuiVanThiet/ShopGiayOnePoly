@@ -12,7 +12,6 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="/loading/styleHomeManege.css" type="text/css">
     <link rel="stylesheet" href="/css/bill/styleBill.css" type="text/css">
-    <link rel="stylesheet" href="/css/Security/noAccess.css">
     <link rel="stylesheet" th:href="@{/toast/styleToast.css}" type="text/css">
     <link rel="stylesheet" th:href="@{/css/bill/styleSelect2Tag.css}" type="text/css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
@@ -45,12 +44,9 @@
         <div class="offcanvas-header d-flex justify-content-between align-items-center border-bottom">
             <a href="#" class="offcanvas-title text-decoration-none text-white fs-3" id="offcanvasExampleLabel">
                 <div id="user-info">
-                    <p><span>Họ và tên: </span> <span id="fullName"></span></p>
-                    <p><span>Chức vụ:</span> <span id="roleName"></span></p>
+                    <span id="result"></span>
+                    <span id="userInfo"></span>
                 </div>
-<!--                <span th:text="${username}">Người dùng</span>-->
-<!--                <span th:text="${nameRole}">Chức vụ</span>-->
-<!--                <p th:text="${message}"></p>-->
                 <br>
                 <span>Chúc bạn một ngày tốt lành!</span>
             </a>
@@ -175,7 +171,7 @@
                 </a>
                 <!-- Hiển thị nút Đăng nhập nếu người dùng chưa đăng nhập -->
                 <a class="text-decoration-none text-white fs-3 bg-transparent"
-                   th:if="${#authorization.expression('!isAuthenticated()')}" th:href="@{/login}">
+                   th:if="${#authorization.expression('!isAuthenticated()')}" th:href="@{/login/login}">
                     Đăng nhập
                 </a>
             </p>

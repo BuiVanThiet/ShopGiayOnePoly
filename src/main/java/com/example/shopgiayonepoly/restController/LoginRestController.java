@@ -12,6 +12,8 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -27,37 +29,30 @@ public class LoginRestController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody loginRequest loginRequest, HttpSession session) {
         Staff staff = staffRepository.findByAcountOrEmail(loginRequest.getAccount(), loginRequest.getAccount());
-
         if (staff != null && loginRequest.getPassword().equals(staff.getPassword())) {
             // Đăng nhập thành công, lưu thông tin vào session
             session.setAttribute("loggedInUser", staff);
+            System.out.println("Session ID: " + session.getId());
 
             loginReponse response = new loginReponse(staff.getFullName(), staff.getRole() != null ? staff.getRole().getNameRole() : "No role");
             return ResponseEntity.ok(response);
-
         } else {
             // Đăng nhập thất bại
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login thất bại");
         }
-    }
+    }   
 
     @GetMapping("/info")
-    public ResponseEntity<Map<String, String>> getUserInfo(Principal principal) {
-        if (principal == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+    public ResponseEntity<?> getUserInfo(HttpSession session) {
+        Staff loggedInUser = (Staff) session.getAttribute("loggedInUser");
+        if (loggedInUser != null) {
+            loginReponse response = new loginReponse(loggedInUser.getFullName(), loggedInUser.getRole().getNameRole());
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Chưa đăng nhập");
         }
-
-        Staff staff = staffRepository.findByAcountOrEmail(principal.getName(),principal.getName());
-        if (staff == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-
-        Map<String, String> userInfo = new HashMap<>();
-        userInfo.put("fullName", staff.getFullName());
-        userInfo.put("roleName", staff.getRole().getNameRole());
-      
-        return ResponseEntity.ok(userInfo);
     }
+
 
 }
 
