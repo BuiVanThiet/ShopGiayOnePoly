@@ -29,6 +29,8 @@ public class ProductDetail extends Base {
     private Size size;
     @Column(name = "price")
     private BigDecimal price;
+    @Column(name = "import_price")
+    private BigDecimal import_price;
     @Column(name = "quantity")
     private Integer quantity;
     @Column(name = "describe")
