@@ -2,6 +2,7 @@ var provinceTransport;
 var districtTransport;
 var wardTransport;
 var totalBill;
+var shipPrice = 0;
 function initializeLocationDropdowns(provinceSelectId, districtSelectId, wardSelectId,districtSelectContainerID,wardSelectContainerID, provinceID, districtID, wardID) {
     const provinceSelect = document.getElementById(provinceSelectId);
     const districtSelect = document.getElementById(districtSelectId);
@@ -29,6 +30,9 @@ function initializeLocationDropdowns(provinceSelectId, districtSelectId, wardSel
                 const selectedProvinceID = this.value;
                 $('#shipMoney').text('0' + ' VNĐ');
                 $('#moneyTransport').val(0.00)
+                shipPrice = 0;
+                btnCreateBill.disabled = true;
+                paymentInformation();
 
                 provinceTransport = this.value;
 
@@ -60,6 +64,9 @@ function initializeLocationDropdowns(provinceSelectId, districtSelectId, wardSel
                                 const selectedDistrictID = this.value;
                                 $('#shipMoney').text('0' + ' VNĐ');
                                 $('#moneyTransport').val(0.00)
+                                btnCreateBill.disabled = true;
+                                shipPrice = 0;
+                                paymentInformation();
 
                                 districtTransport = this.value;
 
@@ -102,6 +109,8 @@ function initializeLocationDropdowns(provinceSelectId, districtSelectId, wardSel
                                 } else {
                                     $('#shipMoney').text(0 + ' VNĐ');
                                     $('#moneyTransport').val(0.00)
+                                    btnCreateBill.disabled = true;
+                                    shipPrice = 0;
 
                                     wardTransport = null;
                                     wardSelectContainer.style.display = 'none';
@@ -290,6 +299,10 @@ function totalShip(province, district, ward) {
                             console.log(response.data);
                             $('#shipMoney').text(response.data.total.toLocaleString('en-US') + ' VNĐ');
                             $('#moneyTransport').val(response.data.total)
+                            shipPrice = response.data.total;
+                            btnCreateBill.disabled = false;
+                            setClientShip(nameCustomer,numberPhoneCustomer,provinceTransport,districtTransport,wardTransport,addRessDetailCustomer)
+                            paymentInformation();
                         },
                         error: function (xhr) {
                             console.log('Lỗi tính tiền ship: ' + xhr.responseText);

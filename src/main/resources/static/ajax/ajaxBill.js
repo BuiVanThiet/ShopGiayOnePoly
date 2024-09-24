@@ -105,7 +105,7 @@ function paymentInformation() {
             // Cập nhật thông tin vào các phần tử HTML
             $('#subTotal').text(response.totalAmount.toLocaleString('en-US') + ' VNĐ');
             $('#discountAmount').text(response.discount.toLocaleString('en-US') + ' VNĐ');
-            $('#totalAmount').text(response.finalAmount.toLocaleString('en-US') + ' VNĐ');
+            $('#totalAmount').text((response.finalAmount+shipPrice).toLocaleString('en-US') + ' VNĐ');
 
             totalBill = response.finalAmount;
 
