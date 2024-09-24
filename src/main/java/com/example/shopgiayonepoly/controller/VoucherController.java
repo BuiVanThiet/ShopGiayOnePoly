@@ -196,7 +196,20 @@ public class VoucherController {
     }
 
     @GetMapping("/search")
-    public String searchVoucherByKey(@RequestParam("key")String key){
-        return "redirect:/voucher/list";
+    public String searchVoucherByKey(@RequestParam("key")String key,Model model,
+                                     @RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber,
+                                     @RequestParam(name = "pageNumberDelete", defaultValue = "0") Integer pageNumberDelete){
+
+        Pageable pageableSearch = PageRequest.of(pageNumber,pageSize);
+        Page<Voucher> pageVoucher = voucherService.searchVoucherByKeyword(key,pageableSearch);
+
+        Pageable pageableDelete = PageRequest.of(pageNumberDelete,pageSize);
+        Page<Voucher> pageVoucherDelete = voucherService.getAllVoucherDeleteByPage(pageableDelete);
+
+        model.addAttribute("pageVoucher", pageVoucher);
+
+        model.addAttribute("pageVoucherDelete", pageVoucherDelete);
+        model.addAttribute("voucher", new VoucherRequest());
+        return "voucher/index";
     }
 }
