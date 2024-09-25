@@ -26,8 +26,7 @@ public class VoucherController {
     private static final int pageSize = 5;
 
     @GetMapping("/list")
-    public String getListVoucherByPage(Model model, @RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber,
-                                       @RequestParam(name = "pageNumberDelete", defaultValue = "0") Integer pageNumberDelete) {
+    public String getListVoucherByPage(Model model, @RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber, @RequestParam(name = "pageNumberDelete", defaultValue = "0") Integer pageNumberDelete) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<Voucher> pageVoucher = voucherService.getAllVoucherByPage(pageable);
 
@@ -42,11 +41,7 @@ public class VoucherController {
 
 
     @PostMapping("/create")
-    public String createNewVoucher(@Valid @ModelAttribute("voucher") VoucherRequest voucherRequest,
-                                   BindingResult result, Model model,
-                                   RedirectAttributes redirectAttributes,
-                                   @RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber,
-                                   @RequestParam(name = "pageNumberDelete", defaultValue = "0") Integer pageNumberDelete) {
+    public String createNewVoucher(@Valid @ModelAttribute("voucher") VoucherRequest voucherRequest, BindingResult result, Model model, RedirectAttributes redirectAttributes, @RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber, @RequestParam(name = "pageNumberDelete", defaultValue = "0") Integer pageNumberDelete) {
 
         BigDecimal zero = BigDecimal.ZERO;
         BigDecimal oneHundred = new BigDecimal("100");
@@ -88,8 +83,7 @@ public class VoucherController {
         }
 
 // Kiểm tra pricesApply và pricesMax
-        if (voucherRequest.getPricesApply() != null && voucherRequest.getPricesMax() != null &&
-                voucherRequest.getPricesApply().compareTo(voucherRequest.getPricesMax()) < 0) {
+        if (voucherRequest.getPricesApply() != null && voucherRequest.getPricesMax() != null && voucherRequest.getPricesApply().compareTo(voucherRequest.getPricesMax()) < 0) {
             result.rejectValue("pricesApply", "error.voucher", "Giá trị áp dụng phải lớn hơn giá trị giảm tối đa!");
         }
 
@@ -136,8 +130,7 @@ public class VoucherController {
     }
 
     @PostMapping("/update")
-    public String updateVoucher(RedirectAttributes redirectAttributes, @Valid @ModelAttribute("voucher") VoucherRequest voucherRequest,
-                                BindingResult result, Model model) {
+    public String updateVoucher(RedirectAttributes redirectAttributes, @Valid @ModelAttribute("voucher") VoucherRequest voucherRequest, BindingResult result, Model model) {
         BigDecimal zero = BigDecimal.ZERO;
         BigDecimal oneHundred = new BigDecimal("90");
         BigDecimal tenHundred = new BigDecimal("10000");
@@ -178,8 +171,7 @@ public class VoucherController {
         }
 
 // Kiểm tra pricesApply và pricesMax
-        if (voucherRequest.getPricesApply() != null && voucherRequest.getPricesMax() != null &&
-                voucherRequest.getPricesApply().compareTo(voucherRequest.getPricesMax()) < 0) {
+        if (voucherRequest.getPricesApply() != null && voucherRequest.getPricesMax() != null && voucherRequest.getPricesApply().compareTo(voucherRequest.getPricesMax()) < 0) {
             result.rejectValue("pricesApply", "error.voucher", "Giá trị áp dụng phải lớn hơn giá trị giảm tối đa!");
         }
         if (result.hasErrors()) {
@@ -196,14 +188,12 @@ public class VoucherController {
     }
 
     @GetMapping("/search")
-    public String searchVoucherByKey(@RequestParam("key")String key,Model model,
-                                     @RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber,
-                                     @RequestParam(name = "pageNumberDelete", defaultValue = "0") Integer pageNumberDelete){
+    public String searchVoucherByKey(@RequestParam("key") String key, Model model, @RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber, @RequestParam(name = "pageNumberDelete", defaultValue = "0") Integer pageNumberDelete) {
 
-        Pageable pageableSearch = PageRequest.of(pageNumber,pageSize);
-        Page<Voucher> pageVoucher = voucherService.searchVoucherByKeyword(key,pageableSearch);
+        Pageable pageableSearch = PageRequest.of(pageNumber, pageSize);
+        Page<Voucher> pageVoucher = voucherService.searchVoucherByKeyword(key, pageableSearch);
 
-        Pageable pageableDelete = PageRequest.of(pageNumberDelete,pageSize);
+        Pageable pageableDelete = PageRequest.of(pageNumberDelete, pageSize);
         Page<Voucher> pageVoucherDelete = voucherService.getAllVoucherDeleteByPage(pageableDelete);
 
         model.addAttribute("pageVoucher", pageVoucher);
@@ -213,23 +203,28 @@ public class VoucherController {
         return "voucher/index";
     }
 
-    @GetMapping("/search")
-    public String searchVoucherByDateRange(@RequestParam("startDate")LocalDate startDate,
-                                           @RequestParam("endDate")LocalDate endDate,
-                                           Model model,
-                                     @RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber,
-                                     @RequestParam(name = "pageNumberDelete", defaultValue = "0") Integer pageNumberDelete){
+    @GetMapping("/search-date")
+    public String searchVoucherByDateRange(@RequestParam("startDate") LocalDate startDate, @RequestParam("endDate") LocalDate endDate, Model model, @RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber, @RequestParam(name = "pageNumberDelete", defaultValue = "0") Integer pageNumberDelete) {
 
-        Pageable pageableSearch = PageRequest.of(pageNumber,pageSize);
-        Page<Voucher> pageVoucher = voucherService.searchVoucherByDateRange(pageableSearch,startDate,endDate);
+        Pageable pageableSearch = PageRequest.of(pageNumber, pageSize);
+        Page<Voucher> pageVoucher;
 
-        Pageable pageableDelete = PageRequest.of(pageNumberDelete,pageSize);
+        if (startDate != null && endDate != null) {
+            pageVoucher = voucherService.searchVoucherByDateRange(pageableSearch, startDate, endDate);
+        } else {
+            pageVoucher = voucherService.getAllVoucherByPage(pageableSearch);
+        }
+
+        Pageable pageableDelete = PageRequest.of(pageNumberDelete, pageSize);
         Page<Voucher> pageVoucherDelete = voucherService.getAllVoucherDeleteByPage(pageableDelete);
 
         model.addAttribute("pageVoucher", pageVoucher);
-
         model.addAttribute("pageVoucherDelete", pageVoucherDelete);
         model.addAttribute("voucher", new VoucherRequest());
+        model.addAttribute("startDate", startDate);
+        model.addAttribute("endDate", endDate);
+
         return "voucher/index";
     }
+
 }
