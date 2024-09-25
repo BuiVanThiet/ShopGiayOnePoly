@@ -16,10 +16,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
-import java.util.HashMap;
-import java.util.Map;
-
 @RestController
 @RequestMapping("/login-api")
 public class LoginRestController {
@@ -32,6 +28,7 @@ public class LoginRestController {
         if (staff != null && loginRequest.getPassword().equals(staff.getPassword())) {
             // Đăng nhập thành công, lưu thông tin vào session
             session.setAttribute("loggedInUser", staff);
+            System.out.println(staff.toString());
             System.out.println("Session ID: " + session.getId());
 
             loginReponse response = new loginReponse(staff.getFullName(), staff.getRole() != null ? staff.getRole().getNameRole() : "No role");
@@ -40,7 +37,7 @@ public class LoginRestController {
             // Đăng nhập thất bại
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login thất bại");
         }
-    }   
+    }
 
     @GetMapping("/info")
     public ResponseEntity<?> getUserInfo(HttpSession session) {
