@@ -212,4 +212,24 @@ public class VoucherController {
         model.addAttribute("voucher", new VoucherRequest());
         return "voucher/index";
     }
+
+    @GetMapping("/search")
+    public String searchVoucherByDateRange(@RequestParam("startDate")LocalDate startDate,
+                                           @RequestParam("endDate")LocalDate endDate,
+                                           Model model,
+                                     @RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber,
+                                     @RequestParam(name = "pageNumberDelete", defaultValue = "0") Integer pageNumberDelete){
+
+        Pageable pageableSearch = PageRequest.of(pageNumber,pageSize);
+        Page<Voucher> pageVoucher = voucherService.searchVoucherByDateRange(pageableSearch,startDate,endDate);
+
+        Pageable pageableDelete = PageRequest.of(pageNumberDelete,pageSize);
+        Page<Voucher> pageVoucherDelete = voucherService.getAllVoucherDeleteByPage(pageableDelete);
+
+        model.addAttribute("pageVoucher", pageVoucher);
+
+        model.addAttribute("pageVoucherDelete", pageVoucherDelete);
+        model.addAttribute("voucher", new VoucherRequest());
+        return "voucher/index";
+    }
 }

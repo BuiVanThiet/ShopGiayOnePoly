@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -70,5 +71,10 @@ public class VoucherServiceImplement implements VoucherService {
     @Override
     public Page<Voucher> searchVoucherByKeyword(String key, Pageable pageable) {
         return voucherRepository.searchVoucherByKeyword(key, pageable);
+    }
+
+    @Override
+    public Page<Voucher> searchVoucherByDateRange(Pageable pageable, LocalDate startDate, LocalDate endDate) {
+        return voucherRepository.searchVoucherByDateRange(pageable,startDate,endDate);
     }
 }
