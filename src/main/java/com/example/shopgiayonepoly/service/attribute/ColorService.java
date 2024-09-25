@@ -25,6 +25,8 @@ public interface ColorService {
 
     List<Color> getClientNotStatus0();
 
+    List<Color> getColorDelete();
+
     void updateStatus(int id, int status);
 
     void updateColor(int id, String codeColor, String nameColor);

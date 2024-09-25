@@ -53,6 +53,11 @@ public class ColorImplement implements ColorService {
     }
 
     @Override
+    public List<Color> getColorDelete() {
+        return this.colorRepository.getColorDelete();
+    }
+
+    @Override
     public void updateStatus(int id, int status) {
         Optional<Color> optionalColor = colorRepository.findById(id);
         if (optionalColor.isPresent()) {
