@@ -25,8 +25,8 @@ function showNotification() {
         }, 7000); // Hiển thị thông báo trong 7 giây
     });
 }
-
-window.onload = showNotification;
+//
+// window.onload = showNotification;
 
 
 

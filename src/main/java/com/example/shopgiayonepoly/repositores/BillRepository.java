@@ -67,7 +67,7 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
             "WHERE (SELECT b.totalAmount FROM Bill b WHERE b.id = :idBill) >= v.pricesApply " +
             "AND v.status <> 0 " +
             "AND (v.id <> (SELECT b.voucher.id FROM Bill b WHERE b.id = :idBill) OR (SELECT b.voucher.id FROM Bill b WHERE b.id = :idBill) IS NULL) " +
-            "and concat(v.nameVoucher+v.codeVoucher) LIKE %:keyword%")
+            "and concat(v.nameVoucher,v.codeVoucher) LIKE %:keyword%")
     Page<Voucher> getVoucherByBill(@Param("idBill") Integer idBill, @Param("keyword") String keyword, Pageable pageable);
     @Query("SELECT v FROM Voucher v " +
             "WHERE (SELECT b.totalAmount FROM Bill b WHERE b.id = :idBill) >= v.pricesApply " +
@@ -91,8 +91,9 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
         LEFT JOIN bill.staff staff
         LEFT JOIN bill.voucher voucher
         where 
+        bill.status <> 0 and
         (concat(COALESCE(bill.codeBill, ''), COALESCE(bill.customer.fullName, ''), COALESCE(bill.customer.numberPhone, '')) like %:nameCheck%)
-         and (:statusCheck is null or (bill.status = :statusCheck and bill.status <> 0))
+         and (:statusCheck is null or (bill.status = :statusCheck))
     """)
     Page<BillResponseManage> getAllBillByStatusDiss0(@Param("nameCheck") String nameCheck, @Param("statusCheck") Integer statusCheck, Pageable pageable);
 
@@ -108,8 +109,9 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
         LEFT JOIN bill.staff staff
         LEFT JOIN bill.voucher voucher
         where 
+         bill.status <> 0 and
          (concat(COALESCE(bill.codeBill, ''), COALESCE(bill.customer.fullName, ''), COALESCE(bill.customer.numberPhone, '')) like %:nameCheck%)
-         and (:statusCheck is null or (bill.status = :statusCheck and bill.status <> 0))
+         and (:statusCheck is null or (bill.status = :statusCheck))
     """)
     List<BillResponseManage> getAllBillByStatusDiss0(@Param("nameCheck") String nameCheck, @Param("statusCheck") Integer statusCheck);
  }

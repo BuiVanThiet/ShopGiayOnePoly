@@ -89,9 +89,9 @@ document.getElementById('flexSwitchCheckDefault').addEventListener('change', fun
             btnCreateBill.disabled = true;
         }
         document.getElementById('formMoney').style.display = 'block';
-        document.getElementById('moneyTransport').value = 0.00;
+        document.getElementById('moneyTransport').value = 0;
         shipSpan.style.display = 'none'; // Hiển thị lại thẻ div khi checkbox không được chọn
-        $('#moneyTransport').val(0.00)
+        $('#moneyTransport').val(0)
         shipPrice = 0;
         paymentInformation();
         dynamicContent.innerHTML = `
