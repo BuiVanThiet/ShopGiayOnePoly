@@ -106,3 +106,123 @@ function deleteByID(element) {
         });
     }
 }
+document.querySelector('.attribute-btn-listDelete').addEventListener('click', function () {
+    fetchDeletedColors();
+
+    // Ẩn nút "Danh sách đã xóa"
+    this.style.display = 'none';
+
+    // Hiển thị nút "Danh sách hoạt động"
+    document.querySelector('.attribute-btn-listActive').style.display = 'inline-block';
+});
+
+document.querySelector('.attribute-btn-listActive').addEventListener('click', function () {
+    fetchActiveColors();  // Bạn có thể tạo hàm này để lấy danh sách màu hoạt động
+
+    // Ẩn nút "Danh sách hoạt động"
+    this.style.display = 'none';
+
+    // Hiển thị lại nút "Danh sách đã xóa"
+    document.querySelector('.attribute-btn-listDelete').style.display = 'inline-block';
+});
+
+function fetchDeletedColors() {
+    // Thay URL dưới đây bằng endpoint của bạn để lấy danh sách màu đã xóa
+    fetch('http://localhost:8080/attribute/color/delete')
+        .then(response => response.json())
+        .then(data => {
+            if (data.length > 0) {
+                // Xóa các hàng cũ trong tbody
+                const tbody = document.querySelector('#colorTable tbody');
+                tbody.innerHTML = '';
+
+                // Lặp qua các màu đã xóa và thêm các hàng vào bảng
+                data.forEach((color, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                            <td>${color.codeColor}</td>
+                            <td>${color.nameColor}</td>
+                            <td>${color.createDate}</td>
+                            <td>${color.updateDate}</td>
+                            <td>
+                                <i class="attribute-status-icon status-icon fas ${color.status == 1 ? 'fa-toggle-on' : 'fa-toggle-off'}" 
+                                   data-status="${color.status}"></i>
+                            </td>
+                            <td>
+                                <a href="#" onclick="restoreColor(${color.id})">
+                                    <i class="attribute-icon-restore fas fa-undo" title="Khôi phục"></i>
+                                </a>
+                            </td>
+                        `;
+                    tbody.appendChild(row);
+                });
+            } else {
+                alert("Không có màu nào đã bị xóa.");
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching deleted colors:', error);
+        });
+}
+document.querySelector('.attribute-btn-listActive').addEventListener('click', function () {
+    fetchActiveColors();
+
+    // Ẩn nút "Danh sách hoạt động"
+    this.style.display = 'none';
+
+    // Hiển thị lại nút "Danh sách đã xóa"
+    document.querySelector('.attribute-btn-listDelete').style.display = 'inline-block';
+});
+
+function fetchActiveColors() {
+    // Thay URL dưới đây bằng endpoint của bạn để lấy danh sách màu đang hoạt động
+    fetch('http://localhost:8080/attribute/color/active')
+        .then(response => response.json())
+        .then(data => {
+            if (data.length > 0) {
+                // Xóa các hàng cũ trong tbody
+                const tbody = document.querySelector('#colorTable tbody');
+                tbody.innerHTML = '';
+
+                // Lặp qua các màu đang hoạt động và thêm các hàng vào bảng
+                data.forEach((color, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                            <td>${color.codeColor}</td>
+                            <td>${color.nameColor}</td>
+                            <td>${color.createDate}</td>
+                            <td>${color.updateDate}</td>
+                            <td>
+                                <i class="attribute-status-icon status-icon fas ${color.status == 1 ? 'fa-toggle-on' : 'fa-toggle-off'}" 
+                                   data-status="${color.status}"></i>
+                            </td>
+                            <td>
+                                <a href="#" onclick="editRow(${index})" id="edit-btn-${index}">
+                                    <i class="attribute-icon-edit fas fa-edit" title="Edit"></i>
+                                </a>
+                                <a href="#" onclick="saveRow(${index})" style="display:none;" id="save-btn-${index}">
+                                    <i class="attribute-icon-save fas fa-save" title="Save"></i>
+                                </a>
+                                <a href="#" onclick="deleteByID(this)" data-index="${index}">
+                                    <i class="attribute-icon-delete fas fa-trash" title="Delete"></i>
+                                </a>
+                            </td>
+                        `;
+                    tbody.appendChild(row);
+                });
+            } else {
+                alert("Không có màu nào đang hoạt động.");
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching active colors:', error);
+        });
+}
+
+
+
+function restoreColor(colorId) {
+    // Logic để khôi phục màu bị xóa (thực hiện khi người dùng bấm vào icon khôi phục)
+    alert('Khôi phục màu có ID: ' + colorId);
+}
+

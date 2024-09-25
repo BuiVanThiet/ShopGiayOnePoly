@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -27,6 +28,18 @@ public class ColorController {
         model.addAttribute("colorList", colorService.getClientNotStatus0());
         model.addAttribute("colorAdd", new Color());
         return "Attribute/color";
+    }
+
+    @GetMapping("/color/delete")
+    public ResponseEntity<List<Color>> listColorDelete() {
+        List<Color> deletedColors = colorService.getColorDelete();
+        return new ResponseEntity<>(deletedColors, HttpStatus.OK);
+    }
+
+    @GetMapping("/color/active")
+    public ResponseEntity<List<Color>> listActive() {
+        List<Color> listColorActive = colorService.getClientNotStatus0();
+        return new ResponseEntity<>(listColorActive, HttpStatus.OK);
     }
 
     @GetMapping("/popup")

@@ -2,40 +2,32 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{Home/home_manege}">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Product Management Page">
     <meta name="keywords" content="ecommerce, product management, online store">
     <title>Quản lý màu sắc</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-
-<!--    <link rel="stylesheet" href="/css/popup/popup.css">-->
-
 </head>
-
 <body class="body-attribute">
 <div layout:fragment="content">
     <article class="container-xxl mt-5">
-        <button id="notifyBtn">Show Notification</button>
         <h1 class="h1-attribute">Quản lý màu sắc</h1>
-        <div id="notification" class="notification hidden">
-            <div class="icon">🔔</div>
-            <div class="message">Vinh đẹp trai</div>
-        </div>
         <form th:object="${colorAdd}" method="post" action="/attribute/color/add">
-            <div class="search-section search-section-attribute">
-                <div class="search-bar search-bar-attribute">
+            <div class="attribute-search-section search-section ">
+                <div class="attribute-search-bar search-bar ">
                     <input id="codeColorInput" th:field="*{codeColor}" type="text" placeholder="Mã màu sắc" required/>
                     <input id="nameColorInput" th:field="*{nameColor}" type="text" placeholder="Tên màu sắc" required/>
-                    <button  type="submit" class="btn-add btn-add-attribute">Thêm màu sắc</button>
+                    <button type="submit" class="attribute-btn-add btn-add">Thêm màu sắc</button>
                 </div>
             </div>
         </form>
-
-        <table id="colorTable" class="table table-bordered table-striped table-hover ">
+        <div style="text-align: right;">
+            <button type="submit" class="attribute-btn-listDelete">Danh sách đã xóa</button>
+            <button type="submit" class="attribute-btn-listActive" style="display: none;">Danh sách hoạt động</button>
+        </div>
+        <br>
+        <table id="colorTable" class="attribute-table table table-bordered table-striped table-hover ">
             <thead>
             <tr>
                 <th>Mã màu sắc</th>
@@ -61,25 +53,24 @@
                 <td>[[${color.createDate}]]</td>
                 <td>[[${color.updateDate}]]</td>
                 <td>
-                    <i class="status-icon status-icon-attribute fas"
+                    <i class="attribute-status-icon status-icon fas"
                        th:classappend="${color.status == 1 ? 'fa-toggle-on' : (color.status == 2 ? 'fa-toggle-off' : '')}"
                        th:data-status="${color.status}"
                        th:data-index="${iterStat.index}"
                        onclick="toggleStatus(this)"
                        title="Toggle Status"></i>
                 </td>
-
                 <td>
                     <a href="#" th:onclick="'editRow(' + ${iterStat.index} + ')'"
                        th:id="'edit-btn-' + ${iterStat.index}">
-                        <i class="icon-edit icon-edit-attribute fas fa-edit" title="Edit"></i>
+                        <i class="attribute-icon-edit icon-edit fas fa-edit" title="Edit"></i>
                     </a>
                     <a href="#" th:onclick="'saveRow(' + ${iterStat.index} + ')'" style="display:none;"
                        th:id="'save-btn-' + ${iterStat.index}">
-                        <i class="icon-save icon-save-attribute fas fa-save" title="Save"></i>
+                        <i class="attribute-icon-save icon-save fas fa-save" title="Save"></i>
                     </a>
                     <a href="#" th:data-index="${iterStat.index}" onclick="deleteByID(this)">
-                        <i class="icon-delete icon-delete-attribute fas fa-trash" title="Delete"></i>
+                        <i class="attribute-icon-delete icon-delete fas fa-trash" title="Delete"></i>
                     </a>
                 </td>
             </tr>
@@ -87,9 +78,5 @@
         </table>
     </article>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-
 </body>
-
 </html>
