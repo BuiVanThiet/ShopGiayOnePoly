@@ -110,7 +110,9 @@ function paymentInformation() {
             totalBill = response.finalAmount;
 
             $('#notePayment').text(response.note);
-            $('#cashAccount').val(response.finalAmount);
+            if(payMethodChecked === 2 || payMethodChecked === 3) {
+                $('#cashAccount').val(response.finalAmount);
+            }
             var totalCash = document.getElementById('totalCash');
             totalCash.value = response.finalAmount;
             if (response.voucherId) {
@@ -175,24 +177,6 @@ function loadClientsIntoSelect() {
 }
 
 var payMethodUpLoad = 0;
-// Đợi cho trang tải xong
-window.onload = function() {
-    // Lấy phần tử nút theo ID và gán sự kiện click
-    document.getElementById('cash').addEventListener('click', function() {
-        payMethodUpLoad = 1;
-        uploadPayMethod()
-    });
-
-    document.getElementById('accountMoney').addEventListener('click', function() {
-        payMethodUpLoad = 2;
-        uploadPayMethod()
-    });
-
-    document.getElementById('accountMoneyAndCash').addEventListener('click', function() {
-        payMethodUpLoad = 3;
-        uploadPayMethod()
-    });
-};
 
 function uploadPayMethod() {
     $.ajax({
@@ -623,7 +607,7 @@ function getAllBilByStatus(value) {
                             <td>${bill.billType == 1 ? 'Tại quầy' : 'Giao hàng'}</td>
                             <td>${formattedDateTime}</td>
                             <td>
-                                <a href="" class="btn btn-primary">Xem chi tiết</a>
+                                <a href="/bill/bill-status-index/${bill.id}" class="btn btn-primary">Xem chi tiết</a>
                             </td>
                         </tr>
                     `);
@@ -703,7 +687,7 @@ $(document).ready(function () {
         var $numberDiv = $(this).siblings('.number');
         var value = parseInt($numberDiv.text(), 10);
         $numberDiv.text(value + 1);
-
+        loadProduct(1);
         // Cập nhật giá trị mới trên server
         updateQuantity($(this).closest('.custom-number-input').data('id'), $numberDiv.text());
     });
@@ -713,7 +697,7 @@ $(document).ready(function () {
         var value = parseInt($numberDiv.text(), 10);
         if (value > 0) {
             $numberDiv.text(value - 1);
-
+            loadProduct(1);
             // Cập nhật giá trị mới trên server
             updateQuantity($(this).closest('.custom-number-input').data('id'), $numberDiv.text());
         }

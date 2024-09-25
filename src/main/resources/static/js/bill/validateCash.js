@@ -38,8 +38,8 @@ if (cashClient.value.trim() === "" && payMethodChecked === 1 || payMethodChecked
     btnCreateBill.disabled = true;
     surplusMoneySpan.style.display = 'none';
     surplusMoney.innerText = '';
-    textSurplusMoney.value = '0.00';
-    cashClientText.value = '0.00';
+    textSurplusMoney.value = '0';
+    cashClientText.value = '0';
 }
 
 function validate(cash) {
@@ -53,64 +53,71 @@ function validate(cash) {
         btnCreateBill.disabled = true;
         surplusMoneySpan.style.display = 'none';
         surplusMoney.innerText = '';
-        textSurplusMoney.value = '0.00';
-        cashClientText.value = '0.00';
-
-        return;
-    }
-
-    var totalAmountNumber = parseNumber(totalAmount.value);
-    var cashClientNumber = parseNumber(cashClientValue);
-    console.log(cashClientValue)
-    // Kiểm tra nếu dữ liệu đầu vào không phải là số
-    if (isNaN(cashClientValue)) {
-        formErorrCash.style.display = 'block';
-        erorrCash.innerText = 'Đây không phải là số!';
-        btnCreateBill.disabled = true;
-        surplusMoneySpan.style.display = 'none';
-        surplusMoney.innerText = '';
-        textSurplusMoney.value = '0.00';
-        cashClientText.value = cashClientValue;
-
-    } else {
-        console.log('Neu la so thi vao day');
-
-        // // Kiểm tra nếu dữ liệu là số nhỏ hơn 0
-        // if (cashClientNumber < 500) {
-        //     formErorrCash.style.display = 'block';
-        //     erorrCash.innerText = 'Tiền nhập không được nhỏ hơn 500 VNĐ!';
-        //     btnCreateBill.disabled = true;
-        // }
-        // Kiểm tra nếu số tiền nhập vào lớn hơn hoặc nhỏ hơn tổng tiền
-         if (cashClientNumber < totalAmountNumber && parseNumber(payMethod.value) === 1) {
+        textSurplusMoney.value = '0';
+        cashClientText.value = '0';
+    }else {
+        var totalAmountNumber = parseNumber(totalAmount.value);
+        var cashClientNumber = parseNumber(cashClientValue);
+        console.log(cashClientValue)
+        // Kiểm tra nếu dữ liệu đầu vào không phải là số
+        if (isNaN(cashClientValue)) {
             formErorrCash.style.display = 'block';
-            erorrCash.innerText = 'Tiền nhập vào phải bằng với hóa đơn!';
+            erorrCash.innerText = 'Đây không phải là số!';
             btnCreateBill.disabled = true;
             surplusMoneySpan.style.display = 'none';
             surplusMoney.innerText = '';
-             textSurplusMoney.value = '0.00';
-             cashClientText.value = cashClientValue;
+            textSurplusMoney.value = '0';
+            cashClientText.value = cashClientValue;
 
-         }else if (cashClientNumber > totalAmountNumber ) {
-            formErorrCash.style.display = 'none';
-            erorrCash.innerText = '';
-            btnCreateBill.disabled = false;
-            surplusMoneySpan.style.display = 'block';
-            surplusMoney.innerText = formatNumber(cashClientNumber - totalAmountNumber);
-             textSurplusMoney.value = cashClientNumber - totalAmountNumber;
-             cashClientText.value = cashClientNumber;
-             cashAccount.value = '0.00'
         } else {
-            formErorrCash.style.display = 'none';
-            erorrCash.innerText = '';
-            btnCreateBill.disabled = false;
-            surplusMoneySpan.style.display = 'none';
-            surplusMoney.innerText = '';
-            textSurplusMoney.value = '0.00';
-            cashClientText.value = cashClientNumber;
-            cashAccount.value = totalAmountNumber - cashClientNumber;
+            console.log('Neu la so thi vao day');
+            // // Kiểm tra nếu dữ liệu là số nhỏ hơn 0
+            // if (cashClientNumber < 500) {
+            //     formErorrCash.style.display = 'block';
+            //     erorrCash.innerText = 'Tiền nhập không được nhỏ hơn 500 VNĐ!';
+            //     btnCreateBill.disabled = true;
+            // }
+            // Kiểm tra nếu số tiền nhập vào lớn hơn hoặc nhỏ hơn tổng tiền
+            if(cashClientNumber < 1000) {
+                formErorrCash.style.display = 'block';
+                erorrCash.innerText = 'Tiền nhập vào không được thấp hơn 1,000 VNĐ!';
+                btnCreateBill.disabled = true;
+                surplusMoneySpan.style.display = 'none';
+                surplusMoney.innerText = '';
+                textSurplusMoney.value = '0';
+                cashClientText.value = cashClientValue;
+            }
+            else if (cashClientNumber < totalAmountNumber && parseNumber(payMethod.value) === 1) {
+                formErorrCash.style.display = 'block';
+                erorrCash.innerText = 'Tiền nhập vào phải bằng với hóa đơn!';
+                btnCreateBill.disabled = true;
+                surplusMoneySpan.style.display = 'none';
+                surplusMoney.innerText = '';
+                textSurplusMoney.value = '0';
+                cashClientText.value = cashClientValue;
 
-         }
+            }else if (cashClientNumber > totalAmountNumber ) {
+                formErorrCash.style.display = 'none';
+                erorrCash.innerText = '';
+                btnCreateBill.disabled = false;
+                surplusMoneySpan.style.display = 'block';
+                surplusMoney.innerText = formatNumber(cashClientNumber - totalAmountNumber);
+                textSurplusMoney.value = cashClientNumber - totalAmountNumber;
+                cashClientText.value = cashClientNumber;
+                cashAccount.value = 0;
+            } else {
+                formErorrCash.style.display = 'none';
+                erorrCash.innerText = '';
+                btnCreateBill.disabled = false;
+                surplusMoneySpan.style.display = 'none';
+                surplusMoney.innerText = '';
+                textSurplusMoney.value = '0';
+                cashClientText.value = cashClientNumber;
+                if(payMethodChecked === 3) {
+                    cashAccount.value = totalAmountNumber - cashClientNumber;
+                }
+            }
+        }
     }
 }
 

@@ -1,5 +1,6 @@
 package com.example.shopgiayonepoly.restController;
 
+import com.example.shopgiayonepoly.baseMethod.BaseBill;
 import com.example.shopgiayonepoly.dto.request.BillDetailAjax;
 import com.example.shopgiayonepoly.dto.request.PayMethodRequest;
 import com.example.shopgiayonepoly.dto.request.ProductDetailCheckRequest;
@@ -24,29 +25,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/bill-api")
-public class BillRestController {
-    ProductDetailCheckRequest productDetailCheckRequest;
-    @Autowired
-    BillService billService;
-    @Autowired
-    BillDetailService billDetailService;
-    //Atribute filter
-    @Autowired
-    ColorService colorService;
-    @Autowired
-    SizeService sizeService;
-    @Autowired
-    MaterialService materialService;
-    @Autowired
-    ManufacturerService manufacturerService;
-    @Autowired
-    OriginService originService;
-
-    Integer pageProduct = 0;
-    String keyVoucher = "";
-    Integer statusBillCheck = null;
-    String keyBillmanage = "";
-
+public class BillRestController extends BaseBill {
     @GetMapping("/get-idbill")
     @ResponseBody
     public Integer getIdBillFromSession(HttpSession session) {
@@ -111,7 +90,13 @@ public class BillRestController {
         }
         thongBao.put("message","Sửa số lượng sản phẩm thành công!");
         thongBao.put("check","1");
+        Integer quantityUpdate = 1;
+        Integer statusUpdate = billDetail.getQuantity() > billDetailAjax.getQuantity() ?  2 : 1;
+
+        getUpdateQuantityProduct(productDetail.getId(),quantityUpdate,statusUpdate);
+
         billDetail.setQuantity(billDetailAjax.getQuantity());
+
         billDetail.setTotalAmount(billDetail.getPrice().multiply(BigDecimal.valueOf(billDetail.getQuantity())));
         this.billDetailService.save(billDetail);
 
@@ -128,23 +113,13 @@ public class BillRestController {
 
         ProductDetail productDetail = this.billDetailService.getProductDetailById(Integer.parseInt(dataId));
 
-        BillDetail billDetail;
+        BillDetail billDetail = getBuyProduct(billById,productDetail,1);
 
         Integer idBillDetail = this.billDetailService.getBillDetailExist(billById.getId(),productDetail.getId());
         if(idBillDetail != null) {
-            billDetail = this.billDetailService.findById(idBillDetail).orElse(new BillDetail());
-            billDetail.setQuantity(billDetail.getQuantity()+1);
-            billDetail.setTotalAmount(billDetail.getPrice().multiply(BigDecimal.valueOf(billDetail.getQuantity())));
             thongBao.put("message","Sửa số lượng sản phẩm thành công!");
             thongBao.put("check","1");
         }else {
-            billDetail = new BillDetail();
-            billDetail.setBill(billById);
-            billDetail.setProductDetail(productDetail);
-            billDetail.setQuantity(1);
-            billDetail.setPrice(productDetail.getPrice());
-            billDetail.setTotalAmount(billDetail.getPrice().multiply(BigDecimal.valueOf(billDetail.getQuantity())));
-            billDetail.setStatus(1);
             thongBao.put("message","Thêm sản phẩm thành công!");
             thongBao.put("check","1");
         }
@@ -336,28 +311,12 @@ public class BillRestController {
         System.out.println("du lieu loc vc " + keyword);
         return ResponseEntity.ok("done");
     }
-//
 
-    public void setTotalAmount(Bill bill) {
-        BigDecimal total = this.billDetailService.getTotalAmountByIdBill(bill.getId());
-        if(total != null) {
-            bill.setUpdateDate(new Date());
-            bill.setTotalAmount(total);
-        }else {
-            bill.setUpdateDate(new Date());
-            bill.setTotalAmount(BigDecimal.valueOf(0));
-        }
-        System.out.println("Thong tin bill: " + bill.toString());
-
-        this.billService.save(bill);
-    }
-//    Phân trang cho product
-    public Page<ProductDetail> convertListToPage(List<ProductDetail> list, Pageable pageable) {
-        int start = (int) pageable.getOffset();
-        int end = Math.min((start + pageable.getPageSize()), list.size());
-        List<ProductDetail> sublist = list.subList(start, end);
-
-        return new PageImpl<>(sublist, pageable, list.size());
+    @GetMapping("/show-status-bill")
+    public List<InvoiceStatus> getShowInvoiceStatus(HttpSession session) {
+        List<InvoiceStatus> invoiceStatuses = this.invoiceStatusService.getALLInvoiceStatusByBill((Integer) session.getAttribute("idBillCheckStatus"));
+//        session.removeAttribute("idBillCheckStatus");
+        return invoiceStatuses;
     }
 
 }

@@ -29,7 +29,7 @@ function initializeLocationDropdowns(provinceSelectId, districtSelectId, wardSel
             provinceSelect.addEventListener('change', function() {
                 const selectedProvinceID = this.value;
                 $('#shipMoney').text('0' + ' VNĐ');
-                $('#moneyTransport').val(0.00)
+                $('#moneyTransport').val(0)
                 shipPrice = 0;
                 btnCreateBill.disabled = true;
                 paymentInformation();
@@ -63,7 +63,7 @@ function initializeLocationDropdowns(provinceSelectId, districtSelectId, wardSel
                             districtSelect.addEventListener('change', function() {
                                 const selectedDistrictID = this.value;
                                 $('#shipMoney').text('0' + ' VNĐ');
-                                $('#moneyTransport').val(0.00)
+                                $('#moneyTransport').val(0)
                                 btnCreateBill.disabled = true;
                                 shipPrice = 0;
                                 paymentInformation();
@@ -108,7 +108,7 @@ function initializeLocationDropdowns(provinceSelectId, districtSelectId, wardSel
                                     });
                                 } else {
                                     $('#shipMoney').text(0 + ' VNĐ');
-                                    $('#moneyTransport').val(0.00)
+                                    $('#moneyTransport').val(0)
                                     btnCreateBill.disabled = true;
                                     shipPrice = 0;
 
@@ -165,7 +165,7 @@ function initializeLocationDropdowns(provinceSelectId, districtSelectId, wardSel
                     });
                 } else {
                     $('#shipMoney').text('0' + ' VNĐ');
-                    $('#moneyTransport').val(0.00)
+                    $('#moneyTransport').val(0)
 
                     districtTransport = null;
                     wardTransport = null;

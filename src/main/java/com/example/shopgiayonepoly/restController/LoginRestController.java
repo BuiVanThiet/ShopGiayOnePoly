@@ -40,7 +40,7 @@ public class LoginRestController {
             // Đăng nhập thất bại
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login thất bại");
         }
-    }   
+    }
 
     @GetMapping("/info")
     public ResponseEntity<?> getUserInfo(HttpSession session) {
