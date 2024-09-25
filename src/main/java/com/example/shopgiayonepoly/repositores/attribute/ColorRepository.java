@@ -11,4 +11,7 @@ import java.util.List;
 public interface ColorRepository extends JpaRepository<Color, Integer> {
     @Query("select client from Color client where client.status <> 0")
     List<Color> getClientNotStatus0();
+
+    @Query("select color from Color color where color.status = 0")
+    List<Color> getColorDelete();
 }

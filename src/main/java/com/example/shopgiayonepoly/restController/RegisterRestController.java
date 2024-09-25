@@ -32,13 +32,8 @@ public class RegisterRestController {
             return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Tài khoản hoặc email đã tồn tại!"));
         }
 
-        // Mã nhân viên tự tăng
-        Integer lastCode = staffRepository.findLastCode();
-        String newCode = String.format("STF%03d", (lastCode + 1));
-
         // Thêm mới nhân viên
         Staff staff = new Staff();
-        staff.setCodeStaff(newCode);
         staff.setFullName(registerRequest.getFullName());
         staff.setGender(registerRequest.getGender());
         staff.setEmail(registerRequest.getEmail());
@@ -47,10 +42,6 @@ public class RegisterRestController {
         staff.setAcount(registerRequest.getAcount());
         staff.setPassword(registerRequest.getPassword());
         staff.setStatus(1);
-
-        // Thêm mới mặc định là nhân viên bán hàng
-        Role role = roleReponsitory.findByCodeRole("ROLE002"); // Mã vai trò Nhân viên bán hàng
-        staff.setRole(role);
 
         staffRepository.save(staff);
 

@@ -4,8 +4,8 @@ import com.example.shopgiayonepoly.dto.request.VoucherRequest;
 import com.example.shopgiayonepoly.entites.Voucher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface VoucherService {
@@ -28,5 +28,8 @@ public interface VoucherService {
     public void restoreStatusVoucher(Integer id);
 
     public Page<Voucher> searchVoucherByKeyword(String key, Pageable pageable);
+
+    public Page<Voucher> searchVoucherByDateRange(Pageable pageable, LocalDate startDate, LocalDate endDate);
+
 
 }

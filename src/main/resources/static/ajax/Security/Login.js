@@ -3,11 +3,13 @@ $(document).ready(function() {
         event.preventDefault(); // Ngăn chặn form gửi thông thường
         var account = $("#account").val();
         var password = $("#password").val();
+
         // Dữ liệu gửi đi
         var loginData = {
             account: account,
             password: password
         };
+
         $.ajax({
             url: "/login-api/login",
             type: "POST",
@@ -18,7 +20,8 @@ $(document).ready(function() {
             },
             success: function(response) {
                 // Đăng nhập thành công
-                fetchUserInfo();
+                $("#result").text("Đăng nhập thành công!"); // Hiển thị thông báo thành công
+                fetchUserInfo(); // Gọi hàm để lấy thông tin người dùng
             },
             error: function(xhr, status, error) {
                 console.error("Lỗi đăng nhập:", error);
@@ -36,10 +39,16 @@ $(document).ready(function() {
             },
             success: function(data) {
                 console.log("Thông tin người dùng:", data);
-                $("#userInfo").text("Tên: " + data.fullName + ", Vai trò: " + data.roleName);
+                // Kiểm tra và hiển thị thông tin người dùng
+                if (data && data.fullName && data.roleName) {
+                    $("#userInfo").text("Tên: " + data.fullName + ", Vai trò: " + data.roleName);
+                } else {
+                    $("#userInfo").text("Không có thông tin người dùng.");
+                }
             },
             error: function(xhr, status, error) {
                 console.error("Không thể lấy thông tin người dùng:", error);
+                $("#userInfo").text("Lỗi khi lấy thông tin người dùng.");
             }
         });
     }

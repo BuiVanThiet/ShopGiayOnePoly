@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -38,6 +39,10 @@ public interface VoucherRepository extends JpaRepository<Voucher, Integer> {
 
     @Query("select v from Voucher v where v.nameVoucher like %:key% or v.codeVoucher like %:key%")
     public Page<Voucher> searchVoucherByKeyword(@Param("key") String key, Pageable pageable);
+    @Query("select v from Voucher v where v.startDate >= :dateStart and v.startDate <= :dateEnd")
+    public Page<Voucher> searchVoucherByDateRange(Pageable pageable,
+                                                  @Param("dateStart") LocalDate startDate,
+                                                  @Param("dateEnd") LocalDate endDate);
 
 
 }
