@@ -1,16 +1,10 @@
 package com.example.shopgiayonepoly.controller;
 
 import com.example.shopgiayonepoly.baseMethod.BaseBill;
-import com.example.shopgiayonepoly.dto.request.VoucherRequest;
-import com.example.shopgiayonepoly.dto.response.BillTotalInfornationResponse;
-import com.example.shopgiayonepoly.dto.response.ClientBillInformationResponse;
-import com.example.shopgiayonepoly.dto.response.VoucherResponse;
+import com.example.shopgiayonepoly.dto.response.bill.BillTotalInfornationResponse;
 import com.example.shopgiayonepoly.entites.*;
-import com.example.shopgiayonepoly.service.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -18,12 +12,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/bill")
@@ -145,32 +140,32 @@ public class BillController extends BaseBill {
 
     @GetMapping("/addClientInBill/{idClient}")
     @ResponseBody
-    public ResponseEntity<String> getAddClientInBill(@PathVariable("idClient") Integer idClient, HttpSession session) {
+    public ResponseEntity<Map<String,String>> getAddClientInBill(@PathVariable("idClient") Integer idClient, HttpSession session) {
         Bill bill = this.billService.findById((Integer) session.getAttribute("IdBill")).orElse(new Bill());
         bill.setUpdateDate(new Date());
         Customer customer = new Customer();
+        Map<String,String> thongBao = new HashMap<>();
+        thongBao.put("message","Thêm khách hàng thành công!");
+        thongBao.put("check","1");
         customer.setId(idClient);
         bill.setCustomer(customer);
         this.billService.save(bill);
-        this.mess = "Thêm khách hàng thành công!";
-        this.colorMess = "1";
-        System.out.println("Them thanh cong khach hang co id la "+idClient+" tai hoa don " + session.getAttribute("IdBill"));
-        return ResponseEntity.ok("Thêm khách hàng thành công!");
+        return ResponseEntity.ok(thongBao);
     }
 
     @GetMapping("/removeClientInBill/{idClient}")
     @ResponseBody
-    public ResponseEntity<String>  getRemoveClientInBill(@PathVariable("idClient") Integer idClient, HttpSession session) {
+    public ResponseEntity<Map<String,String>>  getRemoveClientInBill(@PathVariable("idClient") Integer idClient, HttpSession session) {
         Bill bill = this.billService.findById((Integer) session.getAttribute("IdBill")).orElse(new Bill());
         bill.setUpdateDate(new Date());
+        Map<String,String> thongBao = new HashMap<>();
+        thongBao.put("message","Xóa khách hàng thành công!");
+        thongBao.put("check","1");
 //        Client client = new Client();
 //        client.setId(idClient);
         bill.setCustomer(null);
         this.billService.save(bill);
-        this.mess = "Xóa khách hàng thành công!";
-        this.colorMess = "1";
-        System.out.println("Xoa thanh cong khach hang co id la "+idClient+" tai hoa don " + session.getAttribute("IdBill"));
-        return ResponseEntity.ok("Xóa khách hàng thành công!");
+        return ResponseEntity.ok(thongBao);
     }
 
     @PostMapping("/pay-ment/{idBill}")
@@ -298,7 +293,6 @@ public class BillController extends BaseBill {
             if(this.billPay.getVoucher() != null) {
                 this.getSubtractVoucher(this.billPay.getVoucher());
             }
-
             return "Bill/successBill" ;
         }else {
 //            Bill bill = this.billPay;
@@ -375,38 +369,68 @@ public class BillController extends BaseBill {
         return "redirect:/bill/bill-detail/" + (Integer) session.getAttribute("IdBill");
     }
 
-    @GetMapping("/delete-voucher-bill")
-    public String getDeleteVoucherBill(HttpSession session) {
-        Bill bill = this.billService.findById((Integer) session.getAttribute("IdBill")).orElse(null);
+//    @GetMapping("/delete-voucher-bill")
+//
+//    public String getDeleteVoucherBill(HttpSession session) {
+//        Bill bill = this.billService.findById((Integer) session.getAttribute("IdBill")).orElse(null);
+//
+//        bill.setVoucher(null);
+//        bill.setUpdateDate(new Date());
+//        this.billService.save(bill);
+//        this.mess = "Xóa voucher thành công!";
+//        this.colorMess = "1";
+//
+//        return "redirect:/bill/bill-detail/" + (Integer) session.getAttribute("IdBill");
+//    }
 
+//    @GetMapping("/click-voucher-bill/{idVoucher}")
+//    public String getClickVoucherBill(@PathVariable("idVoucher") String idVoucher,HttpSession session) {
+//        Bill bill = this.billService.findById((Integer) session.getAttribute("IdBill")).orElse(null);
+//
+//        Voucher voucher = new Voucher();
+//        voucher.setId(Integer.parseInt(idVoucher));
+//        bill.setVoucher(voucher);
+//        bill.setUpdateDate(new Date());
+//        this.billService.save(bill);
+//        this.mess = "Thêm voucher thành công!";
+//        this.colorMess = "1";
+//
+//        return "redirect:/bill/bill-detail/" + (Integer) session.getAttribute("IdBill");
+//    }
+    @PostMapping("/delete-voucher-bill")
+    @ResponseBody
+    public ResponseEntity<Map<String,String>> getDeleteVoucherBill(HttpSession session) {
+        Bill bill = this.billService.findById((Integer) session.getAttribute("IdBill")).orElse(null);
+        Map<String,String> thongBao = new HashMap<>();
+        thongBao.put("message","Xóa mã giảm giá thành công!");
+        thongBao.put("check","1");
         bill.setVoucher(null);
         bill.setUpdateDate(new Date());
         this.billService.save(bill);
-        this.mess = "Xóa voucher thành công!";
-        this.colorMess = "1";
 
-        return "redirect:/bill/bill-detail/" + (Integer) session.getAttribute("IdBill");
+        return ResponseEntity.ok(thongBao);
     }
 
-    @GetMapping("/click-voucher-bill/{idVoucher}")
-    public String getClickVoucherBill(@PathVariable("idVoucher") String idVoucher,HttpSession session) {
-        Bill bill = this.billService.findById((Integer) session.getAttribute("IdBill")).orElse(null);
 
+    @PostMapping("/click-voucher-bill/{idVoucher}")
+    @ResponseBody
+    public ResponseEntity<Map<String,String>> getClickVoucherBill(@PathVariable("idVoucher") String idVoucher, HttpSession session) {
+        Bill bill = this.billService.findById((Integer) session.getAttribute("IdBill")).orElse(null);
+        Map<String,String> thongBao = new HashMap<>();
+        thongBao.put("message","Thêm mã giảm giá thành công!");
+        thongBao.put("check","1");
         Voucher voucher = new Voucher();
         voucher.setId(Integer.parseInt(idVoucher));
         bill.setVoucher(voucher);
         bill.setUpdateDate(new Date());
         this.billService.save(bill);
-        this.mess = "Thêm voucher thành công!";
-        this.colorMess = "1";
-
-        return "redirect:/bill/bill-detail/" + (Integer) session.getAttribute("IdBill");
+        return ResponseEntity.ok(thongBao);
     }
 
     //danh cho quan ly hoa don
     @GetMapping("/bill-status-index/{idBill}")
     public String getStatusBill(@PathVariable("idBill") Integer idBill,HttpSession session) {
-        session.setAttribute("idBillCheckStatus",idBill);
+        session.setAttribute("IdBill",idBill);
         return "Bill/billInformationIndex";
     }
 

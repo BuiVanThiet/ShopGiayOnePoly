@@ -1,4 +1,4 @@
-package com.example.shopgiayonepoly.dto.response;
+package com.example.shopgiayonepoly.dto.response.bill;
 
 import jakarta.persistence.ColumnResult;
 import jakarta.persistence.ConstructorResult;

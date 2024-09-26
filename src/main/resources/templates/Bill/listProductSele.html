@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div th:fragment="listProduct">
+    <!-- Nội dung của fragment -->
+    <div class="modal fade" id="product-modal" tabindex="-1" aria-labelledby="productModalLabel"
+                                       aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="productModalLabel">
+                    Danh sách sản phẩm
+                </h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <form id="formFilterProduct" class="row">
+                            <div class="col-12">
+                                <div class="mb-3">
+                                    <label class="form-label">Tên sản phẩm tìm:</label>
+                                    <input type="text" id="nameSearch" class="form-control">
+                                </div>
+                            </div>
+
+                            <div class="col-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Màu sắc:</label>
+                                    <select id="colorSearch" class="form-select">
+                                        <option selected>--Tất cả--</option>
+                                        <option value="1">One</option>
+                                        <option value="2">Two</option>
+                                        <option value="3">Three</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Kích cỡ:</label>
+                                    <select id="sizeSearch" class="form-select">
+                                        <option selected>--Tất cả--</option>
+                                        <option value="1">One</option>
+                                        <option value="2">Two</option>
+                                        <option value="3">Three</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Chất liệu:</label>
+                                    <select id="materialSearch" class="form-select">
+                                        <option selected>--Tất cả--</option>
+                                        <option value="1">One</option>
+                                        <option value="2">Two</option>
+                                        <option value="3">Three</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Nhà sản xuất:</label>
+                                    <select id="manufacturerSearch" class="form-select">
+                                        <option selected>--Tất cả--</option>
+                                        <option value="1">One</option>
+                                        <option value="2">Two</option>
+                                        <option value="3">Three</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Nơi sản xuất:</label>
+                                    <select id="originSearch" class="form-select">
+                                        <option selected>--Tất cả--</option>
+                                        <option value="1">One</option>
+                                        <option value="2">Two</option>
+                                        <option value="3">Three</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Danh mục</label>
+                                    <select  name="categores" id="categores" class="multi-select-dropdown">
+
+                                    </select>
+                                </div>
+                            </div>
+                            <input type="hidden" id="categorySearch" value="">
+
+                            <div class="d-flex justify-content-center">
+                                <button type="submit" id="filterSubmit" class="btn btn-outline-warning mb-3 me-2">
+                                    <i class="bi bi-search"></i> Gửi
+                                </button>
+                                <button class="btn btn-outline-primary mb-3" onclick="resetFilterProductSale()" id="resetFilter">
+                                    <i class="bi bi-arrow-counterclockwise"></i> Làm mới
+                                </button>
+                            </div>
+
+
+                        </form>
+                    </div>
+                </div>
+                <div id="noDataProductDetail" style="display:none; text-align:center;">
+                    <!-- Ảnh sẽ được hiển thị ở đây nếu không có dữ liệu -->
+                </div>
+
+                <table class="table table-bordered mt-2" style="display:none;">
+                    <thead>
+                    <tr>
+                        <th scope="col">STT</th>
+                        <th scope="col">Ảnh</th>
+                        <th scope="col">Sản phẩm</th>
+                        <th scope="col">Số lượng</th>
+                        <th scope="col">Giá</th>
+                        <th scope="col">Hành động</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tableProductDetailSell">
+                    <!-- Dữ liệu sẽ được tải ở đây -->
+                    </tbody>
+                </table>
+
+                <div class="pagination-section">
+                    <!-- Phân trang 2 -->
+                    <div class="pagination-custom d-flex justify-content-center">
+                        <ul id="productPageMax" class="pagination"></ul>
+                    </div>
+                    <input type="hidden" id="totalPages2" value="20"> <!-- Phân trang 2 có 20 trang -->
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+    <div id="modalQuantityProduct">
+
+    </div>
+
+    <!--            them so luong de mua-->
+
+
+    <div class="modal fade" id="exampleQuantity" aria-hidden="true" aria-labelledby="exampleQuantityLable" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleQuantityLable">Số lượng</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formBuy" method="post" action="/bill/buy-product-detail">
+
+                        <input type="hidden" id="quantityProduct" name="quantityProduct">
+                        <input type="hidden" id="idProductDetail" name="idProductDetail">
+                        <input type="hidden" id="nameProduct">
+
+                        <div class="mb-3 row g-3 align-items-center">
+
+                            <div class="col-auto">
+                                <label class="form-label">Số lượng mua:</label>
+                            </div>
+
+                            <div class="col-auto">
+                                <input type="text" class="form-control" id="quantity" name="quantityDetail">
+                            </div>
+
+                            <div class="col-auto">
+                                <button disabled type="submit" class="btn btn-outline-primary col-auto" id="btnBuy"><i class="bi bi-plus"></i> Xác nhận</button>
+                            </div>
+
+                            <div class="col-12" id="errorCard">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <span class="text-danger" id="erorrQuantity">Mời nhập số lượng!</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-outline-secondary" data-bs-target="#product-modal" data-bs-toggle="modal" id="comeBackProduct"><i class="bi bi-arrow-counterclockwise"></i> Quay lại</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

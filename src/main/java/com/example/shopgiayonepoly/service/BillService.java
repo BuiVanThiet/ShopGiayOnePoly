@@ -1,8 +1,9 @@
 package com.example.shopgiayonepoly.service;
 
-import com.example.shopgiayonepoly.dto.response.BillResponseManage;
-import com.example.shopgiayonepoly.dto.response.BillTotalInfornationResponse;
+import com.example.shopgiayonepoly.dto.response.bill.BillResponseManage;
+import com.example.shopgiayonepoly.dto.response.bill.BillTotalInfornationResponse;
 import com.example.shopgiayonepoly.dto.response.ClientBillInformationResponse;
+import com.example.shopgiayonepoly.dto.response.bill.InformationBillByIdBillResponse;
 import com.example.shopgiayonepoly.entites.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -40,4 +41,6 @@ public interface BillService {
     Page<BillResponseManage> getAllBillByStatusDiss0(String nameCheck, Integer status, Pageable pageable);
 
     List<BillResponseManage> getAllBillByStatusDiss0(String nameCheck, Integer status);
+
+    InformationBillByIdBillResponse getInformationBillByIdBill(Integer idBill);
 }

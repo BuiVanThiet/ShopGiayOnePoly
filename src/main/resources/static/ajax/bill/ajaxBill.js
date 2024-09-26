@@ -426,8 +426,7 @@ function loadCategoryIntoSelect() {
     });
 }
 
-
-document.getElementById('resetFilter').addEventListener('click', function () {
+function resetFilterProductSale() {
     document.getElementById('nameSearch').value='';
     document.getElementById('colorSearch').selectedIndex = 0;
     document.getElementById('sizeSearch').selectedIndex = 0;
@@ -437,7 +436,18 @@ document.getElementById('resetFilter').addEventListener('click', function () {
     document.getElementById('categores').selectedIndex = 0;
     clearAllSelections();
     filterProduct();
-});
+}
+// document.getElementById('resetFilter').addEventListener('click', function () {
+//     document.getElementById('nameSearch').value='';
+//     document.getElementById('colorSearch').selectedIndex = 0;
+//     document.getElementById('sizeSearch').selectedIndex = 0;
+//     document.getElementById('materialSearch').selectedIndex = 0;
+//     document.getElementById('manufacturerSearch').selectedIndex = 0;
+//     document.getElementById('originSearch').selectedIndex = 0;
+//     document.getElementById('categores').selectedIndex = 0;
+//     clearAllSelections();
+//     filterProduct();
+// });
 
 
 function getMaxPageProduct() {
@@ -473,8 +483,8 @@ function updateQuantity(id, quantity) {
             showToast(response.message,response.check)
             loadBillNew(); // Tải lại danh sách bill mới
             loadBillDetail(pageBillDetail); // Tải lại chi tiết bill
-            loadProduct();
             paymentInformation();
+            loadProduct(1);
             // pageNumber();
         },
         error: function (xhr) {
@@ -502,7 +512,8 @@ function loadVoucherByBill(page) {
                                 </div>
                                 
                                 <!-- Button to Select Voucher -->
-                                <a href="/bill/click-voucher-bill/${voucher.id}" class="btn btn-outline-success btn-lg px-4">Chọn</a>
+<!--                                <a href="/bill/click-voucher-bill/${voucher.id}" class="btn btn-outline-success btn-lg px-4">Chọn</a>-->
+                                <button class="btn btn-outline-success btn-lg px-4" onclick="getAddVoucherInBill(${voucher.id})">Chọn</button>
                             </div>
                         </div>
                     </div>
@@ -517,6 +528,11 @@ function loadVoucherByBill(page) {
     });
 }
 
+function resetSearchVoucher() {
+    document.getElementById('textVoucherSearch').value='';
+    console.log('da rết voucher')
+    searchVoucher();
+}
 function searchVoucher() {
     $.ajax({
         type: "POST",
@@ -532,6 +548,44 @@ function searchVoucher() {
             console.error('Loi tim voucher ' + xhr.responseText);
         }
     });
+}
+
+function getAddVoucherInBill(idVoucher) {
+    $.ajax({
+        type: "POST",
+        url: "/bill/click-voucher-bill/"+idVoucher,
+        success: function (response) {
+            loadBillDetail(1);
+            loadProduct(1)
+            loadVoucherByBill(1);
+            paymentInformation();
+            loadBillStatusByBillId();
+            loadInformationBillByIdBill();
+            showToast(response.message,response.check)
+        },
+        error: function (xhr) {
+            console.error('loi' + xhr.responseText);
+        }
+    })
+}
+
+function getRemoveVoucherInBill() {
+    $.ajax({
+        type: "POST",
+        url: "/bill/delete-voucher-bill",
+        success: function (response) {
+            loadBillDetail(1);
+            loadProduct(1)
+            loadVoucherByBill(1);
+            paymentInformation();
+            loadBillStatusByBillId();
+            loadInformationBillByIdBill();
+            showToast(response.message,response.check)
+        },
+        error: function (xhr) {
+            console.error('loi' + xhr.responseText);
+        }
+    })
 }
 
 function getUpdateTypeBill(type) {
@@ -663,11 +717,28 @@ function searchBillManage() {
         }
     });
 }
-
-document.getElementById('resetFilterBillManage').addEventListener('click', function () {
+function resetFillterBillManage() {
     document.getElementById('keywordBillManage').value='';
     searchBillManage()
-});
+}
+// document.getElementById('resetFilterBillManage').addEventListener('click', function () {
+//     document.getElementById('keywordBillManage').value='';
+//     searchBillManage()
+// });
+
+    function updateMethodPay(method) {
+        if(method === 1) {
+                payMethodUpLoad = 1;
+                uploadPayMethod()
+        }else if (method === 2) {
+                payMethodUpLoad = 2;
+                uploadPayMethod()
+        }else {
+                payMethodUpLoad = 3;
+                uploadPayMethod()
+        }
+
+    }
 
 $(document).ready(function () {
     $('#formFilterProduct').submit(function (event) {
@@ -687,7 +758,6 @@ $(document).ready(function () {
         var $numberDiv = $(this).siblings('.number');
         var value = parseInt($numberDiv.text(), 10);
         $numberDiv.text(value + 1);
-        loadProduct(1);
         // Cập nhật giá trị mới trên server
         updateQuantity($(this).closest('.custom-number-input').data('id'), $numberDiv.text());
     });
@@ -697,7 +767,6 @@ $(document).ready(function () {
         var value = parseInt($numberDiv.text(), 10);
         if (value > 0) {
             $numberDiv.text(value - 1);
-            loadProduct(1);
             // Cập nhật giá trị mới trên server
             updateQuantity($(this).closest('.custom-number-input').data('id'), $numberDiv.text());
         }
@@ -718,5 +787,6 @@ $(document).ready(function () {
     getAllBilByStatus(1);
     getMaxPageBillManage();
     // pageNumber();
+    clickStatusBillManager(999);
 
 });

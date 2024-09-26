@@ -1,4 +1,4 @@
-package com.example.shopgiayonepoly.dto.response;
+package com.example.shopgiayonepoly.dto.response.bill;
 
 import ch.qos.logback.core.net.server.Client;
 import com.example.shopgiayonepoly.dto.base.BaseDTO;
