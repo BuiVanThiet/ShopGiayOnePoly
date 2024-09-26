@@ -1,44 +1,44 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{Home/home_manege}">
-
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="description" content="Male_Fashion Template">
-    <meta name="keywords" content="Male_Fashion, unica, creative, html">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Shop Giày Onepoly</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đăng Nhập</title>
+    <link rel="stylesheet" href="/css/Security/login.css" />
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css" />
 </head>
 <body>
-<div layout:fragment="content">
-    <div class="container">
-        <div class="row justify-content-center mt-5">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header text-center">
-                        <h3>Đăng nhập</h3>
-                    </div>
-                    <div class="card-body">
-                        <form id="loginForm">
-                            <div class="form-group mb-3">
-                                <label for="account">Tài khoản</label>
-                                <input type="text" class="form-control" id="account" name="account" required>
-                            </div>
-                            <div class="form-group mb-3">
-                                <label for="password">Mật khẩu</label>
-                                <input type="password" class="form-control" id="password" name="password" required>
-                            </div>
-                            <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary btn-block">Đăng nhập</button>
-                            </div>
-                        </form>
-                    </div>
+<section class="home">
+    <div class="form_container">
+        <div class="form login_form">
+            <!-- Sử dụng th:action để chỉ định URL cho form -->
+            <form th:action="@{/login}" method="post">
+                <h2>Đăng Nhập</h2>
+
+                <div class="input_box">
+                    <i class="uil uil-envelope-alt email"></i>
+                    <input type="text" name="username" placeholder="Tài khoản" required />
                 </div>
-            </div>
+                <div class="input_box">
+                    <i class="uil uil-lock password"></i>
+                    <input type="password" name="password" placeholder="Mật khẩu" required />
+                    <i class="uil uil-eye-slash pw_hide"></i>
+                </div>
+
+                <div class="option_field">
+                        <span class="checkbox">
+                            <input type="checkbox" id="check" />
+                            <label for="check">Ghi nhớ tôi</label>
+                        </span>
+                    <a href="#" class="forgot_pw">Quên mật khẩu?</a>
+                </div>
+
+                <button class="button">Đăng Nhập</button>
+            </form>
         </div>
     </div>
-</div>
+</section>
+<script src="/js/Security/login.js"></script>
 </body>
 </html>

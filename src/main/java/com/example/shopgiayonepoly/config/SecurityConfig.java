@@ -1,7 +1,11 @@
 package com.example.shopgiayonepoly.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
@@ -10,7 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
-import org.springframework.web.cors.CorsConfiguration;
+
 
 import java.util.Arrays;
 
@@ -22,7 +26,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .authorizeHttpRequests( auth -> auth
-                        .requestMatchers("/bill/**").permitAll()
+                        .requestMatchers("/bill/**").hasAnyRole("Quản trị viên","Nhân viên bán hàng")
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/login-api/**").permitAll()
                         .requestMatchers("/ajax/**", "/css/**", "/img/**", "/js/**", "/loading/**", "/toast/**").permitAll()
@@ -36,21 +40,21 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .httpBasic(basic -> basic.disable())
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
                         .loginProcessingUrl("/login")
-                        .defaultSuccessUrl("/", true)
-                        .failureUrl("/login?error=true")
+                        .defaultSuccessUrl("/home_manage", true)
                 )
+
                 .logout(config -> config
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login?logout"))
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .accessDeniedHandler(accessDeniedHandler()) // Xử lý quyền truy cập bị từ chối
                 )
-                        .build();
+                .build();
     }
 
     @Bean

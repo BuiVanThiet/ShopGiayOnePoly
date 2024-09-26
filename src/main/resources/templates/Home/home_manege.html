@@ -45,9 +45,9 @@
 
         <div class="offcanvas-header d-flex justify-content-between align-items-center border-bottom position-relative">
             <a href="#" class="offcanvas-title text-decoration-none text-white fs-3" id="offcanvasExampleLabel">
-                <div id="user-info">
-                    <span id="result"></span>
-                    <span id="userInfo"></span>
+                <div>
+                    <span th:text="${fullName}"></span>
+                    <span th:text="${roleName}"></span>
                 </div>
                 <br>
                 <span>Chúc bạn một ngày tốt lành!</span>
