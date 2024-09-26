@@ -10,6 +10,6 @@ import java.util.List;
 
 @ResponseBody
 public interface InvoiceStatusRespository extends JpaRepository<InvoiceStatus,Integer> {
-    @Query("select invoi from InvoiceStatus invoi where invoi.bill.id = :idCheck")
+    @Query("select invoi from InvoiceStatus invoi where invoi.bill.id = :idCheck and invoi.status <> 0")
     List<InvoiceStatus> getALLInvoiceStatusByBill(@Param("idCheck") Integer idCheck);
 }

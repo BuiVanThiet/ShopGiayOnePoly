@@ -1,8 +1,9 @@
 package com.example.shopgiayonepoly.repositores;
 
-import com.example.shopgiayonepoly.dto.response.BillResponseManage;
-import com.example.shopgiayonepoly.dto.response.BillTotalInfornationResponse;
+import com.example.shopgiayonepoly.dto.response.bill.BillResponseManage;
+import com.example.shopgiayonepoly.dto.response.bill.BillTotalInfornationResponse;
 import com.example.shopgiayonepoly.dto.response.ClientBillInformationResponse;
+import com.example.shopgiayonepoly.dto.response.bill.InformationBillByIdBillResponse;
 import com.example.shopgiayonepoly.entites.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,7 +12,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -23,7 +23,7 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
     List<Customer> getClientNotStatus0();
 
     @Query("""
-    select new com.example.shopgiayonepoly.dto.response.BillTotalInfornationResponse(
+    select new com.example.shopgiayonepoly.dto.response.bill.BillTotalInfornationResponse(
         b.id,
         b.totalAmount,
         v.id,
@@ -81,7 +81,7 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
     // phan nay danh cho quan ly hoa don
     @Query("""
         select 
-        new com.example.shopgiayonepoly.dto.response.BillResponseManage(
+        new com.example.shopgiayonepoly.dto.response.bill.BillResponseManage(
             bill.id, bill.codeBill, bill.customer, bill.staff, bill.addRess, bill.voucher, 
             bill.shippingPrice, bill.cash, bill.acountMoney, bill.note, bill.totalAmount, 
             bill.paymentMethod, bill.billType, bill.paymentStatus, bill.surplusMoney, 
@@ -99,7 +99,7 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
 
     @Query("""
         select 
-        new com.example.shopgiayonepoly.dto.response.BillResponseManage(
+        new com.example.shopgiayonepoly.dto.response.bill.BillResponseManage(
             bill.id, bill.codeBill, bill.customer, bill.staff, bill.addRess, bill.voucher, 
             bill.shippingPrice, bill.cash, bill.acountMoney, bill.note, bill.totalAmount, 
             bill.paymentMethod, bill.billType, bill.paymentStatus, bill.surplusMoney, 
@@ -114,4 +114,37 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
          and (:statusCheck is null or (bill.status = :statusCheck))
     """)
     List<BillResponseManage> getAllBillByStatusDiss0(@Param("nameCheck") String nameCheck, @Param("statusCheck") Integer statusCheck);
- }
+
+    @Query(""" 
+    select 
+     new com.example.shopgiayonepoly.dto.response.bill.InformationBillByIdBillResponse(
+     b.id,
+     b.createDate,
+     b.updateDate,
+     b.status,
+     b.codeBill,
+     b.billType,
+     b.shippingPrice,
+     b.totalAmount,
+     v,
+     case 
+            when v.discountType = 1 then
+                case 
+                    when b.totalAmount * (v.priceReduced / 100) > v.pricesMax then
+                        v.pricesMax
+                    else 
+                        b.totalAmount * (v.priceReduced / 100)
+                end 
+            when v.discountType = 2 then
+                v.priceReduced
+            else 
+                0.00
+        end
+     )
+     from Bill b
+     left join b.voucher v
+     where b.id = :idCheck
+""")
+    InformationBillByIdBillResponse getInformationBillByIdBill(@Param("idCheck") Integer idBill);
+
+}

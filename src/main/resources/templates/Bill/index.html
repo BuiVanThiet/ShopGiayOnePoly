@@ -2,7 +2,6 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{Home/home_manege}">
-
 <head>
     <meta charset="UTF-8">
     <meta name="description" content="Male_Fashion Template">
@@ -10,10 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Shop Giày Onepoly</title>
-
-
 </head>
-
 <body>
 <main>
     <div layout:fragment="content">
@@ -50,7 +46,9 @@
                                     Giỏ hàng
                                 </p>
                                 <div class="d-flex ms-auto" th:if="${bill.id != null}">
-                                    <button type="button" class="btn btn-outline-info me-2" data-bs-target="#product-modal"
+                                    <button type="button"
+                                            class="btn btn-outline-info me-2"
+                                            data-bs-target="#product-modal"
                                             data-bs-toggle="modal">
                                         <i class="bi bi-basket"></i> Thêm sản phẩm
                                     </button>
@@ -167,9 +165,9 @@
 
                                         <div id="discountContainer" class="mb-3" style="display: none;">
                                             <div class="card position-relative">
-                                                <a href="/bill/delete-voucher-bill" type="button"
+                                                <button type="button" onclick="getRemoveVoucherInBill()"
                                                    class="btn-close position-absolute top-0 end-0 m-2"
-                                                   aria-label="Close"></a>
+                                                   aria-label="Close"></button>
                                                 <div class="card-body">
                                                     Phiếu giảm giá: <span id="voucherName"></span>
                                                 </div>
@@ -214,19 +212,19 @@
                                     </div>
                                     <div class="row mb-3">
                                         <div class="col-6 mb-3">
-                                            <button th:class="${'btn btn-outline-primary col-12 ' + (bill.paymentMethod == 1 ? 'active' : '')}" id="cash" style="display: flex; align-items: center; justify-content: center;">
+                                            <button th:class="${'btn btn-outline-primary col-12 ' + (bill.paymentMethod == 1 ? 'active' : '')}" onclick="updateMethodPay(1)" id="cash" style="display: flex; align-items: center; justify-content: center;">
                                                 <i class="bi bi-cash" style="font-size: 30px; margin-right: 10px;"></i>
                                                 Tiền mặt
                                             </button>
                                         </div>
                                         <div class="col-6 mb-3">
-                                            <button th:class="${'btn btn-outline-primary col-12 ' + (bill.paymentMethod == 2 ? 'active' : '')}" id="accountMoney" style="display: flex; align-items: center; justify-content: center;">
+                                            <button th:class="${'btn btn-outline-primary col-12 ' + (bill.paymentMethod == 2 ? 'active' : '')}" onclick="updateMethodPay(2)" id="accountMoney" style="display: flex; align-items: center; justify-content: center;">
                                                 <i class="bi bi-credit-card" style="font-size: 30px; margin-right: 10px;"></i>
                                                 Chuyển khoản
                                             </button>
                                         </div>
                                         <div class="col-12 mb-3">
-                                            <button th:class="${'btn btn-outline-primary col-12 ' + (bill.paymentMethod == 3 ? 'active' : '')}" id="accountMoneyAndCash" style="display: flex; align-items: center; justify-content: center;">
+                                            <button th:class="${'btn btn-outline-primary col-12 ' + (bill.paymentMethod == 3 ? 'active' : '')}" onclick="updateMethodPay(3)" id="accountMoneyAndCash" style="display: flex; align-items: center; justify-content: center;">
                                                 <i class="bi bi-cash" style="font-size: 30px;"></i>
                                                 <i class="bi bi-input-cursor"></i>
                                                 <i class="bi bi-credit-card" style="font-size: 30px; margin-right: 10px;"></i>
@@ -291,7 +289,7 @@
                                     <button type="submit" id="filterSubmitBillManage" class="btn btn-outline-warning mb-3 me-2">
                                         <i class="bi bi-search"></i> Gửi
                                     </button>
-                                    <button class="btn btn-outline-primary mb-3" id="resetFilterBillManage">
+                                    <button class="btn btn-outline-primary mb-3" onclick="resetFillterBillManage()" id="resetFilterBillManage">
                                         <i class="bi bi-arrow-counterclockwise"></i> Làm mới
                                     </button>
                                 </div>
@@ -306,16 +304,19 @@
                             <button class="nav-link text-dark nav-link-custom" onclick="setActive(this,1)">Chờ xác nhận</button>
                         </li>
                         <li class="nav-item">
-                            <button class="nav-link text-dark nav-link-custom" onclick="setActive(this,2)">Đã xác nhận</button>
+                            <button class="nav-link text-dark nav-link-custom" onclick="setActive(this,2)">Xác nhận</button>
                         </li>
                         <li class="nav-item">
-                            <button class="nav-link text-dark nav-link-custom" onclick="setActive(this,3)">Chờ giao</button>
+                            <button class="nav-link text-dark nav-link-custom" onclick="setActive(this,3)">Đang giao</button>
                         </li>
                         <li class="nav-item">
-                            <button class="nav-link text-dark nav-link-custom" onclick="setActive(this,4)">Hoàn thành</button>
+                            <button class="nav-link text-dark nav-link-custom" onclick="setActive(this,4)">Đã nhận được hàng</button>
                         </li>
                         <li class="nav-item">
-                            <button class="nav-link text-dark nav-link-custom" onclick="setActive(this,5)">Đã hủy</button>
+                            <button class="nav-link text-dark nav-link-custom" onclick="setActive(this,5)">Hoàn thành</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link text-dark nav-link-custom" onclick="setActive(this,6)">Đã hủy</button>
                         </li>
 <!--                        <li class="nav-item">-->
 <!--                            <a class="nav-link text-dark" href="#" onclick="setActive(this)">Trả hàng</a>-->
@@ -382,148 +383,9 @@
 
             <!-- phần modal -->
             <!-- modal phần nút thêm sản phẩm  -->
-            <div class="modal fade" id="product-modal" tabindex="-1" aria-labelledby="productModalLabel"
-                 aria-hidden="true">
-                <div class="modal-dialog modal-xl modal-dialog-scrollable">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="productModalLabel">
-                                Danh sách sản phẩm
-                            </h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="card mb-3">
-                                <div class="card-body">
-                                        <form id="formFilterProduct" class="row">
-                                            <div class="col-12">
-                                                <div class="mb-3">
-                                                    <label class="form-label">Tên sản phẩm tìm:</label>
-                                                    <input type="text" id="nameSearch" class="form-control">
-                                                </div>
-                                            </div>
-
-                                            <div class="col-4">
-                                                <div class="mb-3">
-                                                    <label class="form-label">Màu sắc:</label>
-                                                    <select id="colorSearch" class="form-select">
-                                                        <option selected>--Tất cả--</option>
-                                                        <option value="1">One</option>
-                                                        <option value="2">Two</option>
-                                                        <option value="3">Three</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-4">
-                                                <div class="mb-3">
-                                                    <label class="form-label">Kích cỡ:</label>
-                                                    <select id="sizeSearch" class="form-select">
-                                                        <option selected>--Tất cả--</option>
-                                                        <option value="1">One</option>
-                                                        <option value="2">Two</option>
-                                                        <option value="3">Three</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-4">
-                                                <div class="mb-3">
-                                                    <label class="form-label">Chất liệu:</label>
-                                                    <select id="materialSearch" class="form-select">
-                                                        <option selected>--Tất cả--</option>
-                                                        <option value="1">One</option>
-                                                        <option value="2">Two</option>
-                                                        <option value="3">Three</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-4">
-                                                <div class="mb-3">
-                                                    <label class="form-label">Nhà sản xuất:</label>
-                                                    <select id="manufacturerSearch" class="form-select">
-                                                        <option selected>--Tất cả--</option>
-                                                        <option value="1">One</option>
-                                                        <option value="2">Two</option>
-                                                        <option value="3">Three</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-4">
-                                                <div class="mb-3">
-                                                    <label class="form-label">Nơi sản xuất:</label>
-                                                    <select id="originSearch" class="form-select">
-                                                        <option selected>--Tất cả--</option>
-                                                        <option value="1">One</option>
-                                                        <option value="2">Two</option>
-                                                        <option value="3">Three</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-4">
-                                                <div class="mb-3">
-                                                    <label class="form-label">Danh mục</label>
-                                                    <select  name="categores" id="categores" class="multi-select-dropdown">
-
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <input type="hidden" id="categorySearch" value="">
-
-                                            <div class="d-flex justify-content-center">
-                                                <button type="submit" id="filterSubmit" class="btn btn-outline-warning mb-3 me-2">
-                                                    <i class="bi bi-search"></i> Gửi
-                                                </button>
-                                                <button class="btn btn-outline-primary mb-3" id="resetFilter">
-                                                    <i class="bi bi-arrow-counterclockwise"></i> Làm mới
-                                                </button>
-                                            </div>
-
-
-                                        </form>
-                                </div>
-                            </div>
-                            <div id="noDataProductDetail" style="display:none; text-align:center;">
-                                <!-- Ảnh sẽ được hiển thị ở đây nếu không có dữ liệu -->
-                            </div>
-
-                            <table class="table table-bordered mt-2" style="display:none;">
-                                <thead>
-                                <tr>
-                                    <th scope="col">STT</th>
-                                    <th scope="col">Ảnh</th>
-                                    <th scope="col">Sản phẩm</th>
-                                    <th scope="col">Số lượng</th>
-                                    <th scope="col">Giá</th>
-                                    <th scope="col">Hành động</th>
-                                </tr>
-                                </thead>
-                                <tbody id="tableProductDetailSell">
-                                <!-- Dữ liệu sẽ được tải ở đây -->
-                                </tbody>
-                            </table>
-
-                            <div class="pagination-section">
-                                <!-- Phân trang 2 -->
-                                <div class="pagination-custom d-flex justify-content-center">
-                                    <ul id="productPageMax" class="pagination"></ul>
-                                </div>
-                                <input type="hidden" id="totalPages2" value="20"> <!-- Phân trang 2 có 20 trang -->
-                            </div>
-
-
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <div th:replace="~{Bill/listProductSele :: listProduct}"></div>
 <!--            them so luong de mua-->
 
-            <div id="modalQuantityProduct">
-
-            </div>
 
             <div class="modal fade" id="exampleQuantity" aria-hidden="true" aria-labelledby="exampleQuantityLable" tabindex="-1">
                 <div class="modal-dialog modal-dialog-centered">
@@ -697,61 +559,9 @@
 
 
             <!-- phần hiện các mã giảm giá có thể sử dụng được  -->
-            <div class="modal fade" id="voucher-modal" tabindex="-1"
-                 aria-labelledby="voucherModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="voucherModalLabel">
-                                Mã giảm giá
-                            </h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="card mb-3">
-                                <div class="card-body">
-                                    <form id="formSearchVoucher">
-                                        Tìm kiếm:
-                                        <div class="input-group">
-                                            <input type="text" id="textVoucherSearch" class="form-control" placeholder="Tìm theo tên, theo mã...">
-                                            <button type="submit"  class="btn btn-outline-warning">
-                                                <i class="bi bi-search"></i> Gửi
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
+            <div th:replace="~{Bill/listVoucherIndex :: listVoucherBill}"></div>
 
-                            <div id="loadVoucher">
-                                <div class="card mb-3">
-                                    <div class="card-body">
-                                        <div class="d-flex justify-content-between">
-                                            <span>Voucher mua hè</span>
-                                            <span>
-                                            <a href="" class="btn btn-success">chọn</a>
-                                        </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
 
-                            <nav aria-label="Page navigation example">
-                                <ul class="pagination justify-content-center">
-
-                                </ul>
-                            </nav>
-
-                            <div class="pagination-section">
-                                <!-- Phân trang 2 -->
-                                <div class="pagination-custom d-flex justify-content-center">
-                                    <ul id="voucherPageMax" class="pagination"></ul>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
             <input type="hidden" id="toastMessage" th:value="${message}">
             <input type="hidden" id="toastCheck" th:value="${check}">
             <input type="hidden" id="idBill" th:value="${bill.id}">
