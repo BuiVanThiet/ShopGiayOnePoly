@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -43,6 +44,10 @@ public interface VoucherRepository extends JpaRepository<Voucher, Integer> {
     public Page<Voucher> searchVoucherByDateRange(Pageable pageable,
                                                   @Param("dateStart") LocalDate startDate,
                                                   @Param("dateEnd") LocalDate endDate);
+
+    @Query("select v from Voucher v where v.priceReduced >= :priceRange and v.priceReduced <= :priceRange")
+    public Page<Voucher> searchVoucherByPriceRange(Pageable pageable,
+                                                   @Param("dateStart")BigDecimal priceRange);
 
 
 }

@@ -75,6 +75,6 @@ public class VoucherServiceImplement implements VoucherService {
 
     @Override
     public Page<Voucher> searchVoucherByDateRange(Pageable pageable, LocalDate startDate, LocalDate endDate) {
-        return voucherRepository.searchVoucherByDateRange(pageable,startDate,endDate);
+        return voucherRepository.searchVoucherByDateRange(pageable, startDate, endDate);
     }
 }
