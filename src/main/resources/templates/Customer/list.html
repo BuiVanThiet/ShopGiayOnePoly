@@ -25,13 +25,15 @@
                 <button type="button" class="btn btn-primary">Thêm mới khách hàng</button>
             </div>
 
+            <form action="/customer/search">
             <div class="search-container">
                 <div class="search-bar">
                     <span class="icon"><i class="fas fa-search"></i></span> <!-- Sử dụng icon kính lúp -->
-                    <input type="text" placeholder="Tìm kiếm...">
+                    <input type="text" name="key" placeholder="Tìm kiếm...">
                 </div>
                 <button class="btn btn-primary">Tìm kiếm</button>
             </div>
+            </form>
 
             <table class="table table-bordered table-striped">
                 <thead>
@@ -48,6 +50,22 @@
                 </tr>
                 </thead>
                 <tbody>
+                <tr th:each="customer, index: ${customerList}">
+                    <td th:text="${customer.nameImage}"></td>
+                    <td th:text="${customer.fullName}"></td>
+                    <td th:text="${customer.gender}"> </td>
+                    <td th:text="${customer.birthDay}"> </td>
+                    <td th:text="${customer.numberPhone}">  </td>
+                    <td th:text="${customer.email}"></td>
+                    <td th:text="${customer.addRessDetail}"> </td>
+                    <td th:text="${customer.status}"> </td>
+                    <td>
+                        <a href="#" class="edit-icon" onclick="enableEditing(this); return false;"><i class="fas fa-edit" title="Edit"></i></a>
+                        <a href="#" class="save-icon" style="display:none;" onclick="saveChanges(this); return false;"><i class="fas fa-save" title="Save"></i></a>
+                        <a href="vf"><i class="icon-detail fas fa-bars"></i></a>
+                        <a th:href="@{/customer/delete/1}" onclick="return confirm('Bạn có chắc chắn muốn xóa khach hang?')"><i class="icon-delete fas fa-trash" title="Delete"></i></a>
+                    </td>
+                </tr>
 
                 </tbody>
             </table>

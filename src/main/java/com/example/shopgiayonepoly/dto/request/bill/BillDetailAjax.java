@@ -1,4 +1,4 @@
-package com.example.shopgiayonepoly.dto.request;
+package com.example.shopgiayonepoly.dto.request.bill;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

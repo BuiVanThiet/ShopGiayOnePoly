@@ -8,6 +8,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface StaffSecurityRepository extends JpaRepository<Staff, Integer> {
-    @Query("SELECT s FROM Staff s WHERE s.acount = :acount OR s.email = :email")
-    Staff findByAcountOrEmail(@Param("acount") String acount, @Param("email") String email);
+    Staff findByAcountOrEmail(String acount, String email);
 }

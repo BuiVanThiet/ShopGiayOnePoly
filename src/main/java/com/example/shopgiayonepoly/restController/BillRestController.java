@@ -1,20 +1,15 @@
 package com.example.shopgiayonepoly.restController;
 
 import com.example.shopgiayonepoly.baseMethod.BaseBill;
-import com.example.shopgiayonepoly.dto.request.BillDetailAjax;
+import com.example.shopgiayonepoly.dto.request.bill.BillDetailAjax;
 import com.example.shopgiayonepoly.dto.request.PayMethodRequest;
 import com.example.shopgiayonepoly.dto.request.ProductDetailCheckRequest;
-import com.example.shopgiayonepoly.dto.response.BillResponseManage;
-import com.example.shopgiayonepoly.dto.response.BillTotalInfornationResponse;
+import com.example.shopgiayonepoly.dto.response.bill.BillResponseManage;
+import com.example.shopgiayonepoly.dto.response.bill.BillTotalInfornationResponse;
 import com.example.shopgiayonepoly.dto.response.ClientBillInformationResponse;
+import com.example.shopgiayonepoly.dto.response.bill.InformationBillByIdBillResponse;
 import com.example.shopgiayonepoly.entites.*;
-import com.example.shopgiayonepoly.service.BillDetailService;
-import com.example.shopgiayonepoly.service.BillService;
-import com.example.shopgiayonepoly.service.attribute.*;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -312,11 +307,21 @@ public class BillRestController extends BaseBill {
         return ResponseEntity.ok("done");
     }
 
+    //giao dientrnag thia bill
     @GetMapping("/show-status-bill")
     public List<InvoiceStatus> getShowInvoiceStatus(HttpSession session) {
-        List<InvoiceStatus> invoiceStatuses = this.invoiceStatusService.getALLInvoiceStatusByBill((Integer) session.getAttribute("idBillCheckStatus"));
+        List<InvoiceStatus> invoiceStatuses = this.invoiceStatusService.getALLInvoiceStatusByBill((Integer) session.getAttribute("IdBill"));
 //        session.removeAttribute("idBillCheckStatus");
         return invoiceStatuses;
     }
+
+    @GetMapping("/show-invoice-status-bill")
+    public InformationBillByIdBillResponse getInformationBillByIdBill(HttpSession session) {
+        InformationBillByIdBillResponse informationBillByIdBillResponse = billService.getInformationBillByIdBill((Integer) session.getAttribute("IdBill"));
+        System.out.println(informationBillByIdBillResponse.toString());
+        return informationBillByIdBillResponse;
+    }
+
+
 
 }
