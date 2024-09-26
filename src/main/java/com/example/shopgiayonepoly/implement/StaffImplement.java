@@ -1,7 +1,10 @@
 package com.example.shopgiayonepoly.implement;
 
+import com.example.shopgiayonepoly.dto.response.StaffResponse;
 import com.example.shopgiayonepoly.entites.Staff;
+import com.example.shopgiayonepoly.repositores.StaffRepository;
 import com.example.shopgiayonepoly.service.StaffService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -12,20 +15,27 @@ import java.util.Optional;
 
 @Service
 public class StaffImplement implements StaffService {
+    @Autowired
+    StaffRepository staffRepository;
 
     @Override
-    public List<Staff> findAll() {
-        return null;
+    public List<StaffResponse> getAllStaff() {
+        return staffRepository.getAllStaff();
+    }
+
+    @Override
+    public List<StaffResponse> searchStaffByKeyword(String key) {
+        return staffRepository.searchStaffByKeyword(key);
     }
 
     @Override
     public <S extends Staff> S save(S entity) {
-        return null;
+        return staffRepository.save(entity);
     }
 
     @Override
     public Optional<Staff> findById(Integer integer) {
-        return Optional.empty();
+        return staffRepository.findById(integer);
     }
 
     @Override

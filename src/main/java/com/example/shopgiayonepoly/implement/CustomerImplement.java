@@ -1,7 +1,10 @@
 package com.example.shopgiayonepoly.implement;
 
+import com.example.shopgiayonepoly.dto.response.CustomerResponse;
 import com.example.shopgiayonepoly.entites.Customer;
+import com.example.shopgiayonepoly.repositores.CustomerRepository;
 import com.example.shopgiayonepoly.service.CustomerService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -12,20 +15,27 @@ import java.util.Optional;
 
 @Service
 public class CustomerImplement implements CustomerService {
+    @Autowired
+    CustomerRepository customerRepository;
 
     @Override
-    public List<Customer> findAll() {
-        return null;
+    public List<CustomerResponse> getAllCustomer() {
+        return customerRepository.getAllCustomer();
+    }
+
+    @Override
+    public List<CustomerResponse> searchCustomerByKeyword(String key) {
+        return customerRepository.searchCustomerByKeyword(key);
     }
 
     @Override
     public <S extends Customer> S save(S entity) {
-        return null;
+        return customerRepository.save(entity);
     }
 
     @Override
     public Optional<Customer> findById(Integer integer) {
-        return Optional.empty();
+        return customerRepository.findById(integer);
     }
 
     @Override
