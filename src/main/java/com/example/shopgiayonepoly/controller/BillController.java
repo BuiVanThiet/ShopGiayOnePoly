@@ -433,6 +433,13 @@ public class BillController extends BaseBill {
         session.setAttribute("IdBill",idBill);
         return "Bill/billInformationIndex";
     }
+<<<<<<< HEAD
+    @ModelAttribute("staffInfo")
+    public Staff staff(HttpSession session){
+        Staff staff = (Staff) session.getAttribute("staffLogin");
+        return staff;
+    }
+=======
 
     @ModelAttribute("staffInfo")
     public Staff staff(HttpSession session) {
@@ -441,4 +448,5 @@ public class BillController extends BaseBill {
         return staff;
     }
 
+>>>>>>> c11296b89f7aedfcb32d7e02f475906a758aaad9
 }

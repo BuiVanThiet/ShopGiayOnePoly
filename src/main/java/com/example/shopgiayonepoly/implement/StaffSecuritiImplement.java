@@ -25,28 +25,27 @@ public class StaffSecuritiImplement implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String acountOrEmail) throws UsernameNotFoundException {
         Staff staff = staffRepository.findByAcountOrEmail(acountOrEmail, acountOrEmail);
-        if(staff != null){
-
-            // Lấy HttpServletRequest từ RequestContextHolder
-            ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-            HttpServletRequest request = attr.getRequest();
-            HttpSession session = request.getSession();  // Lấy session
-
-            // Lưu đối tượng staff vào session
-            session.setAttribute("staffLogin", staff);
-
-            String username = (staff.getAcount() != null) ? staff.getAcount() : staff.getEmail();
-            String role = staff.getRole() != null ? staff.getRole().getNameRole() : "USER";
-
-            var springStaff = User.withUsername(username)
-                    .password(this.passwordEncoder().encode(staff.getPassword()))
-                    .roles(role)
-                    .build();
-
-            return springStaff;
+        if (staff == null) {
+            throw new UsernameNotFoundException("User not found: " + acountOrEmail);
         }
-        return null;
+
+        // Lấy HttpServletRequest từ RequestContextHolder
+        ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+        HttpServletRequest request = attr.getRequest();
+        HttpSession session = request.getSession();  // Lấy session
+
+        // Lưu đối tượng staff vào session
+        session.setAttribute("staffLogin", staff);
+
+        String username = (staff.getAcount() != null) ? staff.getAcount() : staff.getEmail();
+        String role = staff.getRole() != null ? staff.getRole().getNameRole() : "USER";
+
+        return User.withUsername(username)
+                .password(this.passwordEncoder().encode(staff.getPassword()))
+                .roles(role)
+                .build();
     }
+
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }

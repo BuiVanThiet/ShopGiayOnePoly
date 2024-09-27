@@ -1,125 +1,101 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
-/* Nhập font "Poppins" từ Google Fonts để sử dụng trong trang web. */
 
 * {
-    margin: 0; /* Đặt khoảng cách ngoài (margin) của tất cả các phần tử về 0. */
-    padding: 0; /* Đặt khoảng cách trong (padding) của tất cả các phần tử về 0. */
-    box-sizing: border-box; /* Đảm bảo rằng chiều rộng và chiều cao bao gồm cả padding và border. */
-    font-family: "Poppins", sans-serif; /* Sử dụng font "Poppins" cho toàn bộ trang. */
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
 }
 
 .home {
-    position: relative; /* Đặt vị trí tương đối cho phần tử. */
-    height: 100vh; /* Chiều cao của phần tử bằng 100% chiều cao của viewport. */
-    width: 100%; /* Chiều rộng của phần tử chiếm 100% chiều rộng của phần tử cha. */
-    background-color: #f5f5f5; /* Đặt màu nền của phần tử. Có thể thay đổi thành hình nền khác nếu cần. */
+    position: relative;
+    height: 100vh;
+    width: 100%;
+    background-color: #f5f5f5; /* Có thể thay đổi thành hình nền khác nếu cần */
 }
 
 .form_container {
-    position: fixed; /* Đặt vị trí cố định cho phần tử, không di chuyển khi cuộn trang. */
-    max-width: 750px; /* Chiều rộng tối đa của form là 750px. */
-    width: 100%; /* Chiều rộng của phần tử là 100% cho tới khi đạt chiều rộng tối đa. */
-    top: 50%; /* Đặt phần tử ở giữa theo chiều dọc. */
-    left: 50%; /* Đặt phần tử ở giữa theo chiều ngang. */
-    transform: translate(-50%, -50%); /* Di chuyển phần tử lên và sang trái 50% chiều cao và chiều rộng của nó để căn giữa chính xác. */
-    z-index: 101; /* Đặt độ ưu tiên hiển thị của phần tử. */
-    background: #fff; /* Đặt màu nền là trắng. */
-    padding: 52.5px; /* Đặt khoảng cách trong là 52.5px. */
-    border-radius: 12px; /* Bo tròn các góc của phần tử. */
-    box-shadow: rgba(0, 0, 0, 0.1); /* Thêm bóng cho phần tử để tạo hiệu ứng nổi. */
+    position: fixed;
+    max-width: 600px; /* Tăng chiều dài form lên 20% */
+    width: 100%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 101;
+    background: #fff;
+    padding: 40px; /* Tăng padding lên 20% */
+    border-radius: 12px;
+    box-shadow: rgba(0, 0, 0, 0.1);
 }
 
 .form_container h2 {
-    font-size: 50px; /* Đặt kích thước font là 33px cho tiêu đề. */
-    color: #0b0217; /* Đặt màu chữ cho tiêu đề. */
-    text-align: center; /* Căn giữa văn bản. */
+    font-size: 30px; /* Tăng kích thước font lên 20% */
+    color: #0b0217;
+    text-align: center;
 }
 
 .input_box {
-    position: relative; /* Đặt vị trí tương đối cho phần tử. Giúp căn chỉnh các phần tử con. */
-    margin-top: 45px; /* Đặt khoảng cách trên của phần tử là 45px. */
-    width: 100%; /* Chiều rộng là 100%. */
-    height: 60px; /* Đặt chiều cao là 60px. */
+    position: relative;
+    margin-top: 36px; /* Tăng khoảng cách lên 20% */
+    width: 100%;
+    height: 48px; /* Tăng chiều cao lên 20% */
 }
 
 .input_box input {
-    height: 100%; /* Chiều cao của trường nhập là 100%. */
-    width: 100%; /* Chiều rộng là 100%. */
-    border: none; /* Không có đường viền. */
-    outline: none; /* Không có viền khi trường được chọn. */
-    padding: 0 45px; /* Đặt khoảng cách bên trái và bên phải là 45px cho trường nhập. */
-    color: #333; /* Đặt màu chữ cho trường nhập. */
-    transition: all 0.2s ease; /* Thêm hiệu ứng chuyển tiếp cho tất cả các thuộc tính khi thay đổi. */
-    border-bottom: 1.5px solid #aaaaaa; /* Thêm đường kẻ dưới cho trường nhập. */
-    font-size: 20px; /*Kích thước forn chữ trông ô nhập*/
+    height: 100%;
+    width: 100%;
+    border: none;
+    outline: none;
+    padding: 0 36px; /* Tăng padding lên 20% */
+    color: #333;
+    transition: all 0.2s ease;
+    border-bottom: 1.5px solid #aaaaaa;
 }
 
 .input_box input:focus {
-    border-color: #7d2ae8; /* Đổi màu đường viền dưới khi trường nhập được chọn. */
+    border-color: #7d2ae8;
 }
 
 .input_box i {
-    position: absolute; /* Đặt vị trí của icon là tuyệt đối để dễ dàng căn chỉnh. */
-    top: 50%; /* Đặt icon ở giữa theo chiều dọc. */
-    transform: translateY(-50%); /* Di chuyển icon lên 50% chiều cao của nó để căn giữa. */
-    font-size: 30px; /* Đặt kích thước font cho icon. */
-    color: #707070; /* Đặt màu cho icon. */
-}
-
-.pw_hide {
-    position: absolute; /* Đặt vị trí của icon mắt là tuyệt đối để dễ dàng căn chỉnh. */
-    top: 50%; /* Đặt icon ở giữa theo chiều dọc. */
-    right: 10px; /* Đặt icon ở cách bên phải 10px. */
-    transform: translateY(-50%); /* Di chuyển icon lên 50% chiều cao của nó để căn giữa. */
-    cursor: pointer; /* Đặt con trỏ thành hình bàn tay khi di chuột qua. */
-    color: #707070; /* Đặt màu cho icon mắt. */
-    font-size: 30px; /* Thay đổi kích thước icon mắt */
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 24px; /* Tăng kích thước icon lên 20% */
+    color: #707070;
 }
 
 .option_field {
-    margin-top: 21px; /* Đặt khoảng cách trên của phần tử là 21px. */
-    display: flex; /* Sử dụng Flexbox để sắp xếp các phần tử con. */
-    align-items: center; /* Căn giữa các phần tử con theo chiều dọc. */
-    justify-content: space-between; /* Tạo khoảng cách đều giữa các phần tử con. */
-    font-size: 20px;
+    margin-top: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .form_container .button {
-    background: #7d2ae8; /* Đặt màu nền cho nút. */
-    margin-top: 45px; /* Đặt khoảng cách trên của nút là 45px. */
-    width: 100%; /* Chiều rộng của nút là 100%. */
-    padding: 15px 0; /* Đặt khoảng cách bên trên và dưới của nút là 15px. */
-    border-radius: 10px; /* Bo tròn các góc của nút. */
-    color: #fff; /* Đặt màu chữ cho nút là trắng. */
-    border: none; /* Không có đường viền cho nút. */
-    cursor: pointer; /* Đặt con trỏ thành hình bàn tay khi di chuột qua. */
-    font-size: 22px; /* Tăng kích thước font cho nút */
-}
-.checkbox {
-    display: flex; /* Sử dụng Flexbox để sắp xếp các phần tử con. */
-    align-items: center; /* Căn giữa các phần tử con theo chiều dọc. */
+    background: #7d2ae8;
+    margin-top: 50px; /* Tăng khoảng cách lên 50px hoặc giá trị tùy chỉnh bạn mong muốn */
+    width: 100%;
+    padding: 12px 0; /* Giữ nguyên padding */
+    border-radius: 10px;
+    color: #fff;
+    border: none;
+    cursor: pointer;
 }
 
-.checkbox input {
-    -webkit-appearance: none; /* Ẩn checkbox mặc định trên các trình duyệt Webkit. */
-    -moz-appearance: none; /* Ẩn checkbox mặc định trên Firefox. */
-    appearance: none; /* Ẩn checkbox mặc định trên các trình duyệt khác. */
-    width: 25px; /* Chiều rộng của checkbox tùy chỉnh. */
-    height: 25px; /* Chiều cao của checkbox tùy chỉnh. */
-    border: 2px solid #707070; /* Đường viền cho checkbox. */
-    border-radius: 3px; /* Bo tròn các góc của checkbox. */
-    cursor: pointer; /* Đặt con trỏ thành hình bàn tay khi di chuột qua. */
-    margin-right: 10px; /* Khoảng cách bên phải cho label. */
+
+.pw_hide {
+    position: absolute;
+    top: 50%;
+    right: 12px; /* Tăng khoảng cách icon mắt bên phải lên 20% */
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #707070;
 }
 
-.checkbox label {
-    font-size: 24px; /* Tăng kích thước chữ cho nhãn "Ghi nhớ tôi". */
-    color: #333; /* Đặt màu chữ cho nhãn. */
-}
-
-/* Nếu bạn muốn có màu nền khi checkbox được chọn */
-.checkbox input:checked {
-    background-color: #7d2ae8; /* Màu nền khi checkbox được chọn. */
-    border-color: #7d2ae8; /* Đổi màu đường viền khi được chọn. */
+.error-message {
+    color: red; /* Màu chữ đỏ */
+    font-size: 14px; /* Kích thước chữ */
+    margin-top: 5px; /* Khoảng cách từ trường nhập đến thông báo */
+    display: block; /* Hiển thị thông báo */
 }
 
