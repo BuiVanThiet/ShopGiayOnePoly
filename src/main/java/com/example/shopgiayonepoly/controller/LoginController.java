@@ -33,7 +33,7 @@
         @GetMapping("/home_manage")
         public String homeManage(Model model, HttpSession session) {
             Staff staff = (Staff) session.getAttribute("staffLogin");
-//            System.out.println(staff.toString());
+            System.out.println(staff.toString());
             if (staff != null) {
                     model.addAttribute("staffInfo", staff);
                 } else {
