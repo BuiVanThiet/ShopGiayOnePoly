@@ -6,6 +6,7 @@ import com.example.shopgiayonepoly.dto.response.StaffResponse;
 import com.example.shopgiayonepoly.entites.Staff;
 import com.example.shopgiayonepoly.entites.Voucher;
 import com.example.shopgiayonepoly.service.StaffService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -66,6 +67,12 @@ public class StaffController {
         staff.setPassword("@shoponepoly");
         this.staffService.save(staffSave);
         return "redirect:/staff/create";
+    }
+
+    @ModelAttribute("staffInfo")
+    public Staff staff(HttpSession session){
+        Staff staff = (Staff) session.getAttribute("staffLogin");
+        return staff;
     }
 
 }

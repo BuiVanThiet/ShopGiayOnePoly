@@ -1,8 +1,10 @@
 package com.example.shopgiayonepoly.controller;
 
 import com.example.shopgiayonepoly.dto.request.VoucherRequest;
+import com.example.shopgiayonepoly.entites.Staff;
 import com.example.shopgiayonepoly.entites.Voucher;
 import com.example.shopgiayonepoly.service.VoucherService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -275,6 +277,11 @@ public class VoucherController {
         model.addAttribute("pageVoucherDelete", pageVoucherDelete);
         model.addAttribute("voucher", new VoucherRequest());
         return "voucher/index";
+    }
+    @ModelAttribute("staffInfo")
+    public Staff staff(HttpSession session){
+        Staff staff = (Staff) session.getAttribute("staffLogin");
+        return staff;
     }
 
 
