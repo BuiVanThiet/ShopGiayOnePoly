@@ -434,4 +434,11 @@ public class BillController extends BaseBill {
         return "Bill/billInformationIndex";
     }
 
+    @ModelAttribute("staffInfo")
+    public Staff staff(HttpSession session) {
+        Staff staff = (Staff) session.getAttribute("staffLogin");
+        System.out.println("Thong tin trong model " + staff.toString());
+        return staff;
+    }
+
 }

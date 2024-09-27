@@ -34,5 +34,6 @@ public class Customer extends Base {
     private String password;
     @Column(name = "gender")
     private Integer gender;
-
+    @Column(name = "address")
+    private String addRess;
 }

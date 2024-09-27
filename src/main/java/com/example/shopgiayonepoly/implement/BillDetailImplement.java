@@ -1,9 +1,8 @@
 package com.example.shopgiayonepoly.implement;
 
-import com.example.shopgiayonepoly.dto.request.ProductDetailCheckRequest;
+import com.example.shopgiayonepoly.dto.request.bill.ProductDetailCheckRequest;
 import com.example.shopgiayonepoly.entites.BillDetail;
 import com.example.shopgiayonepoly.entites.Category;
-import com.example.shopgiayonepoly.entites.Product;
 import com.example.shopgiayonepoly.entites.ProductDetail;
 import com.example.shopgiayonepoly.repositores.BillDetailRepository;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -125,14 +125,70 @@ function loadInformationBillByIdBill() {
             $('#informationPriceAllBill').text((response.totalPriceProduct+response.shipPrice-response.maximumReduction).toLocaleString('en-US') + ' VNĐ')
             $('#nameVoucherApply').val(voucher);
             $('#informationPriceReduction').text(response.maximumReduction.toLocaleString('en-US') + ' VNĐ');
-        },
+            totalBill = response.totalPriceProduct-response.maximumReduction;
+            },
         error: function (xhr) {
             console.error('Loi ne' + xhr.responseText);
         }
     })
 }
+
+function loadCustomerShipInBill() {
+    $.ajax({
+        type: "GET",
+        url: "/bill-api/show-customer-in-bill",
+        success: function (response) {
+            $('#customerNotSystem').hide();
+            $('#customerSystem').show();
+            $('#nameCustomerShip').val(response.name);
+            $('#phoneCustomerShip').val(response.numberPhone);
+            $('#addResDetailCustomerShip').val(response.addressDetail);
+            $('#nameCustomerNotModal').text(response.name);
+            $('#numberPhoneNotModal').text(response.numberPhone);
+            $('#emailNotModal').text(response.email);
+            $('#addResDetailNotModal').text(response.addressDetail);
+            initializeLocationDropdowns('provinceSelect-transport-Ship','districtSelect-transport-Ship','wardSelect-transport-Ship','districtSelectContainer-transport-Ship','wardSelectContainer-transport-Ship',parseInt(response.city),parseInt(response.district),parseInt(response.commune));
+
+        },
+        error: function (xhr) {
+            console.error('loi' + xhr.responseText);
+            $('#customerNotSystem').show();
+            $('#customerSystem').hide();
+        }
+    })
+}
+
+function updateAddressShip() {
+    $.ajax({
+        type: "POST",
+        url: "/bill-api/update-customer-ship",
+        contentType: 'application/json',
+        data: JSON.stringify({
+            name: $('#nameCustomerShip').val().trim(),
+            numberPhone: $('#phoneCustomerShip').val().trim() || null, // Sử dụng || null để xử lý trường hợp không có giá trị
+            city: parseInt($('#provinceSelect-transport-Ship').val().trim()) || null,
+            district: parseInt($('#districtSelect-transport-Ship').val().trim()) || null,
+            commune: parseInt($('#wardSelect-transport-Ship').val().trim()) || null,
+            addressDetail: $('#addResDetailCustomerShip').val().trim() || null
+        }),
+        success: function (response) {
+            loadBillStatusByBillId();
+            loadInformationBillByIdBill();
+            loadCustomerShipInBill();
+            showToast(response.message,response.check)
+        },
+        error: function (xhr) {
+            console.error('loi' + xhr.responseText);
+        }
+
+    })
+}
 $(document).ready(function () {
+    $('#updateAddressShip').submit(function (event){
+        event.preventDefault();
+        updateAddressShip();
+    })
     loadBillStatusByBillId();
     loadInformationBillByIdBill();
-
+    loadCustomerShipInBill();
 });

@@ -1,8 +1,8 @@
-var provinceTransport;
-var districtTransport;
-var wardTransport;
-var totalBill;
-var shipPrice = 0;
+// var provinceTransport;
+// var districtTransport;
+// var wardTransport;
+// var totalBill;
+// var shipPrice = 0;
 function initializeLocationDropdowns(provinceSelectId, districtSelectId, wardSelectId,districtSelectContainerID,wardSelectContainerID, provinceID, districtID, wardID) {
     const provinceSelect = document.getElementById(provinceSelectId);
     const districtSelect = document.getElementById(districtSelectId);

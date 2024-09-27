@@ -12,10 +12,7 @@
     import org.springframework.stereotype.Controller;
     import org.springframework.ui.Model;
     import org.springframework.ui.ModelMap;
-    import org.springframework.web.bind.annotation.GetMapping;
-    import org.springframework.web.bind.annotation.PostMapping;
-    import org.springframework.web.bind.annotation.RequestMapping;
-    import org.springframework.web.bind.annotation.RequestParam;
+    import org.springframework.web.bind.annotation.*;
 
     import java.security.Principal;
 
@@ -31,10 +28,11 @@
         @GetMapping("/home_manage")
         public String homeManage(Model model, HttpSession session) {
             Staff staff = (Staff) session.getAttribute("staffLogin");
-            System.out.println(staff.toString());
+//            System.out.println(staff.toString());
             if (staff != null) {
-                    model.addAttribute("fullName", staff.getFullName());
-                    model.addAttribute("roleName", staff.getRole() != null ? staff.getRole().getNameRole() : "Không có vai trò");
+                    model.addAttribute("staffInfo", staff);
+//                    model.addAttribute("fullName", staff.getFullName());
+//                    model.addAttribute("roleName", staff.getRole() != null ? staff.getRole().getNameRole() : "Không có vai trò");
                 } else {
                     model.addAttribute("fullName", "Lỗi");
                     model.addAttribute("roleName", "Không có vai trò");
@@ -49,4 +47,14 @@
             session.invalidate();
             return "redirect:/login";
         }
+
+//        @ModelAttribute("staffInfo")
+//        public Staff staff(HttpSession session) {
+//            Staff staff = (Staff) session.getAttribute("loggedInUser");
+//            System.out.println("Thong tin trong model " + staff.toString());
+//            return staff;
+//        }
+
     }
+
+

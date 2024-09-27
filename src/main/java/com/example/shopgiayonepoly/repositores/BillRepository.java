@@ -2,7 +2,7 @@ package com.example.shopgiayonepoly.repositores;
 
 import com.example.shopgiayonepoly.dto.response.bill.BillResponseManage;
 import com.example.shopgiayonepoly.dto.response.bill.BillTotalInfornationResponse;
-import com.example.shopgiayonepoly.dto.response.ClientBillInformationResponse;
+import com.example.shopgiayonepoly.dto.response.bill.ClientBillInformationResponse;
 import com.example.shopgiayonepoly.dto.response.bill.InformationBillByIdBillResponse;
 import com.example.shopgiayonepoly.entites.*;
 import org.springframework.data.domain.Page;
@@ -76,16 +76,42 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
             "and concat(v.nameVoucher,v.codeVoucher) LIKE %:keyword%")
     List<Voucher> getVoucherByBill(@Param("idBill") Integer idBill, @Param("keyword") String keyword);
 
-    @Query("select new com.example.shopgiayonepoly.dto.response.ClientBillInformationResponse(addRess.customer.fullName,addRess.customer.numberPhone,addRess.specificAddress,addRess.specificAddress,addRess.specificAddress,addRess.specificAddress) from AddressShip addRess where addRess.customer.id = :idClient")
+    @Query("select new com.example.shopgiayonepoly.dto.response.bill.ClientBillInformationResponse(cuss.fullName,cuss.numberPhone,cuss.email,cuss.addRess,cuss.addRess,cuss.addRess,cuss.addRess) from Customer cuss where cuss.id = :idClient")
     List<ClientBillInformationResponse> getClientBillInformationResponse(@Param("idClient") Integer idBill);
     // phan nay danh cho quan ly hoa don
     @Query("""
         select 
         new com.example.shopgiayonepoly.dto.response.bill.BillResponseManage(
-            bill.id, bill.codeBill, bill.customer, bill.staff, bill.addRess, bill.voucher, 
-            bill.shippingPrice, bill.cash, bill.acountMoney, bill.note, bill.totalAmount, 
-            bill.paymentMethod, bill.billType, bill.paymentStatus, bill.surplusMoney, 
-            bill.createDate, bill.updateDate, bill.status) 
+            bill.id, 
+            bill.codeBill, 
+            bill.customer, 
+            bill.staff, 
+            bill.addRess, 
+            bill.voucher, 
+            bill.shippingPrice, 
+            bill.cash, 
+            bill.acountMoney, 
+            bill.note, 
+            case 
+            when voucher.discountType = 1 then
+                case 
+                    when bill.totalAmount * (voucher.priceReduced / 100) > voucher.pricesMax then
+                        bill.totalAmount - voucher.pricesMax + bill.shippingPrice
+                    else 
+                        bill.totalAmount - (bill.totalAmount * (voucher.priceReduced / 100)) + bill.shippingPrice
+                end 
+            when voucher.discountType = 2 then
+                bill.totalAmount - voucher.priceReduced + bill.shippingPrice
+            else 
+                bill.totalAmount + bill.shippingPrice
+        end, 
+            bill.paymentMethod, 
+            bill.billType, 
+            bill.paymentStatus, 
+            bill.surplusMoney, 
+            bill.createDate, 
+            bill.updateDate,
+            bill.status) 
         from Bill bill 
         LEFT JOIN bill.customer customer
         LEFT JOIN bill.staff staff
@@ -146,5 +172,4 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
      where b.id = :idCheck
 """)
     InformationBillByIdBillResponse getInformationBillByIdBill(@Param("idCheck") Integer idBill);
-
 }
