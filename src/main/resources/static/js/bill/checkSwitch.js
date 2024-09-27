@@ -106,6 +106,9 @@ document.getElementById('flexSwitchCheckDefault').addEventListener('change', fun
 });
 
 function setClientShip(name,numberPhone,province,district,ward,addressDetail) {
+    $('#idCity-staff').val(province)
+    $('#idDistrict-staff').val(district)
+    $('#idCommune-staff').val(ward)
     $('#customerShip').val(name+','+numberPhone+','+province+','+district+','+ward+','+addressDetail);
 }
 

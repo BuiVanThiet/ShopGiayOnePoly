@@ -21,7 +21,7 @@
             <h1 class="center">Danh sách nhân viên</h1>
 
             <div class="button">
-                <button type="button" class="btn btn-primary">Thêm mới nhân viên</button>
+                <a href="/staff/create" class="btn btn-primary">Thêm mới nhân viên</a>
                 <button type="button" class="btn btn-success">Thêm chức vụ</button>
             </div>
 
@@ -41,6 +41,7 @@
                     <th>Ảnh</th>
                     <th>Mã nhân viên</th>
                     <th>Tên nhân viên</th>
+                    <th>Dia chi</th>
                     <th>Giới tính</th>
                     <th>Ngày sinh</th>
                     <th>Số điện thoại</th>
@@ -55,11 +56,12 @@
                     <td th:text="${staff.nameImage}"></td>
                     <td th:text="${staff.codeStaff}"></td>
                     <td th:text="${staff.fullName}"></td>
+                    <td th:text="${staff.address}"></td>
                     <td th:text="${staff.gender}"></td>
                     <td th:text="${staff.birthDay}"></td>
                     <td th:text="${staff.numberPhone}"></td>
                     <td th:text="${staff.email}"></td>
-                    <td th:text="${staff.nameRole}"></td>
+                    <td th:text="${staff.role.nameRole}"></td>
                     <td th:text="${staff.status}"></td>
                     <td>
                         <a href="#" class="edit-icon" onclick="enableEditing(this); return false;"><i class="fas fa-edit" title="Edit"></i></a>

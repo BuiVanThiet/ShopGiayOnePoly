@@ -22,11 +22,12 @@ public interface StaffRepository extends JpaRepository<Staff, Integer> {
             "image1",
             s.codeStaff,
             s.fullName,
+            s.address,
             s.gender,
             s.birthDay,
             s.numberPhone,
             s.email,
-            s.role.nameRole
+            s.role
         ) 
         from Staff s
     """)
@@ -42,11 +43,12 @@ public interface StaffRepository extends JpaRepository<Staff, Integer> {
             "image1",
             s.codeStaff,
             s.fullName,
+            s.address,
             s.gender,
             s.birthDay,
             s.numberPhone,
             s.email,
-            s.role.nameRole
+            s.role
     )  
     from Staff s where concat(s.fullName, s.codeStaff, s.numberPhone) like %:key%
     """)
