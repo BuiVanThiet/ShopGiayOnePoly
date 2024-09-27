@@ -1,5 +1,10 @@
 package com.example.shopgiayonepoly.config;
 
+import com.example.shopgiayonepoly.entites.Staff;
+import com.example.shopgiayonepoly.repositores.StaffSecurityRepository;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,18 +15,24 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 
 
+import java.io.IOException;
 import java.util.Arrays;
 
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+    @Autowired
+    StaffSecurityRepository staffSecurityRepository;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
@@ -46,6 +57,7 @@ public class SecurityConfig {
                         .loginPage("/login")
                         .loginProcessingUrl("/login")
                         .defaultSuccessUrl("/home_manage", true)
+                        .failureHandler(authenticationFailureHandler())
                 )
 
                 .logout(config -> config
@@ -57,6 +69,35 @@ public class SecurityConfig {
                 .build();
     }
 
+    @Bean
+    public AuthenticationFailureHandler authenticationFailureHandler() {
+        return new SimpleUrlAuthenticationFailureHandler() {
+            @Override
+            public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
+                                                AuthenticationException exception) throws IOException, ServletException {
+
+                String username = request.getParameter("username");
+                Staff staff = staffSecurityRepository.findByAcountOrEmail(username, username);
+
+                if (staff != null) {
+                    // Tài khoản tồn tại nhưng mật khẩu không khớp
+                    request.getSession().setAttribute("usernameError", "");
+                    request.getSession().setAttribute("passwordError", "Mật khẩu không chính xác");
+                } else {
+                    // Tài khoản không tồn tại
+                    request.getSession().setAttribute("usernameError", "Tài khoản không tồn tại");
+                }
+                // Giữ lại username khi đăng nhập thất bại
+                request.getSession().setAttribute("usernameFalse", username);
+                request.getSession().setAttribute("usernameError", "Tài khoản không chính xác");
+                request.getSession().setAttribute("passwordError", "Mật khẩu không chính xác");
+
+                // Chuyển hướng lại trang login
+                super.setDefaultFailureUrl("/login?error=true");
+                super.onAuthenticationFailure(request, response, exception);
+            }
+        };
+    }
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();

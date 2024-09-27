@@ -25,7 +25,12 @@
         StaffSecurityRepository staffSecurityRepository;
 
         @GetMapping("/login")
-        public String showLoginForm() {
+        public String login(HttpSession session, Model model) {
+//            String username = (String) session.getAttribute("username");
+//            if (username != null) {
+//                model.addAttribute("usernameError", "Tài khoản không tồn tại");
+//                model.addAttribute("passwordErorr","Mật khẩu chưa chính xác");
+//            }
             return "login/login";
         }
         @GetMapping("/home_manage")
@@ -33,14 +38,13 @@
             Staff staff = (Staff) session.getAttribute("staffLogin");
             System.out.println(staff.toString());
             if (staff != null) {
-                    model.addAttribute("fullName", staff.getFullName());
-                    model.addAttribute("roleName", staff.getRole() != null ? staff.getRole().getNameRole() : "Không có vai trò");
+                    model.addAttribute("staffInfo", staff);
+
                 } else {
                     model.addAttribute("fullName", "Lỗi");
                     model.addAttribute("roleName", "Không có vai trò");
                     return "redirect:/login";
                 }
-
             return "Home/home_manege";
         }
         @GetMapping("/logout")
