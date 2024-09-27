@@ -5,7 +5,7 @@ $(function() {
         max: 10000000,
         values: [0, 10000000],
         slide: function(event, ui) {
-            $("#minAmount").val(ui.values[0] + " ₫");
+            $("#minAmount").val(ui.values[0] + " ₫");A
             $("#maxAmount").val(ui.values[1] + " ₫");
         }
     });
