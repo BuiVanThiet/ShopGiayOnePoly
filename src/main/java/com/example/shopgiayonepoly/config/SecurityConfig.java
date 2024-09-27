@@ -83,6 +83,7 @@ public class SecurityConfig {
                 System.out.println(staff);
                 if (staff != null) {
                     // Tài khoản tồn tại nhưng mật khẩu không khớp
+                    request.getSession().setAttribute("usernameError", null);
                     request.getSession().setAttribute("passwordError", "Mật khẩu không chính xác");
                 } else {
                     // Tài khoản không tồn tại
