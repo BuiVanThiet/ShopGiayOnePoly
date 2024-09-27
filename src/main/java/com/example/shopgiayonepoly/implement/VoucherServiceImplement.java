@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -75,6 +76,16 @@ public class VoucherServiceImplement implements VoucherService {
 
     @Override
     public Page<Voucher> searchVoucherByDateRange(Pageable pageable, LocalDate startDate, LocalDate endDate) {
-        return voucherRepository.searchVoucherByDateRange(pageable, startDate, endDate);
+        return voucherRepository.searchVoucherByDateRange(pageable,startDate,endDate);
+    }
+
+    @Override
+    public Page<Voucher> searchVoucherByPriceRange(Pageable pageable, BigDecimal minPrice, BigDecimal maxPrice) {
+        return voucherRepository.searchVoucherByPriceRange(pageable,minPrice,maxPrice);
+    }
+
+    @Override
+    public Page<Voucher> searchVoucherByTypeVoucher(int type, Pageable pageable) {
+        return voucherRepository.searchVoucherByTypeVoucher(type,pageable);
     }
 }
