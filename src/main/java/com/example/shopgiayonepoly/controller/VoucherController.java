@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -204,12 +205,21 @@ public class VoucherController {
     }
 
     @GetMapping("/search-date")
-    public String searchVoucherByDateRange(@RequestParam("startDate") LocalDate startDate, @RequestParam("endDate") LocalDate endDate, Model model, @RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber, @RequestParam(name = "pageNumberDelete", defaultValue = "0") Integer pageNumberDelete) {
+    public String searchVoucherByDateRange(
+            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            Model model,
+            @RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber,
+            @RequestParam(name = "pageNumberDelete", defaultValue = "0") Integer pageNumberDelete) {
 
         Pageable pageableSearch = PageRequest.of(pageNumber, pageSize);
         Page<Voucher> pageVoucher;
 
         if (startDate != null && endDate != null) {
+            if (startDate.isAfter(endDate)) {
+                model.addAttribute("error", "Ngày bắt đầu phải nhỏ hơn hoặc bằng ngày kết thúc.");
+                return "voucher/index";
+            }
             pageVoucher = voucherService.searchVoucherByDateRange(pageableSearch, startDate, endDate);
         } else {
             pageVoucher = voucherService.getAllVoucherByPage(pageableSearch);
@@ -218,13 +228,54 @@ public class VoucherController {
         Pageable pageableDelete = PageRequest.of(pageNumberDelete, pageSize);
         Page<Voucher> pageVoucherDelete = voucherService.getAllVoucherDeleteByPage(pageableDelete);
 
+        // Đưa dữ liệu vào model
         model.addAttribute("pageVoucher", pageVoucher);
         model.addAttribute("pageVoucherDelete", pageVoucherDelete);
         model.addAttribute("voucher", new VoucherRequest());
         model.addAttribute("startDate", startDate);
         model.addAttribute("endDate", endDate);
+        System.out.println("Start Date: " + startDate);
+        System.out.println("End Date: " + endDate);
+
 
         return "voucher/index";
     }
+
+    @GetMapping("/search-range-price")
+    public String searchVoucherByDateRange(
+            Model model,
+            @RequestParam(name = "minPrice", defaultValue = "0") BigDecimal minPrice,
+            @RequestParam(name = "maxPrice", defaultValue = "0") BigDecimal maxPrice,
+            @RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber,
+            @RequestParam(name = "pageNumberDelete", defaultValue = "0") Integer pageNumberDelete) {
+
+        Pageable pageableSearch = PageRequest.of(pageNumber, pageSize);
+        Page<Voucher> pageVoucher = voucherService.searchVoucherByPriceRange(pageableSearch, minPrice, maxPrice);
+
+        Pageable pageableDelete = PageRequest.of(pageNumberDelete, pageSize);
+        Page<Voucher> pageVoucherDelete = voucherService.getAllVoucherDeleteByPage(pageableDelete);
+
+        model.addAttribute("pageVoucher", pageVoucher);
+        model.addAttribute("pageVoucherDelete", pageVoucherDelete);
+        model.addAttribute("voucher", new VoucherRequest());
+        return "voucher/index";
+    }
+
+    @GetMapping("/search-type")
+    public String searchVoucherByType(@RequestParam("typeSearch") Integer typeSearch, Model model,
+                                      @RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber,
+                                      @RequestParam(name = "pageNumberDelete", defaultValue = "0") Integer pageNumberDelete) {
+
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Page<Voucher> pageVoucher = voucherService.searchVoucherByTypeVoucher(typeSearch, pageable);
+
+        Pageable pageableDelete = PageRequest.of(pageNumberDelete, pageSize);
+        Page<Voucher> pageVoucherDelete = voucherService.getAllVoucherDeleteByPage(pageableDelete);
+        model.addAttribute("pageVoucher", pageVoucher);
+        model.addAttribute("pageVoucherDelete", pageVoucherDelete);
+        model.addAttribute("voucher", new VoucherRequest());
+        return "voucher/index";
+    }
+
 
 }

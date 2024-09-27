@@ -1,12 +1,12 @@
-const shipSpan = document.getElementById('shipSpan'); // Xác định thẻ div cần ẩn/hiện
-
-shipSpan.style.display = 'none'; // Ẩn thẻ div khi checkbox được chọn
-var provinceID;
-var districtID;
-var wardID;
-var nameCustomer='';
-var numberPhoneCustomer = '';
-var addRessDetailCustomer = '';
+// const shipSpan = document.getElementById('shipSpan'); // Xác định thẻ div cần ẩn/hiện
+//
+// shipSpan.style.display = 'none'; // Ẩn thẻ div khi checkbox được chọn
+// var provinceID;
+// var districtID;
+// var wardID;
+// var nameCustomer='';
+// var numberPhoneCustomer = '';
+// var addRessDetailCustomer = '';
 document.getElementById('flexSwitchCheckDefault').addEventListener('change', function() {
     const dynamicContent = document.getElementById('dynamic-content');
     const shipSpan = document.getElementById('shipSpan'); // Xác định thẻ div cần ẩn/hiện
@@ -25,7 +25,6 @@ document.getElementById('flexSwitchCheckDefault').addEventListener('change', fun
             url: '/bill-api/client-bill-information', // URL của endpoint
             method: 'GET',
             success: function(client) {
-
                 provinceID  = parseInt(client.city);
                 districtID = parseInt(client.district);
                 wardID = parseInt(client.commune);
@@ -106,6 +105,9 @@ document.getElementById('flexSwitchCheckDefault').addEventListener('change', fun
 });
 
 function setClientShip(name,numberPhone,province,district,ward,addressDetail) {
+    $('#idCity-staff').val(province)
+    $('#idDistrict-staff').val(district)
+    $('#idCommune-staff').val(ward)
     $('#customerShip').val(name+','+numberPhone+','+province+','+district+','+ward+','+addressDetail);
 }
 

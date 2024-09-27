@@ -75,23 +75,20 @@ public class SecurityConfig {
             @Override
             public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
                                                 AuthenticationException exception) throws IOException, ServletException {
-
+                // Lưu lại session username sai
                 String username = request.getParameter("username");
-                Staff staff = staffSecurityRepository.findByAcountOrEmail(username, username);
+                request.getSession().setAttribute("usernameFalse", username);
 
+                Staff staff = staffSecurityRepository.findByAcountOrEmail(username, username);
+                System.out.println(staff);
                 if (staff != null) {
                     // Tài khoản tồn tại nhưng mật khẩu không khớp
-                    request.getSession().setAttribute("usernameError", "");
                     request.getSession().setAttribute("passwordError", "Mật khẩu không chính xác");
                 } else {
                     // Tài khoản không tồn tại
                     request.getSession().setAttribute("usernameError", "Tài khoản không tồn tại");
+                    request.getSession().setAttribute("passwordError", "Mật khẩu không chính xác");
                 }
-                // Giữ lại username khi đăng nhập thất bại
-                request.getSession().setAttribute("usernameFalse", username);
-                request.getSession().setAttribute("usernameError", "Tài khoản không chính xác");
-                request.getSession().setAttribute("passwordError", "Mật khẩu không chính xác");
-
                 // Chuyển hướng lại trang login
                 super.setDefaultFailureUrl("/login?error=true");
                 super.onAuthenticationFailure(request, response, exception);

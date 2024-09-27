@@ -1,18 +1,13 @@
-
-    document.addEventListener("DOMContentLoaded", function() {
-    document.getElementById("searchStartDate").addEventListener("change", function() {
-        autoSubmitForm();
-    });
-    document.getElementById("searchEndDate").addEventListener("change", function() {
-    autoSubmitForm();
-});
-
-    function autoSubmitForm() {
+function autoSubmitForm() {
     var startDate = document.getElementById("searchStartDate").value;
     var endDate = document.getElementById("searchEndDate").value;
 
-    var url = "/voucher/search-date?startDate=" + startDate + "&endDate=" + endDate;
+    if (startDate && endDate) {
+        // Đảm bảo định dạng ngày là YYYY-MM-DD
+        var formattedStartDate = new Date(startDate).toISOString().split('T')[0];
+        var formattedEndDate = new Date(endDate).toISOString().split('T')[0];
 
-    window.location.href = url;
+        var url = "/voucher/search-date?startDate=" + formattedStartDate + "&endDate=" + formattedEndDate;
+        window.location.href = url;
+    }
 }
-});

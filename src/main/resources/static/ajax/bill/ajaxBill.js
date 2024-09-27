@@ -107,7 +107,7 @@ function paymentInformation() {
             $('#discountAmount').text(response.discount.toLocaleString('en-US') + ' VNĐ');
             $('#totalAmount').text((response.finalAmount+shipPrice).toLocaleString('en-US') + ' VNĐ');
 
-            totalBill = response.finalAmount;
+            totalBill = response.finalAmount-response.discount;
 
             $('#notePayment').text(response.note);
             if(payMethodChecked === 2 || payMethodChecked === 3) {

@@ -13,5 +13,6 @@ public class InfomationCustomerBillResponse {
     private String fullName;
     private String numberPhone;
     private String email;
-    private String addRess;
+
+    private String addRessDetail;
 }

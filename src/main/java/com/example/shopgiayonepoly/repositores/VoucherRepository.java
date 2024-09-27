@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -39,10 +40,17 @@ public interface VoucherRepository extends JpaRepository<Voucher, Integer> {
 
     @Query("select v from Voucher v where v.nameVoucher like %:key% or v.codeVoucher like %:key%")
     public Page<Voucher> searchVoucherByKeyword(@Param("key") String key, Pageable pageable);
+
     @Query("select v from Voucher v where v.startDate >= :dateStart and v.startDate <= :dateEnd")
     public Page<Voucher> searchVoucherByDateRange(Pageable pageable,
                                                   @Param("dateStart") LocalDate startDate,
                                                   @Param("dateEnd") LocalDate endDate);
 
+    @Query("select v from Voucher v where v.priceReduced >= :minPrice and v.priceReduced <= :maxPrice")
+    public Page<Voucher> searchVoucherByPriceRange(Pageable pageable,
+                                                   @Param("minPrice") BigDecimal minPrice,
+                                                   @Param("maxPrice") BigDecimal maxPrice);
 
+    @Query("select v from Voucher v where v.discountType =:types and v.status = 1")
+    Page<Voucher> searchVoucherByTypeVoucher(@Param("types") int type, Pageable pageable);
 }

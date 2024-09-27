@@ -1,4 +1,4 @@
-package com.example.shopgiayonepoly.dto.request;
+package com.example.shopgiayonepoly.dto.request.bill;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,6 +9,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class SearchClientRequest {
-    private String name;
+public class PayMethodRequest {
+    private Integer payMethod;
 }

@@ -1,17 +1,17 @@
-var totalAmount = document.getElementById('totalCash');
-var cashClient = document.getElementById('cashClient');
-var btnCreateBill = document.getElementById('createBill');
-var erorrCash = document.getElementById('erorrCash');
-var formErorrCash = document.getElementById('formErorrCash');
-var payMethod = document.getElementById('payMethod');
-var formPayMethod = document.getElementById('formPay');
-
-var surplusMoney = document.getElementById('surplusMoney');
-var surplusMoneySpan = document.getElementById('surplusMoneySpan');
-var textSurplusMoney = document.getElementById('textSurplusMoney');
+// var totalAmount = document.getElementById('totalCash');
+// var cashClient = document.getElementById('cashClient');
+// var btnCreateBill = document.getElementById('createBill');
+// var erorrCash = document.getElementById('erorrCash');
+// var formErorrCash = document.getElementById('formErorrCash');
+// var payMethod = document.getElementById('payMethod');
+// var formPayMethod = document.getElementById('formPay');
 //
-var cashClientText = document.getElementById('cashClientText');
-var cashAccount = document.getElementById('cashAccount');
+// var surplusMoney = document.getElementById('surplusMoney');
+// var surplusMoneySpan = document.getElementById('surplusMoneySpan');
+// var textSurplusMoney = document.getElementById('textSurplusMoney');
+// //
+// var cashClientText = document.getElementById('cashClientText');
+// var cashAccount = document.getElementById('cashAccount');
 function formatNumber(number) {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }

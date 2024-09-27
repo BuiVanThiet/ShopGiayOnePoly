@@ -1,6 +1,6 @@
 package com.example.shopgiayonepoly.baseMethod;
 
-import com.example.shopgiayonepoly.dto.request.ProductDetailCheckRequest;
+import com.example.shopgiayonepoly.dto.request.bill.ProductDetailCheckRequest;
 import com.example.shopgiayonepoly.dto.request.VoucherRequest;
 import com.example.shopgiayonepoly.entites.*;
 import com.example.shopgiayonepoly.service.*;
@@ -67,17 +67,17 @@ public abstract class BaseBill {
 
     //    sua lai so luong san pham khi duoc dua vao hoa don
     protected void getUpdateQuantityProduct(Integer idProductDetail,Integer quantity,Integer status) {
-        ProductDetail productDetail = this.billDetailService.getProductDetailById(idProductDetail);
+//        ProductDetail productDetail = this.billDetailService.getProductDetailById(idProductDetail);
 
         if (status == 1) {
-            productDetail.setQuantity(productDetail.getQuantity() - quantity);
+//            productDetail.setQuantity(productDetail.getQuantity() - quantity);
             System.out.println("da tru");
         } else {
-            productDetail.setQuantity(productDetail.getQuantity() + quantity);
+//            productDetail.setQuantity(productDetail.getQuantity() + quantity);
             System.out.println("da cong");
         }
 
-        productDetail.setUpdateDate(new Date());
+//        productDetail.setUpdateDate(new Date());
     }
 //danh cho giao hang, cai nay dung de theo doi don hang
 protected void setBillStatus(Integer idBillSet) {
