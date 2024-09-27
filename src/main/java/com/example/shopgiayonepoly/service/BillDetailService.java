@@ -1,9 +1,8 @@
 package com.example.shopgiayonepoly.service;
 
-import com.example.shopgiayonepoly.dto.request.ProductDetailCheckRequest;
+import com.example.shopgiayonepoly.dto.request.bill.ProductDetailCheckRequest;
 import com.example.shopgiayonepoly.entites.BillDetail;
 import com.example.shopgiayonepoly.entites.Category;
-import com.example.shopgiayonepoly.entites.Product;
 import com.example.shopgiayonepoly.entites.ProductDetail;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

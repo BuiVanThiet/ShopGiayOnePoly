@@ -1,4 +1,4 @@
-package com.example.shopgiayonepoly.dto.response;
+package com.example.shopgiayonepoly.dto.response.bill;
 
 import com.example.shopgiayonepoly.entites.Product;
 import lombok.AllArgsConstructor;

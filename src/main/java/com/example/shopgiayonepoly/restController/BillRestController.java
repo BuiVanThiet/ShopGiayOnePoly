@@ -2,11 +2,11 @@ package com.example.shopgiayonepoly.restController;
 
 import com.example.shopgiayonepoly.baseMethod.BaseBill;
 import com.example.shopgiayonepoly.dto.request.bill.BillDetailAjax;
-import com.example.shopgiayonepoly.dto.request.PayMethodRequest;
-import com.example.shopgiayonepoly.dto.request.ProductDetailCheckRequest;
+import com.example.shopgiayonepoly.dto.request.bill.PayMethodRequest;
+import com.example.shopgiayonepoly.dto.request.bill.ProductDetailCheckRequest;
 import com.example.shopgiayonepoly.dto.response.bill.BillResponseManage;
 import com.example.shopgiayonepoly.dto.response.bill.BillTotalInfornationResponse;
-import com.example.shopgiayonepoly.dto.response.ClientBillInformationResponse;
+import com.example.shopgiayonepoly.dto.response.bill.ClientBillInformationResponse;
 import com.example.shopgiayonepoly.dto.response.bill.InformationBillByIdBillResponse;
 import com.example.shopgiayonepoly.entites.*;
 import jakarta.servlet.http.HttpSession;
@@ -66,9 +66,9 @@ public class BillRestController extends BaseBill {
             thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }
-        if(billDetailAjax.getQuantity() > billDetail.getProductDetail().getQuantity()) {
+        if(billDetail.getProductDetail().getQuantity() <  0) {
             System.out.println("Số lượng mua không được quá số lượng trong hệ thống!");
-            thongBao.put("message","Số lượng mua không được quá số lượng trong hệ thống!");
+            thongBao.put("message","Số lượng sản phẩm đã hết trong hệ thống!");
             thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }
@@ -321,7 +321,40 @@ public class BillRestController extends BaseBill {
         System.out.println(informationBillByIdBillResponse.toString());
         return informationBillByIdBillResponse;
     }
+    @GetMapping("/show-customer-in-bill")
+    public ClientBillInformationResponse getCustomerInBill(HttpSession session) {
+        Bill bill = this.billService.findById((Integer) session.getAttribute("IdBill")).orElse(null);
+        if (bill != null) {
+            String getAddRessDetail = bill.getAddRess();
+            String[] part = getAddRessDetail.split(",\\s*");
+            String fullName = part[0];
+            String numberPhone = part[1];
+            String province = part[2];
+            String district = part[3];
+            String ward = part[4];
+            String addRessDetail = String.join(", ", java.util.Arrays.copyOfRange(part, 5, part.length));
+            ClientBillInformationResponse clientBillInformationResponse = new ClientBillInformationResponse(fullName,numberPhone,bill.getCustomer().getEmail(),province,district,ward,addRessDetail);
+            System.out.println("thong tin cua doi tuong ship " + clientBillInformationResponse.toString());
+            return clientBillInformationResponse;
+        }
+        return new ClientBillInformationResponse();
+    }
 
-
+    @PostMapping("/update-customer-ship")
+    public ResponseEntity<Map<String,String>> getUpdateclientBillInformation(@RequestBody ClientBillInformationResponse clientBillInformationResponse,HttpSession session) {
+        Map<String,String> thongBao = new HashMap<>();
+        Bill bill = this.billService.findById((Integer) session.getAttribute("IdBill")).orElse(null);
+        bill.setUpdateDate(new Date());
+        bill.setAddRess(clientBillInformationResponse.getName()+","
+                +clientBillInformationResponse.getNumberPhone()+","
+                +clientBillInformationResponse.getCity()+","
+                +clientBillInformationResponse.getDistrict()+","
+                +clientBillInformationResponse.getCommune()+","
+                +clientBillInformationResponse.getAddressDetail());
+        this.billService.save(bill);
+        thongBao.put("message","Sửa thông tin giao hàng thành công!");
+        thongBao.put("check","1");
+        return ResponseEntity.ok(thongBao);
+    }
 
 }

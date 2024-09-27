@@ -1,8 +1,8 @@
-var provinceTransport;
-var districtTransport;
-var wardTransport;
-var totalBill;
-var shipPrice = 0;
+// var provinceTransport;
+// var districtTransport;
+// var wardTransport;
+// var totalBill;
+// var shipPrice = 0;
 function initializeLocationDropdowns(provinceSelectId, districtSelectId, wardSelectId,districtSelectContainerID,wardSelectContainerID, provinceID, districtID, wardID) {
     const provinceSelect = document.getElementById(provinceSelectId);
     const districtSelect = document.getElementById(districtSelectId);
@@ -30,8 +30,11 @@ function initializeLocationDropdowns(provinceSelectId, districtSelectId, wardSel
                 const selectedProvinceID = this.value;
                 $('#shipMoney').text('0' + ' VNĐ');
                 $('#moneyTransport').val(0)
+                $('#moneyShipUpdate').val(0)
                 shipPrice = 0;
-                btnCreateBill.disabled = true;
+                if(btnCreateBill != null) {
+                    btnCreateBill.disabled = true;
+                }
                 paymentInformation();
 
                 provinceTransport = this.value;
@@ -64,7 +67,10 @@ function initializeLocationDropdowns(provinceSelectId, districtSelectId, wardSel
                                 const selectedDistrictID = this.value;
                                 $('#shipMoney').text('0' + ' VNĐ');
                                 $('#moneyTransport').val(0)
-                                btnCreateBill.disabled = true;
+                                $('#moneyShipUpdate').val(0)
+                                if(btnCreateBill != null) {
+                                    btnCreateBill.disabled = true;
+                                }
                                 shipPrice = 0;
                                 paymentInformation();
 
@@ -109,7 +115,10 @@ function initializeLocationDropdowns(provinceSelectId, districtSelectId, wardSel
                                 } else {
                                     $('#shipMoney').text(0 + ' VNĐ');
                                     $('#moneyTransport').val(0)
-                                    btnCreateBill.disabled = true;
+                                    $('#moneyShipUpdate').val(0)
+                                    if(btnCreateBill != null) {
+                                        btnCreateBill.disabled = true;
+                                    }
                                     shipPrice = 0;
 
                                     wardTransport = null;
@@ -299,8 +308,11 @@ function totalShip(province, district, ward) {
                             console.log(response.data);
                             $('#shipMoney').text(response.data.total.toLocaleString('en-US') + ' VNĐ');
                             $('#moneyTransport').val(response.data.total)
+                            $('#moneyShipUpdate').val(response.data.total)
                             shipPrice = response.data.total;
-                            btnCreateBill.disabled = false;
+                            if(btnCreateBill != null) {
+                                btnCreateBill.disabled = false;
+                            }
                             setClientShip(nameCustomer,numberPhoneCustomer,provinceTransport,districtTransport,wardTransport,addRessDetailCustomer)
                             paymentInformation();
                         },
