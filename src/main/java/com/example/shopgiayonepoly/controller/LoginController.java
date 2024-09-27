@@ -36,12 +36,7 @@
 //            System.out.println(staff.toString());
             if (staff != null) {
                     model.addAttribute("staffInfo", staff);
-<<<<<<< HEAD
 
-=======
-//                    model.addAttribute("fullName", staff.getFullName());
-//                    model.addAttribute("roleName", staff.getRole() != null ? staff.getRole().getNameRole() : "Không có vai trò");
->>>>>>> c11296b89f7aedfcb32d7e02f475906a758aaad9
                 } else {
                     model.addAttribute("fullName", "Lỗi");
                     model.addAttribute("roleName", "Không có vai trò");
