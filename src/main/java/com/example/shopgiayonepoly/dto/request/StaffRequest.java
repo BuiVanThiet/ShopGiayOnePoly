@@ -21,8 +21,6 @@ public class StaffRequest extends BaseDTO {
     private String codeStaff;
     @NotBlank(message = "Tên nhân viên không được để trống!")
     private String fullName;
-//    @NotBlank(message = "Dia chi nhân viên không được để trống!")
-//    private String address;
     @NotNull(message = "Thanh pho không được để trống")
     private Integer city;
     @NotNull(message = "Huyen không được để trống")

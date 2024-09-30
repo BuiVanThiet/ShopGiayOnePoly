@@ -27,33 +27,6 @@ public class StaffResponse extends BaseDTO {
     private Role role;
 
 
-//    public StaffResponse(Integer id, Date createDate, Date updateDate, @NotNull(message = "Mời bạn chọn trạng thái!") Integer status, String nameImage, String codeStaff, String fullName, Integer gender, LocalDate birthDay, String numberPhone, String email, String nameRole) {
-//        super(id, createDate, updateDate, status);
-//        this.nameImage = nameImage;
-//        this.codeStaff = codeStaff;
-//        this.fullName = fullName;
-//        this.gender = gender;
-//        this.birthDay = birthDay;
-//        this.numberPhone = numberPhone;
-//        this.email = email;
-//        this.nameRole = nameRole;
-//    }
-
-
-//    public StaffResponse(Integer id, Date createDate, Date updateDate, @NotNull(message = "Mời bạn chọn trạng thái!") Integer status, String nameImage, String codeStaff, String fullName, String address, Integer gender, LocalDate birthDay, String numberPhone, String email, String nameRole) {
-//        super(id, createDate, updateDate, status);
-//        this.nameImage = nameImage;
-//        this.codeStaff = codeStaff;
-//        this.fullName = fullName;
-//        this.address = address;
-//        this.gender = gender;
-//        this.birthDay = birthDay;
-//        this.numberPhone = numberPhone;
-//        this.email = email;
-//        this.nameRole = nameRole;
-//    }
-
-
     public StaffResponse(Integer id, Date createDate, Date updateDate, @NotNull(message = "Mời bạn chọn trạng thái!") Integer status, String nameImage, String codeStaff, String fullName, String address, Integer gender, LocalDate birthDay, String numberPhone, String email, Role role) {
         super(id, createDate, updateDate, status);
         this.nameImage = nameImage;

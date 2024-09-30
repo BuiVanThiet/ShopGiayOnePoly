@@ -21,7 +21,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
             c.birthDay,
             c.numberPhone,
             c.email,
-            addRess.specificAddress
+            c.addRess
         ) 
         from Customer c 
         left join AddressShip addRess on c.id = addRess.customer.id
@@ -40,10 +40,9 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
             c.birthDay,
             c.numberPhone,
             c.email,
-            addRess.specificAddress
+            c.addRess
         ) 
         from Customer c 
-        left join AddressShip addRess on c.id = addRess.customer.id
         where concat(c.fullName, c.numberPhone) like %:key%
     """)
     public List<CustomerResponse> searchCustomerByKeyword(@Param("key") String key);
