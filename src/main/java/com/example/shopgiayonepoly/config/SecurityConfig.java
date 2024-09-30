@@ -91,6 +91,7 @@ public class SecurityConfig {
                     request.getSession().setAttribute("passwordError", "Mật khẩu không chính xác");
                 }
                 // Chuyển hướng lại trang login
+
                 super.setDefaultFailureUrl("/login?error=true");
                 super.onAuthenticationFailure(request, response, exception);
             }
