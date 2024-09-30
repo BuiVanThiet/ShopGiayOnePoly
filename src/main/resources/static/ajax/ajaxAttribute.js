@@ -149,7 +149,7 @@ function fetchDeletedColors() {
                                    data-status="${color.status}"></i>
                             </td>
                             <td>
-                                <a href="#" onclick="restoreColor(${color.id})">
+                                <a href="#"  onclick="restoreColor(${color.id})">
                                     <i class="attribute-icon-restore fas fa-undo" title="Khôi phục"></i>
                                 </a>
                             </td>
@@ -222,7 +222,33 @@ function fetchActiveColors() {
 
 
 function restoreColor(colorId) {
-    // Logic để khôi phục màu bị xóa (thực hiện khi người dùng bấm vào icon khôi phục)
-    alert('Khôi phục màu có ID: ' + colorId);
+    if (confirm('Bạn có chắc chắn muốn khôi phục này không?')) {
+        var index = element.getAttribute('data-index');  // Lấy index từ th:data-index
+        var id = $('#row-' + index).data('id');  // Lấy id của phần tử từ th:data-id của hàng
+
+        $.ajax({
+            url: '/attribute/delete-color',  // Đường dẫn API để xóa
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                id: id,
+                status: 2  // Giả sử status 0 là trạng thái bị xóa
+            }),
+            success: function (response) {
+                if (response.success) {
+                    // Xóa hàng trong bảng mà không cần reload trang
+                    $('#row-' + index).remove();  // Xóa hàng với id là row-index
+                    console.log('Khôi phục thành công');
+                } else {
+                    alert('Khôi phục thất bại!');
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Có lỗi xảy ra khi khôi phục:', error);
+            }
+        });
+        alert('Khôi phục màu có ID: ' + colorId);
+    }
+
 }
 

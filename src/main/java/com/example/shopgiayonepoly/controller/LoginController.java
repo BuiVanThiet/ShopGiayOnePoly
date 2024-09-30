@@ -36,6 +36,7 @@
             System.out.println(staff.toString());
             if (staff != null) {
                     model.addAttribute("staffInfo", staff);
+
                 } else {
                     model.addAttribute("fullName", "Lỗi");
                     model.addAttribute("roleName", "Không có vai trò");
