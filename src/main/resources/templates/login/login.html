@@ -16,14 +16,14 @@
                 <h2>Đăng Nhập</h2>
                 <div class="input_box">
                     <i class="uil uil-envelope-alt email"></i>
-                    <input type="text" name="username" placeholder="Tài khoản" th:value="${session.usernameFalse}" required />
+                    <input type="text" name="username" placeholder="Tài khoản" th:value="${session.usernameFalse}"/>
                     <div class="error-message">
                         <p th:text="${session.usernameError}"></p>
                     </div>
                 </div>
                 <div class="input_box">
                     <i class="uil uil-lock password"></i>
-                    <input type="password" name="password" placeholder="Mật khẩu" required />
+                    <input type="password" name="password" placeholder="Mật khẩu"/>
                     <i class="uil uil-eye-slash pw_hide"></i>
                     <div class="error-message">
                         <p th:text="${session.passwordError}"></p>
