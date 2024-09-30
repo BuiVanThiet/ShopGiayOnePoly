@@ -28,7 +28,9 @@ if(payMethodChecked === 1 || payMethodChecked === 3) {
     document.getElementById('formAtTheSpot').style.display = 'block';
 }else {
     console.log(payMethodChecked)
-    btnCreateBill.disabled = false;
+    if(btnCreateBill != null) {
+        btnCreateBill.disabled = false;
+    }
     document.getElementById('formAtTheSpot').style.display = 'none';
 }
 

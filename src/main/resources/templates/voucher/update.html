@@ -106,30 +106,11 @@
                 </div>
 
                 <button type="submit" class="btn btn-primary mt-3"
-                        onclick="return confirm('Bạn có muốn thêm mới phiếu giảm giá này không?')">Cập nhật
+                        onclick="return confirm('Bạn có muốn sửa phiếu giảm giá này không?')">Cập nhật
                 </button>
             </div>
         </form>
     </div>
 </div>
-
-<script>
-    function changeTextTypeVoucher() {
-        var selectElement = document.getElementById("discountType");
-        var selectedValue = selectElement.options[selectElement.selectedIndex].value;
-        var valueReduce = selectedValue === "1" ? "%" : "₫";
-        document.getElementById("discountText").innerText = valueReduce;
-    }
-
-    window.onload = function () {
-        var discountTypeSelect = document.getElementById("discountType");
-        if (discountTypeSelect) {
-            discountTypeSelect.addEventListener("change", changeTextTypeVoucher);
-            changeTextTypeVoucher(); // Gọi hàm một lần để thiết lập giá trị mặc định
-        } else {
-            console.error("Không tìm thấy phần tử discountType.");
-        }
-    }
-</script>
 </body>
 </html>

@@ -4,17 +4,18 @@ import com.example.shopgiayonepoly.baseMethod.BaseBill;
 import com.example.shopgiayonepoly.dto.request.bill.BillDetailAjax;
 import com.example.shopgiayonepoly.dto.request.bill.PayMethodRequest;
 import com.example.shopgiayonepoly.dto.request.bill.ProductDetailCheckRequest;
-import com.example.shopgiayonepoly.dto.response.bill.BillResponseManage;
-import com.example.shopgiayonepoly.dto.response.bill.BillTotalInfornationResponse;
-import com.example.shopgiayonepoly.dto.response.bill.ClientBillInformationResponse;
-import com.example.shopgiayonepoly.dto.response.bill.InformationBillByIdBillResponse;
+import com.example.shopgiayonepoly.dto.response.bill.*;
 import com.example.shopgiayonepoly.entites.*;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -72,7 +73,7 @@ public class BillRestController extends BaseBill {
             thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }
-        if(billDetailAjax.getQuantity() > 10) {
+        if(billDetailAjax.getQuantity() > 10 && billDetailAjax.getMethod().equals("cong")) {
             System.out.println("Hiện tại cửa hàng chỉ bán mỗi sản phẩm số lượng không quá 10!");
             thongBao.put("message","Hiện tại cửa hàng chỉ bán mỗi sản phẩm số lượng không quá 10!");
             thongBao.put("check","3");
@@ -321,10 +322,10 @@ public class BillRestController extends BaseBill {
         System.out.println(informationBillByIdBillResponse.toString());
         return informationBillByIdBillResponse;
     }
-    @GetMapping("/show-customer-in-bill")
-    public ClientBillInformationResponse getCustomerInBill(HttpSession session) {
+    @GetMapping("/show-customer-in-bill-ship")
+    public ClientBillInformationResponse getCustomerInBillShip(HttpSession session) {
         Bill bill = this.billService.findById((Integer) session.getAttribute("IdBill")).orElse(null);
-        if (bill != null) {
+        if (bill.getCustomer() != null && !bill.getAddRess().equals("Không có")) {
             String getAddRessDetail = bill.getAddRess();
             String[] part = getAddRessDetail.split(",\\s*");
             String fullName = part[0];
@@ -337,7 +338,22 @@ public class BillRestController extends BaseBill {
             System.out.println("thong tin cua doi tuong ship " + clientBillInformationResponse.toString());
             return clientBillInformationResponse;
         }
-        return new ClientBillInformationResponse();
+        return null;
+    }
+
+    @GetMapping("/show-customer-in-bill-not-ship")
+    public InfomationCustomerBillResponse getShowCustomerInBillNotShip(HttpSession session) {
+        Bill bill = this.billService.findById((Integer) session.getAttribute("IdBill")).orElse(null);
+        if (bill.getCustomer() != null) {
+            InfomationCustomerBillResponse info = new InfomationCustomerBillResponse();
+            info.setFullName(bill.getCustomer().getFullName());
+            info.setEmail(bill.getCustomer().getEmail());
+            info.setNumberPhone(bill.getCustomer().getNumberPhone());
+            String[] part = bill.getCustomer().getAddRess().split(",\\s*");
+            info.setAddRessDetail(String.join(", ", java.util.Arrays.copyOfRange(part, 3, part.length)));
+            return info;
+        }
+        return null;
     }
 
     @PostMapping("/update-customer-ship")
@@ -355,6 +371,154 @@ public class BillRestController extends BaseBill {
         thongBao.put("message","Sửa thông tin giao hàng thành công!");
         thongBao.put("check","1");
         return ResponseEntity.ok(thongBao);
+    }
+
+    @GetMapping("/update-ship-money")
+    public ResponseEntity<Map<String,String>> getUpdateShipMoneyBillInformation(String money,HttpSession session) {
+        Map<String,String> thongBao = new HashMap<>();
+        Bill bill = this.billService.findById((Integer) session.getAttribute("IdBill")).orElse(null);
+        if (bill.getStatus() == 0 ) {
+            thongBao.put("message","Loi ne");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+        BigDecimal moneyNumber = new BigDecimal(money);
+        bill.setUpdateDate(new Date());
+        bill.setShippingPrice(moneyNumber);
+        this.billService.save(bill);
+        System.out.println("da cap nhat lai gia ship");
+        thongBao.put("message","Sửa thông tin giao hàng thành công!");
+        thongBao.put("check","1");
+        return ResponseEntity.ok(thongBao);
+    }
+
+    @GetMapping("/confirm-bill/{content}")
+    public ResponseEntity<Map<String,String>> getCancelBill(@PathVariable("content") String content,HttpSession session) {
+        Map<String,String> thongBao = new HashMap<>();
+        Bill bill = this.billService.findById((Integer) session.getAttribute("IdBill")).orElse(null);
+        if (bill.getStatus() == 0 ) {
+            thongBao.put("message","Loi ne");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+        if(content.equals("cancel")) {
+            bill.setUpdateDate(new Date());
+            bill.setStatus(6);
+            mess = "Hóa đơn đã được hủy!";
+            colorMess = "3";
+            this.billService.save(bill);
+            this.setBillStatus(bill.getId(),bill.getStatus(),session);
+        }else if (content.equals("agree")) {
+            if(bill.getStatus() == 4 && bill.getPaymentStatus() == 0) {
+                mess = "Đơn hàng chưa được thanh toán!";
+                colorMess = "3";
+            }else {
+                bill.setUpdateDate(new Date());
+                bill.setStatus(bill.getStatus()+1);
+                mess = "Hóa đơn đã được xác nhận!";
+                colorMess = "1";
+                this.billService.save(bill);
+                this.setBillStatus(bill.getId(),bill.getStatus(),session);
+            }
+        }
+        thongBao.put("message",mess);
+        thongBao.put("check",colorMess);
+        return ResponseEntity.ok(thongBao);
+    }
+
+    @PostMapping("/payment-for-ship")
+    public ResponseEntity<Map<String,String>> getPaymentForShip(@RequestBody Map<String, String> paymentData,HttpSession session, HttpServletRequest request) {
+        Map<String,String> thongBao = new HashMap<>();
+        String cashPay = paymentData.get("cashPay");
+        String cashAcountPay = paymentData.get("cashAcountPay");
+        String cashBillPay = paymentData.get("cashBillPay");
+        String notePay = paymentData.get("notePay");
+        String payStatus = paymentData.get("payStatus");
+        String surplusMoneyPay = paymentData.get("surplusMoneyPay");
+        String payMethod = paymentData.get("payMethod");
+        System.out.println("Du lieu khi thnah toan ");
+
+        System.out.println("cashPay: " + cashPay);
+        System.out.println("cashAcountPay: " + cashAcountPay);
+        System.out.println("cashBillPay: " + cashBillPay);
+        System.out.println("notePay: " + notePay);
+        System.out.println("payStatus: " + payStatus);
+        System.out.println("surplusMoneyPay: " + surplusMoneyPay);
+        System.out.println("payMethod: " + payMethod);
+        mess = "Thanh toan thanh cong";
+        colorMess = "1";
+        Integer checkPayMethod = Integer.parseInt(payMethod);
+        if(checkPayMethod == 1) {
+            Bill billPayment = this.billService.findById((Integer) session.getAttribute("IdBill")).orElse(null);
+            billPayment.setCash(BigDecimal.valueOf(Long.parseLong(cashPay)));
+            if(billPayment.getNote().trim().equals("")) {
+                billPayment.setNote("Thanh toán bằng tiền mặt!");
+            }
+            if(notePay.trim().equals("")) {
+                session.setAttribute("notePayment","Thanh toán bằng tiền mặt!");
+            }else {
+                session.setAttribute("notePayment",notePay);
+            }
+            billPayment.setPaymentMethod(checkPayMethod);
+            billPayment.setPaymentStatus(Integer.parseInt(payStatus));
+            billPayment.setUpdateDate(new Date());
+            billPayment.setSurplusMoney(BigDecimal.valueOf(Long.parseLong(surplusMoneyPay)));
+            this.billService.save(billPayment);
+            thongBao.put("message",mess);
+            thongBao.put("check",colorMess);
+            this.setBillStatus(billPayment.getId(),101,session);
+            return ResponseEntity.ok(thongBao);
+        }else {
+            Bill billPayment = this.billService.findById((Integer) session.getAttribute("IdBill")).orElse(null);
+            billPayment.setPaymentMethod(checkPayMethod);
+            if(notePay.trim().equals("") && checkPayMethod == 2) {
+                notePay = "Thanh toán bằng tiền tài khoản!";
+                session.setAttribute("notePayment",notePay);
+            }else {
+                notePay = "Thanh toán bằng tiền tài khoan và tiền mặt!";
+                billPayment.setCash(BigDecimal.valueOf(Long.parseLong(cashPay)));
+                session.setAttribute("notePayment",notePay);
+            }
+            if(billPayment.getNote().trim().equals("")) {
+                billPayment.setNote(notePay);
+            }
+
+            String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
+            String vnpayUrl = vnPayService.createOrder((Integer.parseInt(cashAcountPay)), "chuyenKhoan", baseUrl);
+            thongBao.put("vnpayUrl",vnpayUrl);
+            return ResponseEntity.ok(thongBao);
+        }
+    }
+    @GetMapping("/infomation-payment-bill")
+    public List<Object[]> getInfomationPaymentByIdBill(HttpSession session) {
+        List<Object[]> results = billService.getInfoPaymentByIdBill((Integer) session.getAttribute("IdBill"));
+        return results;
+    }
+    @GetMapping("/infomation-history-bill")
+    public List<Object[]> getInfomationHistoryByIdBill(HttpSession session) {
+        List<Object[]> results = invoiceStatusService.getHistoryByBill((Integer) session.getAttribute("IdBill"));
+        for (Object[] row : results) {
+            // Duyệt qua các phần tử trong từng Object[] và in ra giá trị
+            System.out.println("Row data: ");
+            for (Object obj : row) {
+                System.out.print(obj + " "); // In từng giá trị trong Object[]
+            }
+            System.out.println(); // Xuống dòng sau khi in hết một hàng
+        }
+        return results;
+    }
+    //xuat pdf
+    @GetMapping("/export-bill-pdf")
+    public  ResponseEntity<byte[]> getExportPDFBill() {
+        try {
+            // Đặt tên file hóa đơn và lưu vào ổ D
+            String fileName = "invoice_12345";
+            invoicePdfService.createPdf(fileName);
+
+            return new ResponseEntity<>(HttpStatus.OK);
+        }catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 }

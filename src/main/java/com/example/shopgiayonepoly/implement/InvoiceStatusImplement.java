@@ -55,4 +55,8 @@ public class InvoiceStatusImplement implements InvoiceStatusService {
     public List<InvoiceStatus> getALLInvoiceStatusByBill(Integer idBill) {
         return this.invoiceStatusRespository.getALLInvoiceStatusByBill(idBill);
     }
+    @Override
+    public List<Object[]> getHistoryByBill(Integer id) {
+        return this.invoiceStatusRespository.getHistoryByBill(id);
+    }
 }

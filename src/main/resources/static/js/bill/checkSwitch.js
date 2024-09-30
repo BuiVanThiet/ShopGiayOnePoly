@@ -19,7 +19,7 @@ document.getElementById('flexSwitchCheckDefault').addEventListener('change', fun
         btnCreateBill.disabled = false;
         document.getElementById('formMoney').style.display = 'none';
         shipSpan.style.display = 'block'; // Ẩn thẻ div khi checkbox được chọn
-
+        document.getElementById('form-payMethod-bill').style.display = 'none';
         // Gọi AJAX để lấy dữ liệu khách hàng
         $.ajax({
             url: '/bill-api/client-bill-information', // URL của endpoint

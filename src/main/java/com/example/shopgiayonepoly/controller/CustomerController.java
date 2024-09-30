@@ -4,14 +4,15 @@ import com.example.shopgiayonepoly.dto.request.CustomerRequest;
 import com.example.shopgiayonepoly.dto.request.StaffRequest;
 import com.example.shopgiayonepoly.dto.response.CustomerResponse;
 import com.example.shopgiayonepoly.dto.response.StaffResponse;
+import com.example.shopgiayonepoly.entites.Customer;
+import com.example.shopgiayonepoly.entites.Staff;
 import com.example.shopgiayonepoly.service.CustomerService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,10 +23,9 @@ public class CustomerController {
     CustomerService customerService;
 
     @GetMapping("/list")
-    public String list(ModelMap modelMap) {
+    public String getFormList(Model model) {
         List<CustomerResponse> listCustomer = customerService.getAllCustomer();
-        modelMap.addAttribute("customerList", customerService.getAllCustomer());
-//        System.out.println(customerService.findAll());
+        model.addAttribute("customerList", customerService.getAllCustomer());
         return "Customer/list";
     }
 
@@ -35,5 +35,38 @@ public class CustomerController {
         model.addAttribute("customerList", searchCustomer);
         model.addAttribute("customer", new CustomerRequest());
         return "customer/list";
+    }
+
+    @GetMapping("/create")
+    public String createCustomer(ModelMap modelMap){
+        modelMap.addAttribute("customer",new CustomerRequest());
+        return "Customer/create";
+    }
+
+    @PostMapping("/add")
+    public String addCustomer(Model model, @ModelAttribute(name="customer") CustomerRequest customerRequest){
+        System.out.println("Du lieu khi them cua customer: " + customerRequest.toString());
+        Customer customer = new Customer();
+        customer.setFullName(customerRequest.getFullName());
+        customer.setNumberPhone(customerRequest.getNumberPhone());
+        customer.setBirthDay(customerRequest.getBirthDay());
+        customer.setImage(customerRequest.getNameImage());
+        customer.setEmail(customer.getEmail());
+        customer.setAcount("");
+        customer.setPassword("");
+        customer.setGender(customerRequest.getGender());
+        customer.setAddRess(customerRequest.getCommune() + "," + customerRequest.getDistrict() + "," + customerRequest.getCity() + "," +customerRequest.getAddRessDetail());
+        customer.setStatus(customerRequest.getStatus());
+        Customer customerSave = this.customerService.save(customer);
+        customerSave.setAcount(customerSave.getFullName()+customerSave.getId());
+        customer.setPassword("@shoponepoly");
+        this.customerService.save(customerSave);
+        return "redirect:/customer/create";
+    }
+
+    @ModelAttribute("staffInfo")
+    public Staff staff(HttpSession session){
+        Staff staff = (Staff) session.getAttribute("staffLogin");
+        return staff;
     }
 }

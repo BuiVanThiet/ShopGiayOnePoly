@@ -12,4 +12,5 @@ import lombok.Setter;
 public class BillDetailAjax {
     private Integer id;
     private Integer quantity;
+    private String method;
 }

@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="/css/customer/create.css" type="text/css">
-
     <title>Them khach hang</title>
 </head>
 
@@ -18,128 +17,141 @@
 
 <main class="container">
     <div layout:fragment="content">
-        <article class="container-xxl bd-gutter mt-4 my-md-3 bd-layout">
-            <h2>Thêm khách hàng</h2>
-            <!-- <form action="/product/save" method="post" enctype="multipart/form-data"> -->
-            <div class="form-nab">
-                <div class="container">
+        <form th:object="${customer}" th:action="${'/customer/add'}" method="post">
+            <article class="container-xxl bd-gutter mt-4 my-md-3 bd-layout">
+                <h2>Thêm khách hàng</h2>
+                <!-- <form action="/product/save" method="post" enctype="multipart/form-data"> -->
+                <div class="form-nab">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-6">
+                                <p>Ảnh khách hàng (3x4)</p>
+                                <div class="upload-container">
+                                    <label for="file-upload" class="custom-file-upload">
+                                        <img id="image-preview" src="path_to_default_image.png" alt="Ảnh khách hàng"/>
+                                    </label>
+                                    <input id="file-upload" type="file" accept="image/*"/>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Tên khách hàng</label>
+                                        <input type="text" class="form-control"
+                                               placeholder="Enter customer name" required
+                                               th:field="${customer.fullName}">
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="form-group">
+                                                <label>Giới tính</label>
+                                                <div class="radio-group">
+                                                    <div class="radio-item">
+                                                        <input type="radio" value="1" th:field="${customer.gender}"/>Nam
+                                                    </div>
+                                                    <div class="radio-item">
+                                                        <input type="radio" value="2" th:field="${customer.gender}"/>Nu
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="form-group">
+                                                <label>Trạng thái</label>
+                                                <div class="radio-item">
+                                                    <input type="radio" name="status" value="1"
+                                                           th:field="${customer.status}"/>Hoat dong
+                                                </div>
+                                                <div class="radio-item">
+                                                    <input type="radio" name="status" value="2"
+                                                           th:field="${customer.status}"/>Ngung hoat dong
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SDT/Ngày sinh/Email -->
+                <div class="form-row">
                     <div class="row">
-                        <div class="col-6">
-                            <p>Ảnh khách hàng (3x4)</p>
-                            <div class="upload-container">
-                                <label for="file-upload" class="custom-file-upload">
-                                    <img id="image-preview" src="path_to_default_image.png" alt="Ảnh khách hàng" />
-                                </label>
-                                <input id="file-upload" type="file" accept="image/*" />
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label>Số điện thoại</label>
+                                <input type="text" class="form-control"
+                                       placeholder="Enter customer numberPhone" required
+                                       th:field="${customer.numberPhone}">
                             </div>
                         </div>
-                        <div class="col-6">
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="customerName">Tên khách hàng</label>
-                                    <input type="text" id="customerName" name="customerName" class="form-control"
-                                           placeholder="Enter customer name" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="gender">Giới tính</label>
-                                    <div class="radio-group">
-                                        <div class="radio-item">
-                                            <input type="radio" name="gender" value="0" checked />Nam
-                                        </div>
-                                        <div class="radio-item">
-                                            <input type="radio" name="gender" value="1" />Nữ
-                                        </div>
-                                        <div class="radio-item">
-                                            <input type="radio" name="gender" value="2" />Khác
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="status">Trạng thái</label>
-                                    <div class="radio-group">
-                                        <div class="radio-item">
-                                            <input type="radio" name="status" value="0" checked />Hoạt động
-                                        </div>
-                                        <div class="radio-item">
-                                            <input type="radio" name="status" value="1" />Ngừng hoạt động
-                                        </div>
-                                    </div>
-                                </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label>Ngày sinh</label>
+                                <input type="date" class="form-control"
+                                       placeholder="Enter customer birthDay" required th:field="${customer.birthDay}">
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="text" class="form-control"
+                                       placeholder="Enter customer email" required th:field="${customer.email}">
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- SDT/Ngày sinh/Email -->
-            <div class="form-row">
-                <div class="row">
-                    <div class="col-4">
-                        <div class="form-group">
-                            <label for="phoneNumber">Số điện thoại</label>
-                            <input type="number" id="phoneNumber" name="phoneNumber" class="form-control"
-                                   placeholder="Enter customer phoneNumber" required>
+                <!-- Địa chỉ -->
+                <div class="form-row">
+                    <div class="row">
+                        <!-- Các phần khác của form -->
+                        <div class="col-4">
+                            <label class="form-label">Tỉnh/Thành phố</label>
+                            <select class="form-select" id="city-customer">
+                                <option selected>Chọn tỉnh/thành phố</option>
+                            </select>
                         </div>
-                    </div>
-                    <div class="col-4">
-                        <div class="form-group">
-                            <label for="dateOfBirth">Ngày sinh</label>
-                            <input type="date" id="dateOfBirth" name="dateOfBirth" class="form-control"
-                                   placeholder="Enter customer dateOfBirth" required>
+                        <div class="col-4" id="districtSelectContainer-customer" style="display: none;">
+                            <label class="form-label">Quận/Huyện</label>
+                            <select class="form-select" id="district-customer">
+                                <option selected>Chọn quận/huyện</option>
+                            </select>
                         </div>
+                        <div class="col-4" id="wardSelectContainer-customer" style="display: none;">
+                            <label class="form-label">Xã/Phường/Thị Trấn</label>
+                            <select class="form-select" id="ward-customer">
+                                <option selected>Chọn xã/phường/thị trấn</option>
+                            </select>
+                        </div>
+                        <input type="hidden" id="idCity-customer" th:field="${customer.city}" value="0">
+                        <input type="hidden" id="idDistrict-customer" th:field="${customer.district}" value="0">
+                        <input type="hidden" id="idCommune-customer" th:field="${customer.commune}" value="0">
                     </div>
-                    <div class="col-4">
-                        <div class="form-group">
-                            <label for="email">Email</label>
-                            <input type="text" id="email" name="email" class="form-control"
-                                   placeholder="Enter customer email" required>
+                </div>
+
+                <!-- Địa chỉ cụ thể -->
+                <div class="form-row">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label>Địa chi chi tiết</label>
+                                <textarea class="form-control"
+                                          placeholder="Enter customer address" required
+                                          th:field="${customer.addRessDetail}"></textarea>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Địa chỉ -->
-            <div class="form-row">
-                <div class="row">
-                    <div class="col-4">
-                        <label for="city">Tỉnh/Thành phố</label>
-                        <select>
-                            <option value="">Small select</option>
-                            <option value="">Small select</option>
-                            <option value="">Small select</option>
-                        </select>
-                    </div>
-                    <div class="col-4">
-                        <label for="district">Quận/Huyện</label>
-                        <select>
-                            <option value="">Small select</option>
-                        </select>
-                    </div>
-                    <div class="col-4">
-                        <label for="commune">Xã/Phường/Thị trấn</label>
-                        <select>
-                            <option value="">Small select</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Địa chỉ cụ thể -->
-            <div class="form-row">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="form-group">
-                            <label for="specificAddress">Địa chi chi tiết</label>
-                            <input type="text" id="specificAddress" name="specificAddress" class="form-control"
-                                   placeholder="Enter customer specificAddress" required>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <button type="submit" class="btn btn-primary">Them khach hang</button>
-            <!-- </form> -->
-        </article>
+                <button type="submit" class="btn btn-primary">Them khach hang</button>
+                <!-- </form> -->
+            </article>
+        </form>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script th:src="@{/js/customer/addRessApiCustomer.js}" type="text/javascript"></script>
+        <script th:src="@{/js/bill/callAPIGHN.js}" type="text/javascript"></script>
     </div>
 </main>
 
