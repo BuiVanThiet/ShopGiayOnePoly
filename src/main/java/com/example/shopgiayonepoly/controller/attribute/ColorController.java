@@ -1,7 +1,9 @@
 package com.example.shopgiayonepoly.controller.attribute;
 
 import com.example.shopgiayonepoly.entites.Color;
+import com.example.shopgiayonepoly.entites.Staff;
 import com.example.shopgiayonepoly.service.attribute.ColorService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -153,7 +155,11 @@ public class ColorController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
-
+    @ModelAttribute("staffInfo")
+    public Staff staff(HttpSession session){
+        Staff staff = (Staff) session.getAttribute("staffLogin");
+        return staff;
+    }
 
 
 
