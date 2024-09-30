@@ -24,4 +24,6 @@ public interface InvoiceStatusService {
     <S extends InvoiceStatus> long count(Example<S> example);
 
     List<InvoiceStatus> getALLInvoiceStatusByBill(Integer idBill);
+
+    List<Object[]> getHistoryByBill(Integer id);
 }

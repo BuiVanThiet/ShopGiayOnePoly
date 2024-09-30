@@ -24,6 +24,8 @@ public class BillDetail extends Base {
     private ProductDetail productDetail;
     @Column(name = "quantity")
     private Integer quantity;
+    @Column(name = "price_root")
+    private BigDecimal priceRoot;
     @Column(name = "price")
     private BigDecimal price;
     @Column(name = "total_amount")

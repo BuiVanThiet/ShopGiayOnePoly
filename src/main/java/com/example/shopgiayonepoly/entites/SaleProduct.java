@@ -24,7 +24,7 @@ public class SaleProduct extends Base {
     @Column(name = "name_sale")
     private String nameSale;
     @Column(name = "discount_type")
-    private String discountType;
+    private Integer discountType;
     @Column(name = "discount_value")
     private BigDecimal discountValue;
     @Column(name = "start_date")

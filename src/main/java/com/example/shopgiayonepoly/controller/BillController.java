@@ -25,6 +25,7 @@ import java.util.Map;
 public class BillController extends BaseBill {
     @GetMapping("/home")
     public String getForm(ModelMap modelMap, HttpSession session) {
+        session.removeAttribute("pageReturn");
         session.removeAttribute("idBillCheckStatus");
         modelMap.addAttribute("message",mess);
         modelMap.addAttribute("check",colorMess);
@@ -61,6 +62,8 @@ public class BillController extends BaseBill {
         this.colorMess = "";
 
         modelMap.addAttribute("page","/Bill/index");
+
+        displayProductDetailsWithCurrentPrice();
         return "Bill/index";
     }
     @GetMapping("/bill-detail/{idBill}")
@@ -95,6 +98,8 @@ public class BillController extends BaseBill {
             return "redirect:/bill/home";
         }
         Bill billSave = new Bill();
+        Staff staff = (Staff) session.getAttribute("staffLogin");
+        billSave.setStaff(staff);
         billSave.setPaymentStatus(0);
         billSave.setStatus(0);
         billSave.setShippingPrice(BigDecimal.valueOf(0));
@@ -117,8 +122,11 @@ public class BillController extends BaseBill {
         Bill billGetStatus = this.billService.save(bill);
         session.setAttribute("IdBill",bill.getId());
         session.setAttribute("IdClient",null);
+        session.setAttribute("notePayment","Tạo đơn hàng!");
 
-        this.setBillStatus(billGetStatus.getId());
+        this.setBillStatus(billGetStatus.getId(),billGetStatus.getStatus(),session);
+
+//        this.getAddHistory("bill",bill.getId(),"Mới tạo","Mới tao","Mới tạo",staff,"Mới tạo");
 
         this.mess = "Thêm hóa đơn mới thành công!";
         this.colorMess = "1";
@@ -196,11 +204,11 @@ public class BillController extends BaseBill {
         BillTotalInfornationResponse billTotalInfornationResponse = this.billService.findBillVoucherById(bill.getId());
         BigDecimal cashAll = bill.getCash().add(bill.getAcountMoney().add(bill.getShippingPrice()));
         BigDecimal cashEquals = billTotalInfornationResponse.getFinalAmount().setScale(2, RoundingMode.HALF_UP);
-        if(cashAll.equals(cashEquals)) {
-            bill.setPaymentStatus(1);
-        }else {
-            bill.setPaymentStatus(0);
-        }
+//        if(cashAll.equals(cashEquals)) {
+//            bill.setPaymentStatus(1);
+//        }else {
+//            bill.setPaymentStatus(0);
+//        }
 
         bill.setUpdateDate(new Date());
 
@@ -210,16 +218,23 @@ public class BillController extends BaseBill {
         bill.setSurplusMoney(surplusMoneyNumber.setScale(2,RoundingMode.FLOOR));
         bill.setShippingPrice(shipMoneyNumber);
 
+        session.setAttribute("pageReturn",1);
+
         if(bill.getPaymentMethod() == 1 || bill.getBillType() == 2) {
-            bill.setPaymentStatus(1);
             bill.setUpdateDate(new Date());
             if(bill.getBillType() == 2) {
-                bill.setStatus(1);
+                bill.setPaymentStatus(0);
+                bill.setStatus(2);
             }else {
-                bill.setStatus(4);
+                bill.setPaymentStatus(1);
+                bill.setStatus(5);
+                if(bill.getNote().length() < 0 || bill.getNote() == null || bill.getNote().trim().equals("")) {
+                    bill.setNote("Thanh toán bằng tiền mặt!");
+                }
             }
             System.out.println("Thong tin bill(TM)" + bill.toString());
-            this.setBillStatus(bill.getId());
+            this.setBillStatus(bill.getId(),bill.getStatus(),session);
+            this.setBillStatus(bill.getId(),101,session);
             this.billService.save(bill);
             if(bill.getVoucher() != null) {
                 this.getSubtractVoucher(bill.getVoucher());
@@ -227,13 +242,13 @@ public class BillController extends BaseBill {
             return "Bill/successBill";
         }else if (bill.getPaymentMethod() == 2) {
             if(bill.getNote().length() < 0 || bill.getNote() == null || bill.getNote().trim().equals("")) {
-                bill.setNote("chuyen khoan");
+                bill.setNote("Thanh toán bằng tiền tài khoản!");
             }
             bill.setCash(BigDecimal.valueOf(0));
             bill.setSurplusMoney(BigDecimal.valueOf(0));
             this.billPay = bill;
             String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
-            String vnpayUrl = vnPayService.createOrder((Integer.parseInt(cashAccount)), bill.getNote(), baseUrl);
+            String vnpayUrl = vnPayService.createOrder((Integer.parseInt(cashAccount)), "chuyenKhoan", baseUrl);
             return "redirect:" + vnpayUrl;
         }else {
             this.billPay = bill;
@@ -245,16 +260,17 @@ public class BillController extends BaseBill {
                 System.out.println("Do nhap qua so tien mat nen khong the tao thanh toan online");
                 System.out.println("Thong tin Bill thanh toan bang tien va tk(1)" + this.billPay.toString());
                 this.billService.save(bill);
-                this.setBillStatus(bill.getId());
+                this.setBillStatus(bill.getId(),bill.getStatus(),session);
+                this.setBillStatus(bill.getId(),101,session);
                 return "Bill/successBill";
             }else {
                 if(bill.getNote().length() < 0 || bill.getNote() == null || bill.getNote().trim().equals("")) {
-                    bill.setNote("chuyen khoan va tien mat");
+                    bill.setNote("Thanh toán bằng tiền tài khoan và tiền mặt!");
                 }
                 bill.setSurplusMoney(BigDecimal.valueOf(0));
                 this.billPay = bill;
                 String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
-                String vnpayUrl = vnPayService.createOrder((Integer.parseInt(cashAccount)+Integer.parseInt(shipMoney)), bill.getNote(), baseUrl);
+                String vnpayUrl = vnPayService.createOrder((Integer.parseInt(cashAccount)+Integer.parseInt(shipMoney)), "chuyenKhoan", baseUrl);
                 System.out.println("Thong tin Bill thanh toan bang tien va tk(2)" + this.billPay.toString());
                 return "redirect:" + vnpayUrl;
             }
@@ -279,40 +295,81 @@ public class BillController extends BaseBill {
 
         System.out.println("tien tai khoan " + totalPrice);
         BigDecimal accountMoney = new BigDecimal(totalPrice);
-        System.out.println("Thong tin thanh toan bang the " + this.billPay.toString());
-        if(paymentStatus == 1) {
-            this.billPay.setAcountMoney(accountMoney.divide(BigDecimal.valueOf(100)));
-            this.billPay.setPaymentStatus(1);
-            this.billPay.setSurplusMoney(BigDecimal.valueOf(0.00));
-            this.billPay.setUpdateDate(new Date());
-            this.billPay.setStatus(4);
-            this.billService.save(this.billPay);
 
-            this.setBillStatus(this.billPay.getId());
+        Integer returnFrom = (Integer) session.getAttribute("pageReturn");
 
-            if(this.billPay.getVoucher() != null) {
-                this.getSubtractVoucher(this.billPay.getVoucher());
+        if(returnFrom == 1) {
+            if(paymentStatus == 1) {
+                this.billPay.setAcountMoney(accountMoney.divide(BigDecimal.valueOf(100)));
+                this.billPay.setPaymentStatus(1);
+                this.billPay.setSurplusMoney(BigDecimal.valueOf(0.00));
+                this.billPay.setUpdateDate(new Date());
+                this.billPay.setStatus(5);
+                this.billService.save(this.billPay);
+                this.setBillStatus(this.billPay.getId(),101,session);
+                this.setBillStatus(this.billPay.getId(),this.billPay.getStatus(),session);
+
+                if(this.billPay.getVoucher() != null) {
+                    this.getSubtractVoucher(this.billPay.getVoucher());
+                }
+                return "Bill/successBill" ;
+            }else {
+                System.out.println("Bil bo thanh toan " + this.billPay.toString());
+                return "Bill/errorBill";
             }
-            return "Bill/successBill" ;
         }else {
-//            Bill bill = this.billPay;
-//            bill.setShippingPrice(BigDecimal.valueOf(0));
-//            bill.setCash(BigDecimal.valueOf(0));
-//            bill.setAcountMoney(BigDecimal.valueOf(0));
-//            bill.setBillType(1);
-//            bill.setPaymentStatus(0);
-//            bill.setSurplusMoney(BigDecimal.valueOf(0));
-////            bill.setStatus(0);
-//            bill.setUpdateDate(new Date());
-//
-////            this.billService.save(bill);
-            System.out.println("Bil bo thanh toan " + this.billPay.toString());
-            return "Bill/errorBill";
+            if(paymentStatus == 1) {
+                this.billPay = (Bill) session.getAttribute("billPaymentRest");
+                this.billPay.setAcountMoney(accountMoney.divide(BigDecimal.valueOf(100)));
+                this.billPay.setPaymentStatus(1);
+                this.billPay.setSurplusMoney(BigDecimal.valueOf(0.00));
+                this.billPay.setUpdateDate(new Date());
+                this.billPay.setPaymentMethod(2);
+                this.billService.save(this.billPay);
+
+                this.setBillStatus(this.billPay.getId(),101,session);
+                if(this.billPay.getVoucher() != null) {
+                    this.getSubtractVoucher(this.billPay.getVoucher());
+                }
+                session.removeAttribute("pageReturn");
+                mess = "Thanh toán thành công!";
+                colorMess = "1";
+                return "redirect:/bill/bill-status-index/"+session.getAttribute("IdBill");
+            }else {
+                System.out.println("Bil bo thanh toan " + this.billPay.toString());
+                return "redirect:/bill/bill-status-index/"+session.getAttribute("IdBill");
+            }
         }
     }
 
+//    @GetMapping("/deleteBillDetail/{id}")
+//        public String getDeleteProductDetail(@PathVariable("id") Integer id, HttpSession session) {
+//        BillDetail billDetail = this.billDetailService.findById(id).orElse(new BillDetail());
+//        this.billDetailService.delete(billDetail);
+//        Bill bill = this.billService.findById((Integer) session.getAttribute("IdBill")).orElse(null);
+//        BigDecimal total = this.billDetailService.getTotalAmountByIdBill(bill.getId());
+//        bill.setUpdateDate(new Date());
+//        if(total != null) {
+//            bill.setTotalAmount(total);
+//        }else {
+//            bill.setTotalAmount(BigDecimal.valueOf(0));
+//        }
+//        this.mess="Xóa sản phẩm trong hóa đơn thành công!";
+//        this.colorMess="1";
+//
+//        getUpdateQuantityProduct(billDetail.getProductDetail().getId(),billDetail.getQuantity(),2);
+//
+//        this.billService.save(bill);
+//        return "redirect:/bill/bill-detail/"+session.getAttribute("IdBill");
+//    }
+
     @GetMapping("/deleteBillDetail/{id}")
-        public String getDeleteProductDetail(@PathVariable("id") Integer id, HttpSession session) {
+    @ResponseBody
+    public  ResponseEntity<Map<String,String>> getDeleteProductDetail(@PathVariable("id") Integer id, HttpSession session) {
+        Map<String,String> thongBao = new HashMap<>();
+
+        thongBao.put("message","Xóa sản phẩm trong hóa đơn thành công!");
+        thongBao.put("check","1");
         BillDetail billDetail = this.billDetailService.findById(id).orElse(new BillDetail());
         this.billDetailService.delete(billDetail);
         Bill bill = this.billService.findById((Integer) session.getAttribute("IdBill")).orElse(null);
@@ -323,51 +380,49 @@ public class BillController extends BaseBill {
         }else {
             bill.setTotalAmount(BigDecimal.valueOf(0));
         }
-        this.mess="Xóa sản phẩm trong hóa đơn thành công!";
-        this.colorMess="1";
 
         getUpdateQuantityProduct(billDetail.getProductDetail().getId(),billDetail.getQuantity(),2);
 
         this.billService.save(bill);
-        return "redirect:/bill/bill-detail/"+session.getAttribute("IdBill");
+        return ResponseEntity.ok(thongBao);
     }
 
-    @PostMapping("/buy-product-detail")
-    public String getBuyProduct(
-            @RequestParam(name = "quantityDetail") String quantity,
-            @RequestParam(name = "idProductDetail") String idPDT,
-            HttpSession session) {
-        System.out.println("Số lượng mua: " + quantity + ", ID sản phẩm chi tiết: " + idPDT);
-
-        ProductDetail productDetail = this.billDetailService.getProductDetailById(Integer.parseInt(idPDT));
-
-        Bill billById = this.billService.findById((Integer) session.getAttribute("IdBill")).orElse(new Bill());
-
-        BillDetail billDetailSave = getBuyProduct(billById,productDetail,Integer.parseInt(quantity));
-
-//        Integer idBillDetail = this.billDetailService.getBillDetailExist(billById.getId(),productDetail.getId());
-//        if(idBillDetail != null) {
-//            billDetailSave = this.billDetailService.findById(idBillDetail).orElse(new BillDetail());
-//            billDetailSave.setQuantity(billDetailSave.getQuantity()+1);
-//            billDetailSave.setTotalAmount(billDetailSave.getPrice().multiply(BigDecimal.valueOf(billDetailSave.getQuantity())));
-//        }else {
-//            billDetailSave = new BillDetail();
-//            billDetailSave.setBill(billById);
-//            billDetailSave.setProductDetail(productDetail);
-//            billDetailSave.setQuantity(Integer.parseInt(quantity));
-//            billDetailSave.setPrice(productDetail.getPrice());
-//            billDetailSave.setTotalAmount(billDetailSave.getPrice().multiply(BigDecimal.valueOf(billDetailSave.getQuantity())));
-//            billDetailSave.setStatus(1);
-//        }
-        this.mess = "Thêm sản phẩm thành công!";
-        this.colorMess = "1";
-
-        getUpdateQuantityProduct(billDetailSave.getProductDetail().getId(),Integer.parseInt(quantity),1);
-
-        this.billDetailService.save(billDetailSave);
-        this.setTotalAmount(billDetailSave.getBill());
-        return "redirect:/bill/bill-detail/" + (Integer) session.getAttribute("IdBill");
-    }
+//    @PostMapping("/buy-product-detail")
+//    public String getBuyProduct(
+//            @RequestParam(name = "quantityDetail") String quantity,
+//            @RequestParam(name = "idProductDetail") String idPDT,
+//            HttpSession session) {
+//        System.out.println("Số lượng mua: " + quantity + ", ID sản phẩm chi tiết: " + idPDT);
+//
+//        ProductDetail productDetail = this.billDetailService.getProductDetailById(Integer.parseInt(idPDT));
+//
+//        Bill billById = this.billService.findById((Integer) session.getAttribute("IdBill")).orElse(new Bill());
+//
+//        BillDetail billDetailSave = getBuyProduct(billById,productDetail,Integer.parseInt(quantity));
+//
+////        Integer idBillDetail = this.billDetailService.getBillDetailExist(billById.getId(),productDetail.getId());
+////        if(idBillDetail != null) {
+////            billDetailSave = this.billDetailService.findById(idBillDetail).orElse(new BillDetail());
+////            billDetailSave.setQuantity(billDetailSave.getQuantity()+1);
+////            billDetailSave.setTotalAmount(billDetailSave.getPrice().multiply(BigDecimal.valueOf(billDetailSave.getQuantity())));
+////        }else {
+////            billDetailSave = new BillDetail();
+////            billDetailSave.setBill(billById);
+////            billDetailSave.setProductDetail(productDetail);
+////            billDetailSave.setQuantity(Integer.parseInt(quantity));
+////            billDetailSave.setPrice(productDetail.getPrice());
+////            billDetailSave.setTotalAmount(billDetailSave.getPrice().multiply(BigDecimal.valueOf(billDetailSave.getQuantity())));
+////            billDetailSave.setStatus(1);
+////        }
+//        this.mess = "Thêm sản phẩm thành công!";
+//        this.colorMess = "1";
+//
+//        getUpdateQuantityProduct(billDetailSave.getProductDetail().getId(),Integer.parseInt(quantity),1);
+//
+//        this.billDetailService.save(billDetailSave);
+//        this.setTotalAmount(billDetailSave.getBill());
+//        return "redirect:/bill/bill-detail/" + (Integer) session.getAttribute("IdBill");
+//    }
 
 //    @GetMapping("/delete-voucher-bill")
 //
@@ -382,7 +437,34 @@ public class BillController extends BaseBill {
 //
 //        return "redirect:/bill/bill-detail/" + (Integer) session.getAttribute("IdBill");
 //    }
+    @PostMapping("/buy-product-detail")
+    @ResponseBody
+    public ResponseEntity<Map<String,String>> getBuyProduct(
+            @RequestParam(name = "quantityDetail") String quantity,
+            @RequestParam(name = "idProductDetail") String idPDT,
+            @RequestParam(name = "priceProductSale") String priceProductSale,
+            @RequestParam(name = "priceProductRoot") String priceProductRoot,
+            HttpSession session) {
+        Map<String,String> thongBao = new HashMap<>();
 
+        thongBao.put("message","Xóa mã giảm giá thành công!");
+        thongBao.put("check","1");
+
+        System.out.println("Số lượng mua: " + quantity + ", ID sản phẩm chi tiết: " + idPDT);
+
+        ProductDetail productDetail = this.billDetailService.getProductDetailById(Integer.parseInt(idPDT));
+
+        Bill billById = this.billService.findById((Integer) session.getAttribute("IdBill")).orElse(new Bill());
+
+        BillDetail billDetailSave = getBuyProduct(billById,productDetail,Integer.parseInt(quantity));
+
+        getUpdateQuantityProduct(billDetailSave.getProductDetail().getId(),Integer.parseInt(quantity),1);
+
+        this.billDetailService.save(billDetailSave);
+        this.setTotalAmount(billDetailSave.getBill());
+
+        return ResponseEntity.ok(thongBao);
+    }
 //    @GetMapping("/click-voucher-bill/{idVoucher}")
 //    public String getClickVoucherBill(@PathVariable("idVoucher") String idVoucher,HttpSession session) {
 //        Bill bill = this.billService.findById((Integer) session.getAttribute("IdBill")).orElse(null);
@@ -429,8 +511,15 @@ public class BillController extends BaseBill {
 
     //danh cho quan ly hoa don
     @GetMapping("/bill-status-index/{idBill}")
-    public String getStatusBill(@PathVariable("idBill") Integer idBill,HttpSession session) {
+    public String getStatusBill(@PathVariable("idBill") Integer idBill,HttpSession session, ModelMap modelMap) {
         session.setAttribute("IdBill",idBill);
+        modelMap.addAttribute("client", (Integer) session.getAttribute("IdClient"));
+        modelMap.addAttribute("bill",(Integer) session.getAttribute("IdBill") == null ? new Bill() : this.billService.findById((Integer)session.getAttribute("IdBill")).orElse(new Bill()));
+        modelMap.addAttribute("message",mess);
+        modelMap.addAttribute("check",colorMess);
+        session.setAttribute("pageReturn",2);
+        mess = "";
+        colorMess = "";
         return "Bill/billInformationIndex";
     }
 

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div th:fragment="listProductBuy">
+    <div id="noDataContainer" style="display:none; text-align:center;">
+        <!-- Ảnh sẽ được hiển thị ở đây nếu không có dữ liệu -->
+    </div>
+
+    <table class="table table-bordered mt-2" style="display:none;">
+        <thead>
+        <tr>
+            <th scope="col">STT</th>
+            <th scope="col">Ảnh</th>
+            <th scope="col">Sản phẩm</th>
+            <th scope="col">Giá</th>
+            <th scope="col">Số lượng</th>
+            <th scope="col">Tổng tiền</th>
+            <th scope="col">Hành động</th>
+        </tr>
+        </thead>
+        <tbody id="tableBillDetail">
+        <!-- Dữ liệu sẽ được tải ở đây -->
+        </tbody>
+    </table>
+
+    <div class="pagination-section">
+        <!-- Phân trang 2 -->
+        <div class="pagination-custom d-flex justify-content-center">
+            <ul id="billDetailPageMax" class="pagination"></ul>
+        </div>
+    </div>
+</div>
+</body>
+</html>

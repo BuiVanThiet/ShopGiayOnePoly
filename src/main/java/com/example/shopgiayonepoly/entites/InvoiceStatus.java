@@ -1,10 +1,7 @@
 package com.example.shopgiayonepoly.entites;
 
 import com.example.shopgiayonepoly.entites.baseEntity.Base;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,4 +17,6 @@ public class InvoiceStatus extends Base {
     @ManyToOne
     @JoinColumn(name = "id_bill")
     private Bill bill;
+    @Column(name = "note")
+    private String note;
 }

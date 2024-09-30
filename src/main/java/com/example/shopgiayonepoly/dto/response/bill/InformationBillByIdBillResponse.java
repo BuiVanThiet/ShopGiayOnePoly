@@ -20,8 +20,10 @@ public class InformationBillByIdBillResponse extends BaseDTO {
     private BigDecimal totalPriceProduct;
     private Voucher voucher;
     private BigDecimal maximumReduction;
+    private Integer paymentStatus;
+    private String note;
 
-    public InformationBillByIdBillResponse(Integer id, Date createDate, Date updateDate, @NotNull(message = "Mời bạn chọn trạng thái!") Integer status, String codeBill, Integer billMethod, BigDecimal shipPrice, BigDecimal totalPriceProduct, Voucher voucher, BigDecimal maximumReduction) {
+    public InformationBillByIdBillResponse(Integer id, Date createDate, Date updateDate, @NotNull(message = "Mời bạn chọn trạng thái!") Integer status, String codeBill, Integer billMethod, BigDecimal shipPrice, BigDecimal totalPriceProduct, Voucher voucher, BigDecimal maximumReduction, Integer paymentStatus, String note) {
         super(id, createDate, updateDate, status);
         this.codeBill = codeBill;
         this.billMethod = billMethod;
@@ -29,5 +31,7 @@ public class InformationBillByIdBillResponse extends BaseDTO {
         this.totalPriceProduct = totalPriceProduct;
         this.voucher = voucher;
         this.maximumReduction = maximumReduction;
+        this.paymentStatus = paymentStatus;
+        this.note = note;
     }
 }
