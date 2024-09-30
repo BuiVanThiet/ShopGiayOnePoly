@@ -98,4 +98,8 @@ public class BillImplement implements BillService {
     public InformationBillByIdBillResponse getInformationBillByIdBill(Integer idBill) {
         return this.billRepository.getInformationBillByIdBill(idBill);
     }
+    @Override
+    public List<Object[]> getInfoPaymentByIdBill(Integer id) {
+        return this.billRepository.getInfoPaymentByIdBill(id);
+    }
 }

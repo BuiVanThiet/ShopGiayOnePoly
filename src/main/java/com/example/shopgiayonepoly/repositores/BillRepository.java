@@ -165,11 +165,38 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
                 v.priceReduced
             else 
                 0.00
-        end
+        end,
+        b.paymentStatus,
+        b.note
      )
      from Bill b
      left join b.voucher v
      where b.id = :idCheck
 """)
     InformationBillByIdBillResponse getInformationBillByIdBill(@Param("idCheck") Integer idBill);
+
+    @Query(value = """
+        (select
+        	b.id,
+        	b.update_date,
+        	b.cash AS so_tien,
+        	N'Tiền mặt'  payment_method,
+        	(select s.code_staff+'-'+s.full_name from staff s where s.id = (SUBSTRING(invo.note, 1, CHARINDEX(',', invo.note) - 1)))
+        from bill b
+        join invoice_status invo
+        on invo.id_bill = b.id
+        where b.id = :idCheck and invo.status = 101  AND b.cash > 0)
+        UNION ALL
+        (select
+        	b.id,
+        	b.update_date,
+        	b.cash AS so_tien,
+        	N'Tiền mặt'  payment_method,
+        	(select s.code_staff+'-'+s.full_name from staff s where s.id = (SUBSTRING(invo.note, 1, CHARINDEX(',', invo.note) - 1)))
+        from bill b
+        join invoice_status invo
+        on invo.id_bill = b.id
+        where b.id = :idCheck and invo.status = 101 AND b.acount_money > 0)
+""", nativeQuery = true)
+    List<Object[]> getInfoPaymentByIdBill(@Param("idCheck") Integer idCheck);
 }

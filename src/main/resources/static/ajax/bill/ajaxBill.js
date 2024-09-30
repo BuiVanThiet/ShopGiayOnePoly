@@ -37,6 +37,42 @@ function loadBillDetail(page)  {
                             </div>`;
                     });
 
+                    var priceSaleAndRoot = '';
+
+                    if(billDetail.priceRoot == billDetail.price) {
+                        priceSaleAndRoot = `
+                                <div>
+                                    <span>${billDetail.price.toLocaleString('en-US')} VNĐ</span>
+                                </div>`;
+                    }else {
+                        priceSaleAndRoot = `
+                                <div>
+                                    <span class="text-decoration-line-through">${billDetail.priceRoot.toLocaleString('en-US')} VNĐ</span>
+                                    <br>
+                                    <span class="text-danger fs-5">${billDetail.price.toLocaleString('en-US')} VNĐ</span>
+                                </div>`;
+                    }
+                    var btnDeleteProduct = '';
+                    if(billDetail.bill.status > 1) {
+                        btnDeleteProduct = `
+                       `;
+                    }else {
+                        btnDeleteProduct = `
+                        <button onclick="deleteBillDetail(${billDetail.id})" class="btn btn-outline-danger"><i class="bi bi-x-lg"></i> Xóa bỏ</button>
+                        `;
+                    }
+                    var btnBuyProduct = '';
+                    if(billDetail.bill.status > 1) {
+                        btnBuyProduct =`
+                                    <div class="number" id="pageNumber">${billDetail.quantity}</div>
+                        `
+                    }else {
+                        btnBuyProduct =`
+                            <button class="button btn-decrement">-</button>
+                                    <div class="number" id="pageNumber">${billDetail.quantity}</div>
+                                    <button class="button btn-increment">+</button>
+                        `;
+                    }
                     tbody.append(`
                         <tr>
                             <th scope="row">${index + 1}</th>
@@ -47,24 +83,39 @@ function loadBillDetail(page)  {
                                     </div>
                                 </div>
                             </td>
-                            <td>${billDetail.productDetail.product.nameProduct}</td>
-                            <td>${billDetail.price.toLocaleString('en-US') + ' VNĐ'}</td>
-                            <td>
+                            <td class="">
+                                <div class="fs-4">
+                                    ${billDetail.productDetail.product.nameProduct}
+                                </div>
+                                <div class="fs-6">
+                                    Tên màu: ${billDetail.productDetail.color.nameColor}
+                                    <br>
+                                    Tên size: ${billDetail.productDetail.size.nameSize}
+                                </div>
+                            </td>
+                            <td class="text-center align-middle">
+                                   ${priceSaleAndRoot}
+                            </td>
+                            <td class="text-center align-middle">
                                 <div class="pagination mb-3 custom-number-input" style="width: 130px;" data-id="${billDetail.id}">
-                                    <button class="button btn-decrement">-</button>
-                                    <div class="number" id="pageNumber">${billDetail.quantity}</div>
-                                    <button class="button btn-increment">+</button>
+                                    ${btnBuyProduct}
                                </div>
                             </td>
-                            <td>${billDetail.totalAmount.toLocaleString('en-US') + 'VNĐ'}</td>
-                            <td>
-                                <a href="/bill/deleteBillDetail/${billDetail.id}" class="btn btn-outline-danger" id="deleteproduct"><i class="bi bi-x-lg"></i> Xóa bỏ</a>
+                            <td class="text-center align-middle">
+                                ${billDetail.totalAmount.toLocaleString('en-US') + ' VNĐ'}
+                            </td>
+                            <td class="text-center align-middle">
+<!--                                <a href="/bill/deleteBillDetail/${billDetail.id}" class="btn btn-outline-danger" id="deleteproduct"><i class="bi bi-x-lg"></i> Xóa bỏ</a>-->
+                                ${btnDeleteProduct}
                             </td>
                         </tr>`);
                 });
-                cashClient.value='';
-                formErorrCash.style.display = 'block';
-                erorrCash.innerText = 'Mời nhập đủ giá!';
+                if(cashClient != null) {
+                    cashClient.value='';
+                    formErorrCash.style.display = 'block';
+                    erorrCash.innerText = 'Mời nhập đủ giá!';
+                }
+
                 if(payMethodChecked === 1 || payMethodChecked === 3) {
                     btnCreateBill.disabled = true;
                 }
@@ -77,7 +128,11 @@ function loadBillDetail(page)  {
         },
         error: function(xhr) {
             console.error("Lỗi khi hiển thị chi tiết hóa đơn: " + xhr.responseText);
-        }
+        },
+        // complete: function() {
+        //     // Sau khi hoàn thành, lại tiếp tục gửi yêu cầu để giữ kết nối liên tục
+        //     setTimeout(loadBillDetail, 5000);  // Gửi lại sau 5 giây
+        // }
     });
 }
 
@@ -90,7 +145,11 @@ function maxPageBillDetailByIdBill() {
         },
         error: function (xhr) {
             console.error('loi phan trang cho bill deatil' + xhr.responseText)
-        }
+        },
+        // complete: function() {
+        //     // Sau khi hoàn thành, lại tiếp tục gửi yêu cầu để giữ kết nối liên tục
+        //     setTimeout(maxPageBillDetailByIdBill, 5000);  // Gửi lại sau 5 giây
+        // }
     })
 }
 
@@ -114,19 +173,26 @@ function paymentInformation() {
                 $('#cashAccount').val(response.finalAmount);
             }
             var totalCash = document.getElementById('totalCash');
-            totalCash.value = response.finalAmount;
+            if(totalCash != null) {
+                totalCash.value = response.finalAmount;
+            }
             if (response.voucherId) {
                 $('#voucherName').text(response.nameVoucher);
                 $('#textVoucher').val(response.nameVoucher);
                 $('#discountContainer').show();
             } else {
                 $('#discountContainer').hide();
+                $('#textVoucher').val('Không có');
             }
 
         },
         error: function(error) {
             console.error('Lỗi khi lấy thông tin thanh toán:', error);
-        }
+        },
+        // complete: function() {
+        //     // Sau khi hoàn thành, lại tiếp tục gửi yêu cầu để giữ kết nối liên tục
+        //     setTimeout(paymentInformation, 5000);  // Gửi lại sau 5 giây
+        // }
     });
 }
 
@@ -138,41 +204,46 @@ function loadClientsIntoSelect() {
         url: "/bill-api/client",
         success: function (response) {
             const selectElement = document.getElementById("clientSelect");
+            if(selectElement != null) {
+                // Xóa tất cả tùy chọn hiện tại
+                selectElement.innerHTML = "";
 
-            // Xóa tất cả tùy chọn hiện tại
-            selectElement.innerHTML = "";
-
-            // Tạo các thẻ <option> mới từ dữ liệu nhận được
-            response.forEach(item => {
-                const option = document.createElement("option");
-                option.value = item.id; // Thay đổi theo cấu trúc dữ liệu nhận được
-                option.textContent = item.fullName + ' - ' + item.numberPhone; // Thay đổi theo cấu trúc dữ liệu nhận được
-                selectElement.appendChild(option);
-            });
-            // Khởi tạo MultiSelectTag sau khi dữ liệu đã được thêm vào
-            if (typeof OneSelectTag === 'function') {
-                // Kiểm tra nếu MultiSelectTag đã được khởi tạo
-                if (!selectElement.classList.contains('multi-select-initialized')) {
-                    new OneSelectTag(selectElement.id, {
-                        rounded: true,
-                        shadow: true,
-                        placeholder: 'Search',
-                        tagColor: {
-                            textColor: '#327b2c',
-                            borderColor: '#92e681',
-                            bgColor: '#eaffe6',
-                        },
-                        onChange: function (values) {
-                            console.log(`${selectElement.id} selected values:`, values);  // Log ra ID của dropdown và các giá trị đã chọn
-                        }
-                    });
-                    selectElement.classList.add('multi-select-initialized');
+                // Tạo các thẻ <option> mới từ dữ liệu nhận được
+                response.forEach(item => {
+                    const option = document.createElement("option");
+                    option.value = item.id; // Thay đổi theo cấu trúc dữ liệu nhận được
+                    option.textContent = item.fullName + ' - ' + item.numberPhone; // Thay đổi theo cấu trúc dữ liệu nhận được
+                    selectElement.appendChild(option);
+                });
+                // Khởi tạo MultiSelectTag sau khi dữ liệu đã được thêm vào
+                if (typeof OneSelectTag === 'function') {
+                    // Kiểm tra nếu MultiSelectTag đã được khởi tạo
+                    if (!selectElement.classList.contains('multi-select-initialized')) {
+                        new OneSelectTag(selectElement.id, {
+                            rounded: true,
+                            shadow: true,
+                            placeholder: 'Search',
+                            tagColor: {
+                                textColor: '#327b2c',
+                                borderColor: '#92e681',
+                                bgColor: '#eaffe6',
+                            },
+                            onChange: function (values) {
+                                console.log(`${selectElement.id} selected values:`, values);  // Log ra ID của dropdown và các giá trị đã chọn
+                            }
+                        });
+                        selectElement.classList.add('multi-select-initialized');
+                    }
                 }
             }
         },
         error: function(xhr, status, error) {
             console.error('Error fetching data:', error);
-        }
+        },
+        // complete: function() {
+        //     // Sau khi hoàn thành, lại tiếp tục gửi yêu cầu để giữ kết nối liên tục
+        //     setTimeout(loadClientsIntoSelect, 5000);  // Gửi lại sau 5 giây
+        // }
     });
 }
 
@@ -236,7 +307,11 @@ function loadBillNew() {
         },
         error: function (xhr) {
             console.error("Lỗi hiển thị bill: " + xhr.responseText);
-        }
+        },
+        // complete: function() {
+        //     // Sau khi hoàn thành, lại tiếp tục gửi yêu cầu để giữ kết nối liên tục
+        //     setTimeout(loadBillNew, 5000);  // Gửi lại sau 5 giây
+        // }
     });
 }
 //tai san pham len giao dien
@@ -249,7 +324,11 @@ function loadProduct(pageNumber) {
         },
         error: function(xhr) {
             console.error("Lỗi khi hiển thị chi tiết hóa đơn: " + xhr.responseText);
-        }
+        },
+        // complete: function() {
+        //     // Sau khi hoàn thành, lại tiếp tục gửi yêu cầu để giữ kết nối liên tục
+        //     setTimeout(loadProduct, 5000);  // Gửi lại sau 5 giây
+        // }
     });
 }
 //cap nhat thong tin san pham
@@ -282,6 +361,21 @@ function updateProductTable(response) {
                         <img src="https://res.cloudinary.com/dfy4umpja/image/upload/f_auto,q_auto/${image.nameImage}" class="d-block w-100" alt="Lỗi ảnh" style="width: auto; height: 100px;">
                     </div>`;
             });
+            var priceSale ;
+            var priceRoot = productDetail.price;
+
+            if(productDetail.saleProduct == null) {
+                priceSale =  productDetail.price;
+                priceRoot = productDetail.price;
+            }else {
+                if(productDetail.saleProduct.discountType == 1) {
+                    priceRoot =  productDetail.price;
+                    priceSale = productDetail.price - (productDetail.price * (productDetail.saleProduct.discountValue/100));
+                }else {
+                    priceSale =  productDetail.price - productDetail.saleProduct.discountValue;
+                    priceRoot = productDetail.price;
+                }
+            }
 
             var btn = '';
             if (productDetail.status === 2 || productDetail.product.status === 2) {
@@ -295,7 +389,10 @@ function updateProductTable(response) {
                             data-bs-toggle="modal"
                             data-name="${productDetail.product.nameProduct}" 
                             data-id="${productDetail.id}" 
-                            data-quantity="${productDetail.quantity}">
+                            data-quantity="${productDetail.quantity}"
+                            data-price-sale="${priceSale}"
+                            data-price-root="${priceRoot}"
+                            >
                            <i class="bi bi-cart-plus"></i> Mua
                         </button>`;
             }
@@ -307,34 +404,71 @@ function updateProductTable(response) {
                 quantityProduct = `${productDetail.quantity}`;
             }
 
+            var priceSaleAndRoot = '';
+
+            // Kiểm tra xem có chương trình giảm giá không
+            if (productDetail.saleProduct != null) {
+                // Lấy giá gốc
+                var originalPrice = productDetail.price;
+
+                // Khởi tạo biến để lưu giá đã giảm
+                var salePrice;
+
+                // Kiểm tra loại giảm giá
+                if (productDetail.saleProduct.discountType === 1) {
+                    // Giảm theo phần trăm
+                    var discountAmount = originalPrice * (productDetail.saleProduct.discountValue / 100);
+                    salePrice = originalPrice - discountAmount;
+                } else if (productDetail.saleProduct.discountType === 2) {
+                    // Giảm theo số tiền cố định
+                    salePrice = originalPrice - productDetail.saleProduct.discountValue;
+                }
+
+                // Gán giá đã giảm và giá gốc vào biến priceSaleAndRoot
+                priceSaleAndRoot = `
+                <div>
+                    <span class="text-decoration-line-through">${originalPrice.toLocaleString('en-US')} VNĐ</span>
+                    <br>
+                    <span class="text-danger fs-5">${salePrice.toLocaleString('en-US')} VNĐ</span>
+                </div>`;
+            } else {
+                // Nếu không có chương trình giảm giá, chỉ hiển thị giá gốc
+                priceSaleAndRoot = `
+                <div>
+                    <span>${productDetail.price.toLocaleString('en-US')} VNĐ</span>
+                </div>`;
+            }
+
             tbody.append(`
-                <tr>
-                    <th scope="row">${index + 1}</th>
-                    <td>
-                        <div id="carouselExampleAutoplaying${index}" class="carousel slide" data-bs-ride="carousel">
-                            <div class="carousel-inner" style="width: auto; height: 100px;">
-                                ${imagesHtml}
-                            </div>
+                        <tr>
+                <th scope="row" class="text-center align-middle">${index + 1}</th>
+                <td class="text-center align-middle">
+                    <div id="carouselExampleAutoplaying${index}" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner" style="width: auto; height: 100px;">
+                            ${imagesHtml}
                         </div>
-                    </td>
-                    <td>
-                        <div class="fs-4">
+                    </div>
+                </td>
+                <td class="">
+                    <div class="fs-4">
                         ${productDetail.product.nameProduct}
-                        </div>
-                        <div class="fs-6">
+                    </div>
+                    <div class="fs-6">
                         Tên màu: ${productDetail.color.nameColor}
                         <br>
                         Tên size: ${productDetail.size.nameSize}
-                        </div>
-                    </td>
-                    <td>
-                        ${quantityProduct}
-                    </td>
-                    <td>${productDetail.price.toLocaleString('en-US') + ' VNĐ'}</td>
-                    <td>
-                        ${btn}
-                    </td>
-                </tr>
+                    </div>
+                </td>
+                <td class="text-center align-middle">
+                    ${quantityProduct}
+                </td>
+                <td class="text-center align-middle">
+                   ${priceSaleAndRoot}
+                </td>
+                <td class="text-center align-middle">
+                    ${btn}
+                </td>
+            </tr>
             `);
         });
 
@@ -343,11 +477,14 @@ function updateProductTable(response) {
             var nameProduct = $(this).data('name');
             var idProductDetail = $(this).data('id');
             var quantityProduct = $(this).data('quantity');
-
+            var priceSale = $(this).data('price-sale');
+            var priceRoot = $(this).data('price-root');
             // Gán các giá trị vào các thẻ hidden trong modal
             $('#nameProduct').val(nameProduct);
             $('#idProductDetail').val(idProductDetail);
             $('#quantityProduct').val(quantityProduct);
+            $('#priceProductSale').val(priceSale);
+            $('#priceProductRoot').val(priceRoot);
         });
 
         // Khởi tạo lại tất cả các carousel sau khi cập nhật DOM
@@ -422,7 +559,11 @@ function loadCategoryIntoSelect() {
         },
         error: function(xhr, status, error) {
             console.error('Error fetching data:', error);
-        }
+        },
+        // complete: function() {
+        //     // Sau khi hoàn thành, lại tiếp tục gửi yêu cầu để giữ kết nối liên tục
+        //     setTimeout(loadCategoryIntoSelect, 5000);  // Gửi lại sau 5 giây
+        // }
     });
 }
 
@@ -460,7 +601,11 @@ function getMaxPageProduct() {
         },
         error: function (xhr) {
             console.error('loi o tao page ' + xhr.responseText);
-        }
+        },
+        // complete: function() {
+        //     // Sau khi hoàn thành, lại tiếp tục gửi yêu cầu để giữ kết nối liên tục
+        //     setTimeout(getMaxPageProduct, 5000);  // Gửi lại sau 5 giây
+        // }
     });
 }
 
@@ -469,14 +614,15 @@ function getMaxPageProduct() {
 
 
 
-function updateQuantity(id, quantity) {
+function updateQuantity(id, quantity,method) {
     $.ajax({
         type: "POST",
         url: "/bill-api/updateBillDetail", // URL API của bạn
         contentType: "application/json", // Chuyển thành JSON
         data: JSON.stringify({
             id: id,
-            quantity: quantity
+            quantity: quantity,
+            method: method
         }),
         success: function (response) {
             console.log('Cập nhật thành công: ' + response);
@@ -485,6 +631,16 @@ function updateQuantity(id, quantity) {
             loadBillDetail(pageBillDetail); // Tải lại chi tiết bill
             paymentInformation();
             loadProduct(1);
+            checkUpdateCustomer = true;
+
+            totalShip(provinceTransport,districtTransport,wardTransport);
+
+            // loadBillStatusByBillId();
+            // loadInformationBillByIdBill();
+            // loadCustomerShipInBill();
+
+            // updateMoneyShipWait(shipMoneyBillWait);
+
             // pageNumber();
         },
         error: function (xhr) {
@@ -524,7 +680,11 @@ function loadVoucherByBill(page) {
         },
         error: function (xhr) {
             console.error('loi ne phan voucher ' + xhr.responseText)
-        }
+        },
+        // complete: function() {
+        //     // Sau khi hoàn thành, lại tiếp tục gửi yêu cầu để giữ kết nối liên tục
+        //     setTimeout(loadVoucherByBill, 5000);  // Gửi lại sau 5 giây
+        // }
     });
 }
 
@@ -559,8 +719,15 @@ function getAddVoucherInBill(idVoucher) {
             loadProduct(1)
             loadVoucherByBill(1);
             paymentInformation();
-            loadBillStatusByBillId();
-            loadInformationBillByIdBill();
+                // loadBillStatusByBillId();
+            var checkFormStatus = document.getElementById('checkFormStatus');
+            if(checkFormStatus != null) {
+                   console.log('Phai vao duoc day')
+                   loadInformationBillByIdBill();
+                   loadCustomerShipInBill();
+                $('#btn-Remove-voucher').hide();
+               }
+
             showToast(response.message,response.check)
         },
         error: function (xhr) {
@@ -578,8 +745,13 @@ function getRemoveVoucherInBill() {
             loadProduct(1)
             loadVoucherByBill(1);
             paymentInformation();
-            loadBillStatusByBillId();
-            loadInformationBillByIdBill();
+            var checkFormStatus = document.getElementById('checkFormStatus');
+            if(checkFormStatus != null) {
+                // loadBillStatusByBillId();
+                loadInformationBillByIdBill();
+                loadCustomerShipInBill();
+                $('#btn-Remove-voucher').hide();
+            }
             showToast(response.message,response.check)
         },
         error: function (xhr) {
@@ -639,17 +811,7 @@ function getAllBilByStatus(value) {
                 tableBillManage.empty()
                 response.forEach(function (bill,index) {
 
-                    // Chuyển đổi chuỗi createDate thành đối tượng Date
-                    const createDate = new Date(bill.createDate);
-
-                    // Định dạng ngày theo "dd/MM/yyyy"
-                    const formattedDate = `${('0' + createDate.getDate()).slice(-2)}/${('0' + (createDate.getMonth() + 1)).slice(-2)}/${createDate.getFullYear()}`;
-
-                    // Định dạng thời gian theo "HH:mm"
-                    const formattedTime = `${('0' + createDate.getHours()).slice(-2)}:${('0' + createDate.getMinutes()).slice(-2)}`;
-
-                    // Kết hợp cả thời gian và ngày tháng
-                    const formattedDateTime = `${formattedTime} ${formattedDate}`;
+                    const formattedDateTime = formatDateTime(bill.createDate);
 
                     tableBillManage.append(`
                      <tr>
@@ -657,7 +819,7 @@ function getAllBilByStatus(value) {
                             <td>${bill.codeBill}</td>
                             <td>${bill.customer == null ? 'Khách lẻ' : bill.customer.fullName}</td>
                             <td>${bill.customer == null ? 'Không có' : bill.customer.numberPhone}</td> 
-                            <td>${bill.finalAmount}</td>
+                            <td>${bill.finalAmount.toLocaleString('en-US') + ' VNĐ'}</td>
                             <td>${bill.billType == 1 ? 'Tại quầy' : 'Giao hàng'}</td>
                             <td>${formattedDateTime}</td>
                             <td>
@@ -670,7 +832,11 @@ function getAllBilByStatus(value) {
         },
         error: function (xhr) {
             console.error('Hien thi loi phan chon bill ' + xhr.responseText);
-        }
+        },
+        // complete: function() {
+        //     // Sau khi hoàn thành, lại tiếp tục gửi yêu cầu để giữ kết nối liên tục
+        //     setTimeout(getAllBilByStatus, 5000);  // Gửi lại sau 5 giây
+        // }
     })
 }
 
@@ -683,7 +849,11 @@ function getMaxPageBillManage() {
         },
         error: function (xhr) {
             console.error('loi max page bill manage' + xhr.responseText)
-        }
+        },
+        // complete: function() {
+        //     // Sau khi hoàn thành, lại tiếp tục gửi yêu cầu để giữ kết nối liên tục
+        //     setTimeout(getMaxPageBillManage, 5000);  // Gửi lại sau 5 giây
+        // }
     })
 }
 
@@ -740,7 +910,90 @@ function resetFillterBillManage() {
 
     }
 
+function getBuyProduct() {
+    let quantity = $("#quantity").val();
+    let idProductDetail = $("#idProductDetail").val();
+    let priceProductSale = $("#priceProductSale").val();
+    let priceProductRoot = $("#priceProductRoot").val();
+    $.ajax({
+        url: "/bill/buy-product-detail",
+        type: "POST",
+        data: {
+            quantityDetail: quantity, // Dữ liệu số lượng
+            idProductDetail: idProductDetail, // ID sản phẩm
+            priceProductSale: priceProductSale,
+            priceProductRoot: priceProductRoot
+        },
+        success: function (response) {
+                loadBillNew();
+                loadBillDetail(pageBillDetail);
+                loadProduct(1)
+                paymentInformation();
+                getMaxPageProduct();
+                loadVoucherByBill(1);
+                maxPageBillDetailByIdBill();
+
+                // loadBillStatusByBillId();
+                // loadInformationBillByIdBill();
+                // loadCustomerShipInBill();
+            checkUpdateCustomer = true;
+
+            totalShip(provinceTransport,districtTransport,wardTransport);
+
+            // updateMoneyShipWait(shipMoneyBillWait);
+
+            showToast(response.message,response.check)
+
+            $('#quantity').val('');
+            $('#quantityProduct').val('0');
+            $('#idProductDetail').val('0');
+            $('#priceProductSale').val('0');
+            $('#priceProductRoot').val('0');
+        },
+        error: function (xhr) {
+            console.error('loi ' + xhr.responseText);
+        }
+    })
+}
+
+function resetHidenProductSale() {
+    $('#quantity').val('');
+    $('#quantity').val('');
+    $('#quantityProduct').val('0');
+    $('#idProductDetail').val('0');
+    $('#priceProductSale').val('0');
+    $('#priceProductRoot').val('0');
+}
+function deleteBillDetail(id) {
+    $.ajax({
+        url: "/bill/deleteBillDetail/"+id,
+        type: "GET",
+        success: function (response) {
+            loadBillDetail(pageBillDetail);
+            loadProduct(1)
+            paymentInformation();
+            getMaxPageProduct();
+            loadVoucherByBill(1);
+            maxPageBillDetailByIdBill();
+
+            checkUpdateCustomer = true;
+
+            totalShip(provinceTransport,districtTransport,wardTransport);
+
+
+            showToast(response.message,response.check)
+
+        },
+        error: function (xhr) {
+            console.error('loi ' + xhr.responseText);
+        }
+    })
+}
 $(document).ready(function () {
+    $('#formBuyProduct').submit(function (event) {
+        event.preventDefault();
+        getBuyProduct();
+    })
     $('#formFilterProduct').submit(function (event) {
         event.preventDefault();
         filterProduct();
@@ -759,7 +1012,7 @@ $(document).ready(function () {
         var value = parseInt($numberDiv.text(), 10);
         $numberDiv.text(value + 1);
         // Cập nhật giá trị mới trên server
-        updateQuantity($(this).closest('.custom-number-input').data('id'), $numberDiv.text());
+        updateQuantity($(this).closest('.custom-number-input').data('id'), $numberDiv.text(),'cong');
     });
 
     $(document).on('click', '.btn-decrement', function () {
@@ -768,25 +1021,24 @@ $(document).ready(function () {
         if (value > 0) {
             $numberDiv.text(value - 1);
             // Cập nhật giá trị mới trên server
-            updateQuantity($(this).closest('.custom-number-input').data('id'), $numberDiv.text());
+            updateQuantity($(this).closest('.custom-number-input').data('id'), $numberDiv.text(),'tru');
         }
     });
 
     // Hàm cập nhật số lượng lên server
+        // Gọi các hàm tải dữ liệu ban đầu
+        loadBillNew();
+        loadClientsIntoSelect();
+        paymentInformation();
+        loadCategoryIntoSelect()
+        // pageNumber();
+        clickStatusBillManager(999);
 
-    // Gọi các hàm tải dữ liệu ban đầu
-    loadBillNew();
-    loadBillDetail(1);
     loadProduct(1)
-    loadClientsIntoSelect();
-    paymentInformation();
+    loadBillDetail(pageBillDetail);
     getMaxPageProduct();
-    loadCategoryIntoSelect()
     loadVoucherByBill(1);
     maxPageBillDetailByIdBill();
     getAllBilByStatus(1);
     getMaxPageBillManage();
-    // pageNumber();
-    clickStatusBillManager(999);
-
 });

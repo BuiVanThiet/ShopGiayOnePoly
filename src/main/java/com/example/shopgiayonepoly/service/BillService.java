@@ -43,4 +43,6 @@ public interface BillService {
     List<BillResponseManage> getAllBillByStatusDiss0(String nameCheck, Integer status);
 
     InformationBillByIdBillResponse getInformationBillByIdBill(Integer idBill);
+
+    List<Object[]> getInfoPaymentByIdBill(Integer id);
 }

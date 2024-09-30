@@ -31,6 +31,8 @@ function initializeLocationDropdowns(provinceSelectId, districtSelectId, wardSel
                 $('#shipMoney').text('0' + ' VNĐ');
                 $('#moneyTransport').val(0)
                 $('#moneyShipUpdate').val(0)
+                checkUpdateCustomer = false;
+
                 shipPrice = 0;
                 if(btnCreateBill != null) {
                     btnCreateBill.disabled = true;
@@ -72,6 +74,8 @@ function initializeLocationDropdowns(provinceSelectId, districtSelectId, wardSel
                                     btnCreateBill.disabled = true;
                                 }
                                 shipPrice = 0;
+                                checkUpdateCustomer = false;
+
                                 paymentInformation();
 
                                 districtTransport = this.value;
@@ -99,6 +103,7 @@ function initializeLocationDropdowns(provinceSelectId, districtSelectId, wardSel
                                             wardSelect.addEventListener('change',function () {
                                                 wardTransport = this.value;
                                                 console.log('Thong tin sau khi chon api (danh cho doi tuong sau khi chon xong)' + provinceTransport + '-' + districtTransport + '-' + wardTransport)
+                                                checkUpdateCustomer = false;
                                                 totalShip(provinceTransport,districtTransport,wardTransport);
                                             })
 
@@ -116,6 +121,8 @@ function initializeLocationDropdowns(provinceSelectId, districtSelectId, wardSel
                                     $('#shipMoney').text(0 + ' VNĐ');
                                     $('#moneyTransport').val(0)
                                     $('#moneyShipUpdate').val(0)
+                                    checkUpdateCustomer = false;
+
                                     if(btnCreateBill != null) {
                                         btnCreateBill.disabled = true;
                                     }
@@ -158,6 +165,7 @@ function initializeLocationDropdowns(provinceSelectId, districtSelectId, wardSel
                                                 wardSelect.value = wardID;
                                                 wardTransport = wardID;
                                             }
+                                            checkUpdateCustomer = false;
                                             console.log('Tu dong chon ne' + + provinceTransport + '-' + districtTransport + '-' + wardTransport)
                                             totalShip(provinceTransport,districtTransport,wardTransport);
                                         },
@@ -313,6 +321,13 @@ function totalShip(province, district, ward) {
                             if(btnCreateBill != null) {
                                 btnCreateBill.disabled = false;
                             }
+                            if(checkUpdateCustomer == true) {
+                                console.log('da xac nhan doi vi tri')
+                                shipMoneyBillWait = response.data.total;
+                                checkUpdateCustomer = false;
+                                updateMoneyShipWait(shipMoneyBillWait);
+                            }
+                            console.log('đay là số tiền ship: ' + response.data.total);
                             setClientShip(nameCustomer,numberPhoneCustomer,provinceTransport,districtTransport,wardTransport,addRessDetailCustomer)
                             paymentInformation();
                         },

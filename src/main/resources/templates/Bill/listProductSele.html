@@ -158,14 +158,17 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h1 class="modal-title fs-5" id="exampleQuantityLable">Số lượng</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="resetHidenProductSale()"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="formBuy" method="post" action="/bill/buy-product-detail">
+<!--                    <form id="formBuy" method="post" action="/bill/buy-product-detail">-->
+                        <form id="formBuyProduct">
 
-                        <input type="hidden" id="quantityProduct" name="quantityProduct">
-                        <input type="hidden" id="idProductDetail" name="idProductDetail">
-                        <input type="hidden" id="nameProduct">
+                            <input type="hidden" id="quantityProduct" name="quantityProduct">
+                            <input type="hidden" id="idProductDetail" name="idProductDetail">
+                            <input type="hidden" id="priceProductSale" name="priceProductSale">
+                            <input type="hidden" id="priceProductRoot" name="priceProductRoot">
+                            <input type="hidden" id="nameProduct">
 
                         <div class="mb-3 row g-3 align-items-center">
 
@@ -178,7 +181,7 @@
                             </div>
 
                             <div class="col-auto">
-                                <button disabled type="submit" class="btn btn-outline-primary col-auto" id="btnBuy"><i class="bi bi-plus"></i> Xác nhận</button>
+                                <button disabled type="submit" class="btn btn-outline-primary col-auto " id="btnBuy" data-bs-dismiss="modal" aria-label="Close"><i class="bi bi-plus"></i> Xác nhận</button>
                             </div>
 
                             <div class="col-12" id="errorCard">
@@ -194,11 +197,32 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button class="btn btn-outline-secondary" data-bs-target="#product-modal" data-bs-toggle="modal" id="comeBackProduct"><i class="bi bi-arrow-counterclockwise"></i> Quay lại</button>
+                    <button class="btn btn-outline-secondary"
+                            data-bs-target="#product-modal"
+                            data-bs-toggle="modal"
+                            id="comeBackProduct"
+                            onclick="resetHidenProductSale()"><i class="bi bi-arrow-counterclockwise"></i> Quay lại</button>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- modal phần nút quét sản phẩm  -->
+    <div class="modal fade" id="camera-Modal" tabindex="-1" aria-labelledby="cameraModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="cameraModalLabel">Quét QR sản phẩm</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text text-center">
+                    <video id="video" width="300" height="200" autoplay></video> <!-- Video hiển thị camera -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 </div>
 </body>
 </html>

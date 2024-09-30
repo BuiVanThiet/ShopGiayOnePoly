@@ -28,7 +28,7 @@ public interface BillDetailRepository extends JpaRepository<BillDetail,Integer> 
     @Query("select bdt.id from BillDetail bdt where bdt.bill.id = :idBill order by bdt.createDate desc")
     Integer getFirstBillDetailIdByIdBill(@Param("idBill") Integer idBill);
 
-//    @Query("select pdt from ProductDetail pdt " +
+    //    @Query("select pdt from ProductDetail pdt " +
 ////            "join pdt.product p " +
 //            "left join pdt.product.categories cate " +
 //            "where (:product is null or pdt.product.nameProduct like %:product%)" +
@@ -47,30 +47,62 @@ public interface BillDetailRepository extends JpaRepository<BillDetail,Integer> 
 //                                              @Param("origin") Integer idOrigin
 //                                                ,@Param("categories") List<Integer> idCategory
 //                                              );
-@Query("SELECT pd FROM ProductDetail pd " +
-        "JOIN pd.product p " +
-        "LEFT JOIN p.categories c " +
-        "WHERE p.nameProduct LIKE %:nameProduct% "+
-        "AND (:size IS NULL OR pd.size.id = :size) " +
-        "AND (:color IS NULL OR pd.color.id = :color) " +
-        "AND (:material IS NULL OR p.material.id = :material) " +
-        "AND (:manufacturer IS NULL OR p.manufacturer.id = :manufacturer) " +
-        "AND (:origin IS NULL OR p.origin.id = :origin) " +
-        "AND (:categories IS NULL OR  c.id IN :categories) " +
-        "AND pd.status <> 0 AND p.status <> 0 ")
-List<ProductDetail> findProductDetailSale(
-        @Param("nameProduct") String nameProduct,
-        @Param("size") Integer size,
-        @Param("color") Integer color,
-        @Param("material") Integer material,
-        @Param("manufacturer") Integer manufacturer,
-        @Param("origin") Integer origin,
-        @Param("categories") List<Integer> categories
-);
-
-
-
-
+//@Query("""
+//    SELECT
+//        new com.example.shopgiayonepoly.dto.response.bill.ProductDetailSaleResponse(
+//            pd.id,
+//            pd.createDate,
+//            pd.updateDate,
+//            pd.status,
+//            pd.product,
+//            pd.color,
+//            pd.size,
+//            CASE
+//                WHEN pd.saleProduct IS NOT NULL AND pd.saleProduct.discountType = 1
+//                    THEN pd.price - (pd.price * pd.saleProduct.discountValue / 100)
+//                WHEN pd.saleProduct IS NOT NULL AND pd.saleProduct.discountType = 2
+//                    THEN pd.price - pd.saleProduct.discountValue
+//                ELSE pd.price
+//            END,
+//            pd.price,
+//            pd.quantity,
+//            pd.describe
+//
+//        )
+//    FROM ProductDetail pd
+//    left JOIN pd.product p
+//    LEFT JOIN p.categories c
+//    WHERE p.nameProduct LIKE %:nameProduct%
+//    AND (:size IS NULL OR pd.size.id = :size)
+//    AND (:color IS NULL OR pd.color.id = :color)
+//    AND (:material IS NULL OR p.material.id = :material)
+//    AND (:manufacturer IS NULL OR p.manufacturer.id = :manufacturer)
+//    AND (:origin IS NULL OR p.origin.id = :origin)
+//    AND (:categories IS NULL OR c.id IN :categories)
+//    AND pd.status <> 0\s
+//    AND p.status <> 0
+//
+//""")
+    @Query("SELECT pd FROM ProductDetail pd " +
+            "JOIN pd.product p " +
+            "LEFT JOIN p.categories c " +
+            "WHERE p.nameProduct LIKE %:nameProduct% "+
+            "AND (:size IS NULL OR pd.size.id = :size) " +
+            "AND (:color IS NULL OR pd.color.id = :color) " +
+            "AND (:material IS NULL OR p.material.id = :material) " +
+            "AND (:manufacturer IS NULL OR p.manufacturer.id = :manufacturer) " +
+            "AND (:origin IS NULL OR p.origin.id = :origin) " +
+            "AND (:categories IS NULL OR  c.id IN :categories) " +
+            "AND pd.status <> 0 AND p.status <> 0 ")
+    List<ProductDetail> findProductDetailSale(
+            @Param("nameProduct") String nameProduct,
+            @Param("size") Integer size,
+            @Param("color") Integer color,
+            @Param("material") Integer material,
+            @Param("manufacturer") Integer manufacturer,
+            @Param("origin") Integer origin,
+            @Param("categories") List<Integer> categories
+    );
 
     @Query("select sum(bdt.totalAmount) from BillDetail bdt where bdt.bill.id = :idCheck")
     BigDecimal getTotalAmountByIdBill(@Param("idCheck") Integer id);
