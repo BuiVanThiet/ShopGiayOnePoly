@@ -28,7 +28,6 @@ public class StaffController {
     public String list(Model model) {
         List<StaffResponse> listStaff = staffService.getAllStaff();
         model.addAttribute("staffList", staffService.getAllStaff());
-//        System.out.println(staffService.findAll());
         return "Staff/list";
     }
 
