@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -39,6 +40,17 @@ public class VoucherServiceImplement implements VoucherService {
     public List<Voucher> getAllVoucherDelete() {
         return voucherRepository.getAllVoucherDelete();
     }
+
+    @Override
+    public Page<Voucher> getVoucherExpiredByPage(Pageable pageable) {
+        return  voucherRepository.getVoucherExpiredByPage(pageable);
+    }
+
+    @Override
+    public void updateVoucherExpired(Integer id) {
+        voucherRepository.updateVoucherExpired(id);
+    }
+
 
     @Override
     public void createNewVoucher(VoucherRequest voucherRequest) {
@@ -75,17 +87,13 @@ public class VoucherServiceImplement implements VoucherService {
     }
 
     @Override
-    public Page<Voucher> searchVoucherByDateRange(Pageable pageable, LocalDate startDate, LocalDate endDate) {
-        return voucherRepository.searchVoucherByDateRange(pageable,startDate,endDate);
-    }
-
-    @Override
-    public Page<Voucher> searchVoucherByPriceRange(Pageable pageable, BigDecimal minPrice, BigDecimal maxPrice) {
-        return voucherRepository.searchVoucherByPriceRange(pageable,minPrice,maxPrice);
-    }
-
-    @Override
     public Page<Voucher> searchVoucherByTypeVoucher(int type, Pageable pageable) {
         return voucherRepository.searchVoucherByTypeVoucher(type,pageable);
     }
+
+    @Override
+    public void updateVoucherStatusForExpired() {
+        voucherRepository.updateVoucherStatusForExpired();
+    }
+
 }

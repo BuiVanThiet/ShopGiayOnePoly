@@ -4,6 +4,7 @@ import com.example.shopgiayonepoly.dto.base.BaseDTO;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -35,7 +36,8 @@ public class VoucherRequest extends BaseDTO {
     private LocalDate endDate;
     @NotBlank(message = "Mô tả không được để trống!")
     private String describe;
-    @NotNull(message = "Số lượng không được để trống")
+    @NotNull(message = "Số lượng không được để trống!")
+    @Size(min = 1,max = 100, message = "Số lượng voucher phải từ 1 - 100!")
     private Integer quantity;
 
 

@@ -15,9 +15,10 @@
             <div class="text-center">
                 <p class="fs-4 mt-2">QUẢN LÝ PHIẾU GIẢM GIÁ</p>
             </div>
-            <div th:if="${mes != null}" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div th:if="${mes != null}" class="toast show" role="alert" aria-live="assertive" aria-atomic="true"
+                 style="position: absolute; top: 100px; right: 20px;">
                 <div class="toast-header">
-                    <img src="..." class="rounded me-2" alt="...">
+                    <i class="bi bi-check-circle me-2" style="font-size: 1.5rem; color: green;"></i> <!-- Icon ở đây -->
                     <strong class="me-auto">Thông báo</strong>
                     <small>vài giây trước</small>
                     <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
@@ -27,7 +28,8 @@
                 </div>
             </div>
 
-            <div class="row p-2">
+
+            <div class="row p-2" style="margin-top: 100px">
                 <!-- Form Thêm Mới Phiếu Giảm Giá -->
                 <div class="col-4">
                     <div class="card mb-5">
@@ -162,47 +164,26 @@
                         <div class="card-body">
                             <div class="row">
                                 <hr>
-                                <div class="col-12 mb-3">
-                                    <div class="form-group">
-                                        <label for="priceFilter" id="priceLabel" class="search-label" data-target="#priceFilter">Khoảng giá</label>
-                                        <div id="priceFilter" class="filter-options search-input" style="display:none; margin-top: 30px">
-                                            <div class="row d-flex align-items-center mb-2">
-                                                <div class="col d-flex justify-content-start">
-                                                    <input type="text" id="minAmount" readonly style="border:0;" placeholder="Min">
-                                                </div>
-                                                <div class="col d-flex justify-content-end">
-                                                    <input type="text" id="maxAmount" readonly style="border:0;" placeholder="Max">
-                                                </div>
-                                            </div>
-                                            <div style="margin-top: 20px" id="slider-range"></div>
-                                        </div>
+                                <form id="searchForm" method="get" action="/voucher/search-type">
+                                    <div class="col-md-12 mb-3">
+                                        <label for="searchDiscountTypeInput" class="search-label"
+                                               data-target="#searchDiscountTypeInput">Loại giảm giá</label>
+                                        <select id="searchDiscountTypeInput" name="type"
+                                                class="form-select mt-3 search-input" onchange="this.form.submit()">
+                                            <option value="">Chọn</option>
+                                            <option value="1" th:selected="${type == 1}">%</option>
+                                            <option value="2" th:selected="${type == 2}">Tiền mặt</option>
+                                        </select>
                                     </div>
-                                </div>
-                                <hr>
-                                <div class="col-12 mb-3" >
-                                    <label for="dateRange" class="search-label" data-target="#dateRangeInputs">Khoảng thời gian</label>
-                                    <div id="dateRangeInputs" class="row search-input" style="display:none;">
-                                        <div class="col-md-6 mb-3">
-                                            <input type="date" id="searchStartDateInput" class="form-control mt-1" value="" placeholder="Ngày bắt đầu">
-                                        </div>
-                                        <div class="col-md-6 mb-3">
-                                            <input type="date" id="searchEndDateInput" class="form-control mt-1" value="" placeholder="Ngày kết thúc">
-                                        </div>
-                                    </div>
-                                </div>
-                                <hr>
-                                <div class="col-md-12 mb-3">
-                                    <label for="searchDiscountType" class="search-label" data-target="#searchDiscountTypeInput">Loại giảm giá</label>
-                                    <select id="searchDiscountTypeInput" class="form-select mt-1 search-input" style="display:none;">
-                                        <option value="0">%</option>
-                                        <option value="1">Tiền mặt</option>
-                                    </select>
-                                </div>
+                                </form>
                                 <hr>
                                 <div class="col-md-12">
-                                    <form action="/voucher/search" method="get">
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" name="key" placeholder="Tìm theo tên, mã giảm giá">
+                                    <form action="/voucher/search-key" method="get">
+                                        <label for="searchKeyword" class="search-label" data-target="#searchKeyword">Từ
+                                            khóa</label>
+                                        <div class="input-group d-flex" id="searchKeyword" style="display: none;">
+                                            <input type="text" class="form-control" name="key"
+                                                   placeholder="Tìm theo tên, mã giảm giá">
                                             <button class="btn btn-light text-dark ms-1">
                                                 <i class="bi bi-search"></i> Search
                                             </button>
@@ -215,15 +196,28 @@
 
                     <div class="card mt-3">
                         <div class="card-body">
-                            <!-- Nút thay đổi bảng -->
-                            <div class="mb-3">
-                                <button id="button1" class="btn btn-primary" style=" width: 200px"
-                                        onclick="changeTable(1)">
-                                    Hoạt Động
-                                </button>
-                                <button id="button2" class="btn btn-secondary" style="width: 200px"
-                                        onclick="changeTable(2)">Ngừng Hoạt Động
-                                </button>
+                            <div class="row" style="">
+                                <div class="col-4">
+                                    <div class="mb-3">
+                                        <button id="button1" style="width: 100%" class="btn btn-primary"
+                                                onclick="changeTable(1)">Hoạt Động
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="mb-3">
+                                        <button id="button2" style="width: 100%" class="btn btn-secondary"
+                                                onclick="changeTable(2)">Ngừng Hoạt Động
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="mb-3">
+                                        <button id="button3" style="width: 100%" class="btn btn-secondary"
+                                                onclick="changeTable(3)">Hết hạn
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- Bảng 1 -->
@@ -250,15 +244,18 @@
                                         <td th:text="${voucher.startDate}">Ngày bắt đầu</td>
                                         <td th:text="${voucher.endDate}">Ngày kết thúc</td>
                                         <td>
-                                            <a th:href="@{/voucher/edit/{id}(id=${voucher.id})}"
-                                               class="btn btn-warning btn-sm">
-                                                <i class="bi bi-pencil-square"></i> Sửa
-                                            </a>
                                             <a th:href="@{/voucher/delete/{id}(id=${voucher.id})}"
                                                onclick="return confirm('Bạn có muốn xóa phiếu giảm giá này không?')"
                                                class="btn btn-danger btn-sm">
                                                 <i class="bi bi-trash"></i> Xóa
                                             </a>
+                                        </td>
+                                        <td>
+                                            <a th:href="@{/voucher/edit/{id}(id=${voucher.id})}"
+                                               class="btn btn-warning btn-sm">
+                                                <i class="bi bi-pencil-square"></i> Sửa
+                                            </a>
+
                                         </td>
                                     </tr>
                                     </tbody>
@@ -313,7 +310,7 @@
                                             <a th:href="@{/voucher/restore/{id}(id=${voucherdlt.id})}"
                                                onclick="return confirm('Bạn có muốn khôi phục phiếu giảm giá này không?')"
                                                class="btn btn-success btn-sm">
-                                                <i class="bi bi-trash"></i> Khôi phục
+                                                <i class="bi bi-arrow-clockwise"></i> Khôi phục
                                             </a>
                                         </td>
                                     </tr>
@@ -340,15 +337,77 @@
                                     </div>
                                 </div>
                             </div>
+                            <!-- Bảng 3 - Voucher Hết Hạn -->
+                            <div id="table-voucher-expired" style="display: none;">
+                                <table class="table table-striped table-hover"
+                                       style="margin-top: 30px;margin-bottom: 70px;">
+                                    <thead class="bg-danger text-white">
+                                    <tr>
+                                        <th>Mã</th>
+                                        <th>Tên</th>
+                                        <th>Giảm giá</th>
+                                        <th>Số lượng</th>
+                                        <th>Ngày bắt đầu</th>
+                                        <th>Ngày kết thúc</th>
+                                        <th colspan="2">Hành động</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="voucherExp : ${pageVoucherExpired}">
+                                        <td th:text="${voucherExp.codeVoucher}">Mã giảm giá</td>
+                                        <td th:text="${voucherExp.nameVoucher}">Tên giảm giá</td>
+                                        <td th:text="${voucherExp.priceReduced}">Giá trị giảm</td>
+                                        <td th:text="${voucherExp.quantity}">Số lượng</td>
+                                        <td th:text="${voucherExp.startDate}">Ngày bắt đầu</td>
+                                        <td th:text="${voucherExp.endDate}">Ngày kết thúc</td>
+                                        <td>
+                                            <a th:href="@{/voucher/delete/{id}(id=${voucherExp.id})}"
+                                               onclick="return confirm('Bạn có muốn xóa phiếu giảm giá này không?')"
+                                               class="btn btn-danger btn-sm">
+                                                <i class="bi bi-trash"></i> Xóa
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a th:href="@{/voucher/extend/{id}(id=${voucherExp.id})}"
+                                               onclick="return confirm('Bạn có muốn gia hạn phiếu giảm giá này không?')"
+                                               class="btn btn-success btn-sm">
+                                                <i class="bi bi-arrow-clockwise"></i> Gia hạn
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <div class="text-center m-3">
+                                    <div class="d-flex justify-content-center">
+                                        <a th:href="@{/voucher/list?pageNumberExpired=0}"
+                                           class="btn btn-secondary mx-1">First</a>
+                                        <a th:href="@{/voucher/list?pageNumberExpired=${pageVoucherExpired.first ? 0 : pageVoucherExpired.number - 1}}"
+                                           class="btn btn-secondary mx-1">Previous</a>
+
+                                        <div th:if="${pageVoucherExpired.totalPages > 0}" class="d-flex">
+                                            <div th:each="pageNumber : ${#numbers.sequence(0, pageVoucherExpired.totalPages - 1)}"
+                                                 class="mx-1">
+                                                <a th:href="@{/voucher/list?pageNumberExpired=${pageNumber}}"
+                                                   class="btn btn-primary" th:text="${pageNumber + 1}"></a>
+                                            </div>
+                                        </div>
+
+                                        <a th:href="@{/voucher/list?pageNumberExpired=${pageVoucherExpired.last ? pageVoucherExpired.totalPages - 1 : pageVoucherExpired.number + 1}}"
+                                           class="btn btn-secondary mx-1">Next</a>
+                                        <a th:href="@{/voucher/list?pageNumberExpired=${pageVoucherExpired.totalPages - 1}}"
+                                           class="btn btn-secondary mx-1">Last</a>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script th:src="@{/js/voucher/home.js}"></script>
-    <script th:src="@{/js/voucher/search-date.js}"></script>
+    <script th:src="@{/js/voucher/home.js}" type="text/javascript"></script>
+    <script th:src="@{/js/voucher/search-type.js}" type="text/javascript"></script>
 </div>
 </body>
 </html>

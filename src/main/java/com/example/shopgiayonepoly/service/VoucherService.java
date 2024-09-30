@@ -19,6 +19,9 @@ public interface VoucherService {
 
     public List<Voucher> getAllVoucherDelete();
 
+    public Page<Voucher> getVoucherExpiredByPage(Pageable pageable);
+    public void updateVoucherExpired(@Param("id") Integer id);
+
     public void createNewVoucher(VoucherRequest voucherRequest);
 
     public void updateVoucher(VoucherRequest voucherRequest);
@@ -30,9 +33,9 @@ public interface VoucherService {
     public void restoreStatusVoucher(Integer id);
 
     public Page<Voucher> searchVoucherByKeyword(String key, Pageable pageable);
-    public Page<Voucher> searchVoucherByDateRange(Pageable pageable, LocalDate startDate, LocalDate endDate);
-    public Page<Voucher> searchVoucherByPriceRange(Pageable pageable, BigDecimal minPrice, BigDecimal maxPrice);
     Page<Voucher> searchVoucherByTypeVoucher(@Param("types") int type, Pageable pageable);
+
+    public void updateVoucherStatusForExpired();
 
 
 }
