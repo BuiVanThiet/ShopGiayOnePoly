@@ -233,8 +233,10 @@ public class BillController extends BaseBill {
                 }
             }
             System.out.println("Thong tin bill(TM)" + bill.toString());
+            if(bill.getBillType() == 1) {
+                this.setBillStatus(bill.getId(),101,session);
+            }
             this.setBillStatus(bill.getId(),bill.getStatus(),session);
-            this.setBillStatus(bill.getId(),101,session);
             this.billService.save(bill);
             if(bill.getVoucher() != null) {
                 this.getSubtractVoucher(bill.getVoucher());
@@ -331,7 +333,9 @@ public class BillController extends BaseBill {
                 if(this.billPay.getVoucher() != null) {
                     this.getSubtractVoucher(this.billPay.getVoucher());
                 }
+                session.removeAttribute("billPaymentRest");
                 session.removeAttribute("pageReturn");
+
                 mess = "Thanh toán thành công!";
                 colorMess = "1";
                 return "redirect:/bill/bill-status-index/"+session.getAttribute("IdBill");

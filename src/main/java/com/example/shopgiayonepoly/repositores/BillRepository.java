@@ -190,8 +190,8 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
         (select
         	b.id,
         	b.update_date,
-        	b.cash AS so_tien,
-        	N'Tiền mặt'  payment_method,
+        	b.acount_money AS so_tien,
+        	N'Tiền tài khoản'  payment_method,
         	(select s.code_staff+'-'+s.full_name from staff s where s.id = (SUBSTRING(invo.note, 1, CHARINDEX(',', invo.note) - 1)))
         from bill b
         join invoice_status invo
@@ -199,4 +199,71 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
         where b.id = :idCheck and invo.status = 101 AND b.acount_money > 0)
 """, nativeQuery = true)
     List<Object[]> getInfoPaymentByIdBill(@Param("idCheck") Integer idCheck);
+
+    @Query(value = """
+    SELECT
+        b.code_bill,
+        b.create_date,
+        COALESCE(c.full_name, 'Không có') AS full_name,
+        COALESCE(c.number_phone, 'Không có') AS number_phone,
+        COALESCE(c.email, 'Không có') AS email,
+        COALESCE(
+            SUBSTRING(
+                c.addRess,
+                CHARINDEX(',', c.addRess, CHARINDEX(',', c.addRess, CHARINDEX(',', c.addRess) + 1) + 1) + 2,
+                LEN(c.addRess)
+            ),
+            'Không có'
+        ) AS addRess,
+        b.total_amount,
+        b.shipping_price,
+        CASE
+            WHEN v.discount_type = 1 THEN
+                CASE
+                    WHEN b.total_amount * (v.price_reduced / 100) > v.prices_max THEN
+                        v.prices_max
+                    ELSE
+                        b.total_amount * (v.price_reduced / 100)
+                END
+            WHEN v.discount_type = 2 THEN
+                v.price_reduced
+            ELSE
+                0
+        END AS discount_value,
+        CASE
+            WHEN v.discount_type = 1 THEN
+                CASE
+                    WHEN b.total_amount * (v.price_reduced / 100) > v.prices_max THEN
+                        b.total_amount - v.prices_max + b.shipping_price
+                    ELSE
+                        b.total_amount - (b.total_amount * (v.price_reduced / 100)) + b.shipping_price
+                END
+            WHEN v.discount_type = 2 THEN
+                b.total_amount - v.price_reduced + b.shipping_price
+            ELSE
+                b.total_amount + b.shipping_price
+        END AS total_after_discount
+    FROM bill b
+    LEFT JOIN customer c ON c.id = b.id_customer
+    LEFT JOIN voucher v ON v.id = b.id_voucher
+    WHERE b.id = :idBill
+""", nativeQuery = true)
+    List<Object[]> getBillByIdCreatePDF(@Param("idBill") Integer idBill);
+
+
+    @Query(value = """
+        select
+        	p.name_product,
+        	bd.quantity,
+        	bd.price_root,
+        	bd.price,
+        	bd.total_amount
+        from bill_detail bd
+        left join product_detail pd
+        on pd.id = bd.id_product_detail
+        join product p
+        on pd.id_product = p.id
+        where bd.id_bill = :idCheck
+""", nativeQuery = true)
+    List<Object[]> getBillDetailByIdBillPDF(@Param("idCheck") Integer id);
 }
