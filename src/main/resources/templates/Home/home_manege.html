@@ -46,9 +46,14 @@
 
         <div class="offcanvas-header d-flex justify-content-between align-items-center border-bottom position-relative">
             <a href="#" class="offcanvas-title text-decoration-none text-white fs-3" id="offcanvasExampleLabel">
-                <div>
-                    <span th:text="${staffInfo.fullName}"></span>
-                    <span th:text="${staffInfo.role.nameRole}"></span>
+                <div th:if="${staffInfo == null}">
+                    <script>
+                        window.location.href = '/logout';
+                    </script>
+                </div>
+                <div th:if="${staffInfo != null}">
+                    <p>Tên: <span th:text="${staffInfo.fullName}"></span></p>
+                    <p>Chức vụ: <span th:text="${staffInfo.role.nameRole}"></span></p>
                 </div>
                 <br>
                 <span>Chúc bạn một ngày tốt lành!</span>
