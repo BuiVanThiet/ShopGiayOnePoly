@@ -38,11 +38,6 @@ public class ManufacturerImplement implements ManufacturerService {
     }
 
     @Override
-    public void deleteById(Integer integer) {
-        manufacturerRepository.deleteById(integer);
-    }
-
-    @Override
     public List<Manufacturer> findAll(Sort sort) {
         return manufacturerRepository.findAll(sort);
     }
@@ -54,7 +49,46 @@ public class ManufacturerImplement implements ManufacturerService {
 
     @Override
     public List<Manufacturer> getClientNotStatus0() {
-        return this.manufacturerRepository.getClientNotStatus0();
+        return this.manufacturerRepository.getManufacturerNotStatus0();
+    }
+
+    @Override
+    public List<Manufacturer> getManufacturerDelete() {
+        return this.manufacturerRepository.getManufacturerDelete();
+    }
+
+    @Override
+    public void updateStatus(int id, int status) {
+        Optional<Manufacturer> optionalManufacturer = manufacturerRepository.findById(id);
+        if (optionalManufacturer.isPresent()) {
+            Manufacturer manufacturer = optionalManufacturer.get();
+            manufacturer.setStatus(status);
+            manufacturerRepository.save(manufacturer);
+        }
+    }
+
+    @Override
+    public void deleteByID(int id) {
+        Optional<Manufacturer> optionalManufacturer = manufacturerRepository.findById(id);
+        if (optionalManufacturer.isPresent()) {
+            Manufacturer manufacturer = optionalManufacturer.get();
+            manufacturer.setStatus(0);
+            manufacturerRepository.save(manufacturer);
+        }
+    }
+
+    @Override
+    public void updateManufacturer(int id, String codeManufacturer, String nameManufacturer) {
+        Optional<Manufacturer> optionalManufacturer = manufacturerRepository.findById(id);
+
+        if (optionalManufacturer.isPresent()) {
+            Manufacturer manufacturer = optionalManufacturer.get();
+            manufacturer.setCodeManufacturer(codeManufacturer);
+            manufacturer.setNameManufacturer(nameManufacturer);
+            manufacturerRepository.save(manufacturer);
+        } else {
+            throw new RuntimeException("Màu sắc có " + id + " Không tồn tại.");
+        }
     }
 
 

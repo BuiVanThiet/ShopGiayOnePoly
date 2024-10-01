@@ -17,11 +17,18 @@ public interface ManufacturerService {
 
     long count();
 
-    void deleteById(Integer integer);
+    void deleteByID(int id);
 
     List<Manufacturer> findAll(Sort sort);
 
     Page<Manufacturer> findAll(Pageable pageable);
 
     List<Manufacturer> getClientNotStatus0();
+
+    List<Manufacturer> getManufacturerDelete();
+
+    void updateStatus(int id, int status);
+
+    void updateManufacturer(int id, String codeManufacturer, String nameManufacturer);
+
 }

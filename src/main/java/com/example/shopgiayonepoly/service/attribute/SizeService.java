@@ -17,11 +17,18 @@ public interface SizeService {
 
     long count();
 
-    void deleteById(Integer integer);
+    void deleteByID(int id);
 
     List<Size> findAll(Sort sort);
 
     Page<Size> findAll(Pageable pageable);
 
     List<Size> getClientNotStatus0();
+
+    List<Size> getSizeDelete();
+
+    void updateStatus(int id, int status);
+
+    void updateSize(int id, String codeSize, String nameSize);
+
 }

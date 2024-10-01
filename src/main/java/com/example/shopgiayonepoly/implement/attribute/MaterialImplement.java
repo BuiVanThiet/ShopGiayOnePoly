@@ -38,11 +38,6 @@ public class MaterialImplement implements MaterialService {
     }
 
     @Override
-    public void deleteById(Integer integer) {
-        materialRepository.deleteById(integer);
-    }
-
-    @Override
     public List<Material> findAll(Sort sort) {
         return materialRepository.findAll(sort);
     }
@@ -54,6 +49,47 @@ public class MaterialImplement implements MaterialService {
 
     @Override
     public List<Material> getClientNotStatus0() {
-        return this.materialRepository.getClientNotStatus0();
+        return this.materialRepository.getMaterialNotStatus0();
     }
+
+    @Override
+    public List<Material> getMaterialDelete() {
+        return this.materialRepository.getMaterialDelete();
+    }
+
+    @Override
+    public void updateStatus(int id, int status) {
+        Optional<Material> optionalMaterial = materialRepository.findById(id);
+        if (optionalMaterial.isPresent()) {
+            Material material = optionalMaterial.get();
+            material.setStatus(status);
+            materialRepository.save(material);
+        }
+    }
+
+    @Override
+    public void deleteByID(int id) {
+        Optional<Material> optionalMaterial = materialRepository.findById(id);
+        if (optionalMaterial.isPresent()) {
+            Material material = optionalMaterial.get();
+            material.setStatus(0);
+            materialRepository.save(material);
+        }
+    }
+
+    @Override
+    public void updateMaterial(int id, String codeMaterial, String nameMaterial) {
+        Optional<Material> optionalMaterial = materialRepository.findById(id);
+
+        if (optionalMaterial.isPresent()) {
+            Material material = optionalMaterial.get();
+            material.setCodeMaterial(codeMaterial);
+            material.setNameMaterial(nameMaterial);
+            materialRepository.save(material);
+        } else {
+            throw new RuntimeException("Màu sắc có " + id + " Không tồn tại.");
+        }
+    }
+
+
 }
