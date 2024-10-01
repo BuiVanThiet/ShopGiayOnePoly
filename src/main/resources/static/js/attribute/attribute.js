@@ -11,22 +11,7 @@ function editRow(index) {
     document.getElementById('save-btn-' + index).style.display = 'inline-block';
 }
 
-function showNotification() {
-    document.getElementById('notifyBtn').addEventListener('click', function() {
-        var notification = document.getElementById('notification');
-        notification.classList.remove('hidden');
-        notification.classList.add('visible');
 
-        setTimeout(function() {
-            notification.classList.remove('visible');
-            setTimeout(function() {
-                notification.classList.add('hidden');
-            }, 500);
-        }, 7000); // Hiển thị thông báo trong 7 giây
-    });
-}
-//
-// window.onload = showNotification;
 
 
 

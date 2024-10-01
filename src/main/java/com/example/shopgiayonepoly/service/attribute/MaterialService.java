@@ -17,12 +17,18 @@ public interface MaterialService {
 
     long count();
 
-    void deleteById(Integer integer);
+    void deleteByID(int id);
 
     List<Material> findAll(Sort sort);
 
     Page<Material> findAll(Pageable pageable);
 
     List<Material> getClientNotStatus0();
+
+    List<Material> getMaterialDelete();
+
+    void updateStatus(int id, int status);
+
+    void updateMaterial(int id, String codeMaterial, String nameMaterial);
 
 }

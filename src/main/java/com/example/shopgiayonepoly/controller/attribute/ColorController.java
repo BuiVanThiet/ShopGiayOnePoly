@@ -44,10 +44,10 @@ public class ColorController {
         return new ResponseEntity<>(listColorActive, HttpStatus.OK);
     }
 
-    @GetMapping("/popup")
-    public String popup(Model model) {
-        return "Attribute/popup";
-    }
+//    @GetMapping("/popup")
+//    public String popup(Model model) {
+//        return "Attribute/popup";
+//    }
 
     @RequestMapping("/color/add")
     public String add(@ModelAttribute("colorAdd") Color color) {
@@ -58,7 +58,7 @@ public class ColorController {
         return "redirect:/attribute/color";
     }
 
-    @PostMapping("/update-status")
+    @PostMapping("/color/update-status")
     @ResponseBody
     public ResponseEntity<String> updateStatus(@RequestBody Map<String, Object> payload) {
         try {

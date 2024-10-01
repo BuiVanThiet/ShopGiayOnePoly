@@ -9,6 +9,9 @@ import java.util.List;
 
 @Repository
 public interface SizeRepository extends JpaRepository<Size, Integer> {
-    @Query("select client from Size client where client.status <> 0")
-    List<Size> getClientNotStatus0();
+    @Query("select kichCo from Size kichCo where kichCo.status <> 0")
+    List<Size> getSizeNotStatus0();
+
+    @Query("select kichCo from Size kichCo where kichCo.status = 0")
+    List<Size> getSizeDelete();
 }

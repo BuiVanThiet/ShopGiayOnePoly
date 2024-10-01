@@ -38,11 +38,6 @@ public class SizeImplement implements SizeService {
     }
 
     @Override
-    public void deleteById(Integer integer) {
-        sizeRepository.deleteById(integer);
-    }
-
-    @Override
     public List<Size> findAll(Sort sort) {
         return sizeRepository.findAll(sort);
     }
@@ -54,6 +49,47 @@ public class SizeImplement implements SizeService {
 
     @Override
     public List<Size> getClientNotStatus0() {
-        return this.sizeRepository.getClientNotStatus0();
+        return this.sizeRepository.getSizeNotStatus0();
     }
+
+    @Override
+    public List<Size> getSizeDelete() {
+        return this.sizeRepository.getSizeDelete();
+    }
+
+    @Override
+    public void updateStatus(int id, int status) {
+        Optional<Size> optionalSize = sizeRepository.findById(id);
+        if (optionalSize.isPresent()) {
+            Size size = optionalSize.get();
+            size.setStatus(status);
+            sizeRepository.save(size);
+        }
+    }
+
+    @Override
+    public void deleteByID(int id) {
+        Optional<Size> optionalSize = sizeRepository.findById(id);
+        if (optionalSize.isPresent()) {
+            Size size = optionalSize.get();
+            size.setStatus(0);
+            sizeRepository.save(size);
+        }
+    }
+
+    @Override
+    public void updateSize(int id, String codeSize, String nameSize) {
+        Optional<Size> optionalSize = sizeRepository.findById(id);
+
+        if (optionalSize.isPresent()) {
+            Size size = optionalSize.get();
+            size.setCodeSize(codeSize);
+            size.setNameSize(nameSize);
+            sizeRepository.save(size);
+        } else {
+            throw new RuntimeException("Màu sắc có " + id + " Không tồn tại.");
+        }
+    }
+
+
 }

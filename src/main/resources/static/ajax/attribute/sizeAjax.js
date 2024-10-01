@@ -1,14 +1,14 @@
-function saveRow(index) {
+function saveRow(index) { // hàm edit dữ liệu trên table
     console.log('Saving row:', index);
     var updatedData = {
-        codeColor: document.getElementById('code-input-' + index).value,
-        nameColor: document.getElementById('name-input-' + index).value,
+        codeSize: document.getElementById('code-input-' + index).value,
+        nameSize: document.getElementById('name-input-' + index).value,
         id: document.getElementById('row-' + index).getAttribute('data-id')  // Lấy ID của đối tượng từ hàng
     };
 
     // Hiển thị lại các giá trị đã chỉnh sửa trên trang
-    document.getElementById('code-text-' + index).innerText = updatedData.codeColor;
-    document.getElementById('name-text-' + index).innerText = updatedData.nameColor;
+    document.getElementById('code-text-' + index).innerText = updatedData.codeSize;
+    document.getElementById('name-text-' + index).innerText = updatedData.nameSize;
 
     // Ẩn input và hiển thị lại text
     document.getElementById('code-input-' + index).style.display = 'none';
@@ -24,7 +24,7 @@ function saveRow(index) {
 
     // Thực hiện AJAX để cập nhật dữ liệu trong cơ sở dữ liệu
     $.ajax({
-        url: '/attribute/update-color',  // Thay bằng URL API của bạn
+        url: '/attribute/update-size',  // Thay bằng URL API của bạn
         method: 'POST',
         contentType: 'application/json',
         data: JSON.stringify(updatedData),  // Gửi dữ liệu JSON
@@ -40,7 +40,7 @@ function saveRow(index) {
 }
 
 
-function toggleStatus(element) {
+function toggleStatus(element) { // hàm thay đổi trạng thái bằng button
     var index = element.getAttribute('data-index');  // Lấy index
     var status = element.getAttribute('data-status') === '1' ? 2 : 1;  // Lấy trạng thái mới
 
@@ -61,7 +61,7 @@ function toggleStatus(element) {
 
     // Thực hiện Ajax request để cập nhật trạng thái trong database
     $.ajax({
-        url: '/attribute/update-status',  // Đường dẫn API
+        url: '/attribute//size/update-status',  // Đường dẫn API
         method: 'POST',
         contentType: 'application/json',
         data: JSON.stringify({
@@ -84,7 +84,7 @@ function deleteByID(element) {
         var id = $('#row-' + index).data('id');  // Lấy id của phần tử từ th:data-id của hàng
 
         $.ajax({
-            url: '/attribute/delete-color',  // Đường dẫn API để xóa
+            url: '/attribute/delete-size',  // Đường dẫn API để xóa
             method: 'POST',
             contentType: 'application/json',
             data: JSON.stringify({
@@ -106,138 +106,145 @@ function deleteByID(element) {
         });
     }
 }
+
 document.querySelector('.attribute-btn-listDelete').addEventListener('click', function () {
-    fetchDeletedColors();
-
-    // Ẩn nút "Danh sách đã xóa"
-    this.style.display = 'none';
-
-    // Hiển thị nút "Danh sách hoạt động"
-    document.querySelector('.attribute-btn-listActive').style.display = 'inline-block';
-});
-
-document.querySelector('.attribute-btn-listActive').addEventListener('click', function () {
-    fetchActiveColors();  // Bạn có thể tạo hàm này để lấy danh sách màu hoạt động
-
-    // Ẩn nút "Danh sách hoạt động"
-    this.style.display = 'none';
-
-    // Hiển thị lại nút "Danh sách đã xóa"
-    document.querySelector('.attribute-btn-listDelete').style.display = 'inline-block';
-});
-
-function fetchDeletedColors() {
-    // Thay URL dưới đây bằng endpoint của bạn để lấy danh sách màu đã xóa
-    fetch('http://localhost:8080/attribute/color/delete')
+    fetch('http://localhost:8080/attribute/size/delete')
         .then(response => response.json())
         .then(data => {
             if (data.length > 0) {
-                // Xóa các hàng cũ trong tbody
-                const tbody = document.querySelector('#colorTable tbody');
-                tbody.innerHTML = '';
-
-                // Lặp qua các màu đã xóa và thêm các hàng vào bảng
-                data.forEach((color, index) => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                            <td>${color.codeColor}</td>
-                            <td>${color.nameColor}</td>
-                            <td>${color.createDate}</td>
-                            <td>${color.updateDate}</td>
-                            <td>
-                                <i class="attribute-status-icon status-icon fas ${color.status == 1 ? 'fa-toggle-on' : 'fa-toggle-off'}" 
-                                   data-status="${color.status}"></i>
-                            </td>
-                            <td>
-                                <a href="#"  onclick="restoreColor(${color.id})">
-                                    <i class="attribute-icon-restore fas fa-undo" title="Khôi phục"></i>
-                                </a>
-                            </td>
-                        `;
-                    tbody.appendChild(row);
-                });
+                fetchDeletedSizes();
+                this.style.display = 'none';
+                document.querySelector('.attribute-btn-listActive').style.display = 'inline-block';
             } else {
-                alert("Không có màu nào đã bị xóa.");
+                alert("Không có kích cỡ nào bị xóa.");
             }
-        })
-        .catch(error => {
-            console.error('Error fetching deleted colors:', error);
         });
-}
+});
+
 document.querySelector('.attribute-btn-listActive').addEventListener('click', function () {
-    fetchActiveColors();
-
-    // Ẩn nút "Danh sách hoạt động"
+    fetchActiveSizes();
     this.style.display = 'none';
-
-    // Hiển thị lại nút "Danh sách đã xóa"
     document.querySelector('.attribute-btn-listDelete').style.display = 'inline-block';
 });
 
-function fetchActiveColors() {
-    // Thay URL dưới đây bằng endpoint của bạn để lấy danh sách màu đang hoạt động
-    fetch('http://localhost:8080/attribute/color/active')
+function fetchDeletedSizes() {
+    // Thay URL dưới đây bằng endpoint của bạn để lấy danh sách màu đã xóa
+    fetch('http://localhost:8080/attribute/size/delete')
         .then(response => response.json())
         .then(data => {
             if (data.length > 0) {
                 // Xóa các hàng cũ trong tbody
-                const tbody = document.querySelector('#colorTable tbody');
+                const tbody = document.querySelector('#sizeTable tbody');
                 tbody.innerHTML = '';
 
                 // Lặp qua các màu đang hoạt động và thêm các hàng vào bảng
-                data.forEach((color, index) => {
+                data.forEach((size, index) => {
                     const row = document.createElement('tr');
+                    row.id = `row-${index}`;
+                    row.setAttribute('data-id', size.id);
                     row.innerHTML = `
-                            <td>${color.codeColor}</td>
-                            <td>${color.nameColor}</td>
-                            <td>${color.createDate}</td>
-                            <td>${color.updateDate}</td>
-                            <td>
-                                <i class="attribute-status-icon status-icon fas ${color.status == 1 ? 'fa-toggle-on' : 'fa-toggle-off'}" 
-                                   data-status="${color.status}"></i>
-                            </td>
-                            <td>
-                                <a href="#" onclick="editRow(${index})" id="edit-btn-${index}">
-                                    <i class="attribute-icon-edit fas fa-edit" title="Edit"></i>
+                        <td>
+                            <span id="code-text-${index}">${size.codeSize}</span>
+                            <input type="text" value="${size.codeSize}" id="code-input-${index}" style="display:none;">
+                        </td>
+                        <td>
+                            <span id="name-text-${index}">${size.nameSize}</span>
+                            <input type="text" value="${size.nameSize}" id="name-input-${index}" style="display:none;">
+                        </td>
+                        <td>${size.createDate}</td>
+                        <td>${size.updateDate}</td>
+                        <td>
+                            <i class="attribute-status-icon status-icon fas ${size.status == 1 ? 'fa-toggle-on' : 'fa-toggle-off'}"
+                               data-status="${size.status}"
+                               data-index="${index}"
+                               title="Toggle Status"></i>
+                        </td>
+                        <td>
+                                <a data-index="${index}"  onclick="restoreSize(this)">
+                                    <i class="attribute-icon-restore fas fa-undo" title="Khôi phục"></i>
                                 </a>
-                                <a href="#" onclick="saveRow(${index})" style="display:none;" id="save-btn-${index}">
-                                    <i class="attribute-icon-save fas fa-save" title="Save"></i>
-                                </a>
-                                <a href="#" onclick="deleteByID(this)" data-index="${index}">
-                                    <i class="attribute-icon-delete fas fa-trash" title="Delete"></i>
-                                </a>
-                            </td>
-                        `;
+                        </td>
+                    `;
                     tbody.appendChild(row);
                 });
             } else {
-                alert("Không có màu nào đang hoạt động.");
+                alert("Không có kích cỡ nào bị xóa.");
             }
         })
         .catch(error => {
-            console.error('Error fetching active colors:', error);
+            console.error('Error fetching active sizes:', error);
         });
 }
 
 
+function fetchActiveSizes() {
+    fetch('http://localhost:8080/attribute/size/active')
+        .then(response => response.json())
+        .then(data => {
+            if (data.length > 0) {
 
-function restoreColor(colorId) {
-    if (confirm('Bạn có chắc chắn muốn khôi phục này không?')) {
-        var index = element.getAttribute('data-index');  // Lấy index từ th:data-index
-        var id = $('#row-' + index).data('id');  // Lấy id của phần tử từ th:data-id của hàng
+                const tbody = document.querySelector('#sizeTable tbody');
+                tbody.innerHTML = '';
+
+                data.forEach((size, index) => {
+                    const row = document.createElement('tr');
+                    row.id = `row-${index}`;
+                    row.setAttribute('data-id', size.id);
+                    row.innerHTML = `
+                        <td>
+                            <span id="code-text-${index}">${size.codeSize}</span>
+                            <input class="inputUpdate-attribute" type="text" value="${size.codeSize}" id="code-input-${index}" style="display:none;">
+                        </td>
+                        <td>
+                            <span id="name-text-${index}">${size.nameSize}</span>
+                            <input class="inputUpdate-attribute" type="text" value="${size.nameSize}" id="name-input-${index}" style="display:none;">
+                        </td>
+                        <td>${size.createDate}</td>
+                        <td>${size.updateDate}</td>
+                        <td>
+                            <i class="attribute-status-icon status-icon fas ${size.status == 1 ? 'fa-toggle-on' : 'fa-toggle-off'}"
+                               data-status="${size.status}"
+                               data-index="${index}"
+                               onclick="toggleStatus(this)"
+                               title="Toggle Status"></i>
+                        </td>
+                        <td>
+                            <a href="#" onclick="editRow(${index})" id="edit-btn-${index}">
+                                <i class="attribute-icon-edit icon-edit fas fa-edit" title="Edit"></i>
+                            </a>
+                            <a href="#" onclick="saveRow(${index})" id="save-btn-${index}" style="display:none;">
+                                <i class="attribute-icon-save icon-save fas fa-save" title="Save"></i>
+                            </a>
+                            <a href="#" data-index="${index}" onclick="deleteByID(this)">
+                                <i class="attribute-icon-delete icon-delete fas fa-trash" title="Delete"></i>
+                            </a>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } else {
+                alert("Không có kích cỡ nào đang hoạt động.");
+            }
+        })
+}
+
+
+function restoreSize(element) {
+    if (confirm('Bạn có chắc chắn muốn khôi phục mục này không?')) {
+        var index = element.getAttribute('data-index');
+        var id = $('#row-' + index).data('id');
 
         $.ajax({
-            url: '/attribute/delete-color',  // Đường dẫn API để xóa
+            url: '/attribute/delete-size',
             method: 'POST',
             contentType: 'application/json',
             data: JSON.stringify({
                 id: id,
-                status: 2  // Giả sử status 0 là trạng thái bị xóa
+                status: 1
             }),
             success: function (response) {
                 if (response.success) {
-                    // Xóa hàng trong bảng mà không cần reload trang
-                    $('#row-' + index).remove();  // Xóa hàng với id là row-index
+                    $('#row-' + index).remove();
                     console.log('Khôi phục thành công');
                 } else {
                     alert('Khôi phục thất bại!');
@@ -247,8 +254,6 @@ function restoreColor(colorId) {
                 console.error('Có lỗi xảy ra khi khôi phục:', error);
             }
         });
-        alert('Khôi phục màu có ID: ' + colorId);
     }
-
 }
 

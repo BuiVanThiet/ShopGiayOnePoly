@@ -17,11 +17,18 @@ public interface OriginService {
 
     long count();
 
-    void deleteById(Integer integer);
+    void deleteByID(int id);
 
     List<Origin> findAll(Sort sort);
 
     Page<Origin> findAll(Pageable pageable);
 
     List<Origin> getClientNotStatus0();
+
+    List<Origin> getOriginDelete();
+
+    void updateStatus(int id, int status);
+
+    void updateOrigin(int id, String codeOrigin, String nameOrigin);
+
 }
