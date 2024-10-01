@@ -37,26 +37,26 @@ function loadBillStatusByBillId() {
                     case 4:
                         iconClass = 'bi-box-seam';
                         stepTitle = 'Khách Đã Nhận Được Hàng';
-                        $('#btnDeleteBill').remove();
+                        $('#btnDeleteBill').hide();
                         $('#btnConfirmBill').show();
                         break;
                     case 5:
                         iconClass = 'bi-star';
                         stepTitle = 'Đơn Hàng Đã Hoàn Thành';
-                        $('#btnDeleteBill').remove();
-                        $('#btnConfirmBill').remove();
+                        $('#btnDeleteBill').hide();
+                        $('#btnConfirmBill').hide();
                         break;
                     case 6:
                         iconClass = 'bi-arrow-counterclockwise';
                         stepTitle = 'Đã Hủy';
-                        $('#btnDeleteBill').remove();
-                        $('#btnConfirmBill').remove();
+                        $('#btnDeleteBill').hide();
+                        $('#btnConfirmBill').hide();
                         break;
                     case 101:
                         iconClass = 'bi-cash';
                         stepTitle = 'Đã Thanh Toán';
-                        $('#btnDeleteBill').remove();
-                        $('#btnConfirmBill').remove();
+                        $('#btnDeleteBill').hide();
+                        $('#btnConfirmBill').hide();
                         break;
                 }
                 const formattedDateTime = formatDateTime(invoiceBill.createDate);
@@ -104,7 +104,7 @@ function loadInformationBillByIdBill() {
             }
 
             if(response.voucher == null) {
-                $('#btnRemoveVoucher').remove();
+                $('#btnRemoveVoucher').hide();
                 voucher = 'Không có';
             }else {
                 $('#btnRemoveVoucher').show();
@@ -123,52 +123,52 @@ function loadInformationBillByIdBill() {
                 statusBill = 'Đã xác nhận';
                 $('#cancel-button').show();
                 $('#confirm-button').show();
-                $('#form-action-voucher').remove();
+                $('#form-action-voucher').hide();
                 $('#form-final-voucher').show();
                 $('#title-voucher').text(voucher);
-                $('#btn-modal-customer').remove();
-                $('#btn-buy-product').remove();
-                $('#startCamera').remove();
+                $('#btn-modal-customer').hide();
+                $('#btn-buy-product').hide();
+                $('#startCamera').hide();
             }else if (response.status == 3) {
                 statusBill = 'Giao hàng';
                 $('#cancel-button').show();
                 $('#confirm-button').show();
-                $('#form-action-voucher').remove();
+                $('#form-action-voucher').hide();
                 $('#form-final-voucher').show();
                 $('#title-voucher').text(voucher);
-                $('#btn-modal-customer').remove();
-                $('#btn-buy-product').remove();
-                $('#startCamera').remove();
+                $('#btn-modal-customer').hide();
+                $('#btn-buy-product').hide();
+                $('#startCamera').hide();
             }else if (response.status == 4) {
                 statusBill = 'Khách đã nhận được hàng';
                 $('#cancel-button').show();
                 $('#confirm-button').show();
-                $('#form-action-voucher').remove();
+                $('#form-action-voucher').hide();
                 $('#form-final-voucher').show();
                 $('#title-voucher').text(voucher);
-                $('#btn-modal-customer').remove();
-                $('#btn-buy-product').remove();
-                $('#startCamera').remove();
+                $('#btn-modal-customer').hide();
+                $('#btn-buy-product').hide();
+                $('#startCamera').hide();
             }else if (response.status == 5) {
                 statusBill = 'Hoàn thành';
-                $('#cancel-button').remove();
-                $('#confirm-button').remove();
-                $('#form-action-voucher').remove();
+                $('#cancel-button').hide();
+                $('#confirm-button').hide();
+                $('#form-action-voucher').hide();
                 $('#form-final-voucher').show();
                 $('#title-voucher').text(voucher);
-                $('#btn-modal-customer').remove();
-                $('#btn-buy-product').remove();
-                $('#startCamera').remove();
+                $('#btn-modal-customer').hide();
+                $('#btn-buy-product').hide();
+                $('#startCamera').hide();
             }else if (response.status == 6) {
                 statusBill = 'Đã hủy';
-                $('#cancel-button').remove();
-                $('#confirm-button').remove();
-                $('#form-action-voucher').remove();
+                $('#cancel-button').hide();
+                $('#confirm-button').hide();
+                $('#form-action-voucher').hide();
                 $('#form-final-voucher').show();
                 $('#title-voucher').text(voucher);
-                $('#btn-modal-customer').remove();
-                $('#btn-buy-product').remove();
-                $('#startCamera').remove();
+                $('#btn-modal-customer').hide();
+                $('#btn-buy-product').hide();
+                $('#startCamera').hide();
             }
 
             // if(response.status == 1) {
@@ -192,11 +192,11 @@ function loadInformationBillByIdBill() {
 
             if(response.paymentStatus == 0) {
                 if(response.status = 6) {
-                    $('#btn-payment-confirm').remove();
+                    $('#btn-payment-confirm').hide();
                 }
                 $('#btn-payment-confirm').show();
             }else {
-                $('#btn-payment-confirm').remove();
+                $('#btn-payment-confirm').hide();
             }
 
 
@@ -243,10 +243,10 @@ function loadCustomerShipInBill() {
                         if(!response || Object.keys(response).length === 0) {
                             console.log('Khong co khach hang thi vao day')
                             $('#customerNotSystem').show();
-                            $('#customerSystem').remove();
+                            $('#customerSystem').hide();
                         }else {
                             console.log('co thi vao day')
-                            $('#customerNotSystem').remove();
+                            $('#customerNotSystem').hide();
                             $('#customerSystem').show();
                             $('#nameCustomerNotModal').text(response.fullName);
                             $('#numberPhoneNotModal').text(response.numberPhone);
@@ -257,14 +257,14 @@ function loadCustomerShipInBill() {
                     error: function (xhr) {
                         console.error('loi' + xhr.responseText);
                         $('#customerNotSystem').show();
-                        $('#customerSystem').remove();
+                        $('#customerSystem').hide();
                     }
                 })
                 // console.log('Khong co khach hang thi vao day')
                 // $('#customerNotSystem').show();
                 // $('#customerSystem').remove();
             }else {
-                $('#customerNotSystem').remove();
+                $('#customerNotSystem').hide();
                 $('#customerSystem').show();
                 $('#nameCustomerShip').val(response.name);
                 $('#phoneCustomerShip').val(response.numberPhone);

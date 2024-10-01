@@ -8,6 +8,7 @@ import com.example.shopgiayonepoly.entites.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -45,4 +46,6 @@ public interface BillService {
     InformationBillByIdBillResponse getInformationBillByIdBill(Integer idBill);
 
     List<Object[]> getInfoPaymentByIdBill(Integer id);
+    List<Object[]> getBillByIdCreatePDF(Integer id);
+    List<Object[]> getBillDetailByIdBillPDF(Integer id);
 }
