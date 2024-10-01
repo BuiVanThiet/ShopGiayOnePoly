@@ -23,6 +23,8 @@ public interface CustomerService {
 
     long count();
 
+    public Customer getOne(Integer integer);
+
     void deleteById(Integer integer);
 
     List<Customer> findAll(Sort sort);

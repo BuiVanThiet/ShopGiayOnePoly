@@ -8,6 +8,7 @@ import com.example.shopgiayonepoly.entites.Customer;
 import com.example.shopgiayonepoly.entites.Staff;
 import com.example.shopgiayonepoly.service.CustomerService;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -68,5 +69,23 @@ public class CustomerController {
     public Staff staff(HttpSession session){
         Staff staff = (Staff) session.getAttribute("staffLogin");
         return staff;
+    }
+
+    @GetMapping("/edit/{id}")
+    public String editCustomer(Model model, @PathVariable("id") Integer id) {
+        Customer customer = customerService.getOne(id);
+        CustomerRequest customerRequest = new CustomerRequest();
+        BeanUtils.copyProperties(customer, customerRequest);
+        model.addAttribute("customer", customerRequest);
+        return "Customer/update";
+    }
+
+    @GetMapping("/detail/{id}")
+    public String detailCustomer(Model model, @PathVariable("id") Integer id) {
+        Customer customer = customerService.getOne(id);
+        CustomerRequest customerRequest = new CustomerRequest();
+        BeanUtils.copyProperties(customer, customerRequest);
+        model.addAttribute("customer", customerRequest);
+        return "Customer/detail";
     }
 }

@@ -1,9 +1,12 @@
 package com.example.shopgiayonepoly.implement;
 
+import com.example.shopgiayonepoly.dto.request.StaffRequest;
 import com.example.shopgiayonepoly.dto.response.StaffResponse;
 import com.example.shopgiayonepoly.entites.Staff;
+import com.example.shopgiayonepoly.entites.Voucher;
 import com.example.shopgiayonepoly.repositores.StaffRepository;
 import com.example.shopgiayonepoly.service.StaffService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -41,6 +44,18 @@ public class StaffImplement implements StaffService {
     @Override
     public long count() {
         return 0;
+    }
+
+    @Override
+    public void updateStaff(StaffRequest staffRequest) {
+        Staff staff = new Staff();
+        BeanUtils.copyProperties(staffRequest, staff);
+        staffRepository.save(staff);
+    }
+
+    @Override
+    public Staff getOne(Integer integer) {
+        return staffRepository.findById(integer).get();
     }
 
     @Override
