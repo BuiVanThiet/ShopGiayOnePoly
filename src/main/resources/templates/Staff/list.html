@@ -38,35 +38,35 @@
             <table class="table table-bordered table-striped">
                 <thead>
                 <tr>
-                    <th>Ảnh</th>
+<!--                    <th>Ảnh</th>-->
                     <th>Mã nhân viên</th>
                     <th>Tên nhân viên</th>
-                    <th>Dia chi</th>
-                    <th>Giới tính</th>
-                    <th>Ngày sinh</th>
-                    <th>Số điện thoại</th>
-                    <th>Email</th>
-                    <th>Chức vụ</th>
+<!--                    <th>Dia chi</th>-->
+<!--                    <th>Giới tính</th>-->
+<!--                    <th>Ngày sinh</th>-->
+<!--                    <th>Số điện thoại</th>-->
+<!--                    <th>Email</th>-->
+<!--                    <th>Chức vụ</th>-->
                     <th>Trạng thái</th>
                     <th>Hành động</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="staff, index: ${staffList}">
-                    <td th:text="${staff.nameImage}"></td>
+<!--                    <td th:text="${staff.nameImage}"></td>-->
                     <td th:text="${staff.codeStaff}"></td>
                     <td th:text="${staff.fullName}"></td>
-                    <td th:text="${staff.address}"></td>
-                    <td th:text="${staff.gender}"></td>
-                    <td th:text="${staff.birthDay}"></td>
-                    <td th:text="${staff.numberPhone}"></td>
-                    <td th:text="${staff.email}"></td>
-                    <td th:text="${staff.role.nameRole}"></td>
+<!--                    <td th:text="${staff.address}"></td>-->
+<!--                    <td th:text="${staff.gender}"></td>-->
+<!--                    <td th:text="${staff.birthDay}"></td>-->
+<!--                    <td th:text="${staff.numberPhone}"></td>-->
+<!--                    <td th:text="${staff.email}"></td>-->
+<!--                    <td th:text="${staff.role.nameRole}"></td>-->
                     <td th:text="${staff.status}"></td>
                     <td>
-                        <a href="#" class="edit-icon" onclick="enableEditing(this); return false;"><i class="fas fa-edit" title="Edit"></i></a>
+                        <a th:href="@{/staff/edit/{id}(id=${staff.id})}" class="edit-icon" onclick="enableEditing(this); return false;"><i class="fas fa-edit" title="Edit"></i></a>
                         <a href="#" class="save-icon" style="display:none;" onclick="saveChanges(this); return false;"><i class="fas fa-save" title="Save"></i></a>
-                        <a href="vf"><i class="icon-detail fas fa-bars"></i></a>
+                        <a th:href="@{/staff/detail/{id}(id=${staff.id})}"><i class="icon-detail fas fa-bars"></i></a>
                         <a th:href="@{/staff/delete/1}" onclick="return confirm('Bạn có chắc chắn muốn xóa nhân viên?')"><i class="icon-delete fas fa-trash" title="Delete"></i></a>
                     </td>
                 </tr>

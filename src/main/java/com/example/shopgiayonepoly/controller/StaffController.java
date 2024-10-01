@@ -7,6 +7,7 @@ import com.example.shopgiayonepoly.entites.Staff;
 import com.example.shopgiayonepoly.entites.Voucher;
 import com.example.shopgiayonepoly.service.StaffService;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -72,6 +73,24 @@ public class StaffController {
     public Staff staff(HttpSession session){
         Staff staff = (Staff) session.getAttribute("staffLogin");
         return staff;
+    }
+
+    @GetMapping("/edit/{id}")
+    public String editStaff(Model model, @PathVariable("id") Integer id) {
+        Staff staff = staffService.getOne(id);
+        StaffRequest staffRequest = new StaffRequest();
+        BeanUtils.copyProperties(staff, staffRequest);
+        model.addAttribute("staff", staffRequest);
+        return "Staff/update";
+    }
+
+    @GetMapping("/detail/{id}")
+    public String detailStaff(Model model, @PathVariable("id") Integer id) {
+        Staff staff = staffService.getOne(id);
+        StaffRequest staffRequest = new StaffRequest();
+        BeanUtils.copyProperties(staff, staffRequest);
+        model.addAttribute("staff", staffRequest);
+        return "Staff/detail";
     }
 
 }

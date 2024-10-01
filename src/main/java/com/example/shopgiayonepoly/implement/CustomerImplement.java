@@ -44,6 +44,11 @@ public class CustomerImplement implements CustomerService {
     }
 
     @Override
+    public Customer getOne(Integer integer) {
+        return customerRepository.findById(integer).get();
+    }
+
+    @Override
     public void deleteById(Integer integer) {
 
     }
