@@ -79,7 +79,10 @@ document.getElementById('flexSwitchCheckDefault').addEventListener('change', fun
                 alert('Lỗi khi lấy thông tin khách hàng.');
             }
         });
+        checkTypeBill = false;
     } else {
+        checkTypeBill = true;
+        document.getElementById('form-payMethod-bill').style.display = 'flex';
         getUpdateTypeBill('1');
         formErorrCash.style.display = 'block';
         erorrCash.innerText = 'Mời nhập đủ giá!';

@@ -1,6 +1,9 @@
 package com.example.shopgiayonepoly.dto.response.bill;
 
+import com.example.shopgiayonepoly.entites.Color;
 import com.example.shopgiayonepoly.entites.Product;
+import com.example.shopgiayonepoly.entites.SaleProduct;
+import com.example.shopgiayonepoly.entites.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,8 +16,12 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductDetailSellResponse {
-    private Product product;
-    private Integer quentity;
+    private Integer id;
+    private String nameProduct;
+    private String nameColor;
+    private String size;
+    private Integer quantity;
     private BigDecimal price;
-    private BigDecimal priceSale;
+    private Integer status;
+    private SaleProduct saleProduct;
 }

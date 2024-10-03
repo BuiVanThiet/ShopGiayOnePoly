@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/sale-product")
+@RequestMapping("/staff/sale-product")
 public class SaleProductController {
     @Autowired
     private SaleProductService saleProductService;

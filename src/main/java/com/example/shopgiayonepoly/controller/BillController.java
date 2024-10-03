@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/bill")
+@RequestMapping("/staff/bill")
 public class BillController extends BaseBill {
     @GetMapping("/home")
     public String getForm(ModelMap modelMap, HttpSession session) {
@@ -63,7 +63,7 @@ public class BillController extends BaseBill {
 
         modelMap.addAttribute("page","/Bill/index");
 
-        displayProductDetailsWithCurrentPrice();
+//        displayProductDetailsWithCurrentPrice();
         return "Bill/index";
     }
     @GetMapping("/bill-detail/{idBill}")
@@ -95,7 +95,7 @@ public class BillController extends BaseBill {
         if(listB.size() >= 10) {
             this.mess = "Thêm hóa đơn thất bại, chỉ được tồn tại 10 hóa đơn mới!";
             this.colorMess = "3";
-            return "redirect:/bill/home";
+            return "redirect:/staff/bill/home";
         }
         Bill billSave = new Bill();
         Staff staff = (Staff) session.getAttribute("staffLogin");
@@ -130,7 +130,7 @@ public class BillController extends BaseBill {
 
         this.mess = "Thêm hóa đơn mới thành công!";
         this.colorMess = "1";
-        return "redirect:/bill/home";
+        return "redirect:/staff/bill/home";
     }
 
     //phan trang
@@ -225,6 +225,7 @@ public class BillController extends BaseBill {
             if(bill.getBillType() == 2) {
                 bill.setPaymentStatus(0);
                 bill.setStatus(2);
+                bill.setPaymentMethod(1);
             }else {
                 bill.setPaymentStatus(1);
                 bill.setStatus(5);
@@ -338,10 +339,10 @@ public class BillController extends BaseBill {
 
                 mess = "Thanh toán thành công!";
                 colorMess = "1";
-                return "redirect:/bill/bill-status-index/"+session.getAttribute("IdBill");
+                return "redirect:/staff/bill/bill-status-index/"+session.getAttribute("IdBill");
             }else {
                 System.out.println("Bil bo thanh toan " + this.billPay.toString());
-                return "redirect:/bill/bill-status-index/"+session.getAttribute("IdBill");
+                return "redirect:/staff/bill/bill-status-index/"+session.getAttribute("IdBill");
             }
         }
     }

@@ -12,10 +12,14 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
@@ -508,5 +512,76 @@ public class BillRestController extends BaseBill {
         }
         return results;
     }
+
+//    @GetMapping("/download-filled-pdf")
+//    public ResponseEntity<byte[]> downloadFilledPdf() throws Exception {
+//        List<Object[]> productList = new ArrayList<>();
+//        productList.add(new Object[]{"Giày Jordan 1", 1, 2500000.0, 2500000.0});
+//        productList.add(new Object[]{"Giày Yeezy Boost 350", 2, 6000000.0, 12000000.0});
+//        productList.add(new Object[]{"Giày Asics Gel-Lyte III", 3, 850000.0, 2550000.0});
+//        productList.add(new Object[]{"Giày Jordan 1", 1, 2500000.0, 2500000.0});
+//        productList.add(new Object[]{"Giày Yeezy Boost 350", 2, 6000000.0, 12000000.0});
+//        productList.add(new Object[]{"Giày Asics Gel-Lyte III", 3, 850000.0, 2550000.0});
+//        // Tạo file PDF từ danh sách sản phẩm
+//        ByteArrayOutputStream pdfStream = pdfTemplateService.fillPdfTemplate(productList);
+//        byte[] pdfBytes = pdfStream.toByteArray();
+//        // Đường dẫn nơi file PDF sẽ được lưu trên ổ đĩa
+//        String filePath = "D:/hd2.pdf";  // Cập nhật đường dẫn theo ổ đĩa của bạn
+//
+////        // Ghi file PDF vào ổ đĩa
+////        try (FileOutputStream fos = new FileOutputStream(filePath)) {
+////            fos.write(pdfBytes);
+////            fos.flush();
+////        } catch (IOException e) {
+////            e.printStackTrace();  // Xử lý lỗi nếu có
+////        }
+//
+//        // Trả về file PDF dưới dạng download cho người dùng
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(MediaType.APPLICATION_PDF);
+//        headers.setContentDispositionFormData("attachment", "hd1.pdf");
+//
+//        return ResponseEntity.ok()
+//                .headers(headers)
+//                .body(pdfBytes);
+//    }
+
+    @GetMapping("/bill-pdf/{idBill}")
+    public ResponseEntity<byte[]> getBillDetails(@PathVariable("idBill") Integer idBill) throws Exception {
+        // Lấy chi tiết hóa đơn và thông tin hóa đơn từ service
+        List<Object[]> billDetails = this.billService.getBillDetailByIdBillPDF(idBill);
+        List<Object[]> billInfoList = this.billService.getBillByIdCreatePDF(idBill);
+
+        // Kiểm tra dữ liệu
+        if (billInfoList == null || billDetails.isEmpty()) {
+            return ResponseEntity.status(404).body(null);
+        }
+
+        Object[] billInfo = billInfoList.get(0);
+
+        // Tạo PDF từ template
+        ByteArrayOutputStream pdfStream = pdfTemplateService.fillPdfTemplate(billInfo, billDetails);
+        byte[] pdfBytes = pdfStream.toByteArray();
+
+        // Lưu file PDF
+        String filePath = "D:/danhSachHoaDon/" + billInfo[0] + ".pdf";
+        try (FileOutputStream fos = new FileOutputStream(filePath)) {
+            fos.write(pdfBytes);
+            fos.flush();
+        } catch (IOException e) {
+            e.printStackTrace();  // Xử lý lỗi nếu có
+            return ResponseEntity.status(500).body(null);  // Trả về mã lỗi 500 nếu xảy ra lỗi khi ghi file
+        }
+
+        // Trả về phản hồi thành công
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("inline", billInfo[0] + ".pdf");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(pdfBytes);
+    }
+
 
 }
