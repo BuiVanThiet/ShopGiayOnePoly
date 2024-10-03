@@ -1,0 +1,20 @@
+.row {
+    max-width: 80%; /* Chiều rộng tối đa cho toàn bộ trang */
+    margin: 0 auto; /* Căn giữa phần body */
+}
+
+.custom-heading {
+    margin-top: 40px;
+    font-weight: bold;/* Điều chỉnh khoảng cách từ trên xuống */
+}
+
+.rectangle {
+    height: 70px; /* Chiều cao của ô chữ nhật */
+    background-color: #f1f1f1; /* Màu nền cho ô chữ nhật */
+    border: 1px solid #ccc; /* Viền ô chữ nhật */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    border-radius: 5px;
+}
