@@ -48,7 +48,7 @@ public class OriginImplement implements OriginService {
     }
 
     @Override
-    public List<Origin> getClientNotStatus0() {
+    public List<Origin> getOriginNotStatus0() {
         return this.originRepository.getOriginNotStatus0();
     }
 

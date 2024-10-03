@@ -48,7 +48,7 @@ public class MaterialImplement implements MaterialService {
     }
 
     @Override
-    public List<Material> getClientNotStatus0() {
+    public List<Material> getMaterialNotStatus0() {
         return this.materialRepository.getMaterialNotStatus0();
     }
 

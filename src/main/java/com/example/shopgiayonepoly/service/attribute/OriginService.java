@@ -23,7 +23,7 @@ public interface OriginService {
 
     Page<Origin> findAll(Pageable pageable);
 
-    List<Origin> getClientNotStatus0();
+    List<Origin> getOriginNotStatus0();
 
     List<Origin> getOriginDelete();
 

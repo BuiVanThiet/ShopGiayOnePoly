@@ -1,8 +1,8 @@
 package com.example.shopgiayonepoly.controller.attribute;
 
-import com.example.shopgiayonepoly.entites.Size;
+import com.example.shopgiayonepoly.entites.Sole;
 import com.example.shopgiayonepoly.entites.Staff;
-import com.example.shopgiayonepoly.service.attribute.SizeService;
+import com.example.shopgiayonepoly.service.attribute.SoleService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,43 +17,43 @@ import java.util.Map;
 
 @Controller
 @RequestMapping("/attribute")
-public class SizeController {
+public class SoleController {
 
     @Autowired
-    SizeService sizeService;
+    SoleService soleService;
 
     String mess = "";
-    String sizeMess = "";
+    String soleMess = "";
 
-    @GetMapping("/size")
+    @GetMapping("/sole")
     public String list(Model model) {
-        model.addAttribute("sizeList", sizeService.getSizeNotStatus0());
-        model.addAttribute("sizeAdd", new Size());
-        return "Attribute/size";
+        model.addAttribute("soleList", soleService.getSoleNotStatus0());
+        model.addAttribute("soleAdd", new Sole());
+        return "Attribute/sole";
     }
 
-    @GetMapping("/size/delete")
-    public ResponseEntity<List<Size>> listSizeDelete() {
-        List<Size> deletedSizes = sizeService.getSizeDelete();
-        return new ResponseEntity<>(deletedSizes, HttpStatus.OK);
+    @GetMapping("/sole/delete")
+    public ResponseEntity<List<Sole>> listSoleDelete() {
+        List<Sole> deletedSoles = soleService.getSoleDelete();
+        return new ResponseEntity<>(deletedSoles, HttpStatus.OK);
     }
 
-    @GetMapping("/size/active")
-    public ResponseEntity<List<Size>> listActive() {
-        List<Size> listSizeActive = sizeService.getSizeNotStatus0();
-        return new ResponseEntity<>(listSizeActive, HttpStatus.OK);
+    @GetMapping("/sole/active")
+    public ResponseEntity<List<Sole>> listActive() {
+        List<Sole> listSoleActive = soleService.getSoleNotStatus0();
+        return new ResponseEntity<>(listSoleActive, HttpStatus.OK);
     }
 
-    @RequestMapping("/size/add")
-    public String add(@ModelAttribute("sizeAdd") Size size) {
-        size.setStatus(1);
-        sizeService.save(size);
+    @RequestMapping("/sole/add")
+    public String add(@ModelAttribute("soleAdd") Sole sole) {
+        sole.setStatus(1);
+        soleService.save(sole);
         this.mess = "Thêm hóa đơn mới thành công!";
-        this.sizeMess = "1";
-        return "redirect:/attribute/size";
+        this.soleMess = "1";
+        return "redirect:/attribute/sole";
     }
 
-    @PostMapping("/size/update-status")
+    @PostMapping("/sole/update-status")
     @ResponseBody
     public ResponseEntity<String> updateStatus(@RequestBody Map<String, Object> payload) {
         try {
@@ -74,7 +74,7 @@ public class SizeController {
             }
 
             // Gọi service để cập nhật trạng thái trong cơ sở dữ liệu
-            sizeService.updateStatus(id, status);
+            soleService.updateStatus(id, status);
 
             return ResponseEntity.ok("Cập nhật trạng thái thành công");
         } catch (NumberFormatException e) {
@@ -82,13 +82,13 @@ public class SizeController {
         }
     }
 
-    @PostMapping("/update-size")
+    @PostMapping("/update-sole")
     @ResponseBody
-    public ResponseEntity<String> updateSize(@RequestBody Map<String, Object> payload) {
+    public ResponseEntity<String> updateSole(@RequestBody Map<String, Object> payload) {
         try {
             int id;
-            String codeSize;
-            String nameSize;
+            String codeSole;
+            String nameSole;
 
             // Lấy giá trị từ payload
             if (payload.get("id") instanceof Integer) {
@@ -97,11 +97,11 @@ public class SizeController {
                 id = Integer.parseInt((String) payload.get("id"));
             }
 
-            codeSize = (String) payload.get("codeSize");
-            nameSize = (String) payload.get("nameSize");
+            codeSole = (String) payload.get("codeSole");
+            nameSole = (String) payload.get("nameSole");
 
             // Gọi service để cập nhật dữ liệu màu sắc trong cơ sở dữ liệu
-            sizeService.updateSize(id, codeSize, nameSize);
+            soleService.updateSole(id, codeSole, nameSole);
 
             return ResponseEntity.ok("Cập nhật dữ liệu thành công");
         } catch (Exception e) {
@@ -109,9 +109,9 @@ public class SizeController {
         }
     }
 
-    @PostMapping("/delete-size")
+    @PostMapping("/delete-sole")
     @ResponseBody
-    public ResponseEntity<Map<String, Object>> deleteSize(@RequestBody Map<String, Object> payload) {
+    public ResponseEntity<Map<String, Object>> deleteSole(@RequestBody Map<String, Object> payload) {
         Map<String, Object> response = new HashMap<>();
         try {
             int id;
@@ -131,7 +131,7 @@ public class SizeController {
             }
 
             // Gọi service để cập nhật trạng thái trong cơ sở dữ liệu
-            sizeService.updateStatus(id, status);
+            soleService.updateStatus(id, status);
 
             // Phản hồi thành công
             response.put("success", true);

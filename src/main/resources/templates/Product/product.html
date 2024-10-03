@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{Home/home_manege}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Product Management Page">
+    <meta name="keywords" content="ecommerce, product management, online store">
+    <title>Quản lý sản phẩm</title>
+</head>
+<body class="body-product">
+<div layout:fragment="content">
+    <article class="container-xxl mt-5">
+        <h1 class="h1-product">Quản lý sản phẩm</h1>
+        <div class="combobox-container">
+            <div class="combobox-header" onclick="toggleDiv()">
+                <span></span>
+                <span class="arrow" id="arrow">&#9660;</span> <!-- Mũi tên -->
+            </div>
+            <div id="collapsibleDiv" class="combobox-content">
+                <form th:object="${productAdd}" method="post" action="/product/add">
+                    <div class="product-search-section search-section ">
+                        <div class="product-search-bar search-bar">
+                            <div class="input-group">
+                                <input id="codeProductInput" th:field="*{codeProduct}" type="text" placeholder="Mã sản phẩm" required/>
+                                <input id="nameProductInput" th:field="*{nameProduct}" type="text" placeholder="Tên sản phẩm" required/>
+                            </div>
+
+                            <div class="select-group">
+                                <select id="material" name="material" th:field="*{material.nameMaterial}">
+                                    <option value="" disabled selected>Chọn danh mục</option>
+                                    <option th:each="material : ${materialList}" th:value="${material.id}" th:text="${material.nameMaterial}"></option>
+                                </select>
+                                <select id="origin" name="origin" th:field="*{origin.nameOrigin}">
+                                    <option value="" disabled selected>Chọn danh mục</option>
+                                    <option th:each="origin : ${originList}" th:value="${origin.id}" th:text="${origin.nameOrigin}"></option>
+                                </select>
+                            </div>
+                            <button type="submit" class="product-btn-add btn-add">Thêm sản phẩm</button>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+        <br>
+
+        <div style="text-align: right;">
+            <button type="submit" class="product-btn-listDelete">Danh sách đã xóa</button>
+            <button type="submit" class="product-btn-listActive" style="display: none;">Danh sách hoạt động</button>
+        </div>
+        <br>
+        <table id="productTable" class="product-table table table-bordered table-striped table-hover ">
+            <thead>
+            <tr>
+                <th>Mã</th>
+                <th>Tên</th>
+                <th>Chất liệu</th>
+                <th>Hãng</th>
+                <th>Xuất xứ</th>
+                <th>Loại đế</th>
+                <th>Mô tả</th>
+                <th>Trạng thái</th>
+                <th>Hành động</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="product, iterStat : ${productList}" th:id="'row-' + ${iterStat.index}" th:data-id="${product.id}">
+                <td>
+                    <span th:text="${product.codeProduct}" th:id="'code-text-' + ${iterStat.index}"></span>
+                    <input class="inputUpdate-product" type="text" th:value="${product.codeProduct}" th:id="'code-input-' + ${iterStat.index}"
+                           style="display:none;">
+                </td>
+                <td>
+                    <span th:text="${product.nameProduct}" th:id="'name-text-' + ${iterStat.index}"></span>
+                    <input class="inputUpdate-product" type="text" th:value="${product.nameProduct}" th:id="'name-input-' + ${iterStat.index}"
+                           style="display:none;">
+                </td>
+                <td>
+                    <span th:text="${product.material.nameMaterial}" th:id="'name-text-' + ${iterStat.index}"></span>
+                    <input class="inputUpdate-product" type="text" th:value="${product.material.nameMaterial}" th:id="'name-input-' + ${iterStat.index}"
+                           style="display:none;">
+                </td>
+                <td>
+                    <span th:text="${product.manufacturer.nameManufacturer}" th:id="'name-text-' + ${iterStat.index}"></span>
+                    <input class="inputUpdate-product" type="text" th:value="${product.manufacturer.nameManufacturer}" th:id="'name-input-' + ${iterStat.index}"
+                           style="display:none;">
+                </td>
+                <td>
+                    <span th:text="${product.origin.nameOrigin}" th:id="'name-text-' + ${iterStat.index}"></span>
+                    <input class="inputUpdate-product" type="text" th:value="${product.origin.nameOrigin}" th:id="'name-input-' + ${iterStat.index}"
+                           style="display:none;">
+                </td>
+                <td>
+                    <span th:text="${product.sole.nameSole}" th:id="'name-text-' + ${iterStat.index}"></span>
+                    <input class="inputUpdate-product" type="text" th:value="${product.sole.nameSole}" th:id="'name-input-' + ${iterStat.index}"
+                           style="display:none;">
+                </td>
+                <td>
+                    <span th:text="${product.describe}" th:id="'name-text-' + ${iterStat.index}"></span>
+                    <input class="inputUpdate-product" type="text" th:value="${product.describe}" th:id="'name-input-' + ${iterStat.index}"
+                           style="display:none;">
+                </td>
+                <td>
+                    <i class="product-status-icon status-icon fas"
+                       th:classappend="${product.status == 1 ? 'fa-toggle-on' : (product.status == 2 ? 'fa-toggle-off' : '')}"
+                       th:data-status="${product.status}"
+                       th:data-index="${iterStat.index}"
+                       onclick="toggleStatus(this)"
+                       title="Toggle Status"></i>
+                </td>
+                <td>
+                    <a th:onclick="'editRow(' + ${iterStat.index} + ')'"
+                       th:id="'edit-btn-' + ${iterStat.index}">
+                        <i class="product-icon-edit icon-edit fas fa-edit" title="Edit"></i>
+                    </a>
+                    <a th:onclick="'saveRow(' + ${iterStat.index} + ')'" style=" display:none; "
+                       th:id="'save-btn-' + ${iterStat.index}">
+                        <i class="product-icon-save icon-save fas fa-save" title="Save"></i>
+                    </a>
+                    <a th:data-index="${iterStat.index}" onclick="deleteByID(this)">
+                        <i class="product-icon-delete icon-delete fas fa-trash" title="Delete"></i>
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </article>
+    <script th:src="@{/js/product/product.js}" type="text/javascript"></script>
+    <script th:src="@{/ajax/product/productAjax.js}" type="text/javascript"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.18.1/umd/index.js"></script>
+
+</div>
+
+</body>
+</html>

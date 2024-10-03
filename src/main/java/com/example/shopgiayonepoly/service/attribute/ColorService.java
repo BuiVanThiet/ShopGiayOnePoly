@@ -23,7 +23,7 @@ public interface ColorService {
 
     Page<Color> findAll(Pageable pageable);
 
-    List<Color> getClientNotStatus0();
+    List<Color> getColorNotStatus0();
 
     List<Color> getColorDelete();
 

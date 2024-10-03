@@ -48,7 +48,7 @@ public class SizeImplement implements SizeService {
     }
 
     @Override
-    public List<Size> getClientNotStatus0() {
+    public List<Size> getSizeNotStatus0() {
         return this.sizeRepository.getSizeNotStatus0();
     }
 

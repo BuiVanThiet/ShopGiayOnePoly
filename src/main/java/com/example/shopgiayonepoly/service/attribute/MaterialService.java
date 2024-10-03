@@ -23,7 +23,7 @@ public interface MaterialService {
 
     Page<Material> findAll(Pageable pageable);
 
-    List<Material> getClientNotStatus0();
+    List<Material> getMaterialNotStatus0();
 
     List<Material> getMaterialDelete();
 

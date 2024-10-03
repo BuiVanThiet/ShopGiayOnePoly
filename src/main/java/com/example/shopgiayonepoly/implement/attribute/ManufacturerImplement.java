@@ -48,7 +48,7 @@ public class ManufacturerImplement implements ManufacturerService {
     }
 
     @Override
-    public List<Manufacturer> getClientNotStatus0() {
+    public List<Manufacturer> getManufacturerNotStatus0() {
         return this.manufacturerRepository.getManufacturerNotStatus0();
     }
 

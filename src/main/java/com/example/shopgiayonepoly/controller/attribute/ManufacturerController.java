@@ -27,7 +27,7 @@ public class ManufacturerController {
 
     @GetMapping("/manufacturer")
     public String list(Model model) {
-        model.addAttribute("manufacturerList", manufacturerService.getClientNotStatus0());
+        model.addAttribute("manufacturerList", manufacturerService.getManufacturerNotStatus0());
         model.addAttribute("manufacturerAdd", new Manufacturer());
         return "Attribute/manufacturer";
     }
@@ -40,14 +40,10 @@ public class ManufacturerController {
 
     @GetMapping("/manufacturer/active")
     public ResponseEntity<List<Manufacturer>> listActive() {
-        List<Manufacturer> listManufacturerActive = manufacturerService.getClientNotStatus0();
+        List<Manufacturer> listManufacturerActive = manufacturerService.getManufacturerNotStatus0();
         return new ResponseEntity<>(listManufacturerActive, HttpStatus.OK);
     }
 
-//    @GetMapping("/popup")
-//    public String popup(Model model) {
-//        return "Attribute/popup";
-//    }
 
     @RequestMapping("/manufacturer/add")
     public String add(@ModelAttribute("manufacturerAdd") Manufacturer manufacturer) {

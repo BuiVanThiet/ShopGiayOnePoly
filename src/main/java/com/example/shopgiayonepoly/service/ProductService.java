@@ -8,7 +8,7 @@ import org.springframework.data.domain.Sort;
 import java.util.List;
 import java.util.Optional;
 
-public interface ProductSevice {
+public interface ProductService {
     List<Product> findAll();
 
     <S extends Product> S save(S entity);
@@ -17,11 +17,18 @@ public interface ProductSevice {
 
     long count();
 
-    void deleteById(Integer integer);
+    void deleteByID(int id);
 
     List<Product> findAll(Sort sort);
 
     Page<Product> findAll(Pageable pageable);
 
+    List<Product> getProductNotStatus0();
+
+    List<Product> getProductDelete();
+
+    void updateStatus(int id, int status);
+
+    void updateProduct(int id, String codeProduct, String nameProduct);
 
 }
