@@ -2,7 +2,9 @@ package com.example.shopgiayonepoly.repositores;
 
 import com.example.shopgiayonepoly.dto.response.CustomerResponse;
 import com.example.shopgiayonepoly.entites.Customer;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -46,4 +48,10 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
         where concat(c.fullName, c.numberPhone) like %:key%
     """)
     public List<CustomerResponse> searchCustomerByKeyword(@Param("key") String key);
+
+
+    @Modifying
+    @Transactional
+    @Query(value = "update Customer set status =0 where id=:id")
+    public void deleteBySetStatus(@Param("id") Integer id);
 }

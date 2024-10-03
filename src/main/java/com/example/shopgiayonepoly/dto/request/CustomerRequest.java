@@ -24,14 +24,14 @@ public class CustomerRequest extends BaseDTO {
     private LocalDate birthDay;
     @NotBlank(message = "Số điện thoại không được để trống!")
     private String numberPhone;
-    @NotNull(message = "Email không được để trống")
+    @NotBlank(message = "Email không được để trống")
     private String email;
-    @NotNull(message = "Thanh pho không được để trống")
-    private Integer city;
-    @NotNull(message = "Huyen không được để trống")
-    private Integer district;
-    @NotNull(message = "Xa không được để trống")
-    private Integer commune;
+    @NotBlank(message = "Thanh pho không được để trống")
+    private String province;
+    @NotBlank(message = "Huyen không được để trống")
+    private String district;
+    @NotBlank(message = "Xa không được để trống")
+    private String ward;
     @NotNull(message = "Địa chỉ không được để trống")
     private String addRessDetail;
 }

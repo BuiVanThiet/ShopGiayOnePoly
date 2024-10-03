@@ -62,4 +62,9 @@ public class CustomerImplement implements CustomerService {
     public Page<Customer> findAll(Pageable pageable) {
         return null;
     }
+
+    @Override
+    public void deleteCustomer(Integer id) {
+        customerRepository.deleteBySetStatus(id);
+    }
 }
