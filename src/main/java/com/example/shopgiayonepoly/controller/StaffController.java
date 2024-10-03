@@ -1,17 +1,12 @@
 package com.example.shopgiayonepoly.controller;
 
 import com.example.shopgiayonepoly.dto.request.StaffRequest;
-import com.example.shopgiayonepoly.dto.request.VoucherRequest;
 import com.example.shopgiayonepoly.dto.response.StaffResponse;
 import com.example.shopgiayonepoly.entites.Staff;
-import com.example.shopgiayonepoly.entites.Voucher;
 import com.example.shopgiayonepoly.service.StaffService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -52,7 +47,7 @@ public class StaffController {
         Staff staff = new Staff();
         staff.setCodeStaff(staffRequest.getCodeStaff());
         staff.setFullName(staffRequest.getFullName());
-        staff.setAddress(staffRequest.getCommune() + "," + staffRequest.getDistrict() + "," + staffRequest.getCity() + "," +staffRequest.getAddRessDetail());
+        staff.setAddress(staffRequest.getWard() + "," + staffRequest.getDistrict() + "," + staffRequest.getProvince() + "," +staffRequest.getAddRessDetail());
         staff.setNumberPhone(staffRequest.getNumberPhone());
         staff.setBirthDay(staffRequest.getBirthDay());
         staff.setImage(staffRequest.getNameImage());
@@ -66,7 +61,7 @@ public class StaffController {
         staffSave.setAcount(staffSave.getCodeStaff()+staffSave.getId());
         staff.setPassword("@shoponepoly");
         this.staffService.save(staffSave);
-        return "redirect:/staff/create";
+        return "redirect:/staff/list";
     }
 
     @ModelAttribute("staffInfo")

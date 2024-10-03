@@ -26,12 +26,13 @@ import java.time.LocalDate;
 public class VoucherController {
     @Autowired
     private VoucherService voucherService;
-    private static final int pageSize = 5;
+    private final int pageSize = 5;
 
     @GetMapping("/list")
-    public String getListVoucherByPage(Model model, @RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber,
+    public String getListVoucherByPage(@RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber,
                                        @RequestParam(name = "pageNumberDelete", defaultValue = "0") Integer pageNumberDelete,
-                                       @RequestParam(name = "pageNumberExpired", defaultValue = "0")Integer pageNumberExpired) {
+                                       @RequestParam(name = "pageNumberExpired", defaultValue = "0")Integer pageNumberExpired,
+                                       Model model) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<Voucher> pageVoucher = voucherService.getAllVoucherByPage(pageable);
 
@@ -40,7 +41,6 @@ public class VoucherController {
 
         Pageable pageableExpired = PageRequest.of(pageNumberExpired,pageSize);
         Page<Voucher> pageVoucherExpired = voucherService.getVoucherExpiredByPage(pageableExpired);
-
 
         model.addAttribute("pageVoucher", pageVoucher);
         model.addAttribute("pageVoucherDelete", pageVoucherDelete);
@@ -59,7 +59,7 @@ public class VoucherController {
                                    @RequestParam(name = "pageNumberExpired", defaultValue = "0")Integer pageNumberExpired) {
 
         BigDecimal zero = BigDecimal.ZERO;
-        BigDecimal oneHundred = new BigDecimal("100");
+        BigDecimal niceTeen = new BigDecimal("91");
         BigDecimal tenHundred = new BigDecimal("10000");
         BigDecimal oneMillion = new BigDecimal("1000000");
         LocalDate dateNow = LocalDate.now();
@@ -69,8 +69,8 @@ public class VoucherController {
             result.rejectValue("priceReduced", "error.voucher", "Giá trị giảm không được để trống!");
         } else {
             if (voucherRequest.getDiscountType() == 1) { // Loại giảm giá là phần trăm
-                if (voucherRequest.getPriceReduced().compareTo(zero) <= 0 || voucherRequest.getPriceReduced().compareTo(oneHundred) >= 0) {
-                    result.rejectValue("priceReduced", "error.voucher", "Giá trị giảm phải lớn hơn 0% và nhỏ hơn 100%!");
+                if (voucherRequest.getPriceReduced().compareTo(zero) <= 0 || voucherRequest.getPriceReduced().compareTo(niceTeen) >= 0) {
+                    result.rejectValue("priceReduced", "error.voucher", "Giá trị giảm phải lớn hơn 0% và nhỏ hơn 90%!");
                 }
             } else { // Loại giảm giá là tiền mặt
                 if (voucherRequest.getPriceReduced().compareTo(tenHundred) < 0 || voucherRequest.getPriceReduced().compareTo(oneMillion) > 0) {
@@ -278,6 +278,10 @@ public class VoucherController {
         Staff staff = (Staff) session.getAttribute("staffLogin");
         return staff;
     }
-
+     @GetMapping("/test")
+    public String getTest(Model model){
+        model.addAttribute("mes","Hahahaa");
+        return "Notification/Notification";
+     }
 
 }

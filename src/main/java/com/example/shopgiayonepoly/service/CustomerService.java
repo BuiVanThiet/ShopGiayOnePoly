@@ -30,4 +30,6 @@ public interface CustomerService {
     List<Customer> findAll(Sort sort);
 
     Page<Customer> findAll(Pageable pageable);
+
+    public void deleteCustomer(Integer id);
 }

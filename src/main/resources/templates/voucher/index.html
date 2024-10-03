@@ -15,19 +15,19 @@
             <div class="text-center">
                 <p class="fs-4 mt-2">QUẢN LÝ PHIẾU GIẢM GIÁ</p>
             </div>
-            <div th:if="${mes != null}" class="toast show" role="alert" aria-live="assertive" aria-atomic="true"
+            <div th:if="${mes != null}" class="custom-toast custom-toast-show" role="alert" aria-live="assertive"
+                 aria-atomic="true"
                  style="position: absolute; top: 100px; right: 20px;">
-                <div class="toast-header">
-                    <i class="bi bi-check-circle me-2" style="font-size: 1.5rem; color: green;"></i> <!-- Icon ở đây -->
-                    <strong class="me-auto">Thông báo</strong>
-                    <small>vài giây trước</small>
-                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                <div class="custom-toast-header" style="background-color:#04812d">
+                    <i class="bi bi-check-circle me-2" style="font-size: 1.5rem; color: #ffffff;"></i>
+                    <strong class="me-auto fw-normal" style="color: white;">Thông báo</strong>
+                    <button type="button" class="custom-btn-close" data-bs-dismiss="custom-toast"
+                            aria-label="Close"></button>
                 </div>
-                <div class="toast-body">
+                <div class="custom-toast-body">
                     <span th:text="${mes}"></span>
                 </div>
             </div>
-
 
             <div class="row p-2" style="margin-top: 100px">
                 <!-- Form Thêm Mới Phiếu Giảm Giá -->
@@ -319,20 +319,20 @@
                                 <div class="text-center m-3">
                                     <div class="d-flex justify-content-center">
                                         <a th:href="@{/voucher/list?pageNumberDelete=0}" class="btn btn-secondary mx-1">First</a>
-                                        <a th:href="@{/voucher/list?pageNumberDelete=${pageVoucherDelete.first ? 0 : pageVoucherDelete.number - 1}}"
+                                        <a th:href="@{/voucher/list(pageNumberDelete=${pageVoucherDelete.first ? 0 : pageVoucherDelete.number - 1})}"
                                            class="btn btn-secondary mx-1">Previous</a>
 
                                         <div th:if="${pageVoucherDelete.totalPages > 0}" class="d-flex">
                                             <div th:each="pageNumber : ${#numbers.sequence(0, pageVoucherDelete.totalPages - 1)}"
                                                  class="mx-1">
-                                                <a th:href="@{/voucher/list?pageNumberDelete=${pageNumber}}"
+                                                <a th:href="@{/voucher/list(pageNumberDelete=${pageNumber})}"
                                                    class="btn btn-primary" th:text="${pageNumber + 1}"></a>
                                             </div>
                                         </div>
 
-                                        <a th:href="@{/voucher/list?pageNumberDelete=${pageVoucherDelete.last ? pageVoucherDelete.totalPages - 1 : pageVoucherDelete.number + 1}}"
+                                        <a th:href="@{/voucher/list(pageNumberDelete=${pageVoucherDelete.last ? pageVoucherDelete.totalPages - 1 : pageVoucherDelete.number + 1})}"
                                            class="btn btn-secondary mx-1">Next</a>
-                                        <a th:href="@{/voucher/list?pageNumberDelete=${pageVoucherDelete.totalPages - 1}}"
+                                        <a th:href="@{/voucher/list(pageNumberDelete=${pageVoucherDelete.totalPages - 1})}"
                                            class="btn btn-secondary mx-1">Last</a>
                                     </div>
                                 </div>
@@ -379,22 +379,22 @@
                                 </table>
                                 <div class="text-center m-3">
                                     <div class="d-flex justify-content-center">
-                                        <a th:href="@{/voucher/list?pageNumberExpired=0}"
+                                        <a th:href="@{/voucher/list(pageNumberExpired=0)}"
                                            class="btn btn-secondary mx-1">First</a>
-                                        <a th:href="@{/voucher/list?pageNumberExpired=${pageVoucherExpired.first ? 0 : pageVoucherExpired.number - 1}}"
+                                        <a th:href="@{/voucher/list(pageNumberExpired=${pageVoucherExpired.first ? 0 : pageVoucherExpired.number - 1})}"
                                            class="btn btn-secondary mx-1">Previous</a>
 
                                         <div th:if="${pageVoucherExpired.totalPages > 0}" class="d-flex">
                                             <div th:each="pageNumber : ${#numbers.sequence(0, pageVoucherExpired.totalPages - 1)}"
                                                  class="mx-1">
-                                                <a th:href="@{/voucher/list?pageNumberExpired=${pageNumber}}"
+                                                <a th:href="@{/voucher/list(pageNumberExpired=${pageNumber})}"
                                                    class="btn btn-primary" th:text="${pageNumber + 1}"></a>
                                             </div>
                                         </div>
 
-                                        <a th:href="@{/voucher/list?pageNumberExpired=${pageVoucherExpired.last ? pageVoucherExpired.totalPages - 1 : pageVoucherExpired.number + 1}}"
+                                        <a th:href="@{/voucher/list(pageNumberExpired=${pageVoucherExpired.last ? pageVoucherExpired.totalPages - 1 : pageVoucherExpired.number + 1})}"
                                            class="btn btn-secondary mx-1">Next</a>
-                                        <a th:href="@{/voucher/list?pageNumberExpired=${pageVoucherExpired.totalPages - 1}}"
+                                        <a th:href="@{/voucher/list(pageNumberExpired=${pageVoucherExpired.totalPages - 1})}"
                                            class="btn btn-secondary mx-1">Last</a>
                                     </div>
                                 </div>
