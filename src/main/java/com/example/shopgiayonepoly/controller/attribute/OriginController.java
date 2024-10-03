@@ -27,7 +27,7 @@ public class OriginController {
 
     @GetMapping("/origin")
     public String list(Model model) {
-        model.addAttribute("originList", originService.getClientNotStatus0());
+        model.addAttribute("originList", originService.getOriginNotStatus0());
         model.addAttribute("originAdd", new Origin());
         return "Attribute/origin";
     }
@@ -40,14 +40,9 @@ public class OriginController {
 
     @GetMapping("/origin/active")
     public ResponseEntity<List<Origin>> listActive() {
-        List<Origin> listOriginActive = originService.getClientNotStatus0();
+        List<Origin> listOriginActive = originService.getOriginNotStatus0();
         return new ResponseEntity<>(listOriginActive, HttpStatus.OK);
     }
-
-//    @GetMapping("/popup")
-//    public String popup(Model model) {
-//        return "Attribute/popup";
-//    }
 
     @RequestMapping("/origin/add")
     public String add(@ModelAttribute("originAdd") Origin origin) {

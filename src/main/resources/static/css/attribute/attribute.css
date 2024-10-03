@@ -169,3 +169,35 @@
 .inputUpdate-attribute{
     border-radius: 10px;
 }
+
+.combobox-container {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.combobox-header {
+    display: flex;
+    justify-content: space-between; /* Đặt khoảng cách giữa text và mũi tên */
+    align-items: center;
+    padding: 10px;
+    cursor: pointer;
+    background-color: #f9f9f9;
+    border-bottom: none;
+}
+
+.arrow {
+    font-size: 14px;
+    transition: transform 0.3s ease; /* Hiệu ứng khi mũi tên xoay */
+}
+
+.combobox-content {
+    display: none; /* Ẩn nội dung ban đầu */
+    padding: 10px;
+    background-color: #f1f1f1;
+    transition: max-height 0.3s ease; /* Hiệu ứng khi mở rộng nội dung */
+    overflow: hidden; /* Giúp ẩn phần nội dung thừa khi thu gọn */
+}
+
+.combobox-content p {
+    margin: 0;
+}

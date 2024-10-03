@@ -1,9 +1,7 @@
 package com.example.shopgiayonepoly.controller;
 
 import com.example.shopgiayonepoly.dto.request.CustomerRequest;
-import com.example.shopgiayonepoly.dto.request.StaffRequest;
 import com.example.shopgiayonepoly.dto.response.CustomerResponse;
-import com.example.shopgiayonepoly.dto.response.StaffResponse;
 import com.example.shopgiayonepoly.entites.Customer;
 import com.example.shopgiayonepoly.entites.Staff;
 import com.example.shopgiayonepoly.service.CustomerService;
@@ -52,17 +50,17 @@ public class CustomerController {
         customer.setNumberPhone(customerRequest.getNumberPhone());
         customer.setBirthDay(customerRequest.getBirthDay());
         customer.setImage(customerRequest.getNameImage());
-        customer.setEmail(customer.getEmail());
+        customer.setEmail(customerRequest.getEmail());
         customer.setAcount("");
         customer.setPassword("");
         customer.setGender(customerRequest.getGender());
-        customer.setAddRess(customerRequest.getCommune() + "," + customerRequest.getDistrict() + "," + customerRequest.getCity() + "," +customerRequest.getAddRessDetail());
+        customer.setAddRess(customerRequest.getWard() + "," + customerRequest.getDistrict() + "," + customerRequest.getProvince() + "," +customerRequest.getAddRessDetail());
         customer.setStatus(customerRequest.getStatus());
         Customer customerSave = this.customerService.save(customer);
         customerSave.setAcount(customerSave.getFullName()+customerSave.getId());
         customer.setPassword("@shoponepoly");
         this.customerService.save(customerSave);
-        return "redirect:/customer/create";
+        return "redirect:/customer/list";
     }
 
     @ModelAttribute("staffInfo")
@@ -76,6 +74,26 @@ public class CustomerController {
         Customer customer = customerService.getOne(id);
         CustomerRequest customerRequest = new CustomerRequest();
         BeanUtils.copyProperties(customer, customerRequest);
+//        // Xử lý địa chỉ
+//        String getAddressDetail = customerRequest.getAddRessDetail();
+//
+//        if (getAddressDetail != null && !getAddressDetail.isEmpty()) {
+//            String[] parts = getAddressDetail.split(",\\s*"); // Cắt chuỗi dựa trên dấu phẩy và khoảng trắng
+//
+//            // Kiểm tra xem chuỗi có đủ phần không
+//            if (parts.length >= 3) {
+//                customerRequest.setWard(parts[0]); // Xã/Phường
+//                customerRequest.setDistrict(parts[1]); // Quận/Huyện
+//                customerRequest.setProvince(parts[2]); // Tỉnh/Thành phố
+//
+//                // Nếu địa chỉ còn các phần khác, gộp lại
+//                if (parts.length > 3) {
+//                    customerRequest.setAddRessDetail(String.join(", ", java.util.Arrays.copyOfRange(parts, 3, parts.length)));
+//                } else {
+//                    customerRequest.setAddRessDetail(""); // Không còn chi tiết địa chỉ khác
+//                }
+//            }
+//        }
         model.addAttribute("customer", customerRequest);
         return "Customer/update";
     }
@@ -88,4 +106,11 @@ public class CustomerController {
         model.addAttribute("customer", customerRequest);
         return "Customer/detail";
     }
+
+//    @GetMapping("/delete/{id}")
+//    public String deleteCustomer(RedirectAttributes ra, @PathVariable("id") Integer id) {
+//        customerService.deleteCustomer(id);
+//        ra.addFlashAttribute("mes", "Xóa thành công phiếu giảm giá với ID là: " + id);
+//        return "redirect:/customer/list";
+//    }
 }

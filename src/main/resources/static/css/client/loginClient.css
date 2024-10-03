@@ -100,6 +100,7 @@
     border: 2px solid #162938; /* Thêm viền */
     background: #162938; /* Màu nền khi hover */
     color: #fff; /* Màu chữ khi hover */
+    transition: background 0.3s, color 0.3s;
 }
 
 
@@ -204,7 +205,7 @@
 
 .login-register p a {
     color: #162938;
-    text-decoration: none;
+    text-decoration: underline;
     font-weight: 600;
 }
 

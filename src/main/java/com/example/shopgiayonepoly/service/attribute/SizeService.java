@@ -23,7 +23,7 @@ public interface SizeService {
 
     Page<Size> findAll(Pageable pageable);
 
-    List<Size> getClientNotStatus0();
+    List<Size> getSizeNotStatus0();
 
     List<Size> getSizeDelete();
 

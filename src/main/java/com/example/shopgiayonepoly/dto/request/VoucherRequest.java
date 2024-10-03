@@ -37,7 +37,6 @@ public class VoucherRequest extends BaseDTO {
     @NotBlank(message = "Mô tả không được để trống!")
     private String describe;
     @NotNull(message = "Số lượng không được để trống!")
-    @Size(min = 1,max = 100, message = "Số lượng voucher phải từ 1 - 100!")
     private Integer quantity;
 
 

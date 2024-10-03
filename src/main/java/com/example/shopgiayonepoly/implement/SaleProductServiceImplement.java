@@ -13,63 +13,58 @@ import java.util.List;
 public class SaleProductServiceImplement implements SaleProductService {
     @Autowired
     private SaleProductRepository saleProductRepository;
+
     @Override
     public Page<SaleProduct> getAllSaleProductByPage(Pageable pageable) {
-        return null;
+        return saleProductRepository.getAllSaleProductByPage(pageable);    }
+
+    @Override
+    public List<SaleProduct> getAllSaleProducts() {
+        return saleProductRepository.getAllSaleProduct();
     }
 
     @Override
-    public List<SaleProduct> getAll() {
-        return null;
+    public Page<SaleProduct> getDeletedSaleProductsByPage(Pageable pageable) {
+        return saleProductRepository.getSaleProductDeleteByPage(pageable);
     }
 
     @Override
-    public Page<SaleProduct> getAllSaleProductDeleteByPage(Pageable pageable) {
-        return null;
+    public List<SaleProduct> getAllDeletedSaleProducts() {
+        return saleProductRepository.getAllSaleProductDelete();
     }
 
     @Override
-    public List<SaleProduct> getAllSaleProductDelete() {
-        return null;
+    public Page<SaleProduct> getExpiredSaleProductsByPage(Pageable pageable) {
+        return saleProductRepository.getSaleProductExpiredByPage(pageable);
     }
 
     @Override
-    public Page<SaleProduct> getSaleProductExpiredByPage(Pageable pageable) {
-        return null;
+    public void updateExpiredSaleProduct(Integer id) {
+        saleProductRepository.updateSaleProductStatusForExpired();
     }
 
     @Override
-    public void updateSaleProductExpired(Integer id) {
-
+    public void deleteSaleProductBySetStatus(Integer id) {
+        saleProductRepository.deleteBySetStatus(id);
     }
 
     @Override
-    public SaleProduct getOne(Integer integer) {
-        return null;
+    public void restoreSaleProductStatus(Integer id) {
+        saleProductRepository.restoreStatusSaleProduct(id);
     }
 
     @Override
-    public void deleteSaleProduct(Integer id) {
-
+    public Page<SaleProduct> searchSaleProductsByKeyword(String key, Pageable pageable) {
+        return saleProductRepository.searchSaleProductByKeyword(key,pageable);
     }
 
     @Override
-    public void restoreStatusSaleProduct(Integer id) {
-
+    public Page<SaleProduct> searchSaleProductsByType(int type, Pageable pageable) {
+        return saleProductRepository.searchSaleProductByTypeSaleProduct(type,pageable);
     }
 
     @Override
-    public Page<SaleProduct> searchSaleProductByKeyword(String key, Pageable pageable) {
-        return null;
-    }
-
-    @Override
-    public Page<SaleProduct> searchSaleProductByTypeSaleProduct(int type, Pageable pageable) {
-        return null;
-    }
-
-    @Override
-    public void updateSaleProductStatusForExpired() {
-
+    public void updateExpiredSaleProductStatus() {
+        saleProductRepository.updateSaleProductStatusForExpired();
     }
 }

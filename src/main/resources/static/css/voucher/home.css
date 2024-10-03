@@ -1,32 +1,67 @@
-/*.toast {*/
-/*    border-radius: 8px; !* Bo tròn các góc *!*/
-/*    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); !* Đổ bóng cho toast *!*/
-/*    transition: all 0.3s ease; !* Hiệu ứng chuyển động mượt mà *!*/
-/*}*/
+/* Custom Toast chung */
+.custom-toast {
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease-in-out;
+    max-width: 350px;
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+}
 
-/*.toast-header {*/
-/*    padding: 0.5rem 1rem; !* Padding cho header *!*/
-/*}*/
+.custom-toast-show {
+    opacity: 1;
+    visibility: visible;
+    animation: custom-slide-in-right 0.5s ease forwards;
+}
 
-/*.toast-body {*/
-/*    padding: 1rem; !* Padding cho body *!*/
-/*    background-color: #f8f9fa; !* Màu nền cho body *!*/
-/*}*/
+.custom-toast-hide {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease, visibility 0s 0.5s;
+}
 
-/*.btn-close {*/
-/*    filter: invert(1); !* Đổi màu nút đóng cho phù hợp với nền tối *!*/
-/*}*/
+@keyframes custom-slide-in-right {
+    0% {
+        transform: translateX(100%);
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
 
-/*.show {*/
-/*    opacity: 1; !* Hiển thị toast khi show *!*/
-/*}*/
+/* Custom Toast header */
+.custom-toast-header {
+    padding: 0.5rem 1rem;
+    background-color: #04812d;
+    display: flex;
+    align-items: center;
+}
 
-/*.hide {*/
-/*    opacity: 0; !* Ẩn toast khi hide *!*/
-/*}*/
+.custom-toast-header i {
+    font-size: 1.5rem;
+    color: #ffffff;
+}
 
-/*!* Hiệu ứng chuyển động *!*/
-/*.toast.fade {*/
-/*    opacity: 0;*/
-/*    transition: opacity 0.5s ease;*/
-/*}*/
+.custom-toast-header .me-auto {
+    font-weight: normal;
+    color: white;
+    margin-left: 10px;
+}
+
+/* Custom Nút đóng */
+.custom-btn-close {
+    filter: invert(1);
+    background: none;
+    border: none;
+    outline: none;
+    cursor: pointer;
+}
+
+/* Custom Toast body */
+.custom-toast-body {
+    padding: 1rem;
+    background-color: #f8f9fa;
+    color: #333;
+    font-size: 0.95rem;
+}

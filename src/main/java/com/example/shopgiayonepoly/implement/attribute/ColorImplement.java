@@ -48,7 +48,7 @@ public class ColorImplement implements ColorService {
     }
 
     @Override
-    public List<Color> getClientNotStatus0() {
+    public List<Color> getColorNotStatus0() {
         return this.colorRepository.getColorNotStatus0();
     }
 
