@@ -23,7 +23,7 @@ public interface ManufacturerService {
 
     Page<Manufacturer> findAll(Pageable pageable);
 
-    List<Manufacturer> getClientNotStatus0();
+    List<Manufacturer> getManufacturerNotStatus0();
 
     List<Manufacturer> getManufacturerDelete();
 

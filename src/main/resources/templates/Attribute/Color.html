@@ -13,15 +13,25 @@
 <div layout:fragment="content">
     <article class="container-xxl mt-5">
         <h1 class="h1-attribute">Quản lý màu sắc</h1>
-        <form th:object="${colorAdd}" method="post" action="/attribute/color/add">
-            <div class="attribute-search-section search-section ">
-                <div class="attribute-search-bar search-bar ">
-                    <input id="codeColorInput" th:field="*{codeColor}" type="text" placeholder="Mã màu sắc" required/>
-                    <input id="nameColorInput" th:field="*{nameColor}" type="text" placeholder="Tên màu sắc" required/>
-                    <button type="submit" class="attribute-btn-add btn-add">Thêm màu sắc</button>
-                </div>
+        <div class="combobox-container">
+            <div class="combobox-header" onclick="toggleDiv()">
+                <span></span>
+                <span class="arrow" id="arrow">&#9660;</span> <!-- Mũi tên -->
             </div>
-        </form>
+            <div id="collapsibleDiv" class="combobox-content">
+                <form th:object="${colorAdd}" method="post" action="/attribute/color/add">
+                    <div class="attribute-search-section search-section ">
+                        <div class="attribute-search-bar search-bar ">
+                            <input id="codeColorInput" th:field="*{codeColor}" type="text" placeholder="Mã màu sắc" required/>
+                            <input id="nameColorInput" th:field="*{nameColor}" type="text" placeholder="Tên màu sắc" required/>
+                            <button type="submit" class="attribute-btn-add btn-add">Thêm màu sắc</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <br>
+
         <div style="text-align: right;">
             <button type="submit" class="attribute-btn-listDelete">Danh sách đã xóa</button>
             <button type="submit" class="attribute-btn-listActive" style="display: none;">Danh sách hoạt động</button>
@@ -65,7 +75,7 @@
                        th:id="'edit-btn-' + ${iterStat.index}">
                         <i class="attribute-icon-edit icon-edit fas fa-edit" title="Edit"></i>
                     </a>
-                    <a href="#" th:onclick="'saveRow(' + ${iterStat.index} + ')'" style="display:none;"
+                    <a href="#" th:onclick="'saveRow(' + ${iterStat.index} + ')'" style="display:none; color: white; text-decoration: none"
                        th:id="'save-btn-' + ${iterStat.index}">
                         <i class="attribute-icon-save icon-save fas fa-save" title="Save"></i>
                     </a>
@@ -86,5 +96,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.18.1/umd/index.js"></script>
 
 </div>
+
 </body>
 </html>

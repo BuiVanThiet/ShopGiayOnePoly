@@ -27,7 +27,7 @@ public class MaterialController {
 
     @GetMapping("/material")
     public String list(Model model) {
-        model.addAttribute("materialList", materialService.getClientNotStatus0());
+        model.addAttribute("materialList", materialService.getMaterialNotStatus0());
         model.addAttribute("materialAdd", new Material());
         return "Attribute/material";
     }
@@ -40,14 +40,9 @@ public class MaterialController {
 
     @GetMapping("/material/active")
     public ResponseEntity<List<Material>> listActive() {
-        List<Material> listMaterialActive = materialService.getClientNotStatus0();
+        List<Material> listMaterialActive = materialService.getMaterialNotStatus0();
         return new ResponseEntity<>(listMaterialActive, HttpStatus.OK);
     }
-
-//    @GetMapping("/popup")
-//    public String popup(Model model) {
-//        return "Attribute/popup";
-//    }
 
     @RequestMapping("/material/add")
     public String add(@ModelAttribute("materialAdd") Material material) {

@@ -27,7 +27,7 @@ public class ColorController {
 
     @GetMapping("/color")
     public String list(Model model) {
-        model.addAttribute("colorList", colorService.getClientNotStatus0());
+        model.addAttribute("colorList", colorService.getColorNotStatus0());
         model.addAttribute("colorAdd", new Color());
         return "Attribute/color";
     }
@@ -40,14 +40,9 @@ public class ColorController {
 
     @GetMapping("/color/active")
     public ResponseEntity<List<Color>> listActive() {
-        List<Color> listColorActive = colorService.getClientNotStatus0();
+        List<Color> listColorActive = colorService.getColorNotStatus0();
         return new ResponseEntity<>(listColorActive, HttpStatus.OK);
     }
-
-//    @GetMapping("/popup")
-//    public String popup(Model model) {
-//        return "Attribute/popup";
-//    }
 
     @RequestMapping("/color/add")
     public String add(@ModelAttribute("colorAdd") Color color) {
