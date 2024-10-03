@@ -202,47 +202,42 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
 
     @Query(value = """
     SELECT
-        b.code_bill,
-        b.create_date,
-        COALESCE(c.full_name, 'Không có') AS full_name,
-        COALESCE(c.number_phone, 'Không có') AS number_phone,
-        COALESCE(c.email, 'Không có') AS email,
-        COALESCE(
-            SUBSTRING(
-                c.addRess,
-                CHARINDEX(',', c.addRess, CHARINDEX(',', c.addRess, CHARINDEX(',', c.addRess) + 1) + 1) + 2,
-                LEN(c.addRess)
-            ),
-            'Không có'
-        ) AS addRess,
-        b.total_amount,
-        b.shipping_price,
-        CASE
-            WHEN v.discount_type = 1 THEN
-                CASE
-                    WHEN b.total_amount * (v.price_reduced / 100) > v.prices_max THEN
-                        v.prices_max
-                    ELSE
-                        b.total_amount * (v.price_reduced / 100)
-                END
-            WHEN v.discount_type = 2 THEN
-                v.price_reduced
-            ELSE
-                0
-        END AS discount_value,
-        CASE
-            WHEN v.discount_type = 1 THEN
-                CASE
-                    WHEN b.total_amount * (v.price_reduced / 100) > v.prices_max THEN
-                        b.total_amount - v.prices_max + b.shipping_price
-                    ELSE
-                        b.total_amount - (b.total_amount * (v.price_reduced / 100)) + b.shipping_price
-                END
-            WHEN v.discount_type = 2 THEN
-                b.total_amount - v.price_reduced + b.shipping_price
-            ELSE
-                b.total_amount + b.shipping_price
-        END AS total_after_discount
+    b.code_bill,
+            b.create_date,
+            COALESCE(SUBSTRING(b.address, 1, CHARINDEX(',', b.address) - 1), 'Không có') AS full_name,
+    		COALESCE(SUBSTRING(b.address, CHARINDEX(',', b.address) + 1, CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) - CHARINDEX(',', b.address) - 1), 'Không có') AS number_phone,
+            COALESCE(c.email, 'Không có') AS email,
+            COALESCE(SUBSTRING(c.addRess,CHARINDEX(',', c.addRess, CHARINDEX(',', c.addRess, CHARINDEX(',', c.addRess) + 1) + 1) + 2,LEN(c.addRess)),'Không có') AS addRess,
+            FORMAT(b.total_amount, 'N2') + ' VNĐ' AS total_amount,
+            FORMAT(b.shipping_price, 'N2') + ' VNĐ' AS shipping_price,
+            FORMAT(
+                    CASE
+                        WHEN v.discount_type = 1 THEN
+                            CASE
+                                WHEN b.total_amount * (v.price_reduced / 100) > v.prices_max THEN
+                                    v.prices_max
+                                ELSE
+                                    b.total_amount * (v.price_reduced / 100)
+                            END
+                        WHEN v.discount_type = 2 THEN
+                            v.price_reduced
+                        ELSE
+                            0
+                    END, 'N2') + ' VNĐ' AS discount_value,
+                FORMAT(
+                    CASE
+                        WHEN v.discount_type = 1 THEN
+                            CASE
+                                WHEN b.total_amount * (v.price_reduced / 100) > v.prices_max THEN
+                                    b.total_amount - v.prices_max + b.shipping_price
+                                ELSE
+                                    b.total_amount - (b.total_amount * (v.price_reduced / 100)) + b.shipping_price
+                            END
+                        WHEN v.discount_type = 2 THEN
+                            b.total_amount - v.price_reduced + b.shipping_price
+                        ELSE
+                            b.total_amount + b.shipping_price
+                    END, 'N2') + ' VNĐ' AS total_after_discount        
     FROM bill b
     LEFT JOIN customer c ON c.id = b.id_customer
     LEFT JOIN voucher v ON v.id = b.id_voucher
@@ -253,11 +248,11 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
 
     @Query(value = """
         select
-        	p.name_product,
-        	bd.quantity,
-        	bd.price_root,
-        	bd.price,
-        	bd.total_amount
+        	 p.name_product,
+                bd.quantity,
+                            FORMAT(bd.price_root, 'N2') + ' VNĐ' AS price_root,
+                            FORMAT(bd.price, 'N2') + ' VNĐ' AS price,
+                            FORMAT(bd.total_amount, 'N2') + ' VNĐ' AS total_amount
         from bill_detail bd
         left join product_detail pd
         on pd.id = bd.id_product_detail

@@ -12,6 +12,8 @@
 // //
 // var cashClientText = document.getElementById('cashClientText');
 // var cashAccount = document.getElementById('cashAccount');
+var checkButonCreateBill = true;
+var checkTypeBill = true;
 function formatNumber(number) {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
@@ -57,6 +59,7 @@ function validate(cash) {
         surplusMoney.innerText = '';
         textSurplusMoney.value = '0';
         cashClientText.value = '0';
+        checkButonCreateBill = false;
     }else {
         var totalAmountNumber = parseNumber(totalAmount.value);
         var cashClientNumber = parseNumber(cashClientValue);
@@ -70,7 +73,7 @@ function validate(cash) {
             surplusMoney.innerText = '';
             textSurplusMoney.value = '0';
             cashClientText.value = cashClientValue;
-
+            checkButonCreateBill = false;
         } else {
             console.log('Neu la so thi vao day');
             // // Kiểm tra nếu dữ liệu là số nhỏ hơn 0
@@ -88,6 +91,7 @@ function validate(cash) {
                 surplusMoney.innerText = '';
                 textSurplusMoney.value = '0';
                 cashClientText.value = cashClientValue;
+                checkButonCreateBill = false;
             }
             else if (cashClientNumber < totalAmountNumber && parseNumber(payMethod.value) === 1) {
                 formErorrCash.style.display = 'block';
@@ -97,8 +101,9 @@ function validate(cash) {
                 surplusMoney.innerText = '';
                 textSurplusMoney.value = '0';
                 cashClientText.value = cashClientValue;
+                checkButonCreateBill = false;
 
-            }else if (cashClientNumber > totalAmountNumber ) {
+            }else if (cashClientNumber > totalAmountNumber  && parseNumber(payMethod.value) === 1) {
                 formErorrCash.style.display = 'none';
                 erorrCash.innerText = '';
                 btnCreateBill.disabled = false;
@@ -107,7 +112,17 @@ function validate(cash) {
                 textSurplusMoney.value = cashClientNumber - totalAmountNumber;
                 cashClientText.value = cashClientNumber;
                 cashAccount.value = 0;
-            } else {
+                checkButonCreateBill = true;
+            }else if (cashClientNumber - totalAmountNumber > 20000 && parseNumber(payMethod.value) === 3) {
+                formErorrCash.style.display = 'block';
+                erorrCash.innerText = 'Để tạo hóa đơn điện tử cần dư ra 20,000 VNĐ!';
+                btnCreateBill.disabled = true;
+                surplusMoneySpan.style.display = 'none';
+                surplusMoney.innerText = '';
+                textSurplusMoney.value = '0';
+                cashClientText.value = cashClientValue;
+                checkButonCreateBill = false;
+            }else {
                 formErorrCash.style.display = 'none';
                 erorrCash.innerText = '';
                 btnCreateBill.disabled = false;
@@ -115,8 +130,10 @@ function validate(cash) {
                 surplusMoney.innerText = '';
                 textSurplusMoney.value = '0';
                 cashClientText.value = cashClientNumber;
+                checkButonCreateBill = true;
                 if(payMethodChecked === 3) {
                     cashAccount.value = totalAmountNumber - cashClientNumber;
+                    checkButonCreateBill = true;
                 }
             }
         }
@@ -138,6 +155,35 @@ function validateAll() {
         validate(rawValue);
     }
 }
+
+var notePaymentFromBill = document.getElementById('notePayment');
+notePaymentFromBill.addEventListener('input', function () {  // Thay 'change' bằng 'input'
+    validateNodte('notePayment','formErorrNote','erorrNote');
+});
+
+function validateNodte(note,fromError,textError) {
+    var noteEvent = document.getElementById(note);
+    console.log(noteEvent.value);
+    if(noteEvent.value.length > 500000) {
+        document.getElementById(fromError).style.display = 'block';
+        document.getElementById(textError).innerText = 'Số lượng ký tự phải dưới 500 nghìn ký tự!';
+        if(checkTypeBill == true) {
+            validateAll();
+        }
+        btnCreateBill.disabled = true;
+    } else {
+        document.getElementById(fromError).style.display = 'none';
+        document.getElementById(textError).innerText = '';
+        if(checkTypeBill == true) {
+            validateAll();
+        }
+        if (btnCreateBill.disabled == false) {
+            btnCreateBill.disabled = false;
+        }
+    }
+}
+
+
 
 cashClient.addEventListener('input', function () {
     validateAll();

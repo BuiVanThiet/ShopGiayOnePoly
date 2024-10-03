@@ -167,7 +167,7 @@ function OneSelectTag(el, customs = { shadow: false, rounded: true }) {
             const idClient = e.target.dataset.idClient;
             if (idClient) {
                 // Thực hiện yêu cầu GET đến endpoint
-                fetch(`/bill/addClientInBill/${idClient}`, {
+                fetch(`/staff/bill/addClientInBill/${idClient}`, {
                     method: 'GET'
                 })
                     .then(response => {
@@ -179,7 +179,7 @@ function OneSelectTag(el, customs = { shadow: false, rounded: true }) {
                     })
                     .then(data => {
                         console.log(data); // Xóa khách hàng thành công!
-                        window.location.href = `/bill/bill-detail/${document.getElementById('idBill').value}`; // Chuyển hướng trang nếu cần
+                        window.location.href = `/staff/bill/bill-detail/${document.getElementById('idBill').value}`; // Chuyển hướng trang nếu cần
                     })
                     .catch(error => console.error('Lỗi:', error));
             }
@@ -238,7 +238,7 @@ function OneSelectTag(el, customs = { shadow: false, rounded: true }) {
             const unselectOption = options.find((op) => op.value == option.value);
             unselectOption.selected = false;
             inputContainer.innerHTML = ''; // Clear the selected tag
-            fetch(`/bill/removeClientInBill/${itemLabel.dataset.value}`, {
+            fetch(`/staff/bill/removeClientInBill/${itemLabel.dataset.value}`, {
                 method: 'GET'
             })
                 .then(response => {
@@ -250,7 +250,7 @@ function OneSelectTag(el, customs = { shadow: false, rounded: true }) {
                 })
                 .then(data => {
                     console.log(data); // Xóa khách hàng thành công!
-                    window.location.href = `/bill/bill-detail/${document.getElementById('idBill').value}`; // Chuyển hướng trang nếu cần
+                    window.location.href = `/staff/bill/bill-detail/${document.getElementById('idBill').value}`; // Chuyển hướng trang nếu cần
                 })
                 .catch(error => console.error('Lỗi:', error));
 

@@ -11,7 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/product")
+@RequestMapping("/staff/product")
 public class ProductController {
 
     @Autowired

@@ -40,8 +40,8 @@ public abstract class BaseBill {
     protected OriginService originService;
     @Autowired
     protected HistoryService historyService;
-//    @Autowired
-//    protected InvoicePdfService invoicePdfService;
+    @Autowired
+    protected PdfTemplateService pdfTemplateService;
 
 
     //bien cuc bo cua bill

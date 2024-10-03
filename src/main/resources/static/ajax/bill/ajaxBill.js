@@ -263,7 +263,7 @@ function uploadPayMethod() {
             // paymentInformation();
             var idBill = document.getElementById('idBill').value;
             payMethodUpLoad = 0;
-            var newUrl = 'http://localhost:8080/bill/bill-detail/' + idBill;
+            var newUrl = 'http://localhost:8080/staff/bill/bill-detail/' + idBill;
 
             // Chuyển hướng đến URL mới
             window.location.href = newUrl;
@@ -291,7 +291,7 @@ function loadBillNew() {
                     var isActive = (url.id == idBill) ? 'active' : ''; // So sánh với idBill
                     ul.append(
                         '<li class="nav-item">' +
-                        '<a class="nav-link text-dark ' + isActive + '" href="' + '/bill/bill-detail/' + url.id + '">' + url.codeBill + '</a>' +
+                        '<a class="nav-link text-dark ' + isActive + '" href="' + '/staff/bill/bill-detail/' + url.id + '">' + url.codeBill + '</a>' +
                         '</li>'
                     );
                 });
@@ -567,6 +567,10 @@ function loadCategoryIntoSelect() {
     });
 }
 
+function loadColoIntoSelect() {
+
+}
+
 function resetFilterProductSale() {
     document.getElementById('nameSearch').value='';
     document.getElementById('colorSearch').selectedIndex = 0;
@@ -713,7 +717,7 @@ function searchVoucher() {
 function getAddVoucherInBill(idVoucher) {
     $.ajax({
         type: "POST",
-        url: "/bill/click-voucher-bill/"+idVoucher,
+        url: "/staff/bill/click-voucher-bill/"+idVoucher,
         success: function (response) {
             loadBillDetail(1);
             loadProduct(1)
@@ -739,7 +743,7 @@ function getAddVoucherInBill(idVoucher) {
 function getRemoveVoucherInBill() {
     $.ajax({
         type: "POST",
-        url: "/bill/delete-voucher-bill",
+        url: "/staff/bill/delete-voucher-bill",
         success: function (response) {
             loadBillDetail(1);
             loadProduct(1)
@@ -823,7 +827,7 @@ function getAllBilByStatus(value) {
                             <td>${bill.billType == 1 ? 'Tại quầy' : 'Giao hàng'}</td>
                             <td>${formattedDateTime}</td>
                             <td>
-                                <a href="/bill/bill-status-index/${bill.id}" class="btn btn-primary">Xem chi tiết</a>
+                                <a href="/staff/bill/bill-status-index/${bill.id}" class="btn btn-primary">Xem chi tiết</a>
                             </td>
                         </tr>
                     `);
@@ -916,7 +920,7 @@ function getBuyProduct() {
     let priceProductSale = $("#priceProductSale").val();
     let priceProductRoot = $("#priceProductRoot").val();
     $.ajax({
-        url: "/bill/buy-product-detail",
+        url: "/staff/bill/buy-product-detail",
         type: "POST",
         data: {
             quantityDetail: quantity, // Dữ liệu số lượng
@@ -966,7 +970,7 @@ function resetHidenProductSale() {
 }
 function deleteBillDetail(id) {
     $.ajax({
-        url: "/bill/deleteBillDetail/"+id,
+        url: "/staff/bill/deleteBillDetail/"+id,
         type: "GET",
         success: function (response) {
             loadBillDetail(pageBillDetail);
@@ -989,6 +993,31 @@ function deleteBillDetail(id) {
         }
     })
 }
+
+//xuat hoa don
+function createBillPDF() {
+    var idBill = parseInt($('#idBillCreatePDF').val());
+    $.ajax({
+        type: "GET",
+        url: "/bill-api/bill-pdf/"+idBill,
+        xhrFields: {
+            responseType: 'blob'  // Nhận PDF dưới dạng blob
+        },
+        success: function (response) {
+            // Tạo URL cho blob PDF
+            const pdfUrl = URL.createObjectURL(response);
+
+            // Mở tab mới và hiển thị PDF
+            const newTab = window.open();
+            newTab.document.write(`<iframe src="${pdfUrl}" width="100%" height="100%" style="border:none;"></iframe>`);
+
+        },
+        error: function (xhr) {
+            console.error('loi ' + xhr.responseType);
+        }
+    })
+}
+
 $(document).ready(function () {
     $('#formBuyProduct').submit(function (event) {
         event.preventDefault();

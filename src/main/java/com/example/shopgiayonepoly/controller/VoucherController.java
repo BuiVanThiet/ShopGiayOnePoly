@@ -22,7 +22,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Controller
-@RequestMapping("/voucher")
+@RequestMapping("/staff/voucher")
 public class VoucherController {
     @Autowired
     private VoucherService voucherService;

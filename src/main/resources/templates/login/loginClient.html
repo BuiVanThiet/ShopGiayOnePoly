@@ -1,10 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đăng Nhập</title>
+    <link rel="stylesheet" href="/css/Security/login.css" />
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css" />
 </head>
 <body>
-
+<section class="home">
+    <div class="form_container">
+        <div class="form login_form">
+            <form th:action="@{/onepoly/login}" method="post">
+                <h2>Đăng Nhập Trang khacvh hang</h2>
+                <div class="input_box">
+                    <i class="uil uil-envelope-alt email"></i>
+                    <input type="text" name="username" th:value="${usernameLogin}" placeholder="Tài khoản"/>
+                </div>
+                <div class="input_box">
+                    <i class="uil uil-lock password"></i>
+                    <input type="password" name="password" placeholder="Mật khẩu"/>
+                    <i class="uil uil-eye-slash pw_hide"></i>
+                    <div class="error-message" th:text="${errorMessage}">
+                    </div>
+                </div>
+                <button class="button">Đăng Nhập</button>
+            </form>
+        </div>
+    </div>
+</section>
+<script src="/js/Security/login.js"></script>
 </body>
 </html>

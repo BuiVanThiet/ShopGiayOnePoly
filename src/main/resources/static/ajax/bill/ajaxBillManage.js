@@ -375,6 +375,7 @@ function confirmBill(content) {
             showToast(response.message,response.check);
             loadBillStatusByBillId();
             loadInformationBillByIdBill();
+            loadInfomationHistoryByBillId();
             // loadCustomerShipInBill();
         },
         error: function (xhr) {
