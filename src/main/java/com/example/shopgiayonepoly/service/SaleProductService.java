@@ -9,30 +9,16 @@ import java.util.List;
 
 public interface SaleProductService {
     public Page<SaleProduct> getAllSaleProductByPage(Pageable pageable);
-
-    public List<SaleProduct> getAll();
-
-    public Page<SaleProduct> getAllSaleProductDeleteByPage(Pageable pageable);
-
-    public List<SaleProduct> getAllSaleProductDelete();
-
-    public Page<SaleProduct> getSaleProductExpiredByPage(Pageable pageable);
-    public void updateSaleProductExpired(@Param("id") Integer id);
-
-//    public void createNewSaleProduct(SaleProductRequest voucherRequest);
-//
-//    public void updateSaleProduct(SaleProductRequest voucherRequest);
-
-    public SaleProduct getOne(Integer integer);
-
-    public void deleteSaleProduct(Integer id);
-
-    public void restoreStatusSaleProduct(Integer id);
-
-    public Page<SaleProduct> searchSaleProductByKeyword(String key, Pageable pageable);
-    Page<SaleProduct> searchSaleProductByTypeSaleProduct(@Param("types") int type, Pageable pageable);
-
-    public void updateSaleProductStatusForExpired();
+    public List<SaleProduct> getAllSaleProducts();
+    public Page<SaleProduct> getDeletedSaleProductsByPage(Pageable pageable);
+    public List<SaleProduct> getAllDeletedSaleProducts();
+    public Page<SaleProduct> getExpiredSaleProductsByPage(Pageable pageable);
+    public void updateExpiredSaleProduct(Integer id);
+    public void deleteSaleProductBySetStatus(Integer id);
+    public void restoreSaleProductStatus(Integer id);
+    public Page<SaleProduct> searchSaleProductsByKeyword(String key, Pageable pageable);
+    public Page<SaleProduct> searchSaleProductsByType(int type, Pageable pageable);
+    public void updateExpiredSaleProductStatus();
 
 
 }
