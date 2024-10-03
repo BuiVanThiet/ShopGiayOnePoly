@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        /* Custom Toast chung */
+        .custom-toast {
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease-in-out;
+            max-width: 350px;
+            overflow: hidden;
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .custom-toast-show {
+            opacity: 1;
+            visibility: visible;
+            animation: custom-slide-in-right 0.5s ease forwards;
+        }
+
+        .custom-toast-hide {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease, visibility 0s 0.5s;
+        }
+
+        @keyframes custom-slide-in-right {
+            0% {
+                transform: translateX(100%);
+            }
+            100% {
+                transform: translateX(0);
+            }
+        }
+
+        /* Custom Toast header */
+        .custom-toast-header {
+            padding: 0.5rem 1rem;
+            background-color: #04812d;
+            display: flex;
+            align-items: center;
+        }
+
+        .custom-toast-header i {
+            font-size: 1.5rem;
+            color: #ffffff;
+        }
+
+        .custom-toast-header .me-auto {
+            font-weight: normal;
+            color: white;
+            margin-left: 10px;
+        }
+
+        /* Custom Nút đóng */
+        .custom-btn-close {
+            filter: invert(1);
+            background: none;
+            border: none;
+            outline: none;
+            cursor: pointer;
+        }
+
+        /* Custom Toast body */
+        .custom-toast-body {
+            padding: 1rem;
+            background-color: #f8f9fa;
+            color: #333;
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+<div th:if="${mes != null}" class="custom-toast custom-toast-show" role="alert" aria-live="assertive" aria-atomic="true"
+     style="position: absolute; top: 100px; right: 20px;">
+    <div class="custom-toast-header" style="background-color:#04812d">
+        <i class="bi bi-check-circle me-2" style="font-size: 1.5rem; color: #ffffff;"></i>
+        <strong class="me-auto fw-normal" style="color: white;">Thông báo</strong>
+        <button type="button" class="custom-btn-close" data-bs-dismiss="custom-toast" aria-label="Close"></button>
+    </div>
+    <div class="custom-toast-body">
+        <span th:text="${mes}"></span>
+    </div>
+</div>
+</body>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var toastEl = document.querySelector('.toast');
+        if (toastEl) {
+            var toast = new bootstrap.Toast(toastEl, {
+                delay: 5000
+            });
+            toast.show();
+        }
+    });
+</script>
+</html>
