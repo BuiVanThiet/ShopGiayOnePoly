@@ -61,7 +61,7 @@
                             class="bi bi-cart4 fs-4"></i></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link btnLogin-popup" href="#" data-bs-toggle="modal" data-bs-target="#authModal"
+                    <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#authModal"
                        style="color: black;">
                         <i class="bi bi-person-circle ts-5 fs-4"></i>
                     </a>
@@ -73,70 +73,20 @@
 <!-- End navbar -->
 
 <!-- Modal for Login/Register -->
-<div class="wrapper">
-      <span class="icon-close">
-        <ion-icon name="close"></ion-icon>
-      </span>
-
-    <div class="form-box login">
-        <h2>Đăng nhập</h2>
-        <form action="#">
-            <div class="input-box">
-            <span class="icon">
-              <ion-icon name="person-circle"></ion-icon></span>
-                <input type="text" name="username" required>
-                <label>Tài khoản</label>
+<div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="authModalLabel">Tài khoản</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="input-box">
-            <span class="icon">
-              <ion-icon name="lock-closed"></ion-icon></span>
-                <input type="password" name="password" required>
-                <label>Mật Khẩu</label>
+            <div class="modal-body">
+                <div class="d-grid gap-2">
+                    <a href="/login" class="btn btn-primary">Đăng nhập</a>
+                    <a href="/register" class="btn btn-secondary">Đăng ký</a>
+                </div>
             </div>
-            <div class="remember-forgot">
-                <label><input type="checkbox">Ghi nhớ tôi</label>
-                <a href="#">Quên mật khẩu?</a>
-            </div>
-            <button type="submit" class="btn-login">Đăng nhập</button>
-            <div class="login-register">
-                <p>Bạn chưa có tài khoản
-                    <a href="#" class="register-link">Đăng ký</a>
-                </p>
-            </div>
-        </form>
-    </div>
-
-    <div class="form-box register">
-        <h2>Đăng ký</h2>
-        <form action="#">
-            <div class="input-box">
-            <span class="icon">
-              <ion-icon name="person-circle"></ion-icon></span>
-                <input type="text" required>
-                <label>Tài khoản</label>
-            </div>
-            <div class="input-box">
-            <span class="icon">
-              <ion-icon name="mail"></ion-icon></span>
-                <input type="text" required>
-                <label>Email</label>
-            </div>
-            <div class="input-box">
-            <span class="icon">
-              <ion-icon name="lock-closed"></ion-icon></span>
-                <input type="password" required>
-                <label>Mật Khẩu</label>
-            </div>
-            <!-- <div class="remember-forgot">
-              <label><input type="checkbox">Ghi nhớ tôi</label>
-            </div> -->
-            <button type="submit" class="btn-login">Đăng ký</button>
-            <div class="login-register">
-                <p>Bạn đã có tài khoản
-                    <a href="#" class="login-link">Đăng Nhập</a>
-                </p>
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
