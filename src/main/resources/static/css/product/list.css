@@ -30,15 +30,15 @@
     gap: 1.5rem;
 }
 
-.input-group,
-.select-group {
+.product-input-group,
+.product-select-group {
     display: flex;
     justify-content: space-between; /* Đặt các thẻ trên cùng một dòng */
     gap: 1.5rem;
 }
 
-.input-group input,
-.select-group select {
+.product-input-group input,
+.product-select-group select {
     flex: 1; /* Đặt độ rộng của các thẻ input/select bằng nhau */
 }
 
@@ -67,6 +67,19 @@
 }
 
 .product-btn-add:hover {
+    background-image: linear-gradient(45deg, #0056b3, #0099ff);
+    transform: translateY(-3px);
+}
+.product-btn-edit {
+    background-image: linear-gradient(45deg, #007bff, #00bfff);
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    transition: background-image 0.3s ease, transform 0.3s ease;
+}
+
+.product-btn-edit:hover {
     background-image: linear-gradient(45deg, #0056b3, #0099ff);
     transform: translateY(-3px);
 }
@@ -215,4 +228,59 @@
 
 .combobox-content p {
     margin: 0;
+}
+
+.select-product{
+    border-radius: 8px;
+    height: 50px;
+}
+.modal-product {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Làm mờ nền */
+    display: flex;
+    justify-content: center;  /* Căn giữa theo chiều ngang */
+    align-items: center;      /* Căn giữa theo chiều dọc */
+    z-index: 1000;            /* Đảm bảo modal luôn ở trên các thành phần khác */
+}
+
+.modal-content-product {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    text-align: center;
+    max-width: 500px; /* Chiều rộng tối đa */
+    width: auto; /* Chiều rộng tùy theo nội dung */
+    height: auto; /* Chiều cao tùy theo nội dung */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Hiệu ứng đổ bóng */
+}
+
+/* Style chung cho các nút */
+.modal-button-product {
+    background-color: #007bff; /* Màu nền xanh dương */
+    border: none; /* Xóa viền mặc định */
+    color: white; /* Màu chữ */
+    padding: 10px 20px; /* Khoảng cách bên trong nút */
+    font-size: 16px; /* Cỡ chữ */
+    border-radius: 5px; /* Bo góc nút */
+    cursor: pointer; /* Con trỏ thay đổi khi hover */
+    transition: background-color 0.3s ease; /* Hiệu ứng chuyển màu khi hover */
+    margin: 10px; /* Khoảng cách giữa các nút */
+}
+
+/* Hiệu ứng khi hover */
+.modal-button-product:hover {
+    background-color: #0056b3; /* Màu nền đậm hơn khi hover */
+}
+
+/* Style cho nút Hủy (nút màu xám) */
+.modal-button-product.cancel {
+    background-color: #6c757d; /* Màu xám */
+}
+
+.modal-button-product.cancel:hover {
+    background-color: #5a6268; /* Màu xám đậm hơn khi hover */
 }

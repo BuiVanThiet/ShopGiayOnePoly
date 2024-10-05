@@ -186,27 +186,27 @@ public class BillRestController extends BaseBill {
 
     @GetMapping("/filter-color")
     public List<Color> getFilterColor() {
-        return this.colorService.getClientNotStatus0();
+        return this.colorService.getColorNotStatus0();
     }
 
     @GetMapping("/filter-size")
     public List<Size> getFilterSize() {
-        return this.sizeService.getClientNotStatus0();
+        return this.sizeService.getSizeNotStatus0();
     }
 
     @GetMapping("/filter-material")
     public List<Material> getFilterMaterial() {
-        return this.materialService.getClientNotStatus0();
+        return this.materialService.getMaterialNotStatus0();
     }
 
     @GetMapping("/filter-manufacturer")
     public List<Manufacturer> getFilterManufacturer() {
-        return this.manufacturerService.getClientNotStatus0();
+        return this.manufacturerService.getManufacturerNotStatus0();
     }
 
     @GetMapping("/filter-origin")
     public List<Origin> getFilterOrigin() {
-        return this.originService.getClientNotStatus0();
+        return this.originService.getOriginNotStatus0();
     }
 
     //goi khach hang
