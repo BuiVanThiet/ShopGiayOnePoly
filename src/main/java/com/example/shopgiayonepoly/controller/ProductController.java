@@ -6,12 +6,19 @@ import com.example.shopgiayonepoly.service.ProductService;
 import com.example.shopgiayonepoly.service.attribute.*;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 @Controller
-@RequestMapping("/staff/product")
+@RequestMapping("/staff")
 public class ProductController {
 
     @Autowired
@@ -25,7 +32,7 @@ public class ProductController {
     @Autowired
     SoleService soleService;
 
-    @GetMapping("/list")
+    @GetMapping("/product")
     public String list(Model model) {
         model.addAttribute("productList", productService.getProductNotStatus0());
         model.addAttribute("productAdd", new Product());
@@ -48,14 +55,34 @@ public class ProductController {
 //        return new ResponseEntity<>(listProductActive, HttpStatus.OK);
 //    }
 //
-//    @RequestMapping("/product/add")
-//    public String add(@ModelAttribute("productAdd") Product product) {
-//        product.setStatus(1);
-//        productService.save(product);
-//        this.mess = "Thêm hóa đơn mới thành công!";
-//        this.productMess = "1";
-//        return "redirect:/attribute/product";
-//    }
+    @RequestMapping("/product/add")
+    public String add(@ModelAttribute("productAdd") Product product) {
+        product.setStatus(1);
+        productService.save(product);
+        return "redirect:/staff/product/list";
+    }
+
+    @GetMapping("/product/get-one/{id}")
+    public ResponseEntity<Product> getOneByID(@PathVariable Integer id) {
+        Optional<Product> product = productService.findById(id);
+
+        if (product.isPresent()) {
+            return ResponseEntity.ok(product.get());
+        } else {
+            return ResponseEntity.notFound().build(); // Trả về 404 nếu không tìm thấy sản phẩm
+        }
+    }
+
+    @GetMapping("/product/check-code/{codeProduct}")
+    public ResponseEntity<Product> checkProductCode(@PathVariable String codeProduct) {
+        Optional<Product> product = productService.getOneProductByCodeProduct(codeProduct);
+
+        if (product.isPresent()) {
+            return ResponseEntity.ok(product.get());
+        } else {
+            return ResponseEntity.notFound().build(); // Trả về 404 nếu không tìm thấy sản phẩm
+        }
+    }
 //
 //    @PostMapping("/product/update-status")
 //    @ResponseBody
@@ -113,47 +140,44 @@ public class ProductController {
 //        }
 //    }
 //
-//    @PostMapping("/delete-product")
-//    @ResponseBody
-//    public ResponseEntity<Map<String, Object>> deleteProduct(@RequestBody Map<String, Object> payload) {
-//        Map<String, Object> response = new HashMap<>();
-//        try {
-//            int id;
-//            int status;
-//
-//            // Lấy id và status từ payload, kiểm tra kiểu dữ liệu
-//            if (payload.get("id") instanceof Integer) {
-//                id = (Integer) payload.get("id");
-//            } else {
-//                id = Integer.parseInt(payload.get("id").toString());
-//            }
-//
-//            if (payload.get("status") instanceof Integer) {
-//                status = (Integer) payload.get("status");
-//            } else {
-//                status = Integer.parseInt(payload.get("status").toString());
-//            }
-//
-//            // Gọi service để cập nhật trạng thái trong cơ sở dữ liệu
-//            productService.updateStatus(id, status);
-//
-//            // Phản hồi thành công
-//            response.put("success", true);
-//            response.put("message", "Xóa thành công");
-//            return ResponseEntity.ok(response);
-//
-//        } catch (NumberFormatException e) {
-//            // Xử lý lỗi parse dữ liệu
-//            response.put("success", false);
-//            response.put("message", "Dữ liệu không hợp lệ: " + e.getMessage());
-//            return ResponseEntity.badRequest().body(response);
-//        } catch (Exception e) {
-//            // Xử lý lỗi khác
-//            response.put("success", false);
-//            response.put("message", "Có lỗi xảy ra: " + e.getMessage());
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-//        }
-//    }
+    @PostMapping("/product/delete")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> deleteProduct(@RequestBody Map<String, Object> payload) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            int id;
+            int status;
+            // Lấy id và status từ payload, kiểm tra kiểu dữ liệu
+            if (payload.get("id") instanceof Integer) {
+                id = (Integer) payload.get("id");
+            } else {
+                id = Integer.parseInt(payload.get("id").toString());
+            }
+
+            if (payload.get("status") instanceof Integer) {
+                status = (Integer) payload.get("status");
+            } else {
+                status = Integer.parseInt(payload.get("status").toString());
+            }
+
+            productService.updateStatus(id, status);
+
+            response.put("success", true);
+            response.put("message", "Xóa thành công");
+            return ResponseEntity.ok(response);
+
+        } catch (NumberFormatException e) {
+            // Xử lý lỗi parse dữ liệu
+            response.put("success", false);
+            response.put("message", "Dữ liệu không hợp lệ: " + e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        } catch (Exception e) {
+            // Xử lý lỗi khác
+            response.put("success", false);
+            response.put("message", "Có lỗi xảy ra: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
     @ModelAttribute("staffInfo")
     public Staff staff(HttpSession session){
         Staff staff = (Staff) session.getAttribute("staffLogin");

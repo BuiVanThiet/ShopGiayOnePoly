@@ -184,6 +184,8 @@ public class BillRestController extends BaseBill {
         return ResponseEntity.ok("Done");
     }
 
+
+
 //    @GetMapping("/filter-color")
 //    public List<Color> getFilterColor() {
 //        return this.colorService.getColorDelete();
@@ -208,6 +210,7 @@ public class BillRestController extends BaseBill {
 //    public List<Origin> getFilterOrigin() {
 //        return this.originService.getClientNotStatus0();
 //    }
+
 
     //goi khach hang
     @GetMapping("/client")

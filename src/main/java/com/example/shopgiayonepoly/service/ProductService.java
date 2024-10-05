@@ -4,6 +4,7 @@ import com.example.shopgiayonepoly.entites.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,5 +31,7 @@ public interface ProductService {
     void updateStatus(int id, int status);
 
     void updateProduct(int id, String codeProduct, String nameProduct);
+
+    Optional<Product> getOneProductByCodeProduct(String codeProduct);
 
 }
