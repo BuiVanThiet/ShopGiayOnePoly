@@ -1,5 +1,8 @@
 package com.example.shopgiayonepoly.service;
 
+import com.example.shopgiayonepoly.dto.request.SaleProductRequest;
+import com.example.shopgiayonepoly.dto.request.VoucherRequest;
+import com.example.shopgiayonepoly.entites.ProductDetail;
 import com.example.shopgiayonepoly.entites.SaleProduct;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,13 +15,13 @@ public interface SaleProductService {
     public List<SaleProduct> getAllSaleProducts();
     public Page<SaleProduct> getDeletedSaleProductsByPage(Pageable pageable);
     public List<SaleProduct> getAllDeletedSaleProducts();
-    public Page<SaleProduct> getExpiredSaleProductsByPage(Pageable pageable);
-    public void updateExpiredSaleProduct(Integer id);
     public void deleteSaleProductBySetStatus(Integer id);
     public void restoreSaleProductStatus(Integer id);
     public Page<SaleProduct> searchSaleProductsByKeyword(String key, Pageable pageable);
     public Page<SaleProduct> searchSaleProductsByType(int type, Pageable pageable);
-    public void updateExpiredSaleProductStatus();
+    public List<ProductDetail> getAllProductDetailByPage();
+    public void createNewSale(SaleProductRequest saleProductRequest);
+    public SaleProduct getSaleProductByID(Integer id);
 
 
 }

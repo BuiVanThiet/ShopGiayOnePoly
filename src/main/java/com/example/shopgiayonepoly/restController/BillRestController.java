@@ -184,30 +184,30 @@ public class BillRestController extends BaseBill {
         return ResponseEntity.ok("Done");
     }
 
-    @GetMapping("/filter-color")
-    public List<Color> getFilterColor() {
-        return this.colorService.getClientNotStatus0();
-    }
-
-    @GetMapping("/filter-size")
-    public List<Size> getFilterSize() {
-        return this.sizeService.getClientNotStatus0();
-    }
-
-    @GetMapping("/filter-material")
-    public List<Material> getFilterMaterial() {
-        return this.materialService.getClientNotStatus0();
-    }
-
-    @GetMapping("/filter-manufacturer")
-    public List<Manufacturer> getFilterManufacturer() {
-        return this.manufacturerService.getClientNotStatus0();
-    }
-
-    @GetMapping("/filter-origin")
-    public List<Origin> getFilterOrigin() {
-        return this.originService.getClientNotStatus0();
-    }
+//    @GetMapping("/filter-color")
+//    public List<Color> getFilterColor() {
+//        return this.colorService.getColorDelete();
+//    }
+//
+//    @GetMapping("/filter-size")
+//    public List<Size> getFilterSize() {
+//        return this.sizeService.getClientNotStatus0();
+//    }
+//
+//    @GetMapping("/filter-material")
+//    public List<Material> getFilterMaterial() {
+//        return this.materialService.getClientNotStatus0();
+//    }
+//
+//    @GetMapping("/filter-manufacturer")
+//    public List<Manufacturer> getFilterManufacturer() {
+//        return this.manufacturerService.getClientNotStatus0();
+//    }
+//
+//    @GetMapping("/filter-origin")
+//    public List<Origin> getFilterOrigin() {
+//        return this.originService.getClientNotStatus0();
+//    }
 
     //goi khach hang
     @GetMapping("/client")
