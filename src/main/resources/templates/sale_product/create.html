@@ -4,15 +4,16 @@
       layout:decorate="~{Home/home_manege}" xmlns:form="http://www.thymeleaf.org">
 
 <head>
-    <title>Update Sale</title>
+    <title>Create new sale</title>
 </head>
 <body>
 <div layout:fragment="content">
     <section>
         <div class="container-xxl bd-gutter mt-5 my-md-4 bd-layout">
+
             <div class="card mb-5">
                 <div class="card-header text-white" style="background-color: #e5e4e4;height: 100px;line-height: 80px;">
-                    <p class="text-dark fs-3" style="margin-left: 35%" th:text="${title}"></p>
+                    <p class="text-dark fs-3" style="margin-left: 35%">THÊM MỚI ĐỢT GIẢM GIÁ</p>
                 </div>
                 <div th:if="${mes != null}" class="custom-toast custom-toast-show" role="alert" aria-live="assertive"
                      aria-atomic="true"
@@ -27,10 +28,8 @@
                         <span th:text="${mes}"></span>
                     </div>
                 </div>
-
                 <div class="card-body" style="margin-top: 100px">
-                    <form th:action="@{/sale-product/update}" th:object="${saleProductRequest}" method="post">
-                        <input type="hidden" th:field="*{id}">
+                    <form th:action="@{/sale-product/create}" th:object="${saleProduct}" method="post">
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="codeVoucher">Mã đợt giảm giá</label>
@@ -58,16 +57,13 @@
                             <div class="col-md-6 mb-3">
                                 <label for="value">Giá trị</label>
                                 <div class="input-group">
-                                    <input type="number" id="value" th:field="*{discountValue}"
-                                           class="form-control mt-2"
-                                           min="0"/>
-                                    <span class="input-group-text" style="display: none"
-                                          id="discountTextDola">%</span>
-                                    <span class="input-group-text" style="display: none"
-                                          id="discountTextCash">₫</span>
+                                    <input type="number" id="value" th:field="*{discountValue}" class="form-control mt-2" min="0"/>
+                                    <span class="input-group-text" id="discountTextDola" style="display: none">%</span>
+                                    <span class="input-group-text" id="discountTextCash" style="display: none">₫</span>
                                 </div>
                                 <div class="text-danger" th:errors="*{discountValue}"></div>
                             </div>
+
                             <div class="col-md-6 mb-3">
                                 <label for="startDate">Ngày bắt đầu</label>
                                 <input type="date" id="startDate" th:field="*{startDate}"
@@ -106,7 +102,7 @@
                         </div>
                         <div class="btn-group d-flex">
                             <button class="btn btn-success mt-3 w-50"
-                                    onclick="return confirm('Bạn có muốn cập nhật đợt giảm giá này không?')">
+                                    onclick="return confirm('Bạn có muốn thêm mới đợt giảm giá này không?')">
                                 <i class="bi bi-plus-lg"></i> Thêm mới
                             </button>
                             <a class="btn btn-primary mt-3 w-50" th:href="@{/sale-product/list}">

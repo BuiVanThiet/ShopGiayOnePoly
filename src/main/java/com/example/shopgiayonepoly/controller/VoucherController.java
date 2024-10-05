@@ -22,7 +22,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Controller
-@RequestMapping("/staff/voucher")
+@RequestMapping("/voucher")
 public class VoucherController {
     @Autowired
     private VoucherService voucherService;
@@ -101,8 +101,6 @@ public class VoucherController {
         if (voucherRequest.getPricesApply() != null && voucherRequest.getPricesMax() != null && voucherRequest.getPricesApply().compareTo(voucherRequest.getPricesMax()) < 0) {
             result.rejectValue("pricesApply", "error.voucher", "Giá trị áp dụng phải lớn hơn giá trị giảm tối đa!");
         }
-
-
         if (result.hasErrors()) {
             Pageable pageable = PageRequest.of(pageNumber, pageSize);
             Page<Voucher> pageVoucher = voucherService.getAllVoucherByPage(pageable);
@@ -118,7 +116,7 @@ public class VoucherController {
             return "voucher/index";
         }
         voucherService.createNewVoucher(voucherRequest);
-        redirectAttributes.addFlashAttribute("mes", "Add new voucher successfully with ID: " + voucherRequest.getId());
+        redirectAttributes.addFlashAttribute("mes", " Thêm phiếu giảm giá thành công với mã là: " + voucherRequest.getCodeVoucher());
         return "redirect:/voucher/list";
     }
 
