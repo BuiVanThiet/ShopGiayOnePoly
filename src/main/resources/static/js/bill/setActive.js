@@ -7,7 +7,7 @@ function setActive(element, value) {
 
     // Thêm lớp active vào liên kết được nhấp vào
     element.classList.add('active');
-    clickStatusBillManager(parseInt(value));
+    clickStatusBillManager(value);
     // Xử lý giá trị được truyền vào (value)
     console.log("Giá trị được truyền vào:", value);
 

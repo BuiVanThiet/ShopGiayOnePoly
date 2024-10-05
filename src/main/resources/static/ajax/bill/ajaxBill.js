@@ -1,5 +1,12 @@
 //hien thi bill detail
 var pageBillDetail = 1;
+var selectSole;
+var selectColor ;
+var selectSize ;
+var selectMaterial;
+var selectManufacturer;
+var selectOrigin;
+var selectCategory;
 function loadBillDetail(page)  {
     $.ajax({
         type: "GET",
@@ -78,7 +85,7 @@ function loadBillDetail(page)  {
                             <th scope="row">${index + 1}</th>
                             <td>
                                 <div id="carouselExampleAutoplaying${index}" class="carousel slide" data-bs-ride="carousel">
-                                    <div class="carousel-inner" style="width: auto; height: 100px;">
+                                    <div class="carousel-inner carousel-inner-bill-custom" style="width: auto; height: 100px;">
                                         ${imagesHtml}
                                     </div>
                                 </div>
@@ -347,128 +354,268 @@ function updateProductTable(response) {
             `);
         noDataContainer.show();
         quantityModal.hide();
-        tbody.closest('table').hide(); // Ẩn table nếu không có dữ liệu
+        tbody.hide(); // Ẩn table nếu không có dữ liệu
     } else {
         quantityModal.show();
         noDataContainer.hide(); // Ẩn phần chứa ảnh nếu có dữ liệu
-        tbody.closest('table').show(); // Hiển thị lại table nếu có dữ liệu
+        tbody.show(); // Hiển thị lại table nếu có dữ liệu
         response.forEach(function(productDetail, index) {
             var imagesHtml = '';
 
-            productDetail.product.images.forEach(function(image, imgIndex) {
-                imagesHtml += `
-                    <div class="carousel-item ${imgIndex === 0 ? 'active' : ''}" style="width: auto; height: 100px;">
-                        <img src="https://res.cloudinary.com/dfy4umpja/image/upload/f_auto,q_auto/${image.nameImage}" class="d-block w-100" alt="Lỗi ảnh" style="width: auto; height: 100px;">
-                    </div>`;
-            });
-            var priceSale ;
-            var priceRoot = productDetail.price;
+            // productDetail.product.images.forEach(function(image, imgIndex) {
+            //     imagesHtml += `
+            //         <div class="carousel-item ${imgIndex === 0 ? 'active' : ''}" style="width: auto; height: 100px;">
+            //             <img src="https://res.cloudinary.com/dfy4umpja/image/upload/f_auto,q_auto/${image.nameImage}" class="d-block w-100" alt="Lỗi ảnh" style="width: auto; height: 100px;">
+            //         </div>`;
+            // });
+            // var priceSale ;
+            // var priceRoot = productDetail.price;
 
-            if(productDetail.saleProduct == null) {
-                priceSale =  productDetail.price;
-                priceRoot = productDetail.price;
-            }else {
-                if(productDetail.saleProduct.discountType == 1) {
-                    priceRoot =  productDetail.price;
-                    priceSale = productDetail.price - (productDetail.price * (productDetail.saleProduct.discountValue/100));
-                }else {
-                    priceSale =  productDetail.price - productDetail.saleProduct.discountValue;
-                    priceRoot = productDetail.price;
-                }
-            }
+            // if(productDetail.saleProduct == null) {
+            //     priceSale =  productDetail.price;
+            //     priceRoot = productDetail.price;
+            // }else {
+            //     if(productDetail.saleProduct.discountType == 1) {
+            //         priceRoot =  productDetail.price;
+            //         priceSale = productDetail.price - (productDetail.price * (productDetail.saleProduct.discountValue/100));
+            //     }else {
+            //         priceSale =  productDetail.price - productDetail.saleProduct.discountValue;
+            //         priceRoot = productDetail.price;
+            //     }
+            // }
 
             var btn = '';
-            if (productDetail.status === 2 || productDetail.product.status === 2) {
-                btn = `<span class="text-danger">Mặt hàng đã ngừng bán</span>`;
-            } else if (productDetail.quantity <= 0) {
-                btn = `<span class="text-danger">Hết hàng</span>`;
-            } else {
-                btn = `
-                        <button class="btn btn-outline-success" 
-                            data-bs-target="#exampleQuantity" 
-                            data-bs-toggle="modal"
-                            data-name="${productDetail.product.nameProduct}" 
-                            data-id="${productDetail.id}" 
-                            data-quantity="${productDetail.quantity}"
-                            data-price-sale="${priceSale}"
-                            data-price-root="${priceRoot}"
-                            >
-                           <i class="bi bi-cart-plus"></i> Mua
-                        </button>`;
-            }
+            // if (productDetail.status === 2 || productDetail.product.status === 2) {
+            //     btn = `<span class="text-danger">Mặt hàng đã ngừng bán</span>`;
+            // } else if (productDetail.quantity <= 0) {
+            //     btn = `<span class="text-danger">Hết hàng</span>`;
+            // } else {
+            //     btn = `
+            //             <button class="btn btn-outline-success"
+            //                 data-bs-target="#exampleQuantity"
+            //                 data-bs-toggle="modal"
+            //                 data-name="${productDetail.product.nameProduct}"
+            //                 data-id="${productDetail.id}"
+            //                 data-quantity="${productDetail.quantity}"
+            //                 data-price-sale="${priceSale}"
+            //                 data-price-root="${priceRoot}"
+            //                 >
+            //                <i class="bi bi-cart-plus"></i> Mua
+            //             </button>`;
+            // }
 
             var quantityProduct = '';
-            if (productDetail.status === 2 || productDetail.product.status === 2) {
-                quantityProduct = ``;
-            } else {
-                quantityProduct = `${productDetail.quantity}`;
-            }
+            // if (productDetail.status === 2 || productDetail.product.status === 2) {
+            //     quantityProduct = ``;
+            // } else {
+            //     quantityProduct = `${productDetail.quantity}`;
+            // }
 
             var priceSaleAndRoot = '';
 
             // Kiểm tra xem có chương trình giảm giá không
-            if (productDetail.saleProduct != null) {
-                // Lấy giá gốc
-                var originalPrice = productDetail.price;
+            // if (productDetail.saleProduct != null) {
+            //     // Lấy giá gốc
+            //     var originalPrice = productDetail.price;
+            //
+            //     // Khởi tạo biến để lưu giá đã giảm
+            //     var salePrice;
+            //
+            //     // Kiểm tra loại giảm giá
+            //     if (productDetail.saleProduct.discountType === 1) {
+            //         // Giảm theo phần trăm
+            //         var discountAmount = originalPrice * (productDetail.saleProduct.discountValue / 100);
+            //         salePrice = originalPrice - discountAmount;
+            //     } else if (productDetail.saleProduct.discountType === 2) {
+            //         // Giảm theo số tiền cố định
+            //         salePrice = originalPrice - productDetail.saleProduct.discountValue;
+            //     }
+            //
+            //     // Gán giá đã giảm và giá gốc vào biến priceSaleAndRoot
+            //     priceSaleAndRoot = `
+            //     <div>
+            //         <span class="text-decoration-line-through">${originalPrice.toLocaleString('en-US')} VNĐ</span>
+            //         <br>
+            //         <span class="text-danger fs-5">${salePrice.toLocaleString('en-US')} VNĐ</span>
+            //     </div>`;
+            // } else {
+            //     // Nếu không có chương trình giảm giá, chỉ hiển thị giá gốc
+            //     priceSaleAndRoot = `
+            //     <div>
+            //         <span>${productDetail.price.toLocaleString('en-US')} VNĐ</span>
+            //     </div>`;
+            // }
 
-                // Khởi tạo biến để lưu giá đã giảm
-                var salePrice;
+            // tbody.append(`
+            //             <tr>
+            //     <th scope="row" class="text-center align-middle">${index + 1}</th>
+            //     <td class="text-center align-middle">
+            //         <div id="carouselExampleAutoplaying${index}" class="carousel slide" data-bs-ride="carousel">
+            //             <div class="carousel-inner" style="width: auto; height: 100px;">
+            //                 ${imagesHtml}
+            //             </div>
+            //         </div>
+            //     </td>
+            //     <td class="">
+            //         <div class="fs-4">
+            //             ${productDetail.product.nameProduct}
+            //         </div>
+            //         <div class="fs-6">
+            //             Tên màu: ${productDetail.color.nameColor}
+            //             <br>
+            //             Tên size: ${productDetail.size.nameSize}
+            //         </div>
+            //     </td>
+            //     <td class="text-center align-middle">
+            //         ${quantityProduct}
+            //     </td>
+            //     <td class="text-center align-middle">
+            //        ${priceSaleAndRoot}
+            //     </td>
+            //     <td class="text-center align-middle">
+            //         ${btn}
+            //     </td>
+            // </tr>
+            // `);
 
-                // Kiểm tra loại giảm giá
-                if (productDetail.saleProduct.discountType === 1) {
-                    // Giảm theo phần trăm
-                    var discountAmount = originalPrice * (productDetail.saleProduct.discountValue / 100);
-                    salePrice = originalPrice - discountAmount;
-                } else if (productDetail.saleProduct.discountType === 2) {
-                    // Giảm theo số tiền cố định
-                    salePrice = originalPrice - productDetail.saleProduct.discountValue;
-                }
-
+            // kiem tra giam gia
+            if (productDetail[14] != 'Không giảm') {
                 // Gán giá đã giảm và giá gốc vào biến priceSaleAndRoot
                 priceSaleAndRoot = `
                 <div>
-                    <span class="text-decoration-line-through">${originalPrice.toLocaleString('en-US')} VNĐ</span>
+                    <span class="text-decoration-line-through fs-6">${productDetail[8].toLocaleString('en-US')} VNĐ</span>
                     <br>
-                    <span class="text-danger fs-5">${salePrice.toLocaleString('en-US')} VNĐ</span>
+                    <span class="text-danger fs-5">${productDetail[11].toLocaleString('en-US')} VNĐ</span>
                 </div>`;
             } else {
                 // Nếu không có chương trình giảm giá, chỉ hiển thị giá gốc
                 priceSaleAndRoot = `
                 <div>
-                    <span>${productDetail.price.toLocaleString('en-US')} VNĐ</span>
+                    <span class="fs-5">${productDetail[8].toLocaleString('en-US')} VNĐ</span>
                 </div>`;
             }
 
+            //setUpBTN
+            if (productDetail[12] === 2 || productDetail[13] === 2) {
+                    btn = `<span class="text-danger">Mặt hàng đã ngừng bán</span>`;
+                } else if (productDetail[10] <= 0) {
+                    btn = `<span class="text-danger">Hết hàng</span>`;
+                } else {
+                    btn = `
+                            <button class="btn btn-outline-success"
+                                data-bs-target="#exampleQuantity"
+                                data-bs-toggle="modal"
+                                data-name="${productDetail[1]}"
+                                data-id="${productDetail[0]}"
+                                data-quantity="${productDetail[10]}"
+                                data-price-sale="${productDetail[8]}"
+                                data-price-root="${productDetail[11]}"
+                                onclick="resetHidenProductSale()">
+                               <i class="bi bi-cart-plus"></i> Mua
+                            </button>`;
+                }
+
+            //lấy ảnh sản phẩm
+            var nameImage = productDetail[16].split(',');
+            nameImage.forEach(function (imageProduct,indexImage) {
+                imagesHtml += `
+                      <div data-bs-interval="2000" class="carousel-item ${indexImage === 0 ? 'active' : ''}">
+                        <img src="https://res.cloudinary.com/dfy4umpja/image/upload/v1724519685/${imageProduct.trim()}" class="d-block w-100" alt="Product Image 1">
+                      </div>
+                     `;
+            })
+            var saleBadge = '';
+            if(productDetail[14] != 'Không giảm') {
+                saleBadge = `<div class="bill-label-sale">${productDetail[14]}</div>`;
+            }else {
+                saleBadge = '';
+            }
+
+            // tbody.append(`
+            //             <tr>
+            //     <th scope="row" class="text-center align-middle">${index + 1}</th>
+            //     <td class="text-center align-middle" style="vertical-align: middle;">
+            //         <div class="carousel-container-bill-custom ">
+            //         ${saleBadge}
+            //         <div id="carouselExampleAutoplaying${index}" class="carousel carousel-bill-custom slide" data-bs-ride="carousel">
+            //             <div class="carousel-inner-bill-custom" style="height: auto; width: 250px;">
+            //                 ${imagesHtml}
+            //             </div>
+            //         </div>
+            //         </div>
+            //     </td>
+            //     <td style="vertical-align: top;">
+            //         <div class="scrollable-content-bill-custom">
+            //             <div class="fs-4">
+            //                 ${productDetail[1]}
+            //             </div>
+            //             <div class="fs-6">
+            //                 Màu: ${productDetail[2]}
+            //                 <br>
+            //                 Kích cỡ: ${productDetail[3]}
+            //                 <br>
+            //                 Hãng: ${productDetail[4]}
+            //                 <br>
+            //                 Chất liệu: ${productDetail[5]}
+            //                 <br>
+            //                 Nơi sản xuất: ${productDetail[6]}
+            //                 <br>
+            //                 Loại đế: ${productDetail[7]}
+            //                 <br>
+            //                 Danh mục: ${productDetail[15]}
+            //             </div>
+            //         </div>
+            //     </td>
+            //     <td class="text-center align-middle">
+            //         ${productDetail[10]}
+            //     </td>
+            //     <td class="text-center align-middle">
+            //        ${priceSaleAndRoot}
+            //     </td>
+            //     <td class="text-center align-middle">
+            //         ${btn}
+            //     </td>
+            // </tr>
+            // `);
             tbody.append(`
-                        <tr>
-                <th scope="row" class="text-center align-middle">${index + 1}</th>
-                <td class="text-center align-middle">
-                    <div id="carouselExampleAutoplaying${index}" class="carousel slide" data-bs-ride="carousel">
-                        <div class="carousel-inner" style="width: auto; height: 100px;">
-                            ${imagesHtml}
+               <div class="col-3 mb-1">
+                  <div class="card card-bill-custom" style="max-width: 800px; margin: auto; height: 500px;">
+                    <!-- Mall label in the top-left corner -->
+                    ${saleBadge}
+                    <div style="height: 150px;" class="mb-2">
+                      <div id="productCarousel1" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner" style="height: 150px;"> <!-- Đặt chiều cao cố định cho carousel -->
+                          ${imagesHtml}
                         </div>
+                      </div>
                     </div>
-                </td>
-                <td class="">
-                    <div class="fs-4">
-                        ${productDetail.product.nameProduct}
-                    </div>
-                    <div class="fs-6">
-                        Tên màu: ${productDetail.color.nameColor}
+                    <!-- Product details below image -->
+                    <div class="card-body" style="max-height: 320px; overflow-y: auto;">
+                      <h5 class="card-title">${productDetail[1]}</h5>
+                      <p class="card-text">
+                        Màu: <span class="text-primary-emphasis">${productDetail[2]}</span>
                         <br>
-                        Tên size: ${productDetail.size.nameSize}
+                        Kích cỡ: <span class="text-primary-emphasis">${productDetail[3]}</span>
+                        <br>
+                        Hãng: <span class="text-primary-emphasis">${productDetail[4]}</span>
+                        <br>
+                        Chất liệu: <span class="text-primary-emphasis">${productDetail[5]}</span>
+                        <br>
+                        Nơi sản xuất: <span class="text-primary-emphasis">${productDetail[6]}</span>
+                        <br>
+                        Loại đế: <span class="text-primary-emphasis">${productDetail[7]}</span>
+                        <br>
+                        Danh mục: <span class="text-primary-emphasis">${productDetail[15]}</span>
+                      </p>
+                      <h6>Số lượng trên hệ thống còn <br> ${productDetail[10]} đôi.</h6>
+                      <h6>Giá: ${priceSaleAndRoot}</h6>
                     </div>
-                </td>
-                <td class="text-center align-middle">
-                    ${quantityProduct}
-                </td>
-                <td class="text-center align-middle">
-                   ${priceSaleAndRoot}
-                </td>
-                <td class="text-center align-middle">
-                    ${btn}
-                </td>
-            </tr>
+                    <div class="card-footer text-body-secondary text-center bg-white" style="height: 50px;">
+                      ${btn}
+                    </div>
+                  </div>
+                </div>
+
             `);
         });
 
@@ -501,18 +648,18 @@ function filterProduct() {
         url: '/bill-api/filter-product-deatail',  // Endpoint xử lý
         contentType: 'application/json',
         data: JSON.stringify({
-            nameProduct: $('#nameSearch').val().trim(),
-            idColor: parseInt($('#colorSearch').val().trim()) || null, // Sử dụng || null để xử lý trường hợp không có giá trị
-            idSize: parseInt($('#sizeSearch').val().trim()) || null,
-            idMaterial: parseInt($('#materialSearch').val().trim()) || null,
-            idManufacturer: parseInt($('#manufacturerSearch').val().trim()) || null,
-            idOrigin: parseInt($('#originSearch').val().trim()) || null,
-            idCategories: $('#categorySearch').val().trim().split(',').map(Number)  // Chuyển đổi giá trị của danh mục
+            nameProduct: $('#nameSearch').val() ? $('#nameSearch').val().trim() : '',  // Kiểm tra null hoặc undefined
+            idColors: $('#colorSearch').val() ? $('#colorSearch').val().trim().replace(/\s+/g, '').split(',').filter(Boolean).map(Number) : null,  // Xóa tất cả khoảng trắng và xử lý
+            idSizes: $('#sizeSearch').val() ? $('#sizeSearch').val().trim().replace(/\s+/g, '').split(',').filter(Boolean).map(Number) : null,  // Xóa tất cả khoảng trắng và xử lý
+            idMaterials: $('#materialSearch').val() ? $('#materialSearch').val().trim().replace(/\s+/g, '').split(',').filter(Boolean).map(Number) : null,  // Xóa tất cả khoảng trắng và xử lý
+            idManufacturers: $('#manufacturerSearch').val() ? $('#manufacturerSearch').val().trim().replace(/\s+/g, '').split(',').filter(Boolean).map(Number) : null,  // Xóa tất cả khoảng trắng và xử lý
+            idOrigins: $('#originSearch').val() ? $('#originSearch').val().trim().replace(/\s+/g, '').split(',').filter(Boolean).map(Number) : null,  // Xóa tất cả khoảng trắng và xử lý
+            idSoles: $('#soleSearch').val() ? $('#soleSearch').val().trim().replace(/\s+/g, '').split(',').filter(Boolean).map(Number) : null,  // Xóa tất cả khoảng trắng và xử lý
+            idCategories: $('#categorySearch').val() ? $('#categorySearch').val().trim().replace(/\s+/g, '').split(',').filter(Boolean).map(Number) : null  // Xóa tất cả khoảng trắng và xử lý
         }),
         success: function (response) {
             loadProduct(1); // Gọi hàm để tải sản phẩm với trang đầu tiên
             getMaxPageProduct(); // Gọi hàm để lấy số trang tối đa
-
             console.log('Dữ liệu truyền về là:', response);
         },
         error: function (xhr) {
@@ -520,7 +667,6 @@ function filterProduct() {
         }
     });
 }
-
 
 function loadCategoryIntoSelect() {
     $.ajax({
@@ -539,23 +685,22 @@ function loadCategoryIntoSelect() {
                 selectElement.append(option);
             });
 
-            // Gọi hàm MultiSelectTag sau khi đã nạp dữ liệu
-            new MultiSelectTag('categores', {
+            selectCategory = new MultiSelectTag('categores', {
                 rounded: true,
-                shadow: true,
+                shadow: false,
                 placeholder: 'Search',
                 tagColor: {
                     textColor: '#327b2c',
                     borderColor: '#92e681',
                     bgColor: '#eaffe6',
                 },
-                onChange: function (values) {
+                onChange: function(values) {
                     let selectedValues = values.map(item => item.value).join(',');
                     document.getElementById('categorySearch').value = selectedValues;
-                    console.log("Selected values: ", selectedValues);
+                    console.log('category search: '+selectedValues)
                 }
             });
-            clearAllSelections()
+            selectCategory.clearAll();
         },
         error: function(xhr, status, error) {
             console.error('Error fetching data:', error);
@@ -567,19 +712,283 @@ function loadCategoryIntoSelect() {
     });
 }
 
-function loadColoIntoSelect() {
+function loadColorIntoSelect() {
+    $.ajax({
+        type: "GET",
+        url: "/bill-api/filter-color",
+        success: function (response) {
+            const selectElement = $('#colors');
+            selectElement.empty(); // Xóa các option cũ nếu có
 
+            // Giả định response là một mảng các đối tượng client
+            response.forEach(color => {
+                const option = $('<option>', {
+                    value: color.id, // giá trị của option
+                    text: color.nameColor // tên hiển thị trong option
+                });
+                selectElement.append(option);
+            });
+
+            // Gọi hàm MultiSelectTag sau khi đã nạp dữ liệu
+            selectColor = new MultiSelectTag('colors', {
+                rounded: true,
+                shadow: false,
+                placeholder: 'Search',
+                tagColor: {
+                    textColor: '#327b2c',
+                    borderColor: '#92e681',
+                    bgColor: '#eaffe6',
+                },
+                onChange: function(values) {
+                    let selectedValues = values.map(item => item.value).join(',');
+                    document.getElementById('colorSearch').value = selectedValues;
+                    console.log('color search: '+selectedValues)
+                }
+            });
+            selectColor.clearAll();
+        },
+        error: function(xhr, status, error) {
+            console.error('Error fetching data:', error);
+        },
+        // complete: function() {
+        //     // Sau khi hoàn thành, lại tiếp tục gửi yêu cầu để giữ kết nối liên tục
+        //     setTimeout(loadCategoryIntoSelect, 5000);  // Gửi lại sau 5 giây
+        // }
+    });
 }
 
+function loadSizeIntoSelect() {
+    $.ajax({
+        type: "GET",
+        url: "/bill-api/filter-size",
+        success: function (response) {
+            const selectElement = $('#sizes');
+            selectElement.empty(); // Xóa các option cũ nếu có
+
+            // Giả định response là một mảng các đối tượng client
+            response.forEach(size => {
+                const option = $('<option>', {
+                    value: size.id, // giá trị của option
+                    text: size.nameSize // tên hiển thị trong option
+                });
+                selectElement.append(option);
+            });
+
+            selectSize = new MultiSelectTag('sizes', {
+                rounded: true,
+                shadow: false,
+                placeholder: 'Search',
+                tagColor: {
+                    textColor: '#327b2c',
+                    borderColor: '#92e681',
+                    bgColor: '#eaffe6',
+                },
+                onChange: function(values) {
+                    let selectedValues = values.map(item => item.value).join(',');
+                    document.getElementById('sizeSearch').value = selectedValues;
+                    console.log('size search: '+selectedValues)
+                }
+            });
+            selectSize.clearAll();
+        },
+        error: function(xhr, status, error) {
+            console.error('Error fetching data:', error);
+        },
+        // complete: function() {
+        //     // Sau khi hoàn thành, lại tiếp tục gửi yêu cầu để giữ kết nối liên tục
+        //     setTimeout(loadCategoryIntoSelect, 5000);  // Gửi lại sau 5 giây
+        // }
+    });
+}
+
+function loadMaterialIntoSelect() {
+    $.ajax({
+        type: "GET",
+        url: "/bill-api/filter-material",
+        success: function (response) {
+            const selectElement = $('#materials');
+            selectElement.empty(); // Xóa các option cũ nếu có
+
+            // Giả định response là một mảng các đối tượng client
+            response.forEach(material => {
+                const option = $('<option>', {
+                    value: material.id, // giá trị của option
+                    text: material.nameMaterial // tên hiển thị trong option
+                });
+                selectElement.append(option);
+            });
+
+            selectMaterial = new MultiSelectTag('materials', {
+                rounded: true,
+                shadow: false,
+                placeholder: 'Search',
+                tagColor: {
+                    textColor: '#327b2c',
+                    borderColor: '#92e681',
+                    bgColor: '#eaffe6',
+                },
+                onChange: function(values) {
+                    let selectedValues = values.map(item => item.value).join(',');
+                    document.getElementById('materialSearch').value = selectedValues;
+                    console.log('material search: '+selectedValues)
+                }
+            });
+            selectMaterial.clearAll();
+        },
+        error: function(xhr, status, error) {
+            console.error('Error fetching data:', error);
+        },
+        // complete: function() {
+        //     // Sau khi hoàn thành, lại tiếp tục gửi yêu cầu để giữ kết nối liên tục
+        //     setTimeout(loadCategoryIntoSelect, 5000);  // Gửi lại sau 5 giây
+        // }
+    });
+}
+
+function loadManufacturerIntoSelect() {
+    $.ajax({
+        type: "GET",
+        url: "/bill-api/filter-manufacturer",
+        success: function (response) {
+            const selectElement = $('#manufacturers');
+            selectElement.empty(); // Xóa các option cũ nếu có
+
+            // Giả định response là một mảng các đối tượng client
+            response.forEach(manufacturer => {
+                const option = $('<option>', {
+                    value: manufacturer.id, // giá trị của option
+                    text: manufacturer.nameManufacturer // tên hiển thị trong option
+                });
+                selectElement.append(option);
+            });
+
+            selectManufacturer = new MultiSelectTag('manufacturers', {
+                rounded: true,
+                shadow: false,
+                placeholder: 'Search',
+                tagColor: {
+                    textColor: '#327b2c',
+                    borderColor: '#92e681',
+                    bgColor: '#eaffe6',
+                },
+                onChange: function(values) {
+                    let selectedValues = values.map(item => item.value).join(',');
+                    document.getElementById('manufacturerSearch').value = selectedValues;
+                    console.log('manufacturer search: '+selectedValues)
+                }
+            });
+            selectManufacturer.clearAll();
+        },
+        error: function(xhr, status, error) {
+            console.error('Error fetching data:', error);
+        },
+        // complete: function() {
+        //     // Sau khi hoàn thành, lại tiếp tục gửi yêu cầu để giữ kết nối liên tục
+        //     setTimeout(loadCategoryIntoSelect, 5000);  // Gửi lại sau 5 giây
+        // }
+    });
+}
+
+function loadOriginIntoSelect() {
+    $.ajax({
+        type: "GET",
+        url: "/bill-api/filter-origin",
+        success: function (response) {
+            const selectElement = $('#origins');
+            selectElement.empty(); // Xóa các option cũ nếu có
+
+            // Giả định response là một mảng các đối tượng client
+            response.forEach(origin => {
+                const option = $('<option>', {
+                    value: origin.id, // giá trị của option
+                    text: origin.nameOrigin // tên hiển thị trong option
+                });
+                selectElement.append(option);
+            });
+
+            selectOrigin = new MultiSelectTag('origins', {
+                rounded: true,
+                shadow: false,
+                placeholder: 'Search',
+                tagColor: {
+                    textColor: '#327b2c',
+                    borderColor: '#92e681',
+                    bgColor: '#eaffe6',
+                },
+                onChange: function(values) {
+                    let selectedValues = values.map(item => item.value).join(',');
+                    document.getElementById('originSearch').value = selectedValues;
+                    console.log('origin search: '+selectedValues)
+                }
+            });
+            selectOrigin.clearAll();
+        },
+        error: function(xhr, status, error) {
+            console.error('Error fetching data:', error);
+        },
+        // complete: function() {
+        //     // Sau khi hoàn thành, lại tiếp tục gửi yêu cầu để giữ kết nối liên tục
+        //     setTimeout(loadCategoryIntoSelect, 5000);  // Gửi lại sau 5 giây
+        // }
+    });
+}
+
+function loadSoleIntoSelect() {
+    $.ajax({
+        type: "GET",
+        url: "/bill-api/filter-sole",
+        success: function (response) {
+            const selectElement = $('#soles');
+            selectElement.empty(); // Xóa các option cũ nếu có
+
+            // Giả định response là một mảng các đối tượng client
+            response.forEach(sole => {
+                const option = $('<option>', {
+                    value: sole.id, // giá trị của option
+                    text: sole.nameSole // tên hiển thị trong option
+                });
+                selectElement.append(option);
+            });
+
+            // Gọi hàm MultiSelectTag sau khi đã nạp dữ liệu
+            selectSole = new MultiSelectTag('soles', {
+                rounded: true,
+                shadow: false,
+                placeholder: 'Search',
+                tagColor: {
+                    textColor: '#327b2c',
+                    borderColor: '#92e681',
+                    bgColor: '#eaffe6',
+                },
+                onChange: function(values) {
+                    let selectedValues = values.map(item => item.value).join(',');
+                    document.getElementById('soleSearch').value = selectedValues;
+                    console.log('sole search: '+selectedValues)
+                }
+            });
+            selectSole.clearAll();
+        },
+        error: function(xhr, status, error) {
+            console.error('Error fetching data:', error);
+        }
+    });
+}
 function resetFilterProductSale() {
     document.getElementById('nameSearch').value='';
-    document.getElementById('colorSearch').selectedIndex = 0;
-    document.getElementById('sizeSearch').selectedIndex = 0;
-    document.getElementById('materialSearch').selectedIndex = 0;
-    document.getElementById('manufacturerSearch').selectedIndex = 0;
-    document.getElementById('originSearch').selectedIndex = 0;
-    document.getElementById('categores').selectedIndex = 0;
-    clearAllSelections();
+    document.getElementById('soleSearch').value='';
+    selectSole.clearAll();
+    document.getElementById('colorSearch').value='';
+    selectColor.clearAll();
+    document.getElementById('sizeSearch').value='';
+    selectSize.clearAll();
+    document.getElementById('materialSearch').value='';
+    selectMaterial.clearAll();
+    document.getElementById('manufacturerSearch').value='';
+    selectManufacturer.clearAll();
+    document.getElementById('originSearch').value='';
+    selectOrigin.clearAll();
+    document.getElementById('categorySearch').value='';
+    selectCategory.clearAll();
     filterProduct();
 }
 // document.getElementById('resetFilter').addEventListener('click', function () {
@@ -967,6 +1376,7 @@ function resetHidenProductSale() {
     $('#idProductDetail').val('0');
     $('#priceProductSale').val('0');
     $('#priceProductRoot').val('0');
+    backToDefaultBuyProduct();
 }
 function deleteBillDetail(id) {
     $.ajax({
@@ -1060,6 +1470,12 @@ $(document).ready(function () {
         loadClientsIntoSelect();
         paymentInformation();
         loadCategoryIntoSelect()
+    loadColorIntoSelect()
+    loadSizeIntoSelect()
+    loadMaterialIntoSelect()
+    loadManufacturerIntoSelect()
+    loadOriginIntoSelect()
+    loadSoleIntoSelect()
         // pageNumber();
         clickStatusBillManager(999);
 

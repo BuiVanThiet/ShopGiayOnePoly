@@ -147,16 +147,15 @@
                                                id="flexSwitchCheckDefault">
                                         <label class="form-check-label" for="flexSwitchCheckDefault">Giao hàng</label>
                                     </div>
-
                                     <div class="input-group mb-3">
-                                        <button class="btn btn-outline-secondary" type="button" id="button-addon1"
+                                        <button class="btn btn-outline-secondary" type="button"
                                                 data-bs-target="#voucher-modal" data-bs-toggle="modal">
-                                            <i class="bi bi-dash"></i><i class="bi bi-currency-dollar"></i> Mã giảm giá
+                                            <i class="bi bi-dash"></i><i class="bi bi-currency-dollar"></i>Mã giảm giá
                                         </button>
-                                        <input type="text" class="form-control" placeholder=""
-                                               aria-label="Example text with button addon"
+                                        <input type="text" class="form-control" placeholder="" aria-label="Example text with button addon"
                                                aria-describedby="button-addon1" id="textVoucher" disabled>
                                     </div>
+
 
                                     <div class="mb-3" id="totalInfor">
                                         <div class="mb-3 d-flex justify-content-between">
@@ -441,22 +440,22 @@
             </div>
 
             <!-- modal phần nút quét sản phẩm  -->
-            <div class="modal fade" id="camera-Modal" tabindex="-1" aria-labelledby="cameraModalLabel"
-                 aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="cameraModalLabel">
-                                Quét QR sản phẩm
-                            </h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body text text-center">
-                            <video id="video" width="300" height="200" autoplay></video>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<!--            <div class="modal fade" id="camera-Modal" tabindex="-1" aria-labelledby="cameraModalLabel"-->
+<!--                 aria-hidden="true">-->
+<!--                <div class="modal-dialog">-->
+<!--                    <div class="modal-content">-->
+<!--                        <div class="modal-header">-->
+<!--                            <h1 class="modal-title fs-5" id="cameraModalLabel">-->
+<!--                                Quét QR sản phẩm-->
+<!--                            </h1>-->
+<!--                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
+<!--                        </div>-->
+<!--                        <div class="modal-body text text-center">-->
+<!--                            <video id="video" width="300" height="200" autoplay></video>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
 
             <!-- phần thêm mới khách hàng nếu khách muốn thêm nhanh  -->
             <div class="modal fade" id="customer-Modal" tabindex="-1" aria-labelledby="clientModalLabel"
@@ -602,7 +601,8 @@
         <script src="/js/bill/checkSwitch.js"></script>
         <!--cai nay de set moi khi chon thi duoc active-->
         <script src="/js/bill/setActive.js"></script>
-
+        <!--select 2 js-->
+        <script th:src="@{/js/bill/actionSelect2tag.js}" type="text/javascript"></script>
         <script th:src="@{/js/select2/multiselect2.js}" type="text/javascript"></script>
         <!--cai nay la ajax cua hien thi bill moi -->
         <!--ngay 3  thang 9-->

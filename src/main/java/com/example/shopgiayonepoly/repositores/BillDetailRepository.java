@@ -1,5 +1,8 @@
 package com.example.shopgiayonepoly.repositores;
 
+import com.example.shopgiayonepoly.dto.response.bill.CategoryProductResponse;
+import com.example.shopgiayonepoly.dto.response.bill.ImageProductResponse;
+import com.example.shopgiayonepoly.dto.response.bill.ProductDetailSellResponse;
 import com.example.shopgiayonepoly.entites.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -103,6 +106,109 @@ public interface BillDetailRepository extends JpaRepository<BillDetail,Integer> 
             @Param("origin") Integer origin,
             @Param("categories") List<Integer> categories
     );
+
+    @Query(value = """
+    SELECT 
+        pd.id AS product_detail_id, --1
+        p.name_product, --2
+        c.name_color, --3
+        s.name_size, --4
+        m.name_manufacturer, --5
+        mat.name_material, --6
+        o.name_origin, --7
+        so.name_sole, --8
+        pd.price, --9
+        pd.quantity, --10
+        (pd.quantity - COALESCE(bd.quantity, 0)) AS updated_quantity,   -- Trừ số lượng ảo 11
+        CASE
+            WHEN sp.start_date <= CAST(GETDATE() AS DATE) AND sp.end_date >= CAST(GETDATE() AS DATE) THEN
+                CASE
+                    WHEN sp.discount_type = 1 THEN pd.price * (1 - sp.discount_value / 100)
+                    WHEN sp.discount_type = 2 THEN pd.price - sp.discount_value
+                    ELSE pd.price
+                END
+            ELSE pd.price
+        END AS final_price, --12
+        p.status AS product_status, --13
+        pd.status AS product_detail_status,--14
+        CASE
+            WHEN sp.start_date <= CAST(GETDATE() AS DATE) AND sp.end_date >= CAST(GETDATE() AS DATE) THEN
+                CASE
+                    WHEN sp.discount_type = 1 THEN N'Giảm ' + CAST(sp.discount_value AS NVARCHAR) + N' %'
+                    WHEN sp.discount_type = 2 THEN N'Giảm ' + CAST(sp.discount_value AS NVARCHAR) + N' VNĐ'
+                    ELSE N'Không giảm'
+                END
+            ELSE N'Không giảm'
+        END AS title_sale, --15
+        STRING_AGG(cat.name_category, ', ') AS categories, --16
+        STRING_AGG(im.name_image, ', ') AS images --17    
+    FROM product_detail pd
+    LEFT JOIN bill_detail bd ON bd.id_product_detail = pd.id AND bd.id_bill = :idBill  -- Hóa đơn 122
+    JOIN product p ON pd.id_product = p.id
+    LEFT JOIN color c ON pd.id_color = c.id
+    LEFT JOIN size s ON pd.id_size = s.id
+    LEFT JOIN sale_product sp ON pd.id_sale_product = sp.id
+    LEFT JOIN manufacturer m ON p.id_manufacturer = m.id
+    LEFT JOIN material mat ON p.id_material = mat.id
+    LEFT JOIN origin o ON p.id_origin = o.id
+    LEFT JOIN sole so ON p.id_sole = so.id
+    LEFT JOIN category_product cp ON p.id = cp.id_product
+    LEFT JOIN category cat ON cp.id_category = cat.id
+    LEFT JOIN image im on im.id_product = p.id
+    WHERE pd.status = 1
+      AND p.status = 1
+      -- Tìm kiếm gần đúng theo tên sản phẩm
+      AND (:nameProduct IS NULL OR p.name_product LIKE CONCAT('%', :nameProduct, '%'))
+      -- Lọc theo danh mục
+      AND (:categoryList IS NULL OR cat.id IN (:categoryList))
+      -- Lọc theo màu sắc
+      AND (:colorList IS NULL OR c.id IN (:colorList))
+      -- Lọc theo kích thước
+      AND (:sizeList IS NULL OR s.id IN (:sizeList))
+      -- Lọc theo nhà sản xuất
+      AND (:manufacturerList IS NULL OR m.id IN (:manufacturerList))
+      -- Lọc theo chất liệu
+      AND (:materialList IS NULL OR mat.id IN (:materialList))
+      -- Lọc theo nơi sản xuất
+      AND (:originList IS NULL OR o.id IN (:originList))
+      -- Lọc theo đế giày
+      AND (:soleList IS NULL OR so.id IN (:soleList))
+      GROUP BY
+          pd.id,
+          p.name_product,
+          c.name_color,
+          s.name_size,
+          m.name_manufacturer,
+          mat.name_material,
+          o.name_origin,
+          so.name_sole,
+          pd.price,
+          pd.quantity,
+          COALESCE(bd.quantity, 0),  -- Thêm bill_detail.quantity vào GROUP BY
+          p.status,
+          pd.status,
+          sp.start_date,
+          sp.end_date,
+          sp.discount_type,
+          sp.discount_value
+      ;
+""", nativeQuery = true)
+    List<Object[]> findProductDetailSaleTest(
+            @Param("nameProduct") String nameProduct,
+            @Param("categoryList") Integer[]  categoryList,
+            @Param("colorList") Integer[]  colorList,
+            @Param("sizeList") Integer[]  sizeList,
+            @Param("manufacturerList") Integer[]  manufacturerList,
+            @Param("materialList") Integer[]  materialList,
+            @Param("originList") Integer[]  originList,
+            @Param("soleList") Integer[]  soleList,
+            @Param("idBill") Integer idBill
+    );
+
+    @Query("select new com.example.shopgiayonepoly.dto.response.bill.ImageProductResponse(image.nameImage) from Image image where image.product.id = :idCheck")
+    List<ImageProductResponse> getImageByBill(@Param("idCheck") Integer id);
+    @Query("select new com.example.shopgiayonepoly.dto.response.bill.CategoryProductResponse(cate.nameCategory) from Category cate right join cate.products product where product.id = :idCheck")
+    List<CategoryProductResponse> getCategoryByBill(@Param("idCheck") Integer id);
 
     @Query("select sum(bdt.totalAmount) from BillDetail bdt where bdt.bill.id = :idCheck")
     BigDecimal getTotalAmountByIdBill(@Param("idCheck") Integer id);
