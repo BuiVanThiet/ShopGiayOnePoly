@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -89,6 +90,10 @@ public class ProductImplement implements ProductService {
         } else {
             throw new RuntimeException("Màu sắc có " + id + " Không tồn tại.");
         }
+    }
+
+    public Optional<Product> getOneProductByCodeProduct(String codeProduct){
+        return productRepository.getOneProductByCodeProduct(codeProduct);
     }
 
 

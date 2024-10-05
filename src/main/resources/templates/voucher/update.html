@@ -9,7 +9,7 @@
 <body>
 <div layout:fragment="content">
     <div class="container-xxl bd-gutter mt-5 my-md-4 bd-layout">
-        <div class="mb-3 text-center p-3 text-white" style="background-color: #c5a60a" th:text="${title}"></div>
+        <div class="mb-3 text-center p-3 text-dark fs-3" style="background-color: #cececd" th:text="${title}"></div>
         <hr>
         <form th:action="@{/voucher/update}" th:object="${voucher}" method="post"
               style="border: 1px solid #bdb5b5;padding: 50px">
@@ -105,9 +105,15 @@
                     <div class="text-danger" th:errors="*{status}"></div>
                 </div>
 
-                <button type="submit" class="btn btn-primary mt-3"
-                        onclick="return confirm('Bạn có muốn sửa phiếu giảm giá này không?')">Cập nhật
-                </button>
+                <div class="btn-group d-flex">
+                    <button class="btn btn-success mt-3 w-50"
+                            onclick="return confirm('Bạn có muốn thêm mới phiếu giảm giá này không?')">
+                        <i class="bi bi-plus-lg"></i> Thêm mới
+                    </button>
+                    <a class="btn btn-primary mt-3 w-50" th:href="@{/voucher/list}">
+                        <i class="bi bi-house"></i> Quay về trang quản lý
+                    </a>
+                </div>
             </div>
         </form>
     </div>

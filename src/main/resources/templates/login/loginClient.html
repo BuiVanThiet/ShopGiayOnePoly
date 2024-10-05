@@ -1,35 +1,48 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"></html>
 <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Đăng Nhập</title>
-    <link rel="stylesheet" href="/css/Security/login.css" />
+
+    <link rel="stylesheet" href="/css/client/loginClient.css" />
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css" />
+
 </head>
 <body>
-<section class="home">
-    <div class="form_container">
-        <div class="form login_form">
-            <form th:action="@{/onepoly/login}" method="post">
-                <h2>Đăng Nhập Trang khacvh hang</h2>
-                <div class="input_box">
-                    <i class="uil uil-envelope-alt email"></i>
-                    <input type="text" name="username" th:value="${usernameLogin}" placeholder="Tài khoản"/>
+<div class="wrapper">
+    <div class="form-box login">
+        <h2>Đăng nhập</h2>
+        <form th:action="@{/onepoly/login}" method="post">
+<!--        tài khoản-->
+            <div class="input-box">
+              <span class="icon">
+                <ion-icon name="person-circle"></ion-icon>
+              </span>
+                <input type="text" name="username" th:value="${usernameLogin}" placeholder="Tài Khoản"/>
+            </div>
+<!--        mật khẩu-->
+            <div class="input-box">
+              <span class="icon">
+                <ion-icon name="lock-closed"></ion-icon>
+              </span>
+                <div class="error-message" th:text="${errorMessage}">
                 </div>
-                <div class="input_box">
-                    <i class="uil uil-lock password"></i>
-                    <input type="password" name="password" placeholder="Mật khẩu"/>
-                    <i class="uil uil-eye-slash pw_hide"></i>
-                    <div class="error-message" th:text="${errorMessage}">
-                    </div>
-                </div>
-                <button class="button">Đăng Nhập</button>
-            </form>
-        </div>
+                <input type="password" name="password" placeholder="Mật khẩu"/>
+            </div>
+            <div class="remember-forgot">
+<!--                <label><input type="checkbox" />Ghi nhớ tôi</label>-->
+                <a href="#">Quên mật khẩu?</a>
+            </div>
+            <button type="submit" class="btn-login">Đăng nhập</button>
+        </form>
     </div>
-</section>
+</div>
+
+</div>
 <script src="/js/Security/login.js"></script>
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 </body>
 </html>

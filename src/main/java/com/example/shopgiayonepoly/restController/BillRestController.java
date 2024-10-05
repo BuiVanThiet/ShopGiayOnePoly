@@ -197,6 +197,7 @@ public class BillRestController extends BaseBill {
         return ResponseEntity.ok("Done");
     }
 
+
     @GetMapping("/filter-color")
     public List<Color> getFilterColor() {
         return this.colorService.getColorNotStatus0();

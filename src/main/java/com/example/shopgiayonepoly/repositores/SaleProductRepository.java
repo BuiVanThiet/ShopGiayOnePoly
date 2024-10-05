@@ -1,5 +1,6 @@
 package com.example.shopgiayonepoly.repositores;
 
+import com.example.shopgiayonepoly.entites.ProductDetail;
 import com.example.shopgiayonepoly.entites.SaleProduct;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface SaleProductRepository extends JpaRepository<com.example.shopgiayonepoly.entites.SaleProduct, Integer> {
+public interface SaleProductRepository extends JpaRepository<SaleProduct, Integer> {
     @Query("select s from SaleProduct s where s.status =1")
     public Page<SaleProduct> getAllSaleProductByPage(Pageable pageable);
 
@@ -25,15 +26,6 @@ public interface SaleProductRepository extends JpaRepository<com.example.shopgia
 
     @Query("select s from SaleProduct s where s.status =0")
     public List<SaleProduct> getAllSaleProductDelete();
-
-    @Query("select s from SaleProduct s where s.status =2")
-    public Page<SaleProduct> getSaleProductExpiredByPage(Pageable pageable);
-
-    @Modifying
-    @Transactional
-    @Query(value = "UPDATE sale_product SET end_date = DATEADD(day, 1, CONVERT(date, GETDATE())), status = 1 WHERE id = :id", nativeQuery = true)
-    public void updateSaleProductExpired(@Param("id") Integer id);
-
 
     @Modifying
     @Transactional
@@ -48,12 +40,10 @@ public interface SaleProductRepository extends JpaRepository<com.example.shopgia
     @Query("select s from SaleProduct s where (s.nameSale like %:key% or s.codeSale like %:key%) and s.status = 1")
     public Page<SaleProduct> searchSaleProductByKeyword(@Param("key") String key, Pageable pageable);
 
-
     @Query("select s from SaleProduct s where s.discountType =:types and s.status = 1")
     Page<SaleProduct> searchSaleProductByTypeSaleProduct(@Param("types") int type, Pageable pageable);
 
-    @Modifying
-    @Transactional
-    @Query("update SaleProduct s set s.status = 2 where s.endDate < CURRENT_DATE and s.status <> 2")
-    public void updateSaleProductStatusForExpired();
+    @Query("select p from ProductDetail p")
+    public List<ProductDetail> getAllProductDetailByPage();
+
 }

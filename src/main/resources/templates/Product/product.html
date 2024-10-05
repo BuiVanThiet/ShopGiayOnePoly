@@ -15,31 +15,37 @@
         <h1 class="h1-product">Quản lý sản phẩm</h1>
         <div class="combobox-container">
             <div class="combobox-header" onclick="toggleDiv()">
-                <span></span>
+                <span style="justify-content: center">Thêm sản phẩm</span>
                 <span class="arrow" id="arrow">&#9660;</span> <!-- Mũi tên -->
             </div>
             <div id="collapsibleDiv" class="combobox-content">
-                <form th:object="${productAdd}" method="post" action="/product/add">
+                <form th:object="${productAdd}" method="post" action="/staff/product/add">
                     <div class="product-search-section search-section ">
                         <div class="product-search-bar search-bar">
-                            <div class="input-group">
+                            <div class="product-input-group input-group">
                                 <input id="codeProductInput" th:field="*{codeProduct}" type="text" placeholder="Mã sản phẩm" required/>
                                 <input id="nameProductInput" th:field="*{nameProduct}" type="text" placeholder="Tên sản phẩm" required/>
                             </div>
-
-                            <div class="select-group">
-                                <select id="material" name="material" th:field="*{material.nameMaterial}">
-                                    <option value="" disabled selected>Chọn danh mục</option>
+                            <div class="product-select-group select-group">
+                                <select class="select-product" id="material" name="material" th:field="*{material}">
+                                    <option value="">Chọn chất liệu</option>
                                     <option th:each="material : ${materialList}" th:value="${material.id}" th:text="${material.nameMaterial}"></option>
                                 </select>
-                                <select id="origin" name="origin" th:field="*{origin.nameOrigin}">
-                                    <option value="" disabled selected>Chọn danh mục</option>
+                                <select class="select-product" id="origin" name="origin" th:field="*{origin}">
+                                    <option value="">Chọn xuất xứ</option>
                                     <option th:each="origin : ${originList}" th:value="${origin.id}" th:text="${origin.nameOrigin}"></option>
                                 </select>
+                                <select class="select-product" id="sole" name="sole" th:field="*{sole}">
+                                    <option value="">Chọn loại đế</option>
+                                    <option th:each="sole : ${soleList}" th:value="${sole.id}" th:text="${sole.nameSole}"></option>
+                                </select>
+                                <select class="select-product" id="manufacturer" name="manufacturer" th:field="*{manufacturer}">
+                                    <option value="">Chọn hãng</option>
+                                    <option th:each="manufacturer : ${manufacturerList}" th:value="${manufacturer.id}" th:text="${manufacturer.nameManufacturer}"></option>
+                                </select>
                             </div>
-                            <button type="submit" class="product-btn-add btn-add">Thêm sản phẩm</button>
+                            <button id="product-btn-add" type="submit" class="product-btn-add btn-add">Thêm sản phẩm</button>
                         </div>
-
                     </div>
                 </form>
             </div>
@@ -67,41 +73,13 @@
             </thead>
             <tbody>
             <tr th:each="product, iterStat : ${productList}" th:id="'row-' + ${iterStat.index}" th:data-id="${product.id}">
-                <td>
-                    <span th:text="${product.codeProduct}" th:id="'code-text-' + ${iterStat.index}"></span>
-                    <input class="inputUpdate-product" type="text" th:value="${product.codeProduct}" th:id="'code-input-' + ${iterStat.index}"
-                           style="display:none;">
-                </td>
-                <td>
-                    <span th:text="${product.nameProduct}" th:id="'name-text-' + ${iterStat.index}"></span>
-                    <input class="inputUpdate-product" type="text" th:value="${product.nameProduct}" th:id="'name-input-' + ${iterStat.index}"
-                           style="display:none;">
-                </td>
-                <td>
-                    <span th:text="${product.material.nameMaterial}" th:id="'name-text-' + ${iterStat.index}"></span>
-                    <input class="inputUpdate-product" type="text" th:value="${product.material.nameMaterial}" th:id="'name-input-' + ${iterStat.index}"
-                           style="display:none;">
-                </td>
-                <td>
-                    <span th:text="${product.manufacturer.nameManufacturer}" th:id="'name-text-' + ${iterStat.index}"></span>
-                    <input class="inputUpdate-product" type="text" th:value="${product.manufacturer.nameManufacturer}" th:id="'name-input-' + ${iterStat.index}"
-                           style="display:none;">
-                </td>
-                <td>
-                    <span th:text="${product.origin.nameOrigin}" th:id="'name-text-' + ${iterStat.index}"></span>
-                    <input class="inputUpdate-product" type="text" th:value="${product.origin.nameOrigin}" th:id="'name-input-' + ${iterStat.index}"
-                           style="display:none;">
-                </td>
-                <td>
-                    <span th:text="${product.sole.nameSole}" th:id="'name-text-' + ${iterStat.index}"></span>
-                    <input class="inputUpdate-product" type="text" th:value="${product.sole.nameSole}" th:id="'name-input-' + ${iterStat.index}"
-                           style="display:none;">
-                </td>
-                <td>
-                    <span th:text="${product.describe}" th:id="'name-text-' + ${iterStat.index}"></span>
-                    <input class="inputUpdate-product" type="text" th:value="${product.describe}" th:id="'name-input-' + ${iterStat.index}"
-                           style="display:none;">
-                </td>
+                <td th:text="${product.codeProduct}"></td>
+                <td th:text="${product.nameProduct}"></td>
+                <td th:text="${product.material.nameMaterial}"></td>
+                <td th:text="${product.manufacturer.nameManufacturer}"></td>
+                <td th:text="${product.origin.nameOrigin}"></td>
+                <td th:text="${product.sole.nameSole}"></td>
+                <td th:text="${product.describe}"></td>
                 <td>
                     <i class="product-status-icon status-icon fas"
                        th:classappend="${product.status == 1 ? 'fa-toggle-on' : (product.status == 2 ? 'fa-toggle-off' : '')}"
@@ -127,6 +105,16 @@
             </tbody>
         </table>
     </article>
+    <!-- Modal tùy chỉnh -->
+    <div id="customConfirmModal" class="modal-product" style="display:none;">
+        <div class="modal-content-product">
+            <h3>Shop giày OnePoly thông báo</h3>
+            <p id="confirmText-product">Bạn có chắc chắn muốn xóa mục này không?</p>
+            <button id="confirmYes" class="modal-button-product">Đồng ý</button>
+            <button id="confirmNo" class="modal-button-product cancel">Hủy</button>
+        </div>
+    </div>
+
     <script th:src="@{/js/product/product.js}" type="text/javascript"></script>
     <script th:src="@{/ajax/product/productAjax.js}" type="text/javascript"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

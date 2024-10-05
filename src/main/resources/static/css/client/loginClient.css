@@ -1,108 +1,41 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
 
-.navigation .btnLogin-popup {
-    width: 130px;
-    height: 50px;
-    background: transparent;
-    border: 2px solid #162938;
-    outline: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 1.1em;
-    color: #162938;
-    font-weight: 500;
-    margin-left: 40px;
-    transition: .5s;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
 }
 
-.navigation .btnLogin-popup:hover {
-    background: #fff;
-    color: #162938;
+body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-size: cover;
+    background-position: center;
 }
+
 .wrapper {
-    position: fixed; /* Cố định vị trí */
-    top: 20%;
-    left: 39%;
-    transform: translate(-50%, -50%);
+    position: relative;
     width: 400px;
     height: 440px;
     background: transparent;
     border: 2px solid rgba(255, 255, 255, .5);
     border-radius: 20px;
-    backdrop-filter: blur(6px); /*Chỉnh độ mờ của Form login*/
+    backdrop-filter: blur(20px);
     box-shadow: 0 0 30px rgba(0, 0, 0, .5);
     display: flex;
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    transform: scale(0);
-    transition: transform .5s ease, height .2s ease;
-    z-index: 1000; /* Đặt giá trị z-index lớn Form ở trên cùng */
-}
-
-.wrapper.active-popup {
-    transform: scale(1);
-}
-
-.wrapper.active {
-    height: 520px; /*Thay đổi khung login theo chiều cao khi ấn vào đăng ký & đăng nhập*/
+    transition: height 0.2s ease;
 }
 
 .wrapper .form-box {
-    position: relative;
-    z-index: 1001; /* Để đảm bảo chúng ở trên cùng so với các phần tử khác */
+    width: 100%;
+    padding: 40px;
 }
-
-.wrapper .form-box.login {
-    width: 300px;
-    transition: transform .18s ease;
-    transform: translateX(0);
-}
-
-.wrapper.active .form-box.login {
-    transition: none;
-    transform: translateX(-400px);
-}
-
-.wrapper .form-box.register {
-    width: 300px;
-    position: absolute;
-    transition: none;
-    transform: translateX(400px);
-}
-
-.wrapper.active .form-box.register {
-    transition: transform .18s ease;
-    transform: translateX(0);
-}
-
-.wrapper .icon-close {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 45px;
-    height: 45px;
-    background: transparent; /* Khởi đầu với nền trong suốt */
-    border: 2px solid #fff; /* Thêm viền */
-    font-size: 2em;
-    color: #162938; /* Màu chữ khi không hover */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-bottom-left-radius: 20px;
-    cursor: pointer;
-    z-index: 1;
-    transition: background 0.3s, color 0.3s; /* Thêm hiệu ứng chuyển tiếp */
-}
-
-/* Khi hover */
-.wrapper .icon-close:hover {
-    border: 2px solid #162938; /* Thêm viền */
-    background: #162938; /* Màu nền khi hover */
-    color: #fff; /* Màu chữ khi hover */
-    transition: background 0.3s, color 0.3s;
-}
-
 
 .form-box h2 {
     font-size: 2em;
@@ -130,8 +63,8 @@
     transition: .5s;
 }
 
-.input-box input:focus~label,
-.input-box input:valid~label {
+.input-box input:focus ~ label,
+.input-box input:valid ~ label {
     top: -5px;
 }
 
@@ -189,27 +122,4 @@
     font-size: 1em;
     color: #fff;
     font-weight: 500;
-}
-
-.btn-login:hover {
-    background: #fdf7f7;
-    color: #162938;
-}
-.login-register {
-    font-size: .9em;
-    color: #162938;
-    text-align: center;
-    font-weight: 500;
-    margin: 25px 0 10px;
-}
-
-.login-register p a {
-    color: #162938;
-    text-decoration: underline;
-    font-weight: 600;
-}
-
-.login-register p a:hover {
-    text-decoration: underline;
-    color: aqua;
 }
