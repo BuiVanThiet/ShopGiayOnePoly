@@ -3,6 +3,7 @@ package com.example.shopgiayonepoly.restController;
 import com.example.shopgiayonepoly.baseMethod.BaseBill;
 import com.example.shopgiayonepoly.dto.request.bill.BillDetailAjax;
 import com.example.shopgiayonepoly.dto.request.bill.PayMethodRequest;
+import com.example.shopgiayonepoly.dto.request.bill.ProductDetailCheckMark2Request;
 import com.example.shopgiayonepoly.dto.request.bill.ProductDetailCheckRequest;
 import com.example.shopgiayonepoly.dto.response.bill.*;
 import com.example.shopgiayonepoly.entites.*;
@@ -72,9 +73,9 @@ public class BillRestController extends BaseBill {
             thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }
-        if(billDetail.getProductDetail().getQuantity() <  0) {
+        if(billDetail.getQuantity() - productDetail.getQuantity() ==  0 && billDetailAjax.getMethod().equals("cong")) {
             System.out.println("Số lượng mua không được quá số lượng trong hệ thống!");
-            thongBao.put("message","Số lượng sản phẩm đã hết trong hệ thống!");
+            thongBao.put("message","Hiện tại sản phẩm bạn mua đã hết!");
             thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }
@@ -93,8 +94,6 @@ public class BillRestController extends BaseBill {
         thongBao.put("check","1");
         Integer quantityUpdate = 1;
         Integer statusUpdate = billDetail.getQuantity() > billDetailAjax.getQuantity() ?  2 : 1;
-
-        getUpdateQuantityProduct(productDetail.getId(),quantityUpdate,statusUpdate);
 
         billDetail.setQuantity(billDetailAjax.getQuantity());
 
@@ -154,63 +153,79 @@ public class BillRestController extends BaseBill {
 //        System.out.println("id bill " + session.getAttribute("IdBill"));
 //    }
     @GetMapping("/productDetail-sell/{pageNumber}")
-    public List<ProductDetail> getProductDetailSell(@PathVariable("pageNumber") Integer pageNumber, HttpSession session) {
-        Pageable pageable = PageRequest.of(pageNumber-1,5);
-        if(this.productDetailCheckRequest == null) {
-            this.productDetailCheckRequest = new ProductDetailCheckRequest("",null,null,null,null,null,null);
+    public List<Object[]> getProductDetailSell(@PathVariable("pageNumber") Integer pageNumber, HttpSession session) {
+        Pageable pageable = PageRequest.of(pageNumber-1,4);
+        if(this.productDetailCheckMark2Request == null) {
+            this.productDetailCheckMark2Request = new ProductDetailCheckMark2Request("",null,null,null,null,null,null,null);
         }
-        List<ProductDetail> productDetails = this.billDetailService.getProductDetailSale(this.productDetailCheckRequest);
+        List<Object[]> productDetails = this.billDetailService.findProductDetailSaleTest(this.productDetailCheckMark2Request,(Integer) session.getAttribute("IdBill"));
         System.out.println("Số lượng 1 trang la " + productDetails.size());
         return convertListToPage(productDetails,pageable).getContent();
     }
+    @GetMapping("/image-product/{idProduct}")
+    public List<ImageProductResponse> getImageByProduct(@PathVariable("idProduct") Integer idProduct) {
+        return this.billDetailService.getImageByBill(idProduct);
+    }
+    @GetMapping("/category-product/{idProduct}")
+    public List<CategoryProductResponse> getCategoryByProduct(@PathVariable("idProduct") Integer idProduct) {
+        return this.billDetailService.getCategoryByBill(idProduct);
+    }
 
     @GetMapping("/page-max-product")
-    public Integer getMaxPageProduct() {
-        if(this.productDetailCheckRequest == null) {
-            this.productDetailCheckRequest = new ProductDetailCheckRequest("",null,null,null,null,null,null);
+    public Integer getMaxPageProduct(HttpSession session) {
+        if(this.productDetailCheckMark2Request == null) {
+            this.productDetailCheckMark2Request = new ProductDetailCheckMark2Request("",null,null,null,null,null,null,null);
         }
-        Integer maxPageProduct = (int) Math.ceil((double) this.billDetailService.getProductDetailSale(this.productDetailCheckRequest).size() / 5);
+        Integer maxPageProduct = (int) Math.ceil((double) this.billDetailService.findProductDetailSaleTest(this.productDetailCheckMark2Request,(Integer) session.getAttribute("IdBill")).size() / 4);
         System.out.println("so trang cua san pham " + maxPageProduct);
         return maxPageProduct;
     }
+//    @PostMapping("/filter-product-deatail")
+//    public ResponseEntity<?> getFilterProduct(@RequestBody ProductDetailCheckRequest productDetailCheckRequest2, HttpSession session) {
+//        if(productDetailCheckRequest2.getIdCategories().get(0) == 0) {
+//            productDetailCheckRequest2.setIdCategories(null);
+//        }
+//        this.productDetailCheckRequest = productDetailCheckRequest2;
+//
+//        System.out.println("Thong tin loc " + this.productDetailCheckRequest.toString());
+//        return ResponseEntity.ok("Done");
+//    }
     @PostMapping("/filter-product-deatail")
-    public ResponseEntity<?> getFilterProduct(@RequestBody ProductDetailCheckRequest productDetailCheckRequest2, HttpSession session) {
-        if(productDetailCheckRequest2.getIdCategories().get(0) == 0) {
-            productDetailCheckRequest2.setIdCategories(null);
-        }
-        this.productDetailCheckRequest = productDetailCheckRequest2;
-
-        System.out.println("Thong tin loc " + this.productDetailCheckRequest.toString());
+    public ResponseEntity<?> getFilterProduct(@RequestBody ProductDetailCheckMark2Request productDetailCheckRequest2, HttpSession session) {
+        this.productDetailCheckMark2Request = productDetailCheckRequest2;
+        System.out.println("Thong tin loc " + productDetailCheckRequest2.toString());
         return ResponseEntity.ok("Done");
     }
 
 
+    @GetMapping("/filter-color")
+    public List<Color> getFilterColor() {
+        return this.colorService.getColorNotStatus0();
+    }
 
-//    @GetMapping("/filter-color")
-//    public List<Color> getFilterColor() {
-//        return this.colorService.getColorDelete();
-//    }
-//
-//    @GetMapping("/filter-size")
-//    public List<Size> getFilterSize() {
-//        return this.sizeService.getClientNotStatus0();
-//    }
-//
-//    @GetMapping("/filter-material")
-//    public List<Material> getFilterMaterial() {
-//        return this.materialService.getClientNotStatus0();
-//    }
-//
-//    @GetMapping("/filter-manufacturer")
-//    public List<Manufacturer> getFilterManufacturer() {
-//        return this.manufacturerService.getClientNotStatus0();
-//    }
-//
-//    @GetMapping("/filter-origin")
-//    public List<Origin> getFilterOrigin() {
-//        return this.originService.getClientNotStatus0();
-//    }
+    @GetMapping("/filter-size")
+    public List<Size> getFilterSize() {
+        return this.sizeService.getSizeNotStatus0();
+    }
 
+    @GetMapping("/filter-material")
+    public List<Material> getFilterMaterial() {
+        return this.materialService.getMaterialNotStatus0();
+    }
+
+    @GetMapping("/filter-manufacturer")
+    public List<Manufacturer> getFilterManufacturer() {
+        return this.manufacturerService.getManufacturerNotStatus0();
+    }
+
+    @GetMapping("/filter-origin")
+    public List<Origin> getFilterOrigin() {
+        return this.originService.getOriginNotStatus0();
+    }
+    @GetMapping("/filter-sole")
+    public List<Sole> getFilterSole() {
+        return this.soleService.getSoleNotStatus0();
+    }
 
     //goi khach hang
     @GetMapping("/client")
@@ -584,6 +599,58 @@ public class BillRestController extends BaseBill {
         return ResponseEntity.ok()
                 .headers(headers)
                 .body(pdfBytes);
+    }
+    @GetMapping("/list-product-sell-test")
+    public List<ProductDetailSellResponse> productDetailSellResponses(HttpSession session) {
+        this.productDetailCheckRequest = new ProductDetailCheckRequest("",null,null,null,null,null,null);
+        if(this.productDetailCheckMark2Request == null) {
+            this.productDetailCheckMark2Request = new ProductDetailCheckMark2Request("",null,null,null,null,null,null,null);
+        }
+        Integer i = 1;
+        System.out.println("cai nay cua ban test: ");
+//        ProductDetailCheckMark2Request request = new ProductDetailCheckMark2Request();
+//        // Đặt danh sách id màu sắc
+//        request.setIdColors(new Integer[]{1, 2});
+//
+//        // Đặt danh sách id kích thước
+//        request.setIdSizes(null);
+//
+//        // Đặt danh sách id chất liệu
+//        request.setIdMaterials(null);
+//
+//        // Đặt danh sách id nhà sản xuất
+//        request.setIdManufacturers(null);
+//
+//        // Đặt danh sách id nơi xuất xứ
+//        request.setIdOrigins(null);
+//
+//        // Đặt danh sách id đế giày
+//        request.setIdSoles(null);
+//
+//        // Đặt danh sách id danh mục
+//        request.setIdCategories(null);
+
+        // In ra thông tin của request để kiểm tra
+        for (Object[] objects: this.billDetailService.findProductDetailSaleTest(this.productDetailCheckMark2Request,(Integer) session.getAttribute("IdBill"))) {
+            System.out.println("Sản phẩm thứ " + i);
+            System.out.println("Sản phẩm có id là: " + objects[0]);  // pd.id
+            System.out.println("Tên sản phẩm: " + objects[1]);  // p.name_product
+            System.out.println("Tên màu: " + objects[2]);  // c.name_color
+            System.out.println("Tên size: " + objects[3]);  // s.name_size
+            System.out.println("Nhà sản xuất: " + objects[4]);  // m.name_manufacturer
+            System.out.println("Chất liệu: " + objects[5]);  // mat.name_material
+            System.out.println("Xuất xứ: " + objects[6]);  // o.name_origin
+            System.out.println("Loại đế: " + objects[7]);  // so.name_sole
+            System.out.println("-----------------------------------------");
+            i++;
+        }
+//        System.out.println("cai nay cua ban chinh thuc: ");
+////        Integer n = 1;
+////        for (ProductDetail productDetail: this.billDetailService.getProductDetailSale(productDetailCheckRequest)) {
+////            System.out.println("san pham "+n+" co id la: "+productDetail.getId());
+////            n++;
+////        }
+        return null;
     }
 
 

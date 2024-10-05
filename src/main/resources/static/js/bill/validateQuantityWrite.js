@@ -50,11 +50,13 @@ function isInteger(value) {
     var numberValue = parseInt(value, 10);
     return !isNaN(numberValue) && numberValue.toString() === value.toString();
 }
-
-document.getElementById('comeBackProduct').addEventListener('click', function () {
+function backToDefaultBuyProduct() {
     document.getElementById('quantity').value = '';
     document.getElementById('errorCard').style.display = 'block';
     document.getElementById('erorrQuantity').textContent = 'Mời nhập số lượng mua!';
     document.getElementById('btnBuy').disabled = true;
-})
+}
+// document.getElementById('comeBackProduct').addEventListener('click', function () {
+//     backToDefaultBuyProduct();
+// })
 

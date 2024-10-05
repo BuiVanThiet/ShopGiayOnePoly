@@ -1,25 +1,25 @@
-.carousel {
-    width: 100px; /* Kích thước cố định cho carousel */
-    height: 100px; /* Chiều cao cố định cho carousel */
-    overflow: hidden; /* Đảm bảo không có phần thừa ra ngoài */
-    display: flex; /* Sử dụng flexbox để căn giữa */
-    align-items: center; /* Căn giữa theo chiều dọc */
-    justify-content: center; /* Căn giữa theo chiều ngang */
-    margin: auto; /* Căn giữa carousel trong td */
+/*.carousel-container-bill-custom .carousel-bill-custom {*/
+/*    width: 250px; !* Kích thước cố định cho carousel *!*/
+/*    height: auto; !* Chiều cao cố định cho carousel *!*/
+/*    overflow: hidden; !* Đảm bảo không có phần thừa ra ngoài *!*/
+/*    display: flex; !* Sử dụng flexbox để căn giữa *!*/
+/*    align-items: center; !* Căn giữa theo chiều dọc *!*/
+/*    justify-content: center; !* Căn giữa theo chiều ngang *!*/
+/*    margin: auto; !* Căn giữa carousel trong td *!*/
 
-}
+/*}*/
 
-.carousel-inner {
-    height: 100%; /* Đảm bảo nội dung chiếm toàn bộ chiều cao của carousel */
-    display: flex; /* Sử dụng flexbox để căn giữa ảnh */
-    align-items: center; /* Căn giữa theo chiều dọc */
-}
+/*.carousel-container-bill-custom .carousel-inner-bill-custom {*/
+/*    height: 100%; !* Đảm bảo nội dung chiếm toàn bộ chiều cao của carousel *!*/
+/*    display: flex; !* Sử dụng flexbox để căn giữa ảnh *!*/
+/*    align-items: center; !* Căn giữa theo chiều dọc *!*/
+/*}*/
 
-.carousel-item img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain; /* Đảm bảo ảnh không bị kéo dài */
-}
+/*.carousel-container-bill-custom .carousel-inner-bill-custom img {*/
+/*    max-width: 100%;*/
+/*    max-height: 100%;*/
+/*    object-fit: contain; !* Đảm bảo ảnh không bị kéo dài *!*/
+/*}*/
 
 /*danh cho tang giam so luogn*/
 .pagination {
@@ -57,4 +57,88 @@
     font-size: 24px;
     min-width: 30px;
     text-align: center;
+}
+
+/*.scrollable-content-bill-custom {*/
+/*    max-height: 130px; !* Chiều cao tối đa *!*/
+/*    overflow-y: auto; !* Thanh cuộn chỉ xuất hiện khi nội dung vượt quá chiều cao *!*/
+/*    padding-right: 10px; !* Tạo khoảng cách bên phải để tránh đè lên nội dung *!*/
+/*}*/
+
+/*!*td {*!*/
+/*!*    vertical-align: top; !* Đặt nội dung bắt đầu từ đầu ô *!*!*/
+/*!*}*!*/
+
+/*!* Ẩn thanh cuộn khi không có *!*/
+/*.scrollable-content-bill-custom::-webkit-scrollbar {*/
+/*    display: none; !* Ẩn thanh cuộn trên các trình duyệt Webkit *!*/
+/*}*/
+
+/*.scrollable-content-bill-custom {*/
+/*    -ms-overflow-style: none;  !* Ẩn thanh cuộn trên IE và Edge *!*/
+/*    scrollbar-width: none;  !* Ẩn thanh cuộn trên Firefox *!*/
+/*}*/
+
+/*.sale-badge {*/
+/*    position: absolute;*/
+/*    top: 5px;*/
+/*    left: 5px;*/
+/*    background-color: #d70018; !* Màu nền cho badge *!*/
+/*    color: white;*/
+/*    padding: 3px 8px;*/
+/*    font-size: 12px;*/
+/*    border-radius: 3px;*/
+/*    font-weight: bold;*/
+/*    z-index: 10; !* Đảm bảo nhãn luôn ở trên cùng *!*/
+/*}*/
+
+/*.carousel-container-bill-custom {*/
+/*    position: relative;*/
+/*    width: 250px; !* Đặt kích thước cho carousel *!*/
+/*    height: auto;*/
+/*    border: 1px solid #ddd;*/
+/*    border-radius: 5px;*/
+/*    overflow: hidden;*/
+/*}*/
+
+.bill-label-sale {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #e60012; /* Red color like the label */
+    color: white;
+    padding: 5px 10px;
+    font-weight: bold;
+    font-size: 14px;
+    z-index: 1;
+    border-bottom-right-radius: 8px; /* Rounded bottom-right corner */
+}
+/* Ensure the card has relative positioning */
+.card .card-bill-custom {
+    position: relative;
+    overflow: hidden;
+}
+/* Custom scrollbar styling */
+.card-body::-webkit-scrollbar {
+    width: 10px; /* Độ rộng của thanh cuộn */
+}
+
+.card-body::-webkit-scrollbar-track {
+    background: #f1f1f1; /* Màu nền của track thanh cuộn */
+}
+
+.card-body::-webkit-scrollbar-thumb {
+    background-color: rgba(244, 0, 0, 0.75); /* Màu thanh cuộn */
+    border-radius: 10px; /* Bo góc cho thanh cuộn */
+    border: 3px solid #f1f1f1; /* Đường viền của thanh cuộn */
+}
+
+.card-body::-webkit-scrollbar-thumb:hover {
+    background: #fffab5; /* Màu thanh cuộn khi hover */
+}
+
+.carousel-inner-bill-custom img {
+    width: 100%; /* Đảm bảo hình ảnh chiếm toàn bộ chiều ngang */
+    height: 100%; /* Chiều cao cố định cho hình ảnh */
+    object-fit: cover; /* Đảm bảo hình ảnh bao phủ toàn bộ mà không bị biến dạng */
 }

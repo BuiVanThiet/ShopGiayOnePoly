@@ -234,14 +234,15 @@ public class BillController extends BaseBill {
                 }
             }
             System.out.println("Thong tin bill(TM)" + bill.toString());
-            if(bill.getBillType() == 1) {
-                this.setBillStatus(bill.getId(),101,session);
-            }
-            this.setBillStatus(bill.getId(),bill.getStatus(),session);
-            this.billService.save(bill);
-            if(bill.getVoucher() != null) {
-                this.getSubtractVoucher(bill.getVoucher());
-            }
+//            if(bill.getBillType() == 1) {
+//                this.setBillStatus(bill.getId(),101,session);
+//            }
+//            this.setBillStatus(bill.getId(),bill.getStatus(),session);
+//            this.billService.save(bill);
+//            if(bill.getVoucher() != null) {
+//                this.getSubtractVoucher(bill.getVoucher());
+//            }
+            this.getUpdateQuantityProduct(session);
             return "Bill/successBill";
         }else if (bill.getPaymentMethod() == 2) {
             if(bill.getNote().length() < 0 || bill.getNote() == null || bill.getNote().trim().equals("")) {
@@ -308,13 +309,14 @@ public class BillController extends BaseBill {
                 this.billPay.setSurplusMoney(BigDecimal.valueOf(0.00));
                 this.billPay.setUpdateDate(new Date());
                 this.billPay.setStatus(5);
-                this.billService.save(this.billPay);
-                this.setBillStatus(this.billPay.getId(),101,session);
-                this.setBillStatus(this.billPay.getId(),this.billPay.getStatus(),session);
-
-                if(this.billPay.getVoucher() != null) {
-                    this.getSubtractVoucher(this.billPay.getVoucher());
-                }
+//                this.billService.save(this.billPay);
+//                this.setBillStatus(this.billPay.getId(),101,session);
+//                this.setBillStatus(this.billPay.getId(),this.billPay.getStatus(),session);
+//
+//                if(this.billPay.getVoucher() != null) {
+//                    this.getSubtractVoucher(this.billPay.getVoucher());
+//                }
+                this.getUpdateQuantityProduct(session);
                 return "Bill/successBill" ;
             }else {
                 System.out.println("Bil bo thanh toan " + this.billPay.toString());
@@ -328,14 +330,16 @@ public class BillController extends BaseBill {
                 this.billPay.setSurplusMoney(BigDecimal.valueOf(0.00));
                 this.billPay.setUpdateDate(new Date());
                 this.billPay.setPaymentMethod(2);
-                this.billService.save(this.billPay);
-
-                this.setBillStatus(this.billPay.getId(),101,session);
-                if(this.billPay.getVoucher() != null) {
-                    this.getSubtractVoucher(this.billPay.getVoucher());
-                }
+//                this.billService.save(this.billPay);
+//
+//                this.setBillStatus(this.billPay.getId(),101,session);
+//                if(this.billPay.getVoucher() != null) {
+//                    this.getSubtractVoucher(this.billPay.getVoucher());
+//                }
                 session.removeAttribute("billPaymentRest");
                 session.removeAttribute("pageReturn");
+
+                this.getUpdateQuantityProduct(session);
 
                 mess = "Thanh toán thành công!";
                 colorMess = "1";
@@ -385,8 +389,6 @@ public class BillController extends BaseBill {
         }else {
             bill.setTotalAmount(BigDecimal.valueOf(0));
         }
-
-        getUpdateQuantityProduct(billDetail.getProductDetail().getId(),billDetail.getQuantity(),2);
 
         this.billService.save(bill);
         return ResponseEntity.ok(thongBao);
@@ -452,7 +454,7 @@ public class BillController extends BaseBill {
             HttpSession session) {
         Map<String,String> thongBao = new HashMap<>();
 
-        thongBao.put("message","Xóa mã giảm giá thành công!");
+        thongBao.put("message","Thêm sản phẩm vào hóa đơn thành công!");
         thongBao.put("check","1");
 
         System.out.println("Số lượng mua: " + quantity + ", ID sản phẩm chi tiết: " + idPDT);
@@ -462,8 +464,6 @@ public class BillController extends BaseBill {
         Bill billById = this.billService.findById((Integer) session.getAttribute("IdBill")).orElse(new Bill());
 
         BillDetail billDetailSave = getBuyProduct(billById,productDetail,Integer.parseInt(quantity));
-
-        getUpdateQuantityProduct(billDetailSave.getProductDetail().getId(),Integer.parseInt(quantity),1);
 
         this.billDetailService.save(billDetailSave);
         this.setTotalAmount(billDetailSave.getBill());

@@ -1,5 +1,6 @@
 package com.example.shopgiayonepoly.baseMethod;
 
+import com.example.shopgiayonepoly.dto.request.bill.ProductDetailCheckMark2Request;
 import com.example.shopgiayonepoly.dto.request.bill.ProductDetailCheckRequest;
 import com.example.shopgiayonepoly.dto.request.VoucherRequest;
 import com.example.shopgiayonepoly.entites.*;
@@ -31,6 +32,8 @@ public abstract class BaseBill {
     @Autowired
     protected ColorService colorService;
     @Autowired
+    protected SoleService soleService;
+    @Autowired
     protected SizeService sizeService;
     @Autowired
     protected MaterialService materialService;
@@ -53,6 +56,7 @@ public abstract class BaseBill {
     protected Integer statusBillCheck = null;
     protected String keyBillmanage = "";
     protected ProductDetailCheckRequest productDetailCheckRequest;
+    protected ProductDetailCheckMark2Request productDetailCheckMark2Request;
 
 
     //method chung
@@ -71,19 +75,25 @@ public abstract class BaseBill {
     }
 
     //    sua lai so luong san pham khi duoc dua vao hoa don
-    protected void getUpdateQuantityProduct(Integer idProductDetail,Integer quantity,Integer status) {
-//        ProductDetail productDetail = this.billDetailService.getProductDetailById(idProductDetail);
+    protected void getUpdateQuantityProduct(HttpSession session) {
+        Bill bill = this.billService.findById((Integer) session.getAttribute("IdBill")).orElse(null);
+        List<BillDetail> billDetailList = this.billDetailService.getBillDetailByIdBill(bill.getId());
+        List<ProductDetail> productDetailList = this.billDetailService.getAllProductDetail();
+        for (BillDetail detail: billDetailList) {
+            for (ProductDetail productDetail: productDetailList) {
+                if (detail.getProductDetail().getId() == productDetail.getId()) {
+                    System.out.println("san pham mua co id la " + productDetail.getId());
+                    System.out.println("ten sn pham la " + productDetail.getProduct().getNameProduct());
+                    System.out.println("So luong trong kho " + productDetail.getQuantity());
+                    System.out.println("So luong mua " + detail.getQuantity());
+                    System.out.println("So luong con lai trong kho " + (productDetail.getQuantity()-detail.getQuantity()));
 
-        if (status == 1) {
-//            productDetail.setQuantity(productDetail.getQuantity() - quantity);
-            System.out.println("da tru");
-        } else {
-//            productDetail.setQuantity(productDetail.getQuantity() + quantity);
-            System.out.println("da cong");
+                }
+            }
         }
-
-//        productDetail.setUpdateDate(new Date());
     }
+    //update
+
 //danh cho giao hang, cai nay dung de theo doi don hang
 protected void setBillStatus(Integer idBillSet,Integer status,HttpSession session) {
     Bill bill = this.billService.findById(idBillSet).orElse(null);
@@ -125,10 +135,10 @@ protected void setBillStatus(Integer idBillSet,Integer status,HttpSession sessio
     }
 
     //    Phân trang cho product
-    protected Page<ProductDetail> convertListToPage(List<ProductDetail> list, Pageable pageable) {
+    protected Page<Object[]> convertListToPage(List<Object[]> list, Pageable pageable) {
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), list.size());
-        List<ProductDetail> sublist = list.subList(start, end);
+        List<Object[]> sublist = list.subList(start, end);
         return new PageImpl<>(sublist, pageable, list.size());
     }
 

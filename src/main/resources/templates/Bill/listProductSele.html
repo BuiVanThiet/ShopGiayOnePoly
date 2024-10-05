@@ -23,72 +23,72 @@
                 <div class="card mb-3">
                     <div class="card-body">
                         <form id="formFilterProduct" class="row">
-                            <div class="col-12">
+                            <div class="col-6">
                                 <div class="mb-3">
                                     <label class="form-label">Tên sản phẩm tìm:</label>
                                     <input type="text" id="nameSearch" class="form-control">
                                 </div>
                             </div>
+                            <div class="col-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Loại đế:</label>
+                                    <select  name="soles" id="soles" class="multi-select-dropdown">
+
+                                    </select>
+                                </div>
+                            </div>
+                            <input type="hidden" id="soleSearch" value="">
 
                             <div class="col-4">
                                 <div class="mb-3">
                                     <label class="form-label">Màu sắc:</label>
-                                    <select id="colorSearch" class="form-select">
-                                        <option selected>--Tất cả--</option>
-                                        <option value="1">One</option>
-                                        <option value="2">Two</option>
-                                        <option value="3">Three</option>
+                                    <select  name="colors" id="colors" class="multi-select-dropdown">
+
                                     </select>
                                 </div>
                             </div>
+                            <input type="hidden" id="colorSearch" value="">
 
                             <div class="col-4">
                                 <div class="mb-3">
                                     <label class="form-label">Kích cỡ:</label>
-                                    <select id="sizeSearch" class="form-select">
-                                        <option selected>--Tất cả--</option>
-                                        <option value="1">One</option>
-                                        <option value="2">Two</option>
-                                        <option value="3">Three</option>
+                                    <select  name="sizes" id="sizes" class="multi-select-dropdown">
+
                                     </select>
                                 </div>
                             </div>
+                            <input type="hidden" id="sizeSearch" value="">
 
                             <div class="col-4">
                                 <div class="mb-3">
                                     <label class="form-label">Chất liệu:</label>
-                                    <select id="materialSearch" class="form-select">
-                                        <option selected>--Tất cả--</option>
-                                        <option value="1">One</option>
-                                        <option value="2">Two</option>
-                                        <option value="3">Three</option>
+                                    <select  name="materials" id="materials" class="multi-select-dropdown">
+
                                     </select>
                                 </div>
                             </div>
+                            <input type="hidden" id="materialSearch" value="">
+
 
                             <div class="col-4">
                                 <div class="mb-3">
-                                    <label class="form-label">Nhà sản xuất:</label>
-                                    <select id="manufacturerSearch" class="form-select">
-                                        <option selected>--Tất cả--</option>
-                                        <option value="1">One</option>
-                                        <option value="2">Two</option>
-                                        <option value="3">Three</option>
+                                    <label class="form-label">Hãng:</label>
+                                    <select  name="manufacturers" id="manufacturers" class="multi-select-dropdown">
+
                                     </select>
                                 </div>
                             </div>
+                            <input type="hidden" id="manufacturerSearch" value="">
 
                             <div class="col-4">
                                 <div class="mb-3">
                                     <label class="form-label">Nơi sản xuất:</label>
-                                    <select id="originSearch" class="form-select">
-                                        <option selected>--Tất cả--</option>
-                                        <option value="1">One</option>
-                                        <option value="2">Two</option>
-                                        <option value="3">Three</option>
+                                    <select  name="origins" id="origins" class="multi-select-dropdown">
+
                                     </select>
                                 </div>
                             </div>
+                            <input type="hidden" id="originSearch" value="">
 
                             <div class="col-4">
                                 <div class="mb-3">
@@ -104,12 +104,10 @@
                                 <button type="submit" id="filterSubmit" class="btn btn-outline-warning mb-3 me-2">
                                     <i class="bi bi-search"></i> Gửi
                                 </button>
-                                <button class="btn btn-outline-primary mb-3" onclick="resetFilterProductSale()" id="resetFilter">
+                                <button type="button"  class="btn btn-outline-primary mb-3" onclick="resetFilterProductSale()" id="resetFilter">
                                     <i class="bi bi-arrow-counterclockwise"></i> Làm mới
                                 </button>
                             </div>
-
-
                         </form>
                     </div>
                 </div>
@@ -117,21 +115,24 @@
                     <!-- Ảnh sẽ được hiển thị ở đây nếu không có dữ liệu -->
                 </div>
 
-                <table class="table table-bordered mt-2" style="display:none;">
-                    <thead>
-                    <tr>
-                        <th scope="col">STT</th>
-                        <th scope="col">Ảnh</th>
-                        <th scope="col">Sản phẩm</th>
-                        <th scope="col">Số lượng</th>
-                        <th scope="col">Giá</th>
-                        <th scope="col">Hành động</th>
-                    </tr>
-                    </thead>
-                    <tbody id="tableProductDetailSell">
-                    <!-- Dữ liệu sẽ được tải ở đây -->
-                    </tbody>
-                </table>
+<!--                <table class="table table-bordered mt-2" style="display:none;">-->
+<!--                    <thead>-->
+<!--                    <tr class="text-center">-->
+<!--                        <th scope="col" style="width: 1%">STT</th>-->
+<!--                        <th scope="col" style="width: 15%;">Ảnh</th>-->
+<!--                        <th scope="col" style="width: 30%">Sản phẩm</th>-->
+<!--                        <th scope="col" style="width: 5%">Số lượng</th>-->
+<!--                        <th scope="col" style="width: 5%">Giá</th>-->
+<!--                        <th scope="col" style="width: 4%">Hành động</th>-->
+<!--                    </tr>-->
+<!--                    </thead>-->
+<!--                    <tbody id="tableProductDetailSell">-->
+<!--                    &lt;!&ndash; Dữ liệu sẽ được tải ở đây &ndash;&gt;-->
+<!--                    </tbody>-->
+<!--                </table>-->
+                    <div id="tableProductDetailSell" class="row">
+
+                    </div>
 
                 <div class="pagination-section">
                     <!-- Phân trang 2 -->
@@ -158,7 +159,6 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h1 class="modal-title fs-5" id="exampleQuantityLable">Số lượng</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="resetHidenProductSale()"></button>
                 </div>
                 <div class="modal-body">
 <!--                    <form id="formBuy" method="post" action="/bill/buy-product-detail">-->
@@ -201,7 +201,7 @@
                             data-bs-target="#product-modal"
                             data-bs-toggle="modal"
                             id="comeBackProduct"
-                            onclick="resetHidenProductSale()"><i class="bi bi-arrow-counterclockwise"></i> Quay lại</button>
+                            ><i class="bi bi-arrow-counterclockwise"></i> Quay lại</button>
                 </div>
             </div>
         </div>

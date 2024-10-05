@@ -1,6 +1,9 @@
 package com.example.shopgiayonepoly.implement;
 
+import com.example.shopgiayonepoly.dto.request.bill.ProductDetailCheckMark2Request;
 import com.example.shopgiayonepoly.dto.request.bill.ProductDetailCheckRequest;
+import com.example.shopgiayonepoly.dto.response.bill.CategoryProductResponse;
+import com.example.shopgiayonepoly.dto.response.bill.ImageProductResponse;
 import com.example.shopgiayonepoly.entites.BillDetail;
 import com.example.shopgiayonepoly.entites.Category;
 import com.example.shopgiayonepoly.entites.ProductDetail;
@@ -107,4 +110,27 @@ public class BillDetailImplement implements com.example.shopgiayonepoly.service.
     public List<Category> getAllCategores() {
         return this.billDetailRepository.getAllCategores();
     }
+    @Override
+    public List<Object[]> findProductDetailSaleTest(ProductDetailCheckMark2Request productDetailCheckRequest,Integer idBill) {
+        return this.billDetailRepository.findProductDetailSaleTest(
+                productDetailCheckRequest.getNameProduct(),            // Tên sản phẩm
+                productDetailCheckRequest.getIdCategories(),           // Danh sách danh mục
+                productDetailCheckRequest.getIdColors(),               // Danh sách màu sắc
+                productDetailCheckRequest.getIdSizes(),                // Danh sách kích thước
+                productDetailCheckRequest.getIdManufacturers(),        // Danh sách nhà sản xuất
+                productDetailCheckRequest.getIdMaterials(),            // Danh sách chất liệu
+                productDetailCheckRequest.getIdOrigins(),              // Danh sách nơi xuất xứ
+                productDetailCheckRequest.getIdSoles(),                 // Danh sách đế giày
+                idBill
+        );
+    }
+    @Override
+    public List<ImageProductResponse> getImageByBill(Integer id) {
+        return this.billDetailRepository.getImageByBill(id);
+    }
+    @Override
+    public List<CategoryProductResponse> getCategoryByBill(Integer id) {
+        return this.billDetailRepository.getCategoryByBill(id);
+    }
+
 }
