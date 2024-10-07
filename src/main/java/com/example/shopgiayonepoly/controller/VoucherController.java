@@ -266,8 +266,9 @@ public class VoucherController {
         return "redirect:/voucher/list";
     }
 
-    @Scheduled(cron = "0 0 0 * * ?")
+    @Scheduled(cron = "0 0 0 * * ?", zone = "Asia/Ho_Chi_Minh")
     public void updateExpiredVouchersStatus() {
+        System.out.println("Running scheduled task to update voucher status");
         voucherService.updateVoucherStatusForExpired();
     }
 

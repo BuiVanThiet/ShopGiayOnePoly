@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface SaleProductService {
@@ -22,6 +23,6 @@ public interface SaleProductService {
     public List<ProductDetail> getAllProductDetailByPage();
     public void createNewSale(SaleProductRequest saleProductRequest);
     public SaleProduct getSaleProductByID(Integer id);
-
-
+    public void applyDiscountToProductDetails(List<Integer> productIds, BigDecimal discountValue,Integer discountType);
 }
+

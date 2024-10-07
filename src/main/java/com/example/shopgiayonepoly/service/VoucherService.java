@@ -37,6 +37,4 @@ public interface VoucherService {
 
     public void updateVoucherStatusForExpired();
 
-
-
 }
