@@ -34,4 +34,7 @@ public interface StaffService {
     List<Staff> findAll(Sort sort);
 
     Page<Staff> findAll(Pageable pageable);
+
+    public void deleteStaff(Integer id);
+
 }
