@@ -36,8 +36,9 @@ public class SecurityConfig {
         return httpSecurity
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/staff/bill/**").hasAnyRole("Quản trị viên", "Nhân viên bán hàng")
+                        .requestMatchers("/staff/return-bill/**").hasAnyRole("Quản trị viên", "Nhân viên bán hàng")
                         .requestMatchers("/login-api/**", "/ajax/**", "/css/**", "/img/**", "/js/**", "/loading/**", "/toast/**").permitAll()
-                        .requestMatchers("/bill-api/**", "/register-api/**", "/register", "/login", "/logout").permitAll()
+                        .requestMatchers("/bill-api/**", "/register-api/**", "/register", "/login", "/logout","/return-bill/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .csrf(csrf -> csrf.disable())

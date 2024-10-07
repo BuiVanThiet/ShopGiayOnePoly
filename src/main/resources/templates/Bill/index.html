@@ -303,26 +303,27 @@
                     </div>
                     <ul class="nav nav-underline">
                         <li class="nav-item">
-                            <button class="nav-link text-dark nav-link-custom active" onclick="setActive(this,999)">Tất cả</button>
+                            <button class="nav-link text-dark nav-link-custom active" onclick="setActive(this,'')">Tất cả</button>
                         </li>
                         <li class="nav-item">
-                            <button class="nav-link text-dark nav-link-custom" onclick="setActive(this,1)">Chờ xác nhận</button>
+                            <button class="nav-link text-dark nav-link-custom" onclick="setActive(this,'1,7')">Chờ xác nhận</button>
                         </li>
                         <li class="nav-item">
-                            <button class="nav-link text-dark nav-link-custom" onclick="setActive(this,2)">Xác nhận</button>
+                            <button class="nav-link text-dark nav-link-custom" onclick="setActive(this,'2')">Xác nhận</button>
                         </li>
                         <li class="nav-item">
-                            <button class="nav-link text-dark nav-link-custom" onclick="setActive(this,3)">Đang giao</button>
+                            <button class="nav-link text-dark nav-link-custom" onclick="setActive(this,'3')">Đang giao</button>
                         </li>
                         <li class="nav-item">
-                            <button class="nav-link text-dark nav-link-custom" onclick="setActive(this,4)">Đã nhận được hàng</button>
+                            <button class="nav-link text-dark nav-link-custom" onclick="setActive(this,'4')">Đã nhận được hàng</button>
                         </li>
                         <li class="nav-item">
-                            <button class="nav-link text-dark nav-link-custom" onclick="setActive(this,5)">Hoàn thành</button>
+                            <button class="nav-link text-dark nav-link-custom" onclick="setActive(this,'5')">Hoàn thành</button>
                         </li>
                         <li class="nav-item">
-                            <button class="nav-link text-dark nav-link-custom" onclick="setActive(this,6)">Đã hủy</button>
+                            <button class="nav-link text-dark nav-link-custom" onclick="setActive(this,'6,9')">Đã hủy</button>
                         </li>
+
 <!--                        <li class="nav-item">-->
 <!--                            <a class="nav-link text-dark" href="#" onclick="setActive(this)">Trả hàng</a>-->
 <!--                        </li>-->
@@ -330,12 +331,12 @@
 <!--                            <a class="nav-link text-dark" href="#" onclick="setActive(this)">Đổi hàng</a>-->
 <!--                        </li>-->
                     </ul>
-
+                    <input type="hidden" id="statusSearch" value="">
                     <div id="nodataBillManage" style="display:none; text-align:center;">
 
                     </div>
 
-                    <table class="table table-bordered mt-2 mb-2">
+                    <table class="table mt-2 mb-2">
                         <thead>
                         <tr>
                             <th scope="col">STT</th>
@@ -392,52 +393,52 @@
 <!--            them so luong de mua-->
 
 
-            <div class="modal fade" id="exampleQuantity" aria-hidden="true" aria-labelledby="exampleQuantityLable" tabindex="-1">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="exampleQuantityLable">Số lượng</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form id="formBuy" method="post" action="/staff/bill/buy-product-detail">
+<!--            <div class="modal fade" id="exampleQuantity" aria-hidden="true" aria-labelledby="exampleQuantityLable" tabindex="-1">-->
+<!--                <div class="modal-dialog modal-dialog-centered">-->
+<!--                    <div class="modal-content">-->
+<!--                        <div class="modal-header">-->
+<!--                            <h1 class="modal-title fs-5" id="exampleQuantityLable">Số lượng</h1>-->
+<!--                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
+<!--                        </div>-->
+<!--                        <div class="modal-body">-->
+<!--                            <form id="formBuy" method="post" action="/staff/bill/buy-product-detail">-->
 
-                                <input type="hidden" id="quantityProduct" name="quantityProduct">
-                                <input type="hidden" id="idProductDetail" name="idProductDetail">
-                                <input type="hidden" id="nameProduct">
+<!--                                <input type="hidden" id="quantityProduct" name="quantityProduct">-->
+<!--                                <input type="hidden" id="idProductDetail" name="idProductDetail">-->
+<!--                                <input type="hidden" id="nameProduct">-->
 
-                                <div class="mb-3 row g-3 align-items-center">
+<!--                                <div class="mb-3 row g-3 align-items-center">-->
 
-                                    <div class="col-auto">
-                                        <label class="form-label">Số lượng mua:</label>
-                                    </div>
+<!--                                    <div class="col-auto">-->
+<!--                                        <label class="form-label">Số lượng mua:</label>-->
+<!--                                    </div>-->
 
-                                    <div class="col-auto">
-                                        <input type="text" class="form-control" id="quantity" name="quantityDetail">
-                                    </div>
+<!--                                    <div class="col-auto">-->
+<!--                                        <input type="text" class="form-control" id="quantity" name="quantityDetail">-->
+<!--                                    </div>-->
 
-                                    <div class="col-auto">
-                                        <button disabled type="submit" class="btn btn-outline-primary col-auto" id="btnBuy"><i class="bi bi-plus"></i> Xác nhận</button>
-                                    </div>
+<!--                                    <div class="col-auto">-->
+<!--                                        <button disabled type="submit" class="btn btn-outline-primary col-auto" id="btnBuy"><i class="bi bi-plus"></i> Xác nhận</button>-->
+<!--                                    </div>-->
 
-                                    <div class="col-12" id="errorCard">
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <span class="text-danger" id="erorrQuantity">Mời nhập số lượng!</span>
-                                            </div>
-                                        </div>
-                                    </div>
+<!--                                    <div class="col-12" id="errorCard">-->
+<!--                                        <div class="card">-->
+<!--                                            <div class="card-body">-->
+<!--                                                <span class="text-danger" id="erorrQuantity">Mời nhập số lượng!</span>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
 
-                                </div>
-                            </form>
-                        </div>
+<!--                                </div>-->
+<!--                            </form>-->
+<!--                        </div>-->
 
-                        <div class="modal-footer">
-                            <button class="btn btn-outline-secondary" data-bs-target="#product-modal" data-bs-toggle="modal" id="comeBackProduct"><i class="bi bi-arrow-counterclockwise"></i> Quay lại</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<!--                        <div class="modal-footer">-->
+<!--                            <button class="btn btn-outline-secondary" data-bs-target="#product-modal" data-bs-toggle="modal" id="comeBackProduct"><i class="bi bi-arrow-counterclockwise"></i> Quay lại</button>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
 
             <!-- modal phần nút quét sản phẩm  -->
 <!--            <div class="modal fade" id="camera-Modal" tabindex="-1" aria-labelledby="cameraModalLabel"-->

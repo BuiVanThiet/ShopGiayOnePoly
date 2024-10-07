@@ -1,5 +1,6 @@
 package com.example.shopgiayonepoly.implement;
 
+import com.example.shopgiayonepoly.dto.request.bill.SearchBillByStatusRequest;
 import com.example.shopgiayonepoly.dto.response.bill.BillResponseManage;
 import com.example.shopgiayonepoly.dto.response.bill.BillTotalInfornationResponse;
 import com.example.shopgiayonepoly.dto.response.bill.ClientBillInformationResponse;
@@ -85,14 +86,23 @@ public class BillImplement implements BillService {
         return billRepository.getVoucherByBill(idBill,keyword);
     }
 
+//    @Override
+//    public Page<BillResponseManage> getAllBillByStatusDiss0(String nameCheck, Integer status, Pageable pageable) {
+//        return this.billRepository.getAllBillByStatusDiss0(nameCheck,status,pageable);
+//    }
+//
+//    @Override
+//    public List<BillResponseManage> getAllBillByStatusDiss0(String nameCheck, Integer status) {
+//        return this.billRepository.getAllBillByStatusDiss0(nameCheck,status);
+//    }
     @Override
-    public Page<BillResponseManage> getAllBillByStatusDiss0(String nameCheck, Integer status, Pageable pageable) {
-        return this.billRepository.getAllBillByStatusDiss0(nameCheck,status,pageable);
+    public Page<BillResponseManage> getAllBillByStatusDiss0(String nameCheck, SearchBillByStatusRequest searchBillByStatusRequest, Pageable pageable) {
+        return this.billRepository.getAllBillByStatusDiss0(nameCheck,searchBillByStatusRequest.getStatusSearch(),pageable);
     }
 
     @Override
-    public List<BillResponseManage> getAllBillByStatusDiss0(String nameCheck, Integer status) {
-        return this.billRepository.getAllBillByStatusDiss0(nameCheck,status);
+    public List<BillResponseManage> getAllBillByStatusDiss0(String nameCheck, SearchBillByStatusRequest searchBillByStatusRequest) {
+        return this.billRepository.getAllBillByStatusDiss0(nameCheck,searchBillByStatusRequest.getStatusSearch());
     }
     @Override
     public InformationBillByIdBillResponse getInformationBillByIdBill(Integer idBill) {

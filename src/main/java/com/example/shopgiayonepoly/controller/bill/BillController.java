@@ -1,4 +1,4 @@
-package com.example.shopgiayonepoly.controller;
+package com.example.shopgiayonepoly.controller.bill;
 
 import com.example.shopgiayonepoly.baseMethod.BaseBill;
 import com.example.shopgiayonepoly.dto.response.bill.BillTotalInfornationResponse;
@@ -214,7 +214,7 @@ public class BillController extends BaseBill {
 
         bill.setNote(note);
 
-        bill.setCash(cashNumber.setScale(2,RoundingMode.FLOOR));
+        bill.setCash(cashNumber.setScale(2,RoundingMode.FLOOR).subtract(surplusMoneyNumber.setScale(2,RoundingMode.FLOOR)));
         bill.setSurplusMoney(surplusMoneyNumber.setScale(2,RoundingMode.FLOOR));
         bill.setShippingPrice(shipMoneyNumber);
 
@@ -234,14 +234,14 @@ public class BillController extends BaseBill {
                 }
             }
             System.out.println("Thong tin bill(TM)" + bill.toString());
-//            if(bill.getBillType() == 1) {
-//                this.setBillStatus(bill.getId(),101,session);
-//            }
-//            this.setBillStatus(bill.getId(),bill.getStatus(),session);
-//            this.billService.save(bill);
-//            if(bill.getVoucher() != null) {
-//                this.getSubtractVoucher(bill.getVoucher());
-//            }
+            if(bill.getBillType() == 1) {
+                this.setBillStatus(bill.getId(),101,session);
+            }
+            this.setBillStatus(bill.getId(),bill.getStatus(),session);
+            this.billService.save(bill);
+            if(bill.getVoucher() != null) {
+                this.getSubtractVoucher(bill.getVoucher());
+            }
             this.getUpdateQuantityProduct(session);
             return "Bill/successBill";
         }else if (bill.getPaymentMethod() == 2) {
@@ -309,13 +309,13 @@ public class BillController extends BaseBill {
                 this.billPay.setSurplusMoney(BigDecimal.valueOf(0.00));
                 this.billPay.setUpdateDate(new Date());
                 this.billPay.setStatus(5);
-//                this.billService.save(this.billPay);
-//                this.setBillStatus(this.billPay.getId(),101,session);
-//                this.setBillStatus(this.billPay.getId(),this.billPay.getStatus(),session);
-//
-//                if(this.billPay.getVoucher() != null) {
-//                    this.getSubtractVoucher(this.billPay.getVoucher());
-//                }
+                this.billService.save(this.billPay);
+                this.setBillStatus(this.billPay.getId(),101,session);
+                this.setBillStatus(this.billPay.getId(),this.billPay.getStatus(),session);
+
+                if(this.billPay.getVoucher() != null) {
+                    this.getSubtractVoucher(this.billPay.getVoucher());
+                }
                 this.getUpdateQuantityProduct(session);
                 return "Bill/successBill" ;
             }else {
@@ -330,12 +330,12 @@ public class BillController extends BaseBill {
                 this.billPay.setSurplusMoney(BigDecimal.valueOf(0.00));
                 this.billPay.setUpdateDate(new Date());
                 this.billPay.setPaymentMethod(2);
-//                this.billService.save(this.billPay);
-//
-//                this.setBillStatus(this.billPay.getId(),101,session);
-//                if(this.billPay.getVoucher() != null) {
-//                    this.getSubtractVoucher(this.billPay.getVoucher());
-//                }
+                this.billService.save(this.billPay);
+
+                this.setBillStatus(this.billPay.getId(),101,session);
+                if(this.billPay.getVoucher() != null) {
+                    this.getSubtractVoucher(this.billPay.getVoucher());
+                }
                 session.removeAttribute("billPaymentRest");
                 session.removeAttribute("pageReturn");
 
@@ -345,7 +345,6 @@ public class BillController extends BaseBill {
                 colorMess = "1";
                 return "redirect:/staff/bill/bill-status-index/"+session.getAttribute("IdBill");
             }else {
-                System.out.println("Bil bo thanh toan " + this.billPay.toString());
                 return "redirect:/staff/bill/bill-status-index/"+session.getAttribute("IdBill");
             }
         }

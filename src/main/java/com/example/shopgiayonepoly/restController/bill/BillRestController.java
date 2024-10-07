@@ -1,10 +1,7 @@
-package com.example.shopgiayonepoly.restController;
+package com.example.shopgiayonepoly.restController.bill;
 
 import com.example.shopgiayonepoly.baseMethod.BaseBill;
-import com.example.shopgiayonepoly.dto.request.bill.BillDetailAjax;
-import com.example.shopgiayonepoly.dto.request.bill.PayMethodRequest;
-import com.example.shopgiayonepoly.dto.request.bill.ProductDetailCheckMark2Request;
-import com.example.shopgiayonepoly.dto.request.bill.ProductDetailCheckRequest;
+import com.example.shopgiayonepoly.dto.request.bill.*;
 import com.example.shopgiayonepoly.dto.response.bill.*;
 import com.example.shopgiayonepoly.entites.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -304,22 +301,28 @@ public class BillRestController extends BaseBill {
     @GetMapping("/manage-bill/{page}")
     public List<BillResponseManage> getAllBillDistStatus0(@PathVariable("page") Integer page) {
         Pageable pageable = PageRequest.of(page-1,5);
-        return this.billService.getAllBillByStatusDiss0(keyBillmanage,statusBillCheck,pageable).getContent();
+        if(searchBillByStatusRequest == null) {
+            searchBillByStatusRequest = new SearchBillByStatusRequest(null);
+        }
+        System.out.println(searchBillByStatusRequest.getStatusSearch());
+        return this.billService.getAllBillByStatusDiss0(keyBillmanage,searchBillByStatusRequest,pageable).getContent();
     }
 
     @GetMapping("/manage-bill-max-page")
     public Integer getMaxPageBillManage() {
-        Integer page = (int) Math.ceil((double) this.billService.getAllBillByStatusDiss0(keyBillmanage,statusBillCheck).size() / 5);
+        Integer page = (int) Math.ceil((double) this.billService.getAllBillByStatusDiss0(keyBillmanage,searchBillByStatusRequest).size() / 5);
         System.out.println("so trang toi da cua quan ly hoa don " + page);
         return page;
     }
 
-    @GetMapping("/status-bill-manage/{status}")
-    public ResponseEntity<?> getClickStatusBill(@PathVariable("status") Integer status) {
-        if(status == 999){
-            status = null;
-        }
-        this.statusBillCheck = status;
+    @PostMapping("/status-bill-manage")
+    public ResponseEntity<?> getClickStatusBill(@RequestBody SearchBillByStatusRequest status) {
+//        if(status == 999){
+//            status = null;
+//        }
+//        this.statusBillCheck = status;
+        System.out.println(status.toString());
+        this.searchBillByStatusRequest = status;
         return ResponseEntity.ok("done");
     }
 
@@ -473,7 +476,8 @@ public class BillRestController extends BaseBill {
         Integer checkPayMethod = Integer.parseInt(payMethod);
         if(checkPayMethod == 1) {
             Bill billPayment = this.billService.findById((Integer) session.getAttribute("IdBill")).orElse(null);
-            billPayment.setCash(BigDecimal.valueOf(Long.parseLong(cashPay)));
+            BigDecimal cash = BigDecimal.valueOf(Long.parseLong(cashPay)).subtract(BigDecimal.valueOf(Long.parseLong(surplusMoneyPay)));
+            billPayment.setCash(cash);
             if(billPayment.getNote().trim().equals("")) {
                 billPayment.setNote("Thanh toán bằng tiền mặt!");
             }

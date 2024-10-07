@@ -39,8 +39,8 @@ function loadBillDetail(page)  {
 
                     billDetail.productDetail.product.images.forEach(function(image, imgIndex) {
                         imagesHtml += `
-                            <div class="carousel-item ${imgIndex === 0 ? 'active' : ''}" style="width: auto; height: 100px;">
-                                <img src="https://res.cloudinary.com/dfy4umpja/image/upload/f_auto,q_auto/${image.nameImage}" class="d-block w-100" alt="Lỗi ảnh" style="width: auto; height: 100px;">
+                            <div class="carousel-item ${imgIndex === 0 ? 'active' : ''}" data-bs-interval="2000">
+                                <img style="height: auto; width: 100px;" src="https://res.cloudinary.com/dfy4umpja/image/upload/f_auto,q_auto/${image.nameImage}" class="d-block w-100" alt="Lỗi ảnh">
                             </div>`;
                     });
 
@@ -60,12 +60,26 @@ function loadBillDetail(page)  {
                                 </div>`;
                     }
                     var btnDeleteProduct = '';
-                    if(billDetail.bill.status > 1) {
+                    if(billDetail.bill.status == 2 || billDetail.bill.status == 3 || billDetail.bill.status == 4) {
                         btnDeleteProduct = `
                        `;
-                    }else {
+                    }else if (billDetail.bill.status == 1 || billDetail.bill.status == 0){
                         btnDeleteProduct = `
                         <button onclick="deleteBillDetail(${billDetail.id})" class="btn btn-outline-danger"><i class="bi bi-x-lg"></i> Xóa bỏ</button>
+                        `;
+                    }else if(billDetail.bill.status == 5) {
+                        btnDeleteProduct = `
+                            <button class="btn btn-outline-danger"
+                                data-bs-target="#returnQuantity"
+                                data-bs-toggle="modal"
+                                data-name=""
+                                data-id=""
+                                data-quantity=""
+                                data-price-sale=""
+                                data-price-root=""
+                                onclick="">
+                               <i class="bi bi-arrow-counterclockwise"></i>Trả hàng
+                            </button>
                         `;
                     }
                     var btnBuyProduct = '';
@@ -82,15 +96,15 @@ function loadBillDetail(page)  {
                     }
                     tbody.append(`
                         <tr>
-                            <th scope="row">${index + 1}</th>
-                            <td>
-                                <div id="carouselExampleAutoplaying${index}" class="carousel slide" data-bs-ride="carousel">
-                                    <div class="carousel-inner carousel-inner-bill-custom" style="width: auto; height: 100px;">
+                            <th scope="row" class="text-center align-middle">${index + 1}</th>
+                            <td class="text-center align-middle">
+                                <div class="carousel slide" data-bs-ride="carousel">
+                                    <div class="carousel-inner carousel-inner-bill-custom">
                                         ${imagesHtml}
                                     </div>
                                 </div>
                             </td>
-                            <td class="">
+                            <td class="" style="max-height: 100px; overflow-y: auto; width: 150px;">
                                 <div class="fs-4">
                                     ${billDetail.productDetail.product.nameProduct}
                                 </div>
@@ -100,6 +114,7 @@ function loadBillDetail(page)  {
                                     Tên size: ${billDetail.productDetail.size.nameSize}
                                 </div>
                             </td>
+
                             <td class="text-center align-middle">
                                    ${priceSaleAndRoot}
                             </td>
@@ -112,7 +127,6 @@ function loadBillDetail(page)  {
                                 ${billDetail.totalAmount.toLocaleString('en-US') + ' VNĐ'}
                             </td>
                             <td class="text-center align-middle">
-<!--                                <a href="/bill/deleteBillDetail/${billDetail.id}" class="btn btn-outline-danger" id="deleteproduct"><i class="bi bi-x-lg"></i> Xóa bỏ</a>-->
                                 ${btnDeleteProduct}
                             </td>
                         </tr>`);
@@ -502,7 +516,7 @@ function updateProductTable(response) {
                     btn = `<span class="text-danger">Hết hàng</span>`;
                 } else {
                     btn = `
-                            <button class="btn btn-outline-success"
+                            <button class="btn btn-outline-success btn-buy-product-detail"
                                 data-bs-target="#exampleQuantity"
                                 data-bs-toggle="modal"
                                 data-name="${productDetail[1]}"
@@ -620,7 +634,7 @@ function updateProductTable(response) {
         });
 
         // Lắng nghe sự kiện khi mở modal
-        $(document).on('click', '.btn-outline-success', function() {
+        $(document).on('click', '.btn-buy-product-detail', function() {
             var nameProduct = $(this).data('name');
             var idProductDetail = $(this).data('id');
             var quantityProduct = $(this).data('quantity');
@@ -1209,6 +1223,7 @@ function getAllBilByStatus(value) {
         success: function (response) {
             var tableBillManage = $('#billManage');
             var nodataBillManage = $('#nodataBillManage');
+            tableBillManage.empty()
             if (response.length === 0) {
                 // Nếu không có dữ liệu, hiển thị ảnh
                 nodataBillManage.html(`
@@ -1221,11 +1236,43 @@ function getAllBilByStatus(value) {
             } else {
                 nodataBillManage.hide(); // Ẩn phần chứa ảnh nếu có dữ liệu
                 tableBillManage.closest('table').show();
-                tableBillManage.empty()
                 response.forEach(function (bill,index) {
 
-                    const formattedDateTime = formatDateTime(bill.createDate);
+                    const formattedDateTime = formatDateTime(bill.updateDate);
+                    var btnDrop = '';
+                    // Lấy ngày hiện tại
+                    const currentDate = new Date();
+                    // Lấy ngày tạo hóa đơn và chuyển đổi sang đối tượng Date
+                    const billCreateDate = new Date(bill.updateDate);
+                    // Tính toán số ngày giữa ngày hiện tại và ngày tạo hóa đơn
+                    const timeDiff = Math.abs(currentDate - billCreateDate); // Hiệu số thời gian (ms)
+                    const dayDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24)); // Chuyển đổi sang số ngày
 
+                    // Kiểm tra điều kiện status
+                    if (bill.status == 5) {
+                        btnDrop = `
+                            <li><a href="/staff/bill/bill-status-index/${bill.id}" class="dropdown-item">Xem chi tiết</a></li>
+                            <li><button class="dropdown-item" onclick="createBillPDF(${bill.id});">Xuất hóa đơn</button></li>
+                        `;
+
+                        // Nếu hóa đơn được tạo trong vòng 3 ngày, hiển thị thêm 2 nút Đổi hàng và Trả hàng
+                        if (dayDiff <= 3) {
+                            btnDrop += `
+                            <li><a class="dropdown-item" href="#">Đổi hàng</a></li>
+                            <li><a class="dropdown-item" href="/staff/return-bill/bill/${bill.id}">Trả hàng</a></li>
+                        `;
+                        }
+                    } else if (bill.status == 6) {
+                        btnDrop = `
+                            <li><a href="/staff/bill/bill-status-index/${bill.id}" class="btn btn-primary">Xem chi tiết</a></li>
+                            <li><a class="dropdown-item" href="#">Xuất hóa đơn</a></li>
+                        `;
+                    }else {
+                        btnDrop = `
+                            <li><a href="/staff/bill/bill-status-index/${bill.id}" class="dropdown-item">Xem chi tiết</a></li>
+                            <li><button class="dropdown-item" onclick="createBillPDF(${bill.id});">Xuất hóa đơn</button></li>
+                        `;
+                    }
                     tableBillManage.append(`
                      <tr>
                             <th scope="row">${index+1}</th>
@@ -1236,7 +1283,14 @@ function getAllBilByStatus(value) {
                             <td>${bill.billType == 1 ? 'Tại quầy' : 'Giao hàng'}</td>
                             <td>${formattedDateTime}</td>
                             <td>
-                                <a href="/staff/bill/bill-status-index/${bill.id}" class="btn btn-primary">Xem chi tiết</a>
+                               <div class="btn-group dropstart">
+                                  <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Chức năng
+                                  </button>
+                                  <ul class="dropdown-menu">
+                                        ${btnDrop}
+                                  </ul>
+                                </div>
                             </td>
                         </tr>
                     `);
@@ -1270,10 +1324,21 @@ function getMaxPageBillManage() {
     })
 }
 
-function clickStatusBillManager(status) {
+function clickStatusBillManager() {
+    let statusSearchVal = $('#statusSearch').val();  // Lấy giá trị từ input
+
+    // Kiểm tra nếu giá trị không rỗng và là chuỗi, sau đó xử lý
+    let statusSearch = (typeof statusSearchVal === 'string' && statusSearchVal.trim()) ?
+        statusSearchVal.trim().replace(/\s+/g, '').split(',').filter(Boolean).map(Number)
+        : null; // Nếu không có giá trị thì gửi mảng rỗng
+
     $.ajax({
-        type: "GET",
-        url: "/bill-api/status-bill-manage/"+status,
+        type: "POST",
+        url: "/bill-api/status-bill-manage",
+        contentType: 'application/json',
+        data: JSON.stringify({
+            statusSearch: statusSearch
+        }),
         success: function (response) {
             getMaxPageBillManage();
             getAllBilByStatus(1);
@@ -1405,11 +1470,13 @@ function deleteBillDetail(id) {
 }
 
 //xuat hoa don
-function createBillPDF() {
-    var idBill = parseInt($('#idBillCreatePDF').val());
+function createBillPDF(id) {
+    if(id == null) {
+         id = parseInt($('#idBillCreatePDF').val());
+    }
     $.ajax({
         type: "GET",
-        url: "/bill-api/bill-pdf/"+idBill,
+        url: "/bill-api/bill-pdf/"+id,
         xhrFields: {
             responseType: 'blob'  // Nhận PDF dưới dạng blob
         },
