@@ -15,6 +15,8 @@
     <div class="form-box login">
         <h2>Đăng nhập</h2>
         <form th:action="@{/onepoly/login}" method="post">
+            <div class="error-message" th:text="${errorMessage}">
+            </div>
 <!--        tài khoản-->
             <div class="input-box">
               <span class="icon">
@@ -22,20 +24,26 @@
               </span>
                 <input type="text" name="username" th:value="${usernameLogin}" placeholder="Tài Khoản"/>
             </div>
+
 <!--        mật khẩu-->
             <div class="input-box">
               <span class="icon">
                 <ion-icon name="lock-closed"></ion-icon>
               </span>
-                <div class="error-message" th:text="${errorMessage}">
-                </div>
                 <input type="password" name="password" placeholder="Mật khẩu"/>
             </div>
+
             <div class="remember-forgot">
 <!--                <label><input type="checkbox" />Ghi nhớ tôi</label>-->
                 <a href="#">Quên mật khẩu?</a>
             </div>
+
             <button type="submit" class="btn-login">Đăng nhập</button>
+            <div class="login-register">
+                <p>Bạn chưa có tài khoản!
+                    <a href="/onepoly/register" class="login-link">Đăng ký</a>
+                </p>
+            </div>
         </form>
     </div>
 </div>

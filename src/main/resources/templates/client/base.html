@@ -59,11 +59,19 @@
                     <a class="navbar-brand" href="#" style="color: black; margin-right: 50px"><i
                             class="bi bi-cart4 fs-4"></i></a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#authModal"
-                       style="color: black;">
+
+                <li class="nav-item" onmouseover="showDropdown()" onmouseout="hideDropdown()">
+                    <a class="nav-link" href="#" style="color: black;">
                         <i class="bi bi-person-circle ts-5 fs-4"></i>
+                        <span style="font-size: 0.8rem; font-weight: 500;">
+                            <span th:text="${loginInfoClient.fullName}"></span>
+                        </span>
                     </a>
+                    <div id="authDropdown" class="dropdown-content">
+                        <button onclick="login()" class="dropdown-button" th:if="${loginInfoClient == null}">Đăng nhập</button>
+                        <button onclick="logout()" class="dropdown-button" th:if="${loginInfoClient != null}">Đăng xuất</button>
+                        <button onclick="register()" class="dropdown-button" >Đăng ký</button>
+                    </div>
                 </li>
             </ul>
         </div>
@@ -72,22 +80,22 @@
 <!-- End navbar -->
 
 <!-- Modal for Login/Register -->
-<div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="authModalLabel">Tài khoản</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="d-grid gap-2">
-                    <a href="/onepoly/login" class="btn btn-primary">Đăng nhập</a>
-                    <a href="/register" class="btn btn-secondary">Đăng ký</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<!--<div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">-->
+<!--    <div class="modal-dialog modal-dialog-centered">-->
+<!--        <div class="modal-content">-->
+<!--            <div class="modal-header">-->
+<!--                <h5 class="modal-title" id="authModalLabel" >Tài khoản</h5>-->
+<!--                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
+<!--            </div>-->
+<!--            <div class="modal-body">-->
+<!--                <div class="d-grid gap-2">-->
+<!--                    <a href="/onepoly/login" class="btn btn-primary">Đăng nhập</a>-->
+<!--                    <a href="/register" class="btn btn-secondary">Đăng ký</a>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
 
 <div layout:fragment="content">
 </div>
@@ -149,7 +157,7 @@
 </div>
 <!-- End Footer -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="/js/client/loginClient.js"></script>
+<script src="/js/client/base.js"></script>
 <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
 <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
