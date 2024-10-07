@@ -1,21 +1,31 @@
 document.addEventListener("DOMContentLoaded", function() {
     const applyDiscountBtn = document.getElementById("applyDiscountBtn");
-    applyDiscountBtn.addEventListener("click", apply_discount);
+
+    // Kiểm tra xem nút applyDiscountBtn có tồn tại không
+    if (applyDiscountBtn) {
+        applyDiscountBtn.addEventListener("click", apply_discount);
+    }
 
     // Thêm sự kiện cho các nút chọn trong bảng sale
     const selectButtons = document.querySelectorAll('.select-sale-btn');
-    selectButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            // Xóa lớp 'selected-sale' khỏi tất cả các nút
-            selectButtons.forEach(btn => btn.classList.remove('selected-sale'));
-            // Thêm lớp 'selected-sale' cho nút được chọn
-            this.classList.add('selected-sale');
-            // Kiểm tra giá trị của các thuộc tính data-discount-value và data-discount-type
-            console.log("Giá trị giảm:", this.dataset.discountValue);
-            console.log("Loại giảm:", this.dataset.discountType);
-            alert(this.dataset.discountType)
+
+    // Kiểm tra xem có nút select-sale-btn không
+    if (selectButtons.length > 0) {
+        selectButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Xóa lớp 'selected-sale' khỏi tất cả các nút
+                selectButtons.forEach(btn => btn.classList.remove('selected-sale'));
+
+                // Thêm lớp 'selected-sale' cho nút được chọn
+                this.classList.add('selected-sale');
+
+                // Kiểm tra giá trị của các thuộc tính data-discount-value và data-discount-type
+                console.log("Giá trị giảm:", this.dataset.discountValue);
+                console.log("Loại giảm:", this.dataset.discountType);
+                alert(`Loại giảm: ${this.dataset.discountType}`);
+            });
         });
-    });
+    }
 });
 
 // Lấy giá trị giảm giá từ nút đã chọn
@@ -49,7 +59,7 @@ function apply_discount() {
     }
 
     if (discountValue === null || isNaN(discountValue) || discountValue <= 0) {
-        alert("Vui lòng nhập giá trị giảm hợp lệ.");
+        alert("Vui lòng chọn giá trị giảm hợp lệ.");
         return;
     }
 
@@ -58,21 +68,22 @@ function apply_discount() {
         return;
     }
 
+    // Gửi request qua AJAX
     $.ajax({
         type: "POST",
-        url: "/sale-product/apply-discount", // Đường dẫn API cần đúng
-        contentType: "application/json", // Đảm bảo định dạng JSON
-        data: JSON.stringify({
-            discountValue: discountValue, // Giá trị giảm
-            discountType: discountType,   // Loại giảm
-            productIds: selectedProductIds // Gửi danh sách productIds dưới dạng mảng
-        }),
+        url: "/sale-product/apply-discount",
+        data: {
+            productIds: selectedProductIds,
+            discountValue: discountValue,
+            discountType: discountType 
+        },
         success: function(response) {
+            console.log("Giảm giá đã được áp dụng thành công!");
             alert("Giảm giá đã được áp dụng thành công!");
         },
         error: function(xhr, status, error) {
-            console.error("Lỗi khi áp dụng giảm giá:", error);
-            alert("Đã xảy ra lỗi trong quá trình áp dụng giảm giá. Vui lòng thử lại.");
+            console.error("Lỗi khi áp dụng giảm giá:", xhr.responseText || error);
+            alert("Đã xảy ra lỗi khi áp dụng giảm giá: " + xhr.responseText || error);
         }
     });
 }

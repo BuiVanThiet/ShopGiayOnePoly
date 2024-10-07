@@ -229,17 +229,29 @@ public class SaleProductController {
             @RequestParam BigDecimal discountValue,
             @RequestParam Integer discountType) {
 
-        if (discountValue == null || discountType == null || productIds.isEmpty()) {
-            return ResponseEntity.badRequest().body("Giá trị giảm giá hoặc loại giảm giá không hợp lệ.");
+        if (discountValue == null || discountValue.compareTo(BigDecimal.ZERO) <= 0) {
+            return ResponseEntity.badRequest().body("Giá trị giảm giá không hợp lệ.");
+        }
+
+        if (discountType == null || (discountType != 1 && discountType != 2)) {
+            return ResponseEntity.badRequest().body("Loại giảm giá không hợp lệ.");
+        }
+
+        if (productIds == null || productIds.isEmpty()) {
+            return ResponseEntity.badRequest().body("Danh sách sản phẩm không được trống.");
         }
 
         try {
+            // Gọi service áp dụng giảm giá
             saleProductService.applyDiscountToProductDetails(productIds, discountValue, discountType);
             return ResponseEntity.ok("Giảm giá đã được áp dụng thành công cho các sản phẩm.");
         } catch (Exception e) {
+            // Ghi lại lỗi để tiện theo dõi
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Đã xảy ra lỗi khi áp dụng giảm giá: " + e.getMessage());
         }
     }
+
 
     @ModelAttribute("staffInfo")
     public Staff staff(HttpSession session) {
