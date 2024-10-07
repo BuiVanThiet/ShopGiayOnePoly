@@ -31,50 +31,93 @@ function editRow(index) {
         })
         .then(data => {
             // Cập nhật dữ liệu vào các ô input và select
-            document.getElementById("codeProductInput").value = data.codeProduct;
-            document.getElementById("nameProductInput").value = data.nameProduct;
+            document.getElementById("codeProduct").value = data.codeProduct;
+            document.getElementById("nameProduct").value = data.nameProduct;
             document.getElementById("material").value = data.material.id;
             document.getElementById("manufacturer").value = data.manufacturer.id;
             document.getElementById("origin").value = data.origin.id;
             document.getElementById("sole").value = data.sole.id;
+            document.getElementById("describeProduct").value = data.describe;
+            var event = new Event('input', { bubbles: true });
+            document.getElementById("codeProduct").dispatchEvent(event);
+            window.scrollTo({
+                top: 0,
+                left: 0,
+                behavior: 'smooth'
+            });
+
         })
         .catch(error => {
             console.error('Lỗi khi lấy dữ liệu sản phẩm:', error);
         });
 }
 
-// Lắng nghe sự kiện "input" khi người dùng nhập vào ô input codeProduct
-// Lắng nghe sự kiện "input" khi người dùng nhập vào ô input codeProduct
-document.getElementById('codeProductInput').addEventListener('input', function() {
+
+document.getElementById('codeProduct').addEventListener('input', function() {
     var codeProduct = this.value;
 
     if (codeProduct.trim() !== "") {  // Kiểm tra nếu codeProduct không rỗng
         // Gửi yêu cầu kiểm tra mã sản phẩm tồn tại
+        var btnAdd = document.getElementById('product-btn-add');
+        var btnEdit = document.getElementById('product-btn-edit');
         fetch('http://localhost:8080/staff/product/check-code/' + codeProduct)
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('Sản phẩm không tìm thấy');
+                    btnEdit.style.display = 'none'
+                    btnAdd.style.display = 'block'
                 }
                 return response.json();
             })
             .then(data => {
-                var btnAdd = document.getElementById('product-btn-add');
 
-                if (data === true) {
-                    // Nếu mã sản phẩm đã tồn tại, thay đổi nút "Thêm sản phẩm" thành "Sửa sản phẩm"
-                    btnAdd.textContent = 'Sửa sản phẩm';
-                    btnAdd.classList.remove('product-btn-add');
-                    btnAdd.classList.add('product-btn-edit');
-                } else {
-                    // Nếu mã sản phẩm không tồn tại, thay đổi lại nút thành "Thêm sản phẩm"
-                    btnAdd.textContent = 'Thêm sản phẩm';
-                    btnAdd.classList.remove('product-btn-edit');
-                    btnAdd.classList.add('product-btn-add');
-                }
+                btnEdit.style.display = 'block'
+                btnAdd.style.display = 'none'
             })
             .catch(error => {
                 console.error('Lỗi khi lấy dữ liệu sản phẩm:', error);
             });
     }
 });
+
+document.getElementById('product-btn-add').addEventListener('click', function(event) {
+    event.preventDefault();
+    // Hiển thị modal tùy chỉnh
+    const modal = document.getElementById('customConfirmModal');
+    modal.style.display = "flex";
+    var codeProduct = document.getElementById("codeProduct").value;
+    document.getElementById('confirmText-product').textContent = 'Bạn có chắc chắn muốn thêm sản phẩm "' + codeProduct + '" không?';
+
+    document.getElementById('confirmYes').onclick = function () {
+        document.getElementById('product-form').submit();
+        modal.style.display = "none";
+    };
+    // Gán hành động khi người dùng nhấn "Hủy"
+    document.getElementById('confirmNo').onclick = function () {
+        modal.style.display = "none";  // Đóng modal mà không thực hiện hành động
+        event.preventDefault(); // Ngăn không cho biểu mẫu được gửi
+    };
+});
+
+document.getElementById('product-btn-edit').addEventListener('click', function(event) {
+    event.preventDefault();
+    // Hiển thị modal tùy chỉnh
+    const modal = document.getElementById('customConfirmModal');
+    modal.style.display = "flex";
+    var codeProduct = document.getElementById("codeProduct").value;
+    document.getElementById('confirmText-product').textContent = 'Bạn có chắc chắn muốn sửa sản phẩm "' + codeProduct + '" không?';
+
+    document.getElementById('confirmYes').onclick = function () {
+        document.getElementById('product-form').submit();
+        modal.style.display = "none";
+    };
+    // Gán hành động khi người dùng nhấn "Hủy"
+    document.getElementById('confirmNo').onclick = function () {
+        modal.style.display = "none";  // Đóng modal mà không thực hiện hành động
+        event.preventDefault(); // Ngăn không cho biểu mẫu được gửi
+    };
+});
+
+
+
+
 

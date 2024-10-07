@@ -30,6 +30,7 @@
     gap: 1.5rem;
 }
 
+.text-area-product,
 .product-input-group,
 .product-select-group {
     display: flex;
@@ -37,13 +38,14 @@
     gap: 1.5rem;
 }
 
+.text-area-product textarea,
 .product-input-group input,
 .product-select-group select {
     flex: 1; /* Đặt độ rộng của các thẻ input/select bằng nhau */
 }
 
 
-.product-search-bar input {
+.product-search-bar input,textarea {
     flex: 1;
     padding: 12px;
     border-radius: 8px;

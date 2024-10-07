@@ -79,7 +79,51 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
     @Query("select new com.example.shopgiayonepoly.dto.response.bill.ClientBillInformationResponse(cuss.fullName,cuss.numberPhone,cuss.email,cuss.addRess,cuss.addRess,cuss.addRess,cuss.addRess) from Customer cuss where cuss.id = :idClient")
     List<ClientBillInformationResponse> getClientBillInformationResponse(@Param("idClient") Integer idBill);
     // phan nay danh cho quan ly hoa don
-    @Query("""
+
+//    @Query("""
+//        select
+//        new com.example.shopgiayonepoly.dto.response.bill.BillResponseManage(
+//            bill.id,
+//            bill.codeBill,
+//            bill.customer,
+//            bill.staff,
+//            bill.addRess,
+//            bill.voucher,
+//            bill.shippingPrice,
+//            bill.cash,
+//            bill.acountMoney,
+//            bill.note,
+//            case
+//            when voucher.discountType = 1 then
+//                case
+//                    when bill.totalAmount * (voucher.priceReduced / 100) > voucher.pricesMax then
+//                        bill.totalAmount - voucher.pricesMax + bill.shippingPrice
+//                    else
+//                        bill.totalAmount - (bill.totalAmount * (voucher.priceReduced / 100)) + bill.shippingPrice
+//                end
+//            when voucher.discountType = 2 then
+//                bill.totalAmount - voucher.priceReduced + bill.shippingPrice
+//            else
+//                bill.totalAmount + bill.shippingPrice
+//        end,
+//            bill.paymentMethod,
+//            bill.billType,
+//            bill.paymentStatus,
+//            bill.surplusMoney,
+//            bill.createDate,
+//            bill.updateDate,
+//            bill.status)
+//        from Bill bill
+//        LEFT JOIN bill.customer customer
+//        LEFT JOIN bill.staff staff
+//        LEFT JOIN bill.voucher voucher
+//        where
+//        bill.status <> 0 and
+//        (concat(COALESCE(bill.codeBill, ''), COALESCE(bill.customer.fullName, ''), COALESCE(bill.customer.numberPhone, '')) like %:nameCheck%)
+//         and (:statusCheck is null or (bill.status = :statusCheck))
+//    """)
+//    Page<BillResponseManage> getAllBillByStatusDiss0(@Param("nameCheck") String nameCheck, @Param("statusCheck") Integer statusCheck, Pageable pageable);
+@Query("""
         select 
         new com.example.shopgiayonepoly.dto.response.bill.BillResponseManage(
             bill.id, 
@@ -119,28 +163,43 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
         where 
         bill.status <> 0 and
         (concat(COALESCE(bill.codeBill, ''), COALESCE(bill.customer.fullName, ''), COALESCE(bill.customer.numberPhone, '')) like %:nameCheck%)
-         and (:statusCheck is null or (bill.status = :statusCheck))
+         AND (:statusCheck IS NULL OR bill.status IN (:statusCheck))
     """)
-    Page<BillResponseManage> getAllBillByStatusDiss0(@Param("nameCheck") String nameCheck, @Param("statusCheck") Integer statusCheck, Pageable pageable);
-
+    Page<BillResponseManage> getAllBillByStatusDiss0(@Param("nameCheck") String nameCheck, @Param("statusCheck") List<Integer> statusCheck, Pageable pageable);
+//    @Query("""
+//        select
+//        new com.example.shopgiayonepoly.dto.response.bill.BillResponseManage(
+//            bill.id, bill.codeBill, bill.customer, bill.staff, bill.addRess, bill.voucher,
+//            bill.shippingPrice, bill.cash, bill.acountMoney, bill.note, bill.totalAmount,
+//            bill.paymentMethod, bill.billType, bill.paymentStatus, bill.surplusMoney,
+//            bill.createDate, bill.updateDate, bill.status)
+//        from Bill bill
+//        LEFT JOIN bill.customer customer
+//        LEFT JOIN bill.staff staff
+//        LEFT JOIN bill.voucher voucher
+//        where
+//         bill.status <> 0 and
+//         (concat(COALESCE(bill.codeBill, ''), COALESCE(bill.customer.fullName, ''), COALESCE(bill.customer.numberPhone, '')) like %:nameCheck%)
+//         and (:statusCheck is null or (bill.status = :statusCheck))
+//    """)
+//    List<BillResponseManage> getAllBillByStatusDiss0(@Param("nameCheck") String nameCheck, @Param("statusCheck") Integer statusCheck);
     @Query("""
-        select 
-        new com.example.shopgiayonepoly.dto.response.bill.BillResponseManage(
-            bill.id, bill.codeBill, bill.customer, bill.staff, bill.addRess, bill.voucher, 
-            bill.shippingPrice, bill.cash, bill.acountMoney, bill.note, bill.totalAmount, 
-            bill.paymentMethod, bill.billType, bill.paymentStatus, bill.surplusMoney, 
-            bill.createDate, bill.updateDate, bill.status) 
-        from Bill bill 
-        LEFT JOIN bill.customer customer
-        LEFT JOIN bill.staff staff
-        LEFT JOIN bill.voucher voucher
-        where 
-         bill.status <> 0 and
-         (concat(COALESCE(bill.codeBill, ''), COALESCE(bill.customer.fullName, ''), COALESCE(bill.customer.numberPhone, '')) like %:nameCheck%)
-         and (:statusCheck is null or (bill.status = :statusCheck))
-    """)
-    List<BillResponseManage> getAllBillByStatusDiss0(@Param("nameCheck") String nameCheck, @Param("statusCheck") Integer statusCheck);
-
+            select 
+            new com.example.shopgiayonepoly.dto.response.bill.BillResponseManage(
+                bill.id, bill.codeBill, bill.customer, bill.staff, bill.addRess, bill.voucher, 
+                bill.shippingPrice, bill.cash, bill.acountMoney, bill.note, bill.totalAmount, 
+                bill.paymentMethod, bill.billType, bill.paymentStatus, bill.surplusMoney, 
+                bill.createDate, bill.updateDate, bill.status) 
+            from Bill bill 
+            LEFT JOIN bill.customer customer
+            LEFT JOIN bill.staff staff
+            LEFT JOIN bill.voucher voucher
+            where 
+             bill.status <> 0 and
+             (concat(COALESCE(bill.codeBill, ''), COALESCE(bill.customer.fullName, ''), COALESCE(bill.customer.numberPhone, '')) like %:nameCheck%) 
+             AND (:statusCheck IS NULL OR bill.status IN (:statusCheck))
+        """)
+    List<BillResponseManage> getAllBillByStatusDiss0(@Param("nameCheck") String nameCheck, @Param("statusCheck") List<Integer> statusCheck);
     @Query(""" 
     select 
      new com.example.shopgiayonepoly.dto.response.bill.InformationBillByIdBillResponse(
@@ -179,7 +238,7 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
         (select
         	b.id,
         	b.update_date,
-        	b.cash AS so_tien,
+        	(b.cash+b.surplus_money) AS so_tien,
         	N'Tiền mặt'  payment_method,
         	(select s.code_staff+'-'+s.full_name from staff s where s.id = (SUBSTRING(invo.note, 1, CHARINDEX(',', invo.note) - 1)))
         from bill b
