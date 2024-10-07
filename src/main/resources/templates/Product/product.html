@@ -15,16 +15,19 @@
         <h1 class="h1-product">Quản lý sản phẩm</h1>
         <div class="combobox-container">
             <div class="combobox-header" onclick="toggleDiv()">
-                <span style="justify-content: center">Thêm sản phẩm</span>
+                <span style="justify-content: center">Thêm và sửa sản phẩm</span>
                 <span class="arrow" id="arrow">&#9660;</span> <!-- Mũi tên -->
             </div>
             <div id="collapsibleDiv" class="combobox-content">
-                <form th:object="${productAdd}" method="post" action="/staff/product/add">
+                <form id="product-form" th:object="${productAdd}" method="post" action="/staff/product/add">
                     <div class="product-search-section search-section ">
                         <div class="product-search-bar search-bar">
                             <div class="product-input-group input-group">
-                                <input id="codeProductInput" th:field="*{codeProduct}" type="text" placeholder="Mã sản phẩm" required/>
-                                <input id="nameProductInput" th:field="*{nameProduct}" type="text" placeholder="Tên sản phẩm" required/>
+                                <input id="codeProduct" th:field="*{codeProduct}" type="text" placeholder="Mã sản phẩm" required/>
+                                <input id="nameProduct" th:field="*{nameProduct}" type="text" placeholder="Tên sản phẩm" required/>
+                            </div>
+                            <div class="text-area-product">
+                                <textarea id="describeProduct" th:field="*{describe}" type="text" placeholder="Mô tả" required ></textarea>
                             </div>
                             <div class="product-select-group select-group">
                                 <select class="select-product" id="material" name="material" th:field="*{material}">
@@ -45,6 +48,7 @@
                                 </select>
                             </div>
                             <button id="product-btn-add" type="submit" class="product-btn-add btn-add">Thêm sản phẩm</button>
+                            <button style="display: none" id="product-btn-edit" type="submit" class="product-btn-edit btn-edit">Sửa sản phẩm</button>
                         </div>
                     </div>
                 </form>
@@ -97,7 +101,7 @@
                        th:id="'save-btn-' + ${iterStat.index}">
                         <i class="product-icon-save icon-save fas fa-save" title="Save"></i>
                     </a>
-                    <a th:data-index="${iterStat.index}" onclick="deleteByID(this)">
+                    <a th:data-index="${iterStat.index}" th:data-code-product="${product.codeProduct}" onclick="deleteByID(this)">
                         <i class="product-icon-delete icon-delete fas fa-trash" title="Delete"></i>
                     </a>
                 </td>

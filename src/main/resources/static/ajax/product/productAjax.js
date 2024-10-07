@@ -2,16 +2,15 @@ function deleteByID(element) {
     // Hiển thị modal tùy chỉnh
     const modal = document.getElementById('customConfirmModal');
     modal.style.display = "flex";
-    var codeProduct = document.getElementById("codeProduct").textContent;
+    var codeProduct = element.getAttribute('data-code-product');
     document.getElementById('confirmText-product').textContent = 'Bạn có chắc chắn muốn xóa sản phẩm "' + codeProduct + '" không?';
 
     // Gán hành động khi người dùng nhấn "Đồng ý"
     document.getElementById('confirmYes').onclick = function () {
-        // Lấy index từ th:data-index
+    // Lấy index từ th:data-index
         var index = element.getAttribute('data-index');
         // Lấy id của phần tử từ th:data-id của hàng
         var id = $('#row-' + index).data('id');
-
         $.ajax({
             url: '/staff/product/delete',  // Đường dẫn API để xóa
             method: 'POST',

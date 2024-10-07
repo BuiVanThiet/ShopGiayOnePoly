@@ -59,7 +59,7 @@ public class ProductController {
     public String add(@ModelAttribute("productAdd") Product product) {
         product.setStatus(1);
         productService.save(product);
-        return "redirect:/staff/product/list";
+        return "redirect:/staff/product";
     }
 
     @GetMapping("/product/get-one/{id}")
