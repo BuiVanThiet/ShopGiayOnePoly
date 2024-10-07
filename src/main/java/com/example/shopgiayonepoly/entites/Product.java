@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Getter
@@ -16,7 +17,8 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "product")
-public class Product extends Base {
+public class Product extends Base implements Serializable {
+    private static final long serialVersionUID = 1L;
     @Column(name = "code_product")
     private String codeProduct;
     @Column(name = "name_product")
@@ -35,7 +37,7 @@ public class Product extends Base {
     private Sole sole;
     @Column(name = "describe")
     private String describe;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name ="category_product",
             joinColumns = @JoinColumn(name = "id_category"),
@@ -43,6 +45,6 @@ public class Product extends Base {
     )
 //    @JsonBackReference
     private List<Category> categories;
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Image> images;
 }

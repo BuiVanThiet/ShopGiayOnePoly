@@ -1,5 +1,6 @@
 package com.example.shopgiayonepoly.service;
 
+import com.example.shopgiayonepoly.dto.request.bill.SearchBillByStatusRequest;
 import com.example.shopgiayonepoly.dto.response.bill.BillResponseManage;
 import com.example.shopgiayonepoly.dto.response.bill.BillTotalInfornationResponse;
 import com.example.shopgiayonepoly.dto.response.bill.ClientBillInformationResponse;
@@ -39,9 +40,12 @@ public interface BillService {
 
     List<Voucher> getVoucherByBill(Integer idBill, String keyword);
 
-    Page<BillResponseManage> getAllBillByStatusDiss0(String nameCheck, Integer status, Pageable pageable);
+//    Page<BillResponseManage> getAllBillByStatusDiss0(String nameCheck, Integer status, Pageable pageable);
+//
+//    List<BillResponseManage> getAllBillByStatusDiss0(String nameCheck, Integer status);
+    Page<BillResponseManage> getAllBillByStatusDiss0(String nameCheck, SearchBillByStatusRequest searchBillByStatusRequest, Pageable pageable);
 
-    List<BillResponseManage> getAllBillByStatusDiss0(String nameCheck, Integer status);
+    List<BillResponseManage> getAllBillByStatusDiss0(String nameCheck, SearchBillByStatusRequest searchBillByStatusRequest);
 
     InformationBillByIdBillResponse getInformationBillByIdBill(Integer idBill);
 

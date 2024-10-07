@@ -3,6 +3,8 @@ package com.example.shopgiayonepoly.baseMethod;
 import com.example.shopgiayonepoly.dto.request.bill.ProductDetailCheckMark2Request;
 import com.example.shopgiayonepoly.dto.request.bill.ProductDetailCheckRequest;
 import com.example.shopgiayonepoly.dto.request.VoucherRequest;
+import com.example.shopgiayonepoly.dto.request.bill.SearchBillByStatusRequest;
+import com.example.shopgiayonepoly.dto.response.bill.ReturnBillDetailResponse;
 import com.example.shopgiayonepoly.entites.*;
 import com.example.shopgiayonepoly.service.*;
 import com.example.shopgiayonepoly.service.attribute.*;
@@ -14,6 +16,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -45,7 +48,8 @@ public abstract class BaseBill {
     protected HistoryService historyService;
     @Autowired
     protected PdfTemplateService pdfTemplateService;
-
+    @Autowired
+    protected ProductDetailService productDetailService;
 
     //bien cuc bo cua bill
     protected Bill billPay;
@@ -53,10 +57,13 @@ public abstract class BaseBill {
     protected String colorMess = "";
     protected Integer pageProduct = 0;
     protected String keyVoucher = "";
-    protected Integer statusBillCheck = null;
+//    protected Integer statusBillCheck = null;
+    protected Integer[] statusBillCheck = null;
+    protected SearchBillByStatusRequest searchBillByStatusRequest;
     protected String keyBillmanage = "";
     protected ProductDetailCheckRequest productDetailCheckRequest;
     protected ProductDetailCheckMark2Request productDetailCheckMark2Request;
+    protected List<ReturnBillDetailResponse> returnBillDetailResponses = new ArrayList<>();
 
 
     //method chung
@@ -87,7 +94,8 @@ public abstract class BaseBill {
                     System.out.println("So luong trong kho " + productDetail.getQuantity());
                     System.out.println("So luong mua " + detail.getQuantity());
                     System.out.println("So luong con lai trong kho " + (productDetail.getQuantity()-detail.getQuantity()));
-
+                    productDetail.setQuantity((productDetail.getQuantity()-detail.getQuantity()));
+                    productDetailService.save(productDetail);
                 }
             }
         }

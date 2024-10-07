@@ -3,10 +3,7 @@ package com.example.shopgiayonepoly.entites;
 import com.example.shopgiayonepoly.entites.baseEntity.Base;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -17,6 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "product_detail")
+@ToString
 public class ProductDetail extends Base {
     @ManyToOne
     @JoinColumn(name = "id_product")
