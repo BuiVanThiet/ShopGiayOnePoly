@@ -72,4 +72,9 @@ public class StaffImplement implements StaffService {
     public Page<Staff> findAll(Pageable pageable) {
         return null;
     }
+
+    @Override
+    public void deleteStaff(Integer id) {
+        staffRepository.deleteBySetStatus(id);
+    }
 }

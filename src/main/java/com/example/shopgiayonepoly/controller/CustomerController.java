@@ -12,11 +12,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
 @Controller
-@RequestMapping("/staff/customer")
+@RequestMapping("/customer")
 public class CustomerController {
     @Autowired
     CustomerService customerService;
@@ -107,10 +108,10 @@ public class CustomerController {
         return "Customer/detail";
     }
 
-//    @GetMapping("/delete/{id}")
-//    public String deleteCustomer(RedirectAttributes ra, @PathVariable("id") Integer id) {
-//        customerService.deleteCustomer(id);
-//        ra.addFlashAttribute("mes", "Xóa thành công phiếu giảm giá với ID là: " + id);
-//        return "redirect:/customer/list";
-//    }
+    @GetMapping("/delete/{id}")
+    public String deleteCustomer(RedirectAttributes ra, @PathVariable("id") Integer id) {
+        customerService.deleteCustomer(id);
+        ra.addFlashAttribute("mes", "Xóa thành công Khach hang với ID là: " + id);
+        return "redirect:/customer/list";
+    }
 }

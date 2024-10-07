@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -75,6 +76,26 @@ public class StaffController {
         Staff staff = staffService.getOne(id);
         StaffRequest staffRequest = new StaffRequest();
         BeanUtils.copyProperties(staff, staffRequest);
+                // Xử lý địa chỉ
+        String getAddressDetail = staffRequest.getAddRessDetail();
+
+        if (getAddressDetail != null && !getAddressDetail.isEmpty()) {
+            String[] parts = getAddressDetail.split(",\\s*"); // Cắt chuỗi dựa trên dấu phẩy và khoảng trắng
+
+            // Kiểm tra xem chuỗi có đủ phần không
+            if (parts.length >= 3) {
+                staffRequest.setWard(parts[0]); // Xã/Phường
+                staffRequest.setDistrict(parts[1]); // Quận/Huyện
+                staffRequest.setProvince(parts[2]); // Tỉnh/Thành phố
+
+                // Nếu địa chỉ còn các phần khác, gộp lại
+                if (parts.length > 3) {
+                    staffRequest.setAddRessDetail(String.join(", ", java.util.Arrays.copyOfRange(parts, 3, parts.length)));
+                } else {
+                    staffRequest.setAddRessDetail(""); // Không còn chi tiết địa chỉ khác
+                }
+            }
+        }
         model.addAttribute("staff", staffRequest);
         return "Staff/update";
     }
@@ -86,6 +107,13 @@ public class StaffController {
         BeanUtils.copyProperties(staff, staffRequest);
         model.addAttribute("staff", staffRequest);
         return "Staff/detail";
+    }
+
+    @GetMapping("/delete/{id}")
+    public String deleteStaff(RedirectAttributes ra, @PathVariable("id") Integer id) {
+        staffService.deleteStaff(id);
+        ra.addFlashAttribute("mes", "Xóa thành công nhan vien với ID là: " + id);
+        return "redirect:/staff/list";
     }
 
 }
