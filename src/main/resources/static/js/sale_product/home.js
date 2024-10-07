@@ -39,29 +39,24 @@ document.addEventListener("DOMContentLoaded", function () {
         changeTable(2);
     });
 
-    document.getElementById("discountType").addEventListener("change", function () {
-        const selectValueType = this.value;
-        const discountTextDola = document.getElementById("discountTextDola");
-        const discountTextCash = document.getElementById("discountTextCash");
-        if (selectValueType === "1") {
-            discountTextDola.style.display = "inline";
-            discountTextCash.style.display = "none";
-        } else if (selectValueType === "2") {
-            discountTextCash.style.display = "inline";
-            discountTextDola.style.display = "none";
-        } else {
-            discountTextDola.style.display = "none";
-            discountTextCash.style.display = "none";
-        }
-    });
-
-    var toastEl = document.querySelector('.toast');
+    // Toast thông báo
+    var toastEl = document.querySelector('.custom-toast');
     if (toastEl) {
         var toast = new bootstrap.Toast(toastEl, {
-            delay: 5000
+            delay: 5000 // Thời gian hiển thị toast là 5 giây
         });
         toast.show();
+
+        // Kiểm tra nếu nút đóng tồn tại
+        var closeBtn = document.querySelector('.custom-btn-close');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', function () {
+                toast.hide(); // Ẩn toast khi nhấn nút close
+            });
+        }
     }
+
+    // Sự kiện click cho các label tìm kiếm
     document.querySelectorAll('.search-label').forEach(label => {
         label.addEventListener('click', function () {
             const targetSelector = this.getAttribute('data-target');

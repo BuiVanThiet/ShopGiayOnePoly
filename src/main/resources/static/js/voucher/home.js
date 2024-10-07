@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    var toastEl = document.querySelector('.toast');
+    var toastEl = document.querySelector('.custom-toast');
     if (toastEl) {
         var toast = new bootstrap.Toast(toastEl, {
             delay: 5000

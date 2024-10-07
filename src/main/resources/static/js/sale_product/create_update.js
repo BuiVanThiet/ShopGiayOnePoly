@@ -14,3 +14,15 @@ document.getElementById("discountType").addEventListener("change", function () {
         discountTextCash.style.display = "none";
     }
 });
+document.addEventListener("DOMContentLoaded", function () {
+    var toastEl = document.querySelector('.custom-toast');
+    if (toastEl) {
+        var toast = new bootstrap.Toast(toastEl, {
+            delay: 5000
+        });
+        toast.show();
+    }
+    document.querySelector('.custom-btn-close').addEventListener('click', function () {
+        toast.hide();
+    });
+});

@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Repository
@@ -45,5 +46,19 @@ public interface SaleProductRepository extends JpaRepository<SaleProduct, Intege
 
     @Query("select p from ProductDetail p")
     public List<ProductDetail> getAllProductDetailByPage();
+    @Modifying
+    @Transactional
+    @Query("update ProductDetail p set p.price = p.price - :discountValue where p.id in :productIds")
+    void applyDiscountToMultipleProducts(@Param("productIds") List<Integer> productIds, @Param("discountValue") BigDecimal discountValue);
+
+//    @Modifying
+//    @Transactional
+//    @Query("update ProductDetail p set p.price = p.price where p.id = :productId")
+//    void revertDiscountForSingleProduct(@Param("productId") Integer productId);
+//
+//    // Phương thức tìm sản phẩm đã hết hạn
+//    @Query("SELECT p FROM ProductDetail p WHERE p.discountEndDate < :now")
+//    List<ProductDetail> findExpiredDiscounts(@Param("now") LocalDateTime now);
+
 
 }
