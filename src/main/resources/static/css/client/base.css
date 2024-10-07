@@ -23,6 +23,45 @@
     color: #007bff !important;
 }
 
+.dropdown-content {
+    display: none; /* Ẩn mặc định */
+    position: absolute; /* Để hiển thị bên dưới item */
+    background-color: white; /* Màu nền cho dropdown */
+    border: 1px solid #ccc; /* Đường viền */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Đổ bóng */
+    z-index: 1; /* Để đảm bảo nằm trên các phần tử khác */
+    padding: 10px; /* Padding cho dropdown */
+    opacity: 0; /* Đặt độ mờ ban đầu là 0 */
+    transform: translateY(-10px); /* Đẩy dropdown lên một chút */
+    transition: opacity 0.3s ease, transform 0.3s ease; /* Hiệu ứng chuyển đổi */
+}
+
+.dropdown-content.show {
+    display: block; /* Hiện dropdown */
+    opacity: 1; /* Đặt độ mờ thành 1 khi hiển thị */
+    transform: translateY(0); /* Trở lại vị trí ban đầu */
+}
+
+.nav-item {
+    position: relative; /* Để dropdown hiển thị chính xác */
+}
+
+.dropdown-button {
+    width: 100%; /* Để nút rộng bằng dropdown */
+    padding: 8px; /* Padding cho nút */
+    border: none; /* Không có viền */
+    background: transparent; /* Nền trong suốt */
+    text-align: left; /* Căn trái văn bản */
+    cursor: pointer; /* Con trỏ tay */
+    font-size: 0.9rem; /* Kích thước chữ */
+}
+
+.dropdown-button:hover {
+    background-color: #f0f0f0; /* Màu nền khi hover */
+}
+
+
+
 
 
 
