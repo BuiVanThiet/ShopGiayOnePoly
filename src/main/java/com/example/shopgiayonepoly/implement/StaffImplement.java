@@ -3,7 +3,6 @@ package com.example.shopgiayonepoly.implement;
 import com.example.shopgiayonepoly.dto.request.StaffRequest;
 import com.example.shopgiayonepoly.dto.response.StaffResponse;
 import com.example.shopgiayonepoly.entites.Staff;
-import com.example.shopgiayonepoly.entites.Voucher;
 import com.example.shopgiayonepoly.repositores.StaffRepository;
 import com.example.shopgiayonepoly.service.StaffService;
 import org.springframework.beans.BeanUtils;
@@ -24,6 +23,11 @@ public class StaffImplement implements StaffService {
     @Override
     public List<StaffResponse> getAllStaff() {
         return staffRepository.getAllStaff();
+    }
+
+    @Override
+    public Page<Staff> getAllStaffByPage(Pageable pageable) {
+        return staffRepository.getAllStaffByPage(pageable);
     }
 
     @Override

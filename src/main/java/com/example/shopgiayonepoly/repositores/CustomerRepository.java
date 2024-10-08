@@ -2,7 +2,10 @@ package com.example.shopgiayonepoly.repositores;
 
 import com.example.shopgiayonepoly.dto.response.CustomerResponse;
 import com.example.shopgiayonepoly.entites.Customer;
+import com.example.shopgiayonepoly.entites.Staff;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -54,4 +57,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
     @Transactional
     @Query(value = "update Customer set status =0 where id=:id")
     public void deleteBySetStatus(@Param("id") Integer id);
+
+    @Query("select v from Customer v where v.status =1")
+    public Page<Customer> getAllCustomrByPage(Pageable pageable);
 }

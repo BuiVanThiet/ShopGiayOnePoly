@@ -49,7 +49,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="customer, index: ${customerList}">
+                <tr th:each="customer, index: ${pageCustomer}">
 <!--                    <td th:text="${customer.nameImage}"></td>-->
                     <td th:text="${customer.fullName}"></td>
                     <td th:text="${customer.gender}"> </td>
@@ -62,12 +62,32 @@
                         <a th:href="@{/customer/edit/{id}(id=${customer.id})}" class="edit-icon" onclick="enableEditing(this); return false;"><i class="fas fa-edit" title="Edit"></i></a>
                         <a href="#" class="save-icon" style="display:none;" onclick="saveChanges(this); return false;"><i class="fas fa-save" title="Save"></i></a>
                         <a th:href="@{/customer/detail/{id}(id=${customer.id})}"><i class="icon-detail fas fa-bars"></i></a>
-                        <a th:href="@{/customer/delete/1}" onclick="return confirm('Bạn có chắc chắn muốn xóa khach hang?')"><i class="icon-delete fas fa-trash" title="Delete"></i></a>
+                        <a th:href="@{/customer/delete/{id}(id=${customer.id})}" onclick="return confirm('Bạn có chắc chắn muốn xóa khach hang?')"><i class="icon-delete fas fa-trash" title="Delete"></i></a>
                     </td>
                 </tr>
 
                 </tbody>
             </table>
+            <div class="text-center m-3">
+                <div class="d-flex justify-content-center">
+                    <a th:href="@{/customer/list?pageNumber=0}"
+                       class="btn btn-secondary mx-1">First</a>
+                    <a th:href="@{/customer/list(pageNumber=${pageCustomer.first ? 0 : pageCustomer.number - 1})}"
+                       class="btn btn-secondary mx-1">Previous</a>
+                    <div th:if="${pageCustomer.totalPages > 0}" class="d-flex">
+                        <div th:each="pageNumber : ${#numbers.sequence(0, pageCustomer.totalPages - 1)}"
+                             class="mx-1">
+                            <a th:href="@{/customer/list(pageNumber=${pageNumber})}"
+                               class="btn btn-primary"
+                               th:text="${pageNumber + 1}"></a>
+                        </div>
+                    </div>
+                    <a th:href="@{/customer/list(pageNumber=${pageCustomer.last ? pageCustomer.totalPages - 1 : pageCustomer.number + 1})}"
+                       class="btn btn-secondary mx-1">Next</a>
+                    <a th:href="@{/customer/list(pageNumber=${pageCustomer.totalPages - 1})}"
+                       class="btn btn-secondary mx-1">Last</a>
+                </div>
+            </div>
         </article>
     </div>
 </main>

@@ -1,21 +1,19 @@
 package com.example.shopgiayonepoly.service;
 
 import com.example.shopgiayonepoly.dto.request.StaffRequest;
-import com.example.shopgiayonepoly.dto.request.VoucherRequest;
 import com.example.shopgiayonepoly.dto.response.StaffResponse;
-import com.example.shopgiayonepoly.entites.Product;
 import com.example.shopgiayonepoly.entites.Staff;
-import com.example.shopgiayonepoly.entites.Voucher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface StaffService {
     List<StaffResponse> getAllStaff();
+
+    public Page<Staff> getAllStaffByPage(Pageable pageable);
 
     public List<StaffResponse> searchStaffByKeyword(String key);
 
