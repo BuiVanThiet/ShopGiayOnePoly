@@ -46,7 +46,22 @@
                                     <option value="">Chọn hãng</option>
                                     <option th:each="manufacturer : ${manufacturerList}" th:value="${manufacturer.id}" th:text="${manufacturer.nameManufacturer}"></option>
                                 </select>
+                                <div class="select-product dropdown">
+                                    <div class="dropdown-btn" id="dropdown-btn">
+                                        Danh mục
+                                        <span class="arrow">&#9660;</span> <!-- Mũi tên xuống -->
+                                    </div>
+                                    <div class="dropdown-content" id="dropdown-content">
+                                        <div th:each="category : ${categoryList}">
+                                            <label>
+                                                <input type="checkbox" name="categories" th:value="${category.id}" />
+                                                <span th:text="${category.nameCategory}"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
+
                             <button id="product-btn-add" type="submit" class="product-btn-add btn-add">Thêm sản phẩm</button>
                             <button style="display: none" id="product-btn-edit" type="submit" class="product-btn-edit btn-edit">Sửa sản phẩm</button>
                         </div>

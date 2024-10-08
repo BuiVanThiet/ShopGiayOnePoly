@@ -37,6 +37,7 @@ function editRow(index) {
             document.getElementById("manufacturer").value = data.manufacturer.id;
             document.getElementById("origin").value = data.origin.id;
             document.getElementById("sole").value = data.sole.id;
+            document.getElementById("categories").value = data.categories.id;
             document.getElementById("describeProduct").value = data.describe;
             var event = new Event('input', { bubbles: true });
             document.getElementById("codeProduct").dispatchEvent(event);
@@ -117,6 +118,30 @@ document.getElementById('product-btn-edit').addEventListener('click', function(e
     };
 });
 
+document.getElementById("dropdown-btn").onclick = function(event) {
+    event.stopPropagation(); // Ngăn chặn sự kiện bấm lan ra ngoài
+    var dropdownContent = document.getElementById("dropdown-content");
+    var arrow = document.querySelector(".arrow");
+
+    dropdownContent.classList.toggle("show");
+    arrow.classList.toggle("rotate");
+};
+
+// Đóng dropdown nếu người dùng bấm ra ngoài
+window.onclick = function(event) {
+    if (!event.target.matches('.dropdown-btn') && !event.target.closest('.dropdown-content')) {
+        var dropdowns = document.getElementsByClassName("dropdown-content");
+        for (var i = 0; i < dropdowns.length; i++) {
+            var openDropdown = dropdowns[i];
+            if (openDropdown.classList.contains('show')) {
+                openDropdown.classList.remove('show');
+            }
+        }
+        // Xoay lại mũi tên về vị trí ban đầu
+        var arrow = document.querySelector(".arrow");
+        arrow.classList.remove("rotate");
+    }
+};
 
 
 

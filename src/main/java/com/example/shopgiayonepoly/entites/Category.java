@@ -8,7 +8,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -23,5 +25,6 @@ public class Category extends Base {
     private String nameCategory;
     @ManyToMany(mappedBy = "categories")
     @JsonBackReference
-    private List<Product> products;
+    private Set<Product> products = new HashSet<>();
+
 }

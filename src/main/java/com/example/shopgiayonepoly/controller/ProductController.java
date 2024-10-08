@@ -1,9 +1,14 @@
 package com.example.shopgiayonepoly.controller;
 
+import com.example.shopgiayonepoly.entites.Category;
 import com.example.shopgiayonepoly.entites.Product;
 import com.example.shopgiayonepoly.entites.Staff;
+import com.example.shopgiayonepoly.service.CategoryService;
 import com.example.shopgiayonepoly.service.ProductService;
-import com.example.shopgiayonepoly.service.attribute.*;
+import com.example.shopgiayonepoly.service.attribute.ManufacturerService;
+import com.example.shopgiayonepoly.service.attribute.MaterialService;
+import com.example.shopgiayonepoly.service.attribute.OriginService;
+import com.example.shopgiayonepoly.service.attribute.SoleService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,10 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Controller
 @RequestMapping("/staff")
@@ -32,6 +34,9 @@ public class ProductController {
     @Autowired
     SoleService soleService;
 
+    @Autowired
+    CategoryService categoryService;
+
     @GetMapping("/product")
     public String list(Model model) {
         model.addAttribute("productList", productService.getProductNotStatus0());
@@ -40,6 +45,7 @@ public class ProductController {
         model.addAttribute("manufacturerList", manufacturerService.findAll());
         model.addAttribute("originList", originService.findAll());
         model.addAttribute("soleList", soleService.findAll());
+        model.addAttribute("categoryList", categoryService.findAll());
         return "/Product/product";
     }
 
@@ -55,12 +61,16 @@ public class ProductController {
 //        return new ResponseEntity<>(listProductActive, HttpStatus.OK);
 //    }
 //
+
     @RequestMapping("/product/add")
-    public String add(@ModelAttribute("productAdd") Product product) {
+    public String add(@ModelAttribute("productAdd") Product product, @RequestParam List<Integer> categories) {
+        Set<Category> selectedCategories = categoryService.findCategoriesByIds(categories);
+        product.setCategories(selectedCategories);
         product.setStatus(1);
         productService.save(product);
         return "redirect:/staff/product";
     }
+
 
     @GetMapping("/product/get-one/{id}")
     public ResponseEntity<Product> getOneByID(@PathVariable Integer id) {
