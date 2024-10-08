@@ -98,8 +98,7 @@
 
                             <!-- Bảng 1 -->
                             <div id="table-sale">
-                                <table class="table table-striped table-hover"
-                                       style="margin-top: 30px; margin-bottom: 70px">
+                                <table class="table table-striped table-hover" style="margin-top: 30px; margin-bottom: 70px">
                                     <thead class="bg-primary text-white">
                                     <tr>
                                         <th>Mã</th>
@@ -108,7 +107,7 @@
                                         <th>Loại</th>
                                         <th>Ngày bắt đầu</th>
                                         <th>Ngày kết thúc</th>
-                                        <th colspan="3">Hành động</th> <!-- Thêm cột Chọn -->
+                                        <th colspan="3">Hành động</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -120,21 +119,17 @@
                                         <td th:text="${sale.startDate}">Ngày bắt đầu</td>
                                         <td th:text="${sale.endDate}">Ngày kết thúc</td>
                                         <td>
-                                            <a th:href="@{/sale-product/delete/{id}(id=${sale.id})}"
-                                               onclick="return confirm('Bạn có muốn xóa đợt giảm giá này không?')"
-                                               class="btn btn-danger btn-sm">
+                                            <a th:href="@{/sale-product/delete/{id}(id=${sale.id})}" onclick="return confirm('Bạn có muốn xóa đợt giảm giá này không?')" class="btn btn-danger btn-sm">
                                                 <i class="bi bi-trash"></i> Xóa
                                             </a>
                                         </td>
                                         <td>
-                                            <a th:href="@{/sale-product/edit/{id}(id=${sale.id})}"
-                                               class="btn btn-warning btn-sm">
+                                            <a th:href="@{/sale-product/edit/{id}(id=${sale.id})}" class="btn btn-warning btn-sm">
                                                 <i class="bi bi-pencil-square"></i> Sửa
                                             </a>
                                         </td>
                                         <td>
-                                            <button class="btn btn-primary btn-sm select-sale-btn"
-                                                    th:attr="data-discount-value=${sale.discountValue}, data-discount-type=${sale.discountType}">
+                                            <button class="btn btn-primary btn-sm select-sale-btn" th:attr="data-sale-id=${sale.id}, data-discount-value=${sale.discountValue}, data-discount-type=${sale.discountType}">
                                                 <i class="bi bi-check2-circle"></i> Chọn
                                             </button>
                                         </td>
@@ -222,9 +217,9 @@
                 </div>
                 <div class="col-4" style="border: 1px solid #b9b1b1">
                     <div class="card-header w-100" style="height:50px;background-color: #e8e6e6;line-height: 40px">
-                        <p style="margin-left: 20%">DANH SÁCH SẢN PHẨM CHI TIẾT</p>
+                        <p class="text-center" style="margin: 0;">DANH SÁCH SẢN PHẨM CHI TIẾT</p>
                     </div>
-                    <table class="table table-striped table-hover" style="margin-top: 30px;margin-bottom: 70px">
+                    <table class="table table-striped table-hover" style="margin-top: 30px; margin-bottom: 70px">
                         <thead class="bg-primary text-white">
                         <tr>
                             <th>ID</th>
@@ -239,13 +234,12 @@
                             <td th:text="${productDt.product.nameProduct}">Tên sản phẩm</td>
                             <td th:text="${productDt.price}">Giá</td>
                             <td>
-                                <input type="checkbox" th:value="${productDt.id}" name="selectedProducts"
-                                       id="product_${productDt.id}"/>
+                                <input type="checkbox" th:value="${productDt.id}" name="selectedProducts" id="product_${productDt.id}"/>
                             </td>
                         </tr>
                         </tbody>
                     </table>
-                    <button id="applyDiscountBtn" class="btn btn-success w-100" onclick="apply_discount()">
+                    <button id="applyDiscountBtn" class="btn btn-success w-100" onclick="confirmApplyDiscount()">
                         <i style="margin-right: 5px" class="bi bi-plus-lg"></i>Áp dụng ngay
                     </button>
                 </div>

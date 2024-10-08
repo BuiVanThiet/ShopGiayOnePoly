@@ -223,23 +223,25 @@ public class SaleProductController {
         model.addAttribute("listProductDetail", listProductDetail);
         return "sale_product/index";
     }
+
     @PostMapping("/apply-discount")
-    public ResponseEntity<String> applyDiscountToProducts(
+    public ResponseEntity<?> applyDiscount(
             @RequestParam List<Integer> productIds,
             @RequestParam BigDecimal discountValue,
-            @RequestParam Integer discountType) {
-
-        if (discountValue == null || discountType == null || productIds.isEmpty()) {
-            return ResponseEntity.badRequest().body("Giá trị giảm giá hoặc loại giảm giá không hợp lệ.");
-        }
+            @RequestParam Integer discountType,
+            @RequestParam Integer saleProductId) {
 
         try {
-            saleProductService.applyDiscountToProductDetails(productIds, discountValue, discountType);
-            return ResponseEntity.ok("Giảm giá đã được áp dụng thành công cho các sản phẩm.");
+            // Sử dụng saleProductId để xử lý logic giảm giá nếu cần
+            saleProductService.applyDiscountToProductDetails(productIds, discountValue, discountType, saleProductId);
+            return ResponseEntity.ok("Giảm giá đã được áp dụng thành công.");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Đã xảy ra lỗi khi áp dụng giảm giá: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Đã xảy ra lỗi khi áp dụng giảm giá.");
+
         }
+
     }
+
 
     @ModelAttribute("staffInfo")
     public Staff staff(HttpSession session) {

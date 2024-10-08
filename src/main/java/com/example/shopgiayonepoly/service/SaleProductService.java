@@ -23,6 +23,6 @@ public interface SaleProductService {
     public List<ProductDetail> getAllProductDetailByPage();
     public void createNewSale(SaleProductRequest saleProductRequest);
     public SaleProduct getSaleProductByID(Integer id);
-    public void applyDiscountToProductDetails(List<Integer> productIds, BigDecimal discountValue,Integer discountType);
+    public void applyDiscountToProductDetails(List<Integer> productIds, BigDecimal discountValue, Integer discountType, Integer saleProductId);
 }
 

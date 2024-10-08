@@ -20,13 +20,12 @@
     <link rel="stylesheet" th:href="@{/pagination/stylePagination.css}" type="text/css">
     <link rel="stylesheet" th:href="@{/css/attribute/attribute.css}" type="text/css">
     <link rel="stylesheet" th:href="@{/css/product/list.css}" type="text/css">
-<!--    <link rel="stylesheet" th:href="@{/css/product/create.css}" type="text/css">-->
+    <!--    <link rel="stylesheet" th:href="@{/css/product/create.css}" type="text/css">-->
     <link rel="stylesheet" th:href="@{/css/voucher/home.css}" type="text/css">
     <link rel="stylesheet" th:href="@{/css/sale-product/home.css}" type="text/css">
 
 </head>
 <body>
-
 
 
 <nav class="navbar border-bottom border-3 border-dark"
@@ -63,9 +62,9 @@
                 <span>Chúc bạn một ngày tốt lành!</span>
 
             </a>
-            <i class="bi bi-x-square position-absolute m-2" style="font-size: 300%; color: white; top: 0; right: 0;" data-bs-dismiss="offcanvas" aria-label="Close"></i>
+            <i class="bi bi-x-square position-absolute m-2" style="font-size: 300%; color: white; top: 0; right: 0;"
+               data-bs-dismiss="offcanvas" aria-label="Close"></i>
         </div>
-
 
 
         <div class="offcanvas-body text-start">
@@ -88,28 +87,68 @@
                         Sản phẩm
                     </a>
                     <!-- Thuộc tính sản phẩm -->
-                    <a class="dropdown-item text-decoration-none text-white fs-6 bg-transparent" data-bs-toggle="collapse" href="#thuocTinh" role="button" aria-expanded="false" aria-controls="thuocTinh">
+                    <a class="dropdown-item text-decoration-none text-white fs-6 bg-transparent"
+                       data-bs-toggle="collapse" href="#thuocTinh" role="button" aria-expanded="false"
+                       aria-controls="thuocTinh">
                         Thuộc tính sản phẩm
                     </a>
                     <hr>
                     <!-- Các tùy chọn con (ẩn/hiện khi bấm vào Thuộc tính sản phẩm) -->
                     <div class="collapse" id="thuocTinh">
-                        <a class="dropdown-item text-decoration-none text-white fs-6 bg-transparent sub-option" href="#">
+                        <a class="dropdown-item text-decoration-none text-white fs-6 bg-transparent sub-option"
+                           href="#">
                             Hãng
                         </a>
-                        <a class="dropdown-item text-decoration-none text-white fs-6 bg-transparent sub-option" href="#">
+                        <a class="dropdown-item text-decoration-none text-white fs-6 bg-transparent sub-option"
+                           href="#">
                             Chất liệu
                         </a>
-                        <a class="dropdown-item text-decoration-none text-white fs-6 bg-transparent sub-option" href="#">
+                        <a class="dropdown-item text-decoration-none text-white fs-6 bg-transparent sub-option"
+                           href="#">
                             Xuất xứ
                         </a>
-                        <a class="dropdown-item text-decoration-none text-white fs-6 bg-transparent sub-option" href="#">
+                        <a class="dropdown-item text-decoration-none text-white fs-6 bg-transparent sub-option"
+                           href="#">
                             Danh mục
                         </a>
                     </div>
                 </div>
             </div>
 
+            <p class="border-bottom">
+                <a class="text-decoration-none text-white fs-3 bg-transparent" data-bs-toggle="collapse"
+                   href="#voucher" role="button" aria-expanded="false" aria-controls="collapseExample">
+                    Quản lý phiếu giảm giá
+                </a>
+            </p>
+
+            <div class="collapse" id="voucher">
+                <div class="card card-body" style="background-color: rgba(255, 255, 255, 0.445); color: white;">
+                    <a class="dropdown-item text-decoration-none text-white fs-6 bg-transparent" href="/voucher/list">
+                        Danh sách phiếu giảm giá
+                    </a>
+                </div>
+            </div>
+
+            <p class="border-bottom">
+                <a class="text-decoration-none text-white fs-3 bg-transparent" data-bs-toggle="collapse"
+                   href="#sale-product" role="button" aria-expanded="false" aria-controls="collapseExample">
+                    Quản lý đợt giảm giá
+                </a>
+            </p>
+
+            <div class="collapse" id="sale-product">
+                <div class="card card-body" style="background-color: rgba(255, 255, 255, 0.445); color: white;">
+                    <a class="dropdown-item text-decoration-none text-white fs-6 bg-transparent" href="/sale-product/list">
+                        Danh sách đợt giảm giá
+                    </a>
+                </div>
+                <div class="card card-body" style="background-color: rgba(255, 255, 255, 0.445); color: white;">
+                    <a class="dropdown-item text-decoration-none text-white fs-6 bg-transparent" href="/sale-product/create">
+                        Thêm đợt giảm giá
+                    </a>
+                </div>
+            </div>
 
             <!-- tab2 -->
             <p class=" border-bottom">
@@ -208,7 +247,8 @@
 <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
     <!-- Đây là container nơi toast sẽ xuất hiện -->
 </div>
-<div class="modal fade" id="accessDeniedModal" tabindex="-1" aria-labelledby="accessDeniedModalLabel" aria-hidden="true">
+<div class="modal fade" id="accessDeniedModal" tabindex="-1" aria-labelledby="accessDeniedModalLabel"
+     aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -216,7 +256,8 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                Bạn không có quyền truy cập vào trang này. Vui lòng liên hệ với quản trị viên nếu bạn nghĩ đây là lỗi.
+                Bạn không có quyền truy cập vào trang này. Vui lòng liên hệ với quản trị viên nếu bạn nghĩ đây là
+                lỗi.
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
@@ -259,8 +300,6 @@
 <script th:src="@{/pagination/actionPagination.js}" type="text/javascript"></script>
 
 <!--<script th:src="@{/js/bill/callAPIGHN.js}" type="text/javascript"></script>-->
-
-
 
 
 <!--<script th:src="@{/ajax/bill/ajaxBillManage.js}" type="text/javascript"></script>-->
