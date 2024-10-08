@@ -9,12 +9,61 @@
 }
 
 .rectangle {
-    height: 70px; /* Chiều cao của ô chữ nhật */
-    background-color: #f1f1f1; /* Màu nền cho ô chữ nhật */
-    border: 1px solid #ccc; /* Viền ô chữ nhật */
+    height: 70px;
+    background-color: #FFF8DC;
+    border: 1px solid #ccc;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column; /* Sắp xếp các thành phần theo cột */
+    justify-content: flex-start; /* Bắt đầu từ phía trên cùng */
+    align-items: flex-start; /* Căn bên trái */
+    padding: 10px; /* Khoảng cách bên trong */
     margin-top: 20px;
-    border-radius: 5px;
+    border-radius: 15px;
+    font-weight: bold;
 }
+
+
+.rectangle h6 {
+    font-weight: bold;
+}
+/* CSS cho nội dung truyền từ BE */
+.data-from-be {
+    margin-top: auto;
+    font-size: 14px;
+    color: #555;
+}
+
+/* CSS cho thẻ bộ lọc */
+.filter-section {
+    margin-bottom: 20px;
+    padding: 15px;
+    border-radius: 5px;
+    display: flex; /* Sử dụng Flexbox */
+    align-items: center; /* Căn chỉnh theo chiều dọc */
+    justify-content: flex-end; /* Đẩy nhóm nút sang bên phải */
+}
+
+.filter-section .btn-group {
+    margin-right: 10px; /* Khoảng cách giữa các nút */
+}
+
+.filter-section .btn {
+    margin-right: 10px; /* Khoảng cách giữa các nút */
+    border-radius: 10px; /* Bo góc cho các nút */
+    border: 1px solid #555; /* Viền màu #FFF8DC */
+    transition: background-color 0.3s, color 0.3s;
+    color: rgb(0, 0, 0); /* Hiệu ứng chuyển màu */
+
+}
+
+.filter-section .btn:hover {
+    background-color: #FFF8DC; /* Nền màu khi hover */
+    color: black; /* Chữ màu trắng khi hover */
+}
+
+
+.filter-section input,
+.filter-section select {
+    margin-bottom: 10px;
+}
+

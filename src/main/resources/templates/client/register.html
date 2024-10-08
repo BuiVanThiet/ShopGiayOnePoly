@@ -15,7 +15,6 @@
 <div class="wrapper">
   <div class="form-box register">
     <h2>Đăng ký</h2>
-
     <div th:if="${errorMessage}" class="error-message">
       <p th:text="${errorMessage}"></p>
     </div>
@@ -29,14 +28,14 @@
             <span class="icon">
               <ion-icon name="person-circle"></ion-icon>
             </span>
-        <input type="text" name="account" required placeholder="Tài khoản"/>
+        <input type="text" name="fullName" th:value="${fullName}" placeholder="Họ và tên"/>
       </div>
 
       <div class="input-box">
             <span class="icon">
               <ion-icon name="mail"></ion-icon>
             </span>
-        <input type="email" name="email" required placeholder="Email"/>
+        <input type="email" name="email"  th:value="${email}"  placeholder="Email"/>
       </div>
 
       <div class="input-box">
