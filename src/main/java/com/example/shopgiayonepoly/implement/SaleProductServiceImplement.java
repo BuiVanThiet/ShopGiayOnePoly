@@ -15,6 +15,9 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -82,12 +85,21 @@ public class SaleProductServiceImplement implements SaleProductService {
     }
 
     @Override
-    public void applyDiscountToProductDetails(List<Integer> productIds, BigDecimal discountValue, Integer discountType) {
+    public void applyDiscountToProductDetails(List<Integer> productIds, BigDecimal discountValue, Integer discountType, Integer saleProductId) {
+        // Tìm kiếm SaleProduct theo saleProductId
+        SaleProduct saleProduct = saleProductRepository.findById(saleProductId).orElse(null);
+
+        if (saleProduct == null) {
+            throw new IllegalArgumentException("SaleProduct không tồn tại với ID: " + saleProductId);
+        }
+
         for (Integer productId : productIds) {
             ProductDetail product = productDetailRepository.findById(productId).orElse(null);
             if (product != null) {
-                // Lưu lại giá gốc trước khi giảm giá
-                product.setOriginalPrice(product.getPrice());
+                // Lưu giá gốc nếu chưa lưu
+                if (product.getOriginalPrice() == null) {
+                    product.setOriginalPrice(product.getPrice());
+                }
 
                 // Tính toán giá mới sau khi giảm giá
                 BigDecimal newPrice;
@@ -100,13 +112,7 @@ public class SaleProductServiceImplement implements SaleProductService {
                 }
                 product.setPrice(newPrice);
 
-                // Tạo đối tượng SaleProduct và lưu nó trước
-                SaleProduct saleProduct = new SaleProduct();
-                saleProduct.setDiscountValue(discountValue);
-                saleProduct.setDiscountType(discountType);
-                saleProductRepository.save(saleProduct); // Lưu SaleProduct
-
-                // Liên kết SaleProduct với ProductDetail
+                // Liên kết SaleProduct đã chọn với ProductDetail
                 product.setSaleProduct(saleProduct);
 
                 // Lưu ProductDetail sau khi cập nhật
@@ -114,5 +120,11 @@ public class SaleProductServiceImplement implements SaleProductService {
             }
         }
     }
+
+    // Hàm để tạo mã giảm giá (bạn có thể tùy chỉnh logic tạo mã này)
+    private String generateSaleCode() {
+        return "SALE" + System.currentTimeMillis(); // Tạo một mã giảm giá dựa trên thời gian hiện tại
+    }
+
 
 }

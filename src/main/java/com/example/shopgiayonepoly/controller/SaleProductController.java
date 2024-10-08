@@ -223,33 +223,23 @@ public class SaleProductController {
         model.addAttribute("listProductDetail", listProductDetail);
         return "sale_product/index";
     }
+
     @PostMapping("/apply-discount")
-    public ResponseEntity<String> applyDiscountToProducts(
+    public ResponseEntity<?> applyDiscount(
             @RequestParam List<Integer> productIds,
             @RequestParam BigDecimal discountValue,
-            @RequestParam Integer discountType) {
-
-        if (discountValue == null || discountValue.compareTo(BigDecimal.ZERO) <= 0) {
-            return ResponseEntity.badRequest().body("Giá trị giảm giá không hợp lệ.");
-        }
-
-        if (discountType == null || (discountType != 1 && discountType != 2)) {
-            return ResponseEntity.badRequest().body("Loại giảm giá không hợp lệ.");
-        }
-
-        if (productIds == null || productIds.isEmpty()) {
-            return ResponseEntity.badRequest().body("Danh sách sản phẩm không được trống.");
-        }
+            @RequestParam Integer discountType,
+            @RequestParam Integer saleProductId) {
 
         try {
-            // Gọi service áp dụng giảm giá
-            saleProductService.applyDiscountToProductDetails(productIds, discountValue, discountType);
-            return ResponseEntity.ok("Giảm giá đã được áp dụng thành công cho các sản phẩm.");
+            // Sử dụng saleProductId để xử lý logic giảm giá nếu cần
+            saleProductService.applyDiscountToProductDetails(productIds, discountValue, discountType, saleProductId);
+            return ResponseEntity.ok("Giảm giá đã được áp dụng thành công.");
         } catch (Exception e) {
-            // Ghi lại lỗi để tiện theo dõi
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Đã xảy ra lỗi khi áp dụng giảm giá: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Đã xảy ra lỗi khi áp dụng giảm giá.");
+
         }
+
     }
 
 
