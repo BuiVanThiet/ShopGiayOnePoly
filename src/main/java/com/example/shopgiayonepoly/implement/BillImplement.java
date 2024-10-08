@@ -122,4 +122,8 @@ public class BillImplement implements BillService {
     public List<Object[]> getBillDetailByIdBillPDF(Integer id) {
         return this.billRepository.getBillDetailByIdBillPDF(id);
     }
+    @Override
+    public List<Object[]> getInfomationBillReturn(Integer id) {
+        return this.billRepository.getInfomationBillReturn(id);
+    }
 }

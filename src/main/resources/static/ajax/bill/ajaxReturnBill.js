@@ -1,7 +1,7 @@
 function loadBillDetailFromReturnBill(page) {
     $.ajax({
         type: "GET",
-        url: "/return-bill/bill-detail/"+page,
+        url: "/return-bill-api/bill-detail/"+page,
         success: function(response) {
             var tbody = $('#tableBillDetail');
             var noDataContainer = $('#noDataContainer');
@@ -125,7 +125,7 @@ function loadBillDetailFromReturnBill(page) {
 function maxPageBillDetailByIdBill() {
     $.ajax({
         type: "GET",
-        url:"/return-bill/max-page-bill-detail",
+        url:"/return-bill-api/max-page-bill-detail",
         success: function (response) {
             createPagination('billDetailPageMax-returnBill', response, 1);
         },
@@ -139,10 +139,10 @@ function maxPageBillDetailByIdBill() {
     })
 }
 
-function loadReturnBill() {
+function loadReturnBill(page) {
     $.ajax({
         type: "GET",
-        url: "/return-bill/bill-return-detail",
+        url: "/return-bill-api/bill-return-detail/"+page,
         success: function (response) {
             var tbody = $('#tableReturnBill');
             var noDataContainer = $('#noDataReturnBill');
@@ -193,7 +193,11 @@ function loadReturnBill() {
                                 ${billReturn.priceBuy.toLocaleString('en-US') + ' VNĐ'}
                             </td>
                             <td class="text-center align-middle">
-                                ${billReturn.quantityReturn}
+                                 <div class="pagination mb-3 custom-number-input" style="width: 130px;" data-id="${billReturn.productDetail.id}">
+                                        <button class="button btn-decrement">-</button>
+                                    <div class="number" id="pageNumber"> ${billReturn.quantityReturn}</div>
+                                    <button class="button btn-increment">+</button>
+                                 </div>
                             </td>
                             <td class="text-center align-middle">
                                 ${billReturn.totalReturn.toLocaleString('en-US') + ' VNĐ'}
@@ -201,6 +205,7 @@ function loadReturnBill() {
                             <td class="text-center align-middle">
                                 <button type="button"
                                    class="btn btn-outline-danger btn-return-product-detail"
+                                   onclick="remoBillReturn(${billReturn.productDetail.id},${billReturn.quantityReturn})"
                                    >
                                     Xóa
                                 </button>
@@ -222,7 +227,7 @@ function loadReturnBill() {
 function maxPageReturnBill() {
     $.ajax({
         type: "GET",
-        url:"/return-bill/max-page-return-bill",
+        url:"/return-bill-api/max-page-return-bill",
         success: function (response) {
             createPagination('billReturnPageMax-returnBill', response, 1);
         },
@@ -236,7 +241,7 @@ function maxPageReturnBill() {
 function addProductReturn() {
     $.ajax({
         type: "POST",
-        url:"/return-bill/add-product-in-return-bill",
+        url:"/return-bill-api/add-product-in-return-bill",
         contentType: "application/json",
         data: JSON.stringify({
             idProductDetail: parseInt($('#idProductDetail').val()),  // Chuyển thành số nguyên
@@ -246,8 +251,9 @@ function addProductReturn() {
         success: function (response) {
             loadBillDetailFromReturnBill(1);
             maxPageBillDetailByIdBill();
-            loadReturnBill();
+            loadReturnBill(1);
             maxPageReturnBill();
+            loadInfomationReturnBill()
             showToast(response.message,response.check);
         },
         error: function (xhr) {
@@ -260,11 +266,11 @@ function addProductReturn() {
 function ressetListReturnBill() {
     $.ajax({
         type: "GET",
-        url:"/return-bill/reset-return-bill-detail",
+        url:"/return-bill-api/reset-return-bill-detail",
         success: function (response) {
             loadBillDetailFromReturnBill(1);
             maxPageBillDetailByIdBill();
-            loadReturnBill();
+            loadReturnBill(1);
             maxPageReturnBill();
             loadInfomationReturnBill();
         },
@@ -277,25 +283,13 @@ function ressetListReturnBill() {
 function loadInfomationReturnBill() {
     $.ajax({
         type: "GET",
-        url: "/return-bill/infomation-return-bill",
+        url: "/return-bill-api/infomation-return-bill",
         success: function (response) {
-            $('#code-bill').text(response.bill.codeBill)
-            var cutomer = '';
-            if (response.bill.customer == null) {
-                cutomer = 'Khách lẻ'
-            }else {
-                cutomer = response.bill.customer.fullName
-            }
-            $('#customer-buy-product').text(cutomer)
-
-            var discout = '';
-            if(response.bill.voucher == null) {
-                discout = '0 VNĐ';
-            }else {
-                discout = (response.bill.totalAmount - (response.bill.acountMoney+response.bill.cash)).toLocaleString('en-US') + ' VNĐ'
-            }
-            $('#discount-voucher').text(discout)
-
+            $('#code-bill').text(response.codeBill)
+            $('#customer-buy-product').text(response.nameCustomer)
+            $('#discount-voucher').text(response.discount.toLocaleString('en-US') + ' VNĐ')
+            $('#divide-equally-product').text(response.discountRatioPercentage+ ' %')
+            $('#total-return').text(response.totalReturn.toLocaleString('en-US') + ' VNĐ')
         },
         error: function (xhr) {
             console.error('loi ' + xhr.responseText);
@@ -303,10 +297,72 @@ function loadInfomationReturnBill() {
     })
 }
 
+function remoBillReturn(idProductDetail,quantity) {
+    $.ajax({
+        type: "GET",
+        url: "/return-bill-api/remove-product-in-return-bill/"+idProductDetail+"/"+quantity,
+        success: function (response) {
+            loadBillDetailFromReturnBill(1);
+            maxPageBillDetailByIdBill();
+            loadReturnBill(1);
+            maxPageReturnBill();
+            loadInfomationReturnBill()
+            showToast(response.message,response.check);
+        },
+        error: function (xhr) {
+            console.error('loi ' + xhr.responseText)
+        }
+    })
+}
+
+function increaseOrDecreaseProductReturn(idProductReturn,quantity,method) {
+    console.log(idProductReturn)
+    console.log(quantity)
+    console.log(method)
+    $.ajax({
+        type: "GET",
+        url: "/return-bill-api/increase-or-decrease-product-return/"+parseInt(idProductReturn)+"/"+parseInt(quantity)+"/"+method, // URL
+        success: function (response) {
+            loadBillDetailFromReturnBill(1);
+            maxPageBillDetailByIdBill();
+            loadReturnBill(1);
+            maxPageReturnBill();
+            loadInfomationReturnBill()
+            showToast(response.message,response.check);
+        },
+        error: function (xhr) {
+            console.error('Lỗi khi cập nhật: ' + xhr.responseText);
+        }
+    });
+}
+
+
 $(document).ready(function () {
+    // Xử lý sự kiện tăng/giảm số lượng
+    $(document).on('click', '.btn-increment', function () {
+        var $numberDiv = $(this).siblings('.number');
+        var value = parseInt($numberDiv.text(), 10);
+        $numberDiv.text(value + 1);
+        // Cập nhật giá trị mới trên server
+        increaseOrDecreaseProductReturn($(this).closest('.custom-number-input').data('id'),$numberDiv.text(),'cong')
+    });
+
+    $(document).on('click', '.btn-decrement', function () {
+        var $numberDiv = $(this).siblings('.number');
+        var value = parseInt($numberDiv.text(), 10);
+        if (value > 0) {
+            $numberDiv.text(value - 1);
+            // Cập nhật giá trị mới trên server
+            increaseOrDecreaseProductReturn($(this).closest('.custom-number-input').data('id'),$numberDiv.text(),'tru')
+        }
+    });
+
     $('#form-return-product').submit(function (event) {
         event.preventDefault();
         addProductReturn();
     })
+
+
+
     ressetListReturnBill();
 });

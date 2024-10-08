@@ -59,6 +59,8 @@ function handlePageClick(pageNumber, elementId, totalPages) {
         getAllBilByStatus(pageNumber);
     }else if (elementId == 'billDetailPageMax-returnBill') {
         loadBillDetailFromReturnBill(pageNumber);
+    }else if (elementId == 'billReturnPageMax-returnBill') {
+        loadReturnBill(pageNumber);
     }
 
     createPagination(elementId, totalPages, pageNumber); // Cập nhật phân trang

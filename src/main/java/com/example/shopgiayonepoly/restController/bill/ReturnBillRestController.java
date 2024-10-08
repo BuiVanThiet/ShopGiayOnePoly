@@ -2,6 +2,7 @@ package com.example.shopgiayonepoly.restController.bill;
 
 import com.example.shopgiayonepoly.baseMethod.BaseBill;
 import com.example.shopgiayonepoly.dto.request.bill.ReturnBillDetailRequest;
+import com.example.shopgiayonepoly.dto.response.bill.InfomationReturnBillResponse;
 import com.example.shopgiayonepoly.dto.response.bill.ReturnBillDetailResponse;
 import com.example.shopgiayonepoly.dto.response.bill.ReturnBillResponse;
 import com.example.shopgiayonepoly.entites.Bill;
@@ -17,54 +18,51 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/return-bill")
+@RequestMapping("/return-bill-api")
 public class ReturnBillRestController extends BaseBill {
     Integer quantity = 0;
     Integer idProductDetail = 0;
+    BigDecimal totalReturn = BigDecimal.valueOf(0);
     private List<BillDetail> billDetailList;
 
     @GetMapping("/bill-detail/{page}")
     public List<BillDetail> getListBillDetailByIdBill(@PathVariable("page") Integer page,HttpSession session) {
         Pageable pageable = PageRequest.of(page-1,2);
         System.out.println("session la " + session.getAttribute("IdBill"));
-        billDetailList = this.billDetailService.getBillDetailByIdBill((Integer) session.getAttribute("IdBill"));
-        int index = getReturnBillDetailResponseIndex(idProductDetail);
-        for (BillDetail billDetail: billDetailList) {
-            if(billDetail.getProductDetail().getId() == idProductDetail) {
-                if(index != -1) {
-                    BillDetail detail = billDetailList.get(index);
-                    detail.setQuantity(detail.getQuantity()-quantity);
-                    detail.setTotalAmount(detail.getPrice().multiply(BigDecimal.valueOf(detail.getQuantity())));
-                    System.out.println("da vao day de giam so luong");
-                    billDetailList.set(index,detail);
-                }
-            }
+        if(billDetailList == null) {
+            System.out.println("neu list null vao day");
+            billDetailList = this.billDetailService.getBillDetailByIdBill((Integer) session.getAttribute("IdBill"));
         }
-        return getConvertListToPage(billDetailList,pageable).getContent();
+        return getConvertListToPageBillDetail(billDetailList,pageable).getContent();
     }
     @GetMapping("/max-page-bill-detail")
     public Integer getMaxPageBillDetail(HttpSession session) {
         System.out.println("session la " + session.getAttribute("IdBill"));
-        billDetailList = this.billDetailService.getBillDetailByIdBill((Integer) session.getAttribute("IdBill"));
+        if(billDetailList == null) {
+            System.out.println("neu list null vao day");
+            billDetailList = this.billDetailService.getBillDetailByIdBill((Integer) session.getAttribute("IdBill"));
+        }
         Integer page = (int) Math.ceil((double) this.billDetailList.size() / 2);
         return page;
     }
 
-    @GetMapping("/bill-return-detail")
-    public List<ReturnBillDetailResponse> getListReturnBillDetail(HttpSession session) {
+    @GetMapping("/bill-return-detail/{page}")
+    public List<ReturnBillDetailResponse> getListReturnBillDetail(@PathVariable("page") Integer pageNumber,HttpSession session) {
         returnBillDetailResponses = (List<ReturnBillDetailResponse>) session.getAttribute("returnBillDetailResponses");
         if(returnBillDetailResponses == null) {
             returnBillDetailResponses =  new ArrayList<>();
         }
+        Pageable pageable = PageRequest.of(pageNumber-1,2);
 //        System.out.println(returnBillDetailResponse.getProductDetail().toString());
 //        System.out.println(returnBillDetailResponse.getProductDetail().getProduct().toString());
-        return this.returnBillDetailResponses;
+        return getConvertListToPageReturnBill(returnBillDetailResponses,pageable).getContent();
     }
 
     @GetMapping("/max-page-return-bill")
@@ -96,8 +94,20 @@ public class ReturnBillRestController extends BaseBill {
                 ReturnBillDetailResponse newReturnBillDetailResponse = new ReturnBillDetailResponse();
                 newReturnBillDetailResponse.setProductDetail(productDetail);
                 newReturnBillDetailResponse.setQuantityReturn(request.getQuantityReturn());
-                newReturnBillDetailResponse.setPriceBuy(request.getPriceBuy());
-                newReturnBillDetailResponse.setTotalReturn(request.getPriceBuy().multiply(BigDecimal.valueOf(request.getQuantityReturn())));
+//                BigDecimal discountRatio = (BigDecimal) session.getAttribute("discountRatioPercentage");
+//                BigDecimal priReturn = (BigDecimal)  request.getPriceBuy().multiply((BigDecimal.valueOf(1).subtract(discountRatio)));
+//                newReturnBillDetailResponse.setPriceBuy(priReturn.setScale(2, RoundingMode.CEILING));
+                BigDecimal discountRatio = (BigDecimal) session.getAttribute("discountRatioPercentage");
+                // Tính giá sau khi giảm giá
+                BigDecimal priReturn = request.getPriceBuy().multiply(BigDecimal.valueOf(1).subtract(discountRatio));
+                // Làm tròn về bội số của 500
+                BigDecimal roundedPrice = priReturn.divide(BigDecimal.valueOf(500), 0, RoundingMode.HALF_UP)
+                        .multiply(BigDecimal.valueOf(500));
+                // Set giá trị đã làm tròn vào đối tượng response
+                newReturnBillDetailResponse.setPriceBuy(roundedPrice);
+//                newReturnBillDetailResponse.setPriceBuy(request.getPriceBuy());
+//                newReturnBillDetailResponse.setTotalReturn(request.getPriceBuy().multiply(BigDecimal.valueOf(request.getQuantityReturn())));
+                newReturnBillDetailResponse.setTotalReturn(roundedPrice.multiply(BigDecimal.valueOf(request.getQuantityReturn())));
 
                 this.returnBillDetailResponses.add(newReturnBillDetailResponse);
                 session.setAttribute("returnBillDetailResponses", returnBillDetailResponses); // Cập nhật session
@@ -130,20 +140,126 @@ public class ReturnBillRestController extends BaseBill {
                 quantity = newQuantity;
             }
         }
-
+        int indexUpdateBill = getBillDetailResponseIndex(idProductDetail);
+        for (BillDetail billDetail: billDetailList) {
+            if(billDetail.getProductDetail().getId() == idProductDetail) {
+                if(indexUpdateBill != -1) {
+                    BillDetail detail = billDetailList.get(indexUpdateBill);
+                    detail.setQuantity(detail.getQuantity()-quantity);
+                    detail.setTotalAmount(detail.getPrice().multiply(BigDecimal.valueOf(detail.getQuantity())));
+                    System.out.println("da vao day de giam so luong");
+                    billDetailList.set(indexUpdateBill,detail);
+                }
+            }
+        }
+        totalReturn = BigDecimal.valueOf(0);
+        for (ReturnBillDetailResponse returnBillDetailResponse : returnBillDetailResponses) {
+                totalReturn = totalReturn.add(returnBillDetailResponse.getTotalReturn());
+        }
         return ResponseEntity.ok(thongBao);
     }
 
+    @GetMapping("/remove-product-in-return-bill/{idProduct}/{quantity}")
+    public ResponseEntity<Map<String, String>> getRemoveProductInReturnBill(@PathVariable("idProduct") Integer idProductDetailRequest,@PathVariable("quantity") Integer quantity, HttpSession session) {
+        Map<String, String> thongBao = new HashMap<>();
+        int index = getReturnBillDetailResponseIndex(idProductDetailRequest);
+
+        if(index != -1) {
+            this.returnBillDetailResponses.remove(index);
+            List<BillDetail> billDetails = this.billDetailService.getBillDetailByIdBill((Integer) session.getAttribute("IdBill"));
+            for (BillDetail detail: billDetails) {
+                if(detail.getProductDetail().getId() == idProductDetailRequest) {
+                    int indexUpdateBill = getBillDetailResponseIndex(idProductDetailRequest);
+                    for (BillDetail billDetail: billDetailList) {
+                        if(billDetail.getProductDetail().getId() == idProductDetail) {
+                            if(indexUpdateBill != -1) {
+                                BillDetail detailUpdate = billDetailList.get(indexUpdateBill);
+                                detailUpdate.setQuantity(detail.getQuantity());
+                                detailUpdate.setTotalAmount(detail.getTotalAmount());
+                                System.out.println("da khoi phuc so luong");
+                                thongBao.put("message", "Xóa sản phẩm trả thành công!");
+                                thongBao.put("check", "1");
+                                billDetailList.set(indexUpdateBill,detailUpdate);
+                            }
+                        }
+                    }
+                }
+            }
+
+            totalReturn = BigDecimal.valueOf(0);
+            for (ReturnBillDetailResponse returnBillDetailResponse : returnBillDetailResponses) {
+                totalReturn = totalReturn.add(returnBillDetailResponse.getTotalReturn());
+            }
+            return ResponseEntity.ok(thongBao);
+        }else {
+            thongBao.put("message", "Sai định dạng, xóa thất bại!");
+            thongBao.put("check", "3");
+            return ResponseEntity.ok(thongBao);
+        }
+    }
+
+    @GetMapping("/infomation-return-bill")
+    public InfomationReturnBillResponse getInfomationReturnBill(HttpSession session) {
+        List<Object[]> objects = this.billService.getInfomationBillReturn((Integer) session.getAttribute("IdBill"));
+        InfomationReturnBillResponse response = new InfomationReturnBillResponse();
+        for (int i = 0; i<1;i++) {
+            Object[] objectSave = objects.get(i);
+            response.setCodeBill((String) objectSave[1]);
+            response.setNameCustomer((String) objectSave[2]);
+            response.setDiscount((BigDecimal) objectSave[3]);
+            response.setDiscountRatioPercentage((BigDecimal) objectSave[4]);
+            response.setQuantityBuy((Integer) objectSave[5]);
+        }
+        response.setTotalReturn(totalReturn);
+        session.setAttribute("discountRatioPercentage", response.getDiscountRatioPercentage().divide(BigDecimal.valueOf(100))); // Reset lại dữ liệu trong session mỗi lần tải trang
+        System.out.println(response.toString());
+        return response;
+    }
 
     @GetMapping("/reset-return-bill-detail")
     public ResponseEntity<?> getResetReturnBill(HttpSession session) {
         session.setAttribute("returnBillDetailResponses", null); // Reset lại dữ liệu trong session mỗi lần tải trang
+        session.setAttribute("totalMoneyReturn", 0); // Reset lại dữ liệu trong session mỗi lần tải trang
+        session.setAttribute("discountRatioPercentage", 0); // Reset lại dữ liệu trong session mỗi lần tải trang
+        billDetailList = null;
+        quantity = 0;
+        idProductDetail = 0;
+        totalReturn = BigDecimal.valueOf(0);
         return ResponseEntity.ok("done");
+    }
+
+    //cong tru so luong tra
+    @GetMapping("/increase-or-decrease-product-return/{idProductReturn}/{quantity}/{method}")
+    public ResponseEntity<Map<String, String>> getIncreaseOrDecreaseProductReturn(
+            @PathVariable("idProductReturn") Integer idProductReturn,
+            @PathVariable("quantity") Integer quantityReturn,
+            @PathVariable("method") String method
+    ) {
+        Map<String, String> thongBao = new HashMap<>();
+        int index = getReturnBillDetailResponseIndex(idProductReturn);
+        if(index != -1) {
+
+        }else {
+            thongBao.put("message", "Khong ton tai!");
+            thongBao.put("check", "3");
+        }
+        return ResponseEntity.ok(thongBao);
     }
 
     public int getReturnBillDetailResponseIndex(Integer idProduct) {
         for (int i = 0; i < returnBillDetailResponses.size(); i++) {
-            if (returnBillDetailResponses.get(i).getProductDetail().getId().equals(idProduct)) {
+            if (returnBillDetailResponses.get(i).getProductDetail().getId() == idProduct) {
+                System.out.println(i);
+                return i; // Trả về chỉ số của sản phẩm nếu tìm thấy
+            }
+        }
+        return -1; // Trả về -1 nếu không tìm thấy
+    }
+
+    public int getBillDetailResponseIndex(Integer idProduct) {
+        for (int i = 0; i < billDetailList.size(); i++) {
+            if (billDetailList.get(i).getProductDetail().getId() == idProduct) {
+                System.out.println(i);
                 return i; // Trả về chỉ số của sản phẩm nếu tìm thấy
             }
         }
@@ -172,30 +288,18 @@ public class ReturnBillRestController extends BaseBill {
         // Trường hợp không tìm thấy sản phẩm trong danh sách
         return false;
     }
-
-    @GetMapping("/infomation-return-bill")
-    public ReturnBillResponse getInfomationReturnBill(HttpSession session) {
-        Bill bill = this.billService.findById((Integer) session.getAttribute("IdBill")).orElse(null);
-        ReturnBillResponse returnBillResponse = new ReturnBillResponse();
-        returnBillResponse.setBill(bill);
-        BigDecimal total = BigDecimal.ZERO;  // Khởi tạo tổng bằng 0
-        // Duyệt qua tất cả các phần tử trong danh sách
-        for (ReturnBillDetailResponse response : returnBillDetailResponses) {
-            if (response != null) { // Kiểm tra tránh lỗi NullPointerException
-                total = total.add(response.getTotalReturn());  // Cộng dồn totalReturn
-            }
-        }
-        returnBillResponse.setTotalReturn(total);
-        return returnBillResponse;
-    }
-
-    protected Page<BillDetail> getConvertListToPage(List<BillDetail> list, Pageable pageable) {
+    protected Page<BillDetail> getConvertListToPageBillDetail(List<BillDetail> list, Pageable pageable) {
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), list.size());
         List<BillDetail> sublist = list.subList(start, end);
         return new PageImpl<>(sublist, pageable, list.size());
     }
 
-
+    protected Page<ReturnBillDetailResponse> getConvertListToPageReturnBill(List<ReturnBillDetailResponse> list, Pageable pageable) {
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), list.size());
+        List<ReturnBillDetailResponse> sublist = list.subList(start, end);
+        return new PageImpl<>(sublist, pageable, list.size());
+    }
 
 }

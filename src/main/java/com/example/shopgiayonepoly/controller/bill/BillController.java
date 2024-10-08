@@ -186,6 +186,7 @@ public class BillController extends BaseBill {
             @RequestParam("cashAccount") String cashAccount,
             @RequestParam("customerShip") String customerShip,
             HttpSession session,
+            ModelMap modelMap,
             HttpServletRequest request) {
 
         BigDecimal cashNumber = new BigDecimal(cash.replaceAll(",", ""));
@@ -242,6 +243,7 @@ public class BillController extends BaseBill {
             if(bill.getVoucher() != null) {
                 this.getSubtractVoucher(bill.getVoucher());
             }
+            modelMap.addAttribute("title","Tạo hóa đơn thành công!");
             this.getUpdateQuantityProduct(session);
             return "Bill/successBill";
         }else if (bill.getPaymentMethod() == 2) {
@@ -266,6 +268,7 @@ public class BillController extends BaseBill {
                 this.billService.save(bill);
                 this.setBillStatus(bill.getId(),bill.getStatus(),session);
                 this.setBillStatus(bill.getId(),101,session);
+                modelMap.addAttribute("title","Tạo hóa đơn thành công!");
                 return "Bill/successBill";
             }else {
                 if(bill.getNote().length() < 0 || bill.getNote() == null || bill.getNote().trim().equals("")) {
@@ -284,7 +287,7 @@ public class BillController extends BaseBill {
 
     //thanh toan bang vnpay
     @GetMapping("/vnpay-payment")
-    public String getVNpay(HttpServletRequest request, Model model, HttpSession session){
+    public String getVNpay(HttpServletRequest request, Model model, HttpSession session,ModelMap modelMap){
         int paymentStatus =vnPayService.orderReturn(request);
 
         String orderInfo = request.getParameter("vnp_OrderInfo");
@@ -317,8 +320,10 @@ public class BillController extends BaseBill {
                     this.getSubtractVoucher(this.billPay.getVoucher());
                 }
                 this.getUpdateQuantityProduct(session);
+                modelMap.addAttribute("title","Tạo hóa đơn thành công!");
                 return "Bill/successBill" ;
             }else {
+                modelMap.addAttribute("title","Tạo hóa đơn thất bại!");
                 System.out.println("Bil bo thanh toan " + this.billPay.toString());
                 return "Bill/errorBill";
             }
@@ -349,6 +354,8 @@ public class BillController extends BaseBill {
             }
         }
     }
+
+
 
 //    @GetMapping("/deleteBillDetail/{id}")
 //        public String getDeleteProductDetail(@PathVariable("id") Integer id, HttpSession session) {

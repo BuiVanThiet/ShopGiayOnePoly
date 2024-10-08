@@ -52,4 +52,6 @@ public interface BillService {
     List<Object[]> getInfoPaymentByIdBill(Integer id);
     List<Object[]> getBillByIdCreatePDF(Integer id);
     List<Object[]> getBillDetailByIdBillPDF(Integer id);
+
+    List<Object[]> getInfomationBillReturn(Integer id);
 }
