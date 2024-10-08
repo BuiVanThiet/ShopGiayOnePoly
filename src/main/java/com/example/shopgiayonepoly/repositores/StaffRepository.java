@@ -60,4 +60,7 @@ public interface StaffRepository extends JpaRepository<Staff, Integer> {
     @Transactional
     @Query(value = "update Staff set status =0 where id=:id")
     public void deleteBySetStatus(@Param("id") Integer id);
+
+    @Query("select v from Staff v where v.status =1")
+    public Page<Staff> getAllStaffByPage(Pageable pageable);
 }

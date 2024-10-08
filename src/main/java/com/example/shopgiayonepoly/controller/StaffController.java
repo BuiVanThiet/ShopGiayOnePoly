@@ -1,12 +1,17 @@
 package com.example.shopgiayonepoly.controller;
 
 import com.example.shopgiayonepoly.dto.request.StaffRequest;
+import com.example.shopgiayonepoly.dto.request.VoucherRequest;
 import com.example.shopgiayonepoly.dto.response.StaffResponse;
 import com.example.shopgiayonepoly.entites.Staff;
+import com.example.shopgiayonepoly.entites.Voucher;
 import com.example.shopgiayonepoly.service.StaffService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -21,10 +26,21 @@ public class StaffController {
     @Autowired
     StaffService staffService;
 
+    private final int pageSize = 1;
+
+//    @GetMapping("/list")
+//    public String list(Model model) {
+//        List<StaffResponse> listStaff = staffService.getAllStaff();
+//        model.addAttribute("staffList", staffService.getAllStaff());
+//        return "Staff/list";
+//    }
+
     @GetMapping("/list")
-    public String list(Model model) {
-        List<StaffResponse> listStaff = staffService.getAllStaff();
-        model.addAttribute("staffList", staffService.getAllStaff());
+    public String getListStaffByPage(@RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber,Model model) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Page<Staff> pageStaff = staffService.getAllStaffByPage(pageable);
+        model.addAttribute("pageStaff", pageStaff);
+        model.addAttribute("staff", new StaffRequest());
         return "Staff/list";
     }
 

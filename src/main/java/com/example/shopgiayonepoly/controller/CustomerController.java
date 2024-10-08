@@ -1,6 +1,7 @@
 package com.example.shopgiayonepoly.controller;
 
 import com.example.shopgiayonepoly.dto.request.CustomerRequest;
+import com.example.shopgiayonepoly.dto.request.StaffRequest;
 import com.example.shopgiayonepoly.dto.response.CustomerResponse;
 import com.example.shopgiayonepoly.entites.Customer;
 import com.example.shopgiayonepoly.entites.Staff;
@@ -8,6 +9,9 @@ import com.example.shopgiayonepoly.service.CustomerService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -22,10 +26,21 @@ public class CustomerController {
     @Autowired
     CustomerService customerService;
 
+    private final int pageSize = 1;
+
+//    @GetMapping("/list")
+//    public String getFormList(Model model) {
+//        List<CustomerResponse> listCustomer = customerService.getAllCustomer();
+//        model.addAttribute("customerList", customerService.getAllCustomer());
+//        return "Customer/list";
+//    }
+
     @GetMapping("/list")
-    public String getFormList(Model model) {
-        List<CustomerResponse> listCustomer = customerService.getAllCustomer();
-        model.addAttribute("customerList", customerService.getAllCustomer());
+    public String getListCustomrByPage(@RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber,Model model) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Page<Customer> pageCustomer = customerService.getAllCustomerByPage(pageable);
+        model.addAttribute("pageCustomer", pageCustomer);
+        model.addAttribute("customer", new CustomerRequest());
         return "Customer/list";
     }
 
