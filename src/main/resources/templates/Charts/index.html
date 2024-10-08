@@ -21,21 +21,36 @@
     <div class="row">
       <div class="col-md-4">
         <div class="rectangle">
-          Ô chữ nhật 1
+          <h6>Doanh số hôm nay</h6>
+          <p class="data-from-be" th:text="${dataFromBackend1}"></p>
         </div>
       </div>
       <div class="col-md-4">
         <div class="rectangle">
-          Ô chữ nhật 2
+          <h6>Doanh số tháng này</h6>
+          <p class="data-from-be" th:text="${dataFromBackend2}"></p>
         </div>
       </div>
       <div class="col-md-4">
         <div class="rectangle">
-          Ô chữ nhật 3
+          <h6>Hàng bán được tháng này</h6>
+          <p class="data-from-be" th:text="${dataFromBackend3}"></p>
         </div>
       </div>
     </div>
+
+    <div class="filter-section">
+      <form action="#" method="GET" class="form-inline">
+        <!-- Bộ lọc khoảng thời gian -->
+        <div class="btn-group" role="group" aria-label="Thời gian lọc">
+          <button type="button" class="btn btn-outline-primary" onclick="filterData('today')">Hôm nay</button>
+          <button type="button" class="btn btn-outline-primary" onclick="filterData('last7days')">7 Ngày</button>
+          <button type="button" class="btn btn-outline-primary" onclick="filterData('month')">Tháng</button>
+          <button type="button" class="btn btn-outline-primary" onclick="filterData('year')">Năm</button>
+        </div>
+      </form>
     </div>
+  </div>
 </main>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
