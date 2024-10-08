@@ -286,3 +286,50 @@
 .modal-button-product.cancel:hover {
     background-color: #5a6268; /* Màu xám đậm hơn khi hover */
 }
+
+
+.dropdown-btn {
+    padding: 12px;
+    transition: all 0.3s ease;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between; /* Căn chỉnh mũi tên */
+    align-items: center; /* Căn giữa mũi tên theo chiều dọc */
+    width: 100%; /* Chiếm toàn bộ chiều rộng */
+}
+
+
+/* Kiểu danh sách tùy chọn */
+.dropdown-content {
+    display: none; /* Ẩn danh sách ban đầu */
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 100%; /* Chiếm toàn bộ chiều rộng */
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-content label {
+    display: block;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.dropdown-content label:hover {
+    background-color: #ddd;
+}
+
+.arrow {
+    margin-left: 10px; /* Khoảng cách giữa chữ và mũi tên */
+    transition: transform 0.3s; /* Hiệu ứng xoay mũi tên */
+}
+
+/* Hiển thị dropdown khi bấm nút */
+.show {
+    display: block;
+}
+
+.rotate {
+    transform: rotate(180deg); /* Xoay mũi tên khi mở dropdown */
+}
