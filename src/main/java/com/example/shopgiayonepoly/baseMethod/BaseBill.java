@@ -50,6 +50,10 @@ public abstract class BaseBill {
     protected PdfTemplateService pdfTemplateService;
     @Autowired
     protected ProductDetailService productDetailService;
+    @Autowired
+    protected ReturnBillService returnBillService;
+    @Autowired
+    protected ReturnBillDetailService returnBillDetailService;
 
     //bien cuc bo cua bill
     protected Bill billPay;
@@ -63,7 +67,13 @@ public abstract class BaseBill {
     protected String keyBillmanage = "";
     protected ProductDetailCheckRequest productDetailCheckRequest;
     protected ProductDetailCheckMark2Request productDetailCheckMark2Request;
+
+    // danh cho tra hang
     protected List<ReturnBillDetailResponse> returnBillDetailResponses = new ArrayList<>();
+    protected Integer quantity = 0;
+    protected Integer idProductDetail = 0;
+    protected BigDecimal totalReturn = BigDecimal.valueOf(0);
+    protected List<BillDetail> billDetailList;
 
 
     //method chung

@@ -336,6 +336,26 @@ function increaseOrDecreaseProductReturn(idProductReturn,quantity,method) {
     });
 }
 
+function createReturnBill() {
+    $.ajax({
+        type: "GET",
+        url: "/return-bill-api/create-return-bill",
+        success: function (response) {
+            // Kiểm tra nếu phản hồi có URL chuyển hướng
+            if (response.redirectUrl) {
+                // Chuyển hướng đến URL được chỉ định trong phản hồi
+                window.location.href = response.redirectUrl;
+            } else {
+                // Xử lý nếu không có chuyển hướng (ví dụ hiển thị thông báo)
+                alert("Không có URL chuyển hướng");
+            }
+        },
+        error: function (xhr) {
+            console.error('Lỗi khi cập nhật: ' + xhr.responseText);
+        }
+    });
+}
+
 
 $(document).ready(function () {
     // Xử lý sự kiện tăng/giảm số lượng
@@ -344,7 +364,7 @@ $(document).ready(function () {
         var value = parseInt($numberDiv.text(), 10);
         $numberDiv.text(value + 1);
         // Cập nhật giá trị mới trên server
-        increaseOrDecreaseProductReturn($(this).closest('.custom-number-input').data('id'),$numberDiv.text(),'cong')
+        increaseOrDecreaseProductReturn($(this).closest('.custom-number-input').data('id'),1,'cong')
     });
 
     $(document).on('click', '.btn-decrement', function () {
@@ -353,7 +373,7 @@ $(document).ready(function () {
         if (value > 0) {
             $numberDiv.text(value - 1);
             // Cập nhật giá trị mới trên server
-            increaseOrDecreaseProductReturn($(this).closest('.custom-number-input').data('id'),$numberDiv.text(),'tru')
+            increaseOrDecreaseProductReturn($(this).closest('.custom-number-input').data('id'),1,'tru')
         }
     });
 

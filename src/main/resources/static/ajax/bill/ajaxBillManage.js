@@ -58,6 +58,24 @@ function loadBillStatusByBillId() {
                         $('#btnDeleteBill').hide();
                         $('#btnConfirmBill').hide();
                         break;
+                    case 201:
+                        iconClass = 'bi-arrow-counterclockwise';
+                        stepTitle = 'Chờ xác nhận trả hàng';
+                        $('#btnDeleteBill').hide();
+                        $('#btnConfirmBill').hide();
+                        break;
+                    case 202:
+                        iconClass = 'bi-file-earmark-check';
+                        stepTitle = 'Đồng ý trả hàng';
+                        $('#btnDeleteBill').hide();
+                        $('#btnConfirmBill').hide();
+                        break;
+                    case 203:
+                        iconClass = 'bi-file-earmark-excel';
+                        stepTitle = 'Không đồng ý trả hàng';
+                        $('#btnDeleteBill').hide();
+                        $('#btnConfirmBill').hide();
+                        break;
                 }
                 const formattedDateTime = formatDateTime(invoiceBill.createDate);
                 // Nếu đây không phải là trạng thái đầu tiên, thì thêm <div class="progress-bar-line"></div>
@@ -159,7 +177,7 @@ function loadInformationBillByIdBill() {
                 $('#btn-modal-customer').hide();
                 $('#btn-buy-product').hide();
                 $('#startCamera').hide();
-            }else if (response.status == 6) {
+            }else {
                 statusBill = 'Đã hủy';
                 $('#cancel-button').hide();
                 $('#confirm-button').hide();
@@ -169,6 +187,11 @@ function loadInformationBillByIdBill() {
                 $('#btn-modal-customer').hide();
                 $('#btn-buy-product').hide();
                 $('#startCamera').hide();
+                if(response.status == 7) {
+                    loadInfomationReturnBillFromBillManage();
+                    loadReturnBillFromBillManage(1);
+                    maxPageReturnBillFromBillManage();
+                }
             }
 
             // if(response.status == 1) {
@@ -535,6 +558,118 @@ function loadInfomationHistoryByBillId() {
         // }
     })
 }
+
+//hien thong tin return bill
+function loadInfomationReturnBillFromBillManage() {
+    $.ajax({
+        type: "GET",
+        url: "/return-bill-api/infomation-return-bill-from-bill-manage",
+        success: function (response) {
+            $('#code-bill').text(response.bill.codeBill)
+            $('#customer-buy-product').text(response.bill.customer.fullName)
+            $('#discount-voucher').text(response.totalReturn.toLocaleString('en-US') + ' VNĐ')
+            $('#divide-equally-product').text((response.bill.priceDiscount/response.bill.totalAmount)*100+ ' %')
+            $('#total-return').text(response.totalReturn.toLocaleString('en-US') + ' VNĐ')
+        },
+        error: function (xhr) {
+            console.error('loi ' + xhr.responseText);
+        }
+    })
+}
+function loadReturnBillFromBillManage(page) {
+    $.ajax({
+        type: "GET",
+        url: "/return-bill-api/infomation-return-bill-detail-from-bill-manage/"+page,
+        success: function (response) {
+            var tbody = $('#tableReturnBill');
+            var noDataContainer = $('#noDataReturnBill');
+            tbody.empty();
+            if(response.length === 0) {
+                noDataContainer.html(`
+                        <img src="https://res.cloudinary.com/dfy4umpja/image/upload/v1725477250/jw3etgwdqqxtkevcxisq.png"
+                             alt="Lỗi ảnh" style="width: auto; height: 100px;">
+                             <p class="text-center">Không có sản phẩm nào!</p>
+                    `);
+
+                noDataContainer.show();
+                tbody.closest('table').hide(); // Ẩn table nếu không có dữ liệu
+            }else {
+                noDataContainer.hide();
+                tbody.closest('table').show(); // Ẩn table nếu không có dữ liệu
+                response.forEach(function(billReturn, index) {
+                    var imagesHtml = '';
+
+                    billReturn.productDetail.product.images.forEach(function(image, imgIndex) {
+                        imagesHtml += `
+                            <div class="carousel-item ${imgIndex === 0 ? 'active' : ''}" data-bs-interval="2000">
+                                <img style="height: auto; width: 100px;" src="https://res.cloudinary.com/dfy4umpja/image/upload/f_auto,q_auto/${image.nameImage}" class="d-block w-100" alt="Lỗi ảnh">
+                            </div>`;
+                    });
+                    tbody.append(`
+                        <tr>
+                            <th scope="row" class="text-center align-middle">${index + 1}</th>
+                            <td class="text-center align-middle">
+                                <div class="carousel slide" data-bs-ride="carousel">
+                                    <div class="carousel-inner carousel-inner-bill-custom">
+                                        ${imagesHtml}
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="" style="max-height: 100px; overflow-y: auto; width: 150px;">
+                                <div class="fs-4">
+                                    ${billReturn.productDetail.product.nameProduct}
+                                </div>
+                                <div class="fs-6">
+                                    Tên màu: ${billReturn.productDetail.color.nameColor}
+                                    <br>
+                                    Tên size: ${billReturn.productDetail.size.nameSize}
+                                </div>
+                            </td>
+
+                            <td class="text-center align-middle">
+                                ${billReturn.priceBuy.toLocaleString('en-US') + ' VNĐ'}
+                            </td>
+                            <td class="text-center align-middle">
+                                 <div class="pagination mb-3 custom-number-input" style="width: 130px;" data-id="${billReturn.productDetail.id}">
+                                        <button class="button btn-decrement">-</button>
+                                    <div class="number" id="pageNumber"> ${billReturn.quantityReturn}</div>
+                                    <button class="button btn-increment">+</button>
+                                 </div>
+                            </td>
+                            <td class="text-center align-middle">
+                                ${billReturn.totalReturn.toLocaleString('en-US') + ' VNĐ'}
+                            </td>
+                            <td class="text-center align-middle">
+                               
+                            </td>
+                        </tr>`);
+                });
+                // Khởi tạo lại tất cả các carousel sau khi cập nhật DOM
+                $('.carousel').each(function() {
+                    $(this).carousel(); // Khởi tạo carousel cho từng phần tử
+                });
+            }
+        },
+        error: function (xhr) {
+            console.error('loi' + xhr.responseText);
+        }
+    })
+}
+
+function maxPageReturnBillFromBillManage() {
+    $.ajax({
+        type: "GET",
+        url:"/return-bill-api/max-page-return-bill-detail-from-bill-manage",
+        success: function (response) {
+            createPagination('billReturnPageMax-returnBill', response, 1);
+        },
+        error: function (xhr) {
+            console.error('loi phan trang cho bill deatil' + xhr.responseText)
+        }
+
+    })
+}
+
 
 $(document).ready(function () {
     checkUpdateCustomer = true;

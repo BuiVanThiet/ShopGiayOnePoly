@@ -136,75 +136,8 @@
                 </div>
             </div>
             <!-- danh sách sách san pham muon tra  -->
-            <div class="card mb-2">
-                <div class="card-body">
-                    Danh sách sản phẩm muốn trả
-                    <div id="noDataReturnBill" style="display:none; text-align:center;">
-                        <!-- Ảnh sẽ được hiển thị ở đây nếu không có dữ liệu -->
-                    </div>
+            <div th:replace="~{Bill/listReturnProduct :: listReturnBill}"></div>
 
-                    <table class="table mt-2" style="display:none;">
-                        <thead>
-                        <tr class="text-center">
-                            <th scope="col" style="width: 1%">STT</th>
-                            <th scope="col" style="width: 15%">Ảnh</th>
-                            <th scope="col" style="width: 25%">Sản phẩm</th>
-                            <th scope="col" style="width: 8%">Giá</th>
-                            <th scope="col" style="width: 8%">Số lượng</th>
-                            <th scope="col" style="width: 5%">Tổng tiền</th>
-                            <th scope="col" style="width: 6%">Hành động</th>
-                        </tr>
-                        </thead>
-                        <tbody id="tableReturnBill">
-                        <!-- Dữ liệu sẽ được tải ở đây -->
-                        </tbody>
-                    </table>
-
-                    <div class="pagination-section">
-                        <!-- Phân trang 2 -->
-                        <div class="pagination-custom d-flex justify-content-center">
-                            <ul id="billReturnPageMax-returnBill" class="pagination"></ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- thông tin cần trả  -->
-            <div class="card">
-                <div class="card-body">
-                    <span>Thông tin phiếu</span>
-                    <div class="row mt-2">
-                        <div id="form-final-voucher" class="col-6">
-                            <div class="mb-3 d-flex justify-content-between">
-                                <span>Mã hóa đơn: </span>
-                                <span id="code-bill">HD11</span>
-                            </div>
-                        </div>
-                        <div class="mb-3 d-flex justify-content-between col-6 align-self-end">
-                            <span>Khách hàng: </span>
-                            <span id="customer-buy-product">Bùi văn thiết</span>
-                        </div>
-                        <div class="mb-3 d-flex justify-content-between col-6">
-                            <span>Tiền hóa đơn được giảm: </span>
-                            <span id="discount-voucher"></span>
-                        </div>
-                        <div class="mb-3 d-flex justify-content-between col-6">
-                            <span>Phần trăm giảm cho mỗi sản phầm: </span>
-                            <span id="divide-equally-product"></span>
-                        </div>
-                        <div class="d-flex justify-content-between col-6">
-                            <span>Tổng tiền phải trả: </span>
-                            <span id="total-return"></span>
-                        </div>
-                        <div class="d-flex justify-content-between col-6">
-                            <button class="btn btn-outline-success">Tạo phiếu</button>
-                        </div>
-                        <div class="justify-content-between col-12">
-                            <span>Ghi chú: </span>
-                            <textarea class="form-control" id="node-return"></textarea>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
             <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
             <script th:src="@{/ajax/bill/ajaxReturnBill.js}" type="text/javascript"></script>
