@@ -64,12 +64,13 @@
                     <a class="nav-link" href="#" style="color: black;">
                         <i class="bi bi-person-circle ts-5 fs-4"></i>
                         <span style="font-size: 0.8rem; font-weight: 500;">
-                            <span th:text="${loginInfoClient.fullName}"></span>
+                            <span th:text="${loginInfoClient.acount}"></span>
                         </span>
                     </a>
                     <div id="authDropdown" class="dropdown-content">
                         <button onclick="login()" class="dropdown-button" th:if="${loginInfoClient == null}">Đăng nhập</button>
                         <button onclick="logout()" class="dropdown-button" th:if="${loginInfoClient != null}">Đăng xuất</button>
+                        <button onclick="profile()" class="dropdown-button" th:if="${loginInfoClient != null}">Tài khoản của tôi</button>
                         <button onclick="register()" class="dropdown-button" >Đăng ký</button>
                     </div>
                 </li>

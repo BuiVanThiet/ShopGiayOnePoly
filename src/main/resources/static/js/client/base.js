@@ -19,3 +19,8 @@ function logout() {
     window.location.href = '/onepoly/logout';
 }
 
+function profile() {
+    // Gửi yêu cầu đăng xuất đến server
+    window.location.href = '/onepoly/userProfile';
+}
+

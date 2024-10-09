@@ -34,6 +34,8 @@
     opacity: 0; /* Đặt độ mờ ban đầu là 0 */
     transform: translateY(-10px); /* Đẩy dropdown lên một chút */
     transition: opacity 0.3s ease, transform 0.3s ease; /* Hiệu ứng chuyển đổi */
+    width: 145px;
+    left: -60px;
 }
 
 .dropdown-content.show {

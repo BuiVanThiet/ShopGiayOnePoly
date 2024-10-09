@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hồ Sơ Của Tôi</title>
+    <!-- Thêm Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/client/UserProfile.css}" type="text/css">
+</head>
+
+<body>
+<div class="container bg-white p-4 rounded shadow-sm">
+    <h2>Hồ Sơ Của Tôi</h2>
+    <p class="description">Quản lý thông tin hồ sơ để bảo mật tài khoản</p>
+    <hr>
+    <form method="post">
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label">Tên đăng nhập</label>
+            <div class="col-sm-10">
+                <input>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label for="name" class="col-sm-2 col-form-label">Tên</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="name" placeholder="Nhập tên của bạn">
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label">Email</label>
+            <div class="col-sm-10">
+                <p class="form-control-plaintext" >co*******@gmail.com <a href="#">Thay Đổi</a></p>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label">Số điện thoại</label>
+            <div class="col-sm-10">
+                <p class="form-control-plaintext" ><a href="#">Thay Đổi</a></p>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label">Giới tính</label>
+            <div class="col-sm-10">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="gender" id="male" value="Nam">
+                    <label class="form-check-label" for="male">Nam</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="gender" id="female" value="Nữ">
+                    <label class="form-check-label" for="female">Nữ</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-10">
+                <button type="submit" class="btn btn-primary">Lưu</button>
+            </div>
+        </div>
+    </form>
+
+    <div class="profile-info text-center mt-4">
+        <img src="avatar.png" alt="Avatar" >
+        <label class="upload-btn btn btn-outline-secondary mt-2" for="file-upload">Chọn Ảnh</label>
+        <input type="file" id="file-upload" class="hidden-input d-none">
+        <p class="small-text">Dụng lượng file tối đa 1 MB<br>Định dạng: .JPEG, .PNG</p>
+    </div>
+</div>
+
+<!-- Thêm Bootstrap JS và Popper.js -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
