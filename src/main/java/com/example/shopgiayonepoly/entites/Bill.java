@@ -45,4 +45,6 @@ public class Bill extends Base {
     private Integer paymentStatus;
     @Column(name = "surplus_money")
     private BigDecimal surplusMoney;
+    @Column(name = "price_discount")
+    private BigDecimal priceDiscount;
 }

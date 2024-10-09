@@ -185,6 +185,7 @@ public class BillController extends BaseBill {
             @RequestParam("surplusMoney") String surplusMoney,
             @RequestParam("cashAccount") String cashAccount,
             @RequestParam("customerShip") String customerShip,
+            @RequestParam("priceDiscount") String priceDiscount,
             HttpSession session,
             ModelMap modelMap,
             HttpServletRequest request) {
@@ -218,6 +219,7 @@ public class BillController extends BaseBill {
         bill.setCash(cashNumber.setScale(2,RoundingMode.FLOOR).subtract(surplusMoneyNumber.setScale(2,RoundingMode.FLOOR)));
         bill.setSurplusMoney(surplusMoneyNumber.setScale(2,RoundingMode.FLOOR));
         bill.setShippingPrice(shipMoneyNumber);
+        bill.setPriceDiscount(BigDecimal.valueOf(Long.parseLong(priceDiscount)));
 
         session.setAttribute("pageReturn",1);
 
@@ -239,6 +241,7 @@ public class BillController extends BaseBill {
                 this.setBillStatus(bill.getId(),101,session);
             }
             this.setBillStatus(bill.getId(),bill.getStatus(),session);
+
             this.billService.save(bill);
             if(bill.getVoucher() != null) {
                 this.getSubtractVoucher(bill.getVoucher());

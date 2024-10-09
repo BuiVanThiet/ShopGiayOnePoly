@@ -1,7 +1,7 @@
 package com.example.shopgiayonepoly.implement;
 
 import com.example.shopgiayonepoly.entites.InvoiceStatus;
-import com.example.shopgiayonepoly.repositores.InvoiceStatusRespository;
+import com.example.shopgiayonepoly.repositores.InvoiceStatusRepository;
 import com.example.shopgiayonepoly.service.InvoiceStatusService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -15,48 +15,48 @@ import java.util.Optional;
 @Service
 public class InvoiceStatusImplement implements InvoiceStatusService {
     @Autowired
-    InvoiceStatusRespository invoiceStatusRespository;
+    InvoiceStatusRepository invoiceStatusRepository;
 
     @Override
     public List<InvoiceStatus> findAll() {
-        return invoiceStatusRespository.findAll();
+        return invoiceStatusRepository.findAll();
     }
 
     @Override
     public <S extends InvoiceStatus> S save(S entity) {
-        return invoiceStatusRespository.save(entity);
+        return invoiceStatusRepository.save(entity);
     }
 
     @Override
     public Optional<InvoiceStatus> findById(Integer integer) {
-        return invoiceStatusRespository.findById(integer);
+        return invoiceStatusRepository.findById(integer);
     }
 
     @Override
     public void deleteById(Integer integer) {
-        invoiceStatusRespository.deleteById(integer);
+        invoiceStatusRepository.deleteById(integer);
     }
 
     @Override
     public void delete(InvoiceStatus entity) {
-        invoiceStatusRespository.delete(entity);
+        invoiceStatusRepository.delete(entity);
     }
 
     @Override
     public Page<InvoiceStatus> findAll(Pageable pageable) {
-        return invoiceStatusRespository.findAll(pageable);
+        return invoiceStatusRepository.findAll(pageable);
     }
 
     @Override
     public <S extends InvoiceStatus> long count(Example<S> example) {
-        return invoiceStatusRespository.count(example);
+        return invoiceStatusRepository.count(example);
     }
     @Override
     public List<InvoiceStatus> getALLInvoiceStatusByBill(Integer idBill) {
-        return this.invoiceStatusRespository.getALLInvoiceStatusByBill(idBill);
+        return this.invoiceStatusRepository.getALLInvoiceStatusByBill(idBill);
     }
     @Override
     public List<Object[]> getHistoryByBill(Integer id) {
-        return this.invoiceStatusRespository.getHistoryByBill(id);
+        return this.invoiceStatusRepository.getHistoryByBill(id);
     }
 }

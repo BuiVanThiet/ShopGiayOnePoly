@@ -7,6 +7,7 @@ import com.example.shopgiayonepoly.entites.baseEntity.Base;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Getter
@@ -14,7 +15,8 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class ReturnBillDetailResponse extends BaseDTO {
+public class ReturnBillDetailResponse extends BaseDTO implements Serializable {
+    private static final long serialVersionUID = 1L;
     private ReturnBill returnBill;
     private ProductDetail productDetail;
     private Integer quantityReturn;

@@ -186,6 +186,7 @@ function paymentInformation() {
             $('#subTotal').text(response.totalAmount.toLocaleString('en-US') + ' VNĐ');
             $('#discountAmount').text(response.discount.toLocaleString('en-US') + ' VNĐ');
             $('#totalAmount').text((response.finalAmount+shipPrice).toLocaleString('en-US') + ' VNĐ');
+            $('#priceDiscount').val(response.discount);
 
             totalBill = response.finalAmount-response.discount;
 

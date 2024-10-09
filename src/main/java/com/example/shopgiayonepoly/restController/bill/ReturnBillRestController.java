@@ -5,10 +5,7 @@ import com.example.shopgiayonepoly.dto.request.bill.ReturnBillDetailRequest;
 import com.example.shopgiayonepoly.dto.response.bill.InfomationReturnBillResponse;
 import com.example.shopgiayonepoly.dto.response.bill.ReturnBillDetailResponse;
 import com.example.shopgiayonepoly.dto.response.bill.ReturnBillResponse;
-import com.example.shopgiayonepoly.entites.Bill;
-import com.example.shopgiayonepoly.entites.BillDetail;
-import com.example.shopgiayonepoly.entites.ProductDetail;
-import com.example.shopgiayonepoly.entites.ReturnBill;
+import com.example.shopgiayonepoly.entites.*;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -19,18 +16,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/return-bill-api")
 public class ReturnBillRestController extends BaseBill {
-    Integer quantity = 0;
-    Integer idProductDetail = 0;
-    BigDecimal totalReturn = BigDecimal.valueOf(0);
-    private List<BillDetail> billDetailList;
 
     @GetMapping("/bill-detail/{page}")
     public List<BillDetail> getListBillDetailByIdBill(@PathVariable("page") Integer page,HttpSession session) {
@@ -237,13 +227,108 @@ public class ReturnBillRestController extends BaseBill {
     ) {
         Map<String, String> thongBao = new HashMap<>();
         int index = getReturnBillDetailResponseIndex(idProductReturn);
-        if(index != -1) {
+        if (index != -1) {
+            ReturnBillDetailResponse returnBillDetailResponse = returnBillDetailResponses.get(index);
+            int indexDetail = getBillDetailResponseIndex(idProductReturn);
+            BillDetail detail = billDetailList.get(indexDetail);
 
-        }else {
-            thongBao.put("message", "Khong ton tai!");
+            if (method.equals("cong")) {
+                // Tăng số lượng trả về, nhưng kiểm tra nếu số lượng trong hóa đơn < 0
+                if (detail.getQuantity() - quantityReturn < 0) {
+                    thongBao.put("message", "Sản phẩm trong hóa đơn đã hết, không thể thêm số lượng trả!");
+                    thongBao.put("check", "3");
+                    return ResponseEntity.ok(thongBao);
+                }
+
+                // Nếu số lượng hợp lệ, cập nhật số lượng trả về và số lượng trong hóa đơn
+                returnBillDetailResponse.setQuantityReturn(returnBillDetailResponse.getQuantityReturn() + quantityReturn);
+                detail.setQuantity(detail.getQuantity() - quantityReturn);
+
+            } else if (method.equals("tru")) {
+                // Kiểm tra nếu số lượng trả về <= 1, không cho phép giảm nữa
+                if (returnBillDetailResponse.getQuantityReturn() - quantityReturn < 1) {
+                    thongBao.put("message", "Số lượng trả về phải luôn lớn hơn 1!");
+                    thongBao.put("check", "3");
+                    return ResponseEntity.ok(thongBao);
+                }
+
+                // Nếu số lượng hợp lệ, cập nhật số lượng trả về và số lượng trong hóa đơn
+                returnBillDetailResponse.setQuantityReturn(returnBillDetailResponse.getQuantityReturn() - quantityReturn);
+                detail.setQuantity(detail.getQuantity() + quantityReturn);
+            }
+
+            // Cập nhật tổng số tiền trả về và tổng số tiền trong hóa đơn
+            returnBillDetailResponse.setTotalReturn(returnBillDetailResponse.getPriceBuy().multiply(BigDecimal.valueOf(returnBillDetailResponse.getQuantityReturn())));
+            detail.setTotalAmount(detail.getPrice().multiply(BigDecimal.valueOf(detail.getQuantity())));
+
+            // Cập nhật danh sách sau khi đã qua kiểm tra
+            billDetailList.set(indexDetail, detail);
+            returnBillDetailResponses.set(index, returnBillDetailResponse);
+            totalReturn = BigDecimal.valueOf(0);
+            for (ReturnBillDetailResponse returnBillDetailResponse1 : returnBillDetailResponses) {
+                totalReturn = totalReturn.add(returnBillDetailResponse1.getTotalReturn());
+            }
+            thongBao.put("message", "Cập nhật sản phẩm thành công!");
+            thongBao.put("check", "1");
+            return ResponseEntity.ok(thongBao);
+        } else {
+            thongBao.put("message", "Sản phẩm không tồn tại!");
             thongBao.put("check", "3");
+            return ResponseEntity.ok(thongBao);
         }
+    }
+    @GetMapping("/create-return-bill")
+    public ResponseEntity<Map<String,String>> getCreateReturnBill(HttpSession session) {
+        Map<String,String> thongBao = new HashMap<>();
+        ReturnBill returnBill = new ReturnBill();
+        //goi bill de tra
+        Bill bill = this.billService.findById((Integer) session.getAttribute("IdBill")).orElse(null);
+        returnBill.setBill(bill);
+        returnBill.setCodeReturnBill("1");
+        returnBill.setTotalReturn(totalReturn);
+        returnBill.setReason("hi ae");
+        returnBill.setStatus(0);
+        ReturnBill returnBillSave = this.returnBillService.save(returnBill);
+        returnBillSave.setCodeReturnBill("THD"+returnBillSave.getId());
+        this.returnBillService.save(returnBillSave);
+        //luu cac chi tiet tra hang
+        for (ReturnBillDetailResponse response : returnBillDetailResponses) {
+            ReturnBillDetail returnBillDetai = new ReturnBillDetail();
+            returnBillDetai.setReturnBill(returnBillSave);
+            returnBillDetai.setProductDetail(response.getProductDetail());
+            returnBillDetai.setQuantityReturn(response.getQuantityReturn());
+            returnBillDetai.setPriceBuy(response.getPriceBuy());
+            returnBillDetai.setTotalReturn(response.getTotalReturn());
+            returnBillDetai.setStatus(0);
+            this.returnBillDetailService.save(returnBillDetai);
+        }
+        //cap nhat lai bill
+        bill.setStatus(7);
+        bill.setUpdateDate(new Date());
+        this.billService.save(bill);
+        this.setBillStatus(bill.getId(),201,session);
+
+        thongBao.put("redirectUrl", "/staff/return-bill/create-return-bill");
         return ResponseEntity.ok(thongBao);
+    }
+
+    //goi danh sách return bill va return bill detail
+    @GetMapping("/infomation-return-bill-from-bill-manage")
+    public ReturnBill getReturnBillByIdBill(HttpSession session) {
+        ReturnBill returnBill = this.returnBillService.getReturnBillByIdBill((Integer) session.getAttribute("IdBill"));
+        session.setAttribute("IdReturnBill",returnBill.getId());
+        return returnBill;
+    }
+    @GetMapping("/infomation-return-bill-detail-from-bill-manage/{page}")
+    public List<ReturnBillDetail> getReturnBillDetailByIdReturnBill(@PathVariable("page") Integer page,HttpSession session) {
+        Pageable pageable = PageRequest.of(page-1,2);
+        return this.returnBillDetailService.getReturnBillDetailByIdReturnBill((Integer) session.getAttribute("IdReturnBill"),pageable).getContent();
+    }
+
+    @GetMapping("/max-page-return-bill-detail-from-bill-manage")
+    public Integer getMaxPageReturnBillDetailByIdReturnBill(HttpSession session) {
+        Integer page = (int) Math.ceil((double) this.returnBillDetailService.getReturnBillDetailByIdReturnBill((Integer) session.getAttribute("IdReturnBill")).size() / 2);
+        return page;
     }
 
     public int getReturnBillDetailResponseIndex(Integer idProduct) {
