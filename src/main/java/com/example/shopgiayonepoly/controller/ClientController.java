@@ -116,16 +116,16 @@ public class ClientController {
     @GetMapping("/register")
     public String formRegister(Model model, HttpSession session) {
         // Lấy dữ liệu từ session nếu có
-        String fullName = (String) session.getAttribute("fullName");
+        String acount = (String) session.getAttribute("acount");
         String email = (String) session.getAttribute("email");
 
         // Đưa dữ liệu từ session vào model
-        model.addAttribute("fullName", fullName != null ? fullName : "");
+        model.addAttribute("acount", acount != null ? acount : "");
         model.addAttribute("email", email != null ? email : "");
         model.addAttribute("errorMessage", session.getAttribute("errorMessage"));
 
         // Xóa session sau khi dùng xong
-        session.removeAttribute("fullName");
+        session.removeAttribute("acount");
         session.removeAttribute("email");
         session.removeAttribute("errorMessage");
 
@@ -136,7 +136,7 @@ public class ClientController {
     @PostMapping("/register")
     public String register(RegisterRequest registerRequest, Model model, HttpSession session) {
         // Lưu thông tin vào session để giữ lại khi có lỗi
-        session.setAttribute("fullName", registerRequest.getFullName());
+        session.setAttribute("acount", registerRequest.getAcount());
         session.setAttribute("email", registerRequest.getEmail());
 
         // Kiểm tra email đã tồn tại
@@ -144,15 +144,20 @@ public class ClientController {
             session.setAttribute("errorMessage", "Email đã tồn tại. Vui lòng chọn email khác.");
             return "redirect:/onepoly/register";  // Chuyển hướng lại trang đăng ký
         }
+        if (customerRegisterRepository.existsByAcount(registerRequest.getAcount())) {
+            session.setAttribute("errorMessage", "Tên đăng nhập đã tồn tại. Vui lòng chọn Tên đăng nhập khác.");
+            return "redirect:/onepoly/register";  // Chuyển hướng lại trang đăng ký
+        }
 
         // Xử lý đăng ký thành công
         Customer customer = new Customer();
-        customer.setFullName(registerRequest.getFullName());  // Gán họ và tên
+        customer.setAcount(registerRequest.getAcount());
         customer.setEmail(registerRequest.getEmail());
         customer.setPassword(registerRequest.getPassword());
 
         // Gán các giá trị mặc định cho các trường khác
-        customer.setNumberPhone("0");
+        customer.setFullName(" ");
+        customer.setNumberPhone(" ");
         customer.setGender(1);
         customer.setStatus(1);
 
@@ -161,7 +166,7 @@ public class ClientController {
         // Kiểm tra thông điệp phản hồi từ dịch vụ
         if (message.equals("Đăng ký thành công!")) {
             session.setAttribute("successMessage", message);
-            session.removeAttribute("fullName");
+            session.removeAttribute("acount");
             session.removeAttribute("email");
             session.removeAttribute("errorMessage");
             return "redirect:/onepoly/login";  // Chuyển hướng đến trang đăng nhập
@@ -170,5 +175,15 @@ public class ClientController {
             return "redirect:/onepoly/register";  // Trả về trang đăng ký với thông báo lỗi
         }
     }
-
+    @GetMapping("/userProfile")
+    public String formProfile( Model model, HttpSession session){
+        ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
+        if (clientLoginResponse != null) {
+            model.addAttribute("clientInfo", clientLoginResponse);
+        } else {
+            session.removeAttribute("clientInfo");
+            return "redirect:/onepoly/login";
+        }
+        return "client/UserProfile";
+    }
 }
