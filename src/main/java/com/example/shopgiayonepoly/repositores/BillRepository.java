@@ -322,45 +322,18 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
     List<Object[]> getBillDetailByIdBillPDF(@Param("idCheck") Integer id);
     @Query(value = """
         SELECT
-            b.id,
-            b.code_bill,
-            CASE
-                WHEN b.id_customer IS NULL THEN N'Không có'
-                ELSE LEFT(b.address, CHARINDEX(',', b.address) - 1)
-            END AS customer_status,
-            CASE
-                WHEN v.discount_type = 1 THEN
-                    CASE
-                        WHEN b.total_amount * (v.price_reduced / 100) > v.prices_max THEN
-                            v.prices_max
-                        ELSE
-                            b.total_amount * (v.price_reduced / 100)
-                    END
-                WHEN v.discount_type = 2 THEN
-                    v.price_reduced
-                ELSE
-                    0
-            END AS discount_amount,
-            -- Tính tỷ lệ discount_amount chia cho total_amount và nhân với 100 để hiển thị %
-            CASE
-                WHEN b.total_amount > 0 THEN
-                    CASE
-                        WHEN v.discount_type = 1 THEN
-                            CASE
-                                WHEN b.total_amount * (v.price_reduced / 100) > v.prices_max THEN
-                                    (v.prices_max / b.total_amount) * 100
-                                ELSE
-                                    ((b.total_amount * (v.price_reduced / 100)) / b.total_amount) * 100
-                            END
-                        WHEN v.discount_type = 2 THEN
-                            (v.price_reduced / b.total_amount) * 100
-                        ELSE
-                            0
-                    END
-                ELSE
-                    0
-            END AS discount_ratio_percentage,
-            SUM(bd.quantity) AS total_products
+             b.id,
+             b.code_bill,
+             CASE
+                 WHEN b.id_customer IS NULL THEN N'Không có'
+                 ELSE LEFT(b.address, CHARINDEX(',', b.address) - 1)
+             END AS customer_status,
+             b.price_discount
+             AS discount_amount,
+             -- Tính tỷ lệ discount_amount chia cho total_amount và nhân với 100 để hiển thị %
+             (b.price_discount/b.total_amount)*100
+             AS discount_ratio_percentage,
+             SUM(bd.quantity) AS total_products
         FROM bill b
         LEFT JOIN voucher v ON v.id = b.id_voucher
         LEFT JOIN bill_detail bd ON bd.id_bill = b.id
@@ -373,6 +346,7 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
             b.total_amount,
             v.discount_type,
             v.price_reduced,
+            b.price_discount,
             v.prices_max;
 """,nativeQuery = true)
     List<Object[]> getInfomationBillReturn(@Param("idBill") Integer id);

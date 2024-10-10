@@ -50,8 +50,6 @@ public class BillController extends BaseBill {
         }else {
             session.setAttribute("IdBill", null);
            session.setAttribute("IdClient",null);
-
-
         }
         session.setAttribute("numberPage",0);
 
@@ -85,6 +83,9 @@ public class BillController extends BaseBill {
         System.out.println("mes hien len la " + mess);
         this.mess = "";
         this.colorMess  = "";
+
+        getDeleteVoucherByBill(idBill);
+
         return "Bill/index";
     }
     @GetMapping("/create")
@@ -247,7 +248,7 @@ public class BillController extends BaseBill {
                 this.getSubtractVoucher(bill.getVoucher());
             }
             modelMap.addAttribute("title","Tạo hóa đơn thành công!");
-            this.getUpdateQuantityProduct(session);
+//            this.getUpdateQuantityProduct(session);
             return "Bill/successBill";
         }else if (bill.getPaymentMethod() == 2) {
             if(bill.getNote().length() < 0 || bill.getNote() == null || bill.getNote().trim().equals("")) {
@@ -322,7 +323,7 @@ public class BillController extends BaseBill {
                 if(this.billPay.getVoucher() != null) {
                     this.getSubtractVoucher(this.billPay.getVoucher());
                 }
-                this.getUpdateQuantityProduct(session);
+//                this.getUpdateQuantityProduct(session);
                 modelMap.addAttribute("title","Tạo hóa đơn thành công!");
                 return "Bill/successBill" ;
             }else {
@@ -347,7 +348,7 @@ public class BillController extends BaseBill {
                 session.removeAttribute("billPaymentRest");
                 session.removeAttribute("pageReturn");
 
-                this.getUpdateQuantityProduct(session);
+//                this.getUpdateQuantityProduct(session);
 
                 mess = "Thanh toán thành công!";
                 colorMess = "1";
@@ -389,7 +390,7 @@ public class BillController extends BaseBill {
         thongBao.put("message","Xóa sản phẩm trong hóa đơn thành công!");
         thongBao.put("check","1");
         BillDetail billDetail = this.billDetailService.findById(id).orElse(new BillDetail());
-        this.billDetailService.delete(billDetail);
+        this.getUpdateQuantityProduct(billDetail.getProductDetail().getId(),-billDetail.getQuantity());
         Bill bill = this.billService.findById((Integer) session.getAttribute("IdBill")).orElse(null);
         BigDecimal total = this.billDetailService.getTotalAmountByIdBill(bill.getId());
         bill.setUpdateDate(new Date());
@@ -398,8 +399,11 @@ public class BillController extends BaseBill {
         }else {
             bill.setTotalAmount(BigDecimal.valueOf(0));
         }
-
+        this.billDetailService.delete(billDetail);
         this.billService.save(bill);
+
+        getDeleteVoucherByBill(bill.getId());
+
         return ResponseEntity.ok(thongBao);
     }
 
@@ -476,6 +480,9 @@ public class BillController extends BaseBill {
 
         this.billDetailService.save(billDetailSave);
         this.setTotalAmount(billDetailSave.getBill());
+        this.getUpdateQuantityProduct(productDetail.getId(),Integer.parseInt(quantity));
+
+        getDeleteVoucherByBill(billById.getId());
 
         return ResponseEntity.ok(thongBao);
     }

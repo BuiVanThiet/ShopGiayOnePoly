@@ -314,10 +314,26 @@ public class ReturnBillRestController extends BaseBill {
 
     //goi danh sách return bill va return bill detail
     @GetMapping("/infomation-return-bill-from-bill-manage")
-    public ReturnBill getReturnBillByIdBill(HttpSession session) {
+    public InfomationReturnBillResponse getReturnBillByIdBill(HttpSession session) {
+
         ReturnBill returnBill = this.returnBillService.getReturnBillByIdBill((Integer) session.getAttribute("IdBill"));
         session.setAttribute("IdReturnBill",returnBill.getId());
-        return returnBill;
+
+        List<Object[]> objects = this.billService.getInfomationBillReturn((Integer) session.getAttribute("IdBill"));
+        InfomationReturnBillResponse response = new InfomationReturnBillResponse();
+        for (int i = 0; i<1;i++) {
+            Object[] objectSave = objects.get(i);
+            response.setCodeBill((String) objectSave[1]);
+            response.setNameCustomer((String) objectSave[2]);
+            response.setDiscount((BigDecimal) objectSave[3]);
+            response.setDiscountRatioPercentage((BigDecimal) objectSave[4]);
+            response.setQuantityBuy((Integer) objectSave[5]);
+        }
+        response.setNoteReturn(returnBill.getReason());
+        response.setTotalReturn(returnBill.getTotalReturn());
+        session.setAttribute("discountRatioPercentage", response.getDiscountRatioPercentage().divide(BigDecimal.valueOf(100))); // Reset lại dữ liệu trong session mỗi lần tải trang
+
+        return response;
     }
     @GetMapping("/infomation-return-bill-detail-from-bill-manage/{page}")
     public List<ReturnBillDetail> getReturnBillDetailByIdReturnBill(@PathVariable("page") Integer page,HttpSession session) {

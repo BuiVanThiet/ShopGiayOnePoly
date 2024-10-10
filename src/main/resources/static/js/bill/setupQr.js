@@ -50,6 +50,7 @@ document.getElementById('startCamera').addEventListener('click', () => {
                                 loadBillNew();
                                 loadBillDetail(pageBillDetail);
                                 paymentInformation();
+                                loadVoucherByBill(1);
 
                             // Cập nhật lại bảng hóa đơn và các chức năng khác
                             //     loadBillStatusByBillId();

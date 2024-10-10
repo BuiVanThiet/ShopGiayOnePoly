@@ -13,7 +13,7 @@
                 <!-- Ảnh sẽ được hiển thị ở đây nếu không có dữ liệu -->
             </div>
 
-            <table class="table mt-2" style="display:none;">
+            <table id="table-returnBill" class="table mt-2" style="display:none;">
                 <thead>
                 <tr class="text-center">
                     <th scope="col" style="width: 1%">STT</th>
@@ -65,9 +65,9 @@
                     <span>Tổng tiền phải trả: </span>
                     <span id="total-return"></span>
                 </div>
-                <div class="d-flex justify-content-between col-6">
+                <div id="block-confirm" class="col-6">
                     <!-- Button trigger modal -->
-                    <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#createReturnBillModal">
+                    <button id="btnCreateReturnBill" type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#createReturnBillModal">
                         Tạo phiếu
                     </button>
 

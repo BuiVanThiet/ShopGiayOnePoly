@@ -18,6 +18,7 @@ function loadBillDetail(page)  {
             var noDataContainer = $('#noDataContainer');
             tbody.empty(); // Xóa các dòng cũ
             var paymentCard = $('#paymentInformationCard');
+
             if (response.length === 0) {
                 // Nếu không có dữ liệu, hiển thị ảnh
                 noDataContainer.html(`
@@ -60,12 +61,14 @@ function loadBillDetail(page)  {
                                 </div>`;
                     }
                     var btnDeleteProduct = '';
-                    if(billDetail.bill.status == 2 || billDetail.bill.status == 3 || billDetail.bill.status == 4) {
+                    if(billDetail.bill.status == 2 || billDetail.bill.status == 3 || billDetail.bill.status == 4 ||  billDetail.bill.status == 6 ||  billDetail.bill.status == 7) {
                         btnDeleteProduct = `
                        `;
                     }else if (billDetail.bill.status == 1 || billDetail.bill.status == 0){
                         btnDeleteProduct = `
-                        <button onclick="deleteBillDetail(${billDetail.id})" class="btn btn-outline-danger"><i class="bi bi-x-lg"></i> Xóa bỏ</button>
+ <td class="text-center align-middle">
+                                <button onclick="deleteBillDetail(${billDetail.id})" class="btn btn-outline-danger"><i class="bi bi-x-lg"></i> Xóa bỏ</button>
+                                </td>
                         `;
                     }else if(billDetail.bill.status == 5) {
                         btnDeleteProduct = `
@@ -126,9 +129,8 @@ function loadBillDetail(page)  {
                             <td class="text-center align-middle">
                                 ${billDetail.totalAmount.toLocaleString('en-US') + ' VNĐ'}
                             </td>
-                            <td class="text-center align-middle">
-                                ${btnDeleteProduct}
-                            </td>
+                                    ${btnDeleteProduct} 
+                               
                         </tr>`);
                 });
                 if(cashClient != null) {
@@ -311,6 +313,7 @@ function loadBillNew() {
                 // Có dữ liệu, hiển thị danh sách bill
                 response.forEach(function (url) {
                     var isActive = (url.id == idBill) ? 'active' : ''; // So sánh với idBill
+
                     ul.append(
                         '<li class="nav-item">' +
                         '<a class="nav-link text-dark ' + isActive + '" href="' + '/staff/bill/bill-detail/' + url.id + '">' + url.codeBill + '</a>' +
@@ -1060,7 +1063,7 @@ function updateQuantity(id, quantity,method) {
             paymentInformation();
             loadProduct(1);
             checkUpdateCustomer = true;
-
+            loadVoucherByBill(1);
             totalShip(provinceTransport,districtTransport,wardTransport);
 
             // loadBillStatusByBillId();
@@ -1474,6 +1477,7 @@ function deleteBillDetail(id) {
 function createBillPDF(id) {
     if(id == null) {
          id = parseInt($('#idBillCreatePDF').val());
+        console.log('id de tao oa don la ' + id)
     }
     $.ajax({
         type: "GET",

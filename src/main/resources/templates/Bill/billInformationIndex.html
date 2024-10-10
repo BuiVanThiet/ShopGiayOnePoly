@@ -108,10 +108,18 @@
         <div class="d-flex justify-content-between align-items-center">
             <!-- Cặp nút trái -->
             <div>
-                <button class="btn btn-outline-danger me-2" type="button" id="cancel-button" data-action="cancel" data-bs-target="#infoBill" data-bs-toggle="modal">
+                <button class="btn btn-outline-danger me-2"
+                        type="button" id="cancel-button"
+                        data-action="cancel"
+                        data-bs-target="#infoBill"
+                        data-bs-toggle="modal">
                     <i class="bi bi-bag-x"></i> Hủy đơn
                 </button>
-                <button class="btn btn-outline-success" type="button" id="confirm-button" data-action="confirm" data-bs-target="#infoBill" data-bs-toggle="modal">
+                <button class="btn btn-outline-success"
+                        type="button" id="confirm-button"
+                        data-action="confirm"
+                        data-bs-target="#infoBill"
+                        data-bs-toggle="modal">
                     <i class="bi bi-bag-check"></i> Xác nhận
                 </button>
             </div>
@@ -310,8 +318,12 @@
 
             </div>
         </div>
-
-        <div th:replace="~{Bill/listReturnProduct :: listReturnBill}"></div>
+        <div th:if="${bill.status == 7 || bill.status == 8 || bill.status == 9}">
+            <div th:replace="~{Bill/listReturnProduct :: listReturnBill}"></div>
+        </div>
+        <div th:if="${!(bill.status == 7 || bill.status == 8 || bill.status == 9)}">
+            <p></p>
+        </div>
 
 
     </div>
@@ -512,7 +524,6 @@
     <input type="hidden" id="toastMessage" th:value="${message}">
     <input type="hidden" id="toastCheck" th:value="${check}">
     <input type="hidden" id="checkFormStatus" value="oke">
-
 
 
 </div>

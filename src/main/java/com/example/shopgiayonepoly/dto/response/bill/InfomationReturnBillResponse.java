@@ -18,4 +18,5 @@ public class InfomationReturnBillResponse {
     private BigDecimal discountRatioPercentage;
     private Integer quantityBuy;
     private BigDecimal totalReturn;
+    private String noteReturn;
 }

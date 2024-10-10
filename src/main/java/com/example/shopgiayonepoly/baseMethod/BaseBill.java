@@ -92,23 +92,11 @@ public abstract class BaseBill {
     }
 
     //    sua lai so luong san pham khi duoc dua vao hoa don
-    protected void getUpdateQuantityProduct(HttpSession session) {
-        Bill bill = this.billService.findById((Integer) session.getAttribute("IdBill")).orElse(null);
-        List<BillDetail> billDetailList = this.billDetailService.getBillDetailByIdBill(bill.getId());
-        List<ProductDetail> productDetailList = this.billDetailService.getAllProductDetail();
-        for (BillDetail detail: billDetailList) {
-            for (ProductDetail productDetail: productDetailList) {
-                if (detail.getProductDetail().getId() == productDetail.getId()) {
-                    System.out.println("san pham mua co id la " + productDetail.getId());
-                    System.out.println("ten sn pham la " + productDetail.getProduct().getNameProduct());
-                    System.out.println("So luong trong kho " + productDetail.getQuantity());
-                    System.out.println("So luong mua " + detail.getQuantity());
-                    System.out.println("So luong con lai trong kho " + (productDetail.getQuantity()-detail.getQuantity()));
-                    productDetail.setQuantity((productDetail.getQuantity()-detail.getQuantity()));
-                    productDetailService.save(productDetail);
-                }
-            }
-        }
+    protected void getUpdateQuantityProduct(Integer idProductDetial,Integer quantity) {
+        ProductDetail detail = this.productDetailService.findById(idProductDetial).orElse(null);
+        detail.setUpdateDate(new Date());
+        detail.setQuantity(detail.getQuantity()-quantity);
+        this.productDetailService.save(detail);
     }
     //update
 
@@ -135,6 +123,20 @@ protected void setBillStatus(Integer idBillSet,Integer status,HttpSession sessio
         session.setAttribute("notePayment","Đơn Hàng Đã Bị Hủy!");
     }else if (invoiceStatus.getStatus() == 101) {
         session.setAttribute("notePayment","Đơn Hàng Đã được thanh toán!");
+    }else if (invoiceStatus.getStatus() == 201) {
+        session.setAttribute("notePayment","Chờ xác nhận trả hàng!");
+    }else if (invoiceStatus.getStatus() == 202) {
+        session.setAttribute("notePayment","Đồng ý trả hàng!");
+        ReturnBill returnBill = this.returnBillService.getReturnBillByIdBill(bill.getId());
+        returnBill.setUpdateDate(new Date());
+        returnBill.setStatus(1);
+        this.returnBillService.save(returnBill);
+    }else if (invoiceStatus.getStatus() == 203) {
+        session.setAttribute("notePayment","Không đồng ý trả hàng!");
+        ReturnBill returnBill = this.returnBillService.getReturnBillByIdBill(bill.getId());
+        returnBill.setUpdateDate(new Date());
+        returnBill.setStatus(2);
+        this.returnBillService.save(returnBill);
     }
     invoiceStatus.setNote(staff.getId()+","+session.getAttribute("notePayment"));
     session.removeAttribute("notePayment");
@@ -282,6 +284,19 @@ protected void setBillStatus(Integer idBillSet,Integer status,HttpSession sessio
         history.setStaff(staff);
         history.setNote(note);
         this.historyService.save(history);
+    }
+
+    //xoa voucher khi giap ap dung khong hop ly
+    protected void getDeleteVoucherByBill(Integer idBill) {
+        Bill bill = this.billService.findById(idBill).orElse(null);
+        if (bill.getVoucher() != null) {
+            Voucher voucher = this.voucherService.getOne(bill.getVoucher().getId());
+            if (bill.getTotalAmount().compareTo(voucher.getPricesApply()) < 0) {
+                bill.setVoucher(null);
+                bill.setUpdateDate(new Date());
+                this.billService.save(bill);
+            }
+        }
     }
 
 }

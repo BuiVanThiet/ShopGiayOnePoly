@@ -53,6 +53,8 @@ public class BillRestController extends BaseBill {
         // Lấy danh sách BillDetail
         List<BillDetail> billDetailList = this.billDetailService.getBillDetailByIdBill(idBill, pageable).getContent();
 
+        getDeleteVoucherByBill(idBill);
+
         return billDetailList;
     }
 
@@ -70,7 +72,7 @@ public class BillRestController extends BaseBill {
             thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }
-        if(billDetail.getQuantity() - productDetail.getQuantity() ==  0 && billDetailAjax.getMethod().equals("cong")) {
+        if(productDetail.getQuantity() ==  0 && billDetailAjax.getMethod().equals("cong")) {
             System.out.println("Số lượng mua không được quá số lượng trong hệ thống!");
             thongBao.put("message","Hiện tại sản phẩm bạn mua đã hết!");
             thongBao.put("check","3");
@@ -89,15 +91,24 @@ public class BillRestController extends BaseBill {
         }
         thongBao.put("message","Sửa số lượng sản phẩm thành công!");
         thongBao.put("check","1");
-        Integer quantityUpdate = 1;
+        Integer quantityUpdate = 0;
+        if(billDetailAjax.getMethod().equals("cong")) {
+            quantityUpdate = 1;
+        }else {
+            quantityUpdate =-1;
+        }
         Integer statusUpdate = billDetail.getQuantity() > billDetailAjax.getQuantity() ?  2 : 1;
 
-        billDetail.setQuantity(billDetailAjax.getQuantity());
+        billDetail.setQuantity(billDetail.getQuantity()+quantityUpdate);
 
         billDetail.setTotalAmount(billDetail.getPrice().multiply(BigDecimal.valueOf(billDetail.getQuantity())));
         this.billDetailService.save(billDetail);
 
         this.setTotalAmount(billDetail.getBill());
+        System.out.println("dang o phuong thuc " + billDetailAjax.getMethod());
+        this.getUpdateQuantityProduct(productDetail.getId(),quantityUpdate);
+
+        getDeleteVoucherByBill(billDetail.getBill().getId());
 
         return ResponseEntity.ok(thongBao);
     }
@@ -124,6 +135,9 @@ public class BillRestController extends BaseBill {
         System.out.println("Thong tin bill: " + billDetail.getBill().toString());
 
         this.setTotalAmount(billById);
+        this.getUpdateQuantityProduct(productDetail.getId(),1);
+
+        getDeleteVoucherByBill(billDetail.getBill().getId());
 
         return ResponseEntity.ok(thongBao);
     }
@@ -446,6 +460,20 @@ public class BillRestController extends BaseBill {
                 this.billService.save(bill);
                 this.setBillStatus(bill.getId(),bill.getStatus(),session);
             }
+        }else if (content.equals("agreeReturnBill")) {
+            bill.setUpdateDate(new Date());
+            bill.setStatus(8);
+            mess = "Hóa đơn đã được xác nhận!";
+            colorMess = "3";
+            this.billService.save(bill);
+            this.setBillStatus(bill.getId(),202,session);
+        }else if(content.equals("cancelReturnBill")) {
+            bill.setUpdateDate(new Date());
+            bill.setStatus(9);
+            mess = "Hóa đơn đã được hủy!";
+            colorMess = "1";
+            this.billService.save(bill);
+            this.setBillStatus(bill.getId(),203,session);
         }
         thongBao.put("message",mess);
         thongBao.put("check",colorMess);
