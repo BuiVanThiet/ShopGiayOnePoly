@@ -1,12 +1,3 @@
-// $(document).ready(function (){
-//     var idCity = $('#idCity-staff').val();
-//     var idDistrict = $('#idDistrict-staff').val();
-//     var idCommune = $('#idCommune-staff').val();
-//
-//     initializeLocationDropdowns('city-staff','district-staff','ward-staff','districtSelectContainer-staff','wardSelectContainer-staff',idCity,idDistrict,idCommune)
-// })
-
-
 document.addEventListener("DOMContentLoaded", function () {
     const apiKey = '0fc88a8e-6633-11ef-8e53-0a00184fe694';
     const shopId = '194418';

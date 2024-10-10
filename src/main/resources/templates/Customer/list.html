@@ -43,7 +43,7 @@
 <!--                    <th>Ngày sinh</th>-->
 <!--                    <th>Số điện thoại</th>-->
 <!--                    <th>Email</th>-->
-<!--                    <th>Địa chỉ</th>-->
+                    <th>Địa chỉ</th>
                     <th>Trạng thái</th>
                     <th>Hành động</th>
                 </tr>
@@ -56,7 +56,7 @@
 <!--                    <td th:text="${customer.birthDay}"> </td>-->
 <!--                    <td th:text="${customer.numberPhone}">  </td>-->
 <!--                    <td th:text="${customer.email}"></td>-->
-<!--                    <td th:text="${customer.addRessDetail}"> </td>-->
+                    <td th:text="${customer.addRess}"> </td>
                     <td th:text="${customer.status}"> </td>
                     <td>
                         <a th:href="@{/customer/edit/{id}(id=${customer.id})}" class="edit-icon" onclick="enableEditing(this); return false;"><i class="fas fa-edit" title="Edit"></i></a>
