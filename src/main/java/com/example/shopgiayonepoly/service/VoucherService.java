@@ -1,6 +1,7 @@
 package com.example.shopgiayonepoly.service;
 
 import com.example.shopgiayonepoly.dto.request.VoucherRequest;
+import com.example.shopgiayonepoly.entites.ProductDetail;
 import com.example.shopgiayonepoly.entites.Voucher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

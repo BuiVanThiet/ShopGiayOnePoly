@@ -73,6 +73,11 @@ public class SaleProductServiceImplement implements SaleProductService {
     }
 
     @Override
+    public List<ProductDetail> getAllProductDetailWithDiscount() {
+       return saleProductRepository.getAllProductDetailWithDiscount();
+    }
+
+    @Override
     public void createNewSale(SaleProductRequest saleProductRequest) {
         SaleProduct saleProduct = new SaleProduct();
         BeanUtils.copyProperties(saleProductRequest, saleProduct);
@@ -110,6 +115,9 @@ public class SaleProductServiceImplement implements SaleProductService {
                     // Giảm theo giá trị cố định
                     newPrice = product.getPrice().subtract(discountValue);
                 }
+                if(product.getSaleProduct()!=null){
+                    break;
+                }
                 product.setPrice(newPrice);
 
                 // Liên kết SaleProduct đã chọn với ProductDetail
@@ -121,7 +129,21 @@ public class SaleProductServiceImplement implements SaleProductService {
         }
     }
 
-    // Hàm để tạo mã giảm giá (bạn có thể tùy chỉnh logic tạo mã này)
+    @Override
+    public void restoreOriginalPrice(List<Integer> productIds) {
+        for (Integer productId : productIds) {
+            ProductDetail product = productDetailRepository.findById(productId).orElse(null);
+            if (product != null && product.getOriginalPrice() != null) {
+                // Khôi phục giá gốc
+                product.setPrice(product.getOriginalPrice());
+                // Xóa liên kết SaleProduct
+                product.setSaleProduct(null);
+                product.setOriginalPrice(null);
+                productDetailRepository.save(product);
+            }
+        }
+    }
+
     private String generateSaleCode() {
         return "SALE" + System.currentTimeMillis(); // Tạo một mã giảm giá dựa trên thời gian hiện tại
     }
