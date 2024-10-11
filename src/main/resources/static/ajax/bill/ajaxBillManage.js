@@ -133,7 +133,7 @@ function loadInformationBillByIdBill() {
                 $('#cancel-button').show();
                 $('#confirm-button').show();
                 $('#form-action-voucher').show();
-                $('#form-final-voucher').show();
+                $('#form-final-voucher').hide();
                 $('#btn-modal-customer').show();
                 $('#btn-buy-product').show();
                 $('#startCamera').show();
@@ -147,6 +147,7 @@ function loadInformationBillByIdBill() {
                 $('#btn-modal-customer').hide();
                 $('#btn-buy-product').hide();
                 $('#startCamera').hide();
+                $('#table-product-buy th:last-child').hide();
             }else if (response.status == 3) {
                 statusBill = 'Giao hàng';
                 $('#cancel-button').show();
@@ -157,6 +158,7 @@ function loadInformationBillByIdBill() {
                 $('#btn-modal-customer').hide();
                 $('#btn-buy-product').hide();
                 $('#startCamera').hide();
+                $('#table-product-buy th:last-child').hide();
             }else if (response.status == 4) {
                 statusBill = 'Khách đã nhận được hàng';
                 $('#cancel-button').show();
@@ -167,6 +169,7 @@ function loadInformationBillByIdBill() {
                 $('#btn-modal-customer').hide();
                 $('#btn-buy-product').hide();
                 $('#startCamera').hide();
+                $('#table-product-buy th:last-child').hide();
             }else if (response.status == 5) {
                 statusBill = 'Hoàn thành';
                 $('#cancel-button').hide();
@@ -177,7 +180,8 @@ function loadInformationBillByIdBill() {
                 $('#btn-modal-customer').hide();
                 $('#btn-buy-product').hide();
                 $('#startCamera').hide();
-            }else {
+                $('#table-product-buy th:last-child').hide();
+            }else if (response.status == 6){
                 statusBill = 'Đã hủy';
                 $('#cancel-button').hide();
                 $('#confirm-button').hide();
@@ -187,13 +191,84 @@ function loadInformationBillByIdBill() {
                 $('#btn-modal-customer').hide();
                 $('#btn-buy-product').hide();
                 $('#startCamera').hide();
-                if(response.status == 7) {
-                    loadInfomationReturnBillFromBillManage();
-                    loadReturnBillFromBillManage(1);
-                    maxPageReturnBillFromBillManage();
-                }
-            }
+                $('#table-product-buy th:last-child').hide();
+            }else if (response.status == 7){
+                statusBill = 'Chờ xác nhận trả hàng';
+                $('#cancel-button').hide();
+                $('#confirm-button').hide();
+                $('#form-action-voucher').hide();
+                $('#form-final-voucher').show();
+                $('#title-voucher').text(voucher);
+                $('#btn-modal-customer').hide();
+                $('#btn-buy-product').hide();
+                $('#startCamera').hide();
+                $('#table-product-buy th:last-child').hide();
 
+                loadInfomationReturnBillFromBillManage();
+                loadReturnBillFromBillManage(1);
+                maxPageReturnBillFromBillManage();
+                var buttons = '';
+                    buttons = `
+                        <button class="btn btn-outline-danger me-2"
+                            type="button" id="cancel-button-return-bill"
+                            data-action="cancel-return-bill"
+                            data-bs-target="#infoBill"
+                            data-bs-toggle="modal">
+                        <i class="bi bi-bag-x"></i> Hủy đơn
+                        </button>
+                        <button class="btn btn-outline-success"
+                                type="button" id="confirm-button-return-bill"
+                                data-action="confirm-return-bill"
+                                data-bs-target="#infoBill"
+                                data-bs-toggle="modal">
+                            <i class="bi bi-bag-check"></i> Xác nhận
+                        </button>`;
+                // Đẩy nút vào trong div có id là "block-confirm"
+                $('#block-confirm').html(buttons);
+                actionModal();
+            }else if (response.status == 8){
+                statusBill = 'Đồng ý trả hàng';
+                $('#cancel-button').hide();
+                $('#confirm-button').hide();
+                $('#form-action-voucher').hide();
+                $('#form-final-voucher').show();
+                $('#title-voucher').text(voucher);
+                $('#btn-modal-customer').hide();
+                $('#btn-buy-product').hide();
+                $('#startCamera').hide();
+                $('#table-product-buy th:last-child').hide();
+
+                loadInfomationReturnBillFromBillManage();
+                loadReturnBillFromBillManage(1);
+                maxPageReturnBillFromBillManage();
+                var buttons = '';
+                buttons = `
+                        `;
+                // Đẩy nút vào trong div có id là "block-confirm"
+                $('#block-confirm').html(buttons);
+                actionModal();
+            }else if (response.status == 9){
+                statusBill = 'Không đồng ý trả hàng';
+                $('#cancel-button').hide();
+                $('#confirm-button').hide();
+                $('#form-action-voucher').hide();
+                $('#form-final-voucher').show();
+                $('#title-voucher').text(voucher);
+                $('#btn-modal-customer').hide();
+                $('#btn-buy-product').hide();
+                $('#startCamera').hide();
+                $('#table-product-buy th:last-child').hide();
+
+                loadInfomationReturnBillFromBillManage();
+                loadReturnBillFromBillManage(1);
+                maxPageReturnBillFromBillManage();
+                var buttons = '';
+                buttons = `
+                        `;
+                // Đẩy nút vào trong div có id là "block-confirm"
+                $('#block-confirm').html(buttons);
+                actionModal();
+            }
             // if(response.status == 1) {
             //     $('#form-action-voucher').show();
             //     $('#form-voucher-final').hide();
@@ -337,6 +412,15 @@ function getBillStatus(response) {
         case 101:
             statusBill = 'Đã thanh toán';
             break;
+        case 201:
+            statusBill = 'Chờ xác nhận trả hàng';
+            break;
+        case 202:
+            statusBill = 'Đồng ý trả hàng';
+            break;
+        case 203:
+            statusBill = 'Không đồng ý trả hàng';
+            break;
         default:
             statusBill = 'Không xác định';
             break;
@@ -407,7 +491,7 @@ function confirmBill(content) {
     })
 }
 
-document.addEventListener('DOMContentLoaded', function () {
+function actionModal() {
     var modalTitle = document.getElementById('modal-title');
     var modalBody = document.getElementById('modal-body');
     var confirmButton = document.getElementById('confirm-action-button');
@@ -424,9 +508,21 @@ document.addEventListener('DOMContentLoaded', function () {
                 modalTitle.textContent = 'Xác nhận đơn hàng';
                 modalBody.textContent = 'Bạn có chắc muốn xác nhận đơn hàng này không?';
                 confirmButton.setAttribute('onclick', "confirmBill('agree')");
+            }else if (action === 'confirm-return-bill') {
+                modalTitle.textContent = 'Xác nhận trả hàng';
+                modalBody.textContent = 'Bạn muốn xác nhận đơn trả hàng này sao?';
+                confirmButton.setAttribute('onclick', "confirmBill('agreeReturnBill')");
+            }else if (action === 'cancel-return-bill') {
+                modalTitle.textContent = 'Xác nhận trả hàng';
+                modalBody.textContent = 'Bạn hủy đơn trả hàng này sao?';
+                confirmButton.setAttribute('onclick', "confirmBill('cancelReturnBill')");
             }
         });
     });
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    actionModal();
 });
 
 function paymentBill() {
@@ -565,11 +661,13 @@ function loadInfomationReturnBillFromBillManage() {
         type: "GET",
         url: "/return-bill-api/infomation-return-bill-from-bill-manage",
         success: function (response) {
-            $('#code-bill').text(response.bill.codeBill)
-            $('#customer-buy-product').text(response.bill.customer.fullName)
-            $('#discount-voucher').text(response.totalReturn.toLocaleString('en-US') + ' VNĐ')
-            $('#divide-equally-product').text((response.bill.priceDiscount/response.bill.totalAmount)*100+ ' %')
+            $('#code-bill').text(response.codeBill)
+            $('#customer-buy-product').text(response.nameCustomer)
+            $('#discount-voucher').text(response.discount.toLocaleString('en-US') + ' VNĐ')
+            $('#divide-equally-product').text(response.discountRatioPercentage+ ' %')
             $('#total-return').text(response.totalReturn.toLocaleString('en-US') + ' VNĐ')
+            $('#node-return').val(response.noteReturn);
+            $('#node-return').attr('disabled', true);
         },
         error: function (xhr) {
             console.error('loi ' + xhr.responseText);
@@ -584,7 +682,12 @@ function loadReturnBillFromBillManage(page) {
             var tbody = $('#tableReturnBill');
             var noDataContainer = $('#noDataReturnBill');
             tbody.empty();
+            $('#btnCreateReturnBill').remove();
+            $('#createReturnBillModal').remove();
+            $('#table-returnBill th:last-child, #table-returnBill td:last-child').hide();
+
             if(response.length === 0) {
+                console.log('khong co san pham tra')
                 noDataContainer.html(`
                         <img src="https://res.cloudinary.com/dfy4umpja/image/upload/v1725477250/jw3etgwdqqxtkevcxisq.png"
                              alt="Lỗi ảnh" style="width: auto; height: 100px;">
@@ -594,6 +697,7 @@ function loadReturnBillFromBillManage(page) {
                 noDataContainer.show();
                 tbody.closest('table').hide(); // Ẩn table nếu không có dữ liệu
             }else {
+                console.log('co san pham tra')
                 noDataContainer.hide();
                 tbody.closest('table').show(); // Ẩn table nếu không có dữ liệu
                 response.forEach(function(billReturn, index) {
@@ -630,17 +734,10 @@ function loadReturnBillFromBillManage(page) {
                                 ${billReturn.priceBuy.toLocaleString('en-US') + ' VNĐ'}
                             </td>
                             <td class="text-center align-middle">
-                                 <div class="pagination mb-3 custom-number-input" style="width: 130px;" data-id="${billReturn.productDetail.id}">
-                                        <button class="button btn-decrement">-</button>
-                                    <div class="number" id="pageNumber"> ${billReturn.quantityReturn}</div>
-                                    <button class="button btn-increment">+</button>
-                                 </div>
+                                 ${billReturn.quantityReturn}
                             </td>
                             <td class="text-center align-middle">
                                 ${billReturn.totalReturn.toLocaleString('en-US') + ' VNĐ'}
-                            </td>
-                            <td class="text-center align-middle">
-                               
                             </td>
                         </tr>`);
                 });

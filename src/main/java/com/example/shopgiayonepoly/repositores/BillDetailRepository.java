@@ -119,7 +119,7 @@ public interface BillDetailRepository extends JpaRepository<BillDetail,Integer> 
         so.name_sole, --8
         pd.price, --9
         pd.quantity, --10
-        (pd.quantity - COALESCE(bd.quantity, 0)) AS updated_quantity,   -- Trừ số lượng ảo 11
+        pd.quantity AS updated_quantity,   -- Trừ
         CASE
             WHEN sp.start_date <= CAST(GETDATE() AS DATE) AND sp.end_date >= CAST(GETDATE() AS DATE) THEN
                 CASE
