@@ -226,23 +226,36 @@ public class SaleProductController {
 
     @PostMapping("/apply-discount")
     public ResponseEntity<?> applyDiscount(
-            @RequestParam List<Integer> productIds,
-            @RequestParam BigDecimal discountValue,
-            @RequestParam Integer discountType,
-            @RequestParam Integer saleProductId) {
-
+                                           @RequestParam List<Integer> productIds,
+                                           @RequestParam BigDecimal discountValue,
+                                           @RequestParam Integer discountType,
+                                           @RequestParam Integer saleProductId) {
         try {
-            // Sử dụng saleProductId để xử lý logic giảm giá nếu cần
+            // Gọi service để áp dụng giảm giá
             saleProductService.applyDiscountToProductDetails(productIds, discountValue, discountType, saleProductId);
-            return ResponseEntity.ok("Giảm giá đã được áp dụng thành công.");
+            return ResponseEntity.ok("Giảm giá đã được áp dụng thành công!");
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
+            // Xử lý các ngoại lệ khác
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Đã xảy ra lỗi khi áp dụng giảm giá.");
-
         }
-
+    }
+    @PostMapping("/cancel-discount")
+    public ResponseEntity<?> cancelDiscount(@RequestParam List<Integer> productIds) {
+        try {
+            saleProductService.restoreOriginalPrice(productIds);
+            return ResponseEntity.ok("Giảm giá đã được ngừng và giá gốc đã được khôi phục!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Đã xảy ra lỗi khi ngừng giảm giá.");
+        }
     }
 
-
+    @GetMapping("/product-details")
+    public ResponseEntity<List<ProductDetail>> getProductDetails() {
+        List<ProductDetail> productDetails = saleProductService.getAllProductDetailByPage();
+        return ResponseEntity.ok(productDetails);
+    }
     @ModelAttribute("staffInfo")
     public Staff staff(HttpSession session) {
         Staff staff = (Staff) session.getAttribute("staffLogin");

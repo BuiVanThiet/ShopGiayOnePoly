@@ -39,26 +39,26 @@ public interface SaleProductRepository extends JpaRepository<SaleProduct, Intege
     public void restoreStatusSaleProduct(@Param("id") Integer id);
 
     @Query("select s from SaleProduct s where (s.nameSale like %:key% or s.codeSale like %:key%) and s.status = 1")
-    public Page<SaleProduct> searchSaleProductByKeyword(@Param("key") String key, Pageable pageable);
+    public Page<SaleProduct> searchSaleProductByKeyword(@Param("key") String key,
+                                                        Pageable pageable);
 
     @Query("select s from SaleProduct s where s.discountType =:types and s.status = 1")
-    Page<SaleProduct> searchSaleProductByTypeSaleProduct(@Param("types") int type, Pageable pageable);
+    Page<SaleProduct> searchSaleProductByTypeSaleProduct(@Param("types") int type,
+                                                         Pageable pageable);
 
-    @Query("select p from ProductDetail p")
+    @Query("select p from ProductDetail p where p.status = 1 and p.saleProduct is null")
     public List<ProductDetail> getAllProductDetailByPage();
+
+    @Query("SELECT p FROM ProductDetail p WHERE p.status = 1 AND p.saleProduct IS NOT NULL")
+    public List<ProductDetail> getAllProductDetailWithDiscount();
+
     @Modifying
     @Transactional
     @Query("update ProductDetail p set p.price = p.price - :discountValue where p.id in :productIds")
-    void applyDiscountToMultipleProducts(@Param("productIds") List<Integer> productIds, @Param("discountValue") BigDecimal discountValue);
+    void applyDiscountToMultipleProducts(@Param("productIds") List<Integer> productIds,
+                                         @Param("discountValue") BigDecimal discountValue);
 
 //    @Modifying
 //    @Transactional
-//    @Query("update ProductDetail p set p.price = p.price where p.id = :productId")
-//    void revertDiscountForSingleProduct(@Param("productId") Integer productId);
-//
-//    // Phương thức tìm sản phẩm đã hết hạn
-//    @Query("SELECT p FROM ProductDetail p WHERE p.discountEndDate < :now")
-//    List<ProductDetail> findExpiredDiscounts(@Param("now") LocalDateTime now);
-
-
+//    @Query("update ProductDetail p set p.saleProduct=null where p.j")
 }

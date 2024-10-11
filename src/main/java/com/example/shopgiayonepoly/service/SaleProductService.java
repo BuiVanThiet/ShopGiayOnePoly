@@ -21,8 +21,11 @@ public interface SaleProductService {
     public Page<SaleProduct> searchSaleProductsByKeyword(String key, Pageable pageable);
     public Page<SaleProduct> searchSaleProductsByType(int type, Pageable pageable);
     public List<ProductDetail> getAllProductDetailByPage();
+    public List<ProductDetail> getAllProductDetailWithDiscount();
     public void createNewSale(SaleProductRequest saleProductRequest);
     public SaleProduct getSaleProductByID(Integer id);
-    public void applyDiscountToProductDetails(List<Integer> productIds, BigDecimal discountValue, Integer discountType, Integer saleProductId);
+    public void applyDiscountToProductDetails(List<Integer> productIds, BigDecimal discountValue,
+                                              Integer discountType, Integer saleProductId);
+    public void restoreOriginalPrice(List<Integer> productIds);
 }
 

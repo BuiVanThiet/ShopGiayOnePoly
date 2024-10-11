@@ -30,6 +30,33 @@ document.addEventListener("DOMContentLoaded", function () {
 
     changeTable(1);
 
+    window.changeTableProductDetail = function (productNumber){
+        const tableNotDiscount = document.getElementById("table-not-discount")
+        const tableAlreadyDiscount = document.getElementById("table-already-discount")
+
+        tableNotDiscount.style.display = "none";
+        tableAlreadyDiscount.style.display = "none";
+
+        // Reset tất cả các nút về trạng thái "btn-secondary"
+        document.getElementById("buttonSPCT1").classList.remove("btn-primary");
+        document.getElementById("buttonSPCT1").classList.add("btn-secondary");
+        document.getElementById("buttonSPCT2").classList.remove("btn-primary");
+        document.getElementById("buttonSPCT2").classList.add("btn-secondary");
+
+        if (productNumber === 1) {
+            // Hiển thị bảng 1 và thay đổi nút button1 thành "btn-primary"
+            tableNotDiscount.style.display = "block";
+            document.getElementById("buttonSPCT1").classList.add("btn-primary");
+            document.getElementById("buttonSPCT1").classList.remove("btn-secondary");
+        } else if (productNumber === 2) {
+            // Hiển thị bảng 2 và thay đổi nút button2 thành "btn-primary"
+            tableAlreadyDiscount.style.display = "block";
+            document.getElementById("buttonSPCT2").classList.add("btn-primary");
+            document.getElementById("buttonSPCT2").classList.remove("btn-secondary");
+        }
+    }
+    changeTableProductDetail(1);
+
     // Thêm sự kiện click cho các nút
     document.getElementById("button1").addEventListener("click", function () {
         changeTable(1);

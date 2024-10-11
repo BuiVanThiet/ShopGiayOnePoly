@@ -69,6 +69,7 @@ document.addEventListener("DOMContentLoaded", function() {
             },
             success: function(response) {
                 alert("Giảm giá đã được áp dụng thành công!");
+                loadProductDetails(); // Gọi hàm tải lại bảng product
             },
             error: function(xhr, status, error) {
                 console.error("Lỗi khi áp dụng giảm giá:", xhr.responseText || error);
@@ -78,4 +79,34 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Thêm sự kiện click vào nút Áp dụng ngay
     applyDiscountBtn.addEventListener('click', apply_discount);
+
+    // Hàm tải lại bảng ProductDetail
+    function loadProductDetails() {
+        $.ajax({
+            type: "GET",
+            url: "/product-details", // Đường dẫn lấy dữ liệu sản phẩm chi tiết
+            success: function(productDetails) {
+                const tbody = document.querySelector('table tbody');
+                tbody.innerHTML = ''; // Xóa nội dung cũ của bảng
+
+                // Thêm dữ liệu mới vào bảng
+                productDetails.forEach(product => {
+                    const row = `
+                        <tr>
+                            <td>${product.id}</td>
+                            <td>${product.product.nameProduct}</td>
+                            <td>${product.price}</td>
+                            <td>
+                                <input type="checkbox" value="${product.id}" name="selectedProducts" id="product_${product.id}" />
+                            </td>
+                        </tr>
+                    `;
+                    tbody.insertAdjacentHTML('beforeend', row);
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error("Lỗi khi tải danh sách sản phẩm:", xhr.responseText || error);
+            }
+        });
+    }
 });
