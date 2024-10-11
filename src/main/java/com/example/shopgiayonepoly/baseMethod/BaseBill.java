@@ -143,8 +143,8 @@ protected void setBillStatus(Integer idBillSet,Integer status,HttpSession sessio
     this.invoiceStatusService.save(invoiceStatus);
 }
     //trừ đi voucher cua hóa đơn
-    protected void getSubtractVoucher(Voucher voucher) {
-        voucher.setQuantity(voucher.getQuantity() - 1);
+    protected void getSubtractVoucher(Voucher voucher,Integer quantity) {
+        voucher.setQuantity(voucher.getQuantity() - quantity);
         voucher.setUpdateDate(new Date());
         VoucherRequest voucherRequest = new VoucherRequest();
         BeanUtils.copyProperties(voucher,voucherRequest);
@@ -295,6 +295,7 @@ protected void setBillStatus(Integer idBillSet,Integer status,HttpSession sessio
                 bill.setVoucher(null);
                 bill.setUpdateDate(new Date());
                 this.billService.save(bill);
+                this.getSubtractVoucher(bill.getVoucher(),-1);
             }
         }
     }

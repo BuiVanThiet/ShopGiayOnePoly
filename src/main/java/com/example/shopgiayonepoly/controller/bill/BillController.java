@@ -228,7 +228,7 @@ public class BillController extends BaseBill {
             bill.setUpdateDate(new Date());
             if(bill.getBillType() == 2) {
                 bill.setPaymentStatus(0);
-                bill.setStatus(2);
+                bill.setStatus(1);
                 bill.setPaymentMethod(1);
             }else {
                 bill.setPaymentStatus(1);
@@ -244,9 +244,6 @@ public class BillController extends BaseBill {
             this.setBillStatus(bill.getId(),bill.getStatus(),session);
 
             this.billService.save(bill);
-            if(bill.getVoucher() != null) {
-                this.getSubtractVoucher(bill.getVoucher());
-            }
             modelMap.addAttribute("title","Tạo hóa đơn thành công!");
 //            this.getUpdateQuantityProduct(session);
             return "Bill/successBill";
@@ -320,9 +317,6 @@ public class BillController extends BaseBill {
                 this.setBillStatus(this.billPay.getId(),101,session);
                 this.setBillStatus(this.billPay.getId(),this.billPay.getStatus(),session);
 
-                if(this.billPay.getVoucher() != null) {
-                    this.getSubtractVoucher(this.billPay.getVoucher());
-                }
 //                this.getUpdateQuantityProduct(session);
                 modelMap.addAttribute("title","Tạo hóa đơn thành công!");
                 return "Bill/successBill" ;
@@ -342,9 +336,6 @@ public class BillController extends BaseBill {
                 this.billService.save(this.billPay);
 
                 this.setBillStatus(this.billPay.getId(),101,session);
-                if(this.billPay.getVoucher() != null) {
-                    this.getSubtractVoucher(this.billPay.getVoucher());
-                }
                 session.removeAttribute("billPaymentRest");
                 session.removeAttribute("pageReturn");
 
@@ -504,13 +495,13 @@ public class BillController extends BaseBill {
     @ResponseBody
     public ResponseEntity<Map<String,String>> getDeleteVoucherBill(HttpSession session) {
         Bill bill = this.billService.findById((Integer) session.getAttribute("IdBill")).orElse(null);
+        this.getSubtractVoucher(bill.getVoucher(),-1);
         Map<String,String> thongBao = new HashMap<>();
         thongBao.put("message","Xóa mã giảm giá thành công!");
         thongBao.put("check","1");
         bill.setVoucher(null);
         bill.setUpdateDate(new Date());
         this.billService.save(bill);
-
         return ResponseEntity.ok(thongBao);
     }
 
@@ -519,14 +510,17 @@ public class BillController extends BaseBill {
     @ResponseBody
     public ResponseEntity<Map<String,String>> getClickVoucherBill(@PathVariable("idVoucher") String idVoucher, HttpSession session) {
         Bill bill = this.billService.findById((Integer) session.getAttribute("IdBill")).orElse(null);
+        if(bill.getVoucher() != null) {
+            this.getSubtractVoucher(bill.getVoucher(),-1);
+        }
         Map<String,String> thongBao = new HashMap<>();
         thongBao.put("message","Thêm mã giảm giá thành công!");
         thongBao.put("check","1");
-        Voucher voucher = new Voucher();
-        voucher.setId(Integer.parseInt(idVoucher));
+        Voucher voucher = this.voucherService.getOne(Integer.parseInt(idVoucher));
         bill.setVoucher(voucher);
         bill.setUpdateDate(new Date());
         this.billService.save(bill);
+        this.getSubtractVoucher(voucher,1);
         return ResponseEntity.ok(thongBao);
     }
 

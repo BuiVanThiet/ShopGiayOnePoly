@@ -1156,7 +1156,7 @@ function getAddVoucherInBill(idVoucher) {
                    console.log('Phai vao duoc day')
                    loadInformationBillByIdBill();
                    loadCustomerShipInBill();
-                $('#btn-Remove-voucher').hide();
+                $('#btn-Remove-voucher').show();
                }
 
             showToast(response.message,response.check)
