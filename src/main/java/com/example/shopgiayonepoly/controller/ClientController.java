@@ -15,6 +15,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Controller
 @RequestMapping("/onepoly")
@@ -176,14 +179,22 @@ public class ClientController {
         }
     }
     @GetMapping("/userProfile")
-    public String formProfile( Model model, HttpSession session){
+    public String formProfile(Model model, HttpSession session) {
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
+
         if (clientLoginResponse != null) {
             model.addAttribute("clientInfo", clientLoginResponse);
+
+            // Trường birthDay là LocalDate, không cần chuyển đổi
+            LocalDate birthDay = clientLoginResponse.getBirthDay();
+            model.addAttribute("birthDay", birthDay);
         } else {
             session.removeAttribute("clientInfo");
             return "redirect:/onepoly/login";
         }
+
         return "client/UserProfile";
     }
+
+
 }
