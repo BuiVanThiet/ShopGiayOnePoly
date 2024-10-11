@@ -258,7 +258,7 @@
                                 <td th:text="${productDt.price}">Giá</td>
                                 <td>
                                     <input type="checkbox" th:value="${productDt.id}" name="selectedProducts"
-                                           id="product_${productDt.id}"/>
+                                           id="product_detail${productDt.id}"/>
                                 </td>
                             </tr>
                             </tbody>
@@ -278,15 +278,18 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr th:each="productDt : ${listProductDetail}">
+                            <tr th:each="productDt : ${listProductDetailWithDiscount}">
                                 <td th:text="${productDt.id}">Mã sản phẩm</td>
                                 <td th:text="${productDt.product.nameProduct}">Tên sản phẩm</td>
                                 <td th:text="${productDt.price}">Giá</td>
-
+                                <td>
+                                    <input type="checkbox" th:value="${productDt.id}" name="selectedProducts"
+                                           id="product_apply${productDt.id}"/>
+                                </td>
                             </tr>
                             </tbody>
                         </table>
-                        <button id="cancelApplySale" class="btn btn-warning  w-100">
+                        <button id="cancelApplySale" class="btn btn-warning w-100">
                             <i style="margin-right: 5px" class="bi bi-plus-lg"></i>Ngừng giảm giá
                         </button>
                     </div>

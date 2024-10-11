@@ -97,7 +97,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             <td>${product.product.nameProduct}</td>
                             <td>${product.price}</td>
                             <td>
-                                <input type="checkbox" value="${product.id}" name="selectedProducts" id="product_${product.id}" />
+                                <input type="checkbox" value="${product.id}" name="selectedProducts" id="product_detail${product.id}" />
                             </td>
                         </tr>
                     `;

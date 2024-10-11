@@ -138,6 +138,7 @@ public class SaleProductServiceImplement implements SaleProductService {
                 product.setPrice(product.getOriginalPrice());
                 // Xóa liên kết SaleProduct
                 product.setSaleProduct(null);
+                // Xóa giá gốc để tránh khôi phục nhiều lần
                 product.setOriginalPrice(null);
                 productDetailRepository.save(product);
             }

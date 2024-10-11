@@ -11,13 +11,11 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -47,9 +45,11 @@ public class SaleProductController {
         Pageable pageableDelete = PageRequest.of(pageNumberDelete, pageSize);
         Page<SaleProduct> pageSaleDelete = saleProductService.getDeletedSaleProductsByPage(pageableDelete);
         List<ProductDetail> listProductDetail = saleProductService.getAllProductDetailByPage();
+        List<ProductDetail> listProductDetailWithDiscount = saleProductService.getAllProductDetailWithDiscount();
         model.addAttribute("pageSale", pageSale);
         model.addAttribute("pageSaleDelete", pageSaleDelete);
         model.addAttribute("listProductDetail", listProductDetail);
+        model.addAttribute("listProductDetailWithDiscount", listProductDetailWithDiscount);
         return "sale_product/index";
     }
 
@@ -62,7 +62,8 @@ public class SaleProductController {
 
     @PostMapping("/create")
     public String createNewSale(RedirectAttributes redirectAttributes, Model model,
-                                @Valid @ModelAttribute("saleProduct") SaleProductRequest saleProductRequest, BindingResult result) {
+                                @Valid @ModelAttribute("saleProduct") SaleProductRequest saleProductRequest,
+                                BindingResult result) {
         BigDecimal zero = BigDecimal.ZERO;
         BigDecimal niceTeen = new BigDecimal("91");
         BigDecimal tenHundred = new BigDecimal("10000");
@@ -133,7 +134,8 @@ public class SaleProductController {
 
     @PostMapping("/update")
     public String UpdateSale(RedirectAttributes redirectAttributes, Model model,
-                             @Valid @ModelAttribute("saleProductRequest") SaleProductRequest saleProductRequest, BindingResult result) {
+                             @Valid @ModelAttribute("saleProductRequest") SaleProductRequest saleProductRequest,
+                             BindingResult result) {
         BigDecimal zero = BigDecimal.ZERO;
         BigDecimal niceTeen = new BigDecimal("91");
         BigDecimal tenHundred = new BigDecimal("10000");
