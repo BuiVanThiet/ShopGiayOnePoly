@@ -1,7 +1,6 @@
 package com.example.shopgiayonepoly.implement;
 
 import com.example.shopgiayonepoly.dto.request.SaleProductRequest;
-import com.example.shopgiayonepoly.dto.request.VoucherRequest;
 import com.example.shopgiayonepoly.entites.ProductDetail;
 import com.example.shopgiayonepoly.entites.SaleProduct;
 import com.example.shopgiayonepoly.repositores.ProductDetailRepository;
@@ -11,13 +10,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 @Service

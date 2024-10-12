@@ -66,8 +66,8 @@ function loadBillDetail(page)  {
                        `;
                     }else if (billDetail.bill.status == 1 || billDetail.bill.status == 0){
                         btnDeleteProduct = `
- <td class="text-center align-middle">
-                                <button onclick="deleteBillDetail(${billDetail.id})" class="btn btn-outline-danger"><i class="bi bi-x-lg"></i> Xóa bỏ</button>
+                                <td class="text-center align-middle">
+                                    <button onclick="deleteBillDetail(${billDetail.id})" class="btn btn-outline-danger"><i class="bi bi-x-lg"></i> Xóa bỏ</button>
                                 </td>
                         `;
                     }else if(billDetail.bill.status == 5) {
@@ -299,10 +299,11 @@ function uploadPayMethod() {
     })
 }
 function loadBillNew() {
+    var url = '/bill-api/all-new';
     var idBill = $('#idBill').val();
     $.ajax({
         type: "GET",
-        url: "/bill-api/all-new",
+        url: url,
         success: function (response) {
             var ul = $('#billBody');
             var noDataBill = $('#noDataBill');
