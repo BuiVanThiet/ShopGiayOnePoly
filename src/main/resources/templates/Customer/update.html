@@ -28,9 +28,9 @@
                                 <p>Ảnh khách hàng (3x4)</p>
                                 <div class="upload-container">
                                     <label for="file-upload" class="custom-file-upload">
-                                        <img id="image-preview" src="path_to_default_image.png" alt="Ảnh khách hàng"/>
+                                        <img id="image-preview" th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728721025/'+${customer.imageString}" alt="Ảnh khach hang" />
                                     </label>
-                                    <input id="file-upload" type="file" accept="image/*"/>
+                                    <input id="file-upload" type="file" accept="image/*" />
                                 </div>
                             </div>
                             <div class="col-6">
@@ -148,6 +148,8 @@
         </form>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script th:src="@{/js/customer/addRessApiCustomer.js}" type="text/javascript"></script>
+        <script th:src="@{/js/customer/uploadImg.js}" type="text/javascript"></script>
+
     </div>
 </main>
 
