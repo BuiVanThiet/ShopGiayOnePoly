@@ -483,6 +483,7 @@ function confirmBill(content) {
             loadBillStatusByBillId();
             loadInformationBillByIdBill();
             loadInfomationHistoryByBillId();
+            loadBillDetail(1);
             // loadCustomerShipInBill();
         },
         error: function (xhr) {

@@ -54,6 +54,8 @@ public abstract class BaseBill {
     protected ReturnBillService returnBillService;
     @Autowired
     protected ReturnBillDetailService returnBillDetailService;
+    @Autowired
+    protected SaleProductService saleProductService;
 
     //bien cuc bo cua bill
     protected Bill billPay;
@@ -74,6 +76,7 @@ public abstract class BaseBill {
     protected Integer idProductDetail = 0;
     protected BigDecimal totalReturn = BigDecimal.valueOf(0);
     protected List<BillDetail> billDetailList;
+
 
 
     //method chung
@@ -299,5 +302,37 @@ protected void setBillStatus(Integer idBillSet,Integer status,HttpSession sessio
             }
         }
     }
+
+    //them gia tien duoc giam vao db
+    protected void getInsertPriceDiscount(Integer idBill) {
+        Bill bill = this.billService.findById(idBill).orElse(null);
+        if (bill != null) {
+            BigDecimal discount = BigDecimal.valueOf(0); // Khởi tạo giá trị giảm mặc định là 0
+            // Kiểm tra xem có voucher không
+            if (bill.getVoucher() != null) {
+                Voucher voucher = bill.getVoucher();
+                // Kiểm tra loại giảm giá (1 là theo %)
+                if (voucher.getDiscountType() == 1) {
+                    // Giảm giá theo phần trăm
+                    BigDecimal discountPercentage = voucher.getPriceReduced(); // % giảm giá
+                    BigDecimal discountAmount = bill.getTotalAmount().multiply(discountPercentage).divide(BigDecimal.valueOf(100));
+                    // Nếu giá trị giảm lớn hơn giá trị tối đa được phép giảm
+                    if (discountAmount.compareTo(voucher.getPricesMax()) > 0) {
+                        discount = voucher.getPricesMax(); // Giảm giá tối đa bằng pricesMax
+                    } else {
+                        discount = discountAmount; // Áp dụng giá trị giảm theo %
+                    }
+                } else {
+                    // Giảm giá theo số tiền cụ thể
+                    discount = voucher.getPriceReduced(); // Giảm trực tiếp theo số tiền đã định
+                }
+            }
+            // Cập nhật giá trị giảm giá vào hóa đơn
+            bill.setPriceDiscount(discount);
+            // Lưu hóa đơn
+            this.billService.save(bill);
+        }
+    }
+
 
 }

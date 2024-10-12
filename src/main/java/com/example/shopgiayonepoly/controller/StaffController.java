@@ -1,13 +1,10 @@
 package com.example.shopgiayonepoly.controller;
 
 import com.example.shopgiayonepoly.dto.request.StaffRequest;
-import com.example.shopgiayonepoly.dto.request.VoucherRequest;
 import com.example.shopgiayonepoly.dto.response.StaffResponse;
 import com.example.shopgiayonepoly.entites.Staff;
-import com.example.shopgiayonepoly.entites.Voucher;
 import com.example.shopgiayonepoly.service.StaffService;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,6 +15,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.util.List;
 
 @Controller
@@ -36,7 +34,7 @@ public class StaffController {
 //    }
 
     @GetMapping("/list")
-    public String getListStaffByPage(@RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber,Model model) {
+    public String getListStaffByPage(@RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber, Model model) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<Staff> pageStaff = staffService.getAllStaffByPage(pageable);
         model.addAttribute("pageStaff", pageStaff);
@@ -53,21 +51,20 @@ public class StaffController {
     }
 
     @GetMapping("/create")
-    public String createStaff(ModelMap modelMap){
-        modelMap.addAttribute("staff",new StaffRequest());
+    public String createStaff(ModelMap modelMap) {
+        modelMap.addAttribute("staff", new StaffRequest());
         return "Staff/create";
     }
 
     @PostMapping("/add")
-    public String addStaff(Model model, @ModelAttribute(name="staff") StaffRequest staffRequest){
+    public String addStaff(Model model, @ModelAttribute(name = "staff") StaffRequest staffRequest) throws IOException {
         System.out.println("Du lieu khi them cua staff: " + staffRequest.toString());
         Staff staff = new Staff();
         staff.setCodeStaff(staffRequest.getCodeStaff());
         staff.setFullName(staffRequest.getFullName());
-        staff.setAddress(staffRequest.getWard() + "," + staffRequest.getDistrict() + "," + staffRequest.getProvince() + "," +staffRequest.getAddRessDetail());
+        staff.setAddress(staffRequest.getWard() + "," + staffRequest.getDistrict() + "," + staffRequest.getProvince() + "," + staffRequest.getAddRessDetail());
         staff.setNumberPhone(staffRequest.getNumberPhone());
         staff.setBirthDay(staffRequest.getBirthDay());
-        staff.setImage(staffRequest.getNameImage());
         staff.setEmail(staffRequest.getEmail());
         staff.setAcount("");
         staff.setPassword("");
@@ -75,14 +72,16 @@ public class StaffController {
         staff.setRole(staffRequest.getRole());
         staff.setStatus(staffRequest.getStatus());
         Staff staffSave = this.staffService.save(staff);
-        staffSave.setAcount(staffSave.getCodeStaff()+staffSave.getId());
+        staffSave.setAcount(staffSave.getCodeStaff() + staffSave.getId());
         staff.setPassword("@shoponepoly");
-        this.staffService.save(staffSave);
+        staff.setImage("fileName");
+        System.out.println(staff.toString());
+        staffService.uploadFile(staffRequest.getNameImage(),staffSave.getId());
         return "redirect:/staff/list";
     }
 
     @ModelAttribute("staffInfo")
-    public Staff staff(HttpSession session){
+    public Staff staff(HttpSession session) {
         Staff staff = (Staff) session.getAttribute("staffLogin");
         return staff;
     }
@@ -91,27 +90,22 @@ public class StaffController {
     public String editStaff(Model model, @PathVariable("id") Integer id) {
         Staff staff = staffService.getOne(id);
         StaffRequest staffRequest = new StaffRequest();
-        BeanUtils.copyProperties(staff, staffRequest);
-                // Xử lý địa chỉ
-        String getAddressDetail = staffRequest.getAddRessDetail();
-
-        if (getAddressDetail != null && !getAddressDetail.isEmpty()) {
-            String[] parts = getAddressDetail.split(",\\s*"); // Cắt chuỗi dựa trên dấu phẩy và khoảng trắng
-
-            // Kiểm tra xem chuỗi có đủ phần không
-            if (parts.length >= 3) {
-                staffRequest.setWard(parts[0]); // Xã/Phường
-                staffRequest.setDistrict(parts[1]); // Quận/Huyện
-                staffRequest.setProvince(parts[2]); // Tỉnh/Thành phố
-
-                // Nếu địa chỉ còn các phần khác, gộp lại
-                if (parts.length > 3) {
-                    staffRequest.setAddRessDetail(String.join(", ", java.util.Arrays.copyOfRange(parts, 3, parts.length)));
-                } else {
-                    staffRequest.setAddRessDetail(""); // Không còn chi tiết địa chỉ khác
-                }
-            }
-        }
+        staffRequest.setId(staff.getId());
+        staffRequest.setCodeStaff(staff.getCodeStaff());
+        staffRequest.setFullName(staff.getFullName());
+        String[] part = staff.getAddress().split(",\\s*");
+        staffRequest.setProvince(part[2]);
+        staffRequest.setDistrict(part[1]);
+        staffRequest.setWard(part[0]);
+        staffRequest.setAddRessDetail(String.join(", ", java.util.Arrays.copyOfRange(part, 3, part.length)));
+        staffRequest.setGender(staff.getGender());
+        staffRequest.setBirthDay(staff.getBirthDay());
+        staffRequest.setNumberPhone(staff.getNumberPhone());
+        staffRequest.setEmail(staff.getEmail());
+        staffRequest.setRole(staff.getRole());
+        staffRequest.setStatus(staff.getStatus());
+        staffRequest.setImageString(staff.getImage());
+        System.out.println(staffRequest.toString());
         model.addAttribute("staff", staffRequest);
         return "Staff/update";
     }
@@ -120,7 +114,22 @@ public class StaffController {
     public String detailStaff(Model model, @PathVariable("id") Integer id) {
         Staff staff = staffService.getOne(id);
         StaffRequest staffRequest = new StaffRequest();
-        BeanUtils.copyProperties(staff, staffRequest);
+        staffRequest.setId(staff.getId());
+        staffRequest.setCodeStaff(staff.getCodeStaff());
+        staffRequest.setFullName(staff.getFullName());
+        String[] part = staff.getAddress().split(",\\s*");
+        staffRequest.setProvince(part[2]);
+        staffRequest.setDistrict(part[1]);
+        staffRequest.setWard(part[0]);
+        staffRequest.setAddRessDetail(String.join(", ", java.util.Arrays.copyOfRange(part, 3, part.length)));
+        staffRequest.setGender(staff.getGender());
+        staffRequest.setBirthDay(staff.getBirthDay());
+        staffRequest.setNumberPhone(staff.getNumberPhone());
+        staffRequest.setEmail(staff.getEmail());
+        staffRequest.setRole(staff.getRole());
+        staffRequest.setStatus(staff.getStatus());
+        staffRequest.setImageString(staff.getImage());
+        System.out.println(staffRequest.toString());
         model.addAttribute("staff", staffRequest);
         return "Staff/detail";
     }

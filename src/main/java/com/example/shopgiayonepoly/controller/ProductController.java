@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
+
 @Controller
 @RequestMapping("/staff")
 public class ProductController {
@@ -47,6 +48,11 @@ public class ProductController {
         model.addAttribute("soleList", soleService.findAll());
         model.addAttribute("categoryList", categoryService.findAll());
         return "/Product/product";
+    }
+
+    @GetMapping("/test")
+    public String vinh(Model model) {
+        return "/Product/testThemanh";
     }
 
 //    @GetMapping("/product/delete")

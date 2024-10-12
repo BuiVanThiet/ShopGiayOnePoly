@@ -1,7 +1,6 @@
 package com.example.shopgiayonepoly.controller;
 
 import com.example.shopgiayonepoly.dto.request.CustomerRequest;
-import com.example.shopgiayonepoly.dto.request.StaffRequest;
 import com.example.shopgiayonepoly.dto.response.CustomerResponse;
 import com.example.shopgiayonepoly.entites.Customer;
 import com.example.shopgiayonepoly.entites.Staff;
@@ -18,6 +17,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.util.List;
 
 @Controller
@@ -59,13 +59,13 @@ public class CustomerController {
     }
 
     @PostMapping("/add")
-    public String addCustomer(Model model, @ModelAttribute(name="customer") CustomerRequest customerRequest){
+    public String addCustomer(Model model, @ModelAttribute(name="customer") CustomerRequest customerRequest) throws IOException {
         System.out.println("Du lieu khi them cua customer: " + customerRequest.toString());
         Customer customer = new Customer();
         customer.setFullName(customerRequest.getFullName());
         customer.setNumberPhone(customerRequest.getNumberPhone());
         customer.setBirthDay(customerRequest.getBirthDay());
-        customer.setImage(customerRequest.getNameImage());
+//        customer.setImage(customerRequest.getNameImage());
         customer.setEmail(customerRequest.getEmail());
         customer.setAcount("");
         customer.setPassword("");
@@ -75,7 +75,10 @@ public class CustomerController {
         Customer customerSave = this.customerService.save(customer);
         customerSave.setAcount(customerSave.getFullName()+customerSave.getId());
         customer.setPassword("@shoponepoly");
-        this.customerService.save(customerSave);
+//        this.customerService.save(customerSave);
+        customer.setImage("fileName");
+        System.out.println(customer.toString());
+        customerService.uploadFile(customerRequest.getNameImage(),customerSave.getId());
         return "redirect:/customer/list";
     }
 
@@ -89,27 +92,20 @@ public class CustomerController {
     public String editCustomer(Model model, @PathVariable("id") Integer id) {
         Customer customer = customerService.getOne(id);
         CustomerRequest customerRequest = new CustomerRequest();
-        BeanUtils.copyProperties(customer, customerRequest);
-//        // Xử lý địa chỉ
-//        String getAddressDetail = customerRequest.getAddRessDetail();
-//
-//        if (getAddressDetail != null && !getAddressDetail.isEmpty()) {
-//            String[] parts = getAddressDetail.split(",\\s*"); // Cắt chuỗi dựa trên dấu phẩy và khoảng trắng
-//
-//            // Kiểm tra xem chuỗi có đủ phần không
-//            if (parts.length >= 3) {
-//                customerRequest.setWard(parts[0]); // Xã/Phường
-//                customerRequest.setDistrict(parts[1]); // Quận/Huyện
-//                customerRequest.setProvince(parts[2]); // Tỉnh/Thành phố
-//
-//                // Nếu địa chỉ còn các phần khác, gộp lại
-//                if (parts.length > 3) {
-//                    customerRequest.setAddRessDetail(String.join(", ", java.util.Arrays.copyOfRange(parts, 3, parts.length)));
-//                } else {
-//                    customerRequest.setAddRessDetail(""); // Không còn chi tiết địa chỉ khác
-//                }
-//            }
-//        }
+        customerRequest.setId(customer.getId());
+        customerRequest.setFullName(customer.getFullName());
+        customerRequest.setGender(customer.getGender());
+        customerRequest.setStatus(customer.getStatus());
+        customerRequest.setBirthDay(customer.getBirthDay());
+        customerRequest.setNumberPhone(customer.getNumberPhone());
+        customerRequest.setEmail(customer.getEmail());
+        String[] part = customer.getAddRess().split(",\\s*");
+        customerRequest.setProvince(part[2]);
+        customerRequest.setDistrict(part[1]);
+        customerRequest.setWard(part[0]);
+        customerRequest.setAddRessDetail(String.join(", ", java.util.Arrays.copyOfRange(part, 3, part.length)));
+        customerRequest.setImageString(customer.getImage());
+        System.out.println(customerRequest.toString());
         model.addAttribute("customer", customerRequest);
         return "Customer/update";
     }
@@ -118,7 +114,20 @@ public class CustomerController {
     public String detailCustomer(Model model, @PathVariable("id") Integer id) {
         Customer customer = customerService.getOne(id);
         CustomerRequest customerRequest = new CustomerRequest();
-        BeanUtils.copyProperties(customer, customerRequest);
+        customerRequest.setId(customer.getId());
+        customerRequest.setFullName(customer.getFullName());
+        customerRequest.setGender(customer.getGender());
+        customerRequest.setStatus(customer.getStatus());
+        customerRequest.setBirthDay(customer.getBirthDay());
+        customerRequest.setNumberPhone(customer.getNumberPhone());
+        customerRequest.setEmail(customer.getEmail());
+        String[] part = customer.getAddRess().split(",\\s*");
+        customerRequest.setProvince(part[2]);
+        customerRequest.setDistrict(part[1]);
+        customerRequest.setWard(part[0]);
+        customerRequest.setAddRessDetail(String.join(", ", java.util.Arrays.copyOfRange(part, 3, part.length)));
+        customerRequest.setImageString(customer.getImage());
+        System.out.println(customerRequest.toString());
         model.addAttribute("customer", customerRequest);
         return "Customer/detail";
     }
