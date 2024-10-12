@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Multiple Images with Preview</title>
+    <style>
+        .image-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .image-preview img {
+            max-width: 150px;
+            max-height: 150px;
+            object-fit: cover; /* Giúp hình ảnh tự động điều chỉnh kích thước phù hợp */
+            border: 1px solid #ccc;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Upload và Xem Trước Ảnh</h2>
+<form id="uploadForm" action="/uploadImages" method="POST" enctype="multipart/form-data">
+    <label for="imageUpload">Chọn ảnh:</label>
+    <input type="file" id="imageUpload" accept="image/*" multiple onchange="previewImages(event)" name="imageFiles">
+    <br><br>
+    <button type="submit">Lưu ảnh</button>
+</form>
+
+<!-- Khu vực xem trước ảnh -->
+<div class="image-preview" id="imagePreview"></div>
+
+<script>
+    // Hiển thị nhiều ảnh xem trước
+    function previewImages(event) {
+        var files = event.target.files;
+        var imagePreview = document.getElementById('imagePreview');
+        imagePreview.innerHTML = ""; // Xóa vùng xem trước cũ
+
+        // Lặp qua tất cả các file và hiển thị
+        for (var i = 0; i < files.length; i++) {
+            var file = files[i];
+            var reader = new FileReader();
+
+            reader.onload = (function(file) {
+                return function(e) {
+                    var img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.alt = file.name;
+                    imagePreview.appendChild(img);
+                };
+            })(file);
+
+            reader.readAsDataURL(file); // Đọc file ảnh
+        }
+    }
+</script>
+
+</body>
+</html>
