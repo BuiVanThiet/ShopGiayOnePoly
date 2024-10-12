@@ -1,6 +1,7 @@
 package com.example.shopgiayonepoly.controller;
 
 import com.example.shopgiayonepoly.dto.request.DiscountRequest;
+import com.example.shopgiayonepoly.dto.request.ProductDetailDiscountRequest;
 import com.example.shopgiayonepoly.dto.request.SaleProductRequest;
 import com.example.shopgiayonepoly.dto.request.VoucherRequest;
 import com.example.shopgiayonepoly.entites.ProductDetail;
@@ -244,9 +245,9 @@ public class SaleProductController {
         }
     }
     @PostMapping("/cancel-discount")
-    public ResponseEntity<?> cancelDiscount(@RequestParam List<Integer> productIds) {
+    public ResponseEntity<?> cancelDiscount(@RequestParam List<ProductDetailDiscountRequest> productDetailRequests) {
         try {
-            saleProductService.restoreOriginalPrice(productIds);
+            saleProductService.restoreOriginalPrice(productDetailRequests);
             return ResponseEntity.ok("Giảm giá đã được ngừng và giá gốc đã được khôi phục!");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Đã xảy ra lỗi khi ngừng giảm giá.");

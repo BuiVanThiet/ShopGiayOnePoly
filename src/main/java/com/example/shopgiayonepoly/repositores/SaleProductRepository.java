@@ -49,14 +49,21 @@ public interface SaleProductRepository extends JpaRepository<SaleProduct, Intege
     @Query("select p from ProductDetail p where p.status = 1 and p.saleProduct is null")
     public List<ProductDetail> getAllProductDetailByPage();
 
-    @Query("SELECT p FROM ProductDetail p WHERE p.status = 1 AND p.saleProduct IS NOT NULL")
+    @Query("select p FROM ProductDetail p WHERE p.status = 1 AND p.saleProduct IS NOT NULL")
     public List<ProductDetail> getAllProductDetailWithDiscount();
 
     @Modifying
     @Transactional
-    @Query("update ProductDetail p set p.price = p.price - :discountValue where p.id in :productIds")
+    @Query("UPDATE ProductDetail p " +
+            "SET p.price = CASE " +
+            "WHEN :discountType = 1 THEN p.price - (p.price * :discountValue / 100) " +
+            "WHEN :discountType = 2 THEN p.price - :discountValue " +
+            "ELSE p.price END " +
+            "WHERE p.id IN :productIds")
     void applyDiscountToMultipleProducts(@Param("productIds") List<Integer> productIds,
-                                         @Param("discountValue") BigDecimal discountValue);
+                                         @Param("discountValue") BigDecimal discountValue,
+                                         @Param("discountType") Integer discountType);
+
 
 //    @Modifying
 //    @Transactional
