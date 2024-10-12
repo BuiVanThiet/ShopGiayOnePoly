@@ -28,7 +28,7 @@
                                 <p>Ảnh nhân viên (3x4)</p>
                                 <div class="upload-container">
                                     <label for="file-upload" class="custom-file-upload">
-                                        <img id="image-preview" src="path_to_default_image.png" alt="Ảnh nhân viên" />
+                                        <img id="image-preview" th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728721025/'+${staff.imageString}" alt="Ảnh nhân viên" />
                                     </label>
                                     <input id="file-upload" type="file" accept="image/*" />
                                 </div>
@@ -159,6 +159,8 @@
         </form>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script th:src="@{/js/staff/addRessApi.js}" type="text/javascript"></script>
+        <script th:src="@{/js/staff/uploadImg.js}" type="text/javascript"></script>
+
     </div>
 </main>
 

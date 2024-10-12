@@ -38,7 +38,7 @@
             <table class="table table-bordered table-striped">
                 <thead>
                 <tr>
-<!--                    <th>Ảnh</th>-->
+                    <th>Ảnh</th>
                     <th>Mã nhân viên</th>
                     <th>Tên nhân viên</th>
                     <th>Dia chi</th>
@@ -53,7 +53,9 @@
                 </thead>
                 <tbody>
                 <tr th:each="staff, index: ${pageStaff}">
-<!--                    <td th:text="${staff.nameImage}"></td>-->
+                    <td>
+                        <img th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728721025/'+${staff.image}" style="height: 50px;">
+                    </td>
                     <td th:text="${staff.codeStaff}"></td>
                     <td th:text="${staff.fullName}"></td>
                     <td th:text="${staff.address}"></td>
