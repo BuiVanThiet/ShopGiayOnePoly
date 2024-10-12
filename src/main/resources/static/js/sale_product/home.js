@@ -30,9 +30,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     changeTable(1);
 
-    window.changeTableProductDetail = function (productNumber){
-        const tableNotDiscount = document.getElementById("table-not-discount")
-        const tableAlreadyDiscount = document.getElementById("table-already-discount")
+    window.changeTableProductDetail = function (productNumber) {
+        const tableNotDiscount = document.getElementById("table-not-discount");
+        const tableAlreadyDiscount = document.getElementById("table-already-discount");
 
         tableNotDiscount.style.display = "none";
         tableAlreadyDiscount.style.display = "none";
@@ -43,19 +43,22 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("buttonSPCT2").classList.remove("btn-primary");
         document.getElementById("buttonSPCT2").classList.add("btn-secondary");
 
-        if (productNumber === 1) {
-            // Hiển thị bảng 1 và thay đổi nút button1 thành "btn-primary"
+        if (productNumber === 2) {
+            // Hiển thị bảng "Chưa Áp Dụng" và thay đổi nút button2 thành "btn-primary"
             tableNotDiscount.style.display = "block";
             document.getElementById("buttonSPCT1").classList.add("btn-primary");
             document.getElementById("buttonSPCT1").classList.remove("btn-secondary");
-        } else if (productNumber === 2) {
-            // Hiển thị bảng 2 và thay đổi nút button2 thành "btn-primary"
+        } else if (productNumber === 1) {
+            // Hiển thị bảng "Đã Áp Dụng" và thay đổi nút button1 thành "btn-primary"
             tableAlreadyDiscount.style.display = "block";
             document.getElementById("buttonSPCT2").classList.add("btn-primary");
             document.getElementById("buttonSPCT2").classList.remove("btn-secondary");
         }
-    }
-    changeTableProductDetail(1);
+    };
+
+// Khởi tạo hiển thị bảng "Đã Áp Dụng" khi trang được tải
+    changeTableProductDetail(2);
+
 
     // Thêm sự kiện click cho các nút
     document.getElementById("button1").addEventListener("click", function () {

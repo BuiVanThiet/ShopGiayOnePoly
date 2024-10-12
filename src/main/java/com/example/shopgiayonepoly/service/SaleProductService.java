@@ -1,5 +1,6 @@
 package com.example.shopgiayonepoly.service;
 
+import com.example.shopgiayonepoly.dto.request.ProductDetailDiscountRequest;
 import com.example.shopgiayonepoly.dto.request.SaleProductRequest;
 import com.example.shopgiayonepoly.dto.request.VoucherRequest;
 import com.example.shopgiayonepoly.entites.ProductDetail;
@@ -26,6 +27,6 @@ public interface SaleProductService {
     public SaleProduct getSaleProductByID(Integer id);
     public void applyDiscountToProductDetails(List<Integer> productIds, BigDecimal discountValue,
                                               Integer discountType, Integer saleProductId);
-    public void restoreOriginalPrice(List<Integer> productIds);
+    public void restoreOriginalPrice(List<ProductDetailDiscountRequest> productDetailRequests);
 }
 

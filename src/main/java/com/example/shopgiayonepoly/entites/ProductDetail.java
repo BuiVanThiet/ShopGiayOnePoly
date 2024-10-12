@@ -44,6 +44,4 @@ public class ProductDetail extends Base {
     @ManyToOne
     @JoinColumn(name = "id_sale_product")
     private SaleProduct saleProduct;
-    @Transient
-    private BigDecimal originalPrice;
 }
