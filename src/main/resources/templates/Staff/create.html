@@ -17,7 +17,7 @@
 
 <main class="container">
     <div layout:fragment="content">
-        <form th:object="${staff}" th:action="${'/staff/add'}" method="post">
+        <form th:object="${staff}" th:action="${'/staff/add'}" method="post" enctype="multipart/form-data">
         <article class="container-xxl bd-gutter mt-4 my-md-3 bd-layout">
             <h2>Thêm nhân viên</h2>
             <div class="form-nab">
@@ -29,9 +29,10 @@
                                 <label for="file-upload" class="custom-file-upload">
                                     <img id="image-preview" src="path_to_default_image.png" alt="Ảnh nhân viên" />
                                 </label>
-                                <input id="file-upload" type="file" accept="image/*" />
+                                <input id="file-upload" name="nameImage"  type="file" accept="image/*" />
                             </div>
                         </div>
+
                         <div class="col-6">
                             <div class="form-row">
                                 <div class="form-group">

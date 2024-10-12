@@ -457,6 +457,9 @@ public class BillRestController extends BaseBill {
                 bill.setStatus(bill.getStatus()+1);
                 mess = "Hóa đơn đã được xác nhận!";
                 colorMess = "1";
+                if(bill.getStatus() == 2) {
+                    getInsertPriceDiscount(bill.getId());
+                }
                 this.billService.save(bill);
                 this.setBillStatus(bill.getId(),bill.getStatus(),session);
             }
@@ -464,7 +467,7 @@ public class BillRestController extends BaseBill {
             bill.setUpdateDate(new Date());
             bill.setStatus(8);
             mess = "Hóa đơn đã được xác nhận!";
-            colorMess = "3";
+            colorMess = "1";
             this.billService.save(bill);
             this.setBillStatus(bill.getId(),202,session);
         }else if(content.equals("cancelReturnBill")) {

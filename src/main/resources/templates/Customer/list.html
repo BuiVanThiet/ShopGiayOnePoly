@@ -37,7 +37,7 @@
             <table class="table table-bordered table-striped">
                 <thead>
                 <tr>
-<!--                    <th>Ảnh</th>-->
+                    <th>Ảnh</th>
                     <th>Tên khách hàng</th>
                     <th>Giới tính</th>
 <!--                    <th>Ngày sinh</th>-->
@@ -50,7 +50,9 @@
                 </thead>
                 <tbody>
                 <tr th:each="customer, index: ${pageCustomer}">
-<!--                    <td th:text="${customer.nameImage}"></td>-->
+                    <td>
+                        <img th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728721025/'+${customer.image}" style="height: 50px;">
+                    </td>
                     <td th:text="${customer.fullName}"></td>
                     <td th:text="${customer.gender}"> </td>
 <!--                    <td th:text="${customer.birthDay}"> </td>-->

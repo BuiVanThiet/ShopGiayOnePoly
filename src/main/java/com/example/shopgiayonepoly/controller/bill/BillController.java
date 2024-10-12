@@ -61,8 +61,18 @@ public class BillController extends BaseBill {
 
         modelMap.addAttribute("page","/Bill/index");
 
+        System.out.println("nhung san pham  ap dung dot giam gia");
+        for (ProductDetail productDetail: saleProductService.getAllProductDetailWithDiscount()) {
+            System.out.println("id" + productDetail.getId());
+        }
+
+        System.out.println("nhung san pham chua ap dung dot giam gia");
+        for (ProductDetail productDetail: saleProductService.getAllProductDetailByPage()) {
+            System.out.println("id" + productDetail.getId());
+        }
 //        displayProductDetailsWithCurrentPrice();
         return "Bill/index";
+
     }
     @GetMapping("/bill-detail/{idBill}")
     public String getBillDetail(@PathVariable("idBill") Integer idBill, ModelMap modelMap, HttpSession session) {
