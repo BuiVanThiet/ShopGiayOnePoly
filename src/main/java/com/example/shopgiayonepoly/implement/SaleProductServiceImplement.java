@@ -109,7 +109,6 @@ public class SaleProductServiceImplement implements SaleProductService {
         if (saleProduct == null) {
             throw new IllegalArgumentException("SaleProduct không tồn tại với ID: " + saleProductId);
         }
-
         List<ProductDetailDiscountRequest> productDetailRequests = new ArrayList<>();
 
         for (Integer productId : productIds) {
@@ -164,8 +163,6 @@ public class SaleProductServiceImplement implements SaleProductService {
         }
         return null;
     }
-
-
 
 
     private String generateSaleCode() {
