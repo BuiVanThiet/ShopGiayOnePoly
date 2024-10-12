@@ -57,7 +57,6 @@ public interface SaleProductRepository extends JpaRepository<SaleProduct, Intege
     @Query("update ProductDetail p set p.price = p.price - :discountValue where p.id in :productIds")
     void applyDiscountToMultipleProducts(@Param("productIds") List<Integer> productIds,
                                          @Param("discountValue") BigDecimal discountValue);
-
 //    @Modifying
 //    @Transactional
 //    @Query("update ProductDetail p set p.saleProduct=null where p.j")
