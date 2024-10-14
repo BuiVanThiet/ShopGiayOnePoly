@@ -1,20 +1,27 @@
 package com.example.shopgiayonepoly.implement;
 
+
+import com.cloudinary.Cloudinary;
+import com.example.shopgiayonepoly.entites.Image;
 import com.example.shopgiayonepoly.entites.Product;
 import com.example.shopgiayonepoly.repositores.ProductRepository;
 import com.example.shopgiayonepoly.service.ProductService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-import java.util.Optional;
+import java.io.IOException;
+import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class ProductImplement implements ProductService {
+
+    private final Cloudinary cloudinary;
     @Autowired
     ProductRepository productRepository;
 
@@ -92,9 +99,31 @@ public class ProductImplement implements ProductService {
         }
     }
 
-    public Optional<Product> getOneProductByCodeProduct(String codeProduct){
+    public Optional<Product> getOneProductByCodeProduct(String codeProduct) {
         return productRepository.getOneProductByCodeProduct(codeProduct);
     }
+
+    @Override
+    public List<String> uploadFiles(List<MultipartFile> multipartFiles) throws IOException {
+        List<String> imageUrls = new ArrayList<>();
+
+        for (MultipartFile multipartFile : multipartFiles) {
+            if (!multipartFile.isEmpty()) {
+                // Tạo tên ảnh duy nhất bằng UUID
+                String nameImage = UUID.randomUUID().toString();
+                // Đẩy file lên Cloudinary và lấy URL
+                String imageUrl = cloudinary.uploader()
+                        .upload(multipartFile.getBytes(), Map.of("public_id", nameImage))
+                        .get("url").toString();
+                imageUrls.add(imageUrl);
+            }
+        }
+        return imageUrls;
+    }
+
+
+
+
 
 
 }

@@ -53,7 +53,7 @@
     transition: all 0.3s ease;
 }
 
-.product-search-bar input:focus {
+.product-search-bar input:focus, textarea:focus {
     border-color: #007bff;
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
     outline: none;
@@ -332,4 +332,17 @@
 
 .rotate {
     transform: rotate(180deg); /* Xoay mũi tên khi mở dropdown */
+}
+.image-preview-product {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.image-preview-product img {
+    width: 205.1px; /* Đặt chiều rộng cố định */
+    height: 205.1px; /* Đặt chiều cao cố định */
+    object-fit: contain; /* Giữ nguyên tỉ lệ ảnh */
+    border: 1px solid #ccc; /* Viền cho ảnh */
+    margin-top: 10px; /* Khoảng cách trên ảnh */
 }

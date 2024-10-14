@@ -142,7 +142,28 @@ window.onclick = function(event) {
         arrow.classList.remove("rotate");
     }
 };
+function previewImages(event) {
+    var files = event.target.files;
+    var imagePreview = document.getElementById('imagePreview');
+    imagePreview.innerHTML = ""; // Xóa vùng xem trước cũ
 
+    // Lặp qua tất cả các file và hiển thị
+    for (var i = 0; i < files.length; i++) {
+        var file = files[i];
+        var reader = new FileReader();
+
+        reader.onload = (function(file) {
+            return function(e) {
+                var img = document.createElement('img');
+                img.src = e.target.result;
+                img.alt = file.name;
+                imagePreview.appendChild(img);
+            };
+        })(file);
+
+        reader.readAsDataURL(file); // Đọc file ảnh
+    }
+}
 
 
 

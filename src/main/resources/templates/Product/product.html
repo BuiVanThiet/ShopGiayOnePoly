@@ -19,13 +19,12 @@
                 <span class="arrow" id="arrow">&#9660;</span> <!-- Mũi tên -->
             </div>
             <div id="collapsibleDiv" class="combobox-content">
-                <form id="product-form" th:object="${productAdd}" method="post" action="/staff/product/add">
+                <form id="product-form" th:object="${productAdd}" method="post" action="/staff/product/add" enctype="multipart/form-data">
                     <div class="product-search-section search-section ">
                         <div class="product-search-bar search-bar">
                             <div class="product-input-group input-group">
                                 <input id="codeProduct" th:field="*{codeProduct}" type="text" placeholder="Mã sản phẩm" required/>
                                 <input id="nameProduct" th:field="*{nameProduct}" type="text" placeholder="Tên sản phẩm" required/>
-                                <input  type="file" placeholder="Tên sản phẩm" required/>
                             </div>
                             <div class="text-area-product">
                                 <textarea id="describeProduct" th:field="*{describe}" type="text" placeholder="Mô tả" required ></textarea>
@@ -61,6 +60,11 @@
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                            <div>
+                                <label for="imageUpload">Chọn ảnh:</label>
+                                <input type="file" id="imageUpload" accept="image/*" multiple onchange="previewImages(event)" name="imageFiles">
+                                <div class="image-preview-product" id="imagePreview"></div>
                             </div>
 
                             <button id="product-btn-add" type="submit" class="product-btn-add btn-add">Thêm sản phẩm</button>

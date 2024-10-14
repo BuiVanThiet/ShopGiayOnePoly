@@ -1,6 +1,8 @@
 package com.example.shopgiayonepoly.controller;
 
+import com.cloudinary.Cloudinary;
 import com.example.shopgiayonepoly.entites.Category;
+import com.example.shopgiayonepoly.entites.Image;
 import com.example.shopgiayonepoly.entites.Product;
 import com.example.shopgiayonepoly.entites.Staff;
 import com.example.shopgiayonepoly.service.CategoryService;
@@ -10,22 +12,28 @@ import com.example.shopgiayonepoly.service.attribute.MaterialService;
 import com.example.shopgiayonepoly.service.attribute.OriginService;
 import com.example.shopgiayonepoly.service.attribute.SoleService;
 import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.*;
 
 
 @Controller
 @RequestMapping("/staff")
+@RequiredArgsConstructor
 public class ProductController {
+    private final Cloudinary cloudinary;
 
     @Autowired
     ProductService productService;
+
     @Autowired
     MaterialService materialService;
     @Autowired
@@ -69,13 +77,49 @@ public class ProductController {
 //
 
     @RequestMapping("/product/add")
-    public String add(@ModelAttribute("productAdd") Product product, @RequestParam List<Integer> categories) {
+    public String add(@ModelAttribute("productAdd") Product product,
+                      @RequestParam List<Integer> categories,
+                      @RequestParam("imageFiles") List<MultipartFile> imageFiles) throws IOException {
+
+        // Gán danh mục cho sản phẩm
         Set<Category> selectedCategories = categoryService.findCategoriesByIds(categories);
         product.setCategories(selectedCategories);
         product.setStatus(1);
+
+        // Tạo danh sách ảnh mới
+        List<Image> newImages = new ArrayList<>();
+
+        // Duyệt qua từng file ảnh
+        for (MultipartFile multipartFile : imageFiles) {
+            if (!multipartFile.isEmpty()) {
+                // Tạo tên ảnh duy nhất bằng UUID
+                String nameImage = UUID.randomUUID().toString();
+
+                cloudinary.uploader()
+                        .upload(multipartFile.getBytes(), Map.of("public_id", nameImage))
+                        .get("url")
+                        .toString();
+
+                // Tạo đối tượng Image và gán sản phẩm cho ảnh
+                Image image = new Image();
+                image.setNameImage(nameImage);
+                image.setProduct(product); // Gán sản phẩm cho ảnh
+
+                // Thêm ảnh vào danh sách
+                newImages.add(image);
+            }
+        }
+
+        // Gán danh sách ảnh mới vào sản phẩm
+        product.setImages(newImages);
+
+        // Lưu sản phẩm vào cơ sở dữ liệu
         productService.save(product);
-        return "redirect:/staff/product";
+
+        return "redirect:/staff/product"; // Chuyển hướng sau khi hoàn tất
     }
+
+
 
 
     @GetMapping("/product/get-one/{id}")
