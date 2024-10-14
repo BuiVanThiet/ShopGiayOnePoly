@@ -108,8 +108,22 @@ public interface BillDetailRepository extends JpaRepository<BillDetail,Integer> 
     );
 
     @Query(value = """
+    WITH CategoryCTE AS (
+        SELECT DISTINCT
+            cp.id_product,
+            cat.name_category
+        FROM category_product cp
+        JOIN category cat ON cp.id_category = cat.id
+    ),
+    ImageCTE AS (
+        SELECT DISTINCT
+            im.id_product,
+            im.name_image
+        FROM image im
+    )
     SELECT 
-        pd.id AS product_detail_id, --1
+        pd.id AS product_detail_id, --0
+        p.id AS product_id, -- 1 Thêm product_id vào SELECT để sử dụng trong GROUP BY
         p.name_product, --2
         c.name_color, --3
         s.name_size, --4
@@ -119,7 +133,7 @@ public interface BillDetailRepository extends JpaRepository<BillDetail,Integer> 
         so.name_sole, --8
         pd.price, --9
         pd.quantity, --10
-        pd.quantity AS updated_quantity,   -- Trừ
+        pd.quantity AS updated_quantity,  -- 11 Trừ số lượng ảo
         CASE
             WHEN sp.start_date <= CAST(GETDATE() AS DATE) AND sp.end_date >= CAST(GETDATE() AS DATE) THEN
                 CASE
@@ -130,7 +144,7 @@ public interface BillDetailRepository extends JpaRepository<BillDetail,Integer> 
             ELSE pd.price
         END AS final_price, --12
         p.status AS product_status, --13
-        pd.status AS product_detail_status,--14
+        pd.status AS product_detail_status, --14
         CASE
             WHEN sp.start_date <= CAST(GETDATE() AS DATE) AND sp.end_date >= CAST(GETDATE() AS DATE) THEN
                 CASE
@@ -140,8 +154,8 @@ public interface BillDetailRepository extends JpaRepository<BillDetail,Integer> 
                 END
             ELSE N'Không giảm'
         END AS title_sale, --15
-        STRING_AGG(cat.name_category, ', ') AS categories, --16
-        STRING_AGG(im.name_image, ', ') AS images --17    
+        (SELECT STRING_AGG(name_category, ', ') FROM CategoryCTE WHERE CategoryCTE.id_product = p.id) AS categories,  --16 Không dùng DISTINCT ở đây
+        (SELECT STRING_AGG(name_image, ', ') FROM ImageCTE WHERE ImageCTE.id_product = p.id) AS images --17
     FROM product_detail pd
     LEFT JOIN bill_detail bd ON bd.id_product_detail = pd.id AND bd.id_bill = :idBill  -- Hóa đơn 122
     JOIN product p ON pd.id_product = p.id
@@ -174,23 +188,24 @@ public interface BillDetailRepository extends JpaRepository<BillDetail,Integer> 
       -- Lọc theo đế giày
       AND (:soleList IS NULL OR so.id IN (:soleList))
       GROUP BY
-          pd.id,
-          p.name_product,
-          c.name_color,
-          s.name_size,
-          m.name_manufacturer,
-          mat.name_material,
-          o.name_origin,
-          so.name_sole,
-          pd.price,
-          pd.quantity,
-          COALESCE(bd.quantity, 0),  -- Thêm bill_detail.quantity vào GROUP BY
-          p.status,
-          pd.status,
-          sp.start_date,
-          sp.end_date,
-          sp.discount_type,
-          sp.discount_value
+             pd.id,
+             p.id,                -- Thêm cột p.id vào GROUP BY
+             p.name_product,
+             c.name_color,
+             s.name_size,
+             m.name_manufacturer,
+             mat.name_material,
+             o.name_origin,
+             so.name_sole,
+             pd.price,
+             pd.quantity,
+             COALESCE(bd.quantity, 0),  -- Thêm bill_detail.quantity vào GROUP BY
+             p.status,
+             pd.status,
+             sp.start_date,
+             sp.end_date,
+             sp.discount_type,
+             sp.discount_value;
       ;
 """, nativeQuery = true)
     List<Object[]> findProductDetailSaleTest(
