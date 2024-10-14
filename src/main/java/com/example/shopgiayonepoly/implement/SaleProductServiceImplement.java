@@ -2,12 +2,14 @@ package com.example.shopgiayonepoly.implement;
 
 import com.example.shopgiayonepoly.dto.request.ProductDetailDiscountRequest;
 import com.example.shopgiayonepoly.dto.request.SaleProductRequest;
+import com.example.shopgiayonepoly.dto.response.ProductWithDiscountResponse;
 import com.example.shopgiayonepoly.entites.ProductDetail;
 import com.example.shopgiayonepoly.entites.SaleProduct;
 import com.example.shopgiayonepoly.repositores.ProductDetailRepository;
 import com.example.shopgiayonepoly.repositores.SaleProductRepository;
 import com.example.shopgiayonepoly.repositores.attribute.ColorRepository;
 import com.example.shopgiayonepoly.service.SaleProductService;
+import com.example.shopgiayonepoly.service.TemporaryPriceStorage;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,6 +17,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -24,7 +28,7 @@ public class SaleProductServiceImplement implements SaleProductService {
     @Autowired
     private ProductDetailRepository productDetailRepository;
     @Autowired
-    private ColorRepository colorRepository;
+    private TemporaryPriceStorage temporaryPriceStorage;
 
     @Override
     public Page<SaleProduct> getAllSaleProductByPage(Pageable pageable) {
@@ -97,70 +101,76 @@ public class SaleProductServiceImplement implements SaleProductService {
         System.out.println("discountValue: " + discountValue);
         System.out.println("discountType: " + discountType);
         System.out.println("saleProductId: " + saleProductId);
-        // Tìm kiếm SaleProduct theo saleProductId
+
         SaleProduct saleProduct = saleProductRepository.findById(saleProductId).orElse(null);
 
         if (saleProduct == null) {
             throw new IllegalArgumentException("SaleProduct không tồn tại với ID: " + saleProductId);
         }
-        List<ProductDetailDiscountRequest> productDetailRequests = new ArrayList<>();
 
         for (Integer productId : productIds) {
             ProductDetail product = productDetailRepository.findById(productId).orElse(null);
             if (product != null) {
-                ProductDetailDiscountRequest productRequest = new ProductDetailDiscountRequest();
-                productRequest.setId(product.getId());
-
                 // Lưu giá gốc
-                BigDecimal originalPrice = product.getPrice(); // Lưu giá hiện tại trước khi thay đổi
-                productRequest.setOriginalPrice(originalPrice);
+                BigDecimal originalPrice = product.getPrice();
+                temporaryPriceStorage.storeOriginalPrice(product.getId(), originalPrice);
 
-                // Tính toán giá mới
                 BigDecimal newPrice;
                 if (discountType == 1) {
                     newPrice = originalPrice.subtract(originalPrice.multiply(discountValue).divide(BigDecimal.valueOf(100)));
                 } else {
                     newPrice = originalPrice.subtract(discountValue);
                 }
-                productRequest.setNewPrice(newPrice);
-                productRequest.setSaleProduct(saleProduct);
-                productDetailRequests.add(productRequest);
                 product.setPrice(newPrice);
-                product.setSaleProduct(saleProduct);
                 productDetailRepository.save(product);
             }
         }
-    }
-    @Override
-    public void restoreOriginalPrice(List<ProductDetailDiscountRequest> productDetailRequests) {
-        for (ProductDetailDiscountRequest request : productDetailRequests) {
-            ProductDetail product = productDetailRepository.findById(request.getId()).orElse(null);
-            if (product != null) {
-                // Lấy giá gốc
-                BigDecimal originalPrice = request.getOriginalPrice();
 
-                if (originalPrice != null) {
+    }
+
+
+    @Override
+    public void restoreOriginalPrice(List<Integer> productIds) {
+        for (Integer productId : productIds) {
+            ProductDetail product = productDetailRepository.findById(productId).orElse(null);
+
+            if (product != null) {
+                SaleProduct saleProduct = product.getSaleProduct();
+
+                if (saleProduct != null) {
+                    BigDecimal discountValue = saleProduct.getDiscountValue(); // Giảm giá (có thể là phần trăm hoặc giá trị)
+                    int discountType = saleProduct.getDiscountType(); // Loại giảm giá (1: phần trăm, 2: giá trị cố định)
+                    BigDecimal originalPrice;
+
+                    if (discountType == 1) {
+                        originalPrice = product.getPrice().divide(BigDecimal.ONE.subtract(discountValue.divide(BigDecimal.valueOf(100))), RoundingMode.HALF_UP);
+                    } else if (discountType == 2) {
+                        // Nếu là giảm giá theo giá trị cố định
+                        originalPrice = product.getPrice().add(discountValue);
+                    } else {
+                        originalPrice = product.getPrice();
+                    }
+
+
                     product.setPrice(originalPrice);
                     product.setSaleProduct(null);
                     productDetailRepository.save(product);
+
+                    System.out.println("Giá gốc đã được khôi phục cho sản phẩm ID " + productId + ": " + originalPrice);
+                } else {
+                    System.out.println("Sản phẩm ID " + productId + " không có đợt giảm giá.");
                 }
+            } else {
+                System.out.println("Sản phẩm ID " + productId + " không tồn tại.");
             }
         }
     }
 
-    private BigDecimal getOriginalPriceFromHistory(Integer productId,
-                                                   List<ProductDetailDiscountRequest> productDetailRequests) {
-        for (ProductDetailDiscountRequest request : productDetailRequests) {
-            if (request.getId().equals(productId)) {
-                return request.getNewPrice();
-            }
-        }
-        return null;
-    }
+
 
 
     private String generateSaleCode() {
-        return "SALE" + System.currentTimeMillis(); // Tạo một mã giảm giá dựa trên thời gian hiện tại
+        return "SALE" + System.currentTimeMillis();
     }
 
 

@@ -1,112 +1,83 @@
-document.addEventListener("DOMContentLoaded", function() {
-    const applyDiscountBtn = document.getElementById("applyDiscountBtn");
+    document.addEventListener("DOMContentLoaded", function() {
+        const applyDiscountBtn = document.getElementById("applyDiscountBtn");
 
-    // Thêm sự kiện cho các nút chọn trong bảng sale
-    const selectButtons = document.querySelectorAll('.select-sale-btn');
-    selectButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            // Xóa lớp 'selected-sale' khỏi tất cả các nút
-            selectButtons.forEach(btn => btn.classList.remove('selected-sale'));
-            // Thêm lớp 'selected-sale' cho nút được chọn
-            this.classList.add('selected-sale');
+        // Thêm sự kiện cho các nút chọn trong bảng sale
+        const selectButtons = document.querySelectorAll('.select-sale-btn');
+        selectButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Xóa lớp 'selected-sale' khỏi tất cả các nút
+                selectButtons.forEach(btn => btn.classList.remove('selected-sale'));
+                // Thêm lớp 'selected-sale' cho nút được chọn
+                this.classList.add('selected-sale');
+            });
         });
+
+        // Lấy giá trị giảm giá từ nút đã chọn
+        function getSelectedDiscountValue() {
+            const selectedSale = document.querySelector('.selected-sale');
+            return selectedSale ? parseFloat(selectedSale.dataset.discountValue) : null;
+        }
+
+        // Lấy loại giảm giá từ nút đã chọn
+        function getSelectedDiscountType() {
+            const selectedSale = document.querySelector('.selected-sale');
+            return selectedSale ? parseInt(selectedSale.dataset.discountType) : null;
+        }
+
+        // Hàm áp dụng giảm giá
+        function apply_discount() {
+            const selectedProductIds = Array.from(document.querySelectorAll('input[name="selectedProducts"]:checked'))
+                .map(input => input.value);
+
+            const discountValue = getSelectedDiscountValue();
+            const discountType = getSelectedDiscountType();
+
+            // Lấy saleProductId từ nút đã chọn
+            const selectedSale = document.querySelector('.selected-sale');
+            const saleProductId = selectedSale ? parseInt(selectedSale.dataset.saleId) : null;
+
+            if (selectedProductIds.length === 0) {
+                alert("Vui lòng chọn ít nhất một sản phẩm.");
+                return;
+            }
+
+            if (discountValue === null || isNaN(discountValue) || discountValue <= 0) {
+                alert("Vui lòng chọn giá trị giảm hợp lệ.");
+                return;
+            }
+
+            if (discountType === null || isNaN(discountType)) {
+                alert("Vui lòng chọn loại giảm hợp lệ.");
+                return;
+            }
+
+            // Kiểm tra saleProductId
+            if (saleProductId === null) {
+                alert("Vui lòng chọn một đợt giảm giá.");
+                return;
+            }
+
+            // Gửi dữ liệu qua AJAX đến server
+            $.ajax({
+                type: "POST",
+                url: "/sale-product/apply-discount",
+                contentType: "application/json", // Đặt Content-Type thành JSON
+                data: JSON.stringify({
+                    productIds: selectedProductIds,
+                    discountValue: discountValue,
+                    discountType: discountType,
+                    saleProductId: saleProductId // Gửi các giá trị trong chuỗi JSON
+                }),
+                success: function(response) {
+                    alert("Giảm giá đã được áp dụng thành công!");
+                },
+                error: function(xhr, status, error) {
+                    console.error("Lỗi khi áp dụng giảm giá:", xhr.responseText || error);
+                }
+            });
+        }
+
+        // Thêm sự kiện click vào nút Áp dụng ngay
+        applyDiscountBtn.addEventListener('click', apply_discount);
+
     });
-
-    // Lấy giá trị giảm giá từ nút đã chọn
-    function getSelectedDiscountValue() {
-        const selectedSale = document.querySelector('.selected-sale');
-        return selectedSale ? parseFloat(selectedSale.dataset.discountValue) : null;
-    }
-
-    // Lấy loại giảm giá từ nút đã chọn
-    function getSelectedDiscountType() {
-        const selectedSale = document.querySelector('.selected-sale');
-        return selectedSale ? parseInt(selectedSale.dataset.discountType) : null;
-    }
-
-    // Hàm áp dụng giảm giá
-    function apply_discount() {
-        const selectedProductIds = Array.from(document.querySelectorAll('input[name="selectedProducts"]:checked'))
-            .map(input => input.value);
-
-        const discountValue = getSelectedDiscountValue();
-        const discountType = getSelectedDiscountType();
-
-        // Lấy saleProductId từ nút đã chọn
-        const selectedSale = document.querySelector('.selected-sale');
-        const saleProductId = selectedSale ? parseInt(selectedSale.dataset.saleId) : null;
-
-        if (selectedProductIds.length === 0) {
-            alert("Vui lòng chọn ít nhất một sản phẩm.");
-            return;
-        }
-
-        if (discountValue === null || isNaN(discountValue) || discountValue <= 0) {
-            alert("Vui lòng chọn giá trị giảm hợp lệ.");
-            return;
-        }
-
-        if (discountType === null || isNaN(discountType)) {
-            alert("Vui lòng chọn loại giảm hợp lệ.");
-            return;
-        }
-
-        // Kiểm tra saleProductId
-        if (saleProductId === null) {
-            alert("Vui lòng chọn một đợt giảm giá.");
-            return;
-        }
-
-        // Gửi dữ liệu qua AJAX đến server
-        $.ajax({
-            type: "POST",
-            url: "/sale-product/apply-discount",
-            data: {
-                productIds: selectedProductIds,
-                discountValue: discountValue,
-                discountType: discountType,
-                saleProductId: saleProductId // Thêm tham số này
-            },
-            success: function(response) {
-                alert("Giảm giá đã được áp dụng thành công!");
-                loadProductDetails(); // Gọi hàm tải lại bảng product
-            },
-            error: function(xhr, status, error) {
-                console.error("Lỗi khi áp dụng giảm giá:", xhr.responseText || error);
-            }
-        });
-    }
-
-    // Thêm sự kiện click vào nút Áp dụng ngay
-    applyDiscountBtn.addEventListener('click', apply_discount);
-
-    // Hàm tải lại bảng ProductDetail
-    function loadProductDetails() {
-        $.ajax({
-            type: "GET",
-            url: "/product-details", // Đường dẫn lấy dữ liệu sản phẩm chi tiết
-            success: function(productDetails) {
-                const tbody = document.querySelector('table tbody');
-                tbody.innerHTML = ''; // Xóa nội dung cũ của bảng
-
-                // Thêm dữ liệu mới vào bảng
-                productDetails.forEach(product => {
-                    const row = `
-                        <tr>
-                            <td>${product.id}</td>
-                            <td>${product.product.nameProduct}</td>
-                            <td>${product.price}</td>
-                            <td>
-                                <input type="checkbox" value="${product.id}" name="selectedProducts" id="product_detail${product.id}" />
-                            </td>
-                        </tr>
-                    `;
-                    tbody.insertAdjacentHTML('beforeend', row);
-                });
-            },
-            error: function(xhr, status, error) {
-                console.error("Lỗi khi tải danh sách sản phẩm:", xhr.responseText || error);
-            }
-        });
-    }
-});
