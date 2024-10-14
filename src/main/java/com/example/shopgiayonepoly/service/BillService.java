@@ -54,4 +54,6 @@ public interface BillService {
     List<Object[]> getBillDetailByIdBillPDF(Integer id);
 
     List<Object[]> getInfomationBillReturn(Integer id);
+
+    ProductDetail getProductDteailById(Integer id);
 }

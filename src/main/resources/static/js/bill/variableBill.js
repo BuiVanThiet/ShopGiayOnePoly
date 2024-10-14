@@ -17,7 +17,8 @@ var cashAccount = document.getElementById('cashAccount');
 var provinceTransport;
 var districtTransport;
 var wardTransport;
-var totalBill;
+var totalBill = 0;
+var totalWeight = 0;
 var shipPrice = 0;
 
 const shipSpan = document.getElementById('shipSpan'); // Xác định thẻ div cần ẩn/hiện
@@ -34,6 +35,8 @@ var addRessDetailCustomer = '';
 var checkFormBill = document.getElementById('checkFormBill');
 var shipMoneyBillWait = 0;
 var checkUpdateCustomer = false;
+
+var checkQuantityOrder = false;
 
 // ep kieu ngay
 function formatDateTime(dateString) {

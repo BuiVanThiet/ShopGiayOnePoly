@@ -8,6 +8,7 @@ var selectManufacturer;
 var selectOrigin;
 var selectCategory;
 function loadBillDetail(page)  {
+    totalWeight = 0;
     $.ajax({
         type: "GET",
         url: "/bill-api/bill-detail-by-id-bill/"+page,
@@ -37,6 +38,8 @@ function loadBillDetail(page)  {
 
                 response.forEach(function(billDetail, index) {
                     var imagesHtml = '';
+                    totalWeight += billDetail.productDetail.wight * billDetail.quantity;
+                    console.log('can nang cua san pham la ' + totalWeight)
 
                     billDetail.productDetail.product.images.forEach(function(image, imgIndex) {
                         imagesHtml += `
@@ -72,17 +75,17 @@ function loadBillDetail(page)  {
                         `;
                     }else if(billDetail.bill.status == 5) {
                         btnDeleteProduct = `
-                            <button class="btn btn-outline-danger"
-                                data-bs-target="#returnQuantity"
-                                data-bs-toggle="modal"
-                                data-name=""
-                                data-id=""
-                                data-quantity=""
-                                data-price-sale=""
-                                data-price-root=""
-                                onclick="">
-                               <i class="bi bi-arrow-counterclockwise"></i>Trả hàng
-                            </button>
+                                <button class="btn btn-outline-danger"
+                                    data-bs-target="#returnQuantity"
+                                    data-bs-toggle="modal"
+                                    data-name=""
+                                    data-id=""
+                                    data-quantity=""
+                                    data-price-sale=""
+                                    data-price-root=""
+                                    onclick="">
+                                   <i class="bi bi-arrow-counterclockwise"></i>Trả hàng
+                                </button>
                         `;
                     }
                     var btnBuyProduct = '';
@@ -97,8 +100,19 @@ function loadBillDetail(page)  {
                                     <button class="button btn-increment">+</button>
                         `;
                     }
+                    // Kiểm tra nếu số lượng mua lớn hơn số lượng tồn kho
+                    var rowClass = '';
+                    if (billDetail.quantity > billDetail.productDetail.quantity && billDetail.bill.status == 1) {
+                        rowClass = 'table-danger';  // Thêm class CSS để làm nổi bật dòng
+                        checkQuantityOrder = false;
+                    }else {
+                        checkQuantityOrder = true;
+                    }
+
+
+
                     tbody.append(`
-                        <tr>
+                        <tr class="${rowClass}">
                             <th scope="row" class="text-center align-middle">${index + 1}</th>
                             <td class="text-center align-middle">
                                 <div class="carousel slide" data-bs-ride="carousel">
@@ -498,44 +512,44 @@ function updateProductTable(response) {
             // `);
 
             // kiem tra giam gia
-            if (productDetail[14] != 'Không giảm') {
+            if (productDetail[15] != 'Không giảm') {
                 // Gán giá đã giảm và giá gốc vào biến priceSaleAndRoot
                 priceSaleAndRoot = `
                 <div>
-                    <span class="text-decoration-line-through fs-6">${productDetail[8].toLocaleString('en-US')} VNĐ</span>
+                    <span class="text-decoration-line-through fs-6">${productDetail[9].toLocaleString('en-US')} VNĐ</span>
                     <br>
-                    <span class="text-danger fs-5">${productDetail[11].toLocaleString('en-US')} VNĐ</span>
+                    <span class="text-danger fs-5">${productDetail[12].toLocaleString('en-US')} VNĐ</span>
                 </div>`;
             } else {
                 // Nếu không có chương trình giảm giá, chỉ hiển thị giá gốc
                 priceSaleAndRoot = `
                 <div>
-                    <span class="fs-5">${productDetail[8].toLocaleString('en-US')} VNĐ</span>
+                    <span class="fs-5">${productDetail[9].toLocaleString('en-US')} VNĐ</span>
                 </div>`;
             }
 
             //setUpBTN
-            if (productDetail[12] === 2 || productDetail[13] === 2) {
+            if (productDetail[13] === 2 || productDetail[14] === 2) {
                     btn = `<span class="text-danger">Mặt hàng đã ngừng bán</span>`;
-                } else if (productDetail[10] <= 0) {
+                } else if (productDetail[11] <= 0) {
                     btn = `<span class="text-danger">Hết hàng</span>`;
                 } else {
                     btn = `
                             <button class="btn btn-outline-success btn-buy-product-detail"
                                 data-bs-target="#exampleQuantity"
                                 data-bs-toggle="modal"
-                                data-name="${productDetail[1]}"
+                                data-name="${productDetail[2]}"
                                 data-id="${productDetail[0]}"
-                                data-quantity="${productDetail[10]}"
-                                data-price-sale="${productDetail[8]}"
-                                data-price-root="${productDetail[11]}"
+                                data-quantity="${productDetail[11]}"
+                                data-price-sale="${productDetail[9]}"
+                                data-price-root="${productDetail[12]}"
                                 onclick="resetHidenProductSale()">
                                <i class="bi bi-cart-plus"></i> Mua
                             </button>`;
                 }
 
             //lấy ảnh sản phẩm
-            var nameImage = productDetail[16].split(',');
+            var nameImage = productDetail[17].split(',');
             nameImage.forEach(function (imageProduct,indexImage) {
                 imagesHtml += `
                       <div data-bs-interval="2000" class="carousel-item ${indexImage === 0 ? 'active' : ''}">
@@ -544,8 +558,8 @@ function updateProductTable(response) {
                      `;
             })
             var saleBadge = '';
-            if(productDetail[14] != 'Không giảm') {
-                saleBadge = `<div class="bill-label-sale">${productDetail[14]}</div>`;
+            if(productDetail[15] != 'Không giảm') {
+                saleBadge = `<div class="bill-label-sale">${productDetail[15]}</div>`;
             }else {
                 saleBadge = '';
             }
@@ -610,23 +624,23 @@ function updateProductTable(response) {
                     </div>
                     <!-- Product details below image -->
                     <div class="card-body" style="max-height: 320px; overflow-y: auto;">
-                      <h5 class="card-title">${productDetail[1]}</h5>
+                      <h5 class="card-title">${productDetail[2]}</h5>
                       <p class="card-text">
-                        Màu: <span class="text-primary-emphasis">${productDetail[2]}</span>
+                        Màu: <span class="text-primary-emphasis">${productDetail[3]}</span>
                         <br>
-                        Kích cỡ: <span class="text-primary-emphasis">${productDetail[3]}</span>
+                        Kích cỡ: <span class="text-primary-emphasis">${productDetail[4]}</span>
                         <br>
-                        Hãng: <span class="text-primary-emphasis">${productDetail[4]}</span>
+                        Hãng: <span class="text-primary-emphasis">${productDetail[5]}</span>
                         <br>
-                        Chất liệu: <span class="text-primary-emphasis">${productDetail[5]}</span>
+                        Chất liệu: <span class="text-primary-emphasis">${productDetail[6]}</span>
                         <br>
-                        Nơi sản xuất: <span class="text-primary-emphasis">${productDetail[6]}</span>
+                        Nơi sản xuất: <span class="text-primary-emphasis">${productDetail[7]}</span>
                         <br>
-                        Loại đế: <span class="text-primary-emphasis">${productDetail[7]}</span>
+                        Loại đế: <span class="text-primary-emphasis">${productDetail[8]}</span>
                         <br>
-                        Danh mục: <span class="text-primary-emphasis">${productDetail[15]}</span>
+                        Danh mục: <span class="text-primary-emphasis">${productDetail[16]}</span>
                       </p>
-                      <h6>Số lượng trên hệ thống còn <br> ${productDetail[10]} đôi.</h6>
+                      <h6>Số lượng trên hệ thống còn <br> ${productDetail[11]} đôi.</h6>
                       <h6>Giá: ${priceSaleAndRoot}</h6>
                     </div>
                     <div class="card-footer text-body-secondary text-center bg-white" style="height: 50px;">
@@ -1559,4 +1573,5 @@ $(document).ready(function () {
     maxPageBillDetailByIdBill();
     getAllBilByStatus(1);
     getMaxPageBillManage();
+    console.log('can nang cua san pham la ' + totalWeight)
 });

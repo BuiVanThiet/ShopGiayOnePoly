@@ -96,9 +96,10 @@ public abstract class BaseBill {
 
     //    sua lai so luong san pham khi duoc dua vao hoa don
     protected void getUpdateQuantityProduct(Integer idProductDetial,Integer quantity) {
-        ProductDetail detail = this.productDetailService.findById(idProductDetial).orElse(null);
+        ProductDetail detail = this.billService.getProductDteailById(idProductDetial);
         detail.setUpdateDate(new Date());
-        detail.setQuantity(detail.getQuantity()-quantity);
+        Integer quantityNew = detail.getQuantity()-quantity;
+        detail.setQuantity(quantityNew);
         this.productDetailService.save(detail);
     }
     //update
@@ -291,14 +292,16 @@ protected void setBillStatus(Integer idBillSet,Integer status,HttpSession sessio
 
     //xoa voucher khi giap ap dung khong hop ly
     protected void getDeleteVoucherByBill(Integer idBill) {
-        Bill bill = this.billService.findById(idBill).orElse(null);
-        if (bill.getVoucher() != null) {
-            Voucher voucher = this.voucherService.getOne(bill.getVoucher().getId());
-            if (bill.getTotalAmount().compareTo(voucher.getPricesApply()) < 0) {
-                bill.setVoucher(null);
-                bill.setUpdateDate(new Date());
-                this.billService.save(bill);
-                this.getSubtractVoucher(bill.getVoucher(),-1);
+        if(idBill != null) {
+            Bill bill = this.billService.findById(idBill).orElse(null);
+            if (bill.getVoucher() != null) {
+                Voucher voucher = this.voucherService.getOne(bill.getVoucher().getId());
+                if (bill.getTotalAmount().compareTo(voucher.getPricesApply()) < 0) {
+                    bill.setVoucher(null);
+                    bill.setUpdateDate(new Date());
+                    this.billService.save(bill);
+                    this.getSubtractVoucher(bill.getVoucher(),-1);
+                }
             }
         }
     }

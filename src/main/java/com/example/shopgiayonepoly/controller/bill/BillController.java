@@ -482,7 +482,7 @@ public class BillController extends BaseBill {
         this.billDetailService.save(billDetailSave);
         this.setTotalAmount(billDetailSave.getBill());
         this.getUpdateQuantityProduct(productDetail.getId(),Integer.parseInt(quantity));
-
+        System.out.println("da mua san pham !");
         getDeleteVoucherByBill(billById.getId());
 
         return ResponseEntity.ok(thongBao);
