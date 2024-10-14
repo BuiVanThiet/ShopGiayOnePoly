@@ -15,8 +15,8 @@
     <h2>Hồ Sơ Của Tôi</h2>
     <p class="description">Quản lý thông tin hồ sơ để bảo mật tài khoản</p>
     <hr>
-    <form method="post">
-        <div class="row">
+    <form th:action="@{/onepoly/userProfile}" method="post" >
+    <div class="row">
             <!-- Form bên trái -->
             <div class="col-md-8">
                 <div class="row mb-3">
@@ -29,21 +29,21 @@
                 <div class="row mb-3">
                     <label class="col-sm-4 col-form-label">Họ và tên</label>
                     <div class="col-sm-8">
-                        <input type="text" class="form-control" id="fullname" th:value="${clientInfo.fullName}" placeholder="Nhập họ và tên">
+                        <input type="text" class="form-control" id="fullname" name="fullName" th:value="${clientInfo.fullName}" placeholder="Nhập họ và tên">
                     </div>
                 </div>
 
                 <div class="row mb-3">
                     <label class="col-sm-4 col-form-label">Email</label>
                     <div class="col-sm-8">
-                        <input type="email" class="form-control" id="email" th:value="${clientInfo.email}" placeholder="Nhập email">
+                        <input type="email" class="form-control" id="email" name="email" th:value="${clientInfo.email}" placeholder="Nhập email">
                     </div>
                 </div>
 
                 <div class="row mb-3">
                     <label class="col-sm-4 col-form-label">Số điện thoại</label>
                     <div class="col-sm-8">
-                        <input type="text" class="form-control" id="sdt" th:value="${clientInfo.numberPhone}" placeholder="Nhập số điện thoại">
+                        <input type="text" class="form-control" id="sdt" name="numberPhone" th:value="${clientInfo.numberPhone}" placeholder="Nhập số điện thoại">
                     </div>
                 </div>
 
@@ -51,11 +51,11 @@
                     <label class="col-sm-4 col-form-label">Giới tính</label>
                     <div class="col-sm-8">
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="gender" id="male" value="Nam" th:checked="${clientInfo.gender == 1}">
+                            <input class="form-check-input" type="radio" name="gender" id="male" value="1" th:checked="${clientInfo.gender == 1}">
                             <label class="form-check-label" for="male">Nam</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="gender" id="female" value="Nu" th:checked="${clientInfo.gender == 2}">
+                            <input class="form-check-input" type="radio" name="gender" id="female" value="2" th:checked="${clientInfo.gender == 2}">
                             <label class="form-check-label" for="female">Nữ</label>
                         </div>
                     </div>
@@ -64,34 +64,22 @@
                 <div class="row mb-3">
                     <label class="col-sm-4 col-form-label">Ngày sinh</label>
                     <div class="col-sm-2">
-                        <select class="form-select" id="dob-day" th:value="${birthDay.getDayOfMonth()}">
+                        <select class="form-select" id="dob-day" name="dob-day">
                             <option selected disabled>Ngày</option>
-                            <option th:each="day : ${#numbers.sequence(1, 31)}"
-                                    th:value="${day}"
-                                    th:text="${day}"
-                                    th:if="${day <= birthDay.lengthOfMonth()}"
-                                    th:selected="${day == birthDay.getDayOfMonth()}"></option>
                         </select>
                     </div>
                     <div class="col-sm-3">
-                        <select class="form-select" id="dob-month" th:value="${birthDay.getMonthValue()}">
+                        <select class="form-select" id="dob-month" name="dob-month">
                             <option selected disabled>Tháng</option>
-                            <option th:each="month : ${#numbers.sequence(1, 12)}"
-                                    th:value="${month}"
-                                    th:text="${month}"
-                                    th:selected="${month == birthDay.getMonthValue()}"></option>
                         </select>
                     </div>
                     <div class="col-sm-3">
-                        <select class="form-select" id="dob-year" th:value="${birthDay.getYear()}">
+                        <select class="form-select" id="dob-year" name="dob-year">
                             <option selected disabled>Năm</option>
-                            <option th:each="year : ${#numbers.sequence(1900, 2024)}"
-                                    th:value="${year}"
-                                    th:text="${year}"
-                                    th:selected="${year == birthDay.getYear()}"></option>
                         </select>
                     </div>
                 </div>
+
             </div>
             <!-- Form bên phải -->
             <div class="col-md-4 d-flex flex-column justify-content-center align-items-center">
