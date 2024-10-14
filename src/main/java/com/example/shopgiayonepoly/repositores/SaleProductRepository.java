@@ -1,5 +1,6 @@
 package com.example.shopgiayonepoly.repositores;
 
+import com.example.shopgiayonepoly.dto.response.ProductWithDiscountResponse;
 import com.example.shopgiayonepoly.entites.ProductDetail;
 import com.example.shopgiayonepoly.entites.SaleProduct;
 import jakarta.transaction.Transactional;
@@ -64,6 +65,9 @@ public interface SaleProductRepository extends JpaRepository<SaleProduct, Intege
                                          @Param("discountValue") BigDecimal discountValue,
                                          @Param("discountType") Integer discountType);
 
+    @Modifying
+    @Query("UPDATE ProductDetail p SET p.price = ?2 WHERE p.id = ?1")
+    void updatePriceById(Integer productId, BigDecimal price);
 
 //    @Modifying
 //    @Transactional

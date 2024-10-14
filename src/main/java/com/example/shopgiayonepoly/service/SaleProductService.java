@@ -27,6 +27,6 @@ public interface SaleProductService {
     public SaleProduct getSaleProductByID(Integer id);
     public void applyDiscountToProductDetails(List<Integer> productIds, BigDecimal discountValue,
                                               Integer discountType, Integer saleProductId);
-    public void restoreOriginalPrice(List<ProductDetailDiscountRequest> productDetailRequests);
+    public void restoreOriginalPrice(List<Integer> productIds);
 }
 
