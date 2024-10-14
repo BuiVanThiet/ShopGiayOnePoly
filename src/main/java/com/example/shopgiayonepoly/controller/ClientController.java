@@ -7,6 +7,7 @@ import com.example.shopgiayonepoly.entites.Staff;
 import com.example.shopgiayonepoly.implement.CustomerRegisterImplement;
 import com.example.shopgiayonepoly.repositores.ClientSecurityResponsetory;
 import com.example.shopgiayonepoly.repositores.CustomerRegisterRepository;
+import com.example.shopgiayonepoly.repositores.CustomerRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -196,5 +197,26 @@ public class ClientController {
         return "client/UserProfile";
     }
 
+    @PostMapping("/userProfile")
+    public String updateUserProfile(@ModelAttribute("clientInfo") ClientLoginResponse clientInfo, HttpSession session, Model model) {
+        // Lấy thông tin người dùng từ session
+        ClientLoginResponse loggedInUser = (ClientLoginResponse) session.getAttribute("clientLogin");
+        if (loggedInUser != null) {
+            // Cập nhật thông tin người dùng
+            loggedInUser.setFullName(clientInfo.getFullName());
+            loggedInUser.setEmail(clientInfo.getEmail());
+            loggedInUser.setNumberPhone(clientInfo.getNumberPhone());
+            loggedInUser.setGender(clientInfo.getGender());
+            // Thay thế thông tin mới vào session
+            session.setAttribute("clientLogin", loggedInUser);
 
+            // Lưu thông tin vào cơ sở dữ liệu nếu cần thiết
+            // customerRepository.save(loggedInUser); // Đảm bảo gọi phương thức lưu trong repository nếu có
+
+            model.addAttribute("successMessage", "Cập nhật thông tin thành công.");
+        } else {
+            model.addAttribute("errorMessage", "Đã xảy ra lỗi khi cập nhật thông tin.");
+        }
+        return "redirect:/onepoly/userProfile";  // Chuyển hướng về trang hồ sơ người dùng
+    }
 }

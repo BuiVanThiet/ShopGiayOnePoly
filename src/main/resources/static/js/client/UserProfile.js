@@ -1,55 +1,45 @@
-// // Lấy thẻ select cho dropdown năm
-// const yearSelect = document.getElementById('dob-year');
-//
-// // Tạo dropdown danh sách năm từ 1910 đến 2024
-// for (let year = 2024; year >= 1910; year--) {
-//     const option = document.createElement('option');
-//     option.value = year;
-//     option.textContent = year;
-//     yearSelect.appendChild(option);
-// }
-//
-// // Lặp để tạo dropdown cho ngày và tháng (nếu cần)
-// const daySelect = document.getElementById('dob-day');
-// for (let day = 1; day <= 31; day++) {
-//     const option = document.createElement('option');
-//     option.value = day;
-//     option.textContent = day;
-//     daySelect.appendChild(option);
-// }
-//
-// const monthSelect = document.getElementById('dob-month');
-// const months = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'];
-// months.forEach((month, index) => {
-//     const option = document.createElement('option');
-//     option.value = index + 1;
-//     option.textContent = month;
-//     monthSelect.appendChild(option);
-// });
-//
-//
-// //Hàm tính năm nhuận
-// // const daySelect = document.getElementById('dob-day');
-// // const monthSelect = document.getElementById('dob-month');
-// // const yearSelect = document.getElementById('dob-year');
-//
-// // // Tạo dropdown cho năm từ 1910 đến năm hiện tại
-// // const currentYear = new Date().getFullYear();
-// // for (let year = currentYear; year >= 1910; year--) {
-// //     const option = document.createElement('option');
-// //     option.value = year;
-// //     option.textContent = year;
-// //     yearSelect.appendChild(option);
-// // }
-//
-// // // Tạo dropdown cho tháng
-// // const months = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'];
-// // months.forEach((month, index) => {
-// //     const option = document.createElement('option');
-// //     option.value = index + 1;
-// //     option.textContent = month;
-// //     monthSelect.appendChild(option);
-// // });
+// Giả sử bạn có biến birthDay chứa giá trị ngày sinh
+const birthDay = new Date(); // Ví dụ: Thay đổi cho phù hợp với giá trị thực tế
+
+// Tạo danh sách ngày
+const daySelect = document.getElementById('dob-day');
+const monthSelect = document.getElementById('dob-month');
+const yearSelect = document.getElementById('dob-year');
+
+// Tạo tùy chọn cho ngày
+const daysInMonth = new Date(birthDay.getFullYear(), birthDay.getMonth() + 1, 0).getDate();
+for (let day = 1; day <= daysInMonth; day++) {
+    const option = document.createElement('option');
+    option.value = day;
+    option.textContent = day;
+    if (day === birthDay.getDate()) {
+        option.selected = true; // Chọn ngày hiện tại
+    }
+    daySelect.appendChild(option);
+}
+
+// Tạo tùy chọn cho tháng
+for (let month = 1; month <= 12; month++) {
+    const option = document.createElement('option');
+    option.value = month;
+    option.textContent = month;
+    if (month === (birthDay.getMonth() + 1)) {
+        option.selected = true; // Chọn tháng hiện tại
+    }
+    monthSelect.appendChild(option);
+}
+
+// Tạo tùy chọn cho năm
+for (let year = 1900; year <= 2024; year++) {
+    const option = document.createElement('option');
+    option.value = year;
+    option.textContent = year;
+    if (year === birthDay.getFullYear()) {
+        option.selected = true; // Chọn năm hiện tại
+    }
+    yearSelect.appendChild(option);
+}
+
 //
 // // // Hàm để kiểm tra năm nhuận
 // // function isLeapYear(year) {
