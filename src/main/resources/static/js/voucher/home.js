@@ -85,4 +85,16 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     });
+    document.getElementById("discountType").addEventListener("change", function () {
+        const selectedVoucherType = this.value;
+        const maxiumPrice = document.getElementById("maxDiscount");
+        const boxMaxiumPrice = document.getElementById("boxOfMaxiumDiscount");
+        const valueVoucher = document.getElementById("value");
+        if (selectedVoucherType === "2") {
+            boxMaxiumPrice.style.display = 'none';
+            maxiumPrice.value = valueVoucher.value;
+        } else if (selectedVoucherType === '1') {
+            boxMaxiumPrice.style.display = 'block';
+        }
+    })
 });

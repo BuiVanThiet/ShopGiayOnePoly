@@ -20,6 +20,13 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     @Query("select product from Product product where product.codeProduct = :codeProduct")
     Optional<Product> getOneProductByCodeProduct(@Param("codeProduct") String codeProduct);
 
+    @Query("SELECT DISTINCT p FROM Product p " +
+            "LEFT JOIN FETCH p.images " +
+            "LEFT JOIN FETCH p.categories " +
+            "WHERE p.id = :id")
+    Optional<Product> getOneByID(@Param("id") Integer id);
+
+
 
 
 }

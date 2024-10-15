@@ -21,7 +21,6 @@ function editRow(index) {
 
     // Lấy id của sản phẩm từ data-id
     var id = $('#row-' + index).data('id');
-
     fetch('http://localhost:8080/staff/product/get-one/' + id)
         .then(response => {
             if (!response.ok) {
@@ -37,21 +36,36 @@ function editRow(index) {
             document.getElementById("manufacturer").value = data.manufacturer.id;
             document.getElementById("origin").value = data.origin.id;
             document.getElementById("sole").value = data.sole.id;
-            document.getElementById("categories").value = data.categories.id;
             document.getElementById("describeProduct").value = data.describe;
+
+            // Tự động chọn các ô checkbox
+            const selectedCategories = data.categories; // Giả sử đây là mảng chứa ID của các danh mục
+            const checkboxes = document.querySelectorAll('input[name="categories"]');
+
+            checkboxes.forEach(checkbox => {
+                if (selectedCategories.includes(parseInt(checkbox.value))) {
+                    checkbox.checked = true;
+                } else {
+                    checkbox.checked = false;
+                }
+            });
+
+            // Tạo event input để trigger các sự kiện khác nếu cần
             var event = new Event('input', { bubbles: true });
             document.getElementById("codeProduct").dispatchEvent(event);
+
+            // Cuộn lên đầu trang
             window.scrollTo({
                 top: 0,
                 left: 0,
                 behavior: 'smooth'
             });
-
         })
         .catch(error => {
-            console.error('Lỗi khi lấy dữ liệu sản phẩm:', error);
+            console.error('Lỗi khi tải dữ liệu sản phẩm:', error);
         });
 }
+
 
 
 document.getElementById('codeProduct').addEventListener('input', function() {
@@ -70,12 +84,8 @@ document.getElementById('codeProduct').addEventListener('input', function() {
                 return response.json();
             })
             .then(data => {
-
                 btnEdit.style.display = 'block'
                 btnAdd.style.display = 'none'
-            })
-            .catch(error => {
-                console.error('Lỗi khi lấy dữ liệu sản phẩm:', error);
             });
     }
 });
@@ -142,6 +152,66 @@ window.onclick = function(event) {
         arrow.classList.remove("rotate");
     }
 };
+
+
+// xem ảnh tạm thời
+function previewImages(event) {
+    var imagePreviewContainer = document.getElementById('imagePreview');
+    imagePreviewContainer.innerHTML = ''; // Xóa các ảnh đã preview trước đó
+
+    var files = event.target.files;
+    var fileArray = Array.from(files); // Chuyển FileList thành mảng
+
+    // Duyệt qua từng file và hiển thị preview
+    fileArray.forEach((file, index) => {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            var imagePreview = document.createElement('div');
+            imagePreview.classList.add('image-preview-container');
+
+            var img = document.createElement('img');
+            img.src = e.target.result;
+
+            var removeButton = document.createElement('button');
+            removeButton.classList.add('remove-btn');
+            removeButton.innerHTML = 'x';
+            removeButton.onclick = function() {
+                // Xóa hình ảnh khi bấm vào nút 'x'
+                imagePreview.remove();
+
+                // Loại bỏ tệp đã xoá từ fileArray
+                fileArray.splice(index, 1);
+
+                // Cập nhật lại input với fileArray mới
+                updateFileInput(fileArray);
+            };
+
+            imagePreview.appendChild(img);
+            imagePreview.appendChild(removeButton);
+            imagePreviewContainer.appendChild(imagePreview);
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+function updateFileInput(fileArray) {
+    var dataTransfer = new DataTransfer();
+
+    // Nếu còn file, thêm chúng vào DataTransfer
+    fileArray.forEach(file => {
+        dataTransfer.items.add(file);
+    });
+
+    // Cập nhật lại input với danh sách file còn lại
+    document.getElementById('imageUpload').files = dataTransfer.files;
+
+    // Nếu không còn file, đặt lại giá trị input
+    if (fileArray.length === 0) {
+        document.getElementById('imageUpload').value = ""; // Reset input nếu không còn ảnh
+    }
+}
+
+
 
 
 

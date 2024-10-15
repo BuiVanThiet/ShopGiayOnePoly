@@ -24,7 +24,7 @@ public class StaffController {
     @Autowired
     StaffService staffService;
 
-    private final int pageSize = 1;
+    private final int pageSize = 4;
 
 //    @GetMapping("/list")
 //    public String list(Model model) {

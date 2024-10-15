@@ -129,7 +129,6 @@ public class SaleProductServiceImplement implements SaleProductService {
 
     }
 
-
     @Override
     public void restoreOriginalPrice(List<Integer> productIds) {
         for (Integer productId : productIds) {

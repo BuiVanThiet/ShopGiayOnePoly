@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{Home/home_manege}" xmlns:form="http://www.thymeleaf.org">
+
+<head>
+    <title>Voucher</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container-xxl bd-gutter mt-5 my-md-4 bd-layout">
+        <div class="mb-3 text-center p-3 text-dark fs-3" style="background-color: #cececd" th:text="${title}"></div>
+        <hr>
+        <form th:action="@{/voucher/update}" th:object="${voucher}" method="post"
+              style="border: 1px solid #bdb5b5;padding: 50px">
+            <input type="hidden" th:field="*{id}">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="codeVoucher">Mã giảm giá</label>
+                    <input type="text" id="codeVoucher" th:field="*{codeVoucher}" class="form-control"/>
+                    <div class="text-danger" th:errors="*{codeVoucher}"></div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="name">Tên giảm giá</label>
+                    <input type="text" id="name" th:field="*{nameVoucher}" class="form-control"/>
+                    <div class="text-danger" th:errors="*{nameVoucher}"></div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="discountType">Loại giảm giá</label>
+                    <select id="discountType" th:field="*{discountType}" class="form-select">
+                        <option value="1" th:selected="${voucher.discountType == 1}">%</option>
+                        <option value="2" th:selected="${voucher.discountType == 2}">Tiền mặt</option>
+                    </select>
+                    <div class="text-danger" th:errors="*{discountType}"></div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="value">Giá trị</label>
+                    <div class="input-group">
+                        <input type="number" id="value" th:field="*{priceReduced}" class="form-control" min="0"/>
+                        <span class="input-group-text" id="discountText"></span>
+                    </div>
+                    <div class="text-danger" th:errors="*{priceReduced}"></div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="applyValue">Giá trị áp dụng</label>
+                    <div class="input-group">
+                        <input type="number" id="applyValue" th:field="*{pricesApply}" class="form-control" min="0"/>
+                        <span class="input-group-text">₫</span>
+                    </div>
+                    <div class="text-danger" th:errors="*{pricesApply}"></div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="maxDiscount">Giảm tối đa</label>
+                    <div class="input-group">
+                        <input type="number" id="maxDiscount" th:field="*{pricesMax}" class="form-control" min="0"/>
+                        <span class="input-group-text">₫</span>
+                    </div>
+                    <div class="text-danger" th:errors="*{pricesMax}"></div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="note">Ghi chú</label>
+                    <textarea id="note" th:field="*{describe}" class="form-control mt-1"></textarea>
+                    <div class="text-danger" th:errors="*{describe}"></div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="startDate">Ngày bắt đầu</label>
+                    <input type="date" id="startDate" th:field="*{startDate}" class="form-control mt-1"/>
+                    <div class="text-danger" th:errors="*{startDate}"></div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="endDate">Ngày kết thúc</label>
+                    <input type="date" id="endDate" th:field="*{endDate}" class="form-control mt-1"/>
+                    <div class="text-danger" th:errors="*{endDate}"></div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="quantity">Số lượng</label>
+                    <input type="number" id="quantity" th:field="*{quantity}" class="form-control mt-1"/>
+                    <div class="text-danger" th:errors="*{quantity}"></div>
+                </div>
+
+                <div class="col-md-12  mb-3">
+                    <label>Trạng thái</label>
+                    <div class="d-flex">
+                        <div class="form-check">
+                            <input class="form-check-input" value="1" type="radio" th:field="*{status}"
+                                   id="flexRadioDefault1"  th:checked="${voucher.status == 1}">
+                            <label class="form-check-label" for="flexRadioDefault1">Hoạt động</label>
+                        </div>
+                        <div class="form-check" style="margin-left: 70px">
+                            <input class="form-check-input" value="2" type="radio" th:field="*{status}"
+                                   id="flexRadioDefault2" th:checked="${voucher.status == 2}">
+                            <label class="form-check-label" for="flexRadioDefault2">Không hoạt động</label>
+                        </div>
+
+                    </div>
+                    <div class="text-danger" th:errors="*{status}"></div>
+                </div>
+
+                <div class="btn-group d-flex">
+                    <button class="btn btn-success mt-3 w-50"
+                            onclick="return confirm('Bạn có muốn thêm mới phiếu giảm giá này không?')">
+                        <i class="bi bi-plus-lg"></i> Thêm mới
+                    </button>
+                    <a class="btn btn-primary mt-3 w-50" th:href="@{/voucher/list}">
+                        <i class="bi bi-house"></i> Quay về trang quản lý
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

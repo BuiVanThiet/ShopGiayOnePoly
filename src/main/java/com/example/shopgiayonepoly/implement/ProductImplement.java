@@ -1,8 +1,10 @@
 package com.example.shopgiayonepoly.implement;
 
+
 import com.example.shopgiayonepoly.entites.Product;
 import com.example.shopgiayonepoly.repositores.ProductRepository;
 import com.example.shopgiayonepoly.service.ProductService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class ProductImplement implements ProductService {
     @Autowired
     ProductRepository productRepository;
@@ -92,9 +95,19 @@ public class ProductImplement implements ProductService {
         }
     }
 
-    public Optional<Product> getOneProductByCodeProduct(String codeProduct){
+    @Override
+    public Optional<Product> getOneProductByCodeProduct(String codeProduct) {
         return productRepository.getOneProductByCodeProduct(codeProduct);
     }
+
+    @Override
+    public Optional<Product> getOneByID(@Param("id") int id) {
+        return productRepository.getOneByID(id);
+    }
+
+
+
+
 
 
 }

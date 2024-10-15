@@ -53,7 +53,7 @@
     transition: all 0.3s ease;
 }
 
-.product-search-bar input:focus {
+.product-search-bar input:focus, textarea:focus {
     border-color: #007bff;
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
     outline: none;
@@ -333,3 +333,45 @@
 .rotate {
     transform: rotate(180deg); /* Xoay mũi tên khi mở dropdown */
 }
+.image-preview-product {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.image-preview-container {
+    position: relative;
+    width: 205.1px;
+    height: 205.1px;
+    margin-top: 10px;
+}
+
+.image-preview-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border: 1px solid #ccc;
+}
+
+.remove-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    display: none; /* Ẩn nút 'x' ban đầu */
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+}
+
+/* Hiển thị nút 'x' khi di chuột vào container của ảnh */
+.image-preview-container:hover .remove-btn {
+    display: flex;
+}
+
