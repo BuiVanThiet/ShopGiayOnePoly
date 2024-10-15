@@ -19,35 +19,34 @@
                 <span class="arrow" id="arrow">&#9660;</span> <!-- Mũi tên -->
             </div>
             <div id="collapsibleDiv" class="combobox-content">
-                <form id="product-form" th:object="${productAdd}" method="post" action="/staff/product/add">
+                <form id="product-form" th:object="${productAdd}" method="post" action="/staff/product/add" enctype="multipart/form-data">
                     <div class="product-search-section search-section ">
                         <div class="product-search-bar search-bar">
                             <div class="product-input-group input-group">
                                 <input id="codeProduct" th:field="*{codeProduct}" type="text" placeholder="Mã sản phẩm" required/>
                                 <input id="nameProduct" th:field="*{nameProduct}" type="text" placeholder="Tên sản phẩm" required/>
-                                <input  type="file" placeholder="Tên sản phẩm" required/>
                             </div>
                             <div class="text-area-product">
                                 <textarea id="describeProduct" th:field="*{describe}" type="text" placeholder="Mô tả" required ></textarea>
                             </div>
                             <div class="product-select-group select-group">
                                 <select class="select-product" id="material" name="material" th:field="*{material}">
-                                    <option value="">Chọn chất liệu</option>
+                                    <option value=""><b>Chọn chất liệu</b></option>
                                     <option th:each="material : ${materialList}" th:value="${material.id}" th:text="${material.nameMaterial}"></option>
                                 </select>
                                 <select class="select-product" id="origin" name="origin" th:field="*{origin}">
-                                    <option value="">Chọn xuất xứ</option>
+                                    <option value=""><b>Chọn xuất xứ</b></option>
                                     <option th:each="origin : ${originList}" th:value="${origin.id}" th:text="${origin.nameOrigin}"></option>
                                 </select>
                                 <select class="select-product" id="sole" name="sole" th:field="*{sole}">
-                                    <option value="">Chọn loại đế</option>
+                                    <option value=""><b>Chọn loại đế</b></option>
                                     <option th:each="sole : ${soleList}" th:value="${sole.id}" th:text="${sole.nameSole}"></option>
                                 </select>
                                 <select class="select-product" id="manufacturer" name="manufacturer" th:field="*{manufacturer}">
-                                    <option value="">Chọn hãng</option>
+                                    <option value=""><b>Chọn hãng</b></option>
                                     <option th:each="manufacturer : ${manufacturerList}" th:value="${manufacturer.id}" th:text="${manufacturer.nameManufacturer}"></option>
                                 </select>
-                                <div class="select-product dropdown">
+                                <div class="select-product dropdown" style="border:1px solid black; border-radius: 8px; ">
                                     <div class="dropdown-btn" id="dropdown-btn">
                                         Danh mục
                                         <span class="arrow">&#9660;</span> <!-- Mũi tên xuống -->
@@ -61,6 +60,11 @@
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                            <div>
+                                <label for="imageUpload">Chọn ảnh:</label>
+                                <input type="file" id="imageUpload" accept="image/*" multiple onchange="previewImages(event)" name="imageFiles">
+                                <div class="image-preview-product" id="imagePreview"></div>
                             </div>
 
                             <button id="product-btn-add" type="submit" class="product-btn-add btn-add">Thêm sản phẩm</button>

@@ -1,7 +1,6 @@
 package com.example.shopgiayonepoly.entites;
 
 import com.example.shopgiayonepoly.entites.baseEntity.Base;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -48,9 +46,8 @@ public class Product extends Base implements Serializable {
     )
     private Set<Category> categories = new HashSet<>();
 
-//    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-//    private List<Image> images;
-
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    private List<Image> images = new ArrayList<>();
+    private List<Image> images;
+
+
 }
