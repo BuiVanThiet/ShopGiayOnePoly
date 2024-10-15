@@ -229,7 +229,7 @@ public class ClientController {
             customer.setEmail(profileUpdateRequest.getEmail());
             customer.setNumberPhone(profileUpdateRequest.getNumberPhone());
             customer.setGender(profileUpdateRequest.getGender());
-            customer.setAddRess(profileUpdateRequest.getWard() + "," + profileUpdateRequest.getDistrict() + "," + profileUpdateRequest.getProvince() + "," +profileUpdateRequest);
+            customer.setAddRess(profileUpdateRequest.getWard() + "," + profileUpdateRequest.getDistrict() + "," + profileUpdateRequest.getProvince());
 
 
             // Cập nhật ngày sinh
@@ -245,8 +245,10 @@ public class ClientController {
             clientLoginResponse.setEmail(profileUpdateRequest.getEmail());
             clientLoginResponse.setNumberPhone(profileUpdateRequest.getNumberPhone());
             clientLoginResponse.setGender(profileUpdateRequest.getGender());
+            clientLoginResponse.setAddRess(profileUpdateRequest.getWard() + "," + profileUpdateRequest.getDistrict() + "," + profileUpdateRequest.getProvince());
             session.setAttribute("clientLogin", clientLoginResponse);
-
+            
+            model.addAttribute("loginInfoClient", clientLoginResponse);
             model.addAttribute("clientInfo", clientLoginResponse);
             model.addAttribute("successMessage", "Cập nhật thông tin thành công!");
         } catch (Exception e) {
