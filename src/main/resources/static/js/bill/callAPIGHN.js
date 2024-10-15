@@ -309,7 +309,7 @@ function totalShip(province, district, ward) {
                             to_ward_code: ward,
                             height: 20,
                             length: 60,
-                            weight: 3000,
+                            weight: totalWeight,
                             width: 15
                         },
                         success: function (response) {
@@ -321,6 +321,7 @@ function totalShip(province, district, ward) {
                             if(btnCreateBill != null) {
                                 btnCreateBill.disabled = false;
                             }
+                            console.log('can nang cua san pham la (ben call api)' + totalWeight)
                             if(checkUpdateCustomer == true) {
                                 console.log('da xac nhan doi vi tri')
                                 shipMoneyBillWait = response.data.total;

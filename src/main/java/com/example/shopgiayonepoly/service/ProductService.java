@@ -37,7 +37,7 @@ public interface ProductService {
 
     Optional<Product> getOneProductByCodeProduct(String codeProduct);
 
-    List<String> uploadFiles(List<MultipartFile> multipartFiles) throws IOException;
 
+    Optional<Product> getOneByID(@Param("id") int id);
 
 }

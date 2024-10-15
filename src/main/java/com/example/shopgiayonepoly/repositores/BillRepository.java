@@ -261,42 +261,54 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
 
     @Query(value = """
     SELECT
-    b.code_bill,
-            b.create_date,
-            COALESCE(SUBSTRING(b.address, 1, CHARINDEX(',', b.address) - 1), 'Không có') AS full_name,
-    		COALESCE(SUBSTRING(b.address, CHARINDEX(',', b.address) + 1, CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) - CHARINDEX(',', b.address) - 1), 'Không có') AS number_phone,
-            COALESCE(c.email, 'Không có') AS email,
-            COALESCE(SUBSTRING(c.addRess,CHARINDEX(',', c.addRess, CHARINDEX(',', c.addRess, CHARINDEX(',', c.addRess) + 1) + 1) + 2,LEN(c.addRess)),'Không có') AS addRess,
-            FORMAT(b.total_amount, 'N2') + ' VNĐ' AS total_amount,
-            FORMAT(b.shipping_price, 'N2') + ' VNĐ' AS shipping_price,
-            FORMAT(
-                    CASE
-                        WHEN v.discount_type = 1 THEN
-                            CASE
-                                WHEN b.total_amount * (v.price_reduced / 100) > v.prices_max THEN
-                                    v.prices_max
-                                ELSE
-                                    b.total_amount * (v.price_reduced / 100)
-                            END
-                        WHEN v.discount_type = 2 THEN
-                            v.price_reduced
-                        ELSE
-                            0
-                    END, 'N2') + ' VNĐ' AS discount_value,
-                FORMAT(
-                    CASE
-                        WHEN v.discount_type = 1 THEN
-                            CASE
-                                WHEN b.total_amount * (v.price_reduced / 100) > v.prices_max THEN
-                                    b.total_amount - v.prices_max + b.shipping_price
-                                ELSE
-                                    b.total_amount - (b.total_amount * (v.price_reduced / 100)) + b.shipping_price
-                            END
-                        WHEN v.discount_type = 2 THEN
-                            b.total_amount - v.price_reduced + b.shipping_price
-                        ELSE
-                            b.total_amount + b.shipping_price
-                    END, 'N2') + ' VNĐ' AS total_after_discount        
+ b.code_bill,
+    b.create_date,
+    -- đã sửa: Kiểm tra nếu tìm thấy dấu phẩy thì mới sử dụng SUBSTRING, nếu không trả về 'Không có'
+    CASE
+        WHEN CHARINDEX(',', b.address) > 0 THEN SUBSTRING(b.address, 1, CHARINDEX(',', b.address) - 1)
+        ELSE 'Không có'
+    END AS full_name,
+   
+    -- đã sửa: Tương tự kiểm tra vị trí dấu phẩy tiếp theo, nếu không có trả về 'Không có'
+    CASE
+        WHEN CHARINDEX(',', b.address) > 0 AND CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) > 0 THEN
+            SUBSTRING(b.address, CHARINDEX(',', b.address) + 1, CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) - CHARINDEX(',', b.address) - 1)
+        ELSE 'Không có'
+    END AS number_phone,
+   
+    COALESCE(c.email, 'Không có') AS email,
+   
+    -- đã sửa: Kiểm tra và sử dụng SUBSTRING khi có đủ dấu phẩy, nếu không trả về 'Không có'
+    CASE
+        WHEN CHARINDEX(',', c.addRess, CHARINDEX(',', c.addRess, CHARINDEX(',', c.addRess) + 1) + 1) > 0 THEN
+            SUBSTRING(c.addRess, CHARINDEX(',', c.addRess, CHARINDEX(',', c.addRess, CHARINDEX(',', c.addRess) + 1) + 1) + 2, LEN(c.addRess))
+        ELSE 'Không có'
+    END AS addRess,
+   
+    FORMAT(b.total_amount, 'N2') + ' VNĐ' AS total_amount,
+    FORMAT(b.shipping_price, 'N2') + ' VNĐ' AS shipping_price,
+   
+    FORMAT(
+        CASE
+            WHEN v.discount_type = 1 THEN
+                CASE
+                    WHEN b.total_amount * (v.price_reduced / 100) > v.prices_max THEN v.prices_max
+                    ELSE b.total_amount * (v.price_reduced / 100)
+                END
+            WHEN v.discount_type = 2 THEN v.price_reduced
+            ELSE 0
+        END, 'N2') + ' VNĐ' AS discount_value,
+   
+    FORMAT(
+        CASE
+            WHEN v.discount_type = 1 THEN
+                CASE
+                    WHEN b.total_amount * (v.price_reduced / 100) > v.prices_max THEN b.total_amount - v.prices_max + b.shipping_price
+                    ELSE b.total_amount - (b.total_amount * (v.price_reduced / 100)) + b.shipping_price
+                END
+            WHEN v.discount_type = 2 THEN b.total_amount - v.price_reduced + b.shipping_price
+            ELSE b.total_amount + b.shipping_price
+        END, 'N2') + ' VNĐ' AS total_after_discount       
     FROM bill b
     LEFT JOIN customer c ON c.id = b.id_customer
     LEFT JOIN voucher v ON v.id = b.id_voucher
@@ -350,4 +362,7 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
             v.prices_max;
 """,nativeQuery = true)
     List<Object[]> getInfomationBillReturn(@Param("idBill") Integer id);
+
+    @Query("select pd from ProductDetail  pd where pd.id = :idCheck")
+    ProductDetail getProductDteailById(@Param("idCheck") Integer id);
 }

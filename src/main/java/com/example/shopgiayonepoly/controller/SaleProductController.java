@@ -1,9 +1,7 @@
 package com.example.shopgiayonepoly.controller;
 
-import com.example.shopgiayonepoly.dto.request.DiscountRequest;
-import com.example.shopgiayonepoly.dto.request.ProductDetailDiscountRequest;
+import com.example.shopgiayonepoly.dto.request.DiscountApplyRequest;
 import com.example.shopgiayonepoly.dto.request.SaleProductRequest;
-import com.example.shopgiayonepoly.dto.request.VoucherRequest;
 import com.example.shopgiayonepoly.entites.ProductDetail;
 import com.example.shopgiayonepoly.entites.SaleProduct;
 import com.example.shopgiayonepoly.entites.Staff;
@@ -25,9 +23,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequestMapping("/sale-product")
@@ -228,14 +224,15 @@ public class SaleProductController {
     }
 
     @PostMapping("/apply-discount")
-    public ResponseEntity<?> applyDiscount(
-                                           @RequestParam List<Integer> productIds,
-                                           @RequestParam BigDecimal discountValue,
-                                           @RequestParam Integer discountType,
-                                           @RequestParam Integer saleProductId) {
+    public ResponseEntity<?> applyDiscount(@RequestBody DiscountApplyRequest discountApplyRequest) {
         try {
             // Gọi service để áp dụng giảm giá
-            saleProductService.applyDiscountToProductDetails(productIds, discountValue, discountType, saleProductId);
+            saleProductService.applyDiscountToProductDetails(
+                    discountApplyRequest.getProductIds(),
+                    discountApplyRequest.getDiscountValue(),
+                    discountApplyRequest.getDiscountType(),
+                    discountApplyRequest.getSaleProductId()
+            );
             return ResponseEntity.ok("Giảm giá đã được áp dụng thành công!");
         } catch (IllegalStateException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -244,21 +241,19 @@ public class SaleProductController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Đã xảy ra lỗi khi áp dụng giảm giá.");
         }
     }
+
     @PostMapping("/cancel-discount")
-    public ResponseEntity<?> cancelDiscount(@RequestParam List<ProductDetailDiscountRequest> productDetailRequests) {
+    public ResponseEntity<?> cancelDiscount(@RequestBody List<Integer> productIds) {
         try {
-            saleProductService.restoreOriginalPrice(productDetailRequests);
+            // Gọi service để khôi phục giá gốc cho các sản phẩm theo ID
+            saleProductService.restoreOriginalPrice(productIds);
             return ResponseEntity.ok("Giảm giá đã được ngừng và giá gốc đã được khôi phục!");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Đã xảy ra lỗi khi ngừng giảm giá.");
         }
     }
 
-    @GetMapping("/product-details")
-    public ResponseEntity<List<ProductDetail>> getProductDetails() {
-        List<ProductDetail> productDetails = saleProductService.getAllProductDetailByPage();
-        return ResponseEntity.ok(productDetails);
-    }
+
     @ModelAttribute("staffInfo")
     public Staff staff(HttpSession session) {
         Staff staff = (Staff) session.getAttribute("staffLogin");

@@ -57,6 +57,7 @@ function loadBillStatusByBillId() {
                         stepTitle = 'Đã Thanh Toán';
                         $('#btnDeleteBill').hide();
                         $('#btnConfirmBill').hide();
+
                         break;
                     case 201:
                         iconClass = 'bi-arrow-counterclockwise';
@@ -137,6 +138,11 @@ function loadInformationBillByIdBill() {
                 $('#btn-modal-customer').show();
                 $('#btn-buy-product').show();
                 $('#startCamera').show();
+                if(checkQuantityOrder == false) {
+                    $('#confirm-button').hide();
+                }else {
+                    $('#confirm-button').show() ;
+                }
             }else if (response.status == 2) {
                 statusBill = 'Đã xác nhận';
                 $('#cancel-button').show();
@@ -297,6 +303,7 @@ function loadInformationBillByIdBill() {
                 $('#btn-payment-confirm').hide();
             }
 
+            console.log(checkQuantityOrder)
 
             $('#informationStatusBill').text(statusBill)
             $('#informationCodeBill').text(response.codeBill);
@@ -464,8 +471,8 @@ function updateMoneyShipWait(moneyShipWait) {
         },
         success: function (response) {
             console.log('data cua cap nhat gia ship ' + response.data)
-            loadBillStatusByBillId();
             loadInformationBillByIdBill();
+            loadBillStatusByBillId();
             // loadCustomerShipInBill();
         },
         error: function (xhr) {
@@ -480,10 +487,10 @@ function confirmBill(content) {
         url: "/bill-api/confirm-bill/"+content,
         success: function (response) {
             showToast(response.message,response.check);
-            loadBillStatusByBillId();
             loadInformationBillByIdBill();
             loadInfomationHistoryByBillId();
             loadBillDetail(1);
+            loadBillStatusByBillId();
             // loadCustomerShipInBill();
         },
         error: function (xhr) {
@@ -552,13 +559,14 @@ function paymentBill() {
             if (response.vnpayUrl) {
                 window.location.href = response.vnpayUrl;
             } else {
-                loadBillStatusByBillId();
                 loadInformationBillByIdBill();
                 loadCustomerShipInBill();
                 setUpPayment();
                 $('#payMethod').val('1');
                 loadInfomationPaymentByBillId();
                 loadInfomationHistoryByBillId();
+                loadBillStatusByBillId();
+                $('#cancel-button').remove();
                 showToast(response.message,response.check);
             }
         },
@@ -780,9 +788,9 @@ $(document).ready(function () {
         event.preventDefault();
         paymentBill();
     })
-    loadBillStatusByBillId();
     loadInformationBillByIdBill();
     loadCustomerShipInBill();
     loadInfomationPaymentByBillId();
     loadInfomationHistoryByBillId();
+    loadBillStatusByBillId();
 });

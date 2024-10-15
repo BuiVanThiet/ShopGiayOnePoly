@@ -124,7 +124,7 @@ public class ProductController {
 
     @GetMapping("/product/get-one/{id}")
     public ResponseEntity<Product> getOneByID(@PathVariable Integer id) {
-        Optional<Product> product = productService.findById(id);
+        Optional<Product> product = productService.getOneByID(id);
 
         if (product.isPresent()) {
             return ResponseEntity.ok(product.get());
