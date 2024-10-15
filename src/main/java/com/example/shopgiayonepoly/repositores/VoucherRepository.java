@@ -59,6 +59,8 @@ public interface VoucherRepository extends JpaRepository<Voucher, Integer> {
     @Query("update Voucher v set v.status = 2 where v.endDate < CURRENT_TIMESTAMP and v.status <> 2")
     public void updateVoucherStatusForExpired();
 
+//    @Query("select from ")
+
 
 
 }

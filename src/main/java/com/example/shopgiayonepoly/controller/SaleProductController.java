@@ -245,14 +245,12 @@ public class SaleProductController {
     @PostMapping("/cancel-discount")
     public ResponseEntity<?> cancelDiscount(@RequestBody List<Integer> productIds) {
         try {
-            // Gọi service để khôi phục giá gốc cho các sản phẩm theo ID
             saleProductService.restoreOriginalPrice(productIds);
             return ResponseEntity.ok("Giảm giá đã được ngừng và giá gốc đã được khôi phục!");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Đã xảy ra lỗi khi ngừng giảm giá.");
         }
     }
-
 
     @ModelAttribute("staffInfo")
     public Staff staff(HttpSession session) {
