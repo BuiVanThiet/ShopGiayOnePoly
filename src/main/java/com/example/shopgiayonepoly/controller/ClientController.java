@@ -34,42 +34,46 @@ public class ClientController {
     @GetMapping("/home")
     public String getFormHomeClient(HttpSession session, Model model){
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
-        if (clientLoginResponse != null) {
+//        if (clientLoginResponse != null) {
             model.addAttribute("loginInfoClient", clientLoginResponse);
-        } else {
+//        } else {
             session.removeAttribute("clientInfo");
-            return "redirect:/onepoly/login";
-        }
+//            return "redirect:/onepoly/login";
+//        }
         return "client/homepage";
     }
-    @GetMapping("/base")
-    public String getFormBaseClient(HttpSession session, Model model){
-        ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
-        if (clientLoginResponse != null) {
-            model.addAttribute("loginInfoClient", clientLoginResponse);
-        } else {
-            session.removeAttribute("clientInfo");
-            return "redirect:/onepoly/login";
-        }
-        return "client/base";
-    }
+//    @GetMapping("/base")
+//    public String getFormBaseClient(HttpSession session, Model model){
+//        ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
+//        if (clientLoginResponse != null) {
+//            model.addAttribute("loginInfoClient", clientLoginResponse);
+//        } else {
+//            session.removeAttribute("clientInfo");
+//            return "redirect:/onepoly/login";
+//        }
+//        return "client/base";
+//    }
     @GetMapping("/products")
     public String getFormProduct(HttpSession session, Model model) {
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
-        if (clientLoginResponse != null) {
+//        if (clientLoginResponse != null) {
             model.addAttribute("loginInfoClient", clientLoginResponse);
-        } else {
-            session.removeAttribute("clientInfo");
-            return "redirect:/onepoly/login";
-        }
+//        } else {
+//            session.removeAttribute("clientInfo");
+//            return "redirect:/onepoly/login";
+//        }
         return "client/product";
     }
     @GetMapping("/address")
-    public String getPriceByGHN() {
+    public String getPriceByGHN(HttpSession session, Model model) {
+        ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
+        model.addAttribute("loginInfoClient", clientLoginResponse);
         return "client/address";
     }
     @GetMapping("/product_detail")
-    public String testMenu(){
+    public String testMenu(HttpSession session, Model model){
+        ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
+        model.addAttribute("loginInfoClient", clientLoginResponse);
         return "client/product_detail";
     }
     @GetMapping("/cerateProduct")

@@ -63,7 +63,7 @@
                 <li class="nav-item" onmouseover="showDropdown()" onmouseout="hideDropdown()">
                     <a class="nav-link" href="#" style="color: black;">
                         <i class="bi bi-person-circle ts-5 fs-4"></i>
-                        <span style="font-size: 0.8rem; font-weight: 500;">
+                        <span th:if="${loginInfoClient != null}" style="font-size: 0.8rem; font-weight: 500;">
                             <span th:text="${loginInfoClient.acount}"></span>
                         </span>
                     </a>

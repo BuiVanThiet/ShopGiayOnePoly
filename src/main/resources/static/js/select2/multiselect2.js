@@ -469,6 +469,25 @@ function MultiSelectTag(el, customs = { shadow: false, rounded: true }) {
         initOptions();
     }
 
+    // function createElementInSelectList(option, val, selected = false) {
+    //     const li = document.createElement('li');
+    //     li.innerHTML = "<input type='checkbox' style='margin:0 0.5em 0 0' class='input_checkbox'>";
+    //     li.innerHTML += option.label;
+    //     li.dataset.value = option.value;
+    //     const checkbox = li.firstChild;
+    //     checkbox.dataset.value = option.value;
+    //
+    //     if (val && option.label.toLowerCase().startsWith(val.toLowerCase())) {
+    //         ul.appendChild(li);
+    //     } else if (!val) {
+    //         ul.appendChild(li);
+    //     }
+    //
+    //     if (selected) {
+    //         li.style.backgroundColor = tagColor.bgColor;
+    //         checkbox.checked = true;
+    //     }
+    // }
     function createElementInSelectList(option, val, selected = false) {
         const li = document.createElement('li');
         li.innerHTML = "<input type='checkbox' style='margin:0 0.5em 0 0' class='input_checkbox'>";
@@ -477,7 +496,8 @@ function MultiSelectTag(el, customs = { shadow: false, rounded: true }) {
         const checkbox = li.firstChild;
         checkbox.dataset.value = option.value;
 
-        if (val && option.label.toLowerCase().startsWith(val.toLowerCase())) {
+        // Kiểm tra xem chuỗi nhập có xuất hiện ở bất kỳ vị trí nào trong nhãn (case-insensitive)
+        if (val && option.label.toLowerCase().includes(val.toLowerCase())) {
             ul.appendChild(li);
         } else if (!val) {
             ul.appendChild(li);
@@ -488,6 +508,7 @@ function MultiSelectTag(el, customs = { shadow: false, rounded: true }) {
             checkbox.checked = true;
         }
     }
+
 
     function initOptions(val = null) {
         ul.innerHTML = '';
