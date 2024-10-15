@@ -277,10 +277,10 @@ public class VoucherController {
         Staff staff = (Staff) session.getAttribute("staffLogin");
         return staff;
     }
-     @GetMapping("/test")
-    public String getTest(Model model){
-        model.addAttribute("mes","Hahahaa");
-        return "Notification/Notification";
-     }
+
+//    @GetMapping("/detail/{id}")
+//    public String getDetailVoucherByID(@PathVariable("id")Integer id){
+//
+//    }
 
 }
