@@ -1,6 +1,7 @@
 package com.example.shopgiayonepoly.controller;
 
 import com.example.shopgiayonepoly.dto.request.RegisterRequest;
+import com.example.shopgiayonepoly.dto.request.UserProfileUpdateRequest;
 import com.example.shopgiayonepoly.dto.response.ClientLoginResponse;
 import com.example.shopgiayonepoly.entites.Customer;
 import com.example.shopgiayonepoly.entites.Staff;
@@ -184,39 +185,75 @@ public class ClientController {
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
 
         if (clientLoginResponse != null) {
+            model.addAttribute("loginInfoClient", clientLoginResponse);
             model.addAttribute("clientInfo", clientLoginResponse);
 
-            // Trường birthDay là LocalDate, không cần chuyển đổi
+            // Tách ngày, tháng, năm từ birthDay
             LocalDate birthDay = clientLoginResponse.getBirthDay();
-            model.addAttribute("birthDay", birthDay);
+            if (birthDay != null) {
+                model.addAttribute("birthDayDay", birthDay.getDayOfMonth());
+                model.addAttribute("birthDayMonth", birthDay.getMonthValue());
+                model.addAttribute("birthDayYear", birthDay.getYear());
+            }
         } else {
             session.removeAttribute("clientInfo");
             return "redirect:/onepoly/login";
         }
 
-        return "client/UserProfile";
+        return "client/UserProfile"; // Chỉ cần trả về tên view
     }
+
+
 
     @PostMapping("/userProfile")
-    public String updateUserProfile(@ModelAttribute("clientInfo") ClientLoginResponse clientInfo, HttpSession session, Model model) {
+    public String updateProfile(
+            @ModelAttribute UserProfileUpdateRequest profileUpdateRequest,
+            HttpSession session,
+            Model model
+    ) {
         // Lấy thông tin người dùng từ session
-        ClientLoginResponse loggedInUser = (ClientLoginResponse) session.getAttribute("clientLogin");
-        if (loggedInUser != null) {
-            // Cập nhật thông tin người dùng
-            loggedInUser.setFullName(clientInfo.getFullName());
-            loggedInUser.setEmail(clientInfo.getEmail());
-            loggedInUser.setNumberPhone(clientInfo.getNumberPhone());
-            loggedInUser.setGender(clientInfo.getGender());
-            // Thay thế thông tin mới vào session
-            session.setAttribute("clientLogin", loggedInUser);
+        ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
 
-            // Lưu thông tin vào cơ sở dữ liệu nếu cần thiết
-            // customerRepository.save(loggedInUser); // Đảm bảo gọi phương thức lưu trong repository nếu có
-
-            model.addAttribute("successMessage", "Cập nhật thông tin thành công.");
-        } else {
-            model.addAttribute("errorMessage", "Đã xảy ra lỗi khi cập nhật thông tin.");
+        // Kiểm tra người dùng có trong session hay không
+        if (clientLoginResponse == null) {
+            model.addAttribute("errorMessage", "Người dùng không hợp lệ.");
+            return "client/UserProfile"; // Redirect về trang profile
         }
-        return "redirect:/onepoly/userProfile";  // Chuyển hướng về trang hồ sơ người dùng
+
+        try {
+            // Tìm người dùng trong cơ sở dữ liệu
+            Customer customer = customerRegisterRepository.findByAcount(clientLoginResponse.getAcount());
+
+            // Cập nhật các trường thông tin từ DTO
+            customer.setFullName(profileUpdateRequest.getFullName());
+            customer.setEmail(profileUpdateRequest.getEmail());
+            customer.setNumberPhone(profileUpdateRequest.getNumberPhone());
+            customer.setGender(profileUpdateRequest.getGender());
+            customer.setAddRess(profileUpdateRequest.getWard() + "," + profileUpdateRequest.getDistrict() + "," + profileUpdateRequest.getProvince() + "," +profileUpdateRequest);
+
+
+            // Cập nhật ngày sinh
+            if (profileUpdateRequest.getBirthDay() != null) {
+                customer.setBirthDay(profileUpdateRequest.getBirthDay());
+            }
+
+            // Lưu lại trong cơ sở dữ liệu
+            customerRegisterRepository.save(customer);
+
+            // Cập nhật lại session với thông tin mới
+            clientLoginResponse.setFullName(profileUpdateRequest.getFullName());
+            clientLoginResponse.setEmail(profileUpdateRequest.getEmail());
+            clientLoginResponse.setNumberPhone(profileUpdateRequest.getNumberPhone());
+            clientLoginResponse.setGender(profileUpdateRequest.getGender());
+            session.setAttribute("clientLogin", clientLoginResponse);
+
+            model.addAttribute("clientInfo", clientLoginResponse);
+            model.addAttribute("successMessage", "Cập nhật thông tin thành công!");
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Cập nhật thất bại. Vui lòng thử lại.");
+        }
+
+        return "client/UserProfile"; // Redirect về trang profile
     }
+
 }
