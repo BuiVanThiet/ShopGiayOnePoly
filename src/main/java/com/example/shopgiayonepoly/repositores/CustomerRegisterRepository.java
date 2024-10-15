@@ -14,7 +14,7 @@ public interface CustomerRegisterRepository extends JpaRepository<Customer,Integ
     @Query("SELECT CASE WHEN COUNT(c) > 0 THEN TRUE ELSE FALSE END FROM Customer c WHERE c.acount = :acount")
     boolean existsByAcount(@Param("acount") String acount);
 
-    @Query("SELECT c FROM Customer c WHERE c.email = :email")
-    Customer findByEmail(@Param("email") String email);
+    @Query("SELECT c FROM Customer c WHERE c.acount = :acount")
+    Customer findByAcount(@Param("acount") String acount);
 
 }

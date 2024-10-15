@@ -1,44 +1,56 @@
-// Giả sử bạn có biến birthDay chứa giá trị ngày sinh
-const birthDay = new Date(); // Ví dụ: Thay đổi cho phù hợp với giá trị thực tế
-
-// Tạo danh sách ngày
-const daySelect = document.getElementById('dob-day');
-const monthSelect = document.getElementById('dob-month');
-const yearSelect = document.getElementById('dob-year');
+const birthDay = new Date();
 
 // Tạo tùy chọn cho ngày
+const daySelect = document.getElementById('dob-day');
 const daysInMonth = new Date(birthDay.getFullYear(), birthDay.getMonth() + 1, 0).getDate();
 for (let day = 1; day <= daysInMonth; day++) {
     const option = document.createElement('option');
     option.value = day;
     option.textContent = day;
-    if (day === birthDay.getDate()) {
-        option.selected = true; // Chọn ngày hiện tại
-    }
     daySelect.appendChild(option);
 }
 
 // Tạo tùy chọn cho tháng
+const monthSelect = document.getElementById('dob-month');
 for (let month = 1; month <= 12; month++) {
     const option = document.createElement('option');
     option.value = month;
     option.textContent = month;
-    if (month === (birthDay.getMonth() + 1)) {
-        option.selected = true; // Chọn tháng hiện tại
-    }
     monthSelect.appendChild(option);
 }
 
 // Tạo tùy chọn cho năm
+const yearSelect = document.getElementById('dob-year');
 for (let year = 1900; year <= 2024; year++) {
     const option = document.createElement('option');
     option.value = year;
     option.textContent = year;
-    if (year === birthDay.getFullYear()) {
-        option.selected = true; // Chọn năm hiện tại
-    }
     yearSelect.appendChild(option);
 }
+document.getElementById('updateProfileForm').addEventListener('submit', function (event) {
+    event.preventDefault(); // Ngăn chặn form gửi mặc định
+
+    const day = document.getElementById('dob-day').value;
+    const month = document.getElementById('dob-month').value;
+    const year = document.getElementById('dob-year').value;
+
+    const dob = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
+    const formData = new FormData(this);
+    formData.append('birthDay', dob); // Gửi ngày sinh
+
+    fetch(this.action, {
+        method: 'POST',
+        body: formData,
+    })
+        .then(response => response.text())
+        .then(data => {
+            // Xử lý phản hồi từ server
+            // Có thể hiển thị thông báo thành công hoặc thất bại
+        })
+        .catch(error => console.error('Error:', error));
+});
+
 
 //
 // // // Hàm để kiểm tra năm nhuận
