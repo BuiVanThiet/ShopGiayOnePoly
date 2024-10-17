@@ -325,18 +325,20 @@
     transition: transform 0.3s; /* Hiệu ứng xoay mũi tên */
 }
 
-/*!* Hiển thị dropdown khi bấm nút *!*/
-/*.show {*/
-/*    display: block;*/
-/*}*/
+/* Hiển thị dropdown khi bấm nút */
+.show-product {
+    display: block;
+}
 
-.rotate {
+
+.rotate-product {
     transform: rotate(180deg); /* Xoay mũi tên khi mở dropdown */
 }
 .image-preview-product {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap; /* Hiển thị theo hàng ngang, không ngắt dòng */
     gap: 10px;
+    overflow-x: auto; /* Thêm thanh cuộn ngang nếu ảnh vượt quá kích thước màn hình */
 }
 
 .image-preview-container {
@@ -353,25 +355,7 @@
     border: 1px solid #ccc;
 }
 
-.remove-btn {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    background-color: red;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
-    display: none; /* Ẩn nút 'x' ban đầu */
-    justify-content: center;
-    align-items: center;
-    font-size: 14px;
-}
 
-/* Hiển thị nút 'x' khi di chuột vào container của ảnh */
-.image-preview-container:hover .remove-btn {
-    display: flex;
-}
+
+
 

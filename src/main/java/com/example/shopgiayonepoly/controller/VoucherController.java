@@ -1,6 +1,7 @@
 package com.example.shopgiayonepoly.controller;
 
 import com.example.shopgiayonepoly.dto.request.VoucherRequest;
+import com.example.shopgiayonepoly.dto.response.VoucherResponse;
 import com.example.shopgiayonepoly.entites.Staff;
 import com.example.shopgiayonepoly.entites.Voucher;
 import com.example.shopgiayonepoly.service.VoucherService;
@@ -31,7 +32,7 @@ public class VoucherController {
     @GetMapping("/list")
     public String getListVoucherByPage(@RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber,
                                        @RequestParam(name = "pageNumberDelete", defaultValue = "0") Integer pageNumberDelete,
-                                       @RequestParam(name = "pageNumberExpired", defaultValue = "0")Integer pageNumberExpired,
+                                       @RequestParam(name = "pageNumberExpired", defaultValue = "0") Integer pageNumberExpired,
                                        Model model) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<Voucher> pageVoucher = voucherService.getAllVoucherByPage(pageable);
@@ -39,7 +40,7 @@ public class VoucherController {
         Pageable pageableDelete = PageRequest.of(pageNumberDelete, pageSize);
         Page<Voucher> pageVoucherDelete = voucherService.getAllVoucherDeleteByPage(pageableDelete);
 
-        Pageable pageableExpired = PageRequest.of(pageNumberExpired,pageSize);
+        Pageable pageableExpired = PageRequest.of(pageNumberExpired, pageSize);
         Page<Voucher> pageVoucherExpired = voucherService.getVoucherExpiredByPage(pageableExpired);
 
         model.addAttribute("pageVoucher", pageVoucher);
@@ -56,7 +57,7 @@ public class VoucherController {
                                    RedirectAttributes redirectAttributes,
                                    @RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber,
                                    @RequestParam(name = "pageNumberDelete", defaultValue = "0") Integer pageNumberDelete,
-                                   @RequestParam(name = "pageNumberExpired", defaultValue = "0")Integer pageNumberExpired) {
+                                   @RequestParam(name = "pageNumberExpired", defaultValue = "0") Integer pageNumberExpired) {
 
         BigDecimal zero = BigDecimal.ZERO;
         BigDecimal niceTeen = new BigDecimal("91");
@@ -110,9 +111,9 @@ public class VoucherController {
             Page<Voucher> pageVoucherDelete = voucherService.getAllVoucherByPage(pageableDelete);
             model.addAttribute("pageVoucherDelete", pageVoucherDelete);
 
-            Pageable pageableExpired = PageRequest.of(pageNumberExpired,pageSize);
+            Pageable pageableExpired = PageRequest.of(pageNumberExpired, pageSize);
             Page<Voucher> pageVoucherExpired = voucherService.getVoucherExpiredByPage(pageableExpired);
-            model.addAttribute("pageVoucherExpired",pageVoucherExpired);
+            model.addAttribute("pageVoucherExpired", pageVoucherExpired);
             return "voucher/index";
         }
         voucherService.createNewVoucher(voucherRequest);
@@ -208,7 +209,7 @@ public class VoucherController {
     public String searchVoucherByKey(@RequestParam("key") String key, Model model,
                                      @RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber,
                                      @RequestParam(name = "pageNumberDelete", defaultValue = "0") Integer pageNumberDelete,
-                                     @RequestParam(name = "pageNumberExpired", defaultValue = "0")Integer pageNumberExpired) {
+                                     @RequestParam(name = "pageNumberExpired", defaultValue = "0") Integer pageNumberExpired) {
 
         Pageable pageableSearch = PageRequest.of(pageNumber, pageSize);
         Page<Voucher> pageVoucher = voucherService.searchVoucherByKeyword(key, pageableSearch);
@@ -216,12 +217,12 @@ public class VoucherController {
         Pageable pageableDelete = PageRequest.of(pageNumberDelete, pageSize);
         Page<Voucher> pageVoucherDelete = voucherService.getAllVoucherDeleteByPage(pageableDelete);
 
-        Pageable pageableExpired = PageRequest.of(pageNumberExpired,pageSize);
+        Pageable pageableExpired = PageRequest.of(pageNumberExpired, pageSize);
         Page<Voucher> pageVoucherExpired = voucherService.getVoucherExpiredByPage(pageableExpired);
 
         model.addAttribute("pageVoucher", pageVoucher);
         model.addAttribute("pageVoucherDelete", pageVoucherDelete);
-        model.addAttribute("voucherExpired",pageableExpired);
+        model.addAttribute("voucherExpired", pageableExpired);
         model.addAttribute("voucher", new VoucherRequest());
         return "voucher/index";
     }
@@ -232,7 +233,7 @@ public class VoucherController {
             Model model,
             @RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber,
             @RequestParam(name = "pageNumberDelete", defaultValue = "0") Integer pageNumberDelete,
-            @RequestParam(name = "pageNumberExpired", defaultValue = "0")Integer pageNumberExpired) {
+            @RequestParam(name = "pageNumberExpired", defaultValue = "0") Integer pageNumberExpired) {
 
         Pageable pageableSearch = PageRequest.of(pageNumber, pageSize);
         Page<Voucher> pageVoucher;
@@ -247,12 +248,12 @@ public class VoucherController {
         Pageable pageableDelete = PageRequest.of(pageNumberDelete, pageSize);
         Page<Voucher> pageVoucherDelete = voucherService.getAllVoucherDeleteByPage(pageableDelete);
 
-        Pageable pageableExpired = PageRequest.of(pageNumberExpired,pageSize);
+        Pageable pageableExpired = PageRequest.of(pageNumberExpired, pageSize);
         Page<Voucher> pageVoucherExpired = voucherService.getVoucherExpiredByPage(pageableExpired);
 
         model.addAttribute("pageVoucher", pageVoucher);
         model.addAttribute("pageVoucherDelete", pageVoucherDelete);
-        model.addAttribute("pageVoucherExpired",pageVoucherExpired);
+        model.addAttribute("pageVoucherExpired", pageVoucherExpired);
         model.addAttribute("voucher", new VoucherRequest());
         model.addAttribute("type", type);
 
@@ -260,7 +261,7 @@ public class VoucherController {
     }
 
     @GetMapping("/extend/{id}")
-    public String extendVoucherExpired(@PathVariable("id")Integer id,RedirectAttributes redirectAttributes){
+    public String extendVoucherExpired(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
         voucherService.updateVoucherExpired(id);
         redirectAttributes.addFlashAttribute("mes", "Gia hạn phiếu giảm giá thành công");
         return "redirect:/voucher/list";
@@ -278,9 +279,13 @@ public class VoucherController {
         return staff;
     }
 
-//    @GetMapping("/detail/{id}")
-//    public String getDetailVoucherByID(@PathVariable("id")Integer id){
-//
-//    }
+    @GetMapping("/detail/{id}")
+    public String getDetailVoucherByID(@PathVariable("id") Integer id, Model model) {
+        Voucher voucher = voucherService.getOne(id);
+        model.addAttribute("voucher", voucher);
+        model.addAttribute("title", "Voucher Detail ID " + id);
+        return "voucher/detail";
+    }
+
 
 }

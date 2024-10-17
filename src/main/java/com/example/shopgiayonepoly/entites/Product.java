@@ -41,8 +41,8 @@ public class Product extends Base implements Serializable {
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "category_product",
-            joinColumns = @JoinColumn(name = "id_product"), // Cột id_product phải liên kết với bảng Product
-            inverseJoinColumns = @JoinColumn(name = "id_category") // Cột id_category phải liên kết với bảng Category
+            joinColumns = @JoinColumn(name = "id_product"),
+            inverseJoinColumns = @JoinColumn(name = "id_category")
     )
     private Set<Category> categories = new HashSet<>();
 
