@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -324,6 +325,9 @@ public class BillRestController extends BaseBill {
 
     @GetMapping("/manage-bill-max-page")
     public Integer getMaxPageBillManage() {
+        if(searchBillByStatusRequest == null) {
+            searchBillByStatusRequest = new SearchBillByStatusRequest();
+        }
         Integer page = (int) Math.ceil((double) this.billService.getAllBillByStatusDiss0(keyBillmanage,searchBillByStatusRequest).size() / 5);
         System.out.println("so trang toi da cua quan ly hoa don " + page);
         return page;
@@ -616,8 +620,17 @@ public class BillRestController extends BaseBill {
         ByteArrayOutputStream pdfStream = pdfTemplateService.fillPdfTemplate(billInfo, billDetails);
         byte[] pdfBytes = pdfStream.toByteArray();
 
+        // Đường dẫn thư mục và file
+        String directoryPath = "D:/danhSachHoaDon/";
+        String filePath = directoryPath + billInfo[0] + ".pdf";
+
+        // Kiểm tra và tạo thư mục nếu chưa tồn tại
+        File directory = new File(directoryPath);
+        if (!directory.exists()) {
+            directory.mkdirs();  // Tạo thư mục
+        }
+
         // Lưu file PDF
-        String filePath = "D:/danhSachHoaDon/" + billInfo[0] + ".pdf";
         try (FileOutputStream fos = new FileOutputStream(filePath)) {
             fos.write(pdfBytes);
             fos.flush();
@@ -635,6 +648,7 @@ public class BillRestController extends BaseBill {
                 .headers(headers)
                 .body(pdfBytes);
     }
+
     @GetMapping("/list-product-sell-test")
     public List<ProductDetailSellResponse> productDetailSellResponses(HttpSession session) {
         this.productDetailCheckRequest = new ProductDetailCheckRequest("",null,null,null,null,null,null);

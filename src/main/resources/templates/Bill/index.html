@@ -13,23 +13,22 @@
 <body>
 <main>
     <div layout:fragment="content">
-
-        <article class="container-xxl bd-gutter mt-5 my-md-4 bd-layout">
-            <!-- conten -->
-            <ul class="nav nav-tabs" id="myTab" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="bill-tab" data-bs-toggle="tab" data-bs-target="#bill-tab-pane"
-                            type="button" role="tab" aria-controls="bill-tab-pane" aria-selected="true">
-                        Hóa đơn
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="all-bill-tab" data-bs-toggle="tab" data-bs-target="#all-bill-tab-pane"
-                            type="button" role="tab" aria-controls="all-bill-tab-pane" aria-selected="false">
-                        Danh sách hóa đơn
-                    </button>
-                </li>
-            </ul>
+        <article class=" bd-gutter mt-5 my-md-4 bd-layout">
+<!--            &lt;!&ndash; conten &ndash;&gt;-->
+<!--            <ul class="nav nav-tabs" id="myTab" role="tablist">-->
+<!--                <li class="nav-item" role="presentation">-->
+<!--                    <button class="nav-link active" id="bill-tab" data-bs-toggle="tab" data-bs-target="#bill-tab-pane"-->
+<!--                            type="button" role="tab" aria-controls="bill-tab-pane" aria-selected="true">-->
+<!--                        Hóa đơn-->
+<!--                    </button>-->
+<!--                </li>-->
+<!--                <li class="nav-item" role="presentation">-->
+<!--                    <button class="nav-link" id="all-bill-tab" data-bs-toggle="tab" data-bs-target="#all-bill-tab-pane"-->
+<!--                            type="button" role="tab" aria-controls="all-bill-tab-pane" aria-selected="false">-->
+<!--                        Danh sách hóa đơn-->
+<!--                    </button>-->
+<!--                </li>-->
+<!--            </ul>-->
             <div class="tab-content" id="myTabContent">
                 <div class="tab-pane fade show active" id="bill-tab-pane" role="tabpanel" aria-labelledby="bill-tab"
                      tabindex="0">
@@ -279,112 +278,6 @@
                                     </form>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-
-                </div>
-                <div class="tab-pane fade" id="all-bill-tab-pane" role="tabpanel" aria-labelledby="all-bill-tab"
-                     tabindex="0">
-                    <div class="card mt-2">
-                        <div class="card-body">
-                            <form id="formSubmitFilterBill">
-                                Tìm kiếm:
-                                <input type="text" class="form-control" id="keywordBillManage"
-                                       placeholder="tìm theo tên khách hàng, mã hóa đơn, số điện thoại...">
-                                <div class="d-flex justify-content-center mt-3">
-                                    <button type="submit" id="filterSubmitBillManage" class="btn btn-outline-warning mb-3 me-2">
-                                        <i class="bi bi-search"></i> Gửi
-                                    </button>
-                                    <button class="btn btn-outline-primary mb-3" onclick="resetFillterBillManage()" id="resetFilterBillManage">
-                                        <i class="bi bi-arrow-counterclockwise"></i> Làm mới
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                    <ul class="nav nav-underline">
-                        <li class="nav-item">
-                            <button class="nav-link text-dark nav-link-custom active" onclick="setActive(this,'')">Tất cả</button>
-                        </li>
-                        <li class="nav-item">
-                            <button class="nav-link text-dark nav-link-custom" onclick="setActive(this,'1,7')">Chờ xác nhận</button>
-                        </li>
-                        <li class="nav-item">
-                            <button class="nav-link text-dark nav-link-custom" onclick="setActive(this,'2')">Xác nhận</button>
-                        </li>
-                        <li class="nav-item">
-                            <button class="nav-link text-dark nav-link-custom" onclick="setActive(this,'3')">Đang giao</button>
-                        </li>
-                        <li class="nav-item">
-                            <button class="nav-link text-dark nav-link-custom" onclick="setActive(this,'4')">Đã nhận được hàng</button>
-                        </li>
-                        <li class="nav-item">
-                            <button class="nav-link text-dark nav-link-custom" onclick="setActive(this,'5')">Hoàn thành</button>
-                        </li>
-                        <li class="nav-item">
-                            <button class="nav-link text-dark nav-link-custom" onclick="setActive(this,'6')">Đã hủy</button>
-                        </li>
-                        <li class="nav-item">
-                            <button class="nav-link text-dark nav-link-custom" onclick="setActive(this,'8,9')">Trả hàng</button>
-                        </li>
-
-<!--                        <li class="nav-item">-->
-<!--                            <a class="nav-link text-dark" href="#" onclick="setActive(this)">Trả hàng</a>-->
-<!--                        </li>-->
-<!--                        <li class="nav-item">-->
-<!--                            <a class="nav-link text-dark" href="#" onclick="setActive(this)">Đổi hàng</a>-->
-<!--                        </li>-->
-                    </ul>
-                    <input type="hidden" id="statusSearch" value="">
-                    <div id="nodataBillManage" style="display:none; text-align:center;">
-
-                    </div>
-
-                    <table class="table mt-2 mb-2">
-                        <thead>
-                        <tr>
-                            <th scope="col">STT</th>
-                            <th scope="col">Mã hóa đơn</th>
-                            <th scope="col">Khách hàng</th>
-                            <th scope="col">Số điện thoại</th>
-                            <th scope="col">Tổng tiền</th>
-                            <th scope="col">Loại đơn hàng</th>
-                            <th scope="col">Ngày tạo</th>
-                            <th scope="col">hành động</th>
-                        </tr>
-                        </thead>
-                        <tbody id="billManage">
-                        <tr>
-                            <th scope="row">1</th>
-                            <td>HD00001</td>
-                            <td>Bùi Văn Thiết</td>
-                            <td>0976591257</td>
-                            <td>100000</td>
-                            <td>Tại quầy</td>
-                            <td>20-12-2022</td>
-                            <td>
-                                <a href="" class="btn btn-primary">Xem chi tiết</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row">2</th>
-                            <td>HD00002</td>
-                            <td>Bùi Thị Trang</td>
-                            <td>0976597654</td>
-                            <td>200000</td>
-                            <td>Giao hàng</td>
-                            <td>01-12-2022</td>
-                            <td>
-                                <a href="" class="btn btn-primary">Xem chi tiết</a>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-
-                    <div class="pagination-section">
-                        <!-- Phân trang 2 -->
-                        <div class="pagination-custom d-flex justify-content-center">
-                            <ul id="billManagePageMax" class="pagination"></ul>
                         </div>
                     </div>
 

@@ -548,6 +548,11 @@ public class BillController extends BaseBill {
         return "Bill/billInformationIndex";
     }
 
+    @GetMapping("/manage-bill")
+    public String getIndexManageBill() {
+        return "Bill/manageBillIndex";
+    }
+
     @ModelAttribute("staffInfo")
     public Staff staff(HttpSession session){
         Staff staff = (Staff) session.getAttribute("staffLogin");

@@ -19,9 +19,9 @@
                     <th scope="col" style="width: 1%">STT</th>
                     <th scope="col" style="width: 15%">Ảnh</th>
                     <th scope="col" style="width: 25%">Sản phẩm</th>
-                    <th scope="col" style="width: 8%">Giá</th>
-                    <th scope="col" style="width: 8%">Số lượng</th>
-                    <th scope="col" style="width: 5%">Tổng tiền</th>
+                    <th scope="col" style="width: 8%">Giá trả</th>
+                    <th scope="col" style="width: 8%">Số lượng trả</th>
+                    <th scope="col" style="width: 5%">Tổng tiền trả</th>
                     <th scope="col" style="width: 6%">Hành động</th>
                 </tr>
                 </thead>
@@ -67,7 +67,7 @@
                 </div>
                 <div id="block-confirm" class="col-6">
                     <!-- Button trigger modal -->
-                    <button id="btnCreateReturnBill" type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#createReturnBillModal">
+                    <button style="display: none;" id="btnCreateReturnBill" type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#createReturnBillModal">
                         Tạo phiếu
                     </button>
 
@@ -91,9 +91,23 @@
 
 
                 </div>
-                <div class="justify-content-between col-12">
-                    <span>Ghi chú: </span>
+                <div class="justify-content-between col-12" id="form_Reason">
+                    <span>Lí do trả: </span>
                     <textarea class="form-control" id="node-return"></textarea>
+                    <span class="text-danger" id="errorReturn" style="display: block;">Mời nhập lý do trả!</span>
+                    <script>
+                        var noteReturn = document.getElementById('node-return');
+                        noteReturn.addEventListener('input', function () {
+                            if(noteReturn.value.length >0) {
+                                document.getElementById('errorReturn').style.display = 'none';
+                                document.getElementById('btnCreateReturnBill').style.display = 'block';
+                                console.log(this.value);
+                            }else {
+                                document.getElementById('errorReturn').style.display = 'block';
+                                document.getElementById('btnCreateReturnBill').style.display = 'none';
+                            }
+                        });
+                    </script>
                 </div>
             </div>
         </div>

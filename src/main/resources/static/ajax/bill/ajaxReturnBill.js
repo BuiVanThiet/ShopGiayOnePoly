@@ -156,7 +156,9 @@ function loadReturnBill(page) {
 
                 noDataContainer.show();
                 tbody.closest('table').hide(); // Ẩn table nếu không có dữ liệu
+                document.getElementById('form_Reason').style.display = 'none';
             }else {
+                document.getElementById('form_Reason').style.display = 'block';
                 noDataContainer.hide();
                 tbody.closest('table').show(); // Ẩn table nếu không có dữ liệu
                 response.forEach(function(billReturn, index) {
@@ -339,7 +341,7 @@ function increaseOrDecreaseProductReturn(idProductReturn,quantity,method) {
 function createReturnBill() {
     $.ajax({
         type: "GET",
-        url: "/return-bill-api/create-return-bill",
+        url: "/return-bill-api/create-return-bill/"+$('#node-return').val(),
         success: function (response) {
             // Kiểm tra nếu phản hồi có URL chuyển hướng
             if (response.redirectUrl) {
