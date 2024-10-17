@@ -58,6 +58,9 @@ public interface StaffRepository extends JpaRepository<Staff, Integer> {
     """)
     public List<StaffResponse> searchStaffByKeyword(@Param("key") String key);
 
+    @Query("select s from Staff s where (s.fullName like %:key% or s.codeStaff like %:key% or s.numberPhone like %:key%) and s.status = 1")
+    public Page<Staff> searchStaffByKeywordPage(@Param("key") String key, Pageable pageable);
+
     @Modifying
     @Transactional
     @Query(value = "update Staff set status =0 where id=:id")

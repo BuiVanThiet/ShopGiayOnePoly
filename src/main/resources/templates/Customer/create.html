@@ -37,8 +37,9 @@
                                     <div class="form-group">
                                         <label>Tên khách hàng</label>
                                         <input type="text" class="form-control"
-                                               placeholder="Enter customer name" required
+                                               placeholder="Enter customer name"
                                                th:field="${customer.fullName}">
+                                        <div class="text-danger" th:errors="*{fullName}"></div>
                                     </div>
                                     <div class="row">
                                         <div class="col-6">
@@ -49,9 +50,10 @@
                                                         <input type="radio" value="1" th:field="${customer.gender}"/>Nam
                                                     </div>
                                                     <div class="radio-item">
-                                                        <input type="radio" value="2" th:field="${customer.gender}"/>Nu
+                                                        <input type="radio" value="2" th:field="${customer.gender}"/>Nữ
                                                     </div>
                                                 </div>
+                                                <div class="text-danger" th:errors="*{gender}"></div>
                                             </div>
                                         </div>
                                         <div class="col-6">
@@ -59,12 +61,13 @@
                                                 <label>Trạng thái</label>
                                                 <div class="radio-item">
                                                     <input type="radio" name="status" value="1"
-                                                           th:field="${customer.status}"/>Hoat dong
+                                                           th:field="${customer.status}"/>Hoạt động
                                                 </div>
                                                 <div class="radio-item">
                                                     <input type="radio" name="status" value="2"
-                                                           th:field="${customer.status}"/>Ngung hoat dong
+                                                           th:field="${customer.status}"/>Ngưng hoạt động
                                                 </div>
+                                                <div class="text-danger" th:errors="*{status}"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -81,22 +84,23 @@
                             <div class="form-group">
                                 <label>Số điện thoại</label>
                                 <input type="text" class="form-control"
-                                       placeholder="Enter customer numberPhone" required
+                                       placeholder="Enter customer numberPhone"
                                        th:field="${customer.numberPhone}">
+                                <div class="text-danger" th:errors="*{numberPhone}"></div>
                             </div>
                         </div>
                         <div class="col-4">
                             <div class="form-group">
                                 <label>Ngày sinh</label>
                                 <input type="date" class="form-control"
-                                       placeholder="Enter customer birthDay" required th:field="${customer.birthDay}">
+                                       placeholder="Enter customer birthDay" th:field="${customer.birthDay}">
                             </div>
                         </div>
                         <div class="col-4">
                             <div class="form-group">
                                 <label>Email</label>
                                 <input type="text" class="form-control"
-                                       placeholder="Enter customer email" required th:field="${customer.email}">
+                                       placeholder="Enter customer email" th:field="${customer.email}">
                             </div>
                         </div>
                     </div>
@@ -111,18 +115,21 @@
                             <select class="form-select" id="province" name="province">
                                 <option value="">Chọn tỉnh/thành phố</option>
                             </select>
+                            <div class="text-danger" th:errors="*{province}"></div>
                         </div>
                         <div class="col-4">
                             <label class="form-label">Quận/Huyện</label>
                             <select class="form-select" id="district" name="district">
                                 <option value="">Chọn quận/huyện</option>
                             </select>
+                            <div class="text-danger" th:errors="*{district}"></div>
                         </div>
                         <div class="col-4">
                             <label class="form-label">Xã/Phường/Thị Trấn</label>
                             <select class="form-select" id="ward" name="ward">
                                 <option value="">Chọn xã/phường/thị trấn</option>
                             </select>
+                            <div class="text-danger" th:errors="*{ward}"></div>
                         </div>
                     </div>
                 </div>
@@ -134,14 +141,15 @@
                             <div class="form-group">
                                 <label>Địa chi chi tiết</label>
                                 <textarea class="form-control"
-                                          placeholder="Enter customer address" required
+                                          placeholder="Enter customer address"
                                           th:field="${customer.addRessDetail}"></textarea>
+                                <div class="text-danger" th:errors="*{addRessDetail}"></div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-primary">Them khach hang</button>
+                <button type="submit" class="btn btn-primary">Thêm khách hàng</button>
                 <!-- </form> -->
             </article>
         </form>

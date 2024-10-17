@@ -21,6 +21,8 @@ public interface CustomerService {
 
     public List<CustomerResponse> searchCustomerByKeyword(String key);
 
+    public Page<Customer> searchCustomerByKeywordPage(String key, Pageable pageable);
+
     <S extends Customer> S save(S entity);
 
     Optional<Customer> findById(Integer integer);
