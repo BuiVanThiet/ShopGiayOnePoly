@@ -46,6 +46,11 @@ public class StaffImplement implements StaffService {
     }
 
     @Override
+    public Page<Staff> searchStaffByKeywordPage(String key, Pageable pageable) {
+        return staffRepository.searchStaffByKeywordPage(key, pageable);
+    }
+
+    @Override
     public <S extends Staff> S save(S entity) {
         return staffRepository.save(entity);
     }

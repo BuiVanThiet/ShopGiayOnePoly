@@ -54,6 +54,9 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
     """)
     public List<CustomerResponse> searchCustomerByKeyword(@Param("key") String key);
 
+    @Query("select c from Customer c where (c.fullName like %:key% or c.numberPhone like %:key%) and c.status = 1")
+    public Page<Customer> searchCustomerByKeywordPage(@Param("key") String key, Pageable pageable);
+
 
     @Modifying
     @Transactional

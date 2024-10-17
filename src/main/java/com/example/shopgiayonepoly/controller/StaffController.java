@@ -5,6 +5,7 @@ import com.example.shopgiayonepoly.dto.response.StaffResponse;
 import com.example.shopgiayonepoly.entites.Staff;
 import com.example.shopgiayonepoly.service.StaffService;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -24,7 +26,7 @@ public class StaffController {
     @Autowired
     StaffService staffService;
 
-    private final int pageSize = 4;
+    private final int pageSize = 10;
 
 //    @GetMapping("/list")
 //    public String list(Model model) {
@@ -43,9 +45,11 @@ public class StaffController {
     }
 
     @GetMapping("/search")
-    public String searchStaffByKey(@RequestParam(name = "key") String key, Model model) {
-        List<StaffResponse> searchStaff = staffService.searchStaffByKeyword(key);
-        model.addAttribute("staffList", searchStaff);
+    public String searchStaffByKey(@RequestParam(name = "key") String key, @RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber, Model model) {
+        Pageable pageableSearch = PageRequest.of(pageNumber, pageSize);
+        Page<Staff> pageStaff = staffService.searchStaffByKeywordPage(key, pageableSearch);
+//        model.addAttribute("staffList", searchStaff);
+        model.addAttribute("pageStaff", pageStaff);
         model.addAttribute("staff", new StaffRequest());
         return "Staff/list";
     }
@@ -57,7 +61,37 @@ public class StaffController {
     }
 
     @PostMapping("/add")
-    public String addStaff(Model model, @ModelAttribute(name = "staff") StaffRequest staffRequest) throws IOException {
+    public String addStaff(Model model, @Valid @ModelAttribute(name = "staff") StaffRequest staffRequest, BindingResult result) throws IOException {
+//        if (staffRequest.getNumberPhone() == null || !staffRequest.getNumberPhone().matches("^(0[3|5|7|8|9])+([0-9]{8})$")) {
+//            result.rejectValue("numberPhone", "error.numberPhone", "Số điện thoại không hợp lệ!");
+//        }
+// Kiểm tra tên
+        if (staffRequest.getFullName() == null || staffRequest.getFullName().trim().isEmpty()) {
+            result.rejectValue("fullName", "error.staff", "Tên không được để trống!"); // Thông báo nếu tên rỗng hoặc chỉ chứa khoảng trắng
+        } else if (staffRequest.getFullName().length() < 2 || staffRequest.getFullName().length() > 50) {
+            result.rejectValue("fullName", "error.staff", "Tên phải có độ dài từ 2 đến 50 ký tự!");
+        } else if (!staffRequest.getFullName().matches("^[\\p{L} ]+$")) {
+            result.rejectValue("fullName", "error.staff", "Tên chỉ được chứa ký tự chữ cái và dấu cách!");
+        }
+// Kiểm tra mã
+        if (staffRequest.getCodeStaff() == null || staffRequest.getCodeStaff().trim().isEmpty()) {
+            result.rejectValue("codeStaff", "error.staff", "Mã không được để trống!"); // Thông báo nếu mã rỗng hoặc chỉ chứa khoảng trắng
+        } else if (staffRequest.getCodeStaff().length() < 3 || staffRequest.getCodeStaff().length() > 10) {
+            result.rejectValue("codeStaff", "error.staff", "Mã phải có độ dài từ 3 đến 10 ký tự!");
+        } else if (!staffRequest.getCodeStaff().matches("^[A-Z][0-9]+$")) {
+            result.rejectValue("codeStaff", "error.staff", "Mã phải bắt đầu bằng chữ hoa và theo sau là số!");
+        }
+// Kiểm tra số điện thoại
+        if (staffRequest.getNumberPhone() == null || staffRequest.getNumberPhone().isEmpty()) {
+            result.rejectValue("numberPhone", "error.staff", "Số điện thoại không được để trống!");
+        } else if (!staffRequest.getNumberPhone().matches("^(0[3|5|7|8|9])+([0-9]{8})$")) {
+            result.rejectValue("numberPhone", "error.staff", "Số điện thoại không hợp lệ!");
+        }
+        if (result.hasErrors()) {
+            model.addAttribute("mes", "Thêm thất bại");
+            // Nếu có lỗi, trả về trang form để người dùng sửa lại
+            return "Staff/create"; // Bạn có thể trả về tên view của form nhập liệu
+        }
         System.out.println("Du lieu khi them cua staff: " + staffRequest.toString());
         Staff staff = new Staff();
         staff.setCodeStaff(staffRequest.getCodeStaff());

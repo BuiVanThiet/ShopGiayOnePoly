@@ -44,6 +44,11 @@ public class CustomerImplement implements CustomerService {
     }
 
     @Override
+    public Page<Customer> searchCustomerByKeywordPage(String key, Pageable pageable) {
+        return customerRepository.searchCustomerByKeywordPage(key, pageable);
+    }
+
+    @Override
     public <S extends Customer> S save(S entity) {
         return customerRepository.save(entity);
     }
