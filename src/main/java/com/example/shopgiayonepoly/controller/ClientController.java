@@ -210,14 +210,35 @@ public class ClientController {
                 userProfile.setBirthDay(customer.getBirthDay());
                 userProfile.setImageString(customer.getImage());
 
-                // Lấy địa chỉ từ Customer
-                String[] addressParts = customer.getAddRess().split(",");
-                if (addressParts.length >= 4) {
-                    userProfile.setWard(addressParts[0].trim());
-                    userProfile.setDistrict(addressParts[1].trim());
-                    userProfile.setProvince(addressParts[2].trim());
-                    userProfile.setAddRessDetail(addressParts[3].trim());
+                // Giả sử customer.getAddRess() trả về chuỗi địa chỉ đã gộp
+                String fullAddress = customer.getAddRess();
+
+                // Kiểm tra nếu địa chỉ không rỗng hoặc không null
+                if (fullAddress != null && !fullAddress.trim().isEmpty()) {
+                    String[] addressParts = fullAddress.split(",");
+
+                    // Kiểm tra và gán giá trị cho từng trường địa chỉ
+                    if (addressParts.length >= 4) {
+                        userProfile.setAddRessDetail(addressParts[3].trim()); // Tham số thứ 4 là địa chỉ chi tiết
+                        userProfile.setWard(addressParts[2].trim());         // Tham số thứ 3 là xã/phường/thị trấn
+                        userProfile.setDistrict(addressParts[1].trim());     // Tham số thứ 2 là quận/huyện
+                        userProfile.setProvince(addressParts[0].trim());      // Tham số thứ 1 là tỉnh/thành phố
+                    } else {
+                        // Nếu không đủ phần tử, có thể để các trường rỗng
+                        userProfile.setAddRessDetail("");
+                        userProfile.setWard("");
+                        userProfile.setDistrict("");
+                        userProfile.setProvince("");
+                    }
+                } else {
+                    // Nếu địa chỉ không có giá trị, không làm gì cả
+                    // Hoặc có thể để các trường rỗng nếu cần
+                    userProfile.setAddRessDetail("");
+                    userProfile.setWard("");
+                    userProfile.setDistrict("");
+                    userProfile.setProvince("");
                 }
+
 
                 // Lấy thông tin ngày sinh
                 LocalDate birthDay = customer.getBirthDay(); // Giả sử birthDay là kiểu LocalDate
