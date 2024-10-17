@@ -1,6 +1,8 @@
 package com.example.shopgiayonepoly.implement;
 
 
+import com.example.shopgiayonepoly.entites.CategoryProduct;
+import com.example.shopgiayonepoly.entites.Image;
 import com.example.shopgiayonepoly.entites.Product;
 import com.example.shopgiayonepoly.repositores.ProductRepository;
 import com.example.shopgiayonepoly.service.ProductService;
@@ -101,13 +103,19 @@ public class ProductImplement implements ProductService {
     }
 
     @Override
-    public Optional<Product> getOneByID(@Param("id") int id) {
-        return productRepository.getOneByID(id);
+    public Optional<Product> getOneProductByID(@Param("id") Integer id) {
+        return productRepository.getOneProductByID(id);
     }
 
+    @Override
+    public List<Image> findAllImagesByProductId(@Param("productId") Integer productId) {
+        return productRepository.findAllImagesByProductId(productId);
+    }
 
-
-
+    @Override
+    public List<CategoryProduct> findAllCategoryByProductId(@Param("productId") Integer productId) {
+        return productRepository.findAllCategoryByProductId(productId);
+    }
 
 
 }

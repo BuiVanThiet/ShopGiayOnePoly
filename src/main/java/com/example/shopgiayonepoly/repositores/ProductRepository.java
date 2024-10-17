@@ -1,5 +1,7 @@
 package com.example.shopgiayonepoly.repositores;
 
+import com.example.shopgiayonepoly.entites.CategoryProduct;
+import com.example.shopgiayonepoly.entites.Image;
 import com.example.shopgiayonepoly.entites.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -20,11 +22,14 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     @Query("select product from Product product where product.codeProduct = :codeProduct")
     Optional<Product> getOneProductByCodeProduct(@Param("codeProduct") String codeProduct);
 
-    @Query("SELECT DISTINCT p FROM Product p " +
-            "LEFT JOIN FETCH p.images " +
-            "LEFT JOIN FETCH p.categories " +
-            "WHERE p.id = :id")
-    Optional<Product> getOneByID(@Param("id") Integer id);
+    @Query("select product from Product product where product.id = :id")
+    Optional<Product> getOneProductByID(@Param("id") Integer id);
+
+    @Query("SELECT image FROM Image image WHERE image.product.id = :productId")
+    List<Image> findAllImagesByProductId(@Param("productId") Integer productId);
+
+    @Query("SELECT categoryProduct FROM CategoryProduct categoryProduct WHERE categoryProduct.product.id = :productId")
+    List<CategoryProduct> findAllCategoryByProductId(@Param("productId") Integer productId);
 
 
 
