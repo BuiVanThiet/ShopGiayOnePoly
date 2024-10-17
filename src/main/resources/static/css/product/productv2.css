@@ -1,0 +1,102 @@
+body {
+    background-color: white;
+    color: black;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+.container {
+    padding: 20px;
+}
+.header {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+.tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+.tab {
+    padding: 10px 20px;
+    background-color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.tab.active {
+    background-color: white;
+    border-bottom: 2px solid #3b82f6;
+}
+.filters {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+.filter-button {
+    padding: 10px 20px;
+    background-color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.filter-button i {
+    font-size: 14px;
+}
+.sort-dropdown {
+    margin-left: auto;
+    padding: 10px 20px;
+    background-color: black;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.table th, .table td {
+    padding: 15px;
+    text-align: center;
+    vertical-align: middle;
+}
+.table th {
+    background-color: white;
+}
+.table td {
+    background-color: white;
+}
+.table img {
+    width: 50px;
+    height: 50px;
+    border-radius: 5px;
+}
+.status {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.status i {
+    font-size: 14px;
+}
+.status.published {
+    color: #10b981;
+}
+.status.draft {
+    color: #f59e0b;
+}
+.view-icon {
+    color: #ffffff;
+    cursor: pointer;
+}
+.add-button {
+    padding: 10px 20px;
+    background-color: #3b82f6;
+    border-radius: 5px;
+    cursor: pointer;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}

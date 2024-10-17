@@ -1,0 +1,90 @@
+<html>
+<head>
+    <title>
+        Danh sách sản phẩm
+    </title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <link href="/css/product/productv2.css" rel="stylesheet"/>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        Danh sách sản phẩm
+    </div>
+    <div class="tabs">
+        <div class="tab active">
+            Tất cả
+        </div>
+        <div class="tab">
+            Đang bán
+        </div>
+        <div class="tab">
+            Ngừng bán
+        </div>
+    </div>
+    <div class="filters">
+        <div class="filter-button">
+            <i class="fas fa-filter">
+            </i>
+            Loại
+        </div>
+        <div class="filter-button">
+            <i class="fas fa-barcode">
+            </i>
+            Mã sản phẩm
+        </div>
+        <div class="sort-dropdown">
+            Mới nhất
+        </div>
+    </div>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Mã</th>
+            <th>Tên</th>
+            <th>Chất liệu</th>
+            <th>Hãng</th>
+            <th>Xuất xứ</th>
+            <th>Loại đế</th>
+            <th>Mô tả</th>
+            <th>Trạng thái</th>
+            <th>Hành động</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="product, iterStat : ${productList}" th:id="'row-' + ${iterStat.index}" th:data-id="${product.id}">
+            <td th:text="${product.codeProduct}"></td>
+            <td>
+                <img alt="Hình ảnh của Soja &amp; Co. Bạch đàn" height="50" src="https://res.cloudinary.com/dfy4umpja/image/upload/v1728725582/7c10e8b5-1df6-4805-92e6-a9f1b2c642d1" width="50"/>
+                <div th:text="${product.nameProduct}"></div>
+            </td>
+            <td th:text="${product.material.nameMaterial}"></td>
+            <td th:text="${product.manufacturer.nameManufacturer}"></td>
+            <td th:text="${product.origin.nameOrigin}"></td>
+            <td th:text="${product.sole.nameSole}"></td>
+            <td th:text="${product.describe}"></td>
+            <td th:text="${product.status == 1 ? 'Đang bán' : (product.status == 2 ? 'Ngừng bán' : '')}"></td>
+            <td>
+                <a th:onclick="'editRow(' + ${iterStat.index} + ')'"
+                   th:id="'edit-btn-' + ${iterStat.index}">
+                    <i class="product-icon-edit icon-edit fas fa-edit" title="Edit"></i>
+                </a>
+                <a th:onclick="'saveRow(' + ${iterStat.index} + ')'" style=" display:none; "
+                   th:id="'save-btn-' + ${iterStat.index}">
+                    <i class="product-icon-save icon-save fas fa-save" title="Save"></i>
+                </a>
+                <a th:onclick="'editRow(' + ${iterStat.index} + ')'"
+                   th:id="'edit-btn-' + ${iterStat.index}">
+                    <i class="product-icon-detail icon-detail fas fa-bars" title="Detail"></i>
+                </a>
+                <a th:data-index="${iterStat.index}" th:data-code-product="${product.codeProduct}" onclick="deleteByID(this)">
+                    <i class="product-icon-delete icon-delete fas fa-trash" title="Delete"></i>
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="add-button"> + Thêm sản phẩm </div>
+</div>
+</body>
+</html>

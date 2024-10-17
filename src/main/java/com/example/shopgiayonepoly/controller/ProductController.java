@@ -1,10 +1,7 @@
 package com.example.shopgiayonepoly.controller;
 
 import com.cloudinary.Cloudinary;
-import com.example.shopgiayonepoly.entites.Category;
-import com.example.shopgiayonepoly.entites.Image;
-import com.example.shopgiayonepoly.entites.Product;
-import com.example.shopgiayonepoly.entites.Staff;
+import com.example.shopgiayonepoly.entites.*;
 import com.example.shopgiayonepoly.service.CategoryService;
 import com.example.shopgiayonepoly.service.ProductService;
 import com.example.shopgiayonepoly.service.attribute.ManufacturerService;
@@ -23,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Controller
@@ -58,10 +56,19 @@ public class ProductController {
         return "/Product/product";
     }
 
-    @GetMapping("/test")
-    public String vinh(Model model) {
-        return "/Product/testThemanh";
+    @GetMapping("/product/productv2")
+    public String productv2(Model model) {
+        model.addAttribute("productList", productService.getProductNotStatus0());
+        model.addAttribute("productAdd", new Product());
+        model.addAttribute("materialList", materialService.findAll());
+        model.addAttribute("manufacturerList", manufacturerService.findAll());
+        model.addAttribute("originList", originService.findAll());
+        model.addAttribute("soleList", soleService.findAll());
+        model.addAttribute("categoryList", categoryService.findAll());
+        return "/Product/productv2";
     }
+
+
 
 //    @GetMapping("/product/delete")
 //    public ResponseEntity<List<Product>> listProductDelete() {
@@ -124,14 +131,29 @@ public class ProductController {
 
     @GetMapping("/product/get-one/{id}")
     public ResponseEntity<Product> getOneByID(@PathVariable Integer id) {
-        Optional<Product> product = productService.getOneByID(id);
-
+        Optional<Product> product = productService.findById(id);
         if (product.isPresent()) {
             return ResponseEntity.ok(product.get());
         } else {
-            return ResponseEntity.notFound().build(); // Trả về 404 nếu không tìm thấy sản phẩm
+            return ResponseEntity.notFound().build();
         }
     }
+
+    @GetMapping("product/getImage/{productId}")
+    public ResponseEntity<List<Image>> getImagesByProductId(@PathVariable Integer productId) {
+        List<Image> images = productService.findAllImagesByProductId(productId);
+        return new ResponseEntity<>(images, HttpStatus.OK);
+    }
+
+    @GetMapping("product/getCategory/{productId}")
+    public ResponseEntity<List<Integer>> getCategoriesByProductId(@PathVariable Integer productId) {
+        List<CategoryProduct> categories = productService.findAllCategoryByProductId(productId);
+        List<Integer> idCategories = categories.stream()
+                .map(CategoryProduct::getIdCategory)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(idCategories);
+    }
+
 
     @GetMapping("/product/check-code/{codeProduct}")
     public ResponseEntity<Product> checkProductCode(@PathVariable String codeProduct) {
@@ -140,7 +162,7 @@ public class ProductController {
         if (product.isPresent()) {
             return ResponseEntity.ok(product.get());
         } else {
-            return ResponseEntity.notFound().build(); // Trả về 404 nếu không tìm thấy sản phẩm
+            return ResponseEntity.notFound().build();
         }
     }
 //

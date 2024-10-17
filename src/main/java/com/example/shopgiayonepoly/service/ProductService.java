@@ -1,5 +1,6 @@
 package com.example.shopgiayonepoly.service;
 
+import com.example.shopgiayonepoly.entites.CategoryProduct;
 import com.example.shopgiayonepoly.entites.Image;
 import com.example.shopgiayonepoly.entites.Product;
 import org.springframework.data.domain.Page;
@@ -37,7 +38,10 @@ public interface ProductService {
 
     Optional<Product> getOneProductByCodeProduct(String codeProduct);
 
+    Optional<Product> getOneProductByID(Integer id);
 
-    Optional<Product> getOneByID(@Param("id") int id);
+    List<Image> findAllImagesByProductId(@Param("productId") Integer productId);
+
+    List<CategoryProduct> findAllCategoryByProductId(@Param("productId") Integer productId);
 
 }
