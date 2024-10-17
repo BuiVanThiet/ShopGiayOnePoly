@@ -27,7 +27,7 @@ public interface StaffRepository extends JpaRepository<Staff, Integer> {
             s.codeStaff,
             s.fullName,
             s.address,
-            s.gender,
+            s.gender,   
             s.birthDay,
             s.numberPhone,
             s.email,
