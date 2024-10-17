@@ -3,6 +3,7 @@ package com.example.shopgiayonepoly.service;
 import com.example.shopgiayonepoly.dto.request.StaffRequest;
 import com.example.shopgiayonepoly.dto.response.StaffResponse;
 import com.example.shopgiayonepoly.entites.Staff;
+import com.example.shopgiayonepoly.entites.Voucher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -18,6 +19,8 @@ public interface StaffService {
     public Page<Staff> getAllStaffByPage(Pageable pageable);
 
     public List<StaffResponse> searchStaffByKeyword(String key);
+
+    public Page<Staff> searchStaffByKeywordPage(String key, Pageable pageable);
 
     <S extends Staff> S save(S entity);
 

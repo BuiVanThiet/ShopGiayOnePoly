@@ -1,5 +1,6 @@
 package com.example.shopgiayonepoly.repositores;
 
+import com.example.shopgiayonepoly.dto.response.VoucherResponse;
 import com.example.shopgiayonepoly.entites.Voucher;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
@@ -59,8 +60,26 @@ public interface VoucherRepository extends JpaRepository<Voucher, Integer> {
     @Query("update Voucher v set v.status = 2 where v.endDate < CURRENT_TIMESTAMP and v.status <> 2")
     public void updateVoucherStatusForExpired();
 
-//    @Query("select from ")
-
-
+    @Query("""
+       select new com.example.shopgiayonepoly.dto.response.VoucherResponse(
+              v.id,
+              v.codeVoucher,
+              v.nameVoucher,
+              v.discountType,
+              v.priceReduced,
+              v.pricesApply,
+              v.pricesMax,
+              v.startDate,
+              v.endDate,
+              v.describe,
+              v.quantity,
+              v.status,
+              v.createDate,
+              v.updateDate
+              )
+       from Voucher v
+       where v.id = :id
+       """)
+    public VoucherResponse getDetailVoucherByID(@Param("id") Integer id);
 
 }

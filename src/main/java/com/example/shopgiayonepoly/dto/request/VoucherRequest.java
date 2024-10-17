@@ -1,11 +1,10 @@
 package com.example.shopgiayonepoly.dto.request;
 
 import com.example.shopgiayonepoly.dto.base.BaseDTO;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 
-import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.hibernate.validator.constraints.Range;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
@@ -28,16 +27,13 @@ public class VoucherRequest extends BaseDTO {
     private BigDecimal pricesApply;
     @NotNull(message = "Giá trị giảm tối đa không được để trống!")
     private BigDecimal pricesMax;
-
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate startDate;
-
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate endDate;
     @NotBlank(message = "Mô tả không được để trống!")
     private String describe;
     @NotNull(message = "Số lượng không được để trống!")
+    @Range(min = 1, max = 100, message = "Số lượng phải từ 1 đến 100!")
     private Integer quantity;
-
-
 }

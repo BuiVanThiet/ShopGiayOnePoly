@@ -18,144 +18,160 @@
 <main class="container">
     <div layout:fragment="content">
         <form th:object="${staff}" th:action="${'/staff/add'}" method="post" enctype="multipart/form-data">
-        <article class="container-xxl bd-gutter mt-4 my-md-3 bd-layout">
-            <h2>Thêm nhân viên</h2>
-            <div class="form-nab">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-6">
-                            <p>Ảnh nhân viên (3x4)</p>
-                            <div class="upload-container">
-                                <label for="file-upload" class="custom-file-upload">
-                                    <img id="image-preview" src="path_to_default_image.png" alt="Ảnh nhân viên" />
-                                </label>
-                                <input id="file-upload" name="nameImage"  type="file" accept="image/*" />
+            <article class="container-xxl bd-gutter mt-4 my-md-3 bd-layout">
+                <h2>Thêm nhân viên</h2>
+                <div class="form-nab">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-6">
+                                <p>Ảnh nhân viên (3x4)</p>
+                                <div class="upload-container">
+                                    <label for="file-upload" class="custom-file-upload">
+                                        <img id="image-preview" src="path_to_default_image.png" alt="Ảnh nhân viên"/>
+                                    </label>
+                                    <input id="file-upload" name="nameImage" type="file" accept="image/*"/>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="col-6">
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label>Mã nhân viên</label>
-                                    <input type="text" class="form-control"
-                                           placeholder="Enter staff code" th:field="${staff.codeStaff}">
-                                </div>
-                                <div class="form-group">
-                                    <label>Tên nhân viên</label>
-                                    <input type="text" class="form-control"
-                                           placeholder="Enter staff name" required th:field="${staff.fullName}">
-                                </div>
-                                <div class="form-group">
-                                    <label>Giới tính</label>
-                                    <div class="radio-group">
-                                        <div class="radio-item">
-                                            <input type="radio" value="1" th:field="${staff.gender}" />Nam
+                            <div class="col-6">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Mã nhân viên</label>
+                                        <input type="text" class="form-control" name="codeStaff"
+                                               placeholder="Enter staff code" th:field="${staff.codeStaff}">
+                                        <div class="text-danger" th:errors="*{codeStaff}"></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Tên nhân viên</label>
+                                        <input type="text" class="form-control" name="fullName"
+                                               placeholder="Enter staff name" th:field="${staff.fullName}">
+                                        <div class="text-danger" th:errors="*{fullName}"></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Giới tính</label>
+                                        <div class="radio-group" name="gender">
+                                            <div class="radio-item">
+                                                <input type="radio" value="1" th:field="${staff.gender}"/>Nam
+                                            </div>
+                                            <div class="radio-item">
+                                                <input type="radio" value="2" th:field="${staff.gender}"/>Nữ
+                                            </div>
                                         </div>
-                                        <div class="radio-item">
-                                            <input type="radio" value="2" th:field="${staff.gender}" />Nu
-                                        </div>
+                                        <div class="text-danger" th:errors="*{gender}"></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- SDT/Ngày sinh/Email -->
-            <div class="form-row">
-                <div class="row">
-                    <div class="col-4">
-                        <div class="form-group">
-                            <label>Số điện thoại</label>
-                            <input type="text"  class="form-control"
-                                   placeholder="Enter staff numberPhone" required th:field="${staff.numberPhone}">
-                        </div>
-                    </div>
-                    <div class="col-4">
-                        <div class="form-group">
-                            <label>Ngày sinh</label>
-                            <input type="date"  class="form-control"
-                                   placeholder="Enter staff birthDay" required th:field="${staff.birthDay}">
-                        </div>
-                    </div>
-                    <div class="col-4">
-                        <div class="form-group">
-                            <label>Email</label>
-                            <input type="text"  class="form-control"
-                                   placeholder="Enter staff email" required th:field="${staff.email}">
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Địa chỉ -->
-            <div class="form-row">
-                <div class="row">
-                    <!-- Các phần khác của form -->
-                    <div class="col-4">
-                        <label class="form-label">Tỉnh/Thành phố</label>
-                        <select class="form-select" id="province" name="province">
-                            <option value="">Chọn tỉnh/thành phố</option>
-                        </select>
-                    </div>
-                    <div class="col-4">
-                        <label class="form-label">Quận/Huyện</label>
-                        <select class="form-select" id="district" name="district">
-                            <option value="">Chọn quận/huyện</option>
-                        </select>
-                    </div>
-                    <div class="col-4">
-                        <label class="form-label">Xã/Phường/Thị Trấn</label>
-                        <select class="form-select" id="ward" name="ward">
-                            <option value="">Chọn xã/phường/thị trấn</option>
-                        </select>
-                    </div>
-                    </div>
-                </div>
-
-            <!-- Địa chỉ cụ thể -->
-            <div class="form-row">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="form-group">
-                            <label>Địa chi chi tiết</label>
-                            <textarea class="form-control"
-                                      placeholder="Enter staff address" required th:field="${staff.addRessDetail}"></textarea>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Chức vụ/ Trạng thái -->
-            <div class="form-row">
-                <div class="row">
-                    <div class="col-8">
-                        <div class="form-group">
-                            <label>Chức vụ</label>
-                            <select class="form-select" th:field="${staff.role.id}">
-                                <option value="1">Nhân viên bán hàng</option>
-                                <option value="2">Quản trị viên</option>
-                                <option value="3">Kế toán</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-4">
-                        <div class="form-group">
-                            <label>Trạng thái</label>
-                            <div class="radio-item">
-                                <input type="radio" name="status" value="1" th:field="${staff.status}"  />Hoat dong
+                <!-- SDT/Ngày sinh/Email -->
+                <div class="form-row">
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label>Số điện thoại</label>
+                                <input type="text" class="form-control" name="numberPhone"
+                                       placeholder="Enter staff numberPhone" th:field="${staff.numberPhone}">
+                                <div class="text-danger" th:errors="*{numberPhone}"></div>
                             </div>
-                            <div class="radio-item">
-                                <input type="radio" name="status" value="2" th:field="${staff.status}"  />Ngung hoat dong
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label>Ngày sinh</label>
+                                <input type="date" class="form-control"
+                                       placeholder="Enter staff birthDay" th:field="${staff.birthDay}">
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="text" class="form-control"
+                                       placeholder="Enter staff email" th:field="${staff.email}">
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <button type="submit" class="btn btn-primary">Thêm nhân viên</button>
-        </article>
+                <!-- Địa chỉ -->
+                <div class="form-row">
+                    <div class="row">
+                        <!-- Các phần khác của form -->
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label class="form-label">Tỉnh/Thành phố</label>
+                                <select class="form-select" id="province" name="province">
+                                    <option value="">Chọn tỉnh/thành phố</option>
+                                </select>
+                                <div class="text-danger" th:errors="*{province}"></div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label class="form-label">Quận/Huyện</label>
+                                <select class="form-select" id="district" name="district">
+                                    <option value="">Chọn quận/huyện</option>
+                                </select>
+                                <div class="text-danger" th:errors="*{district}"></div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label class="form-label">Xã/Phường/Thị Trấn</label>
+                                <select class="form-select" id="ward" name="ward">
+                                    <option value="">Chọn xã/phường/thị trấn</option>
+                                </select>
+                                <div class="text-danger" th:errors="*{ward}"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Địa chỉ cụ thể -->
+                <div class="form-row">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label>Địa chi chi tiết</label>
+                                <textarea class="form-control" name="addRessDetail"
+                                          placeholder="Enter staff address"
+                                          th:field="${staff.addRessDetail}"></textarea>
+                                <div class="text-danger" th:errors="*{addRessDetail}"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chức vụ/ Trạng thái -->
+                <div class="form-row">
+                    <div class="row">
+                        <div class="col-8">
+                            <div class="form-group">
+                                <label>Chức vụ</label>
+                                <select class="form-select" th:field="${staff.role.id}">
+                                    <option value="1">Nhân viên bán hàng</option>
+                                    <option value="2">Quản trị viên</option>
+                                    <option value="3">Kế toán</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label>Trạng thái</label>
+                                <div class="radio-item" name="status">
+                                    <input type="radio" name="status" value="1" th:field="${staff.status}"/>Hoạt động
+                                </div>
+                                <div class="radio-item">
+                                    <input type="radio" name="status" value="2" th:field="${staff.status}"/>Ngưng hoạt động
+                                </div>
+                                <div class="text-danger" th:errors="*{status}"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Thêm nhân viên</button>
+            </article>
         </form>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script th:src="@{/js/staff/addRessApi.js}" type="text/javascript"></script>

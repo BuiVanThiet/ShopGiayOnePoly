@@ -54,7 +54,7 @@
                                     <div class="dropdown-content" id="dropdown-content">
                                         <div th:each="category : ${categoryList}">
                                             <label>
-                                                <input type="checkbox" name="categories" th:value="${category.id}" />
+                                                <input type="checkbox" name="categories" th:value="${category.id}" th:id="'category_' + ${category.id}"/>
                                                 <span th:text="${category.nameCategory}"></span>
                                             </label>
                                         </div>
@@ -120,6 +120,10 @@
                     <a th:onclick="'saveRow(' + ${iterStat.index} + ')'" style=" display:none; "
                        th:id="'save-btn-' + ${iterStat.index}">
                         <i class="product-icon-save icon-save fas fa-save" title="Save"></i>
+                    </a>
+                    <a th:onclick="'editRow(' + ${iterStat.index} + ')'"
+                       th:id="'edit-btn-' + ${iterStat.index}">
+                        <i class="product-icon-detail icon-detail fas fa-bars" title="Detail"></i>
                     </a>
                     <a th:data-index="${iterStat.index}" th:data-code-product="${product.codeProduct}" onclick="deleteByID(this)">
                         <i class="product-icon-delete icon-delete fas fa-trash" title="Delete"></i>

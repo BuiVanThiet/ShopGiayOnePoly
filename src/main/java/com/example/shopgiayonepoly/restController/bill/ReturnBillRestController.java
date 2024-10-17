@@ -277,10 +277,15 @@ public class ReturnBillRestController extends BaseBill {
             return ResponseEntity.ok(thongBao);
         }
     }
-    @GetMapping("/create-return-bill")
-    public ResponseEntity<Map<String,String>> getCreateReturnBill(HttpSession session) {
+    @GetMapping("/create-return-bill/{note}")
+    public ResponseEntity<Map<String,String>> getCreateReturnBill(@PathVariable("note") String note, HttpSession session) {
         Map<String,String> thongBao = new HashMap<>();
         ReturnBill returnBill = new ReturnBill();
+        if(note.trim().equals("")) {
+            thongBao.put("message", "Chưa điền lý do trả!");
+            thongBao.put("check", "1");
+            return ResponseEntity.ok(thongBao);
+        }
         //goi bill de tra
         Bill bill = this.billService.findById((Integer) session.getAttribute("IdBill")).orElse(null);
         returnBill.setBill(bill);
@@ -288,6 +293,7 @@ public class ReturnBillRestController extends BaseBill {
         returnBill.setTotalReturn(totalReturn);
         returnBill.setReason("hi ae");
         returnBill.setStatus(0);
+        returnBill.setReason(note);
         ReturnBill returnBillSave = this.returnBillService.save(returnBill);
         returnBillSave.setCodeReturnBill("THD"+returnBillSave.getId());
         this.returnBillService.save(returnBillSave);
@@ -338,6 +344,7 @@ public class ReturnBillRestController extends BaseBill {
     @GetMapping("/infomation-return-bill-detail-from-bill-manage/{page}")
     public List<ReturnBillDetail> getReturnBillDetailByIdReturnBill(@PathVariable("page") Integer page,HttpSession session) {
         Pageable pageable = PageRequest.of(page-1,2);
+        System.out.println(session.getAttribute("IdReturnBill"));
         return this.returnBillDetailService.getReturnBillDetailByIdReturnBill((Integer) session.getAttribute("IdReturnBill"),pageable).getContent();
     }
 

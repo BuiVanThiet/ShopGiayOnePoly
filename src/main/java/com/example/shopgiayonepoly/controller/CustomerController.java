@@ -6,6 +6,7 @@ import com.example.shopgiayonepoly.entites.Customer;
 import com.example.shopgiayonepoly.entites.Staff;
 import com.example.shopgiayonepoly.service.CustomerService;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -26,7 +28,7 @@ public class CustomerController {
     @Autowired
     CustomerService customerService;
 
-    private final int pageSize = 1;
+    private final int pageSize = 4;
 
 //    @GetMapping("/list")
 //    public String getFormList(Model model) {
@@ -45,11 +47,13 @@ public class CustomerController {
     }
 
     @GetMapping("/search")
-    public String searchCustomerByKey(@RequestParam(name = "key") String key, Model model) {
-        List<CustomerResponse> searchCustomer = customerService.searchCustomerByKeyword(key);
-        model.addAttribute("customerList", searchCustomer);
+    public String searchCustomerByKey(@RequestParam(name = "key") String key, @RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber, Model model) {
+        Pageable pageableSearch = PageRequest.of(pageNumber, pageSize);
+        Page<Customer> pageCustomer = customerService.searchCustomerByKeywordPage(key, pageableSearch);
+//        model.addAttribute("customerList", searchCustomer);
+        model.addAttribute("pageCustomer", pageCustomer);
         model.addAttribute("customer", new CustomerRequest());
-        return "customer/list";
+        return "Customer/list";
     }
 
     @GetMapping("/create")
@@ -59,7 +63,26 @@ public class CustomerController {
     }
 
     @PostMapping("/add")
-    public String addCustomer(Model model, @ModelAttribute(name="customer") CustomerRequest customerRequest) throws IOException {
+    public String addCustomer(Model model, @Valid @ModelAttribute(name="customer") CustomerRequest customerRequest, BindingResult result) throws IOException {
+        // Kiểm tra tên
+        if (customerRequest.getFullName() == null || customerRequest.getFullName().trim().isEmpty()) {
+            result.rejectValue("fullName", "error.customer", "Tên không được để trống!"); // Thông báo nếu tên rỗng hoặc chỉ chứa khoảng trắng
+        } else if (customerRequest.getFullName().length() < 2 || customerRequest.getFullName().length() > 50) {
+            result.rejectValue("fullName", "error.customer", "Tên phải có độ dài từ 2 đến 50 ký tự!");
+        } else if (!customerRequest.getFullName().matches("^[\\p{L} ]+$")) {
+            result.rejectValue("fullName", "error.customer", "Tên chỉ được chứa ký tự chữ cái và dấu cách!");
+        }
+        // Kiểm tra số điện thoại
+        if (customerRequest.getNumberPhone() == null || customerRequest.getNumberPhone().isEmpty()) {
+            result.rejectValue("numberPhone", "error.customer", "Số điện thoại không được để trống!");
+        } else if (!customerRequest.getNumberPhone().matches("^(0[3|5|7|8|9])+([0-9]{8})$")) {
+            result.rejectValue("numberPhone", "error.customer", "Số điện thoại không hợp lệ!");
+        }
+        if (result.hasErrors()) {
+            model.addAttribute("mes", "Thêm thất bại");
+            // Nếu có lỗi, trả về trang form để người dùng sửa lại
+            return "Customer/create"; // Bạn có thể trả về tên view của form nhập liệu
+        }
         System.out.println("Du lieu khi them cua customer: " + customerRequest.toString());
         Customer customer = new Customer();
         customer.setFullName(customerRequest.getFullName());

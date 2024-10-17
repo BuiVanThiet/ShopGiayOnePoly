@@ -51,3 +51,30 @@ function formatDateTime(dateString) {
     // Kết hợp cả thời gian và ngày tháng
     return `${formattedTime} ${formattedDate}`;
 }
+
+//xuat hoa don
+function createBillPDF(id) {
+    if(id == null) {
+        id = parseInt($('#idBillCreatePDF').val());
+        console.log('id de tao oa don la ' + id)
+    }
+    $.ajax({
+        type: "GET",
+        url: "/bill-api/bill-pdf/"+id,
+        xhrFields: {
+            responseType: 'blob'  // Nhận PDF dưới dạng blob
+        },
+        success: function (response) {
+            // Tạo URL cho blob PDF
+            const pdfUrl = URL.createObjectURL(response);
+
+            // Mở tab mới và hiển thị PDF
+            const newTab = window.open();
+            newTab.document.write(`<iframe src="${pdfUrl}" width="100%" height="100%" style="border:none;"></iframe>`);
+
+        },
+        error: function (xhr) {
+            console.error('loi ' + xhr.responseType);
+        }
+    })
+}
