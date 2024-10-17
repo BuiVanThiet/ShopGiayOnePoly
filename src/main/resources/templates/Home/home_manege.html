@@ -9,7 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+<!--    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">-->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="/loading/styleHomeManege.css" type="text/css">
@@ -21,226 +21,328 @@
     <link rel="stylesheet" th:href="@{/css/attribute/attribute.css}" type="text/css">
     <link rel="stylesheet" th:href="@{/css/product/list.css}" type="text/css">
     <link rel="stylesheet" th:href="@{/css/voucher/home.css}" type="text/css">
-    <link rel="stylesheet" th:href="@{/css/sale-product/home.css}" type="text/css">
+    <link rel="stylesheet" th:href="@{/css/sale_product/home.css}" type="text/css">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="stylesheet" th:href="@{/css/homeManage/homeManageStyle.css}" type="text/css">
 
 </head>
 <body>
-<nav class="navbar border-bottom border-3 border-dark"
-     style="background: #FFF8DC; position: fixed; top: 0; width: 100%; z-index: 1000;">
-    <div class="container-fluid">
-        <i class="bi bi-box-seam" style="font-size: 300%; color: rgb(0,0,0);" data-bs-toggle="offcanvas"
-           data-bs-target="#offcanvasExample" aria-controls="offcanvasExample"></i>
-        <a class="navbar-brand" href="#">Sneaker Onepoly</a>
-    </div>
-</nav>
+<!--<nav class="navbar border-bottom border-3 border-dark"-->
+<!--     style="background: #FFF8DC; position: fixed; top: 0; width: 100%; z-index: 1000;">-->
+<!--    <div class="container-fluid">-->
+<!--        <i class="bi bi-box-seam" style="font-size: 300%; color: rgb(0,0,0);" data-bs-toggle="offcanvas"-->
+<!--           data-bs-target="#offcanvasExample" aria-controls="offcanvasExample"></i>-->
+<!--        <a class="navbar-brand" href="#">Sneaker Onepoly</a>-->
+<!--    </div>-->
+<!--</nav>-->
 <div class="loading-overlay" id="loadingOverlay">
     <div class="spinner-grow text-center" role="status" style="width: 200px; height: 200px;">
         <img src="/img/Logo.png" alt="Loading" class="loading-image">
     </div>
 </div>
-<!-- tab -->
-<div>
-    <div style="background-color: rgba(22, 48, 134, 0.445); color: white;"
-         class="offcanvas offcanvas-start border-end" tabindex="-1" id="offcanvasExample"
-         aria-labelledby="offcanvasExampleLabel">
+<!--&lt;!&ndash; tab &ndash;&gt;-->
+<!--<div>-->
+<!--    <div style="background-color: rgba(22, 48, 134, 0.445); color: white;"-->
+<!--         class="offcanvas offcanvas-start border-end" tabindex="-1" id="offcanvasExample"-->
+<!--         aria-labelledby="offcanvasExampleLabel">-->
 
-        <div class="offcanvas-header d-flex justify-content-between align-items-center border-bottom position-relative">
-            <a href="#" class="offcanvas-title text-decoration-none text-white fs-3" id="offcanvasExampleLabel">
-                <div th:if="${staffInfo == null}">
-                    <script>
-                        window.location.href = '/logout';
-                    </script>
-                </div>
-                <div th:if="${staffInfo != null}">
-                    <p>Tên: <span th:text="${staffInfo.fullName}"></span></p>
-                    <p>Chức vụ: <span th:text="${staffInfo.role.nameRole}"></span></p>
-                </div>
-                <br>
-                <span>Chúc bạn một ngày tốt lành!</span>
+<!--        <div class="offcanvas-header d-flex justify-content-between align-items-center border-bottom position-relative">-->
+<!--            <a href="#" class="offcanvas-title text-decoration-none text-white fs-3" id="offcanvasExampleLabel">-->
+<!--                <div th:if="${staffInfo == null}">-->
+<!--                    <script>-->
+<!--                        window.location.href = '/logout';-->
+<!--                    </script>-->
+<!--                </div>-->
+<!--                <div th:if="${staffInfo != null}">-->
+<!--                    <p>Tên: <span th:text="${staffInfo.fullName}"></span></p>-->
+<!--                    <p>Chức vụ: <span th:text="${staffInfo.role.nameRole}"></span></p>-->
+<!--                </div>-->
+<!--                <br>-->
+<!--                <span>Chúc bạn một ngày tốt lành!</span>-->
 
-            </a>
-            <i class="bi bi-x-square position-absolute m-2" style="font-size: 300%; color: white; top: 0; right: 0;"
-               data-bs-dismiss="offcanvas" aria-label="Close"></i>
+<!--            </a>-->
+<!--            <i class="bi bi-x-square position-absolute m-2" style="font-size: 300%; color: white; top: 0; right: 0;"-->
+<!--               data-bs-dismiss="offcanvas" aria-label="Close"></i>-->
+<!--        </div>-->
+
+
+<!--        <div class="offcanvas-body text-start">-->
+<!--            <p class="border-bottom">-->
+<!--                <a href="/chart/form" class="text-decoration-none text-white fs-3 bg-transparent">-->
+<!--                    Thống kê-->
+<!--                </a>-->
+<!--            </p>-->
+
+<!--            <p class="border-bottom">-->
+<!--                <a class="text-decoration-none text-white fs-3 bg-transparent" data-bs-toggle="collapse"-->
+<!--                   href="#sanPham" role="button" aria-expanded="false" aria-controls="collapseExample">-->
+<!--                    Quản lý sản phẩm-->
+<!--                </a>-->
+<!--            </p>-->
+
+<!--            <div class="collapse" id="sanPham">-->
+<!--                <div class="card card-body" style="background-color: rgba(255, 255, 255, 0.445); color: white;">-->
+<!--                    <a class="dropdown-item text-decoration-none text-white fs-6 bg-transparent" href="/staff/product">-->
+<!--                        Sản phẩm-->
+<!--                    </a>-->
+<!--                    &lt;!&ndash; Thuộc tính sản phẩm &ndash;&gt;-->
+<!--                    <a class="dropdown-item text-decoration-none text-white fs-6 bg-transparent"-->
+<!--                       data-bs-toggle="collapse" href="#thuocTinh" role="button" aria-expanded="false"-->
+<!--                       aria-controls="thuocTinh">-->
+<!--                        Thuộc tính sản phẩm-->
+<!--                    </a>-->
+<!--                    <hr>-->
+<!--                    &lt;!&ndash; Các tùy chọn con (ẩn/hiện khi bấm vào Thuộc tính sản phẩm) &ndash;&gt;-->
+<!--                    <div class="collapse" id="thuocTinh">-->
+<!--                        <a class="dropdown-item text-decoration-none text-white fs-6 bg-transparent sub-option"-->
+<!--                           href="#">-->
+<!--                            Hãng-->
+<!--                        </a>-->
+<!--                        <a class="dropdown-item text-decoration-none text-white fs-6 bg-transparent sub-option"-->
+<!--                           href="#">-->
+<!--                            Chất liệu-->
+<!--                        </a>-->
+<!--                        <a class="dropdown-item text-decoration-none text-white fs-6 bg-transparent sub-option"-->
+<!--                           href="#">-->
+<!--                            Xuất xứ-->
+<!--                        </a>-->
+<!--                        <a class="dropdown-item text-decoration-none text-white fs-6 bg-transparent sub-option"-->
+<!--                           href="#">-->
+<!--                            Danh mục-->
+<!--                        </a>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+
+<!--            <p class="border-bottom">-->
+<!--                <a class="text-decoration-none text-white fs-3 bg-transparent" data-bs-toggle="collapse"-->
+<!--                   href="#voucher" role="button" aria-expanded="false" aria-controls="collapseExample">-->
+<!--                    Quản lý phiếu giảm giá-->
+<!--                </a>-->
+<!--            </p>-->
+
+<!--            <div class="collapse" id="voucher">-->
+<!--                <div class="card card-body" style="background-color: rgba(255, 255, 255, 0.445); color: white;">-->
+<!--                    <a class="dropdown-item text-decoration-none text-white fs-6 bg-transparent" href="/voucher/list">-->
+<!--                        Danh sách phiếu giảm giá-->
+<!--                    </a>-->
+<!--                </div>-->
+<!--            </div>-->
+
+<!--            <p class="border-bottom">-->
+<!--                <a class="text-decoration-none text-white fs-3 bg-transparent" data-bs-toggle="collapse"-->
+<!--                   href="#sale-product" role="button" aria-expanded="false" aria-controls="collapseExample">-->
+<!--                    Quản lý đợt giảm giá-->
+<!--                </a>-->
+<!--            </p>-->
+
+<!--            <div class="collapse" id="sale-product">-->
+<!--                <div class="card card-body" style="background-color: rgba(255, 255, 255, 0.445); color: white;">-->
+<!--                    <a class="dropdown-item text-decoration-none text-white fs-6 bg-transparent" href="/sale-product/list">-->
+<!--                        Danh sách đợt giảm giá-->
+<!--                    </a>-->
+<!--                </div>-->
+<!--                <div class="card card-body" style="background-color: rgba(255, 255, 255, 0.445); color: white;">-->
+<!--                    <a class="dropdown-item text-decoration-none text-white fs-6 bg-transparent" href="/sale-product/create">-->
+<!--                        Thêm đợt giảm giá-->
+<!--                    </a>-->
+<!--                </div>-->
+<!--            </div>-->
+
+<!--            &lt;!&ndash; tab2 &ndash;&gt;-->
+<!--            <p class=" border-bottom">-->
+<!--                <a class="text-decoration-none text-white fs-3 bg-transparent" data-bs-toggle="collapse"-->
+<!--                   href="#user" role="button" aria-expanded="false" aria-controls="collapseExample">-->
+<!--                    Quản lý người dùng-->
+<!--                </a>-->
+<!--            </p>-->
+
+<!--            <div class="collapse" id="user">-->
+<!--                <div class="card card-body" style="background-color: rgba(255, 255, 255, 0.445); color: white;">-->
+
+<!--                    <p class="d-inline-flex gap-1">-->
+<!--                        <a class="dropdown-item text-decoration-none text-white fs-5 bg-transparent"-->
+<!--                           data-bs-toggle="collapse" href="#kh" role="button" aria-expanded="false"-->
+<!--                           aria-controls="collapseExample">-->
+<!--                            Quản lý khách hàng-->
+<!--                        </a>-->
+<!--                    </p>-->
+
+<!--                    <div class="collapse" id="kh">-->
+<!--                        <div class="card card-body"-->
+<!--                             style="background-color: rgba(255, 255, 255, 0.445); color: white;">-->
+<!--                            <a class="dropdown-item text-white " href="/customer/list">Danh sách khách hàng</a>-->
+<!--                            <a class="dropdown-item text-white " href="/customer/create">Thêm mới khách hàng</a>-->
+<!--                        </div>-->
+<!--                    </div>-->
+
+<!--                    <p class="d-inline-flex gap-1">-->
+<!--                        <a class="dropdown-item text-decoration-none text-white fs-5 bg-transparent"-->
+<!--                           data-bs-toggle="collapse" href="#nv" role="button" aria-expanded="false"-->
+<!--                           aria-controls="collapseExample">-->
+<!--                            Quản lý Nhân viên-->
+<!--                        </a>-->
+<!--                    </p>-->
+
+<!--                    <div class="collapse" id="nv">-->
+<!--                        <div class="card card-body"-->
+<!--                             style="background-color: rgba(255, 255, 255, 0.445); color: white;">-->
+<!--                            <a class="dropdown-item text-white " href="/staff/list">Danh sách Nhân viên</a>-->
+<!--                            <a class="dropdown-item text-white " href="/staff/create">Thêm mới Nhân viên</a>-->
+<!--                        </div>-->
+<!--                    </div>-->
+
+<!--                    <p class="d-inline-flex gap-1">-->
+<!--                        <a class="dropdown-item text-decoration-none text-white fs-5 bg-transparent"-->
+<!--                           data-bs-toggle="collapse" href="#chucVu" role="button" aria-expanded="false"-->
+<!--                           aria-controls="collapseExample">-->
+<!--                            Quản lý chức vụ-->
+<!--                        </a>-->
+<!--                    </p>-->
+
+<!--                    <div class="collapse" id="chucVu">-->
+<!--                        <div class="card card-body"-->
+<!--                             style="background-color: rgba(255, 255, 255, 0.445); color: white;">-->
+<!--                            <a class="dropdown-item text-white " href="">Danh sách chức vụ</a>-->
+<!--                            <a class="dropdown-item text-white " href="">Thêm mới chức vụ</a>-->
+<!--                        </div>-->
+<!--                    </div>-->
+
+<!--                </div>-->
+<!--            </div>-->
+
+<!--            &lt;!&ndash; tab3 &ndash;&gt;-->
+
+
+<!--            &lt;!&ndash; tab4 &ndash;&gt;-->
+<!--            <p class="border-bottom">-->
+<!--                <a href="/staff/bill/home" class="text-decoration-none text-white fs-3 bg-transparent">-->
+<!--                    Bán hàng-->
+<!--                </a>-->
+<!--            </p>-->
+
+<!--            <p class="border-bottom">-->
+<!--                <a class="text-decoration-none text-white fs-3 bg-transparent"-->
+<!--                   th:if="${#authorization.expression('isAuthenticated()')}" th:href="@{/logout}">-->
+<!--                    Đăng xuất-->
+<!--                </a>-->
+<!--                &lt;!&ndash; Hiển thị nút Đăng nhập nếu người dùng chưa đăng nhập &ndash;&gt;-->
+<!--                <a class="text-decoration-none text-white fs-3 bg-transparent"-->
+<!--                   th:if="${#authorization.expression('!isAuthenticated()')}" th:href="@{/login/login}">-->
+<!--                    Đăng nhập-->
+<!--                </a>-->
+<!--            </p>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+<!--&lt;!&ndash; Nội dung trang bắt đầu sau navbar &ndash;&gt;-->
+<!--<div class="mb-4" style="padding-top: 80px;">-->
+<!--    &lt;!&ndash; Nội dung khác của trang &ndash;&gt;-->
+<!--    &lt;!&ndash;    <th:block th:replace="~{${'/Bill/index'}}"></th:block>&ndash;&gt;-->
+<!--    <div layout:fragment="content">-->
+
+<!--    </div>-->
+<!--</div>-->
+    <aside class="sidebar-custom-manage">
+        <div class="sidebar-custom-manage-header">
+            <img src="/img/homeManage/logoBillv2.png" alt="logo" />
+            <h2>Onepoly Sneaker</h2>
         </div>
-
-
-        <div class="offcanvas-body text-start">
-            <p class="border-bottom">
-                <a href="/chart/form" class="text-decoration-none text-white fs-3 bg-transparent">
-                    Thống kê
+        <div th:if="${staffInfo == null}">
+            <script>
+                window.location.href = '/logout';
+            </script>
+        </div>
+        <ul class="sidebar-custom-manage-links" style="margin: 0 !important;padding: 0 !important;">
+            <h4>
+                <span>Chức năng quản lý 1</span>
+                <div class="menu-separator"></div>
+            </h4>
+            <li>
+                <a href="#">
+                    <span class="material-symbols-outlined"> dashboard </span>
+                    chức năng bé hơn 1
                 </a>
-            </p>
-
-            <p class="border-bottom">
-                <a class="text-decoration-none text-white fs-3 bg-transparent" data-bs-toggle="collapse"
-                   href="#sanPham" role="button" aria-expanded="false" aria-controls="collapseExample">
-                    Quản lý sản phẩm
+            </li>
+            <li>
+                <a href="#"><span class="material-symbols-outlined"> overview </span>chức năng bé hơn 2</a>
+            </li>
+            <li>
+                <a href="#"><span class="material-symbols-outlined"> monitoring </span>chức năng bé hơn 3</a>
+            </li>
+            <h4>
+                <span>General</span>
+                <div class="menu-separator"></div>
+            </h4>
+            <li>
+                <a href="#"><span class="material-symbols-outlined"> folder </span>Projects</a>
+            </li>
+            <li>
+                <a href="#"><span class="material-symbols-outlined"> groups </span>Groups</a>
+            </li>
+            <li>
+                <a href="#"><span class="material-symbols-outlined"> move_up </span>Transfer</a>
+            </li>
+            <li>
+                <a href="#"><span class="material-symbols-outlined"> flag </span>All Reports</a>
+            </li>
+            <li>
+                <a href="#"><span class="material-symbols-outlined">
+                notifications_active </span>Notifications</a>
+            </li>
+            <h4>
+                <span>Hóa đơn</span>
+                <div class="menu-separator"></div>
+            </h4>
+            <li>
+                <a href="/staff/bill/home">
+                  <span class="material-symbols-outlined">
+                    store
+                  </span>
+                    Bán Hàng
                 </a>
-            </p>
+            </li>
+            <li>
+                <a href="/staff/bill/manage-bill">
+                  <span class="material-symbols-outlined">
+                    receipt_long
+                  </span>
+                    Quản lý hóa đơn
+                </a>
+            </li>
+            <h4>
+                <span>Account</span>
+                <div class="menu-separator"></div>
+            </h4>
+            <li>
+                <a href="#"><span class="material-symbols-outlined"> account_circle </span>Profile</a>
+            </li>
+            <li>
+                <a th:if="${#authorization.expression('!isAuthenticated()')}" th:href="@{/login/login}"><span class="material-symbols-outlined"> account_circle </span>Đăng nhập</a>
+            </li>
+            <li>
+                <a th:if="${#authorization.expression('isAuthenticated()')}" th:href="@{/logout}"><span class="material-symbols-outlined"> logout </span>Đăng xuất</a>
+            </li>
 
-            <div class="collapse" id="sanPham">
-                <div class="card card-body" style="background-color: rgba(255, 255, 255, 0.445); color: white;">
-                    <a class="dropdown-item text-decoration-none text-white fs-6 bg-transparent" href="/staff/product">
-                        Sản phẩm
-                    </a>
-                    <!-- Thuộc tính sản phẩm -->
-                    <a class="dropdown-item text-decoration-none text-white fs-6 bg-transparent"
-                       data-bs-toggle="collapse" href="#thuocTinh" role="button" aria-expanded="false"
-                       aria-controls="thuocTinh">
-                        Thuộc tính sản phẩm
-                    </a>
-                    <hr>
-                    <!-- Các tùy chọn con (ẩn/hiện khi bấm vào Thuộc tính sản phẩm) -->
-                    <div class="collapse" id="thuocTinh">
-                        <a class="dropdown-item text-decoration-none text-white fs-6 bg-transparent sub-option"
-                           href="#">
-                            Hãng
-                        </a>
-                        <a class="dropdown-item text-decoration-none text-white fs-6 bg-transparent sub-option"
-                           href="#">
-                            Chất liệu
-                        </a>
-                        <a class="dropdown-item text-decoration-none text-white fs-6 bg-transparent sub-option"
-                           href="#">
-                            Xuất xứ
-                        </a>
-                        <a class="dropdown-item text-decoration-none text-white fs-6 bg-transparent sub-option"
-                           href="#">
-                            Danh mục
-                        </a>
-                    </div>
+        </ul>
+        <div class="user-account" th:if="${staffInfo != null}">
+            <div class="user-profile" >
+                <img src="/img/homeManage/profile-img.jpg" alt="Profile Image" />
+                <div class="user-detail">
+                    <h3 th:text="${staffInfo.fullName}"></h3>
+                    <span th:text="${staffInfo.role.nameRole}"></span>
+                    <br>
+                    <span style="font-size: 0.65rem;">Chúc bạn một ngày tốt lành!</span>
                 </div>
             </div>
+        </div>
+    </aside>
+    <div style="margin-inline-start: 100px;margin-top: 20px;">
+        <div layout:fragment="content">
 
-            <p class="border-bottom">
-                <a class="text-decoration-none text-white fs-3 bg-transparent" data-bs-toggle="collapse"
-                   href="#voucher" role="button" aria-expanded="false" aria-controls="collapseExample">
-                    Quản lý phiếu giảm giá
-                </a>
-            </p>
-
-            <div class="collapse" id="voucher">
-                <div class="card card-body" style="background-color: rgba(255, 255, 255, 0.445); color: white;">
-                    <a class="dropdown-item text-decoration-none text-white fs-6 bg-transparent" href="/voucher/list">
-                        Danh sách phiếu giảm giá
-                    </a>
-                </div>
-            </div>
-
-            <p class="border-bottom">
-                <a class="text-decoration-none text-white fs-3 bg-transparent" data-bs-toggle="collapse"
-                   href="#sale-product" role="button" aria-expanded="false" aria-controls="collapseExample">
-                    Quản lý đợt giảm giá
-                </a>
-            </p>
-
-            <div class="collapse" id="sale-product">
-                <div class="card card-body" style="background-color: rgba(255, 255, 255, 0.445); color: white;">
-                    <a class="dropdown-item text-decoration-none text-white fs-6 bg-transparent" href="/sale-product/list">
-                        Danh sách đợt giảm giá
-                    </a>
-                </div>
-                <div class="card card-body" style="background-color: rgba(255, 255, 255, 0.445); color: white;">
-                    <a class="dropdown-item text-decoration-none text-white fs-6 bg-transparent" href="/sale-product/create">
-                        Thêm đợt giảm giá
-                    </a>
-                </div>
-            </div>
-
-            <!-- tab2 -->
-            <p class=" border-bottom">
-                <a class="text-decoration-none text-white fs-3 bg-transparent" data-bs-toggle="collapse"
-                   href="#user" role="button" aria-expanded="false" aria-controls="collapseExample">
-                    Quản lý người dùng
-                </a>
-            </p>
-
-            <div class="collapse" id="user">
-                <div class="card card-body" style="background-color: rgba(255, 255, 255, 0.445); color: white;">
-
-                    <p class="d-inline-flex gap-1">
-                        <a class="dropdown-item text-decoration-none text-white fs-5 bg-transparent"
-                           data-bs-toggle="collapse" href="#kh" role="button" aria-expanded="false"
-                           aria-controls="collapseExample">
-                            Quản lý khách hàng
-                        </a>
-                    </p>
-
-                    <div class="collapse" id="kh">
-                        <div class="card card-body"
-                             style="background-color: rgba(255, 255, 255, 0.445); color: white;">
-                            <a class="dropdown-item text-white " href="/customer/list">Danh sách khách hàng</a>
-                            <a class="dropdown-item text-white " href="/customer/create">Thêm mới khách hàng</a>
-                        </div>
-                    </div>
-
-                    <p class="d-inline-flex gap-1">
-                        <a class="dropdown-item text-decoration-none text-white fs-5 bg-transparent"
-                           data-bs-toggle="collapse" href="#nv" role="button" aria-expanded="false"
-                           aria-controls="collapseExample">
-                            Quản lý Nhân viên
-                        </a>
-                    </p>
-
-                    <div class="collapse" id="nv">
-                        <div class="card card-body"
-                             style="background-color: rgba(255, 255, 255, 0.445); color: white;">
-                            <a class="dropdown-item text-white " href="/staff/list">Danh sách Nhân viên</a>
-                            <a class="dropdown-item text-white " href="/staff/create">Thêm mới Nhân viên</a>
-                        </div>
-                    </div>
-
-                    <p class="d-inline-flex gap-1">
-                        <a class="dropdown-item text-decoration-none text-white fs-5 bg-transparent"
-                           data-bs-toggle="collapse" href="#chucVu" role="button" aria-expanded="false"
-                           aria-controls="collapseExample">
-                            Quản lý chức vụ
-                        </a>
-                    </p>
-
-                    <div class="collapse" id="chucVu">
-                        <div class="card card-body"
-                             style="background-color: rgba(255, 255, 255, 0.445); color: white;">
-                            <a class="dropdown-item text-white " href="">Danh sách chức vụ</a>
-                            <a class="dropdown-item text-white " href="">Thêm mới chức vụ</a>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <!-- tab3 -->
-
-
-            <!-- tab4 -->
-            <p class="border-bottom">
-                <a href="/staff/bill/home" class="text-decoration-none text-white fs-3 bg-transparent">
-                    Bán hàng
-                </a>
-            </p>
-
-            <p class="border-bottom">
-                <a class="text-decoration-none text-white fs-3 bg-transparent"
-                   th:if="${#authorization.expression('isAuthenticated()')}" th:href="@{/logout}">
-                    Đăng xuất
-                </a>
-                <!-- Hiển thị nút Đăng nhập nếu người dùng chưa đăng nhập -->
-                <a class="text-decoration-none text-white fs-3 bg-transparent"
-                   th:if="${#authorization.expression('!isAuthenticated()')}" th:href="@{/login/login}">
-                    Đăng nhập
-                </a>
-            </p>
         </div>
     </div>
-</div>
-<!-- Nội dung trang bắt đầu sau navbar -->
-<div class="mb-4" style="padding-top: 80px;">
-    <!-- Nội dung khác của trang -->
-    <!--    <th:block th:replace="~{${'/Bill/index'}}"></th:block>-->
-    <div layout:fragment="content">
-
-    </div>
-</div>
 <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
     <!-- Đây là container nơi toast sẽ xuất hiện -->
 </div>

@@ -211,8 +211,6 @@ function loadInformationBillByIdBill() {
                 $('#table-product-buy th:last-child').hide();
 
                 loadInfomationReturnBillFromBillManage();
-                loadReturnBillFromBillManage(1);
-                maxPageReturnBillFromBillManage();
                 var buttons = '';
                     buttons = `
                         <button class="btn btn-outline-danger me-2"
@@ -245,8 +243,6 @@ function loadInformationBillByIdBill() {
                 $('#table-product-buy th:last-child').hide();
 
                 loadInfomationReturnBillFromBillManage();
-                loadReturnBillFromBillManage(1);
-                maxPageReturnBillFromBillManage();
                 var buttons = '';
                 buttons = `
                         `;
@@ -266,8 +262,6 @@ function loadInformationBillByIdBill() {
                 $('#table-product-buy th:last-child').hide();
 
                 loadInfomationReturnBillFromBillManage();
-                loadReturnBillFromBillManage(1);
-                maxPageReturnBillFromBillManage();
                 var buttons = '';
                 buttons = `
                         `;
@@ -677,6 +671,8 @@ function loadInfomationReturnBillFromBillManage() {
             $('#total-return').text(response.totalReturn.toLocaleString('en-US') + ' VNĐ')
             $('#node-return').val(response.noteReturn);
             $('#node-return').attr('disabled', true);
+            loadReturnBillFromBillManage(1);
+            maxPageReturnBillFromBillManage();
         },
         error: function (xhr) {
             console.error('loi ' + xhr.responseText);
@@ -706,6 +702,7 @@ function loadReturnBillFromBillManage(page) {
                 noDataContainer.show();
                 tbody.closest('table').hide(); // Ẩn table nếu không có dữ liệu
             }else {
+                document.getElementById('errorReturn').style.display = 'none';
                 console.log('co san pham tra')
                 noDataContainer.hide();
                 tbody.closest('table').show(); // Ẩn table nếu không có dữ liệu
@@ -775,7 +772,6 @@ function maxPageReturnBillFromBillManage() {
 
     })
 }
-
 
 $(document).ready(function () {
     checkUpdateCustomer = true;

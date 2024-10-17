@@ -136,19 +136,28 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
             bill.cash, 
             bill.acountMoney, 
             bill.note, 
-            case 
-            when voucher.discountType = 1 then
-                case 
-                    when bill.totalAmount * (voucher.priceReduced / 100) > voucher.pricesMax then
-                        bill.totalAmount - voucher.pricesMax + bill.shippingPrice
-                    else 
-                        bill.totalAmount - (bill.totalAmount * (voucher.priceReduced / 100)) + bill.shippingPrice
-                end 
-            when voucher.discountType = 2 then
-                bill.totalAmount - voucher.priceReduced + bill.shippingPrice
-            else 
-                bill.totalAmount + bill.shippingPrice
-        end, 
+            case
+                when bill.status = 6 then 0
+                when bill.status BETWEEN 1 AND 5 then 
+                
+                    case 
+                        when voucher.discountType = 1 then
+                            case 
+                                when bill.totalAmount * (voucher.priceReduced / 100) > voucher.pricesMax then
+                                    bill.totalAmount - voucher.pricesMax + bill.shippingPrice
+                                else 
+                                    bill.totalAmount - (bill.totalAmount * (voucher.priceReduced / 100)) + bill.shippingPrice
+                            end 
+                        when voucher.discountType = 2 then
+                            bill.totalAmount - voucher.priceReduced + bill.shippingPrice
+                        else 
+                            bill.totalAmount + bill.shippingPrice
+                    end
+                
+                when bill.status = 7 OR bill.status = 8 then rb.totalReturn
+                else 0
+            end
+            , 
             bill.paymentMethod, 
             bill.billType, 
             bill.paymentStatus, 
@@ -157,6 +166,7 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
             bill.updateDate,
             bill.status) 
         from Bill bill 
+        left join ReturnBill rb on rb.bill.id = bill.id
         LEFT JOIN bill.customer customer
         LEFT JOIN bill.staff staff
         LEFT JOIN bill.voucher voucher
@@ -333,33 +343,32 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
 """, nativeQuery = true)
     List<Object[]> getBillDetailByIdBillPDF(@Param("idCheck") Integer id);
     @Query(value = """
-        SELECT
-             b.id,
-             b.code_bill,
-             CASE
-                 WHEN b.id_customer IS NULL THEN N'Không có'
-                 ELSE LEFT(b.address, CHARINDEX(',', b.address) - 1)
-             END AS customer_status,
-             b.price_discount
-             AS discount_amount,
-             -- Tính tỷ lệ discount_amount chia cho total_amount và nhân với 100 để hiển thị %
-             (b.price_discount/b.total_amount)*100
-             AS discount_ratio_percentage,
-             SUM(bd.quantity) AS total_products
-        FROM bill b
-        LEFT JOIN voucher v ON v.id = b.id_voucher
-        LEFT JOIN bill_detail bd ON bd.id_bill = b.id
-        WHERE b.id = :idBill
-        GROUP BY
-            b.id,
-            b.code_bill,
-            b.id_customer,
-            b.address,
-            b.total_amount,
-            v.discount_type,
-            v.price_reduced,
-            b.price_discount,
-            v.prices_max;
+       SELECT
+           b.id,
+           b.code_bill,
+           CASE
+               WHEN b.id_customer IS NULL THEN N'Không có'
+               WHEN CHARINDEX(',', b.address) = 0 THEN b.address
+               ELSE LEFT(b.address, CHARINDEX(',', b.address) - 1)
+           END AS customer_status,
+           b.price_discount AS discount_amount,
+           CASE
+               WHEN b.total_amount > 0 THEN ROUND((b.price_discount / b.total_amount) * 100, 2)
+               ELSE 0
+           END AS discount_ratio_percentage,
+           SUM(bd.quantity) AS total_products
+       FROM bill b
+       LEFT JOIN voucher v ON v.id = b.id_voucher
+       LEFT JOIN bill_detail bd ON bd.id_bill = b.id
+       WHERE b.id = :idBill
+       GROUP BY
+           b.id,
+           b.code_bill,
+           b.id_customer,
+           b.address,
+           b.total_amount,
+           b.price_discount;
+       
 """,nativeQuery = true)
     List<Object[]> getInfomationBillReturn(@Param("idBill") Integer id);
 

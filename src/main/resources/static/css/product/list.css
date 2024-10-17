@@ -330,6 +330,7 @@
     display: block;
 }
 
+
 .rotate-product {
     transform: rotate(180deg); /* Xoay mũi tên khi mở dropdown */
 }

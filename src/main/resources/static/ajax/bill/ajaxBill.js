@@ -43,7 +43,7 @@ function loadBillDetail(page)  {
 
                     billDetail.productDetail.product.images.forEach(function(image, imgIndex) {
                         imagesHtml += `
-                            <div class="carousel-item ${imgIndex === 0 ? 'active' : ''}" data-bs-interval="2000">
+                            <div class="carousel-item ${imgIndex === 0 ? 'active' : ''}" data-bs-interval="5000">
                                 <img style="height: auto; width: 100px;" src="https://res.cloudinary.com/dfy4umpja/image/upload/f_auto,q_auto/${image.nameImage}" class="d-block w-100" alt="Lỗi ảnh">
                             </div>`;
                     });
@@ -552,7 +552,7 @@ function updateProductTable(response) {
             var nameImage = productDetail[17].split(',');
             nameImage.forEach(function (imageProduct,indexImage) {
                 imagesHtml += `
-                      <div data-bs-interval="2000" class="carousel-item ${indexImage === 0 ? 'active' : ''}">
+                      <div  data-bs-interval="5000" class="carousel-item ${indexImage === 0 ? 'active' : ''}">
                         <img src="https://res.cloudinary.com/dfy4umpja/image/upload/v1724519685/${imageProduct.trim()}" class="d-block w-100" alt="Product Image 1">
                       </div>
                      `;
@@ -1235,159 +1235,6 @@ function maxPageVoucher() {
 }
 
 //ben trang quan ly hoa don
-function getAllBilByStatus(value) {
-    $.ajax({
-        type: "GET",
-        url: "/bill-api/manage-bill/"+value,
-        success: function (response) {
-            var tableBillManage = $('#billManage');
-            var nodataBillManage = $('#nodataBillManage');
-            tableBillManage.empty()
-            if (response.length === 0) {
-                // Nếu không có dữ liệu, hiển thị ảnh
-                nodataBillManage.html(`
-                <img src="https://res.cloudinary.com/dfy4umpja/image/upload/v1725477250/jw3etgwdqqxtkevcxisq.png"
-                     alt="Lỗi ảnh" style="width: auto; height: 100px;">
-                     <p class="text-center">Không có hóa đơn nào!</p>
-            `);
-                nodataBillManage.show();
-                tableBillManage.closest('table').hide(); // Ẩn table nếu không có dữ liệu
-            } else {
-                nodataBillManage.hide(); // Ẩn phần chứa ảnh nếu có dữ liệu
-                tableBillManage.closest('table').show();
-                response.forEach(function (bill,index) {
-
-                    const formattedDateTime = formatDateTime(bill.updateDate);
-                    var btnDrop = '';
-                    // Lấy ngày hiện tại
-                    const currentDate = new Date();
-                    // Lấy ngày tạo hóa đơn và chuyển đổi sang đối tượng Date
-                    const billCreateDate = new Date(bill.updateDate);
-                    // Tính toán số ngày giữa ngày hiện tại và ngày tạo hóa đơn
-                    const timeDiff = Math.abs(currentDate - billCreateDate); // Hiệu số thời gian (ms)
-                    const dayDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24)); // Chuyển đổi sang số ngày
-
-                    // Kiểm tra điều kiện status
-                    if (bill.status == 5) {
-                        btnDrop = `
-                            <li><a href="/staff/bill/bill-status-index/${bill.id}" class="dropdown-item">Xem chi tiết</a></li>
-                            <li><button class="dropdown-item" onclick="createBillPDF(${bill.id});">Xuất hóa đơn</button></li>
-                        `;
-
-                        // Nếu hóa đơn được tạo trong vòng 3 ngày, hiển thị thêm 2 nút Đổi hàng và Trả hàng
-                        if (dayDiff <= 3) {
-                            btnDrop += `
-                            <li><a class="dropdown-item" href="#">Đổi hàng</a></li>
-                            <li><a class="dropdown-item" href="/staff/return-bill/bill/${bill.id}">Trả hàng</a></li>
-                        `;
-                        }
-                    } else if (bill.status == 6) {
-                        btnDrop = `
-                            <li><a href="/staff/bill/bill-status-index/${bill.id}" class="btn btn-primary">Xem chi tiết</a></li>
-                            <li><a class="dropdown-item" href="#">Xuất hóa đơn</a></li>
-                        `;
-                    }else {
-                        btnDrop = `
-                            <li><a href="/staff/bill/bill-status-index/${bill.id}" class="dropdown-item">Xem chi tiết</a></li>
-                            <li><button class="dropdown-item" onclick="createBillPDF(${bill.id});">Xuất hóa đơn</button></li>
-                        `;
-                    }
-                    tableBillManage.append(`
-                     <tr>
-                            <th scope="row">${index+1}</th>
-                            <td>${bill.codeBill}</td>
-                            <td>${bill.customer == null ? 'Khách lẻ' : bill.customer.fullName}</td>
-                            <td>${bill.customer == null ? 'Không có' : bill.customer.numberPhone}</td> 
-                            <td>${bill.finalAmount.toLocaleString('en-US') + ' VNĐ'}</td>
-                            <td>${bill.billType == 1 ? 'Tại quầy' : 'Giao hàng'}</td>
-                            <td>${formattedDateTime}</td>
-                            <td>
-                               <div class="btn-group dropstart">
-                                  <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Chức năng
-                                  </button>
-                                  <ul class="dropdown-menu">
-                                        ${btnDrop}
-                                  </ul>
-                                </div>
-                            </td>
-                        </tr>
-                    `);
-                })
-            }
-        },
-        error: function (xhr) {
-            console.error('Hien thi loi phan chon bill ' + xhr.responseText);
-        },
-        // complete: function() {
-        //     // Sau khi hoàn thành, lại tiếp tục gửi yêu cầu để giữ kết nối liên tục
-        //     setTimeout(getAllBilByStatus, 5000);  // Gửi lại sau 5 giây
-        // }
-    })
-}
-
-function getMaxPageBillManage() {
-    $.ajax({
-        type: "GET",
-        url: "/bill-api/manage-bill-max-page",
-        success: function (response) {
-            createPagination('billManagePageMax', response, 1); // Phân trang 1
-        },
-        error: function (xhr) {
-            console.error('loi max page bill manage' + xhr.responseText)
-        },
-        // complete: function() {
-        //     // Sau khi hoàn thành, lại tiếp tục gửi yêu cầu để giữ kết nối liên tục
-        //     setTimeout(getMaxPageBillManage, 5000);  // Gửi lại sau 5 giây
-        // }
-    })
-}
-
-function clickStatusBillManager() {
-    let statusSearchVal = $('#statusSearch').val();  // Lấy giá trị từ input
-
-    // Kiểm tra nếu giá trị không rỗng và là chuỗi, sau đó xử lý
-    let statusSearch = (typeof statusSearchVal === 'string' && statusSearchVal.trim()) ?
-        statusSearchVal.trim().replace(/\s+/g, '').split(',').filter(Boolean).map(Number)
-        : null; // Nếu không có giá trị thì gửi mảng rỗng
-
-    $.ajax({
-        type: "POST",
-        url: "/bill-api/status-bill-manage",
-        contentType: 'application/json',
-        data: JSON.stringify({
-            statusSearch: statusSearch
-        }),
-        success: function (response) {
-            getMaxPageBillManage();
-            getAllBilByStatus(1);
-        },
-        error: function (xhr) {
-            console.error('loi chon trang thai ' + xhr.responseText);
-        }
-    })
-}
-
-function searchBillManage() {
-    $.ajax({
-        type: "POST",
-        url: "/bill-api/bill-manage-search",
-        contentType: "application/json",
-        data: JSON.stringify({ keywordBill: $('#keywordBillManage').val().trim() }),  // Gửi dữ liệu dạng JSON
-        success: function(response) {
-            getMaxPageBillManage();
-            getAllBilByStatus(1);
-            // clickStatusBillManager(999);
-        },
-        error: function(xhr) {
-            console.error('Loi tim voucher ' + xhr.responseText);
-        }
-    });
-}
-function resetFillterBillManage() {
-    document.getElementById('keywordBillManage').value='';
-    searchBillManage()
-}
 // document.getElementById('resetFilterBillManage').addEventListener('click', function () {
 //     document.getElementById('keywordBillManage').value='';
 //     searchBillManage()
@@ -1488,32 +1335,6 @@ function deleteBillDetail(id) {
     })
 }
 
-//xuat hoa don
-function createBillPDF(id) {
-    if(id == null) {
-         id = parseInt($('#idBillCreatePDF').val());
-        console.log('id de tao oa don la ' + id)
-    }
-    $.ajax({
-        type: "GET",
-        url: "/bill-api/bill-pdf/"+id,
-        xhrFields: {
-            responseType: 'blob'  // Nhận PDF dưới dạng blob
-        },
-        success: function (response) {
-            // Tạo URL cho blob PDF
-            const pdfUrl = URL.createObjectURL(response);
-
-            // Mở tab mới và hiển thị PDF
-            const newTab = window.open();
-            newTab.document.write(`<iframe src="${pdfUrl}" width="100%" height="100%" style="border:none;"></iframe>`);
-
-        },
-        error: function (xhr) {
-            console.error('loi ' + xhr.responseType);
-        }
-    })
-}
 
 $(document).ready(function () {
     $('#formBuyProduct').submit(function (event) {
@@ -1528,10 +1349,10 @@ $(document).ready(function () {
         event.preventDefault();
         searchVoucher()
     })
-    $('#formSubmitFilterBill').submit(function (event) {
-        event.preventDefault();
-        searchBillManage();
-    })
+    // $('#formSubmitFilterBill').submit(function (event) {
+    //     event.preventDefault();
+    //     searchBillManage();
+    // })
     // Xử lý sự kiện tăng/giảm số lượng
     $(document).on('click', '.btn-increment', function () {
         var $numberDiv = $(this).siblings('.number');
@@ -1564,14 +1385,13 @@ $(document).ready(function () {
     loadOriginIntoSelect()
     loadSoleIntoSelect()
         // pageNumber();
-        clickStatusBillManager(999);
-
+        // clickStatusBillManager(999);
     loadProduct(1)
     loadBillDetail(pageBillDetail);
     getMaxPageProduct();
     loadVoucherByBill(1);
     maxPageBillDetailByIdBill();
-    getAllBilByStatus(1);
-    getMaxPageBillManage();
+    // getAllBilByStatus(1);
+    // getMaxPageBillManage();
     console.log('can nang cua san pham la ' + totalWeight)
 });
