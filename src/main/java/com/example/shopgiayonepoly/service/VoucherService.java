@@ -1,6 +1,7 @@
 package com.example.shopgiayonepoly.service;
 
 import com.example.shopgiayonepoly.dto.request.VoucherRequest;
+import com.example.shopgiayonepoly.dto.response.VoucherResponse;
 import com.example.shopgiayonepoly.entites.ProductDetail;
 import com.example.shopgiayonepoly.entites.Voucher;
 import org.springframework.data.domain.Page;
@@ -37,5 +38,6 @@ public interface VoucherService {
     Page<Voucher> searchVoucherByTypeVoucher(@Param("types") int type, Pageable pageable);
 
     public void updateVoucherStatusForExpired();
+    public VoucherResponse getDetailVoucherByID(@Param("id") Integer id);
 
 }

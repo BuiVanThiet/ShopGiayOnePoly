@@ -69,7 +69,4 @@ public interface SaleProductRepository extends JpaRepository<SaleProduct, Intege
     @Query("UPDATE ProductDetail p SET p.price = ?2 WHERE p.id = ?1")
     void updatePriceById(Integer productId, BigDecimal price);
 
-//    @Modifying
-//    @Transactional
-//    @Query("update ProductDetail p set p.saleProduct=null where p.j")
 }

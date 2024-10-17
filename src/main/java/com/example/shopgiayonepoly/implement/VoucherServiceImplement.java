@@ -1,6 +1,7 @@
 package com.example.shopgiayonepoly.implement;
 
 import com.example.shopgiayonepoly.dto.request.VoucherRequest;
+import com.example.shopgiayonepoly.dto.response.VoucherResponse;
 import com.example.shopgiayonepoly.entites.Voucher;
 import com.example.shopgiayonepoly.repositores.VoucherRepository;
 import com.example.shopgiayonepoly.service.VoucherService;
@@ -94,6 +95,11 @@ public class VoucherServiceImplement implements VoucherService {
     @Override
     public void updateVoucherStatusForExpired() {
         voucherRepository.updateVoucherStatusForExpired();
+    }
+
+    @Override
+    public VoucherResponse getDetailVoucherByID(Integer id) {
+        return voucherRepository.getDetailVoucherByID(id);
     }
 
 }
