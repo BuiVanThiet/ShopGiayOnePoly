@@ -78,7 +78,7 @@ public class SaleProductServiceImplement implements SaleProductService {
 
     @Override
     public List<ProductDetail> getAllProductDetailWithDiscount() {
-       return saleProductRepository.getAllProductDetailWithDiscount();
+        return saleProductRepository.getAllProductDetailWithDiscount();
     }
 
     @Override
@@ -130,7 +130,6 @@ public class SaleProductServiceImplement implements SaleProductService {
                 } else {
                     throw new IllegalArgumentException("Loại giảm giá không hợp lệ: " + discountType);
                 }
-
 
                 if (newPrice.compareTo(BigDecimal.ZERO) < 0) {
                     newPrice = BigDecimal.ZERO;
@@ -186,7 +185,10 @@ public class SaleProductServiceImplement implements SaleProductService {
         }
     }
 
-
+    @Override
+    public List<ProductDetail> getAllProductDetail() {
+        return saleProductRepository.getAllProductDetail();
+    }
 
 
     private String generateSaleCode() {

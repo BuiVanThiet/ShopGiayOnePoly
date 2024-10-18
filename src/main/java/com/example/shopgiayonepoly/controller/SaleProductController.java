@@ -107,6 +107,8 @@ public class SaleProductController {
 
     @GetMapping("/delete/{id}")
     public String deleteSaleProduct(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
+        List<ProductDetail> listProductDetail = saleProductService.getAllProductDetail();
+        
         saleProductService.deleteSaleProductBySetStatus(id);
         redirectAttributes.addFlashAttribute("mes", "Xóa thành công đợt giảm giá với ID: " + id);
         return "redirect:/sale-product/list";
