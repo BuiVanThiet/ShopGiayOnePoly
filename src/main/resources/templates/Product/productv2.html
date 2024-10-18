@@ -1,4 +1,5 @@
-<html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
     <title>
         Danh sách sản phẩm
@@ -11,51 +12,50 @@
     <div class="header">
         Danh sách sản phẩm
     </div>
-    <div class="tabs">
-        <div class="tab active">
-            Tất cả
-        </div>
-        <div class="tab">
-            Đang bán
-        </div>
-        <div class="tab">
-            Ngừng bán
+
+    <div class="search-bar">
+        <select class="search-select">
+            <option value="category1">Category 1</option>
+            <option value="category2">Category 2</option>
+            <option value="category3">Category 3</option>
+        </select>
+        <input type="text" class="search-input" placeholder="Tìm kiếm">
+        <div class="icon-group" >
+            <i class="fa fa-list icon" aria-hidden="true"  onclick="showListView()"></i>
+            <i class="fa fa-th icon" aria-hidden="true" onclick="showGridView()"></i>
         </div>
     </div>
-    <div class="filters">
-        <div class="filter-button">
-            <i class="fas fa-filter">
-            </i>
-            Loại
-        </div>
-        <div class="filter-button">
-            <i class="fas fa-barcode">
-            </i>
-            Mã sản phẩm
-        </div>
-        <div class="sort-dropdown">
-            Mới nhất
+    <div  class="form-group" style="display: none">
+        <div th:each="image : ${imageList}" class="form-control">
+            <img th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728725582/' + ${image.image}" alt="Ảnh 1">
+            <p th:text="${image.nameProduct}"></p>
         </div>
     </div>
     <table class="table">
         <thead>
         <tr>
-            <th>Mã</th>
-            <th>Tên</th>
-            <th>Chất liệu</th>
-            <th>Hãng</th>
-            <th>Xuất xứ</th>
-            <th>Loại đế</th>
-            <th>Mô tả</th>
-            <th>Trạng thái</th>
-            <th>Hành động</th>
+            <th style="width: 30px;">
+                <input type="checkbox" id="select-all" onclick="toggleSelectAll(this)">
+            </th>
+            <th style="width: 50px">Mã</th>
+            <th style="width: 150px">Tên</th>
+            <th style="width: 150px">Chất liệu</th>
+            <th style="width: 150px">Hãng</th>
+            <th style="width: 150px">Xuất xứ</th>
+            <th style="width: 150px">Loại đế</th>
+            <th style="width: 300px">Mô tả</th>
+            <th style="width: 100px">Trạng thái</th>
+            <th style="width: 30px"></th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="product, iterStat : ${productList}" th:id="'row-' + ${iterStat.index}" th:data-id="${product.id}">
+            <td>
+                <input type="checkbox" class="select-row" />
+            </td>
             <td th:text="${product.codeProduct}"></td>
             <td>
-                <img alt="Hình ảnh của Soja &amp; Co. Bạch đàn" height="50" src="https://res.cloudinary.com/dfy4umpja/image/upload/v1728725582/7c10e8b5-1df6-4805-92e6-a9f1b2c642d1" width="50"/>
+                <img alt="Lỗi hiển thị" />
                 <div th:text="${product.nameProduct}"></div>
             </td>
             <td th:text="${product.material.nameMaterial}"></td>
@@ -65,26 +65,21 @@
             <td th:text="${product.describe}"></td>
             <td th:text="${product.status == 1 ? 'Đang bán' : (product.status == 2 ? 'Ngừng bán' : '')}"></td>
             <td>
-                <a th:onclick="'editRow(' + ${iterStat.index} + ')'"
-                   th:id="'edit-btn-' + ${iterStat.index}">
-                    <i class="product-icon-edit icon-edit fas fa-edit" title="Edit"></i>
-                </a>
-                <a th:onclick="'saveRow(' + ${iterStat.index} + ')'" style=" display:none; "
-                   th:id="'save-btn-' + ${iterStat.index}">
-                    <i class="product-icon-save icon-save fas fa-save" title="Save"></i>
-                </a>
-                <a th:onclick="'editRow(' + ${iterStat.index} + ')'"
-                   th:id="'edit-btn-' + ${iterStat.index}">
-                    <i class="product-icon-detail icon-detail fas fa-bars" title="Detail"></i>
-                </a>
-                <a th:data-index="${iterStat.index}" th:data-code-product="${product.codeProduct}" onclick="deleteByID(this)">
-                    <i class="product-icon-delete icon-delete fas fa-trash" title="Delete"></i>
-                </a>
+                <div class="dropdown">
+                    <i class="fa fa-ellipsis-v" aria-hidden="true" onclick="toggleDropdown(event, this)"></i>
+                    <!-- Menu hiện ra khi bấm vào icon -->
+                    <div class="dropdown-menu">
+                        <a href="#">Tùy chọn 1</a>
+                        <a href="#">Tùy chọn 2</a>
+                        <a href="#">Tùy chọn 3</a>
+                    </div>
+                </div>
             </td>
         </tr>
         </tbody>
     </table>
-    <div class="add-button"> + Thêm sản phẩm </div>
+    <div class="add-button"><a style="text-decoration: none;" href="/staff/product/create"> + Thêm sản phẩm </a></div>
 </div>
+<script src="/js/product/productv2.js"></script>
 </body>
 </html>

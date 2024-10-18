@@ -65,7 +65,20 @@ public class ProductController {
         model.addAttribute("originList", originService.findAll());
         model.addAttribute("soleList", soleService.findAll());
         model.addAttribute("categoryList", categoryService.findAll());
+        model.addAttribute("imageList", productService.findAllProductsWithOneImage());
         return "/Product/productv2";
+    }
+
+    @GetMapping("/product/create")
+    public String createProduct(Model model) {
+        model.addAttribute("productList", productService.getProductNotStatus0());
+        model.addAttribute("productAdd", new Product());
+        model.addAttribute("materialList", materialService.findAll());
+        model.addAttribute("manufacturerList", manufacturerService.findAll());
+        model.addAttribute("originList", originService.findAll());
+        model.addAttribute("soleList", soleService.findAll());
+        model.addAttribute("categoryList", categoryService.findAll());
+        return "/Product/create";
     }
 
 

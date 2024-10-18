@@ -1,5 +1,6 @@
 package com.example.shopgiayonepoly.repositores;
 
+import com.example.shopgiayonepoly.dto.response.ProductRespose;
 import com.example.shopgiayonepoly.entites.CategoryProduct;
 import com.example.shopgiayonepoly.entites.Image;
 import com.example.shopgiayonepoly.entites.Product;
@@ -30,6 +31,12 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     @Query("SELECT categoryProduct FROM CategoryProduct categoryProduct WHERE categoryProduct.product.id = :productId")
     List<CategoryProduct> findAllCategoryByProductId(@Param("productId") Integer productId);
+
+    @Query("SELECT new com.example.shopgiayonepoly.dto.response.ProductRespose(p.id, p.nameProduct, MIN(i.nameImage)) " +
+            "FROM Product p " +
+            "LEFT JOIN p.images i " +
+            "GROUP BY p.id, p.nameProduct")
+    List<ProductRespose> findAllProductsWithOneImage();
 
 
 

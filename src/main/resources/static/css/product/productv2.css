@@ -57,20 +57,24 @@ body {
     width: 100%;
     border-collapse: collapse;
 }
+
 .table th, .table td {
-    padding: 15px;
+    padding: 10px;
     text-align: center;
     vertical-align: middle;
+    word-wrap: break-word;
+    word-break: break-word;
+    white-space: normal;
 }
 .table th {
-    background-color: white;
+    background-color: #c0c0c0;
 }
 .table td {
     background-color: white;
 }
 .table img {
-    width: 50px;
-    height: 50px;
+    width: 100px;
+    height: 100px;
     border-radius: 5px;
 }
 .status {
@@ -91,6 +95,7 @@ body {
     color: #ffffff;
     cursor: pointer;
 }
+
 .add-button {
     padding: 10px 20px;
     background-color: #3b82f6;
@@ -100,3 +105,117 @@ body {
     top: 20px;
     right: 20px;
 }
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.5rem;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 30px;
+}
+
+.search-select {
+    padding: 0.5rem;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.search-input {
+    flex-grow: 1;
+    padding: 0.5rem;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.icon-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.icon {
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.icon:hover {
+    background-color: #f0f0f0;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    padding: 1rem;
+    z-index: 1;
+    border-radius: 5px;
+    width: 150px;
+    top: 0;
+    right: 0;   /* Căn theo vị trí của icon */
+}
+
+
+
+.dropdown-menu a {
+    text-decoration: none;
+    display: block;
+    padding: 0.5rem;
+    color: #333;
+}
+
+.dropdown-menu a:hover {
+    background-color: #f1f1f1;
+}
+
+.show {
+    display: block;
+}
+
+/* CSS cho icon */
+.fa-ellipsis-v {
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.fa-ellipsis-v:hover {
+    color: blue;
+}
+
+/* Dạng danh sách (mặc định) */
+.table tbody.list-view tr {
+    display: table-row;
+}
+
+.form-group {
+    display: flex;
+    flex-wrap: wrap; /* Cho phép các thẻ xuống dòng khi không còn chỗ */
+    justify-content: flex-start; /* Căn trái để các thẻ không bị dồn về giữa */
+    margin: 20px;
+}
+
+.form-group .form-control {
+    width: calc(16.66% - 20px); /* 100% / 6 = 16.66%, trừ đi khoảng cách */
+    height: 200px;
+    border-radius: 10px;
+    text-align: center;
+    box-sizing: border-box;
+    margin: 10px;
+    margin-bottom: 50px; /* Thêm khoảng cách giữa các thẻ */
+}
+
+.form-group .form-control img {
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+}
+
