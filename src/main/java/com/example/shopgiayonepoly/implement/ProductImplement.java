@@ -1,6 +1,7 @@
 package com.example.shopgiayonepoly.implement;
 
 
+import com.example.shopgiayonepoly.dto.response.ProductRespose;
 import com.example.shopgiayonepoly.entites.CategoryProduct;
 import com.example.shopgiayonepoly.entites.Image;
 import com.example.shopgiayonepoly.entites.Product;
@@ -115,6 +116,11 @@ public class ProductImplement implements ProductService {
     @Override
     public List<CategoryProduct> findAllCategoryByProductId(@Param("productId") Integer productId) {
         return productRepository.findAllCategoryByProductId(productId);
+    }
+
+    @Override
+    public List<ProductRespose> findAllProductsWithOneImage(){
+        return productRepository.findAllProductsWithOneImage();
     }
 
 

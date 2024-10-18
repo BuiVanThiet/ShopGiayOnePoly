@@ -60,6 +60,7 @@ function editRow(index) {
             // Lấy hình ảnh
             return fetch(`http://localhost:8080/staff/product/getImage/${id}`);
         })
+
         .then(response => response.json())
         .then(images => {
             const imagePreview = document.getElementById('imagePreview');

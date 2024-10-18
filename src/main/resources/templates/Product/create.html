@@ -1,0 +1,157 @@
+<html>
+<head>
+  <title>Tạo sản phẩm mới</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      display: flex;
+    }
+    .content {
+      flex-grow: 1;
+      padding: 20px;
+    }
+    .main-content {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .main-content h2 {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+    .form-group {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .form-group .form-control {
+      width: 48%;
+    }
+    .form-group .attribute {
+      width: 23.5%;
+    }
+    .form-group .description {
+      width: 100%;
+    }
+    .form-group .form-control input,
+    .form-group .form-control select {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid #e0e0e0;
+      border-radius: 5px;
+      outline: none;
+    }
+    .form-group .form-control textarea {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid #e0e0e0;
+      border-radius: 5px;
+      outline: none;
+      resize: none;
+    }
+    .upload-section {
+      text-align: center;
+      padding: 20px;
+      border: 2px dashed #e0e0e0;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+    .upload-section i {
+      font-size: 40px;
+      color: #6c63ff;
+    }
+    .upload-section p {
+      margin: 10px 0;
+      color: #6c63ff;
+    }
+    .buttons {
+      display: flex;
+      justify-content: flex-end;
+    }
+    .buttons button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      margin-left: 10px;
+      cursor: pointer;
+    }
+    .buttons .create-btn {
+      background-color: #6c63ff;
+      color: #fff;
+    }
+    .buttons .cancel-btn {
+      background-color: #e0e0e0;
+      color: #000;
+    }
+
+  </style>
+</head>
+<body>
+<div class="container">
+
+
+  <div class="content">
+    <div class="main-content">
+      <h1>Tạo sản phẩm mới</h1>
+      <div class="form-group">
+        <div class="form-control">
+          <label>Mã sản phẩm</label>
+          <input type="text"/>
+        </div>
+        <div class="form-control">
+          <label>Tên sản phẩm</label>
+          <input type="text"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="form-control attribute">
+          <label>Chất liệu</label>
+          <select class="select-product" id="material" name="material">
+            <option th:each="material : ${materialList}" th:value="${material.id}" th:text="${material.nameMaterial}"></option>
+          </select>
+        </div>
+        <div class="form-control attribute">
+          <label>Hãng</label>
+          <select class="select-product" id="manufacturer" name="manufacturer">
+            <option th:each="manufacturer : ${manufacturerList}" th:value="${manufacturer.id}" th:text="${manufacturer.nameManufacturer}"></option>
+          </select>
+        </div>
+        <div class="form-control attribute">
+          <label>Xuất sứ</label>
+          <select class="select-product" id="origin" name="origin">
+            <option th:each="origin : ${originList}" th:value="${origin.id}" th:text="${origin.nameOrigin}"></option>
+          </select>
+        </div>
+        <div class="form-control attribute">
+          <label>Loại đế</label>
+          <select class="select-product" id="sole" name="sole">
+            <option th:each="sole : ${soleList}" th:value="${sole.id}" th:text="${sole.nameSole}"></option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="form-control description">
+          <label>Mô tả</label>
+          <textarea rows="4"></textarea>
+        </div>
+      </div>
+      <div class="upload-section">
+        <i class="fas fa-cloud-upload-alt"></i>
+        <p>Nhấp để thêm ảnh</p>
+      </div>
+      <div class="buttons">
+        <button class="create-btn">Tạo sản phẩm mới</button>
+        <button class="cancel-btn">Hủy bỏ</button>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
