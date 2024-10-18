@@ -105,12 +105,20 @@ public class StaffController {
         staff.setGender(staffRequest.getGender());
         staff.setRole(staffRequest.getRole());
         staff.setStatus(staffRequest.getStatus());
+        // Kiểm tra ảnh
+        if (staffRequest.getNameImage() != null && !staffRequest.getNameImage().isEmpty()) {
+            staff.setImage("fileName");
+            staffService.uploadFile(staffRequest.getNameImage(), staff.getId());
+        } else {
+            // Đặt ảnh mặc định nếu không có ảnh được tải lên
+            staff.setImage("default-image.jpg");
+        }
         Staff staffSave = this.staffService.save(staff);
         staffSave.setAcount(staffSave.getCodeStaff() + staffSave.getId());
         staff.setPassword("@shoponepoly");
-        staff.setImage("fileName");
+//        staff.setImage("fileName");
         System.out.println(staff.toString());
-        staffService.uploadFile(staffRequest.getNameImage(),staffSave.getId());
+//        staffService.uploadFile(staffRequest.getNameImage(),staffSave.getId());
         return "redirect:/staff/list";
     }
 
