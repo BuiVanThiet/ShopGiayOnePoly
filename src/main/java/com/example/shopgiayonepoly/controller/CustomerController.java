@@ -95,13 +95,21 @@ public class CustomerController {
         customer.setGender(customerRequest.getGender());
         customer.setAddRess(customerRequest.getWard() + "," + customerRequest.getDistrict() + "," + customerRequest.getProvince() + "," +customerRequest.getAddRessDetail());
         customer.setStatus(customerRequest.getStatus());
+        // Kiểm tra ảnh
+        if (customerRequest.getNameImage() != null && !customerRequest.getNameImage().isEmpty()) {
+            customer.setImage("fileName");
+            customerService.uploadFile(customerRequest.getNameImage(), customer.getId());
+        } else {
+            // Đặt ảnh mặc định nếu không có ảnh được tải lên
+            customer.setImage("default-image.jpg");
+        }
         Customer customerSave = this.customerService.save(customer);
         customerSave.setAcount(customerSave.getFullName()+customerSave.getId());
         customer.setPassword("@shoponepoly");
 //        this.customerService.save(customerSave);
-        customer.setImage("fileName");
+//        customer.setImage("fileName");
         System.out.println(customer.toString());
-        customerService.uploadFile(customerRequest.getNameImage(),customerSave.getId());
+//        customerService.uploadFile(customerRequest.getNameImage(),customerSave.getId());
         return "redirect:/customer/list";
     }
 
