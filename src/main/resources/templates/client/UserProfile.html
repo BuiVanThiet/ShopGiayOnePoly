@@ -97,7 +97,7 @@
                 </div>
                 <!-- Form bên phải -->
             <div class="col-md-4 d-flex flex-column justify-content-center align-items-center">
-                <img id="avatar-preview" th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728721025/'+${userProfile.imageString}" class="img-fluid avatar-circle mb-3" alt="Avatar Preview">
+                <img id="avatar-preview" th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728721025/'+${userProfile.imageString}" class="img-fluid avatar-circle mb-3">
                 <label class="upload-btn btn btn-outline-secondary" for="file-upload">Chọn Ảnh</label>
                 <input type="file" id="file-upload" name="nameImage" class="hidden-input d-none" accept="image/*">
             </div>
@@ -128,8 +128,7 @@
                 </div>
             </div>
 
-
-            <div class="row mb-3">
+                <div class="row mb-3">
                     <div class="col-md-8">
                         <label class="form-label">Địa chỉ chi tiết:</label>
                         <textarea name="addRessDetail" class="form-control" rows="1" th:text="${userProfile.addRessDetail}"></textarea>
