@@ -210,13 +210,37 @@ public class ClientController {
                 userProfile.setBirthDay(customer.getBirthDay());
                 userProfile.setImageString(customer.getImage());
 
-                // Lấy địa chỉ từ Customer
-                String[] addressParts = customer.getAddRess().split(",");
-                if (addressParts.length >= 4) {
-                    userProfile.setWard(addressParts[0].trim());
-                    userProfile.setDistrict(addressParts[1].trim());
-                    userProfile.setProvince(addressParts[2].trim());
-                    userProfile.setAddRessDetail(addressParts[3].trim());
+                // Giả sử customer.getAddRess() trả về chuỗi địa chỉ đã gộp
+                String fullAddress = customer.getAddRess();
+
+                // Kiểm tra nếu địa chỉ không rỗng hoặc không null
+                if (fullAddress != null && !fullAddress.trim().isEmpty()) {
+                    String[] addressParts = fullAddress.split(",");
+
+                    // Gán các trường địa chỉ
+                    if (addressParts.length >= 4) {
+                        userProfile.setWard(addressParts[2].trim());         // Tham số thứ 3 là xã/phường/thị trấn
+                        userProfile.setDistrict(addressParts[1].trim());     // Tham số thứ 2 là quận/huyện
+                        userProfile.setProvince(addressParts[0].trim());      // Tham số thứ 1 là tỉnh/thành phố
+
+                        // Lấy tất cả các phần tử từ chỉ mục 3 trở đi và nối chúng lại
+                        StringBuilder detailAddressBuilder = new StringBuilder();
+                        for (int i = 3; i < addressParts.length; i++) {
+                            detailAddressBuilder.append(addressParts[i].trim());
+                            if (i < addressParts.length - 1) {
+                                detailAddressBuilder.append(", "); // Thêm dấu phẩy nếu không phải phần tử cuối
+                            }
+                        }
+                        userProfile.setAddRessDetail(detailAddressBuilder.toString());
+                    } else {
+
+                    }
+                } else {
+                    // Nếu địa chỉ không có giá trị, không làm gì cả
+                    userProfile.setAddRessDetail("");
+                    userProfile.setWard("");
+                    userProfile.setDistrict("");
+                    userProfile.setProvince("");
                 }
 
                 // Lấy thông tin ngày sinh
@@ -264,14 +288,19 @@ public class ClientController {
                 customer.setNumberPhone(userProfile.getNumberPhone());
                 customer.setGender(userProfile.getGender());
                 customer.setBirthDay(userProfile.getBirthDay());
-                customer.setAddRess(userProfile.getWard() + "," + userProfile.getDistrict() + "," + userProfile.getProvince() + "," +userProfile.getAddRessDetail());
-                customer.setImage("fileName");
-                customerService.uploadFile(userProfile.getNameImage(),customer.getId());
+                customer.setAddRess(userProfile.getWard() + "," + userProfile.getDistrict() + "," + userProfile.getProvince() + "," + userProfile.getAddRessDetail());
+
+                // Kiểm tra nếu người dùng có nhập ảnh không
+                if (!nameImage.isEmpty()) {
+                    // Nếu có ảnh, cập nhật tên ảnh và tải ảnh lên
+                    customer.setImage(nameImage.getOriginalFilename()); // Lưu tên file
+                    customerService.uploadFile(nameImage, customer.getId()); // Tải file lên
+                }
 
                 // Lưu cập nhật vào cơ sở dữ liệu
                 customerRegisterRepository.save(customer);
                 model.addAttribute("userProfile", userProfile);
-                model.addAttribute("clientLogin",clientLoginResponse);
+                model.addAttribute("clientLogin", clientLoginResponse);
                 model.addAttribute("loginInfoClient", clientLoginResponse);
                 model.addAttribute("successMessage", "Cập nhật thông tin thành công.");
             } else {
