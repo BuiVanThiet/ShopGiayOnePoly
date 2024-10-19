@@ -273,12 +273,10 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
+
     @ModelAttribute("staffInfo")
     public Staff staff(HttpSession session){
         Staff staff = (Staff) session.getAttribute("staffLogin");
         return staff;
     }
-
-
-
 }

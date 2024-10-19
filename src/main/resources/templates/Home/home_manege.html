@@ -9,7 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-<!--    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">-->
+    <!--    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">-->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="/loading/styleHomeManege.css" type="text/css">
@@ -23,7 +23,7 @@
     <link rel="stylesheet" th:href="@{/css/voucher/home.css}" type="text/css">
     <link rel="stylesheet" th:href="@{/css/sale_product/home.css}" type="text/css">
     <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
     <link rel="stylesheet" th:href="@{/css/homeManage/homeManageStyle.css}" type="text/css">
 
 </head>
@@ -244,105 +244,107 @@
 
 <!--    </div>-->
 <!--</div>-->
-    <aside class="sidebar-custom-manage">
-        <div class="sidebar-custom-manage-header">
-            <img src="/img/homeManage/logoBillv2.png" alt="logo" />
-            <h2>Onepoly Sneaker</h2>
-        </div>
-        <div th:if="${staffInfo == null}">
-            <script>
-                window.location.href = '/logout';
-            </script>
-        </div>
-        <ul class="sidebar-custom-manage-links" style="margin: 0 !important;padding: 0 !important;">
-            <h4>
-                <span>Chức năng quản lý 1</span>
-                <div class="menu-separator"></div>
-            </h4>
-            <li>
-                <a href="#">
-                    <span class="material-symbols-outlined"> dashboard </span>
-                    chức năng bé hơn 1
-                </a>
-            </li>
-            <li>
-                <a href="#"><span class="material-symbols-outlined"> overview </span>chức năng bé hơn 2</a>
-            </li>
-            <li>
-                <a href="#"><span class="material-symbols-outlined"> monitoring </span>chức năng bé hơn 3</a>
-            </li>
-            <h4>
-                <span>General</span>
-                <div class="menu-separator"></div>
-            </h4>
-            <li>
-                <a href="/staff/product/productv2"><span class="material-symbols-outlined"> steps </span>Sản phẩm</a>
-            </li>
-            <li>
-                <a href="#"><span class="material-symbols-outlined"> groups </span>Groups</a>
-            </li>
-            <li>
-                <a href="#"><span class="material-symbols-outlined"> move_up </span>Transfer</a>
-            </li>
-            <li>
-                <a href="#"><span class="material-symbols-outlined"> flag </span>All Reports</a>
-            </li>
-            <li>
-                <a href="#"><span class="material-symbols-outlined">
+<aside class="sidebar-custom-manage">
+    <div class="sidebar-custom-manage-header">
+        <img src="/img/homeManage/logoBillv2.png" alt="logo"/>
+        <h2>Onepoly Sneaker</h2>
+    </div>
+    <div th:if="${staffInfo == null}">
+        <script>
+            window.location.href = '/logout';
+        </script>
+    </div>
+    <ul class="sidebar-custom-manage-links" style="margin: 0 !important;padding: 0 !important;">
+        <h4>
+            <span>Chức năng quản lý 1</span>
+            <div class="menu-separator"></div>
+        </h4>
+        <li>
+            <a href="#">
+                <span class="material-symbols-outlined"> dashboard </span>
+                chức năng bé hơn 1
+            </a>
+        </li>
+        <li>
+            <a href="#"><span class="material-symbols-outlined"> overview </span>chức năng bé hơn 2</a>
+        </li>
+        <li>
+            <a href="#"><span class="material-symbols-outlined"> monitoring </span>chức năng bé hơn 3</a>
+        </li>
+        <h4>
+            <span>General</span>
+            <div class="menu-separator"></div>
+        </h4>
+        <li>
+            <a href="/staff/product/productv2"><span class="material-symbols-outlined"> steps </span>Sản phẩm</a>
+        </li>
+        <li>
+            <a href="/voucher/list"><span class="material-symbols-outlined"> local_offer </span>Phiếu giảm giá</a>
+        </li>
+        <li>
+            <a href="/sale-product/list"><span class="material-symbols-outlined"> percent </span>Đợt giảm giá</a>
+        </li>
+        <li>
+            <a href="#"><span class="material-symbols-outlined"> flag </span>All Reports</a>
+        </li>
+        <li>
+            <a href="#"><span class="material-symbols-outlined">
                 notifications_active </span>Notifications</a>
-            </li>
-            <h4>
-                <span>Hóa đơn</span>
-                <div class="menu-separator"></div>
-            </h4>
-            <li>
-                <a href="/staff/bill/home">
+        </li>
+        <h4>
+            <span>Hóa đơn</span>
+            <div class="menu-separator"></div>
+        </h4>
+        <li>
+            <a href="/staff/bill/home">
                   <span class="material-symbols-outlined">
                     store
                   </span>
-                    Bán Hàng
-                </a>
-            </li>
-            <li>
-                <a href="/staff/bill/manage-bill">
+                Bán Hàng
+            </a>
+        </li>
+        <li>
+            <a href="/staff/bill/manage-bill">
                   <span class="material-symbols-outlined">
                     receipt_long
                   </span>
-                    Quản lý hóa đơn
-                </a>
-            </li>
-            <h4>
-                <span>Account</span>
-                <div class="menu-separator"></div>
-            </h4>
-            <li>
-                <a href="#"><span class="material-symbols-outlined"> account_circle </span>Profile</a>
-            </li>
-            <li>
-                <a th:if="${#authorization.expression('!isAuthenticated()')}" th:href="@{/login/login}"><span class="material-symbols-outlined"> account_circle </span>Đăng nhập</a>
-            </li>
-            <li>
-                <a th:if="${#authorization.expression('isAuthenticated()')}" th:href="@{/logout}"><span class="material-symbols-outlined"> logout </span>Đăng xuất</a>
-            </li>
+                Quản lý hóa đơn
+            </a>
+        </li>
+        <h4>
+            <span>Account</span>
+            <div class="menu-separator"></div>
+        </h4>
+        <li>
+            <a href="#"><span class="material-symbols-outlined"> account_circle </span>Profile</a>
+        </li>
+        <li>
+            <a th:if="${#authorization.expression('!isAuthenticated()')}" th:href="@{/login/login}"><span
+                    class="material-symbols-outlined"> account_circle </span>Đăng nhập</a>
+        </li>
+        <li>
+            <a th:if="${#authorization.expression('isAuthenticated()')}" th:href="@{/logout}"><span
+                    class="material-symbols-outlined"> logout </span>Đăng xuất</a>
+        </li>
 
-        </ul>
-        <div class="user-account" th:if="${staffInfo != null}">
-            <div class="user-profile" >
-                <img src="/img/homeManage/profile-img.jpg" alt="Profile Image" />
-                <div class="user-detail">
-                    <h3 th:text="${staffInfo.fullName}"></h3>
-                    <span th:text="${staffInfo.role.nameRole}"></span>
-                    <br>
-                    <span style="font-size: 0.65rem;">Chúc bạn một ngày tốt lành!</span>
-                </div>
+    </ul>
+    <div class="user-account" th:if="${staffInfo != null}">
+        <div class="user-profile">
+            <img src="/img/homeManage/profile-img.jpg" alt="Profile Image"/>
+            <div class="user-detail">
+                <h3 th:text="${staffInfo.fullName}"></h3>
+                <span th:text="${staffInfo.role.nameRole}"></span>
+                <br>
+                <span style="font-size: 0.65rem;">Chúc bạn một ngày tốt lành!</span>
             </div>
         </div>
-    </aside>
-    <div style="margin-inline-start: 100px;margin-top: 20px;">
-        <div layout:fragment="content">
-
-        </div>
     </div>
+</aside>
+<div style="margin-inline-start: 100px;margin-top: 20px;">
+    <div layout:fragment="content">
+
+    </div>
+</div>
 <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
     <!-- Đây là container nơi toast sẽ xuất hiện -->
 </div>

@@ -13,10 +13,9 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @ToString
 public class ProductWithDiscountResponse extends BaseDTO {
-    private Integer id;
-    private BigDecimal originalPrice;
-    private BigDecimal newPrice;
-    private Product product;
-    private SaleProduct saleProduct;
+    private Integer productId;
+    private String productName;
+    private Integer saleProductId;
+    private String saleProductName;
 
 }
