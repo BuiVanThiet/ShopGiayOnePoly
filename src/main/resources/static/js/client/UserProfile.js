@@ -69,6 +69,62 @@ document.getElementById('file-upload').onchange = function (event) {
         avatarPreview.src = URL.createObjectURL(file); // Tạo URL tạm thời và gán cho src của img
     }
 };
+
+document.getElementById('updateProfileForm').addEventListener('submit', function (event) {
+    var isValid = true;
+
+    // Xóa các thông báo lỗi trước đó
+    document.getElementById('fullname-error').innerText = '';
+    document.getElementById('email-error').innerText = '';
+    document.getElementById('sdt-error').innerText = '';
+    document.getElementById('province-error').innerText = '';
+    document.getElementById('district-error').innerText = '';
+    document.getElementById('ward-error').innerText = '';
+
+    var fullName = document.getElementById('fullname').value.trim();
+    var email = document.getElementById('email').value.trim();
+    var numberPhone = document.getElementById('sdt').value.trim();
+    var province = document.getElementById('province').value;
+    var district = document.getElementById('district').value;
+    var ward = document.getElementById('ward').value;
+
+
+    if (fullName === '') {
+        document.getElementById('fullname-error').innerText = 'Vui lòng nhập họ và tên.';
+        isValid = false;
+    }
+
+    if (email === '') {
+        document.getElementById('email-error').innerText = 'Vui lòng nhập email.';
+        isValid = false;
+    }
+
+    if (numberPhone === '') {
+        document.getElementById('sdt-error').innerText = 'Vui lòng nhập số điện thoại.';
+        isValid = false;
+    }
+
+    if (province === '') {
+        document.getElementById('province-error').innerText = 'Vui lòng chọn tỉnh/thành phố.';
+        isValid = false;
+    }
+
+    if (district === '') {
+        document.getElementById('district-error').innerText = 'Vui lòng chọn quận/huyện.';
+        isValid = false;
+    }
+
+    if (ward === '') {
+        document.getElementById('ward-error').innerText = 'Vui lòng chọn xã/phường/thị trấn.';
+        isValid = false;
+    }
+
+    // Nếu không hợp lệ, ngăn không cho form submit
+    if (!isValid) {
+        event.preventDefault();
+    }
+});
+
 //
 // // // Hàm để kiểm tra năm nhuận
 // // function isLeapYear(year) {

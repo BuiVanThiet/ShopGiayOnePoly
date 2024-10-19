@@ -22,35 +22,33 @@ public class UserProfileUpdateRequest extends BaseDTO {
     private MultipartFile nameImage; // Không validate MultipartFile
 
     private String imageString;
+    private String account;
 
-    @NotBlank(message = "Tên đầy đủ không được để trống")
+    @NotBlank(message = "Tên không được để trống")
     private String fullName;
 
-    @NotBlank(message = "Email không được để trống")
     @Email(message = "Email không hợp lệ")
+    @NotBlank(message = "Email không được để trống")
     private String email;
 
     @NotBlank(message = "Số điện thoại không được để trống")
-    @Pattern(regexp = "^(\\+\\d{1,3}[- ]?)?\\d{10}$", message = "Số điện thoại không hợp lệ")
     private String numberPhone;
 
     @NotNull(message = "Giới tính không được để trống")
-    private Integer gender; // Thay đổi từ int sang Integer để validate null
+    private Integer gender;
 
     @NotNull(message = "Ngày sinh không được để trống")
     private LocalDate birthDay;
 
-    @NotBlank(message = "Tỉnh không được để trống")
+    @NotBlank(message = "Tỉnh/Thành Phố không được để trống")
     private String province;
 
-    @NotBlank(message = "Quận không được để trống")
+    @NotBlank(message = "Quận/Huyện không được để trống")
     private String district;
 
-    @NotBlank(message = "Phường không được để trống")
+    @NotBlank(message = "Xã/Phường/Thị Trấn không được để trống")
     private String ward;
 
-    @NotBlank(message = "Địa chỉ không được để trống")
-    private String AddRess;
-
-    private String addRessDetail; // Nếu không cần validate, có thể để không có chú thích
+    @NotBlank(message = "Địa chỉ chi tiết không được để trống")
+    private String addRessDetail;
 }

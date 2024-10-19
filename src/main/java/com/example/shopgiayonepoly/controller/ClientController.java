@@ -11,10 +11,12 @@ import com.example.shopgiayonepoly.repositores.CustomerRegisterRepository;
 import com.example.shopgiayonepoly.repositores.CustomerRepository;
 import com.example.shopgiayonepoly.service.CustomerService;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -41,24 +43,19 @@ public class ClientController {
     public String getFormHomeClient(HttpSession session, Model model){
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
 //        if (clientLoginResponse != null) {
-            model.addAttribute("loginInfoClient", clientLoginResponse);
+            model.addAttribute("clientLogin", clientLoginResponse);
 //        } else {
             session.removeAttribute("clientInfo");
 //            return "redirect:/onepoly/login";
 //        }
         return "client/homepage";
     }
-//    @GetMapping("/base")
-//    public String getFormBaseClient(HttpSession session, Model model){
-//        ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
-//        if (clientLoginResponse != null) {
-//            model.addAttribute("loginInfoClient", clientLoginResponse);
-//        } else {
-//            session.removeAttribute("clientInfo");
-//            return "redirect:/onepoly/login";
-//        }
-//        return "client/base";
-//    }
+    @GetMapping("/base")
+    public String getFormBaseClient(HttpSession session, Model model){
+        ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
+            model.addAttribute("clientLogin", clientLoginResponse);
+        return "client/base";
+    }
     @GetMapping("/products")
     public String getFormProduct(HttpSession session, Model model) {
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
@@ -203,6 +200,7 @@ public class ClientController {
             if (customer != null) {
                 // Cập nhật thông tin vào UserProfileUpdateRequest
                 UserProfileUpdateRequest userProfile = new UserProfileUpdateRequest();
+                userProfile.setAccount(customer.getAcount());
                 userProfile.setFullName(customer.getFullName());
                 userProfile.setEmail(customer.getEmail());
                 userProfile.setNumberPhone(customer.getNumberPhone());
@@ -274,15 +272,22 @@ public class ClientController {
     }
 
     @PostMapping("/userProfile")
-    public String updateProfile(UserProfileUpdateRequest userProfile, HttpSession session,
-                                @RequestParam("nameImage") MultipartFile nameImage, Model model) throws IOException {
-        // Lấy thông tin đăng nhập từ session
+    public String updateProfile(@Valid UserProfileUpdateRequest userProfile, BindingResult result,
+                                HttpSession session, @RequestParam("nameImage") MultipartFile nameImage, Model model) throws IOException {
+        if (result.hasErrors()) {
+            model.addAttribute("userProfile", userProfile);
+            model.addAttribute("errorMessage", "Vui lòng kiểm tra lại các trường thông tin.");
+            return "client/UserProfile"; // Trả về trang hiện tại với thông báo lỗi
+        }
+
+        // Tiếp tục xử lý cập nhật như trước
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
         if (clientLoginResponse != null) {
             String acount = clientLoginResponse.getAcount();
             Customer customer = customerRegisterRepository.findByAcount(acount);
             if (customer != null) {
                 // Cập nhật thông tin người dùng
+                customer.setAcount(userProfile.getAccount());
                 customer.setFullName(userProfile.getFullName());
                 customer.setEmail(userProfile.getEmail());
                 customer.setNumberPhone(userProfile.getNumberPhone());
@@ -292,16 +297,11 @@ public class ClientController {
 
                 // Kiểm tra nếu người dùng có nhập ảnh không
                 if (!nameImage.isEmpty()) {
-                    // Nếu có ảnh, cập nhật tên ảnh và tải ảnh lên
                     customer.setImage(nameImage.getOriginalFilename()); // Lưu tên file
                     customerService.uploadFile(nameImage, customer.getId()); // Tải file lên
                 }
-
-                // Lưu cập nhật vào cơ sở dữ liệu
+                model.addAttribute("clientLogin",clientLoginResponse);
                 customerRegisterRepository.save(customer);
-                model.addAttribute("userProfile", userProfile);
-                model.addAttribute("clientLogin", clientLoginResponse);
-                model.addAttribute("loginInfoClient", clientLoginResponse);
                 model.addAttribute("successMessage", "Cập nhật thông tin thành công.");
             } else {
                 model.addAttribute("errorMessage", "Không tìm thấy thông tin tài khoản.");
@@ -310,6 +310,7 @@ public class ClientController {
             return "redirect:/onepoly/login";
         }
 
-        return "client/UserProfile"; // Hoặc chuyển hướng đến trang khác
+        return "client/UserProfile";
     }
+
 }
