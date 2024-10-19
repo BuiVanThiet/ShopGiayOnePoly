@@ -18,6 +18,9 @@
 <main class="container">
     <div layout:fragment="content">
         <form th:object="${staff}" th:action="${'/staff/update'}" method="post">
+            <input type="hidden" id="provinceHiden" th:value="${staff.province}">
+            <input type="hidden" id="districtHiden" th:value="${staff.district}">
+            <input type="hidden" id="wardHiden" th:value="${staff.ward}">
             <article class="container-xxl bd-gutter mt-4 my-md-3 bd-layout">
                 <h2>Sửa nhân viên</h2>
                 <!-- <form action="/product/save" method="post" enctype="multipart/form-data"> -->

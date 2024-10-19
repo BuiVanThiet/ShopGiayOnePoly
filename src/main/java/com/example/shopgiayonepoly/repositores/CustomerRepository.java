@@ -63,6 +63,6 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
     @Query(value = "update Customer set status =0 where id=:id")
     public void deleteBySetStatus(@Param("id") Integer id);
 
-    @Query("select v from Customer v where v.status =1")
+    @Query("select v from Customer v where v.status = 1 or v.status = 2")
     public Page<Customer> getAllCustomrByPage(Pageable pageable);
 }

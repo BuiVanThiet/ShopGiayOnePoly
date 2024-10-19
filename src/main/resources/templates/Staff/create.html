@@ -18,6 +18,9 @@
 <main class="container">
     <div layout:fragment="content">
         <form th:object="${staff}" th:action="${'/staff/add'}" method="post" enctype="multipart/form-data">
+            <input type="hidden" id="provinceHiden" >
+            <input type="hidden" id="districtHiden">
+            <input type="hidden" id="wardHiden" >
             <article class="container-xxl bd-gutter mt-4 my-md-3 bd-layout">
                 <h2>Thêm nhân viên</h2>
                 <div class="form-nab">

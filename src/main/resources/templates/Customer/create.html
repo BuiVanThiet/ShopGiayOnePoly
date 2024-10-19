@@ -17,7 +17,10 @@
 
 <main class="container">
     <div layout:fragment="content">
-        <form th:object="${customer}" th:action="${'/customer/add'}" method="post" enctype="multipart/form-data">>
+        <form th:object="${customer}" th:action="${'/customer/add'}" method="post" enctype="multipart/form-data">
+            <input type="hidden" id="provinceHiden" >
+            <input type="hidden" id="districtHiden">
+            <input type="hidden" id="wardHiden" >
             <article class="container-xxl bd-gutter mt-4 my-md-3 bd-layout">
                 <h2>Thêm khách hàng</h2>
                 <div class="form-nab">
