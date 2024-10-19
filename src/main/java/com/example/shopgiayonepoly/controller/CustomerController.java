@@ -101,12 +101,10 @@ public class CustomerController {
             customerService.uploadFile(customerRequest.getNameImage(), customer.getId());
         } else {
             // Đặt ảnh mặc định nếu không có ảnh được tải lên
-            customer.setImage("default-image.jpg");
+            customer.setImage("Khong co anh");
         }
         Customer customerSave = this.customerService.save(customer);
-        customerSave.setAcount(customerSave.getFullName()+customerSave.getId());
-        customer.setPassword("@shoponepoly");
-//        this.customerService.save(customerSave);
+        this.customerService.save(customerSave);
 //        customer.setImage("fileName");
         System.out.println(customer.toString());
 //        customerService.uploadFile(customerRequest.getNameImage(),customerSave.getId());

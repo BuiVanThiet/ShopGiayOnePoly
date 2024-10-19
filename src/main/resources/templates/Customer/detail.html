@@ -18,6 +18,9 @@
 <main class="container">
     <div layout:fragment="content">
         <form th:object="${customer}" >
+            <input type="hidden" id="provinceHiden" th:value="${customer.province}">
+            <input type="hidden" id="districtHiden" th:value="${customer.district}">
+            <input type="hidden" id="wardHiden" th:value="${customer.ward}">
             <article class="container-xxl bd-gutter mt-4 my-md-3 bd-layout">
                 <h2>Chi tiết khách hàng</h2>
                 <!-- <form action="/product/save" method="post" enctype="multipart/form-data"> -->
