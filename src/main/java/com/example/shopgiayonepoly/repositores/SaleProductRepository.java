@@ -69,14 +69,19 @@ public interface SaleProductRepository extends JpaRepository<SaleProduct, Intege
     @Query("UPDATE ProductDetail p SET p.price = ?2 WHERE p.id = ?1")
     void updatePriceById(Integer productId, BigDecimal price);
 
-    @Query(value = "select * from product_detail" +
-                   " join sale_product" +
-                   " on product_detail.id_sale_product=sale_product.id" +
-                   " where id_sale_product=:idSaleProduct", nativeQuery = true)
-    public ProductDetail findProducDetailByIDDiscout(@Param("idSaleProduct") Integer id);
+    @Query("select pd from ProductDetail pd" +
+           " join pd.saleProduct sp" +
+           " where sp.id = :idSaleProduct")
+    public List<ProductDetail> findProducDetailByIDDiscout(@Param("idSaleProduct") Integer id);
 
+
+    @Modifying
+    @Transactional
+    @Query("update SaleProduct v set v.status = 2 where v.endDate < CURRENT_TIMESTAMP and v.status <> 2")
+    public void updateSaleProductStatusForExpired();
     @Query("select p from ProductDetail p")
     public List<ProductDetail> getAllProductDetail();
+
 
 
 }

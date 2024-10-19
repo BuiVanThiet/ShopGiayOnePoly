@@ -5,6 +5,8 @@ import com.example.shopgiayonepoly.dto.request.SaleProductRequest;
 import com.example.shopgiayonepoly.entites.ProductDetail;
 import com.example.shopgiayonepoly.entites.SaleProduct;
 import com.example.shopgiayonepoly.entites.Staff;
+import com.example.shopgiayonepoly.service.ProductDetailService;
+import com.example.shopgiayonepoly.service.ProductService;
 import com.example.shopgiayonepoly.service.SaleProductService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -15,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -22,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -30,6 +34,8 @@ import java.util.List;
 public class SaleProductController {
     @Autowired
     private SaleProductService saleProductService;
+    @Autowired
+    private ProductDetailService productDetailService;
 
     private static final int pageSize = 5;
 
@@ -107,8 +113,14 @@ public class SaleProductController {
 
     @GetMapping("/delete/{id}")
     public String deleteSaleProduct(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
-        List<ProductDetail> listProductDetail = saleProductService.getAllProductDetail();
-        
+        SaleProduct saleProduct = saleProductService.getSaleProductByID(id);
+        List<ProductDetail> listProductDetail = saleProductService.findProducDetailByIDDiscout(saleProduct.getId());
+        System.out.println(listProductDetail);
+        System.out.println("đến đây");
+        for (ProductDetail productDetail : listProductDetail) {
+            productDetail.setSaleProduct(null);
+            productDetailService.save(productDetail);
+        }
         saleProductService.deleteSaleProductBySetStatus(id);
         redirectAttributes.addFlashAttribute("mes", "Xóa thành công đợt giảm giá với ID: " + id);
         return "redirect:/sale-product/list";
@@ -228,11 +240,8 @@ public class SaleProductController {
     @PostMapping("/apply-discount")
     public ResponseEntity<?> applyDiscount(@RequestBody DiscountApplyRequest discountApplyRequest) {
         try {
-            // Gọi service để áp dụng giảm giá
             saleProductService.applyDiscountToProductDetails(
                     discountApplyRequest.getProductIds(),
-                    discountApplyRequest.getDiscountValue(),
-                    discountApplyRequest.getDiscountType(),
                     discountApplyRequest.getSaleProductId()
             );
             return ResponseEntity.ok("Giảm giá đã được áp dụng thành công!");
