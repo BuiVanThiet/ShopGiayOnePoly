@@ -111,11 +111,12 @@ public class StaffController {
             staffService.uploadFile(staffRequest.getNameImage(), staff.getId());
         } else {
             // Đặt ảnh mặc định nếu không có ảnh được tải lên
-            staff.setImage("default-image.jpg");
+            staff.setImage("Khong co anh");
         }
         Staff staffSave = this.staffService.save(staff);
         staffSave.setAcount(staffSave.getCodeStaff() + staffSave.getId());
         staff.setPassword("@shoponepoly");
+        this.staffService.save(staffSave);
 //        staff.setImage("fileName");
         System.out.println(staff.toString());
 //        staffService.uploadFile(staffRequest.getNameImage(),staffSave.getId());

@@ -51,7 +51,7 @@
                 <tbody>
                 <tr th:each="customer, index: ${pageCustomer}">
                     <td>
-                        <img th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728721025/'+${customer.image}" style="height: 50px;">
+                        <img th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728721025/'+${customer.image}" style="height: 50px;" alt="Khong co anh">
                     </td>
                     <td th:text="${customer.fullName}"></td>
                     <td th:text="${customer.gender}"> </td>
