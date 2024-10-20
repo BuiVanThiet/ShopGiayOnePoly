@@ -11,9 +11,11 @@
     width: 400px;
     height: 100%;
 }
+
 #filterButton {
     z-index: 999;
 }
+
 .sale-badge {
     position: absolute;
     top: 10px;
@@ -25,6 +27,7 @@
     border-radius: 3px;
     z-index: 999;
 }
+
 .filter-menu .close-btn {
     position: absolute;
     top: 10px;
@@ -37,6 +40,7 @@
     width: 100%;
     margin: 20px 0;
 }
+
 .filter-options {
     display: none;
 }
@@ -45,9 +49,10 @@
     display: block;
 }
 
-#priceFilter, #brandFilter, #sizeFilter,#colorFilter {
+#priceFilter, #brandFilter, #sizeFilter, #colorFilter {
     margin-top: 10px;
 }
+
 #priceFilter .row {
     display: flex;
     align-items: center;
@@ -91,7 +96,7 @@
     outline: none;
 }
 
-.filter-options{
+.filter-options {
     margin-top: 20px;
 }
 
@@ -110,4 +115,46 @@
 
 .custom-row {
     row-gap: 20px;
+}
+
+/*/Hover ảnh/*/
+.product-item {
+    position: relative;
+    overflow: hidden;
+}
+
+.product-icons {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    gap: 10px;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.product-item:hover .product-icons {
+    opacity: 1;
+    visibility: visible;
+}
+
+.product-icons a {
+    display: inline-block;
+    background-color: #ffffff;
+    padding: 10px;
+    border-radius: 50%;
+    color: #000;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.product-icons a:hover {
+    background-color: #f0f0f0;
+}
+
+.product-icons .cart-icon i,
+.product-icons .view-icon i {
+    font-size: 18px;
 }

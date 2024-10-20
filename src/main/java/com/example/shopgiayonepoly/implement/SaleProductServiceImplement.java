@@ -78,7 +78,7 @@ public class SaleProductServiceImplement implements SaleProductService {
 
     @Override
     public List<ProductDetail> getAllProductDetailWithDiscount() {
-       return saleProductRepository.getAllProductDetailWithDiscount();
+        return saleProductRepository.getAllProductDetailWithDiscount();
     }
 
     @Override
@@ -94,89 +94,37 @@ public class SaleProductServiceImplement implements SaleProductService {
     }
 
     @Override
-    public void applyDiscountToProductDetails(List<Integer> productIds,
-                                              BigDecimal discountValue,
-                                              Integer discountType,
-                                              Integer saleProductId) {
+    public void applyDiscountToProductDetails(List<Integer> productIds, Integer saleProductId) {
         System.out.println("productIds: " + productIds);
-        System.out.println("discountValue: " + discountValue);
-        System.out.println("discountType: " + discountType);
         System.out.println("saleProductId: " + saleProductId);
 
-        // Kiểm tra xem SaleProduct có tồn tại không
         SaleProduct saleProduct = saleProductRepository.findById(saleProductId).orElse(null);
         if (saleProduct == null) {
             throw new IllegalArgumentException("SaleProduct không tồn tại với ID: " + saleProductId);
         }
-
         for (Integer productId : productIds) {
             ProductDetail product = productDetailRepository.findById(productId).orElse(null);
             if (product != null) {
 
-                BigDecimal originalPrice = product.getPrice();
-                temporaryPriceStorage.storeOriginalPrice(product.getId(), originalPrice);
-
-                BigDecimal newPrice;
-                if (discountType == 1) {
-                    if (discountValue.compareTo(BigDecimal.ZERO) <= 0 || discountValue.compareTo(BigDecimal.valueOf(100)) > 0) {
-                        throw new IllegalArgumentException("Giá trị giảm giá phần trăm phải nằm trong khoảng (0, 100].");
-                    }
-                    newPrice = originalPrice.subtract(originalPrice.multiply(discountValue).divide(BigDecimal.valueOf(100)));
-                } else if (discountType == 2) { // Giảm theo giá trị cố định
-                    if (discountValue.compareTo(BigDecimal.ZERO) <= 0) {
-                        throw new IllegalArgumentException("Giá trị giảm giá phải lớn hơn 0.");
-                    }
-                    newPrice = originalPrice.subtract(discountValue);
-                } else {
-                    throw new IllegalArgumentException("Loại giảm giá không hợp lệ: " + discountType);
-                }
-
-
-                if (newPrice.compareTo(BigDecimal.ZERO) < 0) {
-                    newPrice = BigDecimal.ZERO;
-                }
-
-                product.setPrice(newPrice);
                 product.setSaleProduct(saleProduct);
                 productDetailRepository.save(product);
 
-
-                System.out.println("Đã cập nhật giá cho sản phẩm ID " + productId + ": giá mới = " + newPrice);
             } else {
                 System.out.println("Không tìm thấy sản phẩm với ID: " + productId);
             }
         }
     }
 
-
     @Override
     public void restoreOriginalPrice(List<Integer> productIds) {
         for (Integer productId : productIds) {
             ProductDetail product = productDetailRepository.findById(productId).orElse(null);
-
             if (product != null) {
                 SaleProduct saleProduct = product.getSaleProduct();
 
                 if (saleProduct != null) {
-                    BigDecimal discountValue = saleProduct.getDiscountValue(); // Giảm giá (có thể là phần trăm hoặc giá trị)
-                    int discountType = saleProduct.getDiscountType(); // Loại giảm giá (1: phần trăm, 2: giá trị cố định)
-                    BigDecimal originalPrice;
-
-                    if (discountType == 1) {
-                        originalPrice = product.getPrice().divide(BigDecimal.ONE.subtract(discountValue.divide(BigDecimal.valueOf(100))), RoundingMode.HALF_UP);
-                    } else if (discountType == 2) {
-                        // Nếu là giảm giá theo giá trị cố định
-                        originalPrice = product.getPrice().add(discountValue);
-                    } else {
-                        originalPrice = product.getPrice();
-                    }
-
-
-                    product.setPrice(originalPrice);
                     product.setSaleProduct(null);
                     productDetailRepository.save(product);
-
-                    System.out.println("Giá gốc đã được khôi phục cho sản phẩm ID " + productId + ": " + originalPrice);
                 } else {
                     System.out.println("Sản phẩm ID " + productId + " không có đợt giảm giá.");
                 }
@@ -186,8 +134,15 @@ public class SaleProductServiceImplement implements SaleProductService {
         }
     }
 
+    @Override
+    public List<ProductDetail> getAllProductDetail() {
+        return saleProductRepository.getAllProductDetail();
+    }
 
-
+    @Override
+    public List<ProductDetail>findProducDetailByIDDiscout(Integer id) {
+        return saleProductRepository.findProducDetailByIDDiscout(id);
+    }
 
     private String generateSaleCode() {
         return "SALE" + System.currentTimeMillis();

@@ -15,7 +15,10 @@
         <h2>Hồ Sơ Của Tôi</h2>
         <p class="description">Quản lý thông tin hồ sơ để bảo mật tài khoản</p>
         <hr>
-        <form id="updateProfileForm" th:action="@{/onepoly/userProfile}" method="post" >
+        <form id="updateProfileForm" th:action="@{/onepoly/userProfile}" method="post" th:object="${userProfile}">
+            <input type="hidden" id="provinceHiden" th:value="${userProfile.province}">
+            <input type="hidden" id="districtHiden" th:value="${userProfile.district}">
+            <input type="hidden" id="wardHiden" th:value="${userProfile.ward}">
         <div class="row">
                 <!-- Form bên trái -->
                 <div class="col-md-8">
@@ -108,30 +111,22 @@
             <div class="col-md-12">
                 <div class="row 4">
                     <div class="col-4 mb-3">
-                        <label class="form-label">Tỉnh/Thành Phố:</label>
-                        <select id="province" name="province" class="form-select" aria-label="Default select example">
-                            <option th:if="${userProfile.province == null}" value="" th:selected="true">Chọn Tỉnh/Thành Phố</option>
-                            <option th:if="${userProfile.province != null}" th:value="${userProfile.province}" th:selected="true" th:text="${userProfile.province}"></option>                            <!-- Thêm các tùy chọn tỉnh/thành phố khác ở đây nếu cần -->
+                        <label class="form-label">Tỉnh/Thành phố</label>
+                        <select class="form-select" id="province" name="province">
+                            <option value="">Chọn tỉnh/thành phố</option>
                         </select>
-                        <div class="error-message" id="province-error" style="color: red;"></div>
                     </div>
                     <div class="col-4 mb-3">
-                        <label class="form-label">Quận/Huyện:</label>
-                        <select id="district" name="district" class="form-select" aria-label="Default select example">
-                            <option th:if="${userProfile.district == null}" value="" th:selected="true">Chọn Quận/Huyện</option>
-                            <option th:if="${userProfile.district != null}" th:value="${userProfile.district}" th:selected="true" th:text="${userProfile.district}"></option>
-                            <!-- Thêm các tùy chọn quận/huyện khác ở đây nếu cần -->
+                        <label class="form-label">Quận/Huyện</label>
+                        <select class="form-select" id="district" name="district">
+                            <option value="">Chọn quận/huyện</option>
                         </select>
-                        <div class="error-message" id="district-error" style="color: red;"></div>
                     </div>
                     <div class="col-4 mb-3">
-                        <label class="form-label">Xã/Phường/Thị Trấn:</label>
-                        <select id="ward" name="ward" class="form-select" aria-label="Default select example">
-                            <option th:if="${userProfile.ward == null}" value="" th:selected="true">Chọn Xã/Phường/Thị Trấn</option>
-                            <option th:if="${userProfile.ward != null}" th:value="${userProfile.ward}" th:selected="true" th:text="${userProfile.ward}"></option>
-                            <!-- Thêm các tùy chọn xã/phường/thị trấn khác ở đây nếu cần -->
+                        <label class="form-label">Xã/Phường/Thị Trấn</label>
+                        <select class="form-select" id="ward" name="ward">
+                            <option value="">Chọn xã/phường/thị trấn</option>
                         </select>
-                        <div class="error-message" id="ward-error" style="color: red;"></div>
                     </div>
                 </div>
             </div>

@@ -1,0 +1,56 @@
+.bodyProfile {
+    background-color: #f5f5f5;
+}
+
+.container {
+    background-color: #ffffff; /* Màu nền trắng */
+    padding: 20px;
+    border: 1px solid #333; /* Đường viền đậm 4px */
+    border-radius: 10px; /* Bo tròn góc nếu muốn */
+}
+h2 {
+    text-align: left;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.description {
+    margin-top: 0;
+    font-size: 14px;
+    color: #666;
+}
+
+.profile-info img {
+    display: block;
+    margin-top: 10px;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+}
+
+.profile-info .upload-btn {
+    background-color: #f0f0f0;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.profile-info .small-text {
+    font-size: 0.9em;
+    color: #777;
+}
+
+.profile-info {
+    margin-left: 60%;
+}
+
+#avatar-preview {
+    width: 200px;          /* Kích thước cố định chiều rộng */
+    height: 200px;         /* Kích thước cố định chiều cao */
+    border-radius: 50%;    /* Tạo hình tròn */
+    object-fit: cover;     /* Đảm bảo ảnh vừa khung mà không bị méo */
+    border: 2px solid #ddd; /* Đường viền xung quanh ảnh */
+}
+
