@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 @Controller
@@ -78,6 +79,18 @@ public class CustomerController {
         } else if (!customerRequest.getNumberPhone().matches("^(0[3|5|7|8|9])+([0-9]{8})$")) {
             result.rejectValue("numberPhone", "error.customer", "Số điện thoại không hợp lệ!");
         }
+//        // Kiểm tra email (email có thể null, nhưng nếu nhập thì phải đúng định dạng)
+//        if (customerRequest.getEmail() != null && !customerRequest.getEmail().trim().isEmpty()) {
+//            if (!customerRequest.getEmail().matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z]{2,6}$")) {
+//                result.rejectValue("email", "error.customer", "Email không hợp lệ!");
+//            }
+//        }
+//        // Kiểm tra ngày sinh (ngày sinh có thể null, nhưng nếu có thì không được lớn hơn ngày hiện tại)
+//        if (customerRequest.getBirthDay() != null) {
+//            if (customerRequest.getBirthDay().isAfter(LocalDate.now())) {
+//                result.rejectValue("birthDay", "error.customer", "Ngày sinh không được lớn hơn ngày hiện tại!");
+//            }
+//        }
         if (result.hasErrors()) {
             model.addAttribute("mes", "Thêm thất bại");
             // Nếu có lỗi, trả về trang form để người dùng sửa lại
