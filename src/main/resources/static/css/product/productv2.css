@@ -1,39 +1,39 @@
-body {
+body-product {
     background-color: white;
     color: black;
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
 }
-.container {
+.container-product {
     padding: 20px;
 }
-.header {
+.header-product {
     font-size: 24px;
     font-weight: bold;
     margin-bottom: 20px;
 }
-.tabs {
+.tabs-product {
     display: flex;
     gap: 10px;
     margin-bottom: 20px;
 }
-.tab {
+.tab-product {
     padding: 10px 20px;
     background-color: white;
     border-radius: 5px;
     cursor: pointer;
 }
-.tab.active {
+.tab-product.active {
     background-color: white;
     border-bottom: 2px solid #3b82f6;
 }
-.filters {
+.filters-product {
     display: flex;
     gap: 10px;
     margin-bottom: 20px;
 }
-.filter-button {
+.filter-button-product {
     padding: 10px 20px;
     background-color: white;
     border-radius: 5px;
@@ -42,10 +42,10 @@ body {
     align-items: center;
     gap: 5px;
 }
-.filter-button i {
+.filter-button-product i {
     font-size: 14px;
 }
-.sort-dropdown {
+.sort-dropdown-product {
     margin-left: auto;
     padding: 10px 20px;
     background-color: black;
@@ -53,12 +53,12 @@ body {
     border-radius: 5px;
     cursor: pointer;
 }
-.table {
+.table-product {
     width: 100%;
     border-collapse: collapse;
 }
 
-.table th, .table td {
+.table-product th, .table-product td {
     padding: 10px;
     text-align: center;
     vertical-align: middle;
@@ -66,47 +66,50 @@ body {
     word-break: break-word;
     white-space: normal;
 }
-.table th {
+.table-product th {
     background-color: #c0c0c0;
 }
-.table td {
+.table-product td {
     background-color: white;
 }
-.table img {
+.table-product img {
     width: 100px;
     height: 100px;
     border-radius: 5px;
 }
-.status {
+.status-product {
     display: flex;
     align-items: center;
     gap: 5px;
 }
-.status i {
+.status-product i {
     font-size: 14px;
 }
-.status.published {
+.status-product.published {
     color: #10b981;
 }
-.status.draft {
+.status-product.draft {
     color: #f59e0b;
 }
-.view-icon {
+.view-icon-product {
     color: #ffffff;
     cursor: pointer;
 }
 
-.add-button {
-    padding: 10px 20px;
-    background-color: #3b82f6;
+.add-button-product {
+    padding: 10px;
+    background-color: rgb(12, 215, 12);
     border-radius: 5px;
     cursor: pointer;
     position: absolute;
     top: 20px;
     right: 20px;
+    text-decoration: none;
+    color: black;
+
 }
 
-.search-bar {
+.search-bar-product {
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -116,25 +119,25 @@ body {
     margin-bottom: 30px;
 }
 
-.search-select {
+.search-select-product {
     padding: 0.5rem;
     border-radius: 4px;
     border: 1px solid #ccc;
 }
 
-.search-input {
+.search-input-product {
     flex-grow: 1;
     padding: 0.5rem;
     border-radius: 4px;
     border: 1px solid #ccc;
 }
 
-.icon-group {
+.icon-group-product {
     display: flex;
     gap: 0.5rem;
 }
 
-.icon {
+.icon-product {
     font-size: 1.5rem;
     cursor: pointer;
     padding: 0.5rem;
@@ -142,16 +145,16 @@ body {
     transition: background-color 0.3s;
 }
 
-.icon:hover {
+.icon-product:hover {
     background-color: #f0f0f0;
 }
 
-.dropdown {
+.dropdown-product {
     position: relative;
     display: inline-block;
 }
 
-.dropdown-menu {
+.dropdown-menu-product {
     display: none;
     position: absolute;
     background-color: #f9f9f9;
@@ -164,46 +167,44 @@ body {
     right: 0;   /* Căn theo vị trí của icon */
 }
 
-
-
-.dropdown-menu a {
+.dropdown-menu-product a {
     text-decoration: none;
     display: block;
     padding: 0.5rem;
     color: #333;
 }
 
-.dropdown-menu a:hover {
+.dropdown-menu-product a:hover {
     background-color: #f1f1f1;
 }
 
-.show {
+.show-product {
     display: block;
 }
 
 /* CSS cho icon */
-.fa-ellipsis-v {
+.fa-ellipsis-v-product {
     font-size: 1.5rem;
     cursor: pointer;
 }
 
-.fa-ellipsis-v:hover {
+.fa-ellipsis-v-product:hover {
     color: blue;
 }
 
 /* Dạng danh sách (mặc định) */
-.table tbody.list-view tr {
+.table-product tbody.list-view-product tr {
     display: table-row;
 }
 
-.form-group {
+.form-group-product {
     display: flex;
     flex-wrap: wrap; /* Cho phép các thẻ xuống dòng khi không còn chỗ */
     justify-content: flex-start; /* Căn trái để các thẻ không bị dồn về giữa */
     margin: 20px;
 }
 
-.form-group .form-control {
+.form-group-product .form-control-product {
     width: calc(16.66% - 20px); /* 100% / 6 = 16.66%, trừ đi khoảng cách */
     height: 200px;
     border-radius: 10px;
@@ -213,9 +214,8 @@ body {
     margin-bottom: 50px; /* Thêm khoảng cách giữa các thẻ */
 }
 
-.form-group .form-control img {
+.form-group-product .form-control-product img {
     width: 100%;
     height: 100%;
     border-radius: 10px;
 }
-
