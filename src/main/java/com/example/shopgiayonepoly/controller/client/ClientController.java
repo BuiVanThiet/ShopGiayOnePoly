@@ -201,40 +201,14 @@ public class ClientController {
                 userProfile.setNumberPhone(customer.getNumberPhone());
                 userProfile.setGender(customer.getGender());
                 userProfile.setBirthDay(customer.getBirthDay());
+
+                String[] part = customer.getAddRess().split(",\\s*");
+                userProfile.setProvince(part[2]);
+                userProfile.setDistrict(part[1]);
+                userProfile.setWard(part[0]);
+                userProfile.setAddRessDetail(String.join(", ", java.util.Arrays.copyOfRange(part, 3, part.length)));
                 userProfile.setImageString(customer.getImage());
 
-                // Giả sử customer.getAddRess() trả về chuỗi địa chỉ đã gộp
-                String fullAddress = customer.getAddRess();
-
-                // Kiểm tra nếu địa chỉ không rỗng hoặc không null
-                if (fullAddress != null && !fullAddress.trim().isEmpty()) {
-                    String[] addressParts = fullAddress.split(",");
-
-                    // Gán các trường địa chỉ
-                    if (addressParts.length >= 4) {
-                        userProfile.setWard(addressParts[2].trim());         // Tham số thứ 3 là xã/phường/thị trấn
-                        userProfile.setDistrict(addressParts[1].trim());     // Tham số thứ 2 là quận/huyện
-                        userProfile.setProvince(addressParts[0].trim());      // Tham số thứ 1 là tỉnh/thành phố
-
-                        // Lấy tất cả các phần tử từ chỉ mục 3 trở đi và nối chúng lại
-                        StringBuilder detailAddressBuilder = new StringBuilder();
-                        for (int i = 3; i < addressParts.length; i++) {
-                            detailAddressBuilder.append(addressParts[i].trim());
-                            if (i < addressParts.length - 1) {
-                                detailAddressBuilder.append(", "); // Thêm dấu phẩy nếu không phải phần tử cuối
-                            }
-                        }
-                        userProfile.setAddRessDetail(detailAddressBuilder.toString());
-                    } else {
-
-                    }
-                } else {
-                    // Nếu địa chỉ không có giá trị, không làm gì cả
-                    userProfile.setAddRessDetail("");
-                    userProfile.setWard("");
-                    userProfile.setDistrict("");
-                    userProfile.setProvince("");
-                }
 
                 // Lấy thông tin ngày sinh
                 LocalDate birthDay = customer.getBirthDay(); // Giả sử birthDay là kiểu LocalDate
@@ -267,14 +241,8 @@ public class ClientController {
     }
 
     @PostMapping("/userProfile")
-    public String updateProfile(@Valid UserProfileUpdateRequest userProfile, BindingResult result,
+    public String updateProfile(UserProfileUpdateRequest userProfile,
                                 HttpSession session, @RequestParam("nameImage") MultipartFile nameImage, Model model) throws IOException {
-        if (result.hasErrors()) {
-            model.addAttribute("userProfile", userProfile);
-            model.addAttribute("errorMessage", "Vui lòng kiểm tra lại các trường thông tin.");
-            return "client/UserProfile"; // Trả về trang hiện tại với thông báo lỗi
-        }
-
         // Tiếp tục xử lý cập nhật như trước
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
         if (clientLoginResponse != null) {
@@ -282,7 +250,6 @@ public class ClientController {
             Customer customer = customerRegisterRepository.findByAcount(acount);
             if (customer != null) {
                 // Cập nhật thông tin người dùng
-                customer.setAcount(userProfile.getAccount());
                 customer.setFullName(userProfile.getFullName());
                 customer.setEmail(userProfile.getEmail());
                 customer.setNumberPhone(userProfile.getNumberPhone());
@@ -296,6 +263,8 @@ public class ClientController {
                     customerService.uploadFile(nameImage, customer.getId()); // Tải file lên
                 }
                 model.addAttribute("clientLogin",clientLoginResponse);
+                model.addAttribute("userProfile", userProfile);
+                model.addAttribute("clientLogin", clientLoginResponse);
                 customerRegisterRepository.save(customer);
                 model.addAttribute("successMessage", "Cập nhật thông tin thành công.");
             } else {

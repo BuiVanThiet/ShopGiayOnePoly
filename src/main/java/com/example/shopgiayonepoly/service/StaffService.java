@@ -42,5 +42,4 @@ public interface StaffService {
 
     String uploadFile(MultipartFile multipartFile,Integer idStaff) throws IOException;
 
-
 }

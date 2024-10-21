@@ -316,7 +316,7 @@
             <div class="menu-separator"></div>
         </h4>
         <li>
-            <a href="/profile/form"><span class="material-symbols-outlined"> account_circle </span>Profile</a>
+            <a href="/profile/staffProfile"><span class="material-symbols-outlined"> account_circle </span>Profile</a>
         </li>
         <li>
             <a th:if="${#authorization.expression('!isAuthenticated()')}" th:href="@{/login/login}"><span
