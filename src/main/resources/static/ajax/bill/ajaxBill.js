@@ -541,8 +541,8 @@ function updateProductTable(response) {
                                 data-name="${productDetail[2]}"
                                 data-id="${productDetail[0]}"
                                 data-quantity="${productDetail[11]}"
-                                data-price-sale="${productDetail[9]}"
-                                data-price-root="${productDetail[12]}"
+                                data-price-sale="${productDetail[12]}"
+                                data-price-root="${productDetail[9]}"
                                 onclick="resetHidenProductSale()">
                                <i class="bi bi-cart-plus"></i> Mua
                             </button>`;
