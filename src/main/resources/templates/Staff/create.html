@@ -84,6 +84,7 @@
                                 <label>Ngày sinh</label>
                                 <input type="date" class="form-control"
                                        placeholder="Enter staff birthDay" th:field="${staff.birthDay}">
+                                <div class="text-danger" th:errors="*{birthDay}"></div>
                             </div>
                         </div>
                         <div class="col-4">
@@ -91,6 +92,7 @@
                                 <label>Email</label>
                                 <input type="text" class="form-control"
                                        placeholder="Enter staff email" th:field="${staff.email}">
+                                <div class="text-danger" th:errors="*{email}"></div>
                             </div>
                         </div>
                     </div>

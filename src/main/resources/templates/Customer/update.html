@@ -17,7 +17,7 @@
 
 <main class="container">
     <div layout:fragment="content">
-        <form th:object="${customer}" th:action="${'/customer/edit'}" method="post">
+        <form th:object="${customer}" th:action="${'/customer/update'}" method="post">
             <input type="hidden" id="provinceHiden" th:value="${customer.province}">
             <input type="hidden" id="districtHiden" th:value="${customer.district}">
             <input type="hidden" id="wardHiden" th:value="${customer.ward}">
@@ -62,11 +62,11 @@
                                             <div class="form-group">
                                                 <label>Trạng thái</label>
                                                 <div class="radio-group">
-                                                    <input type="radio" value="0"
+                                                    <input type="radio" value="1"
                                                            th:field="${customer.status}"/>Hoat dong
                                                 </div>
                                                 <div class="radio-group">
-                                                    <input type="radio" value="1"
+                                                    <input type="radio" value="2"
                                                            th:field="${customer.status}"/>Ngung hoat dong
                                                 </div>
                                             </div>

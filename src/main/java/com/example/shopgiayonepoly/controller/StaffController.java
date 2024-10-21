@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 @Controller
@@ -86,6 +87,16 @@ public class StaffController {
             result.rejectValue("numberPhone", "error.staff", "Số điện thoại không được để trống!");
         } else if (!staffRequest.getNumberPhone().matches("^(0[3|5|7|8|9])+([0-9]{8})$")) {
             result.rejectValue("numberPhone", "error.staff", "Số điện thoại không hợp lệ!");
+        }
+        // Kiểm tra email
+        if (staffRequest.getEmail() == null || staffRequest.getEmail().isEmpty()) {
+            result.rejectValue("email", "error.customer", "Email không được để trống!");
+        }
+        // Kiểm tra ngày sinh
+        if (staffRequest.getBirthDay() == null) {
+            result.rejectValue("birthDay", "error.customer", "Ngày sinh không được để trống!");
+        } else if (staffRequest.getBirthDay().isAfter(LocalDate.now())) {
+            result.rejectValue("birthDay", "error.customer", "Ngày sinh không được lớn hơn ngày hiện tại!");
         }
         if (result.hasErrors()) {
             model.addAttribute("mes", "Thêm thất bại");
