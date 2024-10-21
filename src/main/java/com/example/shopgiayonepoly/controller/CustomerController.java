@@ -39,7 +39,7 @@ public class CustomerController {
 //    }
 
     @GetMapping("/list")
-    public String getListCustomrByPage(@RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber,Model model) {
+    public String getListCustomrByPage(@RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber, Model model) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<Customer> pageCustomer = customerService.getAllCustomerByPage(pageable);
         model.addAttribute("pageCustomer", pageCustomer);
@@ -58,13 +58,13 @@ public class CustomerController {
     }
 
     @GetMapping("/create")
-    public String createCustomer(ModelMap modelMap){
-        modelMap.addAttribute("customer",new CustomerRequest());
+    public String createCustomer(ModelMap modelMap) {
+        modelMap.addAttribute("customer", new CustomerRequest());
         return "Customer/create";
     }
 
     @PostMapping("/add")
-    public String addCustomer(Model model, @Valid @ModelAttribute(name="customer") CustomerRequest customerRequest, BindingResult result) throws IOException {
+    public String addCustomer(Model model, @Valid @ModelAttribute(name = "customer") CustomerRequest customerRequest, BindingResult result) throws IOException {
         // Kiểm tra tên
         if (customerRequest.getFullName() == null || customerRequest.getFullName().trim().isEmpty()) {
             result.rejectValue("fullName", "error.customer", "Tên không được để trống!"); // Thông báo nếu tên rỗng hoặc chỉ chứa khoảng trắng
@@ -79,18 +79,16 @@ public class CustomerController {
         } else if (!customerRequest.getNumberPhone().matches("^(0[3|5|7|8|9])+([0-9]{8})$")) {
             result.rejectValue("numberPhone", "error.customer", "Số điện thoại không hợp lệ!");
         }
-//        // Kiểm tra email (email có thể null, nhưng nếu nhập thì phải đúng định dạng)
-//        if (customerRequest.getEmail() != null && !customerRequest.getEmail().trim().isEmpty()) {
-//            if (!customerRequest.getEmail().matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z]{2,6}$")) {
-//                result.rejectValue("email", "error.customer", "Email không hợp lệ!");
-//            }
-//        }
-//        // Kiểm tra ngày sinh (ngày sinh có thể null, nhưng nếu có thì không được lớn hơn ngày hiện tại)
-//        if (customerRequest.getBirthDay() != null) {
-//            if (customerRequest.getBirthDay().isAfter(LocalDate.now())) {
-//                result.rejectValue("birthDay", "error.customer", "Ngày sinh không được lớn hơn ngày hiện tại!");
-//            }
-//        }
+        // Kiểm tra email
+        if (customerRequest.getEmail() == null || customerRequest.getEmail().isEmpty()) {
+            result.rejectValue("email", "error.customer", "Email không được để trống!");
+        }
+        // Kiểm tra ngày sinh
+        if (customerRequest.getBirthDay() == null) {
+            result.rejectValue("birthDay", "error.customer", "Ngày sinh không được để trống!");
+        } else if (customerRequest.getBirthDay().isAfter(LocalDate.now())) {
+            result.rejectValue("birthDay", "error.customer", "Ngày sinh không được lớn hơn ngày hiện tại!");
+        }
         if (result.hasErrors()) {
             model.addAttribute("mes", "Thêm thất bại");
             // Nếu có lỗi, trả về trang form để người dùng sửa lại
@@ -106,7 +104,7 @@ public class CustomerController {
         customer.setAcount("");
         customer.setPassword("");
         customer.setGender(customerRequest.getGender());
-        customer.setAddRess(customerRequest.getWard() + "," + customerRequest.getDistrict() + "," + customerRequest.getProvince() + "," +customerRequest.getAddRessDetail());
+        customer.setAddRess(customerRequest.getWard() + "," + customerRequest.getDistrict() + "," + customerRequest.getProvince() + "," + customerRequest.getAddRessDetail());
         customer.setStatus(customerRequest.getStatus());
         // Kiểm tra ảnh
         if (customerRequest.getNameImage() != null && !customerRequest.getNameImage().isEmpty()) {
@@ -125,7 +123,7 @@ public class CustomerController {
     }
 
     @ModelAttribute("staffInfo")
-    public Staff staff(HttpSession session){
+    public Staff staff(HttpSession session) {
         Staff staff = (Staff) session.getAttribute("staffLogin");
         return staff;
     }
