@@ -7,13 +7,15 @@ import com.example.shopgiayonepoly.dto.response.client.ProductDetailClientRespon
 import com.example.shopgiayonepoly.dto.response.client.ProductIClientResponse;
 import com.example.shopgiayonepoly.entites.Customer;
 import com.example.shopgiayonepoly.implement.CustomerRegisterImplement;
-import com.example.shopgiayonepoly.repositores.ClientRepository;
 import com.example.shopgiayonepoly.repositores.ClientSecurityResponsetory;
 import com.example.shopgiayonepoly.repositores.CustomerRegisterRepository;
 import com.example.shopgiayonepoly.service.ClientService;
 import com.example.shopgiayonepoly.service.CustomerService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -64,26 +66,21 @@ public class ClientController {
         return "client/address";
     }
 
-    @GetMapping("/product-detail/{id}")
-    public String testMenu(@PathVariable("id")Integer id,HttpSession session, Model model) {
+    @GetMapping("/product-detail/{productID}")
+    public ResponseEntity<List<ProductDetailClientRespone>> getFormProductDetail(@PathVariable("productID") Integer id,
+                                                                                 HttpSession session,
+                                                                                 Model model) {
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
         model.addAttribute("loginInfoClient", clientLoginResponse);
-        ProductDetailClientRespone productDetailClientRespone = clientService.findProductDetailByProductId(id);
-        model.addAttribute("productDetail",productDetailClientRespone);
-        return "client/product_detail";
+        List<ProductDetailClientRespone> productDetailClientRespone = clientService.findProductDetailByProductId(id);
+        if (productDetailClientRespone == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        return ResponseEntity.ok(productDetailClientRespone);
     }
 
 
-
-
-
-
-
-
-
-
-
-
+//    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @GetMapping("/cerateProduct")
     public String homeManage(Model model, HttpSession session) {
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");

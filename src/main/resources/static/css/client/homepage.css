@@ -1,32 +1,93 @@
-.product-container {
-    position: relative;
-    overflow: hidden;
-}
-
-.product-info {
-    position: absolute;
-    bottom: 40%;
-    left: 0;
-    width: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
-    color: white;
+.circle-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px; /* Kích thước nút */
+    height: 40px;
+    border-radius: 50%; /* Bo tròn để tạo nút tròn */
+    border: 2px solid black; /* Viền luôn được hiển thị */
     text-align: center;
+    font-size: 16px; /* Kích thước chữ */
+    line-height: 1.2;
     padding: 10px;
-    font-size: 1rem;
-    opacity: 0;
-    transition: opacity 0.3s ease;
+    transition: background-color 0.3s, border-color 0.3s; /* Hiệu ứng khi chuyển */
 }
 
-.product-container:hover .product-info {
-    opacity: 1;
+.nav-pills .nav-link {
+    margin: 0 10px; /* Khoảng cách giữa các nút */
+    border: 2px solid black; /* Viền cho tất cả các nút */
 }
 
-.product-image {
-    transition: transform 0.3s ease;
+.nav-pills .nav-link:hover {
+    border-color: #007bff; /* Viền khi hover (có thể thay đổi màu nếu muốn) */
 }
 
-.product-container:hover .product-image {
-    transform: scale(1.1);
+.nav-pills .nav-link.active {
+    background-color: black; /* Màu nền cho nút đang được chọn */
+    color: white; /* Màu chữ cho nút được chọn */
 }
 
+.sale-background-text {
+    position: absolute;
+    top: 50%; /* Đặt dòng chữ ở giữa container */
+    left: 50%;
+    transform: translate(-50%, -50%); /* Căn chỉnh giữa chính xác */
+    font-size: 150px; /* Kích thước chữ */
+    font-weight: bold;
+    color: rgba(0, 0, 0, 0.05); /* Màu chữ mờ đi */
+    z-index: 1; /* Đảm bảo chữ ở dưới nội dung chính */
+    white-space: nowrap; /* Đảm bảo chữ không bị xuống dòng */
+    pointer-events: none; /* Không làm ảnh hưởng đến khả năng click các phần tử khác */
+
+}
+
+.row {
+    position: relative; /* Để chữ "SALE" có thể xuất hiện bên trong hàng */
+    height: 200px; /* Đảm bảo hàng có chiều cao để chữ có chỗ */
+}
+
+.coupon-header, .btn-wrap {
+    position: relative; /* Đảm bảo các nội dung này luôn nằm trên chữ "SALE" */
+    z-index: 2; /* Nội dung chính sẽ nằm trên chữ "SALE" */
+}
+/*button product css*/
+.btn-product {
+    position: relative; /* Để có thể sử dụng các thuộc tính absolute cho phần tử con */
+    display: inline-block; /* Đảm bảo nút có kích thước phù hợp */
+}
+
+.btn-black {
+    background-color: black; /* Nền màu đen cho nút */
+    color: white; /* Màu chữ trắng */
+    padding: 10px 20px; /* Khoảng cách bên trong nút */
+    text-decoration: none; /* Bỏ gạch chân cho chữ */
+    border: 2px solid transparent; /* Viền trong suốt */
+    border-radius: 5px; /* Bo góc nút */
+    position: relative; /* Để sử dụng cho hiệu ứng hover */
+    overflow: hidden; /* Ẩn các phần tử tràn ra ngoài */
+    transition: color 0.3s ease; /* Hiệu ứng chuyển đổi màu sắc */
+}
+
+.btn-black::after {
+    content: ''; /* Tạo phần tử pseudo để tạo hiệu ứng hover */
+    position: absolute; /* Đặt vị trí tuyệt đối */
+    top: 50%; /* Căn giữa theo chiều dọc */
+    left: 50%; /* Căn giữa theo chiều ngang */
+    width: 200%; /* Kích thước lớn hơn để tạo hiệu ứng bao phủ */
+    height: 200%; /* Kích thước lớn hơn để tạo hiệu ứng bao phủ */
+    background: red; /* Màu nền khi hover */
+    transition: opacity 0.3s ease; /* Hiệu ứng chuyển đổi cho opacity */
+    transform: translate(-50%, -50%) rotate(45deg); /* Nghiêng 45 độ */
+    z-index: 0; /* Đặt dưới nội dung chính */
+    opacity: 0; /* Bắt đầu ẩn */
+}
+
+.btn-black:hover::after {
+    opacity: 1; /* Hiện hiệu ứng khi hover */
+}
+
+.btn-black:hover {
+    color: black; /* Đổi màu chữ khi hover */
+    z-index: 1; /* Đảm bảo chữ nằm trên hiệu ứng nền */
+}
 

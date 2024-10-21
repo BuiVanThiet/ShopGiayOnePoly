@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface ClientService {
    public List<ProductIClientResponse> getAllProduct();
-   public ProductDetailClientRespone findProductDetailByProductId(@Param("productId") Integer productId);
+   public List<ProductDetailClientRespone> findProductDetailByProductId(@Param("productId") Integer productId);
 }
