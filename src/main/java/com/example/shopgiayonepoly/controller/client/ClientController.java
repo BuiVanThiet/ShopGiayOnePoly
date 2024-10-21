@@ -13,10 +13,12 @@ import com.example.shopgiayonepoly.repositores.CustomerRegisterRepository;
 import com.example.shopgiayonepoly.service.ClientService;
 import com.example.shopgiayonepoly.service.CustomerService;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -43,9 +45,15 @@ public class ClientController {
     @GetMapping("/home")
     public String getFormHomeClient(HttpSession session, Model model) {
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
-        model.addAttribute("loginInfoClient", clientLoginResponse);
-        session.removeAttribute("clientInfo");
+            model.addAttribute("clientLogin", clientLoginResponse);
+            session.removeAttribute("clientInfo");
         return "client/homepage";
+    }
+    @GetMapping("/base")
+    public String getFormBaseClient(HttpSession session, Model model){
+        ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
+            model.addAttribute("clientLogin", clientLoginResponse);
+        return "client/base";
     }
 
     @GetMapping("/products")
@@ -187,45 +195,20 @@ public class ClientController {
             if (customer != null) {
                 // Cập nhật thông tin vào UserProfileUpdateRequest
                 UserProfileUpdateRequest userProfile = new UserProfileUpdateRequest();
+                userProfile.setAccount(customer.getAcount());
                 userProfile.setFullName(customer.getFullName());
                 userProfile.setEmail(customer.getEmail());
                 userProfile.setNumberPhone(customer.getNumberPhone());
                 userProfile.setGender(customer.getGender());
                 userProfile.setBirthDay(customer.getBirthDay());
+
+                String[] part = customer.getAddRess().split(",\\s*");
+                userProfile.setProvince(part[2]);
+                userProfile.setDistrict(part[1]);
+                userProfile.setWard(part[0]);
+                userProfile.setAddRessDetail(String.join(", ", java.util.Arrays.copyOfRange(part, 3, part.length)));
                 userProfile.setImageString(customer.getImage());
 
-                // Giả sử customer.getAddRess() trả về chuỗi địa chỉ đã gộp
-                String fullAddress = customer.getAddRess();
-
-                // Kiểm tra nếu địa chỉ không rỗng hoặc không null
-                if (fullAddress != null && !fullAddress.trim().isEmpty()) {
-                    String[] addressParts = fullAddress.split(",");
-
-                    // Gán các trường địa chỉ
-                    if (addressParts.length >= 4) {
-                        userProfile.setWard(addressParts[2].trim());         // Tham số thứ 3 là xã/phường/thị trấn
-                        userProfile.setDistrict(addressParts[1].trim());     // Tham số thứ 2 là quận/huyện
-                        userProfile.setProvince(addressParts[0].trim());      // Tham số thứ 1 là tỉnh/thành phố
-
-                        // Lấy tất cả các phần tử từ chỉ mục 3 trở đi và nối chúng lại
-                        StringBuilder detailAddressBuilder = new StringBuilder();
-                        for (int i = 3; i < addressParts.length; i++) {
-                            detailAddressBuilder.append(addressParts[i].trim());
-                            if (i < addressParts.length - 1) {
-                                detailAddressBuilder.append(", "); // Thêm dấu phẩy nếu không phải phần tử cuối
-                            }
-                        }
-                        userProfile.setAddRessDetail(detailAddressBuilder.toString());
-                    } else {
-
-                    }
-                } else {
-                    // Nếu địa chỉ không có giá trị, không làm gì cả
-                    userProfile.setAddRessDetail("");
-                    userProfile.setWard("");
-                    userProfile.setDistrict("");
-                    userProfile.setProvince("");
-                }
 
                 // Lấy thông tin ngày sinh
                 LocalDate birthDay = customer.getBirthDay(); // Giả sử birthDay là kiểu LocalDate
@@ -258,9 +241,9 @@ public class ClientController {
     }
 
     @PostMapping("/userProfile")
-    public String updateProfile(UserProfileUpdateRequest userProfile, HttpSession session,
-                                @RequestParam("nameImage") MultipartFile nameImage, Model model) throws IOException {
-        // Lấy thông tin đăng nhập từ session
+    public String updateProfile(UserProfileUpdateRequest userProfile,
+                                HttpSession session, @RequestParam("nameImage") MultipartFile nameImage, Model model) throws IOException {
+        // Tiếp tục xử lý cập nhật như trước
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
         if (clientLoginResponse != null) {
             String acount = clientLoginResponse.getAcount();
@@ -276,16 +259,13 @@ public class ClientController {
 
                 // Kiểm tra nếu người dùng có nhập ảnh không
                 if (!nameImage.isEmpty()) {
-                    // Nếu có ảnh, cập nhật tên ảnh và tải ảnh lên
                     customer.setImage(nameImage.getOriginalFilename()); // Lưu tên file
                     customerService.uploadFile(nameImage, customer.getId()); // Tải file lên
                 }
-
-                // Lưu cập nhật vào cơ sở dữ liệu
-                customerRegisterRepository.save(customer);
+                model.addAttribute("clientLogin",clientLoginResponse);
                 model.addAttribute("userProfile", userProfile);
                 model.addAttribute("clientLogin", clientLoginResponse);
-                model.addAttribute("loginInfoClient", clientLoginResponse);
+                customerRegisterRepository.save(customer);
                 model.addAttribute("successMessage", "Cập nhật thông tin thành công.");
             } else {
                 model.addAttribute("errorMessage", "Không tìm thấy thông tin tài khoản.");
@@ -294,6 +274,7 @@ public class ClientController {
             return "redirect:/onepoly/login";
         }
 
-        return "client/UserProfile"; // Hoặc chuyển hướng đến trang khác
+        return "client/UserProfile";
     }
+
 }

@@ -50,6 +50,15 @@ document.getElementById('updateProfileForm').addEventListener('submit', function
         })
         .catch(error => console.error('Error:', error));
 });
+
+document.getElementById('file-upload').onchange = function (event) {
+    const [file] = event.target.files; // Lấy tệp đầu tiên từ danh sách tệp đã chọn
+    if (file) {
+        const avatarPreview = document.getElementById('avatar-preview');
+        avatarPreview.src = URL.createObjectURL(file); // Tạo URL tạm thời và gán cho src của img
+    }
+};
+
 //hiển thị ảnh trên web
 // document.getElementById('file-upload').addEventListener('change', function(event) {
 //     const file = event.target.files[0];
@@ -62,13 +71,7 @@ document.getElementById('updateProfileForm').addEventListener('submit', function
 //         reader.readAsDataURL(file);
 //     }
 // });
-document.getElementById('file-upload').onchange = function (event) {
-    const [file] = event.target.files; // Lấy tệp đầu tiên từ danh sách tệp đã chọn
-    if (file) {
-        const avatarPreview = document.getElementById('avatar-preview');
-        avatarPreview.src = URL.createObjectURL(file); // Tạo URL tạm thời và gán cho src của img
-    }
-};
+
 //
 // // // Hàm để kiểm tra năm nhuận
 // // function isLeapYear(year) {

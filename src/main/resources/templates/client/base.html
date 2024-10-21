@@ -64,14 +64,14 @@
                 <li class="nav-item" onmouseover="showDropdown()" onmouseout="hideDropdown()">
                     <a class="nav-link" href="#" style="color: black;">
                         <i class="bi bi-person-circle ts-5 fs-4"></i>
-                        <span th:if="${loginInfoClient != null}" style="font-size: 0.8rem; font-weight: 500;">
-                            <span th:text="${loginInfoClient.acount}"></span>
+                        <span th:if="${clientLogin != null}" style="font-size: 0.8rem; font-weight: 500;">
+                            <span th:text="${clientLogin.acount}"></span>
                         </span>
                     </a>
                     <div id="authDropdown" class="dropdown-content">
-                        <button onclick="login()" class="dropdown-button" th:if="${loginInfoClient == null}">Đăng nhập</button>
-                        <button onclick="logout()" class="dropdown-button" th:if="${loginInfoClient != null}">Đăng xuất</button>
-                        <button onclick="profile()" class="dropdown-button" th:if="${loginInfoClient != null}">Tài khoản của tôi</button>
+                        <button onclick="login()" class="dropdown-button" th:if="${clientLogin == null}">Đăng nhập</button>
+                        <button onclick="logout()" class="dropdown-button" th:if="${clientLogin != null}">Đăng xuất</button>
+                        <button onclick="profile()" class="dropdown-button" th:if="${clientLogin != null}">Tài khoản của tôi</button>
                         <button onclick="register()" class="dropdown-button" >Đăng ký</button>
                     </div>
                 </li>
@@ -169,8 +169,6 @@
         crossorigin="anonymous"></script>
 <script src="/js/client/product_detail.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script th:src="@{/js/customer/addRessApiCustomer.js}" type="text/javascript"></script>
-<script th:src="@{/js/client/UserProfile.js}" type="text/javascript"></script>
 </body>
 </html>
 
