@@ -5,6 +5,7 @@ import com.example.shopgiayonepoly.dto.response.client.ProductIClientResponse;
 import com.example.shopgiayonepoly.repositores.ClientRepository;
 import com.example.shopgiayonepoly.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,7 +20,8 @@ public class ClientServiceImplement implements ClientService {
     }
 
     @Override
-    public ProductDetailClientRespone findProductDetailByProductId(Integer productId) {
-        return clientRepository.findProductDetailByProductId(productId);
+    public List<ProductDetailClientRespone> findProductDetailByProductId(Integer productId) {
+        return  clientRepository.findProductDetailByProductId(productId);
     }
+
 }
