@@ -3,6 +3,7 @@ package com.example.shopgiayonepoly.implement;
 import com.cloudinary.Cloudinary;
 import com.example.shopgiayonepoly.dto.request.StaffRequest;
 import com.example.shopgiayonepoly.dto.response.StaffResponse;
+import com.example.shopgiayonepoly.entites.SaleProduct;
 import com.example.shopgiayonepoly.entites.Staff;
 import com.example.shopgiayonepoly.repositores.StaffRepository;
 import com.example.shopgiayonepoly.service.StaffService;
@@ -66,13 +67,6 @@ public class StaffImplement implements StaffService {
     }
 
     @Override
-    public void updateStaff(StaffRequest staffRequest) {
-        Staff staff = new Staff();
-        BeanUtils.copyProperties(staffRequest, staff);
-        staffRepository.save(staff);
-    }
-
-    @Override
     public Staff getOne(Integer integer) {
         return staffRepository.findById(integer).get();
     }
@@ -109,6 +103,11 @@ public class StaffImplement implements StaffService {
                         Map.of("public_id", nameImage)) // Đặt tên file khi upload
                 .get("url")
                 .toString();
+    }
+
+    @Override
+    public Staff getStaffByID(Integer id) {
+        return staffRepository.findById(id).orElse(new Staff());
     }
 
 

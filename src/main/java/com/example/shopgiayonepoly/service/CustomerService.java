@@ -41,4 +41,5 @@ public interface CustomerService {
 
     String uploadFile(MultipartFile multipartFile, Integer idCustomer) throws IOException;
 
+    public Customer getCustomerByID(Integer id);
 }
