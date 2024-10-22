@@ -47,14 +47,15 @@ public class ClientController {
     @GetMapping("/home")
     public String getFormHomeClient(HttpSession session, Model model) {
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
-            model.addAttribute("clientLogin", clientLoginResponse);
-            session.removeAttribute("clientInfo");
+        model.addAttribute("clientLogin", clientLoginResponse);
+        session.removeAttribute("clientInfo");
         return "client/homepage";
     }
+
     @GetMapping("/base")
-    public String getFormBaseClient(HttpSession session, Model model){
+    public String getFormBaseClient(HttpSession session, Model model) {
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
-            model.addAttribute("clientLogin", clientLoginResponse);
+        model.addAttribute("clientLogin", clientLoginResponse);
         return "client/base";
     }
 
@@ -67,11 +68,24 @@ public class ClientController {
         return "client/product";
     }
 
+    //    Test api address
     @GetMapping("/address")
     public String getPriceByGHN(HttpSession session, Model model) {
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
         model.addAttribute("loginInfoClient", clientLoginResponse);
         return "client/address";
+    }
+
+    //Hiển thị 10 sản phẩm giá cao nhất
+    @GetMapping("/products-highest")
+    public ResponseEntity<List<ProductIClientResponse>> getTop12ProductWithPriceHighest(HttpSession session,
+                                                                                        Model model) {
+
+        ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
+        model.addAttribute("loginInfoClient", clientLoginResponse);
+        List<ProductIClientResponse> productsHighest = clientService.GetTop12ProductWithPriceHighest();
+        return ResponseEntity.ok(productsHighest);
+
     }
 
     @GetMapping("/product-detail/{productID}")
@@ -88,7 +102,7 @@ public class ClientController {
     }
 
 
-//    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @GetMapping("/cerateProduct")
     public String homeManage(Model model, HttpSession session) {
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
@@ -259,7 +273,7 @@ public class ClientController {
                     customer.setImage(nameImage.getOriginalFilename()); // Lưu tên file
                     customerService.uploadFile(nameImage, customer.getId()); // Tải file lên
                 }
-                model.addAttribute("clientLogin",clientLoginResponse);
+                model.addAttribute("clientLogin", clientLoginResponse);
                 model.addAttribute("userProfile", userProfile);
                 model.addAttribute("clientLogin", clientLoginResponse);
                 customerRegisterRepository.save(customer);

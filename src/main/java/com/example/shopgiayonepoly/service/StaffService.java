@@ -2,6 +2,7 @@ package com.example.shopgiayonepoly.service;
 
 import com.example.shopgiayonepoly.dto.request.StaffRequest;
 import com.example.shopgiayonepoly.dto.response.StaffResponse;
+import com.example.shopgiayonepoly.entites.SaleProduct;
 import com.example.shopgiayonepoly.entites.Staff;
 import com.example.shopgiayonepoly.entites.Voucher;
 import org.springframework.data.domain.Page;
@@ -28,7 +29,7 @@ public interface StaffService {
 
     long count();
 
-    public void updateStaff(StaffRequest staffRequest);
+    public Staff getStaffByID(Integer id);
 
     public Staff getOne(Integer integer);
 

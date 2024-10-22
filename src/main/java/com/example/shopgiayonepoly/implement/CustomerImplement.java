@@ -101,4 +101,9 @@ public class CustomerImplement implements CustomerService {
                 .get("url")
                 .toString();
     }
+
+    @Override
+    public Customer getCustomerByID(Integer id) {
+        return customerRepository.findById(id).orElse(new Customer());
+    }
 }

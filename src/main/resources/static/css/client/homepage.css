@@ -1,9 +1,54 @@
+.scrolling-text {
+    white-space: nowrap;
+    overflow: hidden;
+    display: inline-block;
+    animation: scroll-left 20s linear infinite;
+}
+
+@keyframes scroll-left {
+    0% {
+        transform: translateX(95%);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+.fst-italic {
+    font-style: italic;
+}
+
+/*btn*/
+.icon-circle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 15px;  /* Kích thước hình tròn */
+    height: 15px;
+    border-radius: 50%;  /* Tạo hình tròn */
+    background-color: #eaeaea;  /* Màu nền của biểu tượng */
+    color: black;  /* Màu biểu tượng */
+    font-size: 16px;  /* Kích thước biểu tượng */
+    border: 2px solid #e7dede;  /* Viền cho biểu tượng */
+    transition: background-color 0.3s, color 0.3s; /* Hiệu ứng chuyển màu */
+}
+
+.icon-circle:hover {
+    background-color: #007bff;  /* Đổi màu nền khi hover */
+    color: white;  /* Đổi màu biểu tượng khi hover */
+}
+
+.nav-item {
+    margin: 0 10px;  /* Khoảng cách giữa các biểu tượng */
+}
+
+
 .circle-btn {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 40px; /* Kích thước nút */
-    height: 40px;
+    width: 20px; /* Kích thước nút */
+    height: 20px;
     border-radius: 50%; /* Bo tròn để tạo nút tròn */
     border: 2px solid black; /* Viền luôn được hiển thị */
     text-align: center;
@@ -41,15 +86,11 @@
 
 }
 
-.row {
-    position: relative; /* Để chữ "SALE" có thể xuất hiện bên trong hàng */
-    height: 200px; /* Đảm bảo hàng có chiều cao để chữ có chỗ */
-}
-
 .coupon-header, .btn-wrap {
     position: relative; /* Đảm bảo các nội dung này luôn nằm trên chữ "SALE" */
     z-index: 2; /* Nội dung chính sẽ nằm trên chữ "SALE" */
 }
+
 /*button product css*/
 .btn-product {
     position: relative; /* Để có thể sử dụng các thuộc tính absolute cho phần tử con */
@@ -90,4 +131,6 @@
     color: black; /* Đổi màu chữ khi hover */
     z-index: 1; /* Đảm bảo chữ nằm trên hiệu ứng nền */
 }
+
+
 
