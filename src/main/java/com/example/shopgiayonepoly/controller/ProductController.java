@@ -58,14 +58,14 @@ public class ProductController {
 
     @GetMapping("/product/productv2")
     public String productv2(Model model) {
-        model.addAttribute("productList", productService.getProductNotStatus0());
+//        model.addAttribute("productList", productService.getProductNotStatus0());
         model.addAttribute("productAdd", new Product());
         model.addAttribute("materialList", materialService.findAll());
         model.addAttribute("manufacturerList", manufacturerService.findAll());
         model.addAttribute("originList", originService.findAll());
         model.addAttribute("soleList", soleService.findAll());
         model.addAttribute("categoryList", categoryService.findAll());
-        model.addAttribute("imageList", productService.findAllProductsWithOneImage());
+        model.addAttribute("productList", productService.findAllProductsWithOneImage());
         return "/Product/productv2";
     }
 

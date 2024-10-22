@@ -1,88 +1,103 @@
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
-
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{Home/home_manege}">
 <head>
     <title>
         Danh sách sản phẩm
     </title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
-    <link href="./product.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=add_circle" />
+    <!--    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>-->
+    <!--    <link href="./product.css" rel="stylesheet"/>-->
+    <!--    <link rel="stylesheet"-->
+    <!--          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=add_circle"/>-->
 </head>
 
 <body>
-<div class="container-product">
-    <div class="header-product">
-        Danh sách sản phẩm
-    </div>
+<div layout:fragment="content">
+    <article class="container-xxl mt-5">
+        <div class="container-product">
+            <div class="header-product">
+                Danh sách sản phẩm
+            </div>
 
-    <div class="search-bar-product">
-        <select class="search-select-product">
-            <option value="category1">Category 1</option>
-            <option value="category2">Category 2</option>
-            <option value="category3">Category 3</option>
-        </select>
-        <input type="text" class="search-input-product" placeholder="Tìm kiếm">
-        <div class="icon-group-product">
-            <i class="fa fa-list icon-product" aria-hidden="true" onclick="showListView()"></i>
-            <i class="fa fa-th icon-product" aria-hidden="true" onclick="showGridView()"></i>
-        </div>
-    </div>
-    <div class="form-group-product" style="display: none">
-        <div th:each="image : ${imageList}" class="form-control-product">
-            <img th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728725582/' + ${image.image}" alt="Ảnh 1">
-            <p th:text="${image.nameProduct}"></p>
-        </div>
-    </div>
-    <table class="table-product">
-        <thead>
-        <tr>
-            <th style="width: 30px;">
-                <input type="checkbox" id="select-all-product" onclick="toggleSelectAll(this)">
-            </th>
-            <th style="width: 50px">Mã</th>
-            <th style="width: 150px">Tên</th>
-            <th style="width: 150px">Chất liệu</th>
-            <th style="width: 150px">Hãng</th>
-            <th style="width: 150px">Xuất xứ</th>
-            <th style="width: 150px">Loại đế</th>
-            <th style="width: 300px">Mô tả</th>
-            <th style="width: 100px">Trạng thái</th>
-            <th style="width: 30px"></th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="product, iterStat : ${productList}" th:id="'row-product-' + ${iterStat.index}" th:data-id="${product.id}">
-            <td>
-                <input type="checkbox" class="select-row-product" />
-            </td>
-            <td th:text="${product.codeProduct}"></td>
-            <td>
-                <img alt="Lỗi hiển thị" />
-                <div th:text="${product.nameProduct}"></div>
-            </td>
-            <td th:text="${product.material.nameMaterial}"></td>
-            <td th:text="${product.manufacturer.nameManufacturer}"></td>
-            <td th:text="${product.origin.nameOrigin}"></td>
-            <td th:text="${product.sole.nameSole}"></td>
-            <td th:text="${product.describe}"></td>
-            <td th:text="${product.status == 1 ? 'Đang bán' : (product.status == 2 ? 'Ngừng bán' : '')}"></td>
-            <td>
-                <div class="dropdown-product">
-                    <i class="fa fa-ellipsis-v" aria-hidden="true" onclick="toggleDropdown(event, this)"></i>
-                    <!-- Menu hiện ra khi bấm vào icon -->
-                    <div class="dropdown-menu-product">
-                        <a href="#">Tùy chọn 1</a>
-                        <a href="#">Tùy chọn 2</a>
-                        <a href="#">Tùy chọn 3</a>
-                    </div>
+            <div class="search-bar-product">
+                <select class="search-select-product">
+                    <option value="category1">Category 1</option>
+                    <option value="category2">Category 2</option>
+                    <option value="category3">Category 3</option>
+                </select>
+                <input type="text" class="search-input-product" placeholder="Tìm kiếm">
+                <div class="icon-group-product">
+                    <i class="fa fa-list icon-product fa-list-product" aria-hidden="true"
+                       onclick="showListViewProduct()"></i>
+                    <i class="fa fa-th icon-product fa-th-product" aria-hidden="true"
+                       onclick="showGridViewProduct()"></i>
                 </div>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    <a class="add-button-product" style="text-decoration: none;" href="/staff/product/create"><i class="fas fa-plus"></i> Thêm sản phẩm</a>
+            </div>
+            <div class="form-group-product" style="display: none">
+                <div th:each="image : ${productList}" class="form-control-product">
+                    <img th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728725582/' + ${image.image}"
+                         alt="Ảnh sản phẩm">
+                    <p th:text="${image.nameProduct}"></p>
+                </div>
+            </div>
+            <table class="table-product">
+                <thead>
+                <tr>
+                    <th style="width: 30px;">
+                        <input type="checkbox" id="select-all-product" onclick="toggleSelectAllProduct(this)">
+                    </th>
+                    <th style="width: 70px">Mã</th>
+                    <th style="width: 150px">Tên</th>
+                    <th style="width: 150px">Chất liệu</th>
+                    <th style="width: 150px">Hãng</th>
+                    <th style="width: 130px">Xuất xứ</th>
+                    <th style="width: 150px">Loại đế</th>
+                    <th style="width: 200px">Mô tả</th>
+                    <th style="width: 100px">Trạng thái</th>
+                    <th style="width: 30px"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="product, iterStat : ${productList}" th:id="'row-product-' + ${iterStat.index}"
+                    th:data-id="${product.id}">
+                    <td>
+                        <input type="checkbox" class="select-row-product"/>
+                    </td>
+                    <td th:text="${product.codeProduct}"></td>
+                    <td>
+                        <img alt="Lỗi hiển thị"
+                             th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728725582/' + ${product.image}"/>
+                        <div th:text="${product.nameProduct}"></div>
+                    </td>
+                    <td th:text="${product.material.nameMaterial}"></td>
+                    <td th:text="${product.manufacturer.nameManufacturer}"></td>
+                    <td th:text="${product.origin.nameOrigin}"></td>
+                    <td th:text="${product.sole.nameSole}"></td>
+                    <td th:text="${product.describe}"></td>
+                    <td th:text="${product.status == 1 ? 'Đang bán' : (product.status == 2 ? 'Ngừng bán' : '')}"></td>
+                    <td>
+                        <div class="dropdown-product">
+                            <i class="fa fa-ellipsis-v fa-ellipsis-v-product" aria-hidden="true"
+                               onclick="toggleDropdownProduct(event, this)"></i>
+                            <!-- Menu hiện ra khi bấm vào icon -->
+                            <div class="dropdown-menu-product">
+                                <a href="#">Tùy chọn 1</a>
+                                <a href="#">Tùy chọn 2</a>
+                                <a href="#">Tùy chọn 3</a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <a class="add-button-product" style="text-decoration: none;" href="/staff/product/create"><i
+                    class="fas fa-plus"></i> Thêm sản phẩm</a>
+        </div>
+
+    </article>
+
 </div>
-<script src="./product.js"></script>
 </body>
 
 </html>

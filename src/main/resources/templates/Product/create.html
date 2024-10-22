@@ -1,150 +1,158 @@
-<html>
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{Home/home_manege}">
 
 <head>
   <title>Tạo sản phẩm mới</title>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="./create.css">
-  <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=delete_forever" />
+<!--  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>-->
+<!--  <link rel="stylesheet" href="./create.css">-->
+<!--  <link rel="stylesheet"-->
+<!--        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=delete_forever"/>-->
 </head>
 
-<body class="body-product">
-<div class="container-product">
-  <div class="content-product">
-    <div class="main-content-product">
-      <h1 class="h1-product">Tạo sản phẩm mới</h1>
-      <div class="form-group-product">
-        <div class="form-control-product">
-          <label>Mã sản phẩm</label>
-          <input type="text" />
-        </div>
-        <div class="form-control-product">
-          <label>Tên sản phẩm</label>
-          <input type="text" />
-        </div>
-        <div class="form-control-product">
-          <label for="myInput-product">Chọn danh mục:</label>
-          <input list="dataList-product" id="myInput-product" name="myInput-product">
-          <datalist id="dataList-product">
-            <option value="Option 1">
-            <option value="Option 2">
-            <option value="Option 3">
-          </datalist>
-        </div>
-      </div>
-      <div class="form-group-product">
-        <div class="form-control-product">
-          <label for="myInput-product">Chọn chất liệu:</label>
-          <input list="dataList-product" id="myInput-product" name="myInput-product">
-          <datalist id="dataList-product">
-            <option value="Option 1">
-            <option value="Option 2">
-            <option value="Option 3">
-          </datalist>
-        </div>
-        <div class="form-control-product">
-          <label for="myInput-product">Chọn hãng:</label>
-          <input list="dataList-product" id="myInput-product" name="myInput-product">
-          <datalist id="dataList-product">
-            <option value="Option 1">
-            <option value="Option 2">
-            <option value="Option 3">
-          </datalist>
-        </div>
-        <div class="form-control-product">
-          <label for="myInput-product">Chọn xuất sứ:</label>
-          <input list="dataList-product" id="myInput-product" name="myInput-product">
-          <datalist id="dataList-product">
-            <option value="Option 1">
-            <option value="Option 2">
-            <option value="Option 3">
-          </datalist>
-        </div>
-      </div>
-      <div class="form-group-product">
-        <div class="form-control-product">
-          <label for="myInput-product">Chọn loại đế:</label>
-          <input list="dataList-product" id="myInput-product" name="myInput-product">
-          <datalist id="dataList-product">
-            <option style="background-color: white; color: black;" value="Option 1">
-            <option value="Option 2">
-            <option value="Option 3">
-          </datalist>
-        </div>
-        <div class="form-control-product">
-          <label for="">Màu sắc</label>
-          <div class="combobox-container-product">
-            <div class="combobox-toggle-product" id="comboboxToggle-product">Chọn màu sắc</div>
-            <div class="combobox-options-product" id="comboboxOptions-product">
-              <label>
-                <span>Đỏ </span>
-                <input style="width: 50px;" type="checkbox" value="Đỏ" name="color">
-              </label>
+<body class="body-createProduct">
+<div layout:fragment="content">
+  <article class="container-xxl mt-5">
+    <div class="container-createProduct">
+      <div class="content-createProduct">
+        <div class="main-content-createProduct">
+          <h1 class="h1-createProduct">Tạo sản phẩm mới</h1>
+          <div class="form-group-createProduct">
+            <div class="form-control-createProduct">
+              <label>Mã sản phẩm</label>
+              <input type="text"/>
+            </div>
+            <div class="form-control-createProduct">
+              <label>Tên sản phẩm</label>
+              <input type="text" />
+            </div>
+            <div class="form-control-createProduct">
+              <label for="myInput-createProduct">Chọn danh mục:</label>
+              <input list="dataList-createProduct" id="myInput-createProduct" name="myInput-createProduct">
+              <datalist id="dataList-createProduct">
+                <option value="Option 1">
+                <option value="Option 2">
+                <option value="Option 3">
+              </datalist>
             </div>
           </div>
-        </div>
-        <div class="form-control-product">
-          <label for="">Màu sắc</label>
-          <div class="combobox-container-product">
-            <div class="combobox-toggle-product" id="comboboxToggle-product">Chọn màu sắc</div>
-            <div class="combobox-options-product" id="comboboxOptions-product">
-              <label>
-                <span>Đỏ</span>
-                <input style="width: 50px;" type="checkbox" value="Đỏ" name="color">
-              </label>
+          <div class="form-group-createProduct">
+            <div class="form-control-createProduct">
+              <label for="myInput-createProduct">Chọn chất liệu:</label>
+              <input list="dataList-createProduct" id="myInput-createProduct" name="myInput-createProduct">
+              <datalist id="dataList-createProduct">
+                <option value="Option 1">
+                <option value="Option 2">
+                <option value="Option 3">
+              </datalist>
+            </div>
+            <div class="form-control-createProduct">
+              <label for="myInput-createProduct">Chọn hãng:</label>
+              <input list="dataList-createProduct" id="myInput-createProduct" name="myInput-createProduct">
+              <datalist id="dataList-createProduct">
+                <option value="Option 1">
+                <option value="Option 2">
+                <option value="Option 3">
+              </datalist>
+            </div>
+            <div class="form-control-createProduct">
+              <label for="myInput-createProduct">Chọn xuất sứ:</label>
+              <input list="dataList-createProduct" id="myInput-createProduct" name="myInput-createProduct">
+              <datalist id="dataList-createProduct">
+                <option value="Option 1">
+                <option value="Option 2">
+                <option value="Option 3">
+              </datalist>
             </div>
           </div>
-        </div>
-      </div>
-      <div class="form-group-product">
-        <div class="form-control-product description-product">
-          <label>Mô tả</label>
-          <textarea rows="4"></textarea>
-        </div>
-      </div>
-      <div class="upload-section-product" onclick="document.getElementById('file-input-product').click()">
-        <div class="upload-container-product">
-          <div class="upload-item-product" >
-            <i class="fas fa-cloud-upload-alt"></i>
-            <p>Nhấp để thêm ảnh</p>
-            <input type="file" id="file-input-product" accept="image/*" multiple style="display: none;" onchange="previewImages(event)">
+          <div class="form-group-createProduct">
+            <div class="form-control-createProduct">
+              <label for="myInput-createProduct">Chọn loại đế:</label>
+              <input list="dataList-createProduct" id="myInput-createProduct" name="myInput-createProduct">
+              <datalist id="dataList-createProduct">
+                <option style="background-color: white; color: black;" value="Option 1">
+                <option value="Option 2">
+                <option value="Option 3">
+              </datalist>
+            </div>
+            <div class="form-control-createProduct">
+              <label for="">Màu sắc</label>
+              <div class="combobox-container-createProduct">
+                <div class="combobox-toggle-createProduct" id="comboboxToggle-createProduct">Chọn màu sắc</div>
+                <div class="combobox-options-createProduct" id="comboboxOptions-createProduct">
+                  <label>
+                    <span>Đỏ </span>
+                    <input style="width: 50px;" type="checkbox" value="Đỏ" name="color">
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="form-control-createProduct">
+              <label for="">Màu sắc</label>
+              <div class="combobox-container-createProduct">
+                <div class="combobox-toggle-createProduct" id="comboboxToggle-createProduct">Chọn màu sắc</div>
+                <div class="combobox-options-createProduct" id="comboboxOptions-createProduct">
+                  <label>
+                    <span>Đỏ</span>
+                    <input style="width: 50px;" type="checkbox" value="Đỏ" name="color">
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group-createProduct">
+            <div class="form-control-createProduct description-createProduct">
+              <label>Mô tả</label>
+              <textarea rows="4"></textarea>
+            </div>
+          </div>
+          <div class="upload-section-createProduct" onclick="document.getElementById('file-input-createProduct').click()">
+            <div class="upload-container-createProduct">
+              <div class="upload-item-createProduct" >
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p>Nhấp để thêm ảnh</p>
+                <input type="file" id="file-input-createProduct" accept="image/*" multiple style="display: none;" onchange="previewImages(event)">
+              </div>
+            </div>
+            <div id="image-preview-createProduct" class="image-preview-createProduct"></div>
           </div>
         </div>
-        <div id="image-preview-product" class="image-preview-product"></div>
-      </div>
-    </div>
-    <div class="main-content-product" id="table-productDetail-product">
-      <table class="table-product">
-        <thead>
-        <tr>
-          <th style="width: 10px;">
-            <input type="checkbox" id="select-all-product" onclick="toggleSelectAll(this)">
-          </th>
-          <th style="width: 300px">Tên sản phẩm</th>
-          <th style="width: 100px">Màu sắc</th>
-          <th style="width: 150px">Kích cỡ</th>
-          <th style="width: 200px">Giá bán</th>
-          <th style="width: 200px">Giá nhập</th>
-          <th style="width: 150px">Số lượng</th>
-          <th style="width: 150px">Trọng lượng</th>
-          <th style="width: 150px">Chiều cao</th>
-          <th style="width: 150px">Chiều dài</th>
-          <th style="width: 150px">Chiều rộng</th>
-          <th style="width: 10px"><span class="material-symbols-outlined">delete_forever</span></th>
-        </tr>
-        </thead>
-        <tbody>
+        <div class="main-content-createProduct" id="table-productDetail-createProduct">
+          <table class="table-createProduct">
+            <thead>
+            <tr>
+              <th style="width: 10px;">
+                <input type="checkbox" id="select-all-createProduct" onclick="toggleSelectAll(this)">
+              </th>
+              <th style="width: 300px">Tên sản phẩm</th>
+              <th style="width: 100px">Màu sắc</th>
+              <th style="width: 150px">Kích cỡ</th>
+              <th style="width: 200px">Giá bán</th>
+              <th style="width: 200px">Giá nhập</th>
+              <th style="width: 150px">Số lượng</th>
+              <th style="width: 150px">Trọng lượng</th>
+              <th style="width: 150px">Chiều cao</th>
+              <th style="width: 150px">Chiều dài</th>
+              <th style="width: 150px">Chiều rộng</th>
+              <th style="width: 10px"><span class="material-symbols-outlined">delete_forever</span></th>
+            </tr>
+            </thead>
+            <tbody>
 
-        </tbody>
-      </table>
+            </tbody>
+          </table>
+        </div>
+        <div class="buttons-createProduct">
+          <button class="create-btn-createProduct">Tạo sản phẩm mới</button>
+          <button class="cancel-btn-createProduct">Hủy bỏ</button>
+        </div>
+      </div>
     </div>
-    <div class="buttons-product">
-      <button class="create-btn-product">Tạo sản phẩm mới</button>
-      <button class="cancel-btn-product">Hủy bỏ</button>
-    </div>
-  </div>
+  </article>
+
+  <script th:src="@{/js/product/create.js}" type="text/javascript"></script>
 </div>
-<script src="./create.js"></script>
 </body>
 
 </html>

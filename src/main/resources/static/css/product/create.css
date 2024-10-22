@@ -1,25 +1,25 @@
-.body-product {
+.body-createProduct {
     font-family: 'Arial', sans-serif;
     background-color: #f5f5f5;
     margin: 0;
     padding: 0;
 }
 
-.h1-product {
+.h1-createProduct {
     display: flex;
     justify-content: center;
 }
 
-.container-product {
+.container-createProduct {
     display: flex;
 }
 
-.content-product {
+.content-createProduct {
     flex-grow: 1;
     padding: 20px;
 }
 
-.main-content-product {
+.main-content-createProduct {
     background-color: #fff;
     padding: 20px;
     border-radius: 10px;
@@ -27,27 +27,27 @@
     margin-bottom: 20px;
 }
 
-.main-content-product h1 {
+.main-content-createProduct h1 {
     font-size: 24px;
     margin-bottom: 20px;
 }
 
-.form-group-product {
+.form-group-createProduct {
     display: flex;
     justify-content: space-between;
     margin-bottom: 20px;
 }
 
-.form-group-product .form-control-product {
+.form-group-createProduct .form-control-createProduct {
     width: 31.5%;
 }
 
-.form-group-product .description-product {
+.form-group-createProduct .description-createProduct {
     width: 100%;
 }
 
-.form-group-product .form-control-product input,
-.form-group-product .form-control-product select {
+.form-group-createProduct .form-control-createProduct input,
+.form-group-createProduct .form-control-createProduct select {
     width: 100%;
     padding: 10px;
     border: 2px solid #e0e0e0;
@@ -55,7 +55,7 @@
     outline: none;
 }
 
-.form-group-product .form-control-product textarea {
+.form-group-createProduct .form-control-createProduct textarea {
     width: 100%;
     padding: 10px;
     border: 2px solid #e0e0e0;
@@ -64,7 +64,7 @@
     resize: none;
 }
 
-.upload-section-product {
+.upload-section-createProduct {
     text-align: center;
     padding: 10px;
     border: 2px dashed #e0e0e0;
@@ -72,39 +72,39 @@
     margin-bottom: 20px;
 }
 
-.upload-section-product i {
+.upload-section-createProduct i {
     font-size: 40px;
     color: #6c63ff;
 }
 
-.upload-container-product {
+.upload-container-createProduct {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
 }
 
-.upload-item-product {
-    flex: 1 0 30%; /* Điều chỉnh kích thước của mỗi thẻ con */
-    max-width: 150px; /* Giới hạn chiều rộng tối đa */
+.upload-item-createProduct {
+    flex: 1 0 30%;
+    max-width: 150px;
     text-align: center;
     margin: 10px;
     cursor: pointer;
 }
 
-.image-preview-product img {
-    width: 190px; /* Kích thước hiển thị ảnh */
-    height: 190px; /* Giữ tỷ lệ */
+.image-preview-createProduct img {
+    width: 190px;
+    height: 190px;
     margin: 10px;
     border-radius: 5px;
     object-fit: contain;
 }
 
-.buttons-product {
+.buttons-createProduct {
     display: flex;
     justify-content: flex-end;
 }
 
-.buttons-product button {
+.buttons-createProduct button {
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
@@ -112,17 +112,17 @@
     cursor: pointer;
 }
 
-.buttons-product .create-btn-product {
+.buttons-createProduct .create-btn-createProduct {
     background-color: #6c63ff;
     color: #fff;
 }
 
-.buttons-product .cancel-btn-product {
+.buttons-createProduct .cancel-btn-createProduct {
     background-color: #e0e0e0;
     color: #000;
 }
 
-.cancel-btn-product:hover {
+.cancel-btn-createProduct:hover {
     background-color: red;
 }
 
@@ -130,14 +130,14 @@
     color: red;
 }
 
-.combobox-container-product {
+.combobox-container-createProduct {
     position: relative;
     display: flex;
     justify-content: space-between;
     margin-bottom: 20px;
 }
 
-.combobox-toggle-product {
+.combobox-toggle-createProduct {
     width: 100%;
     padding: 10px;
     border: 2px solid #e0e0e0;
@@ -145,7 +145,7 @@
     outline: none;
 }
 
-.combobox-options-product {
+.combobox-options-createProduct {
     display: none;
     position: absolute;
     top: 100%;
@@ -160,13 +160,11 @@
     overflow-x: hidden;
 }
 
-.combobox-options-product label {
+.combobox-options-createProduct label {
     display: flex;
     justify-content: space-between;
-    align-items: center; /* Căn giữa các phần tử theo trục dọc */
+    align-items: center;
     width: 100%;
     padding: 8px;
     cursor: pointer;
 }
-
-
