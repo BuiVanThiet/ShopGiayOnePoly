@@ -21,6 +21,7 @@
             <input type="hidden" id="provinceHiden" th:value="${customer.province}">
             <input type="hidden" id="districtHiden" th:value="${customer.district}">
             <input type="hidden" id="wardHiden" th:value="${customer.ward}">
+            <input type="hidden" th:field="*{id}">
             <article class="container-xxl bd-gutter mt-4 my-md-3 bd-layout">
                 <h2>Sửa khách hàng</h2>
                 <!-- <form action="/product/save" method="post" enctype="multipart/form-data"> -->
@@ -43,6 +44,7 @@
                                         <input type="text" class="form-control"
                                                placeholder="Enter customer name" required
                                                th:field="${customer.fullName}">
+                                        <div class="text-danger" th:errors="*{fullName}"></div>
                                     </div>
                                     <div class="row">
                                         <div class="col-6">
@@ -56,6 +58,7 @@
                                                         <input type="radio" value="2" th:field="${customer.gender}"/>Nu
                                                     </div>
                                                 </div>
+                                                <div class="text-danger" th:errors="*{gender}"></div>
                                             </div>
                                         </div>
                                         <div class="col-6">
@@ -69,6 +72,7 @@
                                                     <input type="radio" value="2"
                                                            th:field="${customer.status}"/>Ngung hoat dong
                                                 </div>
+                                                <div class="text-danger" th:errors="*{status}"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -87,6 +91,7 @@
                                 <input type="text" class="form-control"
                                        placeholder="Enter customer numberPhone" required
                                        th:field="${customer.numberPhone}">
+                                <div class="text-danger" th:errors="*{numberPhone}"></div>
                             </div>
                         </div>
                         <div class="col-4">
@@ -94,6 +99,7 @@
                                 <label>Ngày sinh</label>
                                 <input type="date" class="form-control"
                                        placeholder="Enter customer birthDay" required th:field="${customer.birthDay}">
+                                <div class="text-danger" th:errors="*{birthDay}"></div>
                             </div>
                         </div>
                         <div class="col-4">
@@ -101,6 +107,7 @@
                                 <label>Email</label>
                                 <input type="text" class="form-control"
                                        placeholder="Enter customer email" required th:field="${customer.email}">
+                                <div class="text-danger" th:errors="*{email}"></div>
                             </div>
                         </div>
                     </div>
@@ -115,18 +122,21 @@
                             <select class="form-select" id="province" name="province">
                                 <option value="">Chọn tỉnh/thành phố</option>
                             </select>
+                            <div class="text-danger" th:errors="*{province}"></div>
                         </div>
                         <div class="col-4">
                             <label class="form-label">Quận/Huyện</label>
                             <select class="form-select" id="district" name="district">
                                 <option value="">Chọn quận/huyện</option>
                             </select>
+                            <div class="text-danger" th:errors="*{district}"></div>
                         </div>
                         <div class="col-4">
                             <label class="form-label">Xã/Phường/Thị Trấn</label>
                             <select class="form-select" id="ward" name="ward">
                                 <option value="">Chọn xã/phường/thị trấn</option>
                             </select>
+                            <div class="text-danger" th:errors="*{ward}"></div>
                         </div>
                     </div>
                 </div>
@@ -140,6 +150,7 @@
                                 <textarea class="form-control"
                                           placeholder="Enter customer address" required
                                           th:field="${customer.addRessDetail}"></textarea>
+                                <div class="text-danger" th:errors="*{addRessDetail}"></div>
                             </div>
                         </div>
                     </div>
