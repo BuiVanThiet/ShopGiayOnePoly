@@ -39,7 +39,6 @@ function saveRow(index) { // hàm edit dữ liệu trên table
     });
 }
 
-
 function toggleStatus(element) { // hàm thay đổi trạng thái bằng button
     var index = element.getAttribute('data-index');  // Lấy index
     var status = element.getAttribute('data-status') === '1' ? 2 : 1;  // Lấy trạng thái mới

@@ -80,10 +80,20 @@ public class ClientController {
     @GetMapping("/products-highest")
     public ResponseEntity<List<ProductIClientResponse>> getTop12ProductWithPriceHighest(HttpSession session,
                                                                                         Model model) {
-
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
         model.addAttribute("loginInfoClient", clientLoginResponse);
         List<ProductIClientResponse> productsHighest = clientService.GetTop12ProductWithPriceHighest();
+        return ResponseEntity.ok(productsHighest);
+
+    }
+
+    //Hiển thị 10 sản phẩm giá thấp nhất
+    @GetMapping("/products-lowest")
+    public ResponseEntity<List<ProductIClientResponse>> getTop12ProductWithPriceLowest(HttpSession session,
+                                                                                       Model model) {
+        ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
+        model.addAttribute("loginInfoClient", clientLoginResponse);
+        List<ProductIClientResponse> productsHighest = clientService.GetTop12ProductWithPriceLowest();
         return ResponseEntity.ok(productsHighest);
 
     }
