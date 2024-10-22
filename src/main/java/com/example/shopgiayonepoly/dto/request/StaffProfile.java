@@ -16,7 +16,7 @@ import java.time.LocalDate;
 public class StaffProfile extends BaseDTO {
     private MultipartFile nameImage;
 
-    private String imageString;
+    private String imageStaffString;
 
     private String account;
 

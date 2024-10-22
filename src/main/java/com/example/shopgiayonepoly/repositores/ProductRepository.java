@@ -32,10 +32,12 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     @Query("SELECT categoryProduct FROM CategoryProduct categoryProduct WHERE categoryProduct.product.id = :productId")
     List<CategoryProduct> findAllCategoryByProductId(@Param("productId") Integer productId);
 
-    @Query("SELECT new com.example.shopgiayonepoly.dto.response.ProductRespose(p.id, p.nameProduct, MIN(i.nameImage)) " +
+    @Query("SELECT new com.example.shopgiayonepoly.dto.response.ProductRespose(p.id,p.codeProduct, p.nameProduct,p.material," +
+            "p.manufacturer,p.origin,p.sole, p.describe, p.createDate,p.updateDate,p.status, MIN(i.nameImage)) " +
             "FROM Product p " +
-            "LEFT JOIN p.images i " +
-            "GROUP BY p.id, p.nameProduct")
+            "LEFT JOIN p.images i LEFT JOIN p.material LEFT JOIN p.origin LEFT JOIN p.manufacturer LEFT JOIN p.sole  WHERE p.status <> 0" +
+            "GROUP BY p.id,p.codeProduct, p.nameProduct,p.material,"+
+                     "p.manufacturer,p.origin,p.sole, p.describe, p.createDate,p.updateDate,p.status")
     List<ProductRespose> findAllProductsWithOneImage();
 
 
