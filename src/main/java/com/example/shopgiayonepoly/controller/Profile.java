@@ -1,6 +1,7 @@
 package com.example.shopgiayonepoly.controller;
 
 import com.example.shopgiayonepoly.dto.request.StaffProfile;
+import com.example.shopgiayonepoly.dto.response.loginReponse;
 import com.example.shopgiayonepoly.entites.Staff;
 import com.example.shopgiayonepoly.repositores.StaffRepository;
 import com.example.shopgiayonepoly.service.StaffService;
@@ -40,7 +41,7 @@ public class Profile {
             staffProfile.setDistrict(partStaff[1]);
             staffProfile.setWard(partStaff[0]);
             staffProfile.setAddRessDetail(String.join(", ", java.util.Arrays.copyOfRange(partStaff, 3, partStaff.length)));
-            staffProfile.setImageString(staff.getImage());
+            staffProfile.setImageStaffString(staff.getImage());
 
             LocalDate birthDayStaff = staff.getBirthDay();
             if (birthDayStaff != null) {
@@ -64,7 +65,7 @@ public class Profile {
 
     @PostMapping("/updateStaffProfile")
     public String updateStaffProfile(StaffProfile staffProfile, HttpSession session,
-                                     @RequestParam("nameImage") MultipartFile nameImage, Model model) throws IOException {
+                                     @RequestParam("nameImageStaff") MultipartFile nameImage, Model model) throws IOException {
         Staff staff = (Staff) session.getAttribute("staffLogin");
 
         if (staff != null) {
@@ -74,8 +75,7 @@ public class Profile {
             staff.setNumberPhone(staffProfile.getNumberPhone());
             staff.setGender(staffProfile.getGender());
             staff.setBirthDay(staffProfile.getBirthDay());
-            String fullAddress = String.join(", ", staffProfile.getWard(), staffProfile.getDistrict(), staffProfile.getProvince(), staffProfile.getAddRessDetail());
-            staff.setAddress(fullAddress);
+            staff.setAddress(staffProfile.getWard() + "," + staffProfile.getDistrict() + "," + staffProfile.getProvince() + "," + staffProfile.getAddRessDetail());
 
             if (!nameImage.isEmpty()) {
                 staff.setImage(nameImage.getOriginalFilename()); // Lưu tên file

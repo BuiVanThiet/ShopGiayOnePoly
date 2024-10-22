@@ -254,7 +254,6 @@ public class ClientController {
     @PostMapping("/userProfile")
     public String updateProfile(UserProfileUpdateRequest userProfile,
                                 HttpSession session, @RequestParam("nameImage") MultipartFile nameImage, Model model) throws IOException {
-        // Tiếp tục xử lý cập nhật như trước
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
         if (clientLoginResponse != null) {
             String acount = clientLoginResponse.getAcount();
