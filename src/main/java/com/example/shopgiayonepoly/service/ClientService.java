@@ -9,4 +9,6 @@ import java.util.List;
 public interface ClientService {
    public List<ProductIClientResponse> getAllProduct();
    public List<ProductDetailClientRespone> findProductDetailByProductId(@Param("productId") Integer productId);
+   public List<ProductIClientResponse> GetTop12ProductWithPriceHighest();
+   public List<ProductIClientResponse> GetTop12ProductWithPriceLowest();
 }

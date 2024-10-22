@@ -9,19 +9,33 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ClientServiceImplement implements ClientService {
     @Autowired
     private ClientRepository clientRepository;
+
     @Override
     public List<ProductIClientResponse> getAllProduct() {
-       return clientRepository.getAllProduct();
+        return clientRepository.getAllProduct();
     }
 
     @Override
     public List<ProductDetailClientRespone> findProductDetailByProductId(Integer productId) {
-        return  clientRepository.findProductDetailByProductId(productId);
+        return clientRepository.findProductDetailByProductId(productId);
+    }
+
+    @Override
+    public List<ProductIClientResponse> GetTop12ProductWithPriceHighest() {
+        List<ProductIClientResponse> allProducts = clientRepository.GetTop12ProductWithPriceHighest();
+        return allProducts.stream().limit(12).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProductIClientResponse> GetTop12ProductWithPriceLowest() {
+        List<ProductIClientResponse> allProducts = clientRepository.GetTop12ProductWithPriceLowest();
+        return allProducts.stream().limit(12).collect(Collectors.toList());
     }
 
 }

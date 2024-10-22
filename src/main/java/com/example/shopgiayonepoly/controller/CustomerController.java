@@ -29,7 +29,7 @@ public class CustomerController {
     @Autowired
     CustomerService customerService;
 
-    private final int pageSize = 4;
+    private final int pageSize = 10;
 
 //    @GetMapping("/list")
 //    public String getFormList(Model model) {
@@ -49,8 +49,9 @@ public class CustomerController {
 
     @GetMapping("/search")
     public String searchCustomerByKey(@RequestParam(name = "key") String key, @RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber, Model model) {
+        String trimmedKey = key != null ? key.trim() : null;
         Pageable pageableSearch = PageRequest.of(pageNumber, pageSize);
-        Page<Customer> pageCustomer = customerService.searchCustomerByKeywordPage(key, pageableSearch);
+        Page<Customer> pageCustomer = customerService.searchCustomerByKeywordPage(trimmedKey, pageableSearch);
 //        model.addAttribute("customerList", searchCustomer);
         model.addAttribute("pageCustomer", pageCustomer);
         model.addAttribute("customer", new CustomerRequest());
@@ -148,6 +149,63 @@ public class CustomerController {
         System.out.println(customerRequest.toString());
         model.addAttribute("customer", customerRequest);
         return "Customer/update";
+    }
+
+    @PostMapping("/update")
+    public String updateCustomer(Model model, @Valid @ModelAttribute(name = "customer") CustomerRequest customerRequest, BindingResult result) throws IOException {
+        // Kiểm tra tên
+        if (customerRequest.getFullName() == null || customerRequest.getFullName().trim().isEmpty()) {
+            result.rejectValue("fullName", "error.customer", "Tên không được để trống!"); // Thông báo nếu tên rỗng hoặc chỉ chứa khoảng trắng
+        } else if (customerRequest.getFullName().length() < 2 || customerRequest.getFullName().length() > 50) {
+            result.rejectValue("fullName", "error.customer", "Tên phải có độ dài từ 2 đến 50 ký tự!");
+        } else if (!customerRequest.getFullName().matches("^[\\p{L} ]+$")) {
+            result.rejectValue("fullName", "error.customer", "Tên chỉ được chứa ký tự chữ cái và dấu cách!");
+        }
+        // Kiểm tra số điện thoại
+        if (customerRequest.getNumberPhone() == null || customerRequest.getNumberPhone().isEmpty()) {
+            result.rejectValue("numberPhone", "error.customer", "Số điện thoại không được để trống!");
+        } else if (!customerRequest.getNumberPhone().matches("^(0[3|5|7|8|9])+([0-9]{8})$")) {
+            result.rejectValue("numberPhone", "error.customer", "Số điện thoại không hợp lệ!");
+        }
+        // Kiểm tra email
+        if (customerRequest.getEmail() == null || customerRequest.getEmail().isEmpty()) {
+            result.rejectValue("email", "error.customer", "Email không được để trống!");
+        }
+        // Kiểm tra ngày sinh
+        if (customerRequest.getBirthDay() == null) {
+            result.rejectValue("birthDay", "error.customer", "Ngày sinh không được để trống!");
+        } else if (customerRequest.getBirthDay().isAfter(LocalDate.now())) {
+            result.rejectValue("birthDay", "error.customer", "Ngày sinh không được lớn hơn ngày hiện tại!");
+        }
+        if (result.hasErrors()) {
+            model.addAttribute("mes", "Thêm thất bại");
+            // Nếu có lỗi, trả về trang form để người dùng sửa lại
+            return "Customer/update"; // Bạn có thể trả về tên view của form nhập liệu
+        }
+        Customer customer = customerService.getCustomerByID(customerRequest.getId());
+        customerRequest.setCreateDate(customer.getCreateDate());
+        customer.setFullName(customerRequest.getFullName());
+        customer.setNumberPhone(customerRequest.getNumberPhone());
+        customer.setBirthDay(customerRequest.getBirthDay());
+//        customer.setImage(customerRequest.getNameImage());
+        customer.setEmail(customerRequest.getEmail());
+        customer.setAcount("");
+        customer.setPassword("");
+        customer.setGender(customerRequest.getGender());
+        customer.setAddRess(customerRequest.getWard() + "," + customerRequest.getDistrict() + "," + customerRequest.getProvince() + "," + customerRequest.getAddRessDetail());
+        customer.setStatus(customerRequest.getStatus());
+        // Kiểm tra và cập nhật ảnh
+        if (customerRequest.getNameImage() != null && !customerRequest.getNameImage().isEmpty()) {
+            // Thực hiện upload ảnh và trả về tên file
+            String uploadedFileName = customerService.uploadFile(customerRequest.getNameImage(), customer.getId());
+            customer.setImage(uploadedFileName); // Cập nhật tên ảnh vừa upload
+        } else {
+            // Nếu không có ảnh mới, giữ nguyên ảnh cũ
+            customer.setImage(customer.getImage());
+        }
+        Customer customerSave = this.customerService.save(customer);
+        this.customerService.save(customerSave);
+        return "redirect:/customer/list";
     }
 
     @GetMapping("/detail/{id}")

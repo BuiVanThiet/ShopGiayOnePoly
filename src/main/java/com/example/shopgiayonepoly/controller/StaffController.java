@@ -2,6 +2,7 @@ package com.example.shopgiayonepoly.controller;
 
 import com.example.shopgiayonepoly.dto.request.StaffRequest;
 import com.example.shopgiayonepoly.dto.response.StaffResponse;
+import com.example.shopgiayonepoly.entites.SaleProduct;
 import com.example.shopgiayonepoly.entites.Staff;
 import com.example.shopgiayonepoly.service.StaffService;
 import jakarta.servlet.http.HttpSession;
@@ -47,8 +48,9 @@ public class StaffController {
 
     @GetMapping("/search")
     public String searchStaffByKey(@RequestParam(name = "key") String key, @RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber, Model model) {
+        String trimmedKey = key != null ? key.trim() : null;
         Pageable pageableSearch = PageRequest.of(pageNumber, pageSize);
-        Page<Staff> pageStaff = staffService.searchStaffByKeywordPage(key, pageableSearch);
+        Page<Staff> pageStaff = staffService.searchStaffByKeywordPage(trimmedKey, pageableSearch);
 //        model.addAttribute("staffList", searchStaff);
         model.addAttribute("pageStaff", pageStaff);
         model.addAttribute("staff", new StaffRequest());
@@ -63,9 +65,6 @@ public class StaffController {
 
     @PostMapping("/add")
     public String addStaff(Model model, @Valid @ModelAttribute(name = "staff") StaffRequest staffRequest, BindingResult result) throws IOException {
-//        if (staffRequest.getNumberPhone() == null || !staffRequest.getNumberPhone().matches("^(0[3|5|7|8|9])+([0-9]{8})$")) {
-//            result.rejectValue("numberPhone", "error.numberPhone", "Số điện thoại không hợp lệ!");
-//        }
 // Kiểm tra tên
         if (staffRequest.getFullName() == null || staffRequest.getFullName().trim().isEmpty()) {
             result.rejectValue("fullName", "error.staff", "Tên không được để trống!"); // Thông báo nếu tên rỗng hoặc chỉ chứa khoảng trắng
@@ -162,6 +161,73 @@ public class StaffController {
         System.out.println(staffRequest.toString());
         model.addAttribute("staff", staffRequest);
         return "Staff/update";
+    }
+
+    @PostMapping("/update")
+    public String updateStaff(Model model, @Valid @ModelAttribute(name = "staff") StaffRequest staffRequest, BindingResult result) throws IOException {
+// Kiểm tra tên
+        if (staffRequest.getFullName() == null || staffRequest.getFullName().trim().isEmpty()) {
+            result.rejectValue("fullName", "error.staff", "Tên không được để trống!"); // Thông báo nếu tên rỗng hoặc chỉ chứa khoảng trắng
+        } else if (staffRequest.getFullName().length() < 2 || staffRequest.getFullName().length() > 50) {
+            result.rejectValue("fullName", "error.staff", "Tên phải có độ dài từ 2 đến 50 ký tự!");
+        } else if (!staffRequest.getFullName().matches("^[\\p{L} ]+$")) {
+            result.rejectValue("fullName", "error.staff", "Tên chỉ được chứa ký tự chữ cái và dấu cách!");
+        }
+// Kiểm tra mã
+        if (staffRequest.getCodeStaff() == null || staffRequest.getCodeStaff().trim().isEmpty()) {
+            result.rejectValue("codeStaff", "error.staff", "Mã không được để trống!"); // Thông báo nếu mã rỗng hoặc chỉ chứa khoảng trắng
+        } else if (staffRequest.getCodeStaff().length() < 3 || staffRequest.getCodeStaff().length() > 10) {
+            result.rejectValue("codeStaff", "error.staff", "Mã phải có độ dài từ 3 đến 10 ký tự!");
+        } else if (!staffRequest.getCodeStaff().matches("^[A-Z][0-9]+$")) {
+            result.rejectValue("codeStaff", "error.staff", "Mã phải bắt đầu bằng chữ hoa và theo sau là số!");
+        }
+// Kiểm tra số điện thoại
+        if (staffRequest.getNumberPhone() == null || staffRequest.getNumberPhone().isEmpty()) {
+            result.rejectValue("numberPhone", "error.staff", "Số điện thoại không được để trống!");
+        } else if (!staffRequest.getNumberPhone().matches("^(0[3|5|7|8|9])+([0-9]{8})$")) {
+            result.rejectValue("numberPhone", "error.staff", "Số điện thoại không hợp lệ!");
+        }
+        // Kiểm tra email
+        if (staffRequest.getEmail() == null || staffRequest.getEmail().isEmpty()) {
+            result.rejectValue("email", "error.customer", "Email không được để trống!");
+        }
+        // Kiểm tra ngày sinh
+        if (staffRequest.getBirthDay() == null) {
+            result.rejectValue("birthDay", "error.customer", "Ngày sinh không được để trống!");
+        } else if (staffRequest.getBirthDay().isAfter(LocalDate.now())) {
+            result.rejectValue("birthDay", "error.customer", "Ngày sinh không được lớn hơn ngày hiện tại!");
+        }
+        if (result.hasErrors()) {
+            model.addAttribute("mes", "Thêm thất bại");
+            // Nếu có lỗi, trả về trang form để người dùng sửa lại
+            return "Staff/update"; // Bạn có thể trả về tên view của form nhập liệu
+        }
+        Staff staff = staffService.getStaffByID(staffRequest.getId());
+        staffRequest.setCreateDate(staff.getCreateDate());
+        staff.setCodeStaff(staffRequest.getCodeStaff());
+        staff.setFullName(staffRequest.getFullName());
+        staff.setAddress(staffRequest.getWard() + "," + staffRequest.getDistrict() + "," + staffRequest.getProvince() + "," + staffRequest.getAddRessDetail());
+        staff.setNumberPhone(staffRequest.getNumberPhone());
+        staff.setBirthDay(staffRequest.getBirthDay());
+        staff.setEmail(staffRequest.getEmail());
+        staff.setAcount("");
+        staff.setPassword("");
+        staff.setGender(staffRequest.getGender());
+        staff.setRole(staffRequest.getRole());
+        staff.setStatus(staffRequest.getStatus());
+        // Kiểm tra ảnh
+        if (staffRequest.getNameImage() != null && !staffRequest.getNameImage().isEmpty()) {
+            staff.setImage("fileName");
+            staffService.uploadFile(staffRequest.getNameImage(), staff.getId());
+        } else {
+            // Đặt ảnh mặc định nếu không có ảnh được tải lên
+            staff.setImage("Khong co anh");
+        }
+        Staff staffSave = this.staffService.save(staff);
+        staffSave.setAcount(staffSave.getCodeStaff() + staffSave.getId());
+        staff.setPassword("@shoponepoly");
+        this.staffService.save(staffSave);
+        return "redirect:/staff/list";
     }
 
     @GetMapping("/detail/{id}")
