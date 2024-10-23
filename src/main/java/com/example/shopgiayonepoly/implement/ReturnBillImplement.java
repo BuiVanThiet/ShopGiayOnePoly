@@ -1,6 +1,6 @@
 package com.example.shopgiayonepoly.implement;
 
-import com.example.shopgiayonepoly.entites.ReturnBill;
+import com.example.shopgiayonepoly.entites.ReturnBillExchangeBill;
 import com.example.shopgiayonepoly.repositores.ReturnBillReponsetory;
 import com.example.shopgiayonepoly.service.ReturnBillService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,17 +18,17 @@ public class ReturnBillImplement implements ReturnBillService {
     ReturnBillReponsetory returnBillReponsetory;
 
     @Override
-    public List<ReturnBill> findAll() {
+    public List<ReturnBillExchangeBill> findAll() {
         return returnBillReponsetory.findAll();
     }
 
     @Override
-    public <S extends ReturnBill> S save(S entity) {
+    public <S extends ReturnBillExchangeBill> S save(S entity) {
         return returnBillReponsetory.save(entity);
     }
 
     @Override
-    public Optional<ReturnBill> findById(Integer integer) {
+    public Optional<ReturnBillExchangeBill> findById(Integer integer) {
         return returnBillReponsetory.findById(integer);
     }
 
@@ -43,21 +43,21 @@ public class ReturnBillImplement implements ReturnBillService {
     }
 
     @Override
-    public void delete(ReturnBill entity) {
+    public void delete(ReturnBillExchangeBill entity) {
         returnBillReponsetory.delete(entity);
     }
 
     @Override
-    public List<ReturnBill> findAll(Sort sort) {
+    public List<ReturnBillExchangeBill> findAll(Sort sort) {
         return returnBillReponsetory.findAll(sort);
     }
 
     @Override
-    public Page<ReturnBill> findAll(Pageable pageable) {
+    public Page<ReturnBillExchangeBill> findAll(Pageable pageable) {
         return returnBillReponsetory.findAll(pageable);
     }
     @Override
-    public ReturnBill getReturnBillByIdBill(Integer idBill) {
+    public ReturnBillExchangeBill getReturnBillByIdBill(Integer idBill) {
         return this.returnBillReponsetory.getReturnBillByIdBill(idBill);
     }
 }

@@ -225,7 +225,7 @@ public interface BillDetailRepository extends JpaRepository<BillDetail,Integer> 
     @Query("select new com.example.shopgiayonepoly.dto.response.bill.CategoryProductResponse(cate.nameCategory) from Category cate right join cate.products product where product.id = :idCheck")
     List<CategoryProductResponse> getCategoryByBill(@Param("idCheck") Integer id);
 
-    @Query("select sum(bdt.totalAmount) from BillDetail bdt where bdt.bill.id = :idCheck")
+    @Query("select COALESCE(sum(bdt.totalAmount), 0.00) from BillDetail bdt where bdt.bill.id = :idCheck")
     BigDecimal getTotalAmountByIdBill(@Param("idCheck") Integer id);
 
     @Query("select cate from Category cate where cate.status <> 0")

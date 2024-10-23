@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{Home/home_manege}"><head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
+            <div class="error-container text-center">
+                <div>
+                    <img class="img-fluid" src="/img/image-error.png" alt="Error Image" style="width: 200px;">
+                </div>
+                <div class="mt-3" role="alert">
+                    <strong>Error:</strong> Có gì đó sai sai???
+                </div>
+                <br>
+                <a href="/home_manage" class="btn btn-outline-danger">Trở về trang chủ</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

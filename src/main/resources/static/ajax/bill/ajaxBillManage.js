@@ -61,19 +61,19 @@ function loadBillStatusByBillId() {
                         break;
                     case 201:
                         iconClass = 'bi-arrow-counterclockwise';
-                        stepTitle = 'Chờ xác nhận trả hàng';
+                        stepTitle = 'Chờ xác nhận đổi-trả hàng';
                         $('#btnDeleteBill').hide();
                         $('#btnConfirmBill').hide();
                         break;
                     case 202:
                         iconClass = 'bi-file-earmark-check';
-                        stepTitle = 'Đồng ý trả hàng';
+                        stepTitle = 'Đồng ý đổi-trả hàng';
                         $('#btnDeleteBill').hide();
                         $('#btnConfirmBill').hide();
                         break;
                     case 203:
                         iconClass = 'bi-file-earmark-excel';
-                        stepTitle = 'Không đồng ý trả hàng';
+                        stepTitle = 'Không đồng ý đổi-trả hàng';
                         $('#btnDeleteBill').hide();
                         $('#btnConfirmBill').hide();
                         break;
@@ -199,7 +199,7 @@ function loadInformationBillByIdBill() {
                 $('#startCamera').hide();
                 $('#table-product-buy th:last-child').hide();
             }else if (response.status == 7){
-                statusBill = 'Chờ xác nhận trả hàng';
+                statusBill = 'Chờ xác nhận đổi-trả hàng';
                 $('#cancel-button').hide();
                 $('#confirm-button').hide();
                 $('#form-action-voucher').hide();
@@ -212,7 +212,7 @@ function loadInformationBillByIdBill() {
 
                 loadInfomationReturnBillFromBillManage();
                 var buttons = '';
-                    buttons = `
+                buttons = `
                         <button class="btn btn-outline-danger me-2"
                             type="button" id="cancel-button-return-bill"
                             data-action="cancel-return-bill"
@@ -231,7 +231,7 @@ function loadInformationBillByIdBill() {
                 $('#block-confirm').html(buttons);
                 actionModal();
             }else if (response.status == 8){
-                statusBill = 'Đồng ý trả hàng';
+                statusBill = 'Đồng ý đổi-trả hàng';
                 $('#cancel-button').hide();
                 $('#confirm-button').hide();
                 $('#form-action-voucher').hide();
@@ -250,7 +250,7 @@ function loadInformationBillByIdBill() {
                 $('#block-confirm').html(buttons);
                 actionModal();
             }else if (response.status == 9){
-                statusBill = 'Không đồng ý trả hàng';
+                statusBill = 'Không đồng ý đổi-trả hàng';
                 $('#cancel-button').hide();
                 $('#confirm-button').hide();
                 $('#form-action-voucher').hide();
@@ -315,7 +315,7 @@ function loadInformationBillByIdBill() {
 
             $('#cashBillPay').val((response.totalPriceProduct+response.shipPrice-response.maximumReduction))
 
-            },
+        },
         error: function (xhr) {
             console.error('Loi ne' + xhr.responseText);
         },
@@ -414,13 +414,13 @@ function getBillStatus(response) {
             statusBill = 'Đã thanh toán';
             break;
         case 201:
-            statusBill = 'Chờ xác nhận trả hàng';
+            statusBill = 'Chờ xác nhận đổi-trả hàng';
             break;
         case 202:
-            statusBill = 'Đồng ý trả hàng';
+            statusBill = 'Đồng ý đổi-trả hàng';
             break;
         case 203:
-            statusBill = 'Không đồng ý trả hàng';
+            statusBill = 'Không đồng ý đổi-trả hàng';
             break;
         default:
             statusBill = 'Không xác định';
@@ -511,12 +511,12 @@ function actionModal() {
                 modalBody.textContent = 'Bạn có chắc muốn xác nhận đơn hàng này không?';
                 confirmButton.setAttribute('onclick', "confirmBill('agree')");
             }else if (action === 'confirm-return-bill') {
-                modalTitle.textContent = 'Xác nhận trả hàng';
-                modalBody.textContent = 'Bạn muốn xác nhận đơn trả hàng này sao?';
+                modalTitle.textContent = 'Xác nhận đổi-trả hàng';
+                modalBody.textContent = 'Bạn muốn xác nhận đơn đổi-trả hàng này sao?';
                 confirmButton.setAttribute('onclick', "confirmBill('agreeReturnBill')");
             }else if (action === 'cancel-return-bill') {
-                modalTitle.textContent = 'Xác nhận trả hàng';
-                modalBody.textContent = 'Bạn hủy đơn trả hàng này sao?';
+                modalTitle.textContent = 'Xác nhận đổi-trả hàng';
+                modalBody.textContent = 'Bạn hủy đơn đổi-trả hàng này sao?';
                 confirmButton.setAttribute('onclick', "confirmBill('cancelReturnBill')");
             }
         });
@@ -662,7 +662,7 @@ function loadInfomationHistoryByBillId() {
 function loadInfomationReturnBillFromBillManage() {
     $.ajax({
         type: "GET",
-        url: "/return-bill-api/infomation-return-bill-from-bill-manage",
+        url: "/return-exchange-bill-api/infomation-return-bill-from-bill-manage",
         success: function (response) {
             $('#code-bill').text(response.codeBill)
             $('#customer-buy-product').text(response.nameCustomer)
@@ -671,8 +671,26 @@ function loadInfomationReturnBillFromBillManage() {
             $('#total-return').text(response.totalReturn.toLocaleString('en-US') + ' VNĐ')
             $('#node-return').val(response.noteReturn);
             $('#node-return').attr('disabled', true);
+            $('#total-exchange').text(response.totalExchange.toLocaleString('en-US') + ' VNĐ')
+
+            var totalReturnCustomer = 0;
+            if((response.totalReturn-response.totalExchange) <= 0) {
+                totalReturnCustomer = 0;
+            }else {
+                totalReturnCustomer = response.totalReturn-response.totalExchange;
+            }
+            $('#total-return-customer').text(totalReturnCustomer.toLocaleString('en-US') + ' VNĐ')
+            var totalExchangeCustomer = 0;
+            if((response.totalExchange-response.totalReturn) <= 0) {
+                totalExchangeCustomer = 0;
+            }else {
+                totalExchangeCustomer = response.totalExchange-response.totalReturn;
+            }
+            $('#total-exchange-customer').text(totalExchangeCustomer.toLocaleString('en-US') + ' VNĐ')
             loadReturnBillFromBillManage(1);
             maxPageReturnBillFromBillManage();
+            loadExchangeBillFromBillManage(1);
+            maxPageExchangeBillFromBillManage();
         },
         error: function (xhr) {
             console.error('loi ' + xhr.responseText);
@@ -682,7 +700,7 @@ function loadInfomationReturnBillFromBillManage() {
 function loadReturnBillFromBillManage(page) {
     $.ajax({
         type: "GET",
-        url: "/return-bill-api/infomation-return-bill-detail-from-bill-manage/"+page,
+        url: "/return-exchange-bill-api/infomation-return-bill-detail-from-bill-manage/"+page,
         success: function (response) {
             var tbody = $('#tableReturnBill');
             var noDataContainer = $('#noDataReturnBill');
@@ -711,7 +729,7 @@ function loadReturnBillFromBillManage(page) {
 
                     billReturn.productDetail.product.images.forEach(function(image, imgIndex) {
                         imagesHtml += `
-                            <div class="carousel-item ${imgIndex === 0 ? 'active' : ''}" data-bs-interval="2000">
+                            <div class="carousel-item ${imgIndex === 0 ? 'active' : ''}" data-bs-interval="30000">
                                 <img style="height: auto; width: 100px;" src="https://res.cloudinary.com/dfy4umpja/image/upload/f_auto,q_auto/${image.nameImage}" class="d-block w-100" alt="Lỗi ảnh">
                             </div>`;
                     });
@@ -762,9 +780,113 @@ function loadReturnBillFromBillManage(page) {
 function maxPageReturnBillFromBillManage() {
     $.ajax({
         type: "GET",
-        url:"/return-bill-api/max-page-return-bill-detail-from-bill-manage",
+        url:"/return-exchange-bill-api/max-page-return-bill-detail-from-bill-manage",
         success: function (response) {
             createPagination('billReturnPageMax-returnBill', response, 1);
+        },
+        error: function (xhr) {
+            console.error('loi phan trang cho bill deatil' + xhr.responseText)
+        }
+
+    })
+}
+
+function loadExchangeBillFromBillManage(page) {
+    $.ajax({
+        type: "GET",
+        url: "/return-exchange-bill-api/infomation-exchange-bill-detail-from-bill-manage/"+page,
+        success: function (response) {
+            var tbody = $('#tableExchangeBill');
+            var noDataContainer = $('#noDataExchangeBill');
+            tbody.empty(); // Xóa các dòng cũ
+            $('#table-exchangeBill th:last-child, #table-exchangeBill td:last-child').hide();
+            $('#btn-group-exchange-product').remove();
+            if(response.length == 0) {
+                // Nếu không có dữ liệu, hiển thị ảnh
+                noDataContainer.html(`
+                <img src="https://res.cloudinary.com/dfy4umpja/image/upload/v1725477250/jw3etgwdqqxtkevcxisq.png"
+                     alt="Lỗi ảnh" style="width: auto; height: 100px;">
+                     <p class="text-center">Không có sản phẩm nào!</p>
+                `);
+                noDataContainer.show();
+                tbody.closest('table').hide(); // Ẩn table nếu không có dữ liệu
+            }else {
+                noDataContainer.hide();
+                tbody.closest('table').show();
+                response.forEach(function (exchange,index) {
+                    var imagesHtml = '';
+                    exchange.productDetail.product.images.forEach(function(image, imgIndex) {
+                        imagesHtml += `
+                            <div class="carousel-item ${imgIndex === 0 ? 'active' : ''}" data-bs-interval="30000">
+                                <img style="height: auto; width: 100px;" src="https://res.cloudinary.com/dfy4umpja/image/upload/f_auto,q_auto/${image.nameImage}" class="d-block w-100" alt="Lỗi ảnh">
+                            </div>`;
+                    });
+                    var price = '';
+                    if(exchange.priceAtTheTimeOfExchange == exchange.priceRootAtTime) {
+                        price = `<div>
+                                    <span>${exchange.priceAtTheTimeOfExchange.toLocaleString('en-US')} VNĐ</span>
+                                </div>`;
+                    }else {
+                        price = ` <div>
+                                    <span class="text-decoration-line-through">${ exchange.priceRootAtTime.toLocaleString('en-US')} VNĐ</span>
+                                    <br>
+                                    <span class="text-danger fs-5">${exchange.priceAtTheTimeOfExchange.toLocaleString('en-US')} VNĐ</span>
+                                </div>`;
+                    }
+                    tbody.append(`
+                        <tr>
+                            <th scope="row" class="text-center align-middle">${index + 1}</th>
+                            <td class="text-center align-middle">
+                                <div class="carousel slide" data-bs-ride="carousel">
+                                    <div class="carousel-inner carousel-inner-bill-custom">
+                                        ${imagesHtml}
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="" style="max-height: 100px; overflow-y: auto; width: 150px;">
+                                <div class="fs-4">
+                                    ${exchange.productDetail.product.nameProduct}
+                                </div>
+                                <div class="fs-6">
+                                    Tên màu: ${exchange.productDetail.color.nameColor}
+                                    <br>
+                                    Tên size: ${exchange.productDetail.size.nameSize}
+                                </div>
+                            </td>
+
+                            <td class="text-center align-middle">
+                                ${price}
+                            </td>
+                            <td class="text-center align-middle">
+                                 <div class="pagination mb-3 custom-number-input" style="width: 130px;" data-id="${exchange.productDetail.id}">
+                                    ${exchange.quantityExchange}
+                                 </div>
+                            </td>
+                            <td class="text-center align-middle">
+                                ${exchange.totalExchange.toLocaleString('en-US') + ' VNĐ'}
+                            </td>
+                           
+                        </tr>`);
+                })
+                // Khởi tạo lại tất cả các carousel sau khi cập nhật DOM
+                $('.carousel').each(function() {
+                    $(this).carousel(); // Khởi tạo carousel cho từng phần tử
+                });
+            }
+        },
+        error: function (xhr) {
+            console.error('Loi ' + xhr.responseText)
+        }
+    })
+}
+
+function maxPageExchangeBillFromBillManage() {
+    $.ajax({
+        type: "GET",
+        url:"/return-exchange-bill-api/max-page-exchange-bill-detail-from-bill-manage",
+        success: function (response) {
+            console.log('so trang tra ' + response)
+            createPagination('billExchangePageMax-exchangeBill', response, 1);
         },
         error: function (xhr) {
             console.error('loi phan trang cho bill deatil' + xhr.responseText)
