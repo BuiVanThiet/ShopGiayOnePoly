@@ -207,6 +207,7 @@ public class ClientController {
                 // Cập nhật thông tin vào UserProfileUpdateRequest
                 UserProfileUpdateRequest userProfile = new UserProfileUpdateRequest();
                 userProfile.setAccount(customer.getAcount());
+                userProfile.setPassword(customer.getPassword());
                 userProfile.setFullName(customer.getFullName());
                 userProfile.setEmail(customer.getEmail());
                 userProfile.setNumberPhone(customer.getNumberPhone());
@@ -252,15 +253,20 @@ public class ClientController {
     }
 
     @PostMapping("/userProfile")
-    public String updateProfile(UserProfileUpdateRequest userProfile,
+    public String updateProfile(@Valid UserProfileUpdateRequest userProfile, BindingResult bindingResult,
                                 HttpSession session, @RequestParam("nameImage") MultipartFile nameImage, Model model) throws IOException {
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("userProfile", userProfile);
+            return "client/userProfile";
+        }
         if (clientLoginResponse != null) {
             String acount = clientLoginResponse.getAcount();
             Customer customer = customerRegisterRepository.findByAcount(acount);
             if (customer != null) {
                 // Cập nhật thông tin người dùng
                 customer.setFullName(userProfile.getFullName());
+                customer.setPassword(userProfile.getPassword());
                 customer.setEmail(userProfile.getEmail());
                 customer.setNumberPhone(userProfile.getNumberPhone());
                 customer.setGender(userProfile.getGender());

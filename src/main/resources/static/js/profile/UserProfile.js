@@ -59,45 +59,57 @@ document.getElementById('file-upload').onchange = function (event) {
     }
 };
 
-//hiển thị ảnh trên web
-// document.getElementById('file-upload').addEventListener('change', function(event) {
-//     const file = event.target.files[0];
-//     const reader = new FileReader();
-//
-//     if (file) {
-//         reader.onload = function(e) {
-//             document.getElementById('avatar-preview').src = e.target.result;
-//         }
-//         reader.readAsDataURL(file);
-//     }
-// });
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('updateProfileForm');
+    const fullNameInput = form.querySelector('input[name="fullName"]');
+    const emailInput = form.querySelector('input[name="email"]');
+    const phoneInput = form.querySelector('input[name="numberPhone"]');
+    const passwordInput = form.querySelector('input[name="password"]');
 
-//
-// // // Hàm để kiểm tra năm nhuận
-// // function isLeapYear(year) {
-// //     return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
-// // }
-//
-// // // Hàm để cập nhật số ngày dựa trên tháng và năm đã chọn
-// // function updateDays() {
-// //     const selectedYear = parseInt(yearSelect.value);
-// //     const selectedMonth = parseInt(monthSelect.value);
-//
-// //     // Số ngày trong mỗi tháng
-// //     const daysInMonth = [31, isLeapYear(selectedYear) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-//
-// //     // Xóa các option cũ của ngày
-// //     daySelect.innerHTML = '<option selected disabled>Chọn ngày</option>';
-//
-// //     // Thêm option cho các ngày dựa theo tháng và năm
-// //     for (let day = 1; day <= daysInMonth[selectedMonth - 1]; day++) {
-// //         const option = document.createElement('option');
-// //         option.value = day;
-// //         option.textContent = day;
-// //         daySelect.appendChild(option);
-// //     }
-// // }
-//
-// // // Lắng nghe sự kiện thay đổi của tháng và năm để cập nhật ngày
-// // monthSelect.addEventListener('change', updateDays);
-// // yearSelect.addEventListener('change', updateDays);
+    form.addEventListener('submit', function (event) {
+        let isValid = true;
+
+        // Reset error messages
+        form.querySelectorAll('.error-message').forEach(function (error) {
+            error.textContent = '';
+        });
+
+        // Validate full name (required)
+        if (!fullNameInput.value.trim()) {
+            fullNameInput.nextElementSibling.textContent = 'Vui lòng nhập họ và tên';
+            isValid = false;
+        }
+
+        // Validate email (required and valid format)
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailInput.value.trim()) {
+            emailInput.nextElementSibling.textContent = 'Vui lòng nhập email';
+            isValid = false;
+        } else if (!emailPattern.test(emailInput.value)) {
+            emailInput.nextElementSibling.textContent = 'Định dạng email không hợp lệ';
+            isValid = false;
+        }
+
+        // Validate phone number (required and valid format)
+        const phonePattern = /^0[0-9]{9}$/;
+        if (!phoneInput.value.trim()) {
+            phoneInput.nextElementSibling.textContent = 'Vui lòng nhập số điện thoại';
+            isValid = false;
+        } else if (!phonePattern.test(phoneInput.value)) {
+            phoneInput.nextElementSibling.textContent = 'Số điện thoại không hợp lệ (bắt đầu bằng 0 và có 10 chữ số)';
+            isValid = false;
+        }
+
+        // Validate password (required)
+        if (!passwordInput.value.trim()) {
+            passwordInput.nextElementSibling.textContent = 'Vui lòng nhập mật khẩu';
+            isValid = false;
+        }
+
+        // Prevent form submission if not valid
+        if (!isValid) {
+            event.preventDefault();
+        }
+    });
+});
+
