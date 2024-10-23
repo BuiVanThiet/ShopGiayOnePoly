@@ -18,12 +18,12 @@ import java.util.ArrayList;
 public class ReturnBillController extends BaseBill {
     @GetMapping("/bill/{idBill}")
     public String getIndexReturnBill(@PathVariable("idBill") Integer idBill,HttpSession session) {
+        this.productDetailCheckMark2Request = null;
         session.setAttribute("IdBill",idBill);
         return "Bill/returnBill";
     }
     @GetMapping("/create-return-bill")
     public String getCreateReturnBill(ModelMap modelMap) {
-
         modelMap.addAttribute("title","Tạo phiếu trả hàng thành công!");
         return "Bill/successBill";
     }

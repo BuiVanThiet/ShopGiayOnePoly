@@ -22,7 +22,7 @@ body {
     display: flex;
     overflow-x: hidden;
     flex-direction: column;
-    background: #faebd7;
+    background: #11164b;
     padding: 25px 20px;
     transition: all 0.4s ease;
     z-index: 10000;
@@ -43,7 +43,7 @@ body {
 }
 
 .sidebar-custom-manage .sidebar-custom-manage-header h2 {
-    color: #000000;
+    color: #ffffff;
     font-size: 1rem;
     font-weight: 600;
     white-space: nowrap;
@@ -51,7 +51,7 @@ body {
 }
 
 .sidebar-custom-manage-links h4 {
-    color: #000000;
+    color: #ffffff;
     font-weight: 500;
     white-space: nowrap;
     margin: 10px 0;
@@ -80,7 +80,7 @@ body {
     height: 1px;
     transform: scaleX(1);
     transform: translateY(-50%);
-    background: #000000;
+    background: #ffffff;
     transform-origin: right;
     transition-delay: 0.2s;
 }
@@ -106,7 +106,7 @@ body {
     display: flex;
     align-items: center;
     gap: 0 20px;
-    color: #000000;
+    color: #ffffff;
     font-weight: 500;
     white-space: nowrap;
     padding: 15px 10px;

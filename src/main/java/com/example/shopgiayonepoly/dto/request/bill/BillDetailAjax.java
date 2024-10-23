@@ -1,14 +1,12 @@
 package com.example.shopgiayonepoly.dto.request.bill;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class BillDetailAjax {
     private Integer id;
     private Integer quantity;

@@ -479,7 +479,12 @@ public class BillRestController extends BaseBill {
             bill.setStatus(9);
             mess = "Hóa đơn đã được hủy!";
             colorMess = "1";
-            this.billService.save(bill);
+            Bill billSave = this.billService.save(bill);
+            for (ExchangeBillDetail exchangeBillDetail: this.exchangeBillDetailService.findAll()) {
+                if(exchangeBillDetail.getExchangeBill().getBill().getId() == billSave.getId()) {
+                    this.getUpdateQuantityProduct(exchangeBillDetail.getProductDetail().getId(),-(exchangeBillDetail.getQuantityExchange()));
+                }
+            }
             this.setBillStatus(bill.getId(),203,session);
         }
         thongBao.put("message",mess);

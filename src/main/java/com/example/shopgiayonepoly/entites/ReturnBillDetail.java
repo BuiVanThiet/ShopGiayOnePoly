@@ -18,7 +18,7 @@ import java.math.BigDecimal;
 public class ReturnBillDetail extends Base {
     @ManyToOne
     @JoinColumn(name = "id_return_bill")
-    private ReturnBill returnBill;
+    private ReturnBillExchangeBill returnBill;
     @ManyToOne
     @JoinColumn(name = "id_product_detail")
     private ProductDetail productDetail;

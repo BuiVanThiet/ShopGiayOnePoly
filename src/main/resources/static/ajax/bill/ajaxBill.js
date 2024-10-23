@@ -43,7 +43,7 @@ function loadBillDetail(page)  {
 
                     billDetail.productDetail.product.images.forEach(function(image, imgIndex) {
                         imagesHtml += `
-                            <div class="carousel-item ${imgIndex === 0 ? 'active' : ''}" data-bs-interval="5000">
+                            <div class="carousel-item ${imgIndex === 0 ? 'active' : ''}" data-bs-interval="30000">
                                 <img style="height: auto; width: 100px;" src="https://res.cloudinary.com/dfy4umpja/image/upload/f_auto,q_auto/${image.nameImage}" class="d-block w-100" alt="Lỗi ảnh">
                             </div>`;
                     });
@@ -530,29 +530,29 @@ function updateProductTable(response) {
 
             //setUpBTN
             if (productDetail[13] === 2 || productDetail[14] === 2) {
-                    btn = `<span class="text-danger">Mặt hàng đã ngừng bán</span>`;
-                } else if (productDetail[11] <= 0) {
-                    btn = `<span class="text-danger">Hết hàng</span>`;
-                } else {
-                    btn = `
+                btn = `<span class="text-danger">Mặt hàng đã ngừng bán</span>`;
+            } else if (productDetail[11] <= 0) {
+                btn = `<span class="text-danger">Hết hàng</span>`;
+            } else {
+                btn = `
                             <button class="btn btn-outline-success btn-buy-product-detail"
                                 data-bs-target="#exampleQuantity"
                                 data-bs-toggle="modal"
                                 data-name="${productDetail[2]}"
                                 data-id="${productDetail[0]}"
                                 data-quantity="${productDetail[11]}"
-                                data-price-sale="${productDetail[12]}"
-                                data-price-root="${productDetail[9]}"
+                                data-price-sale="${productDetail[9]}"
+                                data-price-root="${productDetail[12]}"
                                 onclick="resetHidenProductSale()">
                                <i class="bi bi-cart-plus"></i> Mua
                             </button>`;
-                }
+            }
 
             //lấy ảnh sản phẩm
             var nameImage = productDetail[17].split(',');
             nameImage.forEach(function (imageProduct,indexImage) {
                 imagesHtml += `
-                      <div  data-bs-interval="5000" class="carousel-item ${indexImage === 0 ? 'active' : ''}">
+                      <div  data-bs-interval="30000" class="carousel-item ${indexImage === 0 ? 'active' : ''}">
                         <img src="https://res.cloudinary.com/dfy4umpja/image/upload/v1724519685/${imageProduct.trim()}" class="d-block w-100" alt="Product Image 1">
                       </div>
                      `;
@@ -1079,6 +1079,7 @@ function updateQuantity(id, quantity,method) {
             loadProduct(1);
             checkUpdateCustomer = true;
             loadVoucherByBill(1);
+            maxPageVoucher();
             totalShip(provinceTransport,districtTransport,wardTransport);
 
             // loadBillStatusByBillId();
@@ -1097,8 +1098,8 @@ function updateQuantity(id, quantity,method) {
 
 function loadVoucherByBill(page) {
     $.ajax({
-       type: "GET",
-       url: "/bill-api/voucher/"+page,
+        type: "GET",
+        url: "/bill-api/voucher/"+page,
         success: function (response) {
             var load = $('#loadVoucher');
             load.empty();
@@ -1121,7 +1122,6 @@ function loadVoucherByBill(page) {
                     </div>
                 `);
             });
-            maxPageVoucher();
 
         },
         error: function (xhr) {
@@ -1165,14 +1165,15 @@ function getAddVoucherInBill(idVoucher) {
             loadProduct(1)
             loadVoucherByBill(1);
             paymentInformation();
-                // loadBillStatusByBillId();
+            maxPageVoucher();
+            // loadBillStatusByBillId();
             var checkFormStatus = document.getElementById('checkFormStatus');
             if(checkFormStatus != null) {
-                   console.log('Phai vao duoc day')
-                   loadInformationBillByIdBill();
-                   loadCustomerShipInBill();
+                console.log('Phai vao duoc day')
+                loadInformationBillByIdBill();
+                loadCustomerShipInBill();
                 $('#btn-Remove-voucher').show();
-               }
+            }
 
             showToast(response.message,response.check)
         },
@@ -1191,6 +1192,7 @@ function getRemoveVoucherInBill() {
             loadProduct(1)
             loadVoucherByBill(1);
             paymentInformation();
+            maxPageVoucher();
             var checkFormStatus = document.getElementById('checkFormStatus');
             if(checkFormStatus != null) {
                 // loadBillStatusByBillId();
@@ -1240,19 +1242,19 @@ function maxPageVoucher() {
 //     searchBillManage()
 // });
 
-    function updateMethodPay(method) {
-        if(method === 1) {
-                payMethodUpLoad = 1;
-                uploadPayMethod()
-        }else if (method === 2) {
-                payMethodUpLoad = 2;
-                uploadPayMethod()
-        }else {
-                payMethodUpLoad = 3;
-                uploadPayMethod()
-        }
-
+function updateMethodPay(method) {
+    if(method === 1) {
+        payMethodUpLoad = 1;
+        uploadPayMethod()
+    }else if (method === 2) {
+        payMethodUpLoad = 2;
+        uploadPayMethod()
+    }else {
+        payMethodUpLoad = 3;
+        uploadPayMethod()
     }
+
+}
 
 function getBuyProduct() {
     let quantity = $("#quantity").val();
@@ -1269,17 +1271,19 @@ function getBuyProduct() {
             priceProductRoot: priceProductRoot
         },
         success: function (response) {
-                loadBillNew();
-                loadBillDetail(pageBillDetail);
-                loadProduct(1)
-                paymentInformation();
-                getMaxPageProduct();
-                loadVoucherByBill(1);
-                maxPageBillDetailByIdBill();
+            loadBillNew();
+            loadBillDetail(pageBillDetail);
+            loadProduct(1)
+            paymentInformation();
+            getMaxPageProduct();
+            loadVoucherByBill(1);
+            maxPageBillDetailByIdBill();
+            maxPageVoucher();
 
-                // loadBillStatusByBillId();
-                // loadInformationBillByIdBill();
-                // loadCustomerShipInBill();
+
+            // loadBillStatusByBillId();
+            // loadInformationBillByIdBill();
+            // loadCustomerShipInBill();
             checkUpdateCustomer = true;
 
             totalShip(provinceTransport,districtTransport,wardTransport);
@@ -1320,6 +1324,7 @@ function deleteBillDetail(id) {
             getMaxPageProduct();
             loadVoucherByBill(1);
             maxPageBillDetailByIdBill();
+            maxPageVoucher();
 
             checkUpdateCustomer = true;
 
@@ -1373,24 +1378,25 @@ $(document).ready(function () {
     });
 
     // Hàm cập nhật số lượng lên server
-        // Gọi các hàm tải dữ liệu ban đầu
-        loadBillNew();
-        loadClientsIntoSelect();
-        paymentInformation();
-        loadCategoryIntoSelect()
+    // Gọi các hàm tải dữ liệu ban đầu
+    loadBillNew();
+    loadClientsIntoSelect();
+    paymentInformation();
+    loadCategoryIntoSelect()
     loadColorIntoSelect()
     loadSizeIntoSelect()
     loadMaterialIntoSelect()
     loadManufacturerIntoSelect()
     loadOriginIntoSelect()
     loadSoleIntoSelect()
-        // pageNumber();
-        // clickStatusBillManager(999);
+    // pageNumber();
+    // clickStatusBillManager(999);
     loadProduct(1)
     loadBillDetail(pageBillDetail);
     getMaxPageProduct();
     loadVoucherByBill(1);
     maxPageBillDetailByIdBill();
+    maxPageVoucher();
     // getAllBilByStatus(1);
     // getMaxPageBillManage();
     console.log('can nang cua san pham la ' + totalWeight)

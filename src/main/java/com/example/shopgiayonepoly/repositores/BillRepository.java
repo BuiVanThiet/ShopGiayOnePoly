@@ -80,7 +80,7 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
     List<ClientBillInformationResponse> getClientBillInformationResponse(@Param("idClient") Integer idBill);
     // phan nay danh cho quan ly hoa don
 
-//    @Query("""
+    //    @Query("""
 //        select
 //        new com.example.shopgiayonepoly.dto.response.bill.BillResponseManage(
 //            bill.id,
@@ -123,7 +123,7 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
 //         and (:statusCheck is null or (bill.status = :statusCheck))
 //    """)
 //    Page<BillResponseManage> getAllBillByStatusDiss0(@Param("nameCheck") String nameCheck, @Param("statusCheck") Integer statusCheck, Pageable pageable);
-@Query("""
+    @Query("""
         select 
         new com.example.shopgiayonepoly.dto.response.bill.BillResponseManage(
             bill.id, 
@@ -154,8 +154,8 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
                             bill.totalAmount + bill.shippingPrice
                     end
                 
-                when bill.status = 7 OR bill.status = 8 then rb.totalReturn
-                else 0
+                when bill.status = 7 OR bill.status = 8 then rb.customerRefund
+                else rb.customerRefund
             end
             , 
             bill.paymentMethod, 
@@ -166,7 +166,7 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
             bill.updateDate,
             bill.status) 
         from Bill bill 
-        left join ReturnBill rb on rb.bill.id = bill.id
+        left join ReturnBillExchangeBill rb on rb.bill.id = bill.id
         LEFT JOIN bill.customer customer
         LEFT JOIN bill.staff staff
         LEFT JOIN bill.voucher voucher
@@ -176,7 +176,7 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
          AND (:statusCheck IS NULL OR bill.status IN (:statusCheck))
     """)
     Page<BillResponseManage> getAllBillByStatusDiss0(@Param("nameCheck") String nameCheck, @Param("statusCheck") List<Integer> statusCheck, Pageable pageable);
-//    @Query("""
+    //    @Query("""
 //        select
 //        new com.example.shopgiayonepoly.dto.response.bill.BillResponseManage(
 //            bill.id, bill.codeBill, bill.customer, bill.staff, bill.addRess, bill.voucher,
@@ -368,7 +368,6 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
            b.address,
            b.total_amount,
            b.price_discount;
-       
 """,nativeQuery = true)
     List<Object[]> getInfomationBillReturn(@Param("idBill") Integer id);
 

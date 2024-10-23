@@ -49,7 +49,7 @@ public class BillController extends BaseBill {
             modelMap.addAttribute("pageNumber", pageNumber);
         }else {
             session.setAttribute("IdBill", null);
-           session.setAttribute("IdClient",null);
+            session.setAttribute("IdClient",null);
         }
         session.setAttribute("numberPage",0);
 
@@ -70,6 +70,7 @@ public class BillController extends BaseBill {
         for (ProductDetail productDetail: saleProductService.getAllProductDetailByPage()) {
             System.out.println("id" + productDetail.getId());
         }
+        this.productDetailCheckMark2Request = null;
 //        displayProductDetailsWithCurrentPrice();
         return "Bill/index";
 
@@ -78,6 +79,9 @@ public class BillController extends BaseBill {
     public String getBillDetail(@PathVariable("idBill") Integer idBill, ModelMap modelMap, HttpSession session) {
         session.setAttribute("IdBill", idBill);
         Bill bill = this.billService.findById(idBill).orElse(null);
+        if(bill == null) {
+            return "redirect:/404";
+        }
         if(bill.getCustomer() != null){
             session.setAttribute("IdClient", bill.getCustomer().getId());
         }else {
@@ -96,6 +100,7 @@ public class BillController extends BaseBill {
 
         getDeleteVoucherByBill(idBill);
 
+        this.productDetailCheckMark2Request = null;
         return "Bill/index";
     }
     @GetMapping("/create")
@@ -138,7 +143,7 @@ public class BillController extends BaseBill {
         this.setBillStatus(billGetStatus.getId(),billGetStatus.getStatus(),session);
 
 //        this.getAddHistory("bill",bill.getId(),"Mới tạo","Mới tao","Mới tạo",staff,"Mới tạo");
-
+        this.productDetailCheckMark2Request = null;
         this.mess = "Thêm hóa đơn mới thành công!";
         this.colorMess = "1";
         return "redirect:/staff/bill/home";
@@ -206,6 +211,9 @@ public class BillController extends BaseBill {
         BigDecimal shipMoneyNumber = new BigDecimal(shipMoney);
 
         Bill bill = this.billService.findById(id).orElse(null);
+        if (bill == null) {
+            return "redirect:/404";
+        }
 
 //        if(bill.getCustomer() != null) {
 //            List<ClientBillInformationResponse> clientBillInformationResponses = this.billService.getClientBillInformationResponse(bill.getCustomer().getId());
@@ -390,20 +398,18 @@ public class BillController extends BaseBill {
 
         thongBao.put("message","Xóa sản phẩm trong hóa đơn thành công!");
         thongBao.put("check","1");
-        BillDetail billDetail = this.billDetailService.findById(id).orElse(new BillDetail());
+        BillDetail billDetail = this.billDetailService.findById(id).orElse(null);
         this.getUpdateQuantityProduct(billDetail.getProductDetail().getId(),-billDetail.getQuantity());
         Bill bill = this.billService.findById((Integer) session.getAttribute("IdBill")).orElse(null);
+        this.billDetailService.delete(billDetail);
         BigDecimal total = this.billDetailService.getTotalAmountByIdBill(bill.getId());
         bill.setUpdateDate(new Date());
-        if(total != null) {
-            bill.setTotalAmount(total);
-        }else {
-            bill.setTotalAmount(BigDecimal.valueOf(0));
-        }
-        this.billDetailService.delete(billDetail);
+        System.out.println("tong tien hoa don khi xoas " + total);
+        bill.setTotalAmount(total);
+
         this.billService.save(bill);
 
-        getDeleteVoucherByBill(bill.getId());
+        getDeleteVoucherByBill((Integer) session.getAttribute("IdBill"));
 
         return ResponseEntity.ok(thongBao);
     }
@@ -445,7 +451,7 @@ public class BillController extends BaseBill {
 //        return "redirect:/bill/bill-detail/" + (Integer) session.getAttribute("IdBill");
 //    }
 
-//    @GetMapping("/delete-voucher-bill")
+    //    @GetMapping("/delete-voucher-bill")
 //
 //    public String getDeleteVoucherBill(HttpSession session) {
 //        Bill bill = this.billService.findById((Integer) session.getAttribute("IdBill")).orElse(null);
@@ -487,7 +493,7 @@ public class BillController extends BaseBill {
 
         return ResponseEntity.ok(thongBao);
     }
-//    @GetMapping("/click-voucher-bill/{idVoucher}")
+    //    @GetMapping("/click-voucher-bill/{idVoucher}")
 //    public String getClickVoucherBill(@PathVariable("idVoucher") String idVoucher,HttpSession session) {
 //        Bill bill = this.billService.findById((Integer) session.getAttribute("IdBill")).orElse(null);
 //
@@ -537,9 +543,13 @@ public class BillController extends BaseBill {
     //danh cho quan ly hoa don
     @GetMapping("/bill-status-index/{idBill}")
     public String getStatusBill(@PathVariable("idBill") Integer idBill,HttpSession session, ModelMap modelMap) {
+        Bill bill = this.billService.findById(idBill).orElse(null);
+        if(bill == null) {
+            return "redirect:/404";
+        }
         session.setAttribute("IdBill",idBill);
         modelMap.addAttribute("client", (Integer) session.getAttribute("IdClient"));
-        modelMap.addAttribute("bill",(Integer) session.getAttribute("IdBill") == null ? new Bill() : this.billService.findById((Integer)session.getAttribute("IdBill")).orElse(new Bill()));
+        modelMap.addAttribute("bill",(Integer) session.getAttribute("IdBill") == null ? null : this.billService.findById((Integer)session.getAttribute("IdBill")).orElse(null));
         modelMap.addAttribute("message",mess);
         modelMap.addAttribute("check",colorMess);
         session.setAttribute("pageReturn",2);
