@@ -69,3 +69,40 @@ function previewImages(event) {
         reader.readAsDataURL(file);
     }
 }
+function filterFunction() {
+    var input, filter, ul, li, i;
+    input = document.getElementById("myInput-codeProduct");
+    filter = input.value.toUpperCase();
+    ul = document.getElementById("dataList-codeProduct");
+    li = ul.getElementsByTagName("li");
+
+    // Hiển thị dropdown khi có nhập liệu
+    if (input.value) {
+        ul.classList.add("show");
+    } else {
+        ul.classList.remove("show");
+    }
+
+    // Lọc các sản phẩm dựa trên giá trị nhập vào
+    for (i = 0; i < li.length; i++) {
+        txtValue = li[i].textContent || li[i].innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+            li[i].style.display = "";
+        } else {
+            li[i].style.display = "none";
+        }
+    }
+}
+
+// Đóng dropdown khi click ngoài
+window.onclick = function(event) {
+    if (!event.target.matches('#myInput-codeProduct')) {
+        var dropdowns = document.getElementsByClassName("dropdown-content");
+        for (var i = 0; i < dropdowns.length; i++) {
+            var openDropdown = dropdowns[i];
+            if (openDropdown.classList.contains('show')) {
+                openDropdown.classList.remove('show');
+            }
+        }
+    }
+}

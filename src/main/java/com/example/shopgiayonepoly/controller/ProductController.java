@@ -71,7 +71,7 @@ public class ProductController {
 
     @GetMapping("/product/create")
     public String createProduct(Model model) {
-        model.addAttribute("productList", productService.getProductNotStatus0());
+        model.addAttribute("productList", productService.findAllProductsWithOneImage());
         model.addAttribute("productAdd", new Product());
         model.addAttribute("materialList", materialService.findAll());
         model.addAttribute("manufacturerList", manufacturerService.findAll());
