@@ -1,7 +1,6 @@
 package com.example.shopgiayonepoly.controller;
 
 import com.example.shopgiayonepoly.dto.request.StaffProfile;
-import com.example.shopgiayonepoly.dto.response.loginReponse;
 import com.example.shopgiayonepoly.entites.Staff;
 import com.example.shopgiayonepoly.repositores.StaffRepository;
 import com.example.shopgiayonepoly.service.StaffService;
@@ -17,7 +16,7 @@ import java.time.LocalDate;
 
 @Controller
 @RequestMapping("/profile")
-public class Profile {
+public class StaffProfileController {
     @Autowired
     StaffRepository staffRepository;
     @Autowired
@@ -64,8 +63,10 @@ public class Profile {
     }
 
     @PostMapping("/updateStaffProfile")
-    public String updateStaffProfile(StaffProfile staffProfile, HttpSession session,
-                                     @RequestParam("nameImageStaff") MultipartFile nameImage, Model model) throws IOException {
+    public String updateStaffProfile(StaffProfile staffProfile,
+                                     HttpSession session,
+                                     @RequestParam("nameImageStaff") MultipartFile nameImage,
+                                     Model model) throws IOException {
         Staff staff = (Staff) session.getAttribute("staffLogin");
 
         if (staff != null) {
@@ -76,15 +77,17 @@ public class Profile {
             staff.setGender(staffProfile.getGender());
             staff.setBirthDay(staffProfile.getBirthDay());
             staff.setAddress(staffProfile.getWard() + "," + staffProfile.getDistrict() + "," + staffProfile.getProvince() + "," + staffProfile.getAddRessDetail());
-
+            staffRepository.save(staff);
+            // Kiểm tra nếu có ảnh mới
             if (!nameImage.isEmpty()) {
-                staff.setImage(nameImage.getOriginalFilename()); // Lưu tên file
-                staffService.uploadFile(nameImage, staff.getId()); // Tải file lên
+                // Tải ảnh mới lên
+                String imageId = staffService.uploadFile(nameImage, staff.getId());
+                staff.setImage(imageId);
+                // Cập nhật trường image với ID ảnh mới
+            }else {
+                staff.setImage("Khong co anh");
             }
             model.addAttribute("staffProfile", staffProfile);
-            // Lưu lại thay đổi vào database
-            staffRepository.save(staff);
-
             model.addAttribute("successMessage", "Cập nhật thông tin thành công.");
         } else {
             model.addAttribute("errorMessage", "Không tìm thấy thông tin tài khoản nhân viên.");
@@ -92,6 +95,7 @@ public class Profile {
 
         return "redirect:/profile/staffProfile"; // Chuyển hướng sau khi cập nhật
     }
+
     @ModelAttribute("staffInfo")
     public Staff staff(HttpSession session){
         Staff staff = (Staff) session.getAttribute("staffLogin");

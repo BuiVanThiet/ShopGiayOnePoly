@@ -15,13 +15,6 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Đổ bóng nhẹ cho container */
 }
 
-h2 {
-    text-align: left;
-    color: #333;
-    margin-bottom: 15px; /* Tăng khoảng cách dưới tiêu đề */
-    font-size: 1.5em; /* Kích thước tiêu đề lớn hơn */
-}
-
 .description {
     margin-top: 0;
     font-size: 14px;
