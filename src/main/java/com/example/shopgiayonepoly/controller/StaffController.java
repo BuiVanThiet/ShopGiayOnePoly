@@ -115,18 +115,17 @@ public class StaffController {
         staff.setGender(staffRequest.getGender());
         staff.setRole(staffRequest.getRole());
         staff.setStatus(staffRequest.getStatus());
+        Staff staffSave = this.staffService.save(staff);
+        staffSave.setAcount(staffSave.getCodeStaff() + staffSave.getId());
+        staff.setPassword("@shoponepoly");
         // Kiểm tra ảnh
         if (staffRequest.getNameImage() != null && !staffRequest.getNameImage().isEmpty()) {
             staff.setImage("fileName");
-            staffService.uploadFile(staffRequest.getNameImage(), staff.getId());
+            staffService.uploadFile(staffRequest.getNameImage(), staffSave.getId());
         } else {
             // Đặt ảnh mặc định nếu không có ảnh được tải lên
             staff.setImage("Khong co anh");
         }
-        Staff staffSave = this.staffService.save(staff);
-        staffSave.setAcount(staffSave.getCodeStaff() + staffSave.getId());
-        staff.setPassword("@shoponepoly");
-        this.staffService.save(staffSave);
 //        staff.setImage("fileName");
         System.out.println(staff.toString());
 //        staffService.uploadFile(staffRequest.getNameImage(),staffSave.getId());
@@ -210,11 +209,10 @@ public class StaffController {
         staff.setNumberPhone(staffRequest.getNumberPhone());
         staff.setBirthDay(staffRequest.getBirthDay());
         staff.setEmail(staffRequest.getEmail());
-        staff.setAcount("");
-        staff.setPassword("");
         staff.setGender(staffRequest.getGender());
         staff.setRole(staffRequest.getRole());
         staff.setStatus(staffRequest.getStatus());
+        this.staffService.save(staff);
         // Kiểm tra ảnh
         if (staffRequest.getNameImage() != null && !staffRequest.getNameImage().isEmpty()) {
             staff.setImage("fileName");
@@ -223,10 +221,6 @@ public class StaffController {
             // Đặt ảnh mặc định nếu không có ảnh được tải lên
             staff.setImage("Khong co anh");
         }
-        Staff staffSave = this.staffService.save(staff);
-        staffSave.setAcount(staffSave.getCodeStaff() + staffSave.getId());
-        staff.setPassword("@shoponepoly");
-        this.staffService.save(staffSave);
         return "redirect:/staff/list";
     }
 
