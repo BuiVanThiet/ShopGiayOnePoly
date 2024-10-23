@@ -15,85 +15,176 @@
 
 <body>
 
-<main class="container">
+<!--<main class="container">-->
+<!--    <div layout:fragment="content">-->
+<!--        <article class="container-xxl bd-gutter mt-5 my-md-4 bd-layout">-->
+<!--            <h1 class="center">Danh sách nhân viên</h1>-->
+
+<!--            <div class="button">-->
+<!--                <a href="/staff/create" class="btn btn-primary">Thêm mới nhân viên</a>-->
+<!--&lt;!&ndash;                <button type="button" class="btn btn-success">Thêm chức vụ</button>&ndash;&gt;-->
+<!--            </div>-->
+
+<!--            <form action="/staff/search">-->
+<!--            <div class="search-container">-->
+<!--                <div class="search-bar">-->
+<!--                    <span class="icon"><i class="fas fa-search"></i></span> &lt;!&ndash; Sử dụng icon kính lúp &ndash;&gt;-->
+<!--                    <input type="text" name="key" placeholder="Tìm kiếm...">-->
+<!--                </div>-->
+<!--                    <button class="btn btn-primary">Tìm kiếm</button>-->
+<!--            </div>-->
+<!--            </form>-->
+
+<!--            <table class="table table-bordered table-striped">-->
+<!--                <thead>-->
+<!--                <tr>-->
+<!--                    <th>Ảnh</th>-->
+<!--                    <th>Mã nhân viên</th>-->
+<!--                    <th>Tên nhân viên</th>-->
+<!--                    <th>Điạ chỉ</th>-->
+<!--&lt;!&ndash;                    <th>Giới tính</th>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <th>Ngày sinh</th>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <th>Số điện thoại</th>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <th>Email</th>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <th>Chức vụ</th>&ndash;&gt;-->
+<!--                    <th>Trạng thái</th>-->
+<!--                    <th>Hành động</th>-->
+<!--                </tr>-->
+<!--                </thead>-->
+<!--                <tbody>-->
+<!--                <tr th:each="staff, index: ${pageStaff}">-->
+<!--                    <td>-->
+<!--                        <img th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728721025/'+${staff.image}" style="height: 50px;" alt="Khong co anh">-->
+<!--                    </td>-->
+<!--                    <td th:text="${staff.codeStaff}"></td>-->
+<!--                    <td th:text="${staff.fullName}"></td>-->
+<!--                    <td th:text="${staff.address}"></td>-->
+<!--&lt;!&ndash;                    <td th:text="${staff.gender}"></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <td th:text="${staff.birthDay}"></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <td th:text="${staff.numberPhone}"></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <td th:text="${staff.email}"></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <td th:text="${staff.role.nameRole}"></td>&ndash;&gt;-->
+<!--                    <td th:text="${staff.status}"></td>-->
+<!--                    <td>-->
+<!--                        <a th:href="@{/staff/edit/{id}(id=${staff.id})}" class="edit-icon" onclick="enableEditing(this); return false;"><i class="fas fa-edit" title="Edit"></i></a>-->
+<!--                        <a href="#" class="save-icon" style="display:none;" onclick="saveChanges(this); return false;"><i class="fas fa-save" title="Save"></i></a>-->
+<!--                        <a th:href="@{/staff/detail/{id}(id=${staff.id})}"><i class="icon-detail fas fa-bars"></i></a>-->
+<!--                        <a th:href="@{/staff/delete/{id}(id=${staff.id})}" onclick="return confirm('Bạn có chắc chắn muốn xóa nhân viên?')"><i class="icon-delete fas fa-trash" title="Delete"></i></a>-->
+<!--                    </td>-->
+<!--                </tr>-->
+
+<!--                </tbody>-->
+<!--            </table>-->
+<!--            <div class="text-center m-3">-->
+<!--                <div class="d-flex justify-content-center">-->
+<!--                    <a th:href="@{/staff/list?pageNumber=0}"-->
+<!--                       class="btn btn-secondary mx-1">First</a>-->
+<!--                    <a th:href="@{/staff/list(pageNumber=${pageStaff.first ? 0 : pageStaff.number - 1})}"-->
+<!--                       class="btn btn-secondary mx-1">Previous</a>-->
+<!--                    <div th:if="${pageStaff.totalPages > 0}" class="d-flex">-->
+<!--                        <div th:each="pageNumber : ${#numbers.sequence(0, pageStaff.totalPages - 1)}"-->
+<!--                             class="mx-1">-->
+<!--                            <a th:href="@{/staff/list(pageNumber=${pageNumber})}"-->
+<!--                               class="btn btn-primary"-->
+<!--                               th:text="${pageNumber + 1}"></a>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <a th:href="@{/staff/list(pageNumber=${pageStaff.last ? pageStaff.totalPages - 1 : pageStaff.number + 1})}"-->
+<!--                       class="btn btn-secondary mx-1">Next</a>-->
+<!--                    <a th:href="@{/staff/list(pageNumber=${pageStaff.totalPages - 1})}"-->
+<!--                       class="btn btn-secondary mx-1">Last</a>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </article>-->
+<!--    </div>-->
+<!--</main>-->
+
+<main class="container mt-5">
     <div layout:fragment="content">
-        <article class="container-xxl bd-gutter mt-5 my-md-4 bd-layout">
-            <h1 class="center">Danh sách nhân viên</h1>
-
-            <div class="button">
+        <article class="container-xxl bd-gutter my-md-4 bd-layout">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="center">Danh sách nhân viên</h1>
                 <a href="/staff/create" class="btn btn-primary">Thêm mới nhân viên</a>
-<!--                <button type="button" class="btn btn-success">Thêm chức vụ</button>-->
             </div>
 
-            <form action="/staff/search">
-            <div class="search-container">
-                <div class="search-bar">
-                    <span class="icon"><i class="fas fa-search"></i></span> <!-- Sử dụng icon kính lúp -->
-                    <input type="text" name="key" placeholder="Tìm kiếm...">
+            <!-- Search Bar -->
+            <form action="/staff/search" class="mb-4">
+                <div class="input-group">
+                    <input type="text" name="key" class="form-control" placeholder="Tìm kiếm..."
+                           aria-label="Tìm kiếm">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
                 </div>
-                    <button class="btn btn-primary">Tìm kiếm</button>
-            </div>
             </form>
 
-            <table class="table table-bordered table-striped">
-                <thead>
+            <!-- Table -->
+            <table class="table table-hover table-striped align-middle text-center">
+                <thead class="table-dark">
                 <tr>
-                    <th>Ảnh</th>
-                    <th>Mã nhân viên</th>
-                    <th>Tên nhân viên</th>
-                    <th>Điạ chỉ</th>
-<!--                    <th>Giới tính</th>-->
-<!--                    <th>Ngày sinh</th>-->
-<!--                    <th>Số điện thoại</th>-->
-<!--                    <th>Email</th>-->
-<!--                    <th>Chức vụ</th>-->
-                    <th>Trạng thái</th>
-                    <th>Hành động</th>
+                    <th scope="col">Ảnh</th>
+                    <th scope="col">Mã nhân viên</th>
+                    <th scope="col">Tên nhân viên</th>
+                    <th scope="col">Địa chỉ</th>
+                    <th scope="col">Trạng thái</th>
+                    <th scope="col">Hành động</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="staff, index: ${pageStaff}">
                     <td>
-                        <img th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728721025/'+${staff.image}" style="height: 50px;" alt="Khong co anh">
+                        <img th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728721025/'+${staff.image}"
+                             style="height: 50px" alt="Ảnh nhân viên" />
                     </td>
                     <td th:text="${staff.codeStaff}"></td>
                     <td th:text="${staff.fullName}"></td>
                     <td th:text="${staff.address}"></td>
-<!--                    <td th:text="${staff.gender}"></td>-->
-<!--                    <td th:text="${staff.birthDay}"></td>-->
-<!--                    <td th:text="${staff.numberPhone}"></td>-->
-<!--                    <td th:text="${staff.email}"></td>-->
-<!--                    <td th:text="${staff.role.nameRole}"></td>-->
-                    <td th:text="${staff.status}"></td>
+                    <td th:text="${staff.status == 1 ? 'Hoạt động' : 'Ngưng hoạt động'}"></td>
                     <td>
-                        <a th:href="@{/staff/edit/{id}(id=${staff.id})}" class="edit-icon" onclick="enableEditing(this); return false;"><i class="fas fa-edit" title="Edit"></i></a>
-                        <a href="#" class="save-icon" style="display:none;" onclick="saveChanges(this); return false;"><i class="fas fa-save" title="Save"></i></a>
-                        <a th:href="@{/staff/detail/{id}(id=${staff.id})}"><i class="icon-detail fas fa-bars"></i></a>
-                        <a th:href="@{/staff/delete/{id}(id=${staff.id})}" onclick="return confirm('Bạn có chắc chắn muốn xóa nhân viên?')"><i class="icon-delete fas fa-trash" title="Delete"></i></a>
+                        <a th:href="@{/staff/edit/{id}(id=${staff.id})}"
+                           class="btn btn-sm btn-outline-primary me-1">
+                            <i class="fas fa-edit" title="Sửa"></i>
+                        </a>
+                        <a th:href="@{/staff/detail/{id}(id=${staff.id})}"
+                           class="btn btn-sm btn-outline-info me-1">
+                            <i class="fas fa-info-circle" title="Chi tiết"></i>
+                        </a>
+                        <a th:href="@{/staff/delete/{id}(id=${staff.id})}" class="btn btn-sm btn-outline-danger"
+                           onclick="return confirm('Bạn có chắc chắn muốn xóa nhân viên?')">
+                            <i class="fas fa-trash" title="Xóa"></i>
+                        </a>
                     </td>
                 </tr>
-
                 </tbody>
             </table>
-            <div class="text-center m-3">
-                <div class="d-flex justify-content-center">
-                    <a th:href="@{/staff/list?pageNumber=0}"
-                       class="btn btn-secondary mx-1">First</a>
-                    <a th:href="@{/staff/list(pageNumber=${pageStaff.first ? 0 : pageStaff.number - 1})}"
-                       class="btn btn-secondary mx-1">Previous</a>
-                    <div th:if="${pageStaff.totalPages > 0}" class="d-flex">
-                        <div th:each="pageNumber : ${#numbers.sequence(0, pageStaff.totalPages - 1)}"
-                             class="mx-1">
-                            <a th:href="@{/staff/list(pageNumber=${pageNumber})}"
-                               class="btn btn-primary"
+
+            <!-- Pagination -->
+            <div class="d-flex justify-content-center mt-4">
+                <nav aria-label="Pagination">
+                    <ul class="pagination">
+                        <li class="page-item">
+                            <a th:href="@{/staff/list?pageNumber=0}" class="page-link">First</a>
+                        </li>
+                        <li class="page-item">
+                            <a th:href="@{/staff/list(pageNumber=${pageStaff.first ? 0 : pageStaff.number - 1})}"
+                               class="page-link">Previous</a>
+                        </li>
+                        <li class="page-item"
+                            th:each="pageNumber : ${#numbers.sequence(0, pageStaff.totalPages - 1)}"
+                            th:classappend="${pageNumber == pageStaff.number} ? 'active'">
+                            <a th:href="@{/staff/list(pageNumber=${pageNumber})}" class="page-link"
                                th:text="${pageNumber + 1}"></a>
-                        </div>
-                    </div>
-                    <a th:href="@{/staff/list(pageNumber=${pageStaff.last ? pageStaff.totalPages - 1 : pageStaff.number + 1})}"
-                       class="btn btn-secondary mx-1">Next</a>
-                    <a th:href="@{/staff/list(pageNumber=${pageStaff.totalPages - 1})}"
-                       class="btn btn-secondary mx-1">Last</a>
-                </div>
+                        </li>
+                        <li class="page-item">
+                            <a th:href="@{/staff/list(pageNumber=${pageStaff.last ? pageStaff.totalPages - 1 : pageStaff.number + 1})}"
+                               class="page-link">Next</a>
+                        </li>
+                        <li class="page-item">
+                            <a th:href="@{/staff/list(pageNumber=${pageStaff.totalPages - 1})}"
+                               class="page-link">Last</a>
+                        </li>
+                    </ul>
+                </nav>
             </div>
         </article>
     </div>

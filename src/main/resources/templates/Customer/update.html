@@ -17,7 +17,7 @@
 
 <main class="container">
     <div layout:fragment="content">
-        <form th:object="${customer}" th:action="${'/customer/update'}" method="post">
+        <form th:object="${customer}" th:action="${'/customer/update'}" method="post" enctype="multipart/form-data">
             <input type="hidden" id="provinceHiden" th:value="${customer.province}">
             <input type="hidden" id="districtHiden" th:value="${customer.district}">
             <input type="hidden" id="wardHiden" th:value="${customer.ward}">
@@ -25,8 +25,8 @@
             <article class="container-xxl bd-gutter mt-4 my-md-3 bd-layout">
                 <h2>Sửa khách hàng</h2>
                 <!-- <form action="/product/save" method="post" enctype="multipart/form-data"> -->
-                <div class="form-nab">
-                    <div class="container">
+                <div class="form-row">
+<!--                    <div class="container">-->
                         <div class="row">
                             <div class="col-6">
                                 <p>Ảnh khách hàng (3x4)</p>
@@ -34,7 +34,7 @@
                                     <label for="file-upload" class="custom-file-upload">
                                         <img id="image-preview" th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728721025/'+${customer.imageString}" alt="Ảnh khach hang" />
                                     </label>
-                                    <input id="file-upload" type="file" accept="image/*" />
+                                    <input id="file-upload" name="nameImage" type="file" accept="image/*" />
                                 </div>
                             </div>
                             <div class="col-6">
@@ -79,7 +79,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+<!--                    </div>-->
                 </div>
 
                 <!-- SDT/Ngày sinh/Email -->

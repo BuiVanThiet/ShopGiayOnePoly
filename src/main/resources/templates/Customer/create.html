@@ -17,20 +17,21 @@
 
 <main class="container">
     <div layout:fragment="content">
-        <form th:object="${customer}" th:action="${'/customer/add'}" method="post" enctype="multipart/form-data">
+        <form id="customerForm" th:object="${customer}" th:action="${'/customer/add'}" method="post" enctype="multipart/form-data">
             <input type="hidden" id="provinceHiden" >
             <input type="hidden" id="districtHiden">
             <input type="hidden" id="wardHiden" >
             <article class="container-xxl bd-gutter mt-4 my-md-3 bd-layout">
                 <h2>Thêm khách hàng</h2>
-                <div class="form-nab">
-                    <div class="container">
+                <a href="/customer/list" class="btn btn-primary" style="margin-bottom: 20px">Danh sach khach hang</a>
+                <div class="form-row" style="margin-bottom: 20px">
+<!--                    <div class="container">-->
                         <div class="row">
                             <div class="col-6">
                                 <p>Ảnh khách hàng (3x4)</p>
                                 <div class="upload-container">
                                     <label for="file-upload" class="custom-file-upload">
-                                        <img id="image-preview" src="path_to_default_image.png" alt="Ảnh khách "/>
+                                        <img id="image-preview" src="path_to_default_image.png" alt="Ảnh khách hang"/>
                                     </label>
                                     <input id="file-upload" name="nameImage" type="file" accept="image/*"/>
                                 </div>
@@ -77,7 +78,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+<!--                    </div>-->
                 </div>
 
                 <!-- SDT/Ngày sinh/Email -->
@@ -161,13 +162,14 @@
                 </div>
 
                 <button type="submit" class="btn btn-primary">Thêm khách hàng</button>
+                <button type="button" class="btn btn-secondary" onclick="clearForm()">Xóa</button>
                 <!-- </form> -->
             </article>
         </form>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script th:src="@{/js/customer/addRessApiCustomer.js}" type="text/javascript"></script>
         <script th:src="@{/js/customer/uploadImg.js}" type="text/javascript"></script>
-
+        <script th:src="@{/js/customer/clearForm.js}" type="text/javascript"></script>
 
     </div>
 </main>

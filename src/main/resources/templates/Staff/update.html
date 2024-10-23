@@ -17,15 +17,15 @@
 
 <main class="container">
     <div layout:fragment="content">
-        <form th:object="${staff}" th:action="${'/staff/update'}" method="post">
+        <form th:object="${staff}" th:action="${'/staff/update'}" method="post" enctype="multipart/form-data">
             <input type="hidden" id="provinceHiden" th:value="${staff.province}">
             <input type="hidden" id="districtHiden" th:value="${staff.district}">
             <input type="hidden" id="wardHiden" th:value="${staff.ward}">
             <input type="hidden" th:field="*{id}">
             <article class="container-xxl bd-gutter mt-4 my-md-3 bd-layout">
                 <h2>Sửa nhân viên</h2>
-                <div class="form-nab">
-                    <div class="container">
+                <div class="form-row">
+<!--                    <div class="container">-->
                         <div class="row">
                             <div class="col-6">
                                 <p>Ảnh nhân viên (3x4)</p>
@@ -33,7 +33,7 @@
                                     <label for="file-upload" class="custom-file-upload">
                                         <img id="image-preview" th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728721025/'+${staff.imageString}" alt="Ảnh nhân viên" />
                                     </label>
-                                    <input id="file-upload" type="file" accept="image/*" />
+                                    <input id="file-upload" name="nameImage" type="file" accept="image/*" />
                                 </div>
                             </div>
                             <div class="col-6">
@@ -65,7 +65,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+<!--                    </div>-->
                 </div>
 
                 <!-- SDT/Ngày sinh/Email -->

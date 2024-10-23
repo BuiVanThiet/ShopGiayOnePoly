@@ -107,16 +107,16 @@ public class CustomerController {
         customer.setGender(customerRequest.getGender());
         customer.setAddRess(customerRequest.getWard() + "," + customerRequest.getDistrict() + "," + customerRequest.getProvince() + "," + customerRequest.getAddRessDetail());
         customer.setStatus(customerRequest.getStatus());
-        // Kiểm tra ảnh
+        Customer customerSave = this.customerService.save(customer);
+// Kiểm tra ảnh
         if (customerRequest.getNameImage() != null && !customerRequest.getNameImage().isEmpty()) {
             customer.setImage("fileName");
-            customerService.uploadFile(customerRequest.getNameImage(), customer.getId());
+            customerService.uploadFile(customerRequest.getNameImage(), customerSave.getId());
         } else {
             // Đặt ảnh mặc định nếu không có ảnh được tải lên
             customer.setImage("Khong co anh");
         }
-        Customer customerSave = this.customerService.save(customer);
-        this.customerService.save(customerSave);
+        //        this.customerService.save(customerSave);
 //        customer.setImage("fileName");
         System.out.println(customer.toString());
 //        customerService.uploadFile(customerRequest.getNameImage(),customerSave.getId());
@@ -194,6 +194,7 @@ public class CustomerController {
         customer.setGender(customerRequest.getGender());
         customer.setAddRess(customerRequest.getWard() + "," + customerRequest.getDistrict() + "," + customerRequest.getProvince() + "," + customerRequest.getAddRessDetail());
         customer.setStatus(customerRequest.getStatus());
+        this.customerService.save(customer);
         // Kiểm tra và cập nhật ảnh
         if (customerRequest.getNameImage() != null && !customerRequest.getNameImage().isEmpty()) {
             // Thực hiện upload ảnh và trả về tên file
@@ -203,8 +204,6 @@ public class CustomerController {
             // Nếu không có ảnh mới, giữ nguyên ảnh cũ
             customer.setImage(customer.getImage());
         }
-        Customer customerSave = this.customerService.save(customer);
-        this.customerService.save(customerSave);
         return "redirect:/customer/list";
     }
 

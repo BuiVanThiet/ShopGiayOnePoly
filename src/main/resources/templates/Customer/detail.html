@@ -24,8 +24,8 @@
             <article class="container-xxl bd-gutter mt-4 my-md-3 bd-layout">
                 <h2>Chi tiết khách hàng</h2>
                 <!-- <form action="/product/save" method="post" enctype="multipart/form-data"> -->
-                <div class="form-nab">
-                    <div class="container">
+                <div class="form-row">
+<!--                    <div class="container">-->
                         <div class="row">
                             <div class="col-6">
                                 <p>Ảnh khách hàng (3x4)</p>
@@ -75,7 +75,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+<!--                    </div>-->
                 </div>
 
                 <!-- SDT/Ngày sinh/Email -->
@@ -112,19 +112,19 @@
                         <!-- Các phần khác của form -->
                         <div class="col-4">
                             <label class="form-label">Tỉnh/Thành phố</label>
-                            <select class="form-select" id="province" name="province">
+                            <select class="form-select" id="province" name="province" disabled>
                                 <option value="">Chọn tỉnh/thành phố</option>
                             </select>
                         </div>
                         <div class="col-4">
                             <label class="form-label">Quận/Huyện</label>
-                            <select class="form-select" id="district" name="district">
+                            <select class="form-select" id="district" name="district" disabled>
                                 <option value="">Chọn quận/huyện</option>
                             </select>
                         </div>
                         <div class="col-4">
                             <label class="form-label">Xã/Phường/Thị Trấn</label>
-                            <select class="form-select" id="ward" name="ward">
+                            <select class="form-select" id="ward" name="ward" disabled>
                                 <option value="">Chọn xã/phường/thị trấn</option>
                             </select>
                         </div>
@@ -139,7 +139,7 @@
                                 <label>Địa chi chi tiết</label>
                                 <textarea class="form-control"
                                           placeholder="Enter customer address" required
-                                          th:field="${customer.addRessDetail}"></textarea>
+                                          th:field="${customer.addRessDetail}" readonly></textarea>
                             </div>
                         </div>
                     </div>
