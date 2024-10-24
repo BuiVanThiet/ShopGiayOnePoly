@@ -71,16 +71,16 @@ function previewImages(event) {
 }
 function filterFunction() {
     var input, filter, ul, li, i;
-    input = document.getElementById("myInput-codeProduct");
+    input = document.getElementById("myInput-nameProduct");
     filter = input.value.toUpperCase();
-    ul = document.getElementById("dataList-codeProduct");
+    ul = document.getElementById("dataList-nameProduct");
     li = ul.getElementsByTagName("li");
 
     // Hiển thị dropdown khi có nhập liệu
     if (input.value) {
-        ul.classList.add("show");
+        ul.classList.add("show-createProduct");
     } else {
-        ul.classList.remove("show");
+        ul.classList.remove("show-createProduct");
     }
 
     // Lọc các sản phẩm dựa trên giá trị nhập vào
@@ -96,12 +96,47 @@ function filterFunction() {
 
 // Đóng dropdown khi click ngoài
 window.onclick = function(event) {
-    if (!event.target.matches('#myInput-codeProduct')) {
-        var dropdowns = document.getElementsByClassName("dropdown-content");
+    if (!event.target.matches('#myInput-nameProduct')) {
+        var dropdowns = document.getElementsByClassName("dropdown-content-createProduct");
         for (var i = 0; i < dropdowns.length; i++) {
             var openDropdown = dropdowns[i];
-            if (openDropdown.classList.contains('show')) {
-                openDropdown.classList.remove('show');
+            if (openDropdown.classList.contains('show-createProduct')) {
+                openDropdown.classList.remove('show-createProduct');
+            }
+        }
+    }
+}
+function showDropdown() {
+    var ul = document.getElementById("dataList-nameProduct");
+    ul.classList.add("show-createProduct");
+}
+
+function filterFunction() {
+    var input, filter, ul, li, i;
+    input = document.getElementById("myInput-nameProduct");
+    filter = input.value.toUpperCase();
+    ul = document.getElementById("dataList-nameProduct");
+    li = ul.getElementsByTagName("li");
+
+    // Lọc các sản phẩm dựa trên giá trị nhập vào
+    for (i = 0; i < li.length; i++) {
+        txtValue = li[i].textContent || li[i].innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+            li[i].style.display = "";
+        } else {
+            li[i].style.display = "none";
+        }
+    }
+}
+
+// Đóng dropdown khi click ngoài
+window.onclick = function(event) {
+    if (!event.target.matches('#myInput-nameProduct')) {
+        var dropdowns = document.getElementsByClassName("dropdown-content-createProduct");
+        for (var i = 0; i < dropdowns.length; i++) {
+            var openDropdown = dropdowns[i];
+            if (openDropdown.classList.contains('show-createProduct')) {
+                openDropdown.classList.remove('show-createProduct');
             }
         }
     }
