@@ -20,16 +20,18 @@
               <input type="text" />
             </div>
             <div class="form-control-createProduct">
-              <label for="myInput-codeProduct">Tên sản phẩm:</label>
-              <input list="dataList-codeProduct" id="myInput-codeProduct" name="myInput-codeProduct">
-              <datalist style="
-  max-height: 100px;
-  overflow-y: auto;
-
-" id="dataList-codeProduct" >
-                <option th:each="product : ${productList}" th:value="${product.codeProduct}">
-                <option th:each="product : ${productList}" th:value="${product.nameProduct}">
-              </datalist>
+              <label for="myInput-nameProduct">Tên sản phẩm:</label>
+              <input type="text" id="myInput-nameProduct" name="myInput-nameProduct" onfocus="showDropdown()" onkeyup="filterFunction()">
+              <ul id="dataList-nameProduct" class="dropdown-content-createProduct">
+                <li>Product1vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv    </li>
+                <li>Product2</li>
+                <li>Product3</li>
+                <li>Product4</li>
+                <li>Product5</li>
+                <li>Product6</li>
+                <li>Product7</li>
+                <li>Product8</li>
+              </ul>
             </div>
             <div class="form-control-createProduct">
               <label for="myInput-createProduct">Chọn danh mục:</label>
