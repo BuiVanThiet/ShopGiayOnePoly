@@ -23,13 +23,13 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 15px; /* Kích thước hình tròn */
+    width: 15px;
     height: 15px;
     border-radius: 50%; /* Tạo hình tròn */
-    background-color: #eaeaea; /* Màu nền của biểu tượng */
-    color: black; /* Màu biểu tượng */
-    font-size: 16px; /* Kích thước biểu tượng */
-    border: 2px solid #e7dede; /* Viền cho biểu tượng */
+    background-color: #eaeaea;
+    color: black;
+    font-size: 16px;
+    border: 2px solid #e7dede;
     transition: background-color 0.3s, color 0.3s; /* Hiệu ứng chuyển màu */
 }
 
@@ -72,9 +72,6 @@
 }
 
 .sale-background-text {
-    position: absolute;
-    top: 50%; /* Đặt dòng chữ ở giữa container */
-    left: 50%;
     transform: translate(-50%, -50%); /* Căn chỉnh giữa chính xác */
     font-size: 150px; /* Kích thước chữ */
     font-weight: bold;
@@ -87,7 +84,7 @@
 
 .coupon-header, .btn-wrap {
     position: relative; /* Đảm bảo các nội dung này luôn nằm trên chữ "SALE" */
-    z-index: 2; /* Nội dung chính sẽ nằm trên chữ "SALE" */
+    /*z-index: 2; !* Nội dung chính sẽ nằm trên chữ "SALE" *!*/
 }
 
 /*button product css*/
@@ -115,6 +112,36 @@
     position: relative;
     z-index: 2;
 }
+/*Top 10 product lowest*/
+/* Định dạng chữ lớn TOP 12 cho background */
+.top10-background-text-lowest {
+    position: absolute;
+    top: 50%;
+    left: 30%;
+    transform: translate(-50%, -50%);
+    font-size: 150px;
+    font-weight: bold;
+    color: rgba(0, 0, 0, 0.05);
+    z-index: 1;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+/* Định dạng cho phần header của banner */
+.top10-header-lowest {
+    position: absolute;
+    right: 100px;
+    top: 10px;
+}
+
+/* Định dạng cho button trong banner */
+.btn-top10-lowest {
+    position: absolute;
+    right: 100px;
+    top: 75px;
+    line-height: 30px;
+
+}
 
 /* Nút button product highest trong banner */
 .btn-top10 {
@@ -126,27 +153,27 @@
     display: none;
 }
 
-.btn-product-highest {
+.btn-base {
     width: 200px;
-    background-color: #858282; /* Màu nền mặc định */
-    color: white; /* Màu chữ */
+    background-color: #ffffff; /* Màu nền mặc định */
+    color: #000000; /* Màu chữ */
     padding: 10px 20px; /* Khoảng đệm */
-    border: none; /* Loại bỏ viền */
-    border-radius: 5px; /* Bo tròn góc */
+    border: 1px solid black;
     font-size: 16px; /* Kích thước chữ */
     cursor: pointer; /* Con trỏ chuột chuyển thành pointer khi hover */
     transition: background-color 0.3s ease, transform 0.3s ease; /* Hiệu ứng khi hover */
 }
 
 /* Khi hover vào nút */
-.btn-product-highest:hover {
-    background-color: #042e5d; /* Màu nền khi hover */
-    transform: scale(1.05); /* Tăng kích thước một chút khi hover */
+.btn-base:hover {
+    background-color: #464545; /* Màu nền khi hover */
+    color: #ffffff; /* Màu chữ */
+
 }
 
 /* Khi nút bị nhấn */
-.btn-product-highest:active {
-    background-color: #003d80; /* Màu nền khi nhấn nút */
+.btn-base:active {
+    background-color: #464545; /* Màu nền khi nhấn nút */
     transform: scale(1); /* Giảm hiệu ứng khi nhấn nút */
 }
 
