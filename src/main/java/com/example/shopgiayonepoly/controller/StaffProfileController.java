@@ -47,7 +47,7 @@ public class StaffProfileController {
             staffProfile.setWard(partStaff[0]);
             staffProfile.setAddRessDetail(String.join(", ", java.util.Arrays.copyOfRange(partStaff, 3, partStaff.length)));
             staffProfile.setImageStaffString(staff.getImage());
-
+            System.out.println("hiển thị"+ staff.toString());
             LocalDate birthDayStaff = staff.getBirthDay();
             if (birthDayStaff != null) {
                 model.addAttribute("birthDayDay", birthDayStaff.getDayOfMonth());
@@ -90,10 +90,11 @@ public class StaffProfileController {
                 // Tải ảnh mới lên
                 String imageId = staffService.uploadFile(nameImage, staff.getId());
                 staff.setImage(imageId);
-                // Cập nhật trường image với ID ảnh mới
+                // Nếu không nhập ảnh thì lấy ảnh cũ cập nhật vào
             }else {
-                staff.setImage("Khong co anh");
+                staff.setImage(staff.getImage());
             }
+            System.out.println(staff.toString());
             model.addAttribute("staffProfile", staffProfile);
             model.addAttribute("successMessage", "Cập nhật thông tin thành công.");
         } else {

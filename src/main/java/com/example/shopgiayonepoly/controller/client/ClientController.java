@@ -221,7 +221,6 @@ public class ClientController {
                 userProfile.setAddRessDetail(String.join(", ", java.util.Arrays.copyOfRange(part, 3, part.length)));
                 userProfile.setImageString(customer.getImage());
 
-
                 // Lấy thông tin ngày sinh
                 LocalDate birthDay = customer.getBirthDay(); // Giả sử birthDay là kiểu LocalDate
                 if (birthDay != null) {
