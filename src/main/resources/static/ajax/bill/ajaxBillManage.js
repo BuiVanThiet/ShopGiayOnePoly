@@ -668,23 +668,23 @@ function loadInfomationReturnBillFromBillManage() {
             $('#customer-buy-product').text(response.nameCustomer)
             $('#discount-voucher').text(response.discount.toLocaleString('en-US') + ' VNĐ')
             $('#divide-equally-product').text(response.discountRatioPercentage+ ' %')
-            $('#total-return').text(response.totalReturn.toLocaleString('en-US') + ' VNĐ')
+            $('#total-return').text((response.totalReturn-response.exchangeAndReturnFee+response.discountedAmount).toLocaleString('en-US') + ' VNĐ')
             $('#node-return').val(response.noteReturn);
             $('#node-return').attr('disabled', true);
             $('#total-exchange').text(response.totalExchange.toLocaleString('en-US') + ' VNĐ')
 
             var totalReturnCustomer = 0;
-            if((response.totalReturn-response.totalExchange) <= 0) {
+            if(((response.totalReturn-response.exchangeAndReturnFee+response.discountedAmount)-response.totalExchange) <= 0) {
                 totalReturnCustomer = 0;
             }else {
-                totalReturnCustomer = response.totalReturn-response.totalExchange;
+                totalReturnCustomer = (response.totalReturn-response.exchangeAndReturnFee+response.discountedAmount) -response.totalExchange;
             }
             $('#total-return-customer').text(totalReturnCustomer.toLocaleString('en-US') + ' VNĐ')
             var totalExchangeCustomer = 0;
-            if((response.totalExchange-response.totalReturn) <= 0) {
+            if((response.totalExchange-(response.totalReturn-response.exchangeAndReturnFee+response.discountedAmount)) <= 0) {
                 totalExchangeCustomer = 0;
             }else {
-                totalExchangeCustomer = response.totalExchange-response.totalReturn;
+                totalExchangeCustomer = response.totalExchange-(response.totalReturn-response.exchangeAndReturnFee+response.discountedAmount);
             }
             $('#total-exchange-customer').text(totalExchangeCustomer.toLocaleString('en-US') + ' VNĐ')
             loadReturnBillFromBillManage(1);

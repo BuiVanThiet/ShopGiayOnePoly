@@ -135,21 +135,61 @@
                     <span>Phần trăm giảm cho mỗi sản phầm: </span>
                     <span id="divide-equally-product"></span>
                 </div>
-                <div class="mb-3 d-flex justify-content-between col-6">
-                    <span>Tổng tiền hàng trả lại: </span>
-                    <span id="total-return"></span>
+                <!-- Thẻ card bên trái -->
+                <div class="col-4">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="mb-3 d-flex justify-content-between">
+                                <span>Tổng tiền hàng trả lại: </span>
+                                <span id="total-return">0 VNĐ</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>Tổng tiền trả khách hàng: </span>
+                                <span id="total-return-customer">0 VNĐ</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="mb-3 d-flex justify-content-between col-6">
-                    <span>Tổng tiền hàng đổi: </span>
-                    <span id="total-exchange">2</span>
+                <div class="col-4">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="mb-3 d-flex justify-content-between" >
+                                <span>Phí đổi-trả hàng: </span>
+                                <!--                    <span >123</span>-->
+                                <div class="input-group input-group-sm" style="width: 60%;">
+                                    <input type="text"
+                                           class="form-control"
+                                           oninput="exchangeAndReturnFee(this)">
+                                    <span class="input-group-text">VNĐ</span>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between" >
+                            <span>Trả thêm tiền cho khách: </span>
+                            <!--                    <span >123</span>-->
+                            <div class="input-group input-group-sm" style="width: 60%;">
+                                <input type="text"
+                                       class="form-control"
+                                       oninput="discountedAmount(this)">
+                                <span class="input-group-text">VNĐ</span>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="mb-3 d-flex justify-content-between col-6">
-                    <span>Tổng tiền trả khách hàng: </span>
-                    <span id="total-return-customer">23</span>
-                </div>
-                <div class="mb-3 d-flex justify-content-between col-6">
-                    <span>Tổng tiền thu khách hàng: </span>
-                    <span id="total-exchange-customer">12</span>
+                <div class="col-4">
+                    <!-- Thẻ card bên phải (sát về phải và có khoảng cách với thẻ bên trái) -->
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="mb-3 d-flex justify-content-between">
+                                <span>Tổng tiền hàng đổi: </span>
+                                <span id="total-exchange">0 VNĐ</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>Tổng tiền thu khách hàng: </span>
+                                <span id="total-exchange-customer">0 VNĐ</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div id="block-confirm" class="col-6">
                     <!-- Button trigger modal -->
@@ -174,7 +214,6 @@
                             </div>
                         </div>
                     </div>
-
 
                 </div>
                 <div class="justify-content-between col-12" id="form_Reason">

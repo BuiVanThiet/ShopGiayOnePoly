@@ -136,27 +136,7 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
             bill.cash, 
             bill.acountMoney, 
             bill.note, 
-            case
-                when bill.status = 6 then 0
-                when bill.status BETWEEN 1 AND 5 then 
-                
-                    case 
-                        when voucher.discountType = 1 then
-                            case 
-                                when bill.totalAmount * (voucher.priceReduced / 100) > voucher.pricesMax then
-                                    bill.totalAmount - voucher.pricesMax + bill.shippingPrice
-                                else 
-                                    bill.totalAmount - (bill.totalAmount * (voucher.priceReduced / 100)) + bill.shippingPrice
-                            end 
-                        when voucher.discountType = 2 then
-                            bill.totalAmount - voucher.priceReduced + bill.shippingPrice
-                        else 
-                            bill.totalAmount + bill.shippingPrice
-                    end
-                
-                when bill.status = 7 OR bill.status = 8 then rb.customerRefund
-                else rb.customerRefund
-            end
+            bill.totalAmount - bill.priceDiscount
             , 
             bill.paymentMethod, 
             bill.billType, 

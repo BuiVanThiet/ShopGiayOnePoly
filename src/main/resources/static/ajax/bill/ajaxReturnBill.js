@@ -192,7 +192,12 @@ function loadReturnBill(page) {
                             </td>
 
                             <td class="text-center align-middle">
-                                ${billReturn.priceBuy.toLocaleString('en-US') + ' VNĐ'}
+                                <span class="d-inline-block" tabindex="0" 
+                                data-bs-toggle="popover" 
+                                data-bs-trigger="hover focus" 
+                                data-bs-content="${billReturn.priceDiscount.toLocaleString('en-US') + ' VNĐ'}">
+                                    ${billReturn.priceBuy.toLocaleString('en-US') + ' VNĐ'}
+                                </span>
                             </td>
                             <td class="text-center align-middle">
                                  <div class="pagination mb-3 custom-number-input" style="width: 130px;" data-id="${billReturn.productDetail.id}">
@@ -217,6 +222,10 @@ function loadReturnBill(page) {
                 // Khởi tạo lại tất cả các carousel sau khi cập nhật DOM
                 $('.carousel').each(function() {
                     $(this).carousel(); // Khởi tạo carousel cho từng phần tử
+                });
+                // Khởi tạo lại tất cả các popover sau khi cập nhật DOM
+                $(function () {
+                    $('[data-bs-toggle="popover"]').popover();
                 });
             }
         },
@@ -366,6 +375,42 @@ function createReturnBill() {
                 // Xử lý nếu không có chuyển hướng (ví dụ hiển thị thông báo)
                 alert("Không có URL chuyển hướng");
             }
+        },
+        error: function (xhr) {
+            console.error('Lỗi khi cập nhật: ' + xhr.responseText);
+        }
+    });
+}
+
+function exchangeAndReturnFee(input) {
+    let value = input.value.replace(/,/g, '').replace(/[^0-9]/g, '');
+    input.value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    if(value === '') {
+        value = 0;
+    }
+    $.ajax({
+        type: "GET",
+        url: "/return-exchange-bill-api/exchangeAndReturnFee/"+value,
+        success: function (response) {
+            loadInfomationReturnBill();
+        },
+        error: function (xhr) {
+            console.error('Lỗi khi cập nhật: ' + xhr.responseText);
+        }
+    });
+}
+
+function discountedAmount(input) {
+    let value = input.value.replace(/,/g, '').replace(/[^0-9]/g, '');
+    input.value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    if(value === '') {
+        value = 0;
+    }
+    $.ajax({
+        type: "GET",
+        url: "/return-exchange-bill-api/discountedAmount/"+value,
+        success: function (response) {
+            loadInfomationReturnBill();
         },
         error: function (xhr) {
             console.error('Lỗi khi cập nhật: ' + xhr.responseText);

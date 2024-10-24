@@ -85,6 +85,9 @@ public abstract class BaseBill {
 
     protected BigDecimal totalExchange = BigDecimal.valueOf(0);
 
+    protected BigDecimal exchangeAndReturnFee =  BigDecimal.valueOf(0);
+    protected BigDecimal discountedAmount =  BigDecimal.valueOf(0);
+
 
 
     //method chung
