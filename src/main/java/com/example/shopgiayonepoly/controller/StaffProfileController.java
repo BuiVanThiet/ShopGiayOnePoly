@@ -1,13 +1,18 @@
 package com.example.shopgiayonepoly.controller;
 
-import com.example.shopgiayonepoly.dto.request.StaffProfile;
+import com.example.shopgiayonepoly.dto.request.StaffProfileRequest;
+import com.example.shopgiayonepoly.dto.request.UserProfileUpdateRequest;
+import com.example.shopgiayonepoly.dto.response.ClientLoginResponse;
+import com.example.shopgiayonepoly.entites.Customer;
 import com.example.shopgiayonepoly.entites.Staff;
 import com.example.shopgiayonepoly.repositores.StaffRepository;
 import com.example.shopgiayonepoly.service.StaffService;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,9 +32,10 @@ public class StaffProfileController {
 
         if (staff != null) {
             // Bạn có thể sử dụng thông tin staff để thực hiện các thao tác khác
-            StaffProfile staffProfile = new StaffProfile();
+            StaffProfileRequest staffProfile = new StaffProfileRequest();
             staffProfile.setAccount(staff.getAcount());
             staffProfile.setFullName(staff.getFullName());
+            staffProfile.setPassword(staff.getPassword());
             staffProfile.setEmail(staff.getEmail());
             staffProfile.setNumberPhone(staff.getNumberPhone());
             staffProfile.setGender(staff.getGender());
@@ -63,7 +69,7 @@ public class StaffProfileController {
     }
 
     @PostMapping("/updateStaffProfile")
-    public String updateStaffProfile(StaffProfile staffProfile,
+    public String updateStaffProfile(StaffProfileRequest staffProfile,
                                      HttpSession session,
                                      @RequestParam("nameImageStaff") MultipartFile nameImage,
                                      Model model) throws IOException {
@@ -72,12 +78,13 @@ public class StaffProfileController {
         if (staff != null) {
             // Cập nhật thông tin staff dựa trên dữ liệu từ form
             staff.setFullName(staffProfile.getFullName());
+            staff.setPassword(staffProfile.getPassword());
             staff.setEmail(staffProfile.getEmail());
             staff.setNumberPhone(staffProfile.getNumberPhone());
             staff.setGender(staffProfile.getGender());
             staff.setBirthDay(staffProfile.getBirthDay());
             staff.setAddress(staffProfile.getWard() + "," + staffProfile.getDistrict() + "," + staffProfile.getProvince() + "," + staffProfile.getAddRessDetail());
-            staffRepository.save(staff);
+            staffService.save(staff);
             // Kiểm tra nếu có ảnh mới
             if (!nameImage.isEmpty()) {
                 // Tải ảnh mới lên

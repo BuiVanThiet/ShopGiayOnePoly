@@ -40,19 +40,23 @@
     </div>
 
     <div class="filter-section">
-      <form action="#" method="GET" class="form-inline">
+      <form action="#" method="GET" class="custom-form-inline">
         <!-- Bộ lọc khoảng thời gian -->
-        <div class="btn-group" role="group" aria-label="Thời gian lọc">
-          <button type="button" class="btn btn-outline-primary" onclick="filterData('today')">Hôm nay</button>
-          <button type="button" class="btn btn-outline-primary" onclick="filterData('last7days')">7 Ngày</button>
-          <button type="button" class="btn btn-outline-primary" onclick="filterData('month')">Tháng</button>
-          <button type="button" class="btn btn-outline-primary" onclick="filterData('year')">Năm</button>
+        <div class="button-group" role="group" aria-label="Thời gian lọc">
+          <button type="button" class="custom-btn" onclick="filterData('today')">Hôm nay</button>
+          <button type="button" class="custom-btn" onclick="filterData('last7days')">7 Ngày</button>
+          <button type="button" class="custom-btn" onclick="filterData('month')">Tháng</button>
+          <button type="button" class="custom-btn" onclick="filterData('year')">Năm</button>
         </div>
       </form>
     </div>
+    <div class="row mt-4">
+      <div class="col-md-12">
+        <div id="chartContainer" style="height: 370px; width: 100%;"></div>
+      </div>
+    </div>
   </div>
 </main>
-
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

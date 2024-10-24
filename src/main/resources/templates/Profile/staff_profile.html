@@ -33,7 +33,15 @@
                             <label class="col-sm-4 col-form-label">Họ và tên</label>
                             <div class="col-sm-8">
                                 <input type="text" class="form-control" name="fullName" th:value="${staffProfile.fullName}" placeholder="Nhập họ và tên">
-                                <div class="error-message" style="color: red;"></div>
+                                <div class="error-message" id="fullName-error" style="color: red;"></div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <label class="col-sm-4 col-form-label">Mật khẩu</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="password" th:value="${staffProfile.password}" placeholder="Nhập password">
+                                <div class="error-message" id="password-error" style="color: red;"></div>
                             </div>
                         </div>
 

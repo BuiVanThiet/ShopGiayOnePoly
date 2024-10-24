@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class StaffProfile extends BaseDTO {
+public class StaffProfileRequest extends BaseDTO {
     private MultipartFile nameImage;
 
     private String imageStaffString;
