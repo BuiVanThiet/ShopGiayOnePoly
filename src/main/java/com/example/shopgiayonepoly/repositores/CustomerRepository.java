@@ -50,11 +50,11 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
             c.addRess
         ) 
         from Customer c 
-        where concat(c.fullName, c.numberPhone) like %:key%
+        where concat(c.fullName, c.numberPhone, c.email) like %:key%
     """)
     public List<CustomerResponse> searchCustomerByKeyword(@Param("key") String key);
 
-    @Query("select c from Customer c where (c.fullName like %:key% or c.numberPhone like %:key%)")
+    @Query("select c from Customer c where (c.fullName like %:key% or c.numberPhone like %:key% or c.email like %:key%)")
     public Page<Customer> searchCustomerByKeywordPage(@Param("key") String key, Pageable pageable);
 
 

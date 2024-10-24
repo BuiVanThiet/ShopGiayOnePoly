@@ -2,7 +2,6 @@ package com.example.shopgiayonepoly.controller;
 
 import com.example.shopgiayonepoly.dto.request.StaffRequest;
 import com.example.shopgiayonepoly.dto.response.StaffResponse;
-import com.example.shopgiayonepoly.entites.SaleProduct;
 import com.example.shopgiayonepoly.entites.Staff;
 import com.example.shopgiayonepoly.service.StaffService;
 import jakarta.servlet.http.HttpSession;
@@ -28,7 +27,7 @@ public class StaffController {
     @Autowired
     StaffService staffService;
 
-    private final int pageSize = 10;
+    private final int pageSize = 5;
 
 //    @GetMapping("/list")
 //    public String list(Model model) {
@@ -78,8 +77,8 @@ public class StaffController {
             result.rejectValue("codeStaff", "error.staff", "Mã không được để trống!"); // Thông báo nếu mã rỗng hoặc chỉ chứa khoảng trắng
         } else if (staffRequest.getCodeStaff().length() < 3 || staffRequest.getCodeStaff().length() > 10) {
             result.rejectValue("codeStaff", "error.staff", "Mã phải có độ dài từ 3 đến 10 ký tự!");
-        } else if (!staffRequest.getCodeStaff().matches("^[A-Z][0-9]+$")) {
-            result.rejectValue("codeStaff", "error.staff", "Mã phải bắt đầu bằng chữ hoa và theo sau là số!");
+        } else if (staffService.existsByCodeStaff(staffRequest.getCodeStaff())) {
+            result.rejectValue("codeStaff", "error.staff", "Mã đã tồn tại!"); // Thông báo nếu mã đã tồn tại
         }
 // Kiểm tra số điện thoại
         if (staffRequest.getNumberPhone() == null || staffRequest.getNumberPhone().isEmpty()) {
@@ -124,7 +123,7 @@ public class StaffController {
             staffService.uploadFile(staffRequest.getNameImage(), staffSave.getId());
         } else {
             // Đặt ảnh mặc định nếu không có ảnh được tải lên
-            staff.setImage("Khong co anh");
+            staff.setImage("Ảnh nhân viên");
         }
 //        staff.setImage("fileName");
         System.out.println(staff.toString());
@@ -177,8 +176,8 @@ public class StaffController {
             result.rejectValue("codeStaff", "error.staff", "Mã không được để trống!"); // Thông báo nếu mã rỗng hoặc chỉ chứa khoảng trắng
         } else if (staffRequest.getCodeStaff().length() < 3 || staffRequest.getCodeStaff().length() > 10) {
             result.rejectValue("codeStaff", "error.staff", "Mã phải có độ dài từ 3 đến 10 ký tự!");
-        } else if (!staffRequest.getCodeStaff().matches("^[A-Z][0-9]+$")) {
-            result.rejectValue("codeStaff", "error.staff", "Mã phải bắt đầu bằng chữ hoa và theo sau là số!");
+        } else if (staffService.existsByCodeStaff(staffRequest.getCodeStaff())) {
+            result.rejectValue("codeStaff", "error.staff", "Mã đã tồn tại!"); // Thông báo nếu mã đã tồn tại
         }
 // Kiểm tra số điện thoại
         if (staffRequest.getNumberPhone() == null || staffRequest.getNumberPhone().isEmpty()) {
@@ -219,7 +218,7 @@ public class StaffController {
             staffService.uploadFile(staffRequest.getNameImage(), staff.getId());
         } else {
             // Đặt ảnh mặc định nếu không có ảnh được tải lên
-            staff.setImage("Khong co anh");
+            staff.setImage("Ảnh nhân viên");
         }
         return "redirect:/staff/list";
     }

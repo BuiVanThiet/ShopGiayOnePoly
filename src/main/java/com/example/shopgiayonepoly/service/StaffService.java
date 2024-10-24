@@ -42,4 +42,7 @@ public interface StaffService {
     public void deleteStaff(Integer id);
 
     String uploadFile(MultipartFile multipartFile,Integer idStaff) throws IOException;
+
+    public boolean existsByCodeStaff(String codeStaff);
+
 }

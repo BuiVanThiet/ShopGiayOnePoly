@@ -102,6 +102,11 @@ public class StaffImplement implements StaffService {
     }
 
     @Override
+    public boolean existsByCodeStaff(String codeStaff) {
+        return staffRepository.existsByCodeStaff(codeStaff);
+    }
+
+    @Override
     public Staff getStaffByID(Integer id) {
         return staffRepository.findById(id).orElse(new Staff());
     }
