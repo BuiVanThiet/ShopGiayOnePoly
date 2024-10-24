@@ -1,7 +1,7 @@
 function loadBillDetailFromReturnBill(page) {
     $.ajax({
         type: "GET",
-        url: "/return-bill-api/bill-detail/"+page,
+        url: "/return-exchange-bill-api/bill-detail/"+page,
         success: function(response) {
             var tbody = $('#tableBillDetail');
             var noDataContainer = $('#noDataContainer');
@@ -25,7 +25,7 @@ function loadBillDetailFromReturnBill(page) {
 
                     billDetail.productDetail.product.images.forEach(function(image, imgIndex) {
                         imagesHtml += `
-                            <div class="carousel-item ${imgIndex === 0 ? 'active' : ''}" data-bs-interval="2000">
+                            <div class="carousel-item ${imgIndex === 0 ? 'active' : ''}" data-bs-interval="30000">
                                 <img style="height: auto; width: 100px;" src="https://res.cloudinary.com/dfy4umpja/image/upload/f_auto,q_auto/${image.nameImage}" class="d-block w-100" alt="Lỗi ảnh">
                             </div>`;
                     });
@@ -125,7 +125,7 @@ function loadBillDetailFromReturnBill(page) {
 function maxPageBillDetailByIdBill() {
     $.ajax({
         type: "GET",
-        url:"/return-bill-api/max-page-bill-detail",
+        url:"/return-exchange-bill-api/max-page-bill-detail",
         success: function (response) {
             createPagination('billDetailPageMax-returnBill', response, 1);
         },
@@ -142,7 +142,7 @@ function maxPageBillDetailByIdBill() {
 function loadReturnBill(page) {
     $.ajax({
         type: "GET",
-        url: "/return-bill-api/bill-return-detail/"+page,
+        url: "/return-exchange-bill-api/bill-return-detail/"+page,
         success: function (response) {
             var tbody = $('#tableReturnBill');
             var noDataContainer = $('#noDataReturnBill');
@@ -166,7 +166,7 @@ function loadReturnBill(page) {
 
                     billReturn.productDetail.product.images.forEach(function(image, imgIndex) {
                         imagesHtml += `
-                            <div class="carousel-item ${imgIndex === 0 ? 'active' : ''}" data-bs-interval="2000">
+                            <div class="carousel-item ${imgIndex === 0 ? 'active' : ''}" data-bs-interval="30000">
                                 <img style="height: auto; width: 100px;" src="https://res.cloudinary.com/dfy4umpja/image/upload/f_auto,q_auto/${image.nameImage}" class="d-block w-100" alt="Lỗi ảnh">
                             </div>`;
                     });
@@ -192,7 +192,12 @@ function loadReturnBill(page) {
                             </td>
 
                             <td class="text-center align-middle">
-                                ${billReturn.priceBuy.toLocaleString('en-US') + ' VNĐ'}
+                                <span class="d-inline-block" tabindex="0" 
+                                data-bs-toggle="popover" 
+                                data-bs-trigger="hover focus" 
+                                data-bs-content="${billReturn.priceDiscount.toLocaleString('en-US') + ' VNĐ'}">
+                                    ${billReturn.priceBuy.toLocaleString('en-US') + ' VNĐ'}
+                                </span>
                             </td>
                             <td class="text-center align-middle">
                                  <div class="pagination mb-3 custom-number-input" style="width: 130px;" data-id="${billReturn.productDetail.id}">
@@ -218,6 +223,10 @@ function loadReturnBill(page) {
                 $('.carousel').each(function() {
                     $(this).carousel(); // Khởi tạo carousel cho từng phần tử
                 });
+                // Khởi tạo lại tất cả các popover sau khi cập nhật DOM
+                $(function () {
+                    $('[data-bs-toggle="popover"]').popover();
+                });
             }
         },
         error: function (xhr) {
@@ -229,7 +238,7 @@ function loadReturnBill(page) {
 function maxPageReturnBill() {
     $.ajax({
         type: "GET",
-        url:"/return-bill-api/max-page-return-bill",
+        url:"/return-exchange-bill-api/max-page-return-bill",
         success: function (response) {
             createPagination('billReturnPageMax-returnBill', response, 1);
         },
@@ -243,7 +252,7 @@ function maxPageReturnBill() {
 function addProductReturn() {
     $.ajax({
         type: "POST",
-        url:"/return-bill-api/add-product-in-return-bill",
+        url:"/return-exchange-bill-api/add-product-in-return-bill",
         contentType: "application/json",
         data: JSON.stringify({
             idProductDetail: parseInt($('#idProductDetail').val()),  // Chuyển thành số nguyên
@@ -268,7 +277,7 @@ function addProductReturn() {
 function ressetListReturnBill() {
     $.ajax({
         type: "GET",
-        url:"/return-bill-api/reset-return-bill-detail",
+        url:"/return-exchange-bill-api/reset-return-bill-detail",
         success: function (response) {
             loadBillDetailFromReturnBill(1);
             maxPageBillDetailByIdBill();
@@ -285,13 +294,28 @@ function ressetListReturnBill() {
 function loadInfomationReturnBill() {
     $.ajax({
         type: "GET",
-        url: "/return-bill-api/infomation-return-bill",
+        url: "/return-exchange-bill-api/infomation-return-bill",
         success: function (response) {
             $('#code-bill').text(response.codeBill)
             $('#customer-buy-product').text(response.nameCustomer)
             $('#discount-voucher').text(response.discount.toLocaleString('en-US') + ' VNĐ')
             $('#divide-equally-product').text(response.discountRatioPercentage+ ' %')
             $('#total-return').text(response.totalReturn.toLocaleString('en-US') + ' VNĐ')
+            $('#total-exchange').text(response.totalExchange.toLocaleString('en-US') + ' VNĐ')
+            var totalReturnCustomer = 0;
+            if((response.totalReturn-response.totalExchange) <= 0) {
+                totalReturnCustomer = 0;
+            }else {
+                totalReturnCustomer = response.totalReturn-response.totalExchange;
+            }
+            $('#total-return-customer').text(totalReturnCustomer.toLocaleString('en-US') + ' VNĐ')
+            var totalExchangeCustomer = 0;
+            if((response.totalExchange-response.totalReturn) <= 0) {
+                totalExchangeCustomer = 0;
+            }else {
+                totalExchangeCustomer = response.totalExchange-response.totalReturn;
+            }
+            $('#total-exchange-customer').text(totalExchangeCustomer.toLocaleString('en-US') + ' VNĐ')
         },
         error: function (xhr) {
             console.error('loi ' + xhr.responseText);
@@ -302,7 +326,7 @@ function loadInfomationReturnBill() {
 function remoBillReturn(idProductDetail,quantity) {
     $.ajax({
         type: "GET",
-        url: "/return-bill-api/remove-product-in-return-bill/"+idProductDetail+"/"+quantity,
+        url: "/return-exchange-bill-api/remove-product-in-return-bill/"+idProductDetail+"/"+quantity,
         success: function (response) {
             loadBillDetailFromReturnBill(1);
             maxPageBillDetailByIdBill();
@@ -323,7 +347,7 @@ function increaseOrDecreaseProductReturn(idProductReturn,quantity,method) {
     console.log(method)
     $.ajax({
         type: "GET",
-        url: "/return-bill-api/increase-or-decrease-product-return/"+parseInt(idProductReturn)+"/"+parseInt(quantity)+"/"+method, // URL
+        url: "/return-exchange-bill-api/increase-or-decrease-product-return/"+parseInt(idProductReturn)+"/"+parseInt(quantity)+"/"+method, // URL
         success: function (response) {
             loadBillDetailFromReturnBill(1);
             maxPageBillDetailByIdBill();
@@ -341,7 +365,7 @@ function increaseOrDecreaseProductReturn(idProductReturn,quantity,method) {
 function createReturnBill() {
     $.ajax({
         type: "GET",
-        url: "/return-bill-api/create-return-bill/"+$('#node-return').val(),
+        url: "/return-exchange-bill-api/create-return-bill/"+$('#node-return').val(),
         success: function (response) {
             // Kiểm tra nếu phản hồi có URL chuyển hướng
             if (response.redirectUrl) {
@@ -351,6 +375,42 @@ function createReturnBill() {
                 // Xử lý nếu không có chuyển hướng (ví dụ hiển thị thông báo)
                 alert("Không có URL chuyển hướng");
             }
+        },
+        error: function (xhr) {
+            console.error('Lỗi khi cập nhật: ' + xhr.responseText);
+        }
+    });
+}
+
+function exchangeAndReturnFee(input) {
+    let value = input.value.replace(/,/g, '').replace(/[^0-9]/g, '');
+    input.value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    if(value === '') {
+        value = 0;
+    }
+    $.ajax({
+        type: "GET",
+        url: "/return-exchange-bill-api/exchangeAndReturnFee/"+value,
+        success: function (response) {
+            loadInfomationReturnBill();
+        },
+        error: function (xhr) {
+            console.error('Lỗi khi cập nhật: ' + xhr.responseText);
+        }
+    });
+}
+
+function discountedAmount(input) {
+    let value = input.value.replace(/,/g, '').replace(/[^0-9]/g, '');
+    input.value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    if(value === '') {
+        value = 0;
+    }
+    $.ajax({
+        type: "GET",
+        url: "/return-exchange-bill-api/discountedAmount/"+value,
+        success: function (response) {
+            loadInfomationReturnBill();
         },
         error: function (xhr) {
             console.error('Lỗi khi cập nhật: ' + xhr.responseText);
@@ -383,8 +443,6 @@ $(document).ready(function () {
         event.preventDefault();
         addProductReturn();
     })
-
-
 
     ressetListReturnBill();
 });

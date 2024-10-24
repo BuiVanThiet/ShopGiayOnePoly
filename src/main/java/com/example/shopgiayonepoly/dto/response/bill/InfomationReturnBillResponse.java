@@ -1,9 +1,7 @@
 package com.example.shopgiayonepoly.dto.response.bill;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.Column;
+import lombok.*;
 
 import java.math.BigDecimal;
 
@@ -11,6 +9,7 @@ import java.math.BigDecimal;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class InfomationReturnBillResponse {
     private String codeBill;
     private String nameCustomer;
@@ -18,5 +17,9 @@ public class InfomationReturnBillResponse {
     private BigDecimal discountRatioPercentage;
     private Integer quantityBuy;
     private BigDecimal totalReturn;
+    private BigDecimal totalExchange;
     private String noteReturn;
+    private BigDecimal exchangeAndReturnFee;
+    private BigDecimal discountedAmount;
+
 }

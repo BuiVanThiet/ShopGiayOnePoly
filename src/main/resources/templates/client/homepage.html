@@ -11,28 +11,104 @@
 <body>
 <div layout:fragment="content">
     <section>
-        <div class="d-flex" style="width: 100%; height: 270px; background-color: #ffffff;">
-            <div class="w-50 p-3">
-                <p class="text-dark fs-5 fw-lighter" style="margin-top: 100px;">ONE POLY - NHỊP BƯỚC BẢN THÂN</p>
-                <p class="text-dark fw-lighter">Chuẩn phong cách, thanh lịch trong từng bước chân! Trải nghiệm những
-                    thiết kế tuyệt vời với giày thể thao trong bộ sưu tập ONE POLY "Nhịp bước bản thân".</p>
-            </div>
-            <div class="w-50 d-flex justify-content-end p-3">
-                <img src="/img/1.jpg" style="width:250px; height: 240px; margin-top: 30px" alt="...">
-            </div>
-        </div>
-        <div class="d-flex">
-            <div style="background-color: #eaeaea; margin-top: 30px; width: 80%; overflow: hidden;">
-                <div class="scrolling-text fst-italic" style="margin-top: 5px">
-                    Chào mừng bạn đến với OnePoly Store, hãy trải nghiệm tuyệt vời tại đây nhé!
+        <div class="container-xxl bd-gutter mt-5 my-md-6 bd-layout" style="max-width: 93%;">
+            <div class="d-flex" style="width: 100%; height: 270px; background-color: #ffffff;">
+                <div class="w-50 p-3">
+                    <p class="text-dark fs-5 fw-lighter" style="margin-top: 100px;">ONE POLY - NHỊP BƯỚC BẢN THÂN</p>
+                    <p class="text-dark fw-lighter">Chuẩn phong cách, thanh lịch trong từng bước chân! Trải nghiệm những
+                        thiết kế tuyệt vời với giày thể thao trong bộ sưu tập ONE POLY "Nhịp bước bản thân".</p>
+                </div>
+                <div class="w-50 d-flex justify-content-end p-3">
+                    <img src="/img/1.jpg" style="width:250px; height: 240px; margin-top: 30px" alt="...">
                 </div>
             </div>
-            <div style="background-color: #eaeaea; margin-top: 30px; width: 20%;">
-                <p style="margin-top: 5px">Hotline: 0374441985</p>
+            <div class="d-flex">
+                <div style="background-color: #eaeaea; margin-top: 30px; width: 80%; overflow: hidden;">
+                    <div class="scrolling-text fst-italic" style="margin-top: 5px">
+                        Chào mừng bạn đến với OnePoly Store, hãy trải nghiệm tuyệt vời tại đây nhé!
+                    </div>
+                </div>
+                <div style="background-color: #eaeaea; margin-top: 30px; width: 20%;">
+                    <p style="margin-top: 5px">Hotline: 0374441985</p>
+                </div>
             </div>
-        </div>
+            <div class="row-banner2 d-flex mt-3 mb-3">
+                <div class="col-6">
+                    <img src="/img/client/category/1000x600.png" alt="Image 7" class="image-section"
+                         style="width: 100%; height: auto; object-fit: cover;border-radius: 30px">
+                </div>
+                <div class="col-6" style="padding: 100px">
+                    <div class="col-right">
+                        <div class="box-content">
+                            <h3>#ONEPOLY_Club</h3>
+                            <h2>COMFORT &amp; STYLE </h2>
+                            <p></p>
+                            <div> Những đôi Sneakers thời trang và cá tính được tích hợp công nghệ đệm lót Pillow Walk™
+                                độc quyền, mang lại sự đàn hồi, êm ái và thông thoáng cho đôi chân suốt ngày dài.
+                            </div>
+                            <p></p>
+                        </div>
+                        <div class="box-action" style="margin-top: 30px">
+                            <a th:href="@{/onepoly/products}"
+                               class="btn-base" style="text-decoration: none; width: 200px;">Xem Sản Phẩm</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-        <div class="container-fluid g-5 mt-2" style="height: 1500px">
+            <div class="row justify-content-between align-items-center position-relative banner-top10"
+                 style="background-color: #dedcdc; height: 200px;">
+                <!-- Background chữ TOP 10 lớn -->
+                <div class="top10-background-text">
+                    <p style="margin-left: 500px;">TOP 12</p>
+                </div>
+
+                <div class="col-lg-7 col-md-12 mb-3">
+                    <div class="top10-header">
+                        <h2 class="display-7">Top 12 Sản Phẩm Giá Cao Nhất</h2>
+                        <p class="m-0">Khám phá các sản phẩm có giá trị cao nhất trên tạo One Poly</p>
+                    </div>
+                    <div class="btn-top10" style="margin-top: 30px; line-height: 30px;">
+                        <button class="btn-base" id="view-all-btn" onclick="showAllProductsHighest()">
+                            <span>Xem Tất Cả</span>
+                            <i id="view-all-icon" class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+            <div class="mt-2">
+                <button id="view-all-text"
+                        style="position: absolute; right: 100px; background-color: white; padding-bottom: 5px; border: none"
+                        onclick="showAllProductsByTextHighest()">
+                    Xem tất cả <i id="toggle-icon" class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+            <br>
+            <div class="container-fluid mt-2">
+                <div class="row d-flex flex-wrap" id="product-container" style="margin-top: 20px">
+                    <div th:each="product, stat : ${listProductHighest}" class="col-3 position-relative"
+                         th:classappend="${stat.count} >= 5 ? 'hidden-product' : ''">
+                        <div class="product-item"
+                             style="margin: 10px; position: relative; border: 1px solid #b2b2b2; padding: 10px">
+                            <img th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728725582/' + ${product.images}"
+                                 class="jus" height="350px" alt="Image of ${product.nameProduct}">
+                            <div class="info-product mt-2 d-flex justify-content-between">
+                                <p th:text="${product.nameProduct}"></p>
+                                <p class="price-min fw-bold" style="margin-left: auto; color: #2f2a2a"
+                                   th:text="${product.priceProduct}"></p>
+                            </div>
+                            <div class="product-icons">
+                                <a href="#" class="cart-icon"><i class="fas fa-shopping-cart"></i></a>
+                                <a th:href="@{/onepoly/product-detail/{id}(id=${product.id})}" class="view-icon"><i
+                                        class="fas fa-eye"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--        Banner 2-->
+            <div class="container-fluid g-5 mt-4" style="height: 1150px">
                 <ul class="nav nav-pills justify-content-center mb-4" id="pills-tab" role="tablist">
                     <li class="nav-item" role="presentation">
                         <span class="icon-circle" id="pills-home-tab" data-bs-toggle="pill"
@@ -52,77 +128,121 @@
                         </span>
                     </li>
                 </ul>
-            <!-- Tab Content (Images Section) -->
-            <div class="tab-content" id="pills-tabContent">
-                <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
-                    <!-- First Set of Images -->
-                    <div class="row g-3 d-flex justify-content-center">
-                        <div class="col-6">
-                            <img src="/img/client/images/banner-image3.jpg" alt="Image 1" class="image-section"
-                                 style="width: 100%; height: auto; object-fit: cover; border-radius: 30px">
-                        </div>
-                        <div class="col-6">
-                            <img src="/img/client/images/card-image1.jpg" alt="Image 2" class="image-section"
-                                 style="width: 100%; height: auto; object-fit: cover;border-radius: 30px">
-                            <img src="/img/client/images/card-image5.jpg" alt="Image 3" class="image-section mt-3"
-                                 style="width: 100%; height: auto; object-fit: cover;border-radius: 30px">
+                <!-- Tab Content (Images Section) -->
+                <div class="tab-content" id="pills-tabContent">
+                    <div class="tab-pane fade show active" id="pills-home" role="tabpanel"
+                         aria-labelledby="pills-home-tab">
+                        <div class="row g-3 d-flex justify-content-center">
+                            <div class="col-6">
+                                <img src="/img/client/homepage/nike_people.jpg" alt="Image 1" class="image-section"
+                                     style="width: 100%; height: auto; object-fit: cover; border-radius: 30px">
+                                <div class="col-right" style="margin-top: 20px">
+                                    <div class="box-content">
+                                        <h3>#ONEPOLY_Club</h3>
+                                        <h2>COMFORT &amp; STYLE </h2>
+                                        <p></p>
+                                        <div> Những đôi Sneakers thời trang và cá tính được tích hợp công nghệ đệm lót
+                                            Pillow Walk™ độc quyền, mang lại sự đàn hồi, êm ái và thông thoáng cho đôi
+                                            chân suốt ngày dài.
+                                        </div>
+                                        <p></p>
+                                    </div>
+                                </div>
+                                <img src="/img/logoBill.png" alt="Image 1" class="image-section"
+                                     style="width: 50%; height: auto; object-fit: cover; border-radius: 30px; margin-left: 50px">
+                            </div>
+                            <div class="col-6">
+                                <img src="/img/client/homepage/images/card-image1.jpg" alt="Image 2" class="image-section"
+                                     style="width: 100%; height: 500px; object-fit: cover;border-radius: 30px">
+                                <img src="/img/client/homepage/images/card-image2.jpg" alt="Image 3" class="image-section mt-3"
+                                     style="width: 100%; height: auto; object-fit: cover;border-radius: 30px">
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
-                    <!-- Second Set of Images -->
-                    <div class="row g-3 d-flex justify-content-center">
-                        <div class="col-6">
-                            <img src="/img/client/images/post-item6.jpg" alt="Image 4" class="image-section"
-                                 style="width: 100%; height: auto; object-fit: cover;border-radius: 30px">
+                    <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+                        <!-- Second Set of Images -->
+                        <div class="row g-3 d-flex justify-content-center">
+                            <div class="col-12">
+                                <img src="/img/client/homepage/running.jpg" alt="Image 2" class="image-section"
+                                     style="width: 100%; height: 500px; object-fit: cover;border-radius: 30px">
+                            </div>
+                            <div class="col-12">
+                                <img src="/img/client/homepage/adidas_boost.jpg" alt="Image 2" class="image-section"
+                                     style="width: 100%; height: 500px; object-fit: cover;border-radius: 30px">
+                            </div>
                         </div>
-                        <div class="col-6">
-                            <img src="/img/client/images/card-item10.jpg" alt="Image 5" class="image-section"
-                                 style="width: 100%; height: 700px; object-fit: cover;border-radius: 30px">
-                        </div>
+
                     </div>
-                </div>
-                <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">
-                    <!-- Third Set of Images -->
-                    <div class="row g-3 d-flex justify-content-center">
-                        <div class="col-6">
-                            <img src="/img/client/images/post-item4.jpg" alt="Image 7" class="image-section"
-                                 style="width: 100%; height: auto; object-fit: cover;border-radius: 30px">
-                            <img src="/img/client/images/single-post-item.jpg" alt="Image 9" class="image-section mt-3"
-                                 style="width: 100%; height: auto; object-fit: cover;border-radius: 30px">
-                        </div>
-                        <div class="col-6">
-                            <img src="/img/client/images/team-item3.jpg" alt="Image 8" class="image-section"
-                                 style="width: 100%; height: auto; object-fit: cover;border-radius: 30px">
+                    <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">
+                        <!-- Third Set of Images -->
+                        <div class="row g-3 d-flex justify-content-center">
+                            <div class="col-6">
+                                <img src="/img/client/homepage/images/ng9xun3k_q437_1024.png" alt="Image 5"
+                                     class="image-section"
+                                     style="width: 100%; height: 1000px; object-fit: cover;border-radius: 30px">
+                            </div>
+                            <div class="col-6">
+                                <img src="/img/client/category/Adidas.jpg" alt="Image 4" class="image-section"
+                                     style="width: 100%; height: auto; object-fit: cover;border-radius: 30px">
+                            </div>
+
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="row justify-content-between align-items-center position-relative"
-             style="background-color: #dedcdc ; height: 200px">
-            <!-- Background chữ SALE lớn -->
-            <div style="margin-left: 20px">
-                <div class="sale-background-text">
-                    <p style="margin-left: 400px"> SALE</p>
+            <div class="row justify-content-between align-items-center position-relative banner-top10-lowest"
+                 style="background-color: #dedcdc; height: 200px;">
+                <!-- Background chữ TOP 10 lớn -->
+                <div class="top10-background-text-lowest">
+                    <p style="margin-left: 500px;">TOP 12</p>
                 </div>
 
                 <div class="col-lg-7 col-md-12 mb-3">
-                    <div class="coupon-header">
-                        <h2 class="display-7">10% OFF Discount Coupons</h2>
-                        <p class="m-0">Subscribe us to get 10% OFF on all the purchases</p>
+                    <div class="top10-header-lowest">
+                        <h2 class="display-7">Top 12 Sản Phẩm Với Giá Rẻ Nhất</h2>
+                        <p class="m-0">Khám phá các sản phẩm có giá trị rẻ & chất lượng trên tạo One Poly</p>
                     </div>
-                    <div class="btn-product"
-                         style="margin-top: 30px; border: 1px solid black; font-size: 35px;line-height: 30px">
-                        <a href="/onepoly/products" class="btn btn-black btn-medium text-uppercase">SẢN PHẨM</a>
+                    <div class="btn-top10-lowest" style="margin-top: 30px; line-height: 30px;">
+                        <button class="btn-base" id="view-all-btn-2" onclick="showAllProductsLowest()">
+                            <span>Xem Tất Cả</span>
+                            <i id="view-all-icon-2" class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-2">
+                <button id="view-all-text-2"
+                        style="position: absolute; right: 100px; background-color: white; padding-bottom: 5px; border: none"
+                        onclick="showAllProductsByTextLowest()">
+                    Xem tất cả <i id="toggle-icon-2" class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+            <br>
+            <div class="container-fluid mt-2">
+                <div class="row d-flex flex-wrap" id="product-container-2" style="margin-top: 20px">
+                    <div th:each="product, stat : ${listProductLowest}" class="col-3 position-relative"
+                         th:classappend="${stat.count} >= 5 ? 'hidden-product' : ''">
+                        <div class="product-item"
+                             style="margin: 10px; position: relative; border: 1px solid #b2b2b2; padding: 10px">
+                            <img th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728725582/' + ${product.images}"
+                                 class="jus" height="350px" alt="Image of ${product.nameProduct}">
+                            <div class="info-product mt-2 d-flex justify-content-between">
+                                <p th:text="${product.nameProduct}"></p>
+                                <p class="price-min fw-bold" style="margin-left: auto; color: #2f2a2a"
+                                   th:text="${product.priceProduct}"></p>
+                            </div>
+                            <div class="product-icons">
+                                <a href="#" class="cart-icon"><i class="fas fa-shopping-cart"></i></a>
+                                <a th:href="@{/onepoly/product-detail/{id}(id=${product.id})}" class="view-icon"><i
+                                        class="fas fa-eye"></i></a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
+    <script th:src="@{/ajax/client/homepage_ajax.js}"></script>
 </div>
-
-<!-- Thêm Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

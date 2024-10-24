@@ -8,32 +8,106 @@
 <div th:fragment="listReturnBill">
     <div class="card mb-2">
         <div class="card-body">
-            Danh sách sản phẩm muốn trả
-            <div id="noDataReturnBill" style="display:none; text-align:center;">
-                <!-- Ảnh sẽ được hiển thị ở đây nếu không có dữ liệu -->
-            </div>
+            <ul class="nav nav-underline">
+                <li class="nav-item">
+                    <button class="nav-link text-dark nav-link-custom active"
+                            id="return-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#return-tab-pane"
+                            type="button"
+                            role="tab"
+                            aria-controls="return-tab-pane"
+                            aria-selected="true"
+                            onclick="setActiveReturnAndExchangeBill(this)"> Danh sách sản phẩm muốn trả</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link text-dark nav-link-custom"
+                            id="exchange-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#exchange-tab-pane"
+                            type="button"
+                            role="tab"
+                            aria-controls="exchange-tab-pane"
+                            aria-selected="false"
+                            onclick="setActiveReturnAndExchangeBill(this)">Danh sách sản phẩm muốn đổi</button>
+                </li>
+            </ul>
 
-            <table id="table-returnBill" class="table mt-2" style="display:none;">
-                <thead>
-                <tr class="text-center">
-                    <th scope="col" style="width: 1%">STT</th>
-                    <th scope="col" style="width: 15%">Ảnh</th>
-                    <th scope="col" style="width: 25%">Sản phẩm</th>
-                    <th scope="col" style="width: 8%">Giá trả</th>
-                    <th scope="col" style="width: 8%">Số lượng trả</th>
-                    <th scope="col" style="width: 5%">Tổng tiền trả</th>
-                    <th scope="col" style="width: 6%">Hành động</th>
-                </tr>
-                </thead>
-                <tbody id="tableReturnBill">
-                <!-- Dữ liệu sẽ được tải ở đây -->
-                </tbody>
-            </table>
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="return-tab-pane" role="tabpanel" aria-labelledby="return-tab" tabindex="0">
+                    <div id="noDataReturnBill" style="display:none; text-align:center;">
+                        <!-- Ảnh sẽ được hiển thị ở đây nếu không có dữ liệu -->
+                    </div>
 
-            <div class="pagination-section">
-                <!-- Phân trang 2 -->
-                <div class="pagination-custom d-flex justify-content-center">
-                    <ul id="billReturnPageMax-returnBill" class="pagination"></ul>
+                    <table id="table-returnBill" class="table mt-2" style="display:none;">
+                        <thead>
+                        <tr class="text-center">
+                            <th scope="col" style="width: 1%">STT</th>
+                            <th scope="col" style="width: 15%">Ảnh</th>
+                            <th scope="col" style="width: 25%">Sản phẩm</th>
+                            <th scope="col" style="width: 8%">Giá trả</th>
+                            <th scope="col" style="width: 8%">Số lượng trả</th>
+                            <th scope="col" style="width: 5%">Tổng tiền trả</th>
+                            <th scope="col" style="width: 6%">Hành động</th>
+                        </tr>
+                        </thead>
+                        <tbody id="tableReturnBill">
+                        <!-- Dữ liệu sẽ được tải ở đây -->
+                        </tbody>
+                    </table>
+
+                    <div class="pagination-section">
+                        <!-- Phân trang 2 -->
+                        <div class="pagination-custom d-flex justify-content-center">
+                            <ul id="billReturnPageMax-returnBill" class="pagination"></ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="exchange-tab-pane" role="tabpanel" aria-labelledby="exchange-tab" tabindex="0">
+                    <div class="d-flex align-items-center">
+                        <p class="mb-0 me-2">
+
+                        </p>
+                        <div class="d-flex ms-auto" id="btn-group-exchange-product">
+                            <button type="button"
+                                    class="btn btn-outline-info me-2"
+                                    data-bs-target="#product-modal"
+                                    data-bs-toggle="modal" onclick="resetHidenProductSale()">
+                                <i class="bi bi-basket"></i> Thêm sản phẩm
+                            </button>
+                            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"
+                                    data-bs-target="#camera-Modal" id="startCamera">
+                                <i class="bi bi-qr-code-scan"></i> Quét QR sản phẩm
+                            </button>
+                        </div>
+                    </div>
+                    <div id="noDataExchangeBill" style="display:none; text-align:center;">
+                        <!-- Ảnh sẽ được hiển thị ở đây nếu không có dữ liệu -->
+                    </div>
+
+                    <table id="table-exchangeBill" class="table mt-2" style="display:none;">
+                        <thead>
+                        <tr class="text-center">
+                            <th scope="col" style="width: 1%">STT</th>
+                            <th scope="col" style="width: 15%">Ảnh</th>
+                            <th scope="col" style="width: 25%">Sản phẩm</th>
+                            <th scope="col" style="width: 8%">Giá hiện tại</th>
+                            <th scope="col" style="width: 8%">Số lượng đổi</th>
+                            <th scope="col" style="width: 5%">Tổng tiền đổi</th>
+                            <th scope="col" style="width: 6%">Hành động</th>
+                        </tr>
+                        </thead>
+                        <tbody id="tableExchangeBill">
+                        <!-- Dữ liệu sẽ được tải ở đây -->
+                        </tbody>
+                    </table>
+
+                    <div class="pagination-section">
+                        <!-- Phân trang 2 -->
+                        <div class="pagination-custom d-flex justify-content-center">
+                            <ul id="billExchangePageMax-exchangeBill" class="pagination"></ul>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -61,13 +135,65 @@
                     <span>Phần trăm giảm cho mỗi sản phầm: </span>
                     <span id="divide-equally-product"></span>
                 </div>
-                <div class="d-flex justify-content-between col-6">
-                    <span>Tổng tiền phải trả: </span>
-                    <span id="total-return"></span>
+                <!-- Thẻ card bên trái -->
+                <div class="col-4">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="mb-3 d-flex justify-content-between">
+                                <span>Tổng tiền hàng trả lại: </span>
+                                <span id="total-return">0 VNĐ</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>Tổng tiền trả khách hàng: </span>
+                                <span id="total-return-customer">0 VNĐ</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="mb-3 d-flex justify-content-between" >
+                                <span>Phí đổi-trả hàng: </span>
+                                <!--                    <span >123</span>-->
+                                <div class="input-group input-group-sm" style="width: 60%;">
+                                    <input type="text"
+                                           class="form-control"
+                                           oninput="exchangeAndReturnFee(this)">
+                                    <span class="input-group-text">VNĐ</span>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between" >
+                            <span>Trả thêm tiền cho khách: </span>
+                            <!--                    <span >123</span>-->
+                            <div class="input-group input-group-sm" style="width: 60%;">
+                                <input type="text"
+                                       class="form-control"
+                                       oninput="discountedAmount(this)">
+                                <span class="input-group-text">VNĐ</span>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <!-- Thẻ card bên phải (sát về phải và có khoảng cách với thẻ bên trái) -->
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="mb-3 d-flex justify-content-between">
+                                <span>Tổng tiền hàng đổi: </span>
+                                <span id="total-exchange">0 VNĐ</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>Tổng tiền thu khách hàng: </span>
+                                <span id="total-exchange-customer">0 VNĐ</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div id="block-confirm" class="col-6">
                     <!-- Button trigger modal -->
-                    <button style="display: none;" id="btnCreateReturnBill" type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#createReturnBillModal">
+                    <button style="display: none;" id="btnCreateReturnBill" type="button" class="mb-3 btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#createReturnBillModal">
                         Tạo phiếu
                     </button>
 
@@ -89,29 +215,47 @@
                         </div>
                     </div>
 
-
                 </div>
                 <div class="justify-content-between col-12" id="form_Reason">
-                    <span>Lí do trả: </span>
+                    <span>Lí do: </span>
                     <textarea class="form-control" id="node-return"></textarea>
-                    <span class="text-danger" id="errorReturn" style="display: block;">Mời nhập lý do trả!</span>
+                    <span class="text-danger" id="errorReturn" style="display: block;">Mời nhập lí do!</span>
                     <script>
                         var noteReturn = document.getElementById('node-return');
                         noteReturn.addEventListener('input', function () {
                             if(noteReturn.value.length >0) {
-                                document.getElementById('errorReturn').style.display = 'none';
-                                document.getElementById('btnCreateReturnBill').style.display = 'block';
-                                console.log(this.value);
+                                if(noteReturn.value.length > 500000) {
+                                    document.getElementById('errorReturn').innerText = 'Không được nhập quá 500 nghìn ký tự!';
+                                    document.getElementById('errorReturn').style.display = 'block';
+                                    document.getElementById('btnCreateReturnBill').style.display = 'none';
+                                } else {
+                                    document.getElementById('errorReturn').style.display = 'none';
+                                    document.getElementById('btnCreateReturnBill').style.display = 'block';
+                                    console.log(this.value);
+                                }
                             }else {
+                                document.getElementById('errorReturn').innerText = 'Mời nhập lí do!';
                                 document.getElementById('errorReturn').style.display = 'block';
                                 document.getElementById('btnCreateReturnBill').style.display = 'none';
                             }
                         });
+
+                        function setActiveReturnAndExchangeBill(element) {
+                            // Xóa lớp active khỏi tất cả các liên kết
+                            var links = document.querySelectorAll('.nav-link-custom');
+                            links.forEach(function(link) {
+                                link.classList.remove('active');
+                            });
+                            // Thêm lớp active vào liên kết được nhấp vào
+                            element.classList.add('active');
+                        }
+
                     </script>
                 </div>
             </div>
         </div>
     </div>
+
 </div>
 </body>
 </html>

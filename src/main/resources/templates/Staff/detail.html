@@ -24,8 +24,8 @@
                 <input type="hidden" id="provinceHiden" th:value="${staff.province}">
                 <input type="hidden" id="districtHiden" th:value="${staff.district}">
                 <input type="hidden" id="wardHiden" th:value="${staff.ward}">
-                <div class="form-nab">
-                    <div class="container">
+                <div class="form-row">
+<!--                    <div class="container">-->
                         <div class="row">
                             <div class="col-6">
                                 <p>Ảnh nhân viên (3x4)</p>
@@ -62,7 +62,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+<!--                    </div>-->
                 </div>
 
                 <!-- SDT/Ngày sinh/Email -->
@@ -98,19 +98,19 @@
                         <!-- Các phần khác của form -->
                         <div class="col-4">
                             <label class="form-label">Tỉnh/Thành phố</label>
-                            <select class="form-select" id="province" name="province">
+                            <select class="form-select" id="province" name="province" disabled>
                                 <option value="">Chọn tỉnh/thành phố</option>
                             </select>
                         </div>
                         <div class="col-4">
                             <label class="form-label">Quận/Huyện</label>
-                            <select class="form-select" id="district" name="district">
+                            <select class="form-select" id="district" name="district" disabled>
                                 <option value="">Chọn quận/huyện</option>
                             </select>
                         </div>
                         <div class="col-4">
                             <label class="form-label">Xã/Phường/Thị Trấn</label>
-                            <select class="form-select" id="ward" name="ward">
+                            <select class="form-select" id="ward" name="ward" disabled>
                                 <option value="">Chọn xã/phường/thị trấn</option>
                             </select>
                         </div>
@@ -124,7 +124,7 @@
                             <div class="form-group">
                                 <label>Địa chi chi tiết</label>
                                 <textarea class="form-control"
-                                          placeholder="Enter staff address" required th:field="${staff.addRessDetail}"></textarea>
+                                          placeholder="Enter staff address" required th:field="${staff.addRessDetail}" readonly></textarea>
                             </div>
                         </div>
                     </div>
@@ -136,7 +136,7 @@
                         <div class="col-8">
                             <div class="form-group">
                                 <label>Chức vụ</label>
-                                <select class="form-select" th:field="${staff.role.id}">
+                                <select class="form-select" th:field="${staff.role.id}" disabled>
                                     <option value="1">Nhân viên bán hàng</option>
                                     <option value="2">Quản trị viên</option>
                                     <option value="3">Kế toán</option>

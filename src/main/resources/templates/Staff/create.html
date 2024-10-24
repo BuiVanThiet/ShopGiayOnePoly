@@ -17,14 +17,15 @@
 
 <main class="container">
     <div layout:fragment="content">
-        <form th:object="${staff}" th:action="${'/staff/add'}" method="post" enctype="multipart/form-data">
+        <form id="customerForm" th:object="${staff}" th:action="${'/staff/add'}" method="post" enctype="multipart/form-data">
             <input type="hidden" id="provinceHiden" >
             <input type="hidden" id="districtHiden">
             <input type="hidden" id="wardHiden" >
             <article class="container-xxl bd-gutter mt-4 my-md-3 bd-layout">
                 <h2>Thêm nhân viên</h2>
-                <div class="form-nab">
-                    <div class="container">
+                <a href="/staff/list" class="btn btn-primary" style="margin-bottom: 20px">Danh sach nhan vien</a>
+                <div class="form-row">
+<!--                    <div class="container">-->
                         <div class="row">
                             <div class="col-6">
                                 <p>Ảnh nhân viên (3x4)</p>
@@ -65,7 +66,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+<!--                    </div>-->
                 </div>
 
                 <!-- SDT/Ngày sinh/Email -->
@@ -176,11 +177,13 @@
                 </div>
 
                 <button type="submit" class="btn btn-primary">Thêm nhân viên</button>
+                <button type="button" class="btn btn-secondary" onclick="clearForm()">Xóa</button>
             </article>
         </form>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script th:src="@{/js/staff/addRessApi.js}" type="text/javascript"></script>
         <script th:src="@{/js/staff/uploadImg.js}" type="text/javascript"></script>
+        <script th:src="@{/js/staff/clearForm.js}" type="text/javascript"></script>
 
     </div>
 </main>

@@ -4,6 +4,7 @@ import com.example.shopgiayonepoly.dto.request.bill.ProductDetailCheckMark2Reque
 import com.example.shopgiayonepoly.dto.request.bill.ProductDetailCheckRequest;
 import com.example.shopgiayonepoly.dto.request.VoucherRequest;
 import com.example.shopgiayonepoly.dto.request.bill.SearchBillByStatusRequest;
+import com.example.shopgiayonepoly.dto.response.bill.ExchangeBillDetailResponse;
 import com.example.shopgiayonepoly.dto.response.bill.ReturnBillDetailResponse;
 import com.example.shopgiayonepoly.entites.*;
 import com.example.shopgiayonepoly.service.*;
@@ -56,6 +57,8 @@ public abstract class BaseBill {
     protected ReturnBillDetailService returnBillDetailService;
     @Autowired
     protected SaleProductService saleProductService;
+    @Autowired
+    protected ExchangeBillDetailService exchangeBillDetailService;
 
     //bien cuc bo cua bill
     protected Bill billPay;
@@ -63,7 +66,7 @@ public abstract class BaseBill {
     protected String colorMess = "";
     protected Integer pageProduct = 0;
     protected String keyVoucher = "";
-//    protected Integer statusBillCheck = null;
+    //    protected Integer statusBillCheck = null;
     protected Integer[] statusBillCheck = null;
     protected SearchBillByStatusRequest searchBillByStatusRequest;
     protected String keyBillmanage = "";
@@ -76,6 +79,14 @@ public abstract class BaseBill {
     protected Integer idProductDetail = 0;
     protected BigDecimal totalReturn = BigDecimal.valueOf(0);
     protected List<BillDetail> billDetailList;
+
+    //danh cho doi hang
+    protected List<ExchangeBillDetailResponse> exchangeBillDetailResponses = new ArrayList<>();
+
+    protected BigDecimal totalExchange = BigDecimal.valueOf(0);
+
+    protected BigDecimal exchangeAndReturnFee =  BigDecimal.valueOf(0);
+    protected BigDecimal discountedAmount =  BigDecimal.valueOf(0);
 
 
 
@@ -104,48 +115,48 @@ public abstract class BaseBill {
     }
     //update
 
-//danh cho giao hang, cai nay dung de theo doi don hang
-protected void setBillStatus(Integer idBillSet,Integer status,HttpSession session) {
-    Bill bill = this.billService.findById(idBillSet).orElse(null);
-    Staff staff = (Staff) session.getAttribute("staffLogin");
-    InvoiceStatus invoiceStatus = new InvoiceStatus();
-    invoiceStatus.setBill(bill);
-    invoiceStatus.setStatus(status);
-    if (invoiceStatus.getStatus() == 0) {
-        session.setAttribute("notePayment","Tạo Đơn Hàng!");
-    }else if (invoiceStatus.getStatus() == 1) {
-        session.setAttribute("notePayment","Chờ Xác nhận!");
-    }else if(invoiceStatus.getStatus() == 2) {
-        session.setAttribute("notePayment","Đã xác nhận!");
-    }else if (invoiceStatus.getStatus() == 3) {
-        session.setAttribute("notePayment","Giao Hàng!");
-    }else if (invoiceStatus.getStatus() == 4) {
-        session.setAttribute("notePayment","Khách đã nhận được hàng!");
-    }else if (invoiceStatus.getStatus() == 5) {
-        session.setAttribute("notePayment","Đơn Hàng Đã Hoàn Thành!");
-    }else if (invoiceStatus.getStatus() == 6){
-        session.setAttribute("notePayment","Đơn Hàng Đã Bị Hủy!");
-    }else if (invoiceStatus.getStatus() == 101) {
-        session.setAttribute("notePayment","Đơn Hàng Đã được thanh toán!");
-    }else if (invoiceStatus.getStatus() == 201) {
-        session.setAttribute("notePayment","Chờ xác nhận trả hàng!");
-    }else if (invoiceStatus.getStatus() == 202) {
-        session.setAttribute("notePayment","Đồng ý trả hàng!");
-        ReturnBill returnBill = this.returnBillService.getReturnBillByIdBill(bill.getId());
-        returnBill.setUpdateDate(new Date());
-        returnBill.setStatus(1);
-        this.returnBillService.save(returnBill);
-    }else if (invoiceStatus.getStatus() == 203) {
-        session.setAttribute("notePayment","Không đồng ý trả hàng!");
-        ReturnBill returnBill = this.returnBillService.getReturnBillByIdBill(bill.getId());
-        returnBill.setUpdateDate(new Date());
-        returnBill.setStatus(2);
-        this.returnBillService.save(returnBill);
+    //danh cho giao hang, cai nay dung de theo doi don hang
+    protected void setBillStatus(Integer idBillSet,Integer status,HttpSession session) {
+        Bill bill = this.billService.findById(idBillSet).orElse(null);
+        Staff staff = (Staff) session.getAttribute("staffLogin");
+        InvoiceStatus invoiceStatus = new InvoiceStatus();
+        invoiceStatus.setBill(bill);
+        invoiceStatus.setStatus(status);
+        if (invoiceStatus.getStatus() == 0) {
+            session.setAttribute("notePayment","Tạo Đơn Hàng!");
+        }else if (invoiceStatus.getStatus() == 1) {
+            session.setAttribute("notePayment","Chờ Xác nhận!");
+        }else if(invoiceStatus.getStatus() == 2) {
+            session.setAttribute("notePayment","Đã xác nhận!");
+        }else if (invoiceStatus.getStatus() == 3) {
+            session.setAttribute("notePayment","Giao Hàng!");
+        }else if (invoiceStatus.getStatus() == 4) {
+            session.setAttribute("notePayment","Khách đã nhận được hàng!");
+        }else if (invoiceStatus.getStatus() == 5) {
+            session.setAttribute("notePayment","Đơn Hàng Đã Hoàn Thành!");
+        }else if (invoiceStatus.getStatus() == 6){
+            session.setAttribute("notePayment","Đơn Hàng Đã Bị Hủy!");
+        }else if (invoiceStatus.getStatus() == 101) {
+            session.setAttribute("notePayment","Đơn Hàng Đã được thanh toán!");
+        }else if (invoiceStatus.getStatus() == 201) {
+            session.setAttribute("notePayment","Chờ xác nhận đổi-trả hàng!");
+        }else if (invoiceStatus.getStatus() == 202) {
+            session.setAttribute("notePayment","Đồng ý đổi-trả hàng!");
+            ReturnBillExchangeBill returnBill = this.returnBillService.getReturnBillByIdBill(bill.getId());
+            returnBill.setUpdateDate(new Date());
+            returnBill.setStatus(1);
+            this.returnBillService.save(returnBill);
+        }else if (invoiceStatus.getStatus() == 203) {
+            session.setAttribute("notePayment","Không đồng ý đổi-trả hàng!");
+            ReturnBillExchangeBill returnBill = this.returnBillService.getReturnBillByIdBill(bill.getId());
+            returnBill.setUpdateDate(new Date());
+            returnBill.setStatus(2);
+            this.returnBillService.save(returnBill);
+        }
+        invoiceStatus.setNote(staff.getId()+","+session.getAttribute("notePayment"));
+        session.removeAttribute("notePayment");
+        this.invoiceStatusService.save(invoiceStatus);
     }
-    invoiceStatus.setNote(staff.getId()+","+session.getAttribute("notePayment"));
-    session.removeAttribute("notePayment");
-    this.invoiceStatusService.save(invoiceStatus);
-}
     //trừ đi voucher cua hóa đơn
     protected void getSubtractVoucher(Voucher voucher,Integer quantity) {
         voucher.setQuantity(voucher.getQuantity() - quantity);
@@ -292,17 +303,22 @@ protected void setBillStatus(Integer idBillSet,Integer status,HttpSession sessio
 
     //xoa voucher khi giap ap dung khong hop ly
     protected void getDeleteVoucherByBill(Integer idBill) {
+        System.out.println("da vao day de quet voucher");
         if(idBill != null) {
             Bill bill = this.billService.findById(idBill).orElse(null);
+            System.out.println("day ne "+bill.toString());
             if (bill.getVoucher() != null) {
                 Voucher voucher = this.voucherService.getOne(bill.getVoucher().getId());
                 if (bill.getTotalAmount().compareTo(voucher.getPricesApply()) < 0) {
+                    System.out.println("phai xoa thoii");
+                    this.getSubtractVoucher(bill.getVoucher(),-1);
                     bill.setVoucher(null);
                     bill.setUpdateDate(new Date());
                     this.billService.save(bill);
-                    this.getSubtractVoucher(bill.getVoucher(),-1);
                 }
             }
+        }else {
+            System.out.println("hoa don nay co");
         }
     }
 

@@ -15,34 +15,111 @@
 
 <body>
 
-<main class="container">
+<!--<main class="container">-->
+<!--    <div layout:fragment="content">-->
+<!--        <article class="container-xxl bd-gutter mt-5 my-md-4 bd-layout">-->
+<!--            <h1 class="center">Danh sách khách hàng</h1>-->
+
+<!--            <div class="button">-->
+<!--                <a href="/customer/create" class="btn btn-primary">Thêm mới khach hang</a>-->
+<!--            </div>-->
+
+<!--            <form action="/customer/search">-->
+<!--            <div class="search-container">-->
+<!--                <div class="search-bar">-->
+<!--                    <span class="icon"><i class="fas fa-search"></i></span> &lt;!&ndash; Sử dụng icon kính lúp &ndash;&gt;-->
+<!--                    <input type="text" name="key" placeholder="Tìm kiếm...">-->
+<!--                </div>-->
+<!--                <button class="btn btn-primary">Tìm kiếm</button>-->
+<!--            </div>-->
+<!--            </form>-->
+
+<!--            <table class="table table-bordered table-striped">-->
+<!--                <thead>-->
+<!--                <tr>-->
+<!--                    <th>Ảnh</th>-->
+<!--                    <th>Tên khách hàng</th>-->
+<!--                    <th>Giới tính</th>-->
+<!--&lt;!&ndash;                    <th>Ngày sinh</th>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <th>Số điện thoại</th>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <th>Email</th>&ndash;&gt;-->
+<!--                    <th>Địa chỉ</th>-->
+<!--                    <th>Trạng thái</th>-->
+<!--                    <th>Hành động</th>-->
+<!--                </tr>-->
+<!--                </thead>-->
+<!--                <tbody>-->
+<!--                <tr th:each="customer, index: ${pageCustomer}">-->
+<!--                    <td>-->
+<!--                        <img th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728721025/'+${customer.image}" style="height: 50px;" alt="Khong co anh">-->
+<!--                    </td>-->
+<!--                    <td th:text="${customer.fullName}"></td>-->
+<!--                    <td th:text="${customer.gender}"> </td>-->
+<!--&lt;!&ndash;                    <td th:text="${customer.birthDay}"> </td>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <td th:text="${customer.numberPhone}">  </td>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <td th:text="${customer.email}"></td>&ndash;&gt;-->
+<!--                    <td th:text="${customer.addRess}"> </td>-->
+<!--                    <td th:text="${customer.status}"> </td>-->
+<!--                    <td>-->
+<!--                        <a th:href="@{/customer/edit/{id}(id=${customer.id})}" class="edit-icon" onclick="enableEditing(this); return false;"><i class="fas fa-edit" title="Edit"></i></a>-->
+<!--                        <a href="#" class="save-icon" style="display:none;" onclick="saveChanges(this); return false;"><i class="fas fa-save" title="Save"></i></a>-->
+<!--                        <a th:href="@{/customer/detail/{id}(id=${customer.id})}"><i class="icon-detail fas fa-bars"></i></a>-->
+<!--                        <a th:href="@{/customer/delete/{id}(id=${customer.id})}" onclick="return confirm('Bạn có chắc chắn muốn xóa khach hang?')"><i class="icon-delete fas fa-trash" title="Delete"></i></a>-->
+<!--                    </td>-->
+<!--                </tr>-->
+
+<!--                </tbody>-->
+<!--            </table>-->
+<!--            <div class="text-center m-3">-->
+<!--                <div class="d-flex justify-content-center">-->
+<!--                    <a th:href="@{/customer/list?pageNumber=0}"-->
+<!--                       class="btn btn-secondary mx-1">First</a>-->
+<!--                    <a th:href="@{/customer/list(pageNumber=${pageCustomer.first ? 0 : pageCustomer.number - 1})}"-->
+<!--                       class="btn btn-secondary mx-1">Previous</a>-->
+<!--                    <div th:if="${pageCustomer.totalPages > 0}" class="d-flex">-->
+<!--                        <div th:each="pageNumber : ${#numbers.sequence(0, pageCustomer.totalPages - 1)}"-->
+<!--                             class="mx-1">-->
+<!--                            <a th:href="@{/customer/list(pageNumber=${pageNumber})}"-->
+<!--                               class="btn btn-primary"-->
+<!--                               th:text="${pageNumber + 1}"></a>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <a th:href="@{/customer/list(pageNumber=${pageCustomer.last ? pageCustomer.totalPages - 1 : pageCustomer.number + 1})}"-->
+<!--                       class="btn btn-secondary mx-1">Next</a>-->
+<!--                    <a th:href="@{/customer/list(pageNumber=${pageCustomer.totalPages - 1})}"-->
+<!--                       class="btn btn-secondary mx-1">Last</a>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </article>-->
+<!--    </div>-->
+<!--</main>-->
+<main class="container mt-5">
     <div layout:fragment="content">
-        <article class="container-xxl bd-gutter mt-5 my-md-4 bd-layout">
-            <h1 class="center">Danh sách khách hàng</h1>
-
-            <div class="button">
-                <a href="/customer/create" class="btn btn-primary">Thêm mới khach hang</a>
+        <article class="container-xxl bd-gutter my-md-4 bd-layout">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="center">Danh sách khách hàng</h1>
+                <a href="/customer/create" class="btn btn-primary">Thêm mới khách hàng</a>
             </div>
 
-            <form action="/customer/search">
-            <div class="search-container">
-                <div class="search-bar">
-                    <span class="icon"><i class="fas fa-search"></i></span> <!-- Sử dụng icon kính lúp -->
-                    <input type="text" name="key" placeholder="Tìm kiếm...">
+            <!-- Search Bar -->
+            <form action="/customer/search" class="mb-4">
+                <div class="input-group">
+                    <input type="text" name="key" class="form-control" placeholder="Tìm kiếm..."
+                           aria-label="Tìm kiếm">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
                 </div>
-                <button class="btn btn-primary">Tìm kiếm</button>
-            </div>
             </form>
 
-            <table class="table table-bordered table-striped">
-                <thead>
+
+            <!-- Table -->
+            <table class="table table-hover table-striped align-middle text-center">
+                <thead class="table-dark">
                 <tr>
                     <th>Ảnh</th>
                     <th>Tên khách hàng</th>
                     <th>Giới tính</th>
-<!--                    <th>Ngày sinh</th>-->
-<!--                    <th>Số điện thoại</th>-->
-<!--                    <th>Email</th>-->
                     <th>Địa chỉ</th>
                     <th>Trạng thái</th>
                     <th>Hành động</th>
@@ -51,44 +128,61 @@
                 <tbody>
                 <tr th:each="customer, index: ${pageCustomer}">
                     <td>
-                        <img th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728721025/'+${customer.image}" style="height: 50px;" alt="Khong co anh">
+                        <img th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728721025/'+${customer.image}"
+                             style="height: 50px" alt="Ảnh khách hàng" />
                     </td>
                     <td th:text="${customer.fullName}"></td>
-                    <td th:text="${customer.gender}"> </td>
-<!--                    <td th:text="${customer.birthDay}"> </td>-->
-<!--                    <td th:text="${customer.numberPhone}">  </td>-->
-<!--                    <td th:text="${customer.email}"></td>-->
-                    <td th:text="${customer.addRess}"> </td>
-                    <td th:text="${customer.status}"> </td>
+                    <td th:text="${customer.gender == 1 ? 'Nam' : 'Nữ'}"></td>
+                    <td th:text="${customer.addRess}"></td>
+<!--                    <td th:text="${customer.status}"></td>-->
+<!--                    <td th:text="${customer.status.equals('1') ? 'Hoạt động' : 'Ngưng hoạt động'}"></td>-->
+                    <td th:text="${customer.status == 1 ? 'Hoạt động' : 'Ngưng hoạt động'}"></td>
                     <td>
-                        <a th:href="@{/customer/edit/{id}(id=${customer.id})}" class="edit-icon" onclick="enableEditing(this); return false;"><i class="fas fa-edit" title="Edit"></i></a>
-                        <a href="#" class="save-icon" style="display:none;" onclick="saveChanges(this); return false;"><i class="fas fa-save" title="Save"></i></a>
-                        <a th:href="@{/customer/detail/{id}(id=${customer.id})}"><i class="icon-detail fas fa-bars"></i></a>
-                        <a th:href="@{/customer/delete/{id}(id=${customer.id})}" onclick="return confirm('Bạn có chắc chắn muốn xóa khach hang?')"><i class="icon-delete fas fa-trash" title="Delete"></i></a>
+                        <a th:href="@{/customer/edit/{id}(id=${customer.id})}"
+                           class="btn btn-sm btn-outline-primary me-1">
+                            <i class="fas fa-edit" title="Sửa"></i>
+                        </a>
+                        <a th:href="@{/customer/detail/{id}(id=${customer.id})}"
+                           class="btn btn-sm btn-outline-info me-1">
+                            <i class="fas fa-info-circle" title="Chi tiết"></i>
+                        </a>
+                        <a th:href="@{/customer/delete/{id}(id=${customer.id})}"
+                           class="btn btn-sm btn-outline-danger"
+                           onclick="return confirm('Bạn có chắc chắn muốn xóa khách hàng?')">
+                            <i class="fas fa-trash" title="Xóa"></i>
+                        </a>
                     </td>
                 </tr>
-
                 </tbody>
             </table>
-            <div class="text-center m-3">
-                <div class="d-flex justify-content-center">
-                    <a th:href="@{/customer/list?pageNumber=0}"
-                       class="btn btn-secondary mx-1">First</a>
-                    <a th:href="@{/customer/list(pageNumber=${pageCustomer.first ? 0 : pageCustomer.number - 1})}"
-                       class="btn btn-secondary mx-1">Previous</a>
-                    <div th:if="${pageCustomer.totalPages > 0}" class="d-flex">
-                        <div th:each="pageNumber : ${#numbers.sequence(0, pageCustomer.totalPages - 1)}"
-                             class="mx-1">
-                            <a th:href="@{/customer/list(pageNumber=${pageNumber})}"
-                               class="btn btn-primary"
+
+            <!-- Pagination -->
+            <div class="d-flex justify-content-center mt-4">
+                <nav aria-label="Pagination">
+                    <ul class="pagination">
+                        <li class="page-item">
+                            <a th:href="@{/customer/list?pageNumber=0}" class="page-link">First</a>
+                        </li>
+                        <li class="page-item">
+                            <a th:href="@{/customer/list(pageNumber=${pageCustomer.first ? 0 : pageCustomer.number - 1})}"
+                               class="page-link">Previous</a>
+                        </li>
+                        <li class="page-item"
+                            th:each="pageNumber : ${#numbers.sequence(0, pageCustomer.totalPages - 1)}"
+                            th:classappend="${pageNumber == pageCustomer.number} ? 'active'">
+                            <a th:href="@{/customer/list(pageNumber=${pageNumber})}" class="page-link"
                                th:text="${pageNumber + 1}"></a>
-                        </div>
-                    </div>
-                    <a th:href="@{/customer/list(pageNumber=${pageCustomer.last ? pageCustomer.totalPages - 1 : pageCustomer.number + 1})}"
-                       class="btn btn-secondary mx-1">Next</a>
-                    <a th:href="@{/customer/list(pageNumber=${pageCustomer.totalPages - 1})}"
-                       class="btn btn-secondary mx-1">Last</a>
-                </div>
+                        </li>
+                        <li class="page-item">
+                            <a th:href="@{/customer/list(pageNumber=${pageCustomer.last ? pageCustomer.totalPages - 1 : pageCustomer.number + 1})}"
+                               class="page-link">Next</a>
+                        </li>
+                        <li class="page-item">
+                            <a th:href="@{/customer/list(pageNumber=${pageCustomer.totalPages - 1})}"
+                               class="page-link">Last</a>
+                        </li>
+                    </ul>
+                </nav>
             </div>
         </article>
     </div>

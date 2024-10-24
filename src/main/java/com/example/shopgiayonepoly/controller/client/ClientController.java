@@ -49,6 +49,10 @@ public class ClientController {
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
         model.addAttribute("clientLogin", clientLoginResponse);
         session.removeAttribute("clientInfo");
+        List<ProductIClientResponse> listProductHighest = clientService.GetTop12ProductWithPriceHighest();
+        List<ProductIClientResponse> listProductLowest = clientService.GetTop12ProductWithPriceLowest();
+        model.addAttribute("listProductHighest", listProductHighest);
+        model.addAttribute("listProductLowest", listProductLowest);
         return "client/homepage";
     }
 
@@ -78,13 +82,20 @@ public class ClientController {
 
     //Hiển thị 10 sản phẩm giá cao nhất
     @GetMapping("/products-highest")
-    public ResponseEntity<List<ProductIClientResponse>> getTop12ProductWithPriceHighest(HttpSession session,
-                                                                                        Model model) {
-
+    public List<ProductIClientResponse> getTop12ProductWithPriceHighest(HttpSession session,
+                                                                        Model model) {
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
         model.addAttribute("loginInfoClient", clientLoginResponse);
-        List<ProductIClientResponse> productsHighest = clientService.GetTop12ProductWithPriceHighest();
-        return ResponseEntity.ok(productsHighest);
+        return clientService.GetTop12ProductWithPriceHighest();
+    }
+
+    //Hiển thị 10 sản phẩm giá thấp nhất
+    @GetMapping("/products-lowest")
+    public List<ProductIClientResponse> getTop12ProductWithPriceLowest(HttpSession session,
+                                                                       Model model) {
+        ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
+        model.addAttribute("loginInfoClient", clientLoginResponse);
+        return clientService.GetTop12ProductWithPriceLowest();
 
     }
 
@@ -194,9 +205,10 @@ public class ClientController {
             return "redirect:/onepoly/register";
         }
     }
-
+//
     @GetMapping("/userProfile")
     public String formProfile(Model model, HttpSession session) {
+//        ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
         if (clientLoginResponse != null) {
             String acount = clientLoginResponse.getAcount();

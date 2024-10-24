@@ -7,7 +7,6 @@ import com.example.shopgiayonepoly.entites.Staff;
 import com.example.shopgiayonepoly.service.CustomerService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,7 +28,7 @@ public class CustomerController {
     @Autowired
     CustomerService customerService;
 
-    private final int pageSize = 10;
+    private final int pageSize = 5;
 
 //    @GetMapping("/list")
 //    public String getFormList(Model model) {
@@ -107,16 +106,16 @@ public class CustomerController {
         customer.setGender(customerRequest.getGender());
         customer.setAddRess(customerRequest.getWard() + "," + customerRequest.getDistrict() + "," + customerRequest.getProvince() + "," + customerRequest.getAddRessDetail());
         customer.setStatus(customerRequest.getStatus());
-        // Kiểm tra ảnh
+        Customer customerSave = this.customerService.save(customer);
+// Kiểm tra ảnh
         if (customerRequest.getNameImage() != null && !customerRequest.getNameImage().isEmpty()) {
             customer.setImage("fileName");
-            customerService.uploadFile(customerRequest.getNameImage(), customer.getId());
+            customerService.uploadFile(customerRequest.getNameImage(), customerSave.getId());
         } else {
             // Đặt ảnh mặc định nếu không có ảnh được tải lên
-            customer.setImage("Khong co anh");
+            customer.setImage("Ảnh khách hàng");
         }
-        Customer customerSave = this.customerService.save(customer);
-        this.customerService.save(customerSave);
+        //        this.customerService.save(customerSave);
 //        customer.setImage("fileName");
         System.out.println(customer.toString());
 //        customerService.uploadFile(customerRequest.getNameImage(),customerSave.getId());
@@ -194,17 +193,15 @@ public class CustomerController {
         customer.setGender(customerRequest.getGender());
         customer.setAddRess(customerRequest.getWard() + "," + customerRequest.getDistrict() + "," + customerRequest.getProvince() + "," + customerRequest.getAddRessDetail());
         customer.setStatus(customerRequest.getStatus());
+        this.customerService.save(customer);
         // Kiểm tra và cập nhật ảnh
         if (customerRequest.getNameImage() != null && !customerRequest.getNameImage().isEmpty()) {
-            // Thực hiện upload ảnh và trả về tên file
-            String uploadedFileName = customerService.uploadFile(customerRequest.getNameImage(), customer.getId());
-            customer.setImage(uploadedFileName); // Cập nhật tên ảnh vừa upload
+            customer.setImage("fileName");
+            customerService.uploadFile(customerRequest.getNameImage(), customer.getId());
         } else {
-            // Nếu không có ảnh mới, giữ nguyên ảnh cũ
-            customer.setImage(customer.getImage());
+            // Đặt ảnh mặc định nếu không có ảnh được tải lên
+            customer.setImage("Ảnh khách hàng");
         }
-        Customer customerSave = this.customerService.save(customer);
-        this.customerService.save(customerSave);
         return "redirect:/customer/list";
     }
 

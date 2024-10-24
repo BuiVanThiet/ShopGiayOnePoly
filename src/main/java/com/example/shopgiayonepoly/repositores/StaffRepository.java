@@ -54,11 +54,11 @@ public interface StaffRepository extends JpaRepository<Staff, Integer> {
             s.email,
             s.role
     )  
-    from Staff s where concat(s.fullName, s.codeStaff, s.numberPhone) like %:key%
+    from Staff s where concat(s.fullName, s.codeStaff, s.numberPhone, s.email) like %:key%
     """)
     public List<StaffResponse> searchStaffByKeyword(@Param("key") String key);
 
-    @Query("select s from Staff s where (s.fullName like %:key% or s.codeStaff like %:key% or s.numberPhone like %:key%)")
+    @Query("select s from Staff s where (s.fullName like %:key% or s.codeStaff like %:key% or s.numberPhone like %:key% or s.email like %:key%)")
     public Page<Staff> searchStaffByKeywordPage(@Param("key") String key, Pageable pageable);
 
     @Modifying
@@ -68,4 +68,7 @@ public interface StaffRepository extends JpaRepository<Staff, Integer> {
 
     @Query("select v from Staff v where v.status =1 or v.status = 2")
     public Page<Staff> getAllStaffByPage(Pageable pageable);
+
+    boolean existsByCodeStaff(String codeStaff);
+
 }
