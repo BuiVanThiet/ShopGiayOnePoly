@@ -25,4 +25,8 @@ public class ReturnBillExchangeBill extends Base {
     private BigDecimal customerPayment;
     @Column(name = "reason")
     private String reason;
+    @Column(name = "exchange_and_return_fee")
+    private BigDecimal exchangeAndReturnFee;
+    @Column(name = "discounted_amount")
+    private BigDecimal discountedAmount;
 }

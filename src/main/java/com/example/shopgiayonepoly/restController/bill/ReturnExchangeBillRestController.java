@@ -97,6 +97,7 @@ public class ReturnExchangeBillRestController extends BaseBill {
                         .multiply(BigDecimal.valueOf(500));
                 // Set giá trị đã làm tròn vào đối tượng response
                 newReturnBillDetailResponse.setPriceBuy(roundedPrice);
+                newReturnBillDetailResponse.setPriceDiscount(request.getPriceBuy().subtract(roundedPrice));
 //                newReturnBillDetailResponse.setPriceBuy(request.getPriceBuy());
 //                newReturnBillDetailResponse.setTotalReturn(request.getPriceBuy().multiply(BigDecimal.valueOf(request.getQuantityReturn())));
                 newReturnBillDetailResponse.setTotalReturn(roundedPrice.multiply(BigDecimal.valueOf(request.getQuantityReturn())));
@@ -202,7 +203,7 @@ public class ReturnExchangeBillRestController extends BaseBill {
             response.setDiscountRatioPercentage((BigDecimal) objectSave[4]);
             response.setQuantityBuy((Integer) objectSave[5]);
         }
-        response.setTotalReturn(totalReturn);
+        response.setTotalReturn(totalReturn.subtract(exchangeAndReturnFee).add(discountedAmount));
         response.setTotalExchange(totalExchange);
         session.setAttribute("discountRatioPercentage", response.getDiscountRatioPercentage().divide(BigDecimal.valueOf(100))); // Reset lại dữ liệu trong session mỗi lần tải trang
         System.out.println(response.toString());
@@ -218,6 +219,9 @@ public class ReturnExchangeBillRestController extends BaseBill {
         quantity = 0;
         idProductDetail = 0;
         totalReturn = BigDecimal.valueOf(0);
+
+        exchangeAndReturnFee =  BigDecimal.valueOf(0);
+        discountedAmount =  BigDecimal.valueOf(0);
 
         session.setAttribute("exchangeBillDetailResponses", null); // Reset lại dữ liệu trong session mỗi lần tải trang
         session.setAttribute("totalMoneyExchange", 0); // Reset lại dữ liệu trong session mỗi lần tải trang
@@ -300,6 +304,10 @@ public class ReturnExchangeBillRestController extends BaseBill {
         returnBill.setCodeReturnBillExchangBill("1");
         returnBill.setCustomerRefund(totalReturn);
         returnBill.setCustomerPayment(totalExchange);
+
+        returnBill.setExchangeAndReturnFee(exchangeAndReturnFee);
+        returnBill.setDiscountedAmount(discountedAmount);
+
         returnBill.setReason("hi ae");
         returnBill.setStatus(0);
         returnBill.setReason(note);
@@ -364,7 +372,10 @@ public class ReturnExchangeBillRestController extends BaseBill {
         }
         response.setNoteReturn(returnBill.getReason());
         response.setTotalReturn(returnBill.getCustomerRefund());
-        response.setTotalExchange(returnBill.getCustomerPayment()   );
+        response.setTotalExchange(returnBill.getCustomerPayment());
+
+        response.setExchangeAndReturnFee(returnBill.getExchangeAndReturnFee());
+        response.setDiscountedAmount(returnBill.getDiscountedAmount());
         session.setAttribute("discountRatioPercentage", response.getDiscountRatioPercentage().divide(BigDecimal.valueOf(100))); // Reset lại dữ liệu trong session mỗi lần tải trang
 
         return response;
@@ -618,6 +629,18 @@ public class ReturnExchangeBillRestController extends BaseBill {
         Integer page = (int) Math.ceil((double) this.exchangeBillDetailService.getExchangeBillDetailByIdReturnBill((Integer) session.getAttribute("IdReturnBill")).size() / 2);
         System.out.println("so trang tra la " + page);
         return page;
+    }
+
+    //Phụ phí
+    @GetMapping("/exchangeAndReturnFee/{monney}")
+    public ResponseEntity<?> getExchangeAndReturnFee(@PathVariable("monney") String money) {
+        this.exchangeAndReturnFee = new BigDecimal(money);
+        return ResponseEntity.ok("done");
+    }
+    @GetMapping("/discountedAmount/{monney}")
+    public ResponseEntity<?> getDiscountedAmount(@PathVariable("monney") String money) {
+        this.discountedAmount = new BigDecimal(money);
+        return ResponseEntity.ok("done");
     }
 
     private void getReduceProductDetail(Integer id, Integer quantityExchange) {

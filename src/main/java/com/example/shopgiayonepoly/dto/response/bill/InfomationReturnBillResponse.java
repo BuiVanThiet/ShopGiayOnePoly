@@ -1,5 +1,6 @@
 package com.example.shopgiayonepoly.dto.response.bill;
 
+import jakarta.persistence.Column;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -18,5 +19,7 @@ public class InfomationReturnBillResponse {
     private BigDecimal totalReturn;
     private BigDecimal totalExchange;
     private String noteReturn;
+    private BigDecimal exchangeAndReturnFee;
+    private BigDecimal discountedAmount;
 
 }

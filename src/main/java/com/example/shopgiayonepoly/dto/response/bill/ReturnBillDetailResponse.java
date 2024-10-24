@@ -19,5 +19,6 @@ public class ReturnBillDetailResponse extends BaseDTO implements Serializable {
     private ProductDetail productDetail;
     private Integer quantityReturn;
     private BigDecimal priceBuy;
+    private BigDecimal priceDiscount;
     private BigDecimal totalReturn;
 }
