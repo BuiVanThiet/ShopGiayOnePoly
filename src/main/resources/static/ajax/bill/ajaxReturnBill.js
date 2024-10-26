@@ -292,6 +292,8 @@ function ressetListReturnBill() {
 }
 
 function loadInfomationReturnBill() {
+    $('#span-exchangeAndReturnFee').remove();
+    $('#span-discountedAmount').remove();
     $.ajax({
         type: "GET",
         url: "/return-exchange-bill-api/infomation-return-bill",
@@ -303,17 +305,17 @@ function loadInfomationReturnBill() {
             $('#total-return').text(response.totalReturn.toLocaleString('en-US') + ' VNĐ')
             $('#total-exchange').text(response.totalExchange.toLocaleString('en-US') + ' VNĐ')
             var totalReturnCustomer = 0;
-            if((response.totalReturn-response.totalExchange) <= 0) {
+            if(((response.totalReturn-response.exchangeAndReturnFee+response.discountedAmount)-response.totalExchange) <= 0) {
                 totalReturnCustomer = 0;
             }else {
-                totalReturnCustomer = response.totalReturn-response.totalExchange;
+                totalReturnCustomer = (response.totalReturn-response.exchangeAndReturnFee+response.discountedAmount)-response.totalExchange;
             }
             $('#total-return-customer').text(totalReturnCustomer.toLocaleString('en-US') + ' VNĐ')
             var totalExchangeCustomer = 0;
-            if((response.totalExchange-response.totalReturn) <= 0) {
+            if((response.totalExchange-(response.totalReturn-response.exchangeAndReturnFee+response.discountedAmount)) <= 0) {
                 totalExchangeCustomer = 0;
             }else {
-                totalExchangeCustomer = response.totalExchange-response.totalReturn;
+                totalExchangeCustomer = response.totalExchange-(response.totalReturn-response.exchangeAndReturnFee+response.discountedAmount);
             }
             $('#total-exchange-customer').text(totalExchangeCustomer.toLocaleString('en-US') + ' VNĐ')
         },
@@ -333,6 +335,10 @@ function remoBillReturn(idProductDetail,quantity) {
             loadReturnBill(1);
             maxPageReturnBill();
             loadInfomationReturnBill()
+            loadProduct(1);
+            getMaxPageProduct();
+            loadExchangeBill(pageExchange);
+            maxPageExchangeBill();
             showToast(response.message,response.check);
         },
         error: function (xhr) {

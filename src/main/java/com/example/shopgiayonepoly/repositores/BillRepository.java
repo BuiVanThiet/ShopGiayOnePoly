@@ -70,11 +70,11 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
             "and concat(v.nameVoucher,v.codeVoucher) LIKE %:keyword%")
     Page<Voucher> getVoucherByBill(@Param("idBill") Integer idBill, @Param("keyword") String keyword, Pageable pageable);
     @Query("SELECT v FROM Voucher v " +
-            "WHERE (SELECT b.totalAmount FROM Bill b WHERE b.id = :idBill) >= v.pricesApply " +
+            "WHERE (SELECT b.totalAmount FROM Bill b WHERE b.id = :idBillCheck) >= v.pricesApply " +
             "AND v.status <> 0 " +
-            "AND (v.id <> (SELECT b.voucher.id FROM Bill b WHERE b.id = :idBill) OR (SELECT b.voucher.id FROM Bill b WHERE b.id = :idBill) IS NULL) " +
+            "AND (v.id <> (SELECT b.voucher.id FROM Bill b WHERE b.id = :idBillCheck) OR (SELECT b.voucher.id FROM Bill b WHERE b.id = :idBillCheck) IS NULL) " +
             "and concat(v.nameVoucher,v.codeVoucher) LIKE %:keyword%")
-    List<Voucher> getVoucherByBill(@Param("idBill") Integer idBill, @Param("keyword") String keyword);
+    List<Voucher> getVoucherByBill(@Param("idBillCheck") Integer idBill, @Param("keyword") String keyword);
 
     @Query("select new com.example.shopgiayonepoly.dto.response.bill.ClientBillInformationResponse(cuss.fullName,cuss.numberPhone,cuss.email,cuss.addRess,cuss.addRess,cuss.addRess,cuss.addRess) from Customer cuss where cuss.id = :idClient")
     List<ClientBillInformationResponse> getClientBillInformationResponse(@Param("idClient") Integer idBill);

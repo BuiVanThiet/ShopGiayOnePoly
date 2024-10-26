@@ -1112,11 +1112,12 @@ function loadVoucherByBill(page) {
                                 <div>
                                     <p class="fs-6 fw-bold mb-1 text-danger">Mã Voucher: ${voucher.codeVoucher}</p>
                                     <p class="fs-5 text-muted mb-0">Khuyến mãi: ${voucher.nameVoucher}</p>
+                                    <p class="fs-5 text-muted mb-0">Số lượng: ${voucher.quantity}</p>
                                 </div>
                                 
                                 <!-- Button to Select Voucher -->
-<!--                                <a href="/bill/click-voucher-bill/${voucher.id}" class="btn btn-outline-success btn-lg px-4">Chọn</a>-->
-                                <button class="btn btn-outline-success btn-lg px-4" onclick="getAddVoucherInBill(${voucher.id})">Chọn</button>
+<!--                                <a href="/bill/click-voucher-bill/" class="btn btn-outline-success btn-lg px-4">Chọn</a>-->
+                                <button class="btn btn-outline-success btn-lg px-4" data-bs-dismiss="modal" aria-label="Close" onclick="getAddVoucherInBill(${voucher.id})">Chọn</button>
                             </div>
                         </div>
                     </div>
@@ -1157,6 +1158,7 @@ function searchVoucher() {
 }
 
 function getAddVoucherInBill(idVoucher) {
+    console.log(idVoucher)
     $.ajax({
         type: "POST",
         url: "/staff/bill/click-voucher-bill/"+idVoucher,
@@ -1228,6 +1230,7 @@ function maxPageVoucher() {
         type: "GET",
         url:"/bill-api/max-page-voucher",
         success: function (response) {
+            console.log(response + 'Day la so trang toi da cua voucher')
             createPagination('voucherPageMax', response, 1); // Phân trang 1
         },
         error: function (xhr) {
