@@ -3,8 +3,10 @@ package com.example.shopgiayonepoly.controller.client;
 import com.example.shopgiayonepoly.dto.request.RegisterRequest;
 import com.example.shopgiayonepoly.dto.request.UserProfileUpdateRequest;
 import com.example.shopgiayonepoly.dto.response.ClientLoginResponse;
+import com.example.shopgiayonepoly.dto.response.client.ColorClientResponse;
 import com.example.shopgiayonepoly.dto.response.client.ProductDetailClientRespone;
 import com.example.shopgiayonepoly.dto.response.client.ProductIClientResponse;
+import com.example.shopgiayonepoly.dto.response.client.SizeClientResponse;
 import com.example.shopgiayonepoly.entites.Customer;
 import com.example.shopgiayonepoly.implement.CustomerRegisterImplement;
 import com.example.shopgiayonepoly.repositores.ClientSecurityResponsetory;
@@ -100,16 +102,17 @@ public class ClientController {
     }
 
     @GetMapping("/product-detail/{productID}")
-    public ResponseEntity<List<ProductDetailClientRespone>> getFormProductDetail(@PathVariable("productID") Integer id,
-                                                                                 HttpSession session,
-                                                                                 Model model) {
-        ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
-        model.addAttribute("loginInfoClient", clientLoginResponse);
-        List<ProductDetailClientRespone> productDetailClientRespone = clientService.findProductDetailByProductId(id);
-        if (productDetailClientRespone == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-        return ResponseEntity.ok(productDetailClientRespone);
+    public String getFormProductDetail(@PathVariable("productID") Integer id,
+                                       HttpSession session,
+                                       Model model) {
+        List<ProductDetailClientRespone> productDetailClientRespones = clientService.findProductDetailByProductId(id);
+        List<ColorClientResponse> colors = clientService.findDistinctColorsByProductId(id);
+        List<SizeClientResponse> sizes = clientService.findDistinctSizesByProductId(id);
+        model.addAttribute("productDetail", productDetailClientRespones);
+        model.addAttribute("colors", colors);
+        model.addAttribute("sizes", sizes);
+        model.addAttribute("productID", id);
+        return "client/product_detail";
     }
 
     @GetMapping("/cerateProduct")
@@ -204,7 +207,8 @@ public class ClientController {
             return "redirect:/onepoly/register";
         }
     }
-//
+
+    //
     @GetMapping("/userProfile")
     public String formProfile(Model model, HttpSession session) {
 //        ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");

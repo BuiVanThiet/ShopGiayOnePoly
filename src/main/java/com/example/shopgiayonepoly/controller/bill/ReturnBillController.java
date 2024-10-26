@@ -17,9 +17,17 @@ import java.util.ArrayList;
 @RequestMapping("/staff/return-bill")
 public class ReturnBillController extends BaseBill {
     @GetMapping("/bill/{idBill}")
-    public String getIndexReturnBill(@PathVariable("idBill") Integer idBill,HttpSession session) {
+    public String getIndexReturnBill(@PathVariable("idBill") String idBill,HttpSession session) {
         this.productDetailCheckMark2Request = null;
-        session.setAttribute("IdBill",idBill);
+
+        String validateIdBill = validateInteger(idBill);
+        if(!validateIdBill.trim().equals("")) {
+            this.mess = "Lỗi đinh dạng hóa đơn!";
+            this.colorMess = "3";
+            return "redirect:"+validateIdBill;
+        }
+
+        session.setAttribute("IdBill",Integer.parseInt(idBill));
         return "Bill/returnBill";
     }
     @GetMapping("/create-return-bill")

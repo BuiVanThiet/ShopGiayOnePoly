@@ -21,5 +21,4 @@ public class InfomationReturnBillResponse {
     private String noteReturn;
     private BigDecimal exchangeAndReturnFee;
     private BigDecimal discountedAmount;
-
 }

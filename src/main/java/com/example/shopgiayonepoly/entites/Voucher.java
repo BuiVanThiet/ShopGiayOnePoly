@@ -14,8 +14,8 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@ToString
 @Table(name = "voucher")
+@ToString
 public class Voucher extends Base {
     @Column(name = "code_voucher")
     private String codeVoucher;

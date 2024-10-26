@@ -38,7 +38,7 @@ public class SecurityConfig {
                         .requestMatchers("/staff/bill/**").hasAnyRole("Quản trị viên", "Nhân viên bán hàng")
                         .requestMatchers("/staff/return-bill/**").hasAnyRole("Quản trị viên", "Nhân viên bán hàng")
                         .requestMatchers("/login-api/**", "/ajax/**", "/css/**", "/img/**", "/js/**", "/loading/**", "/toast/**").permitAll()
-                        .requestMatchers("/bill-api/**","/register-api/**", "/register", "/login", "/logout","/return-exchange-bill-api/**","/sale/**").permitAll()
+                        .requestMatchers("/bill-api/**","/register-api/**", "/register", "/login", "/logout","/return-exchange-bill-api/**","/sale/**","/api-client/**").permitAll()
                         .requestMatchers("/onepoly/**").permitAll()
                         .anyRequest().authenticated()
                 )
