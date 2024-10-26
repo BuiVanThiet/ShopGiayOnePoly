@@ -159,15 +159,15 @@
                         </div>
                         <div class="product-icons">
                             <a href="#" class="cart-icon"><i class="fas fa-shopping-cart"></i></a>
-                            <a th:href="@{/onepoly/product-detail/{id}(id=${product.id})}" class="view-icon"><i class="fas fa-eye"></i></a>
+                            <a class="view-icon" th:href="@{/onepoly/product-detail/(productID=${product.id})}"><i class="fas fa-eye"></i></a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
+        <script th:src="@{/ajax/client/product-detail.js}" type="text/javascript"></script>
     </section>
-    <script th:src="@{/js/client/product.js}" type="text/javascript"></script>
+
 </div>
 </body>
 </html>

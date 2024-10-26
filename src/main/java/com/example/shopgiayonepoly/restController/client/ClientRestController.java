@@ -1,16 +1,21 @@
 package com.example.shopgiayonepoly.restController.client;
 
+import com.example.shopgiayonepoly.dto.response.ClientLoginResponse;
+import com.example.shopgiayonepoly.dto.response.client.ProductDetailClientRespone;
 import com.example.shopgiayonepoly.dto.response.client.ProductIClientResponse;
 import com.example.shopgiayonepoly.implement.CustomerRegisterImplement;
 import com.example.shopgiayonepoly.repositores.ClientSecurityResponsetory;
 import com.example.shopgiayonepoly.repositores.CustomerRegisterRepository;
 import com.example.shopgiayonepoly.service.ClientService;
 import com.example.shopgiayonepoly.service.CustomerService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -39,4 +44,17 @@ public class ClientRestController {
     public List<ProductIClientResponse> getTop12ProducLowest() {
         return clientService.GetTop12ProductWithPriceLowest();
     }
+
+    @GetMapping("/products/product-detail")
+    public ResponseEntity<ProductDetailClientRespone> getProductDetail(
+            @RequestParam Integer productId,
+            @RequestParam Integer colorId,
+            @RequestParam Integer sizeId) {
+        ProductDetailClientRespone productDetail = clientService.findByProductDetailColorAndSizeAndProductId(colorId, sizeId, productId);
+        if (productDetail != null) {
+            return ResponseEntity.ok(productDetail);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
 }
