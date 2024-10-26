@@ -73,8 +73,8 @@ public class StaffProfileController {
     @PostMapping("/updateStaffProfile")
     public String updateStaffProfile(@Valid @ModelAttribute("staffProfile") StaffProfileRequest staffProfile,
                                      BindingResult bindingResult,
-                                     HttpSession session,
                                      @RequestParam("nameImageStaff") MultipartFile nameImage,
+                                     HttpSession session,
                                      Model model) throws IOException {
         Staff staff = (Staff) session.getAttribute("staffLogin");
         System.out.println("Staff từ model: " + staff);
