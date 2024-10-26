@@ -55,19 +55,19 @@ function showAllProductsByTextHighest() {
 }
 // Lowest
 function showAllProductsLowest() {
-    const products = document.querySelectorAll('.col-3.position-relative');
+    const hiddenProducts = document.querySelectorAll('#product-container-2 .hidden-product');
     const button = document.getElementById('view-all-btn-2');
-    const hiddenProducts = document.querySelectorAll('.col-3.position-relative.hidden-product');
+    const products = document.querySelectorAll('#product-container-2 .col-3.position-relative');
 
     if (hiddenProducts.length > 0) {
-        // Hiển thị tất cả sản phẩm nếu có sản phẩm bị ẩn
-        products.forEach(product => {
+        // Hiển thị tất cả sản phẩm
+        hiddenProducts.forEach(product => {
             product.classList.remove('hidden-product');
         });
         // Đổi text thành "Thu Gọn" và đổi icon sang mũi tên lên
         button.innerHTML = 'Thu Gọn <i id="view-all-icon-2" class="fas fa-chevron-up"></i>';
     } else {
-        // Ẩn lại tất cả sản phẩm ngoài 4 sản phẩm đầu
+        // Ẩn các sản phẩm ngoài 4 sản phẩm đầu
         products.forEach((product, index) => {
             if (index >= 4) {
                 product.classList.add('hidden-product');
@@ -80,19 +80,17 @@ function showAllProductsLowest() {
     }
 }
 function showAllProductsByTextLowest() {
-    const products = document.querySelectorAll('.col-3.position-relative');
+    const products = document.querySelectorAll('#product-container-2 .col-3.position-relative');
     const buttonText = document.getElementById('view-all-text-2');
-    const hiddenProducts = document.querySelectorAll('.col-3.position-relative.hidden-product');
+    const hiddenProducts = document.querySelectorAll('#product-container-2 .hidden-product');
 
     if (hiddenProducts.length > 0) {
-        // Hiển thị tất cả sản phẩm nếu có sản phẩm bị ẩn
-        products.forEach(product => {
-            product.classList.remove('hidden-product');
-        });
-        // Đổi text thành "Thu Gọn" và đổi icon sang mũi tên trái
-        buttonText.innerHTML = 'Thu Gọn <i id="toggle-icon-2" class="fas fa-chevron-left"></i>';
+        // Hiển thị tất cả sản phẩm
+        products.forEach(product => product.classList.remove('hidden-product'));
+        // Đổi text thành "Thu Gọn" và icon mũi tên trái
+        buttonText.innerHTML = 'Thu Gọn <i class="fas fa-chevron-left"></i>';
     } else {
-        // Ẩn lại tất cả sản phẩm ngoài 4 sản phẩm đầu
+        // Ẩn lại các sản phẩm ngoài 4 sản phẩm đầu
         products.forEach((product, index) => {
             if (index >= 4) {
                 product.classList.add('hidden-product');
@@ -100,9 +98,10 @@ function showAllProductsByTextLowest() {
                 product.classList.remove('hidden-product');
             }
         });
-        // Đổi lại text thành "Xem Tất Cả" và đổi icon sang mũi tên phải
-        buttonText.innerHTML = 'Xem Tất Cả <i id="toggle-icon-2" class="fas fa-chevron-right"></i>';
+        // Đổi lại text thành "Xem Tất Cả" và icon mũi tên phải
+        buttonText.innerHTML = 'Xem Tất Cả <i class="fas fa-chevron-right"></i>';
     }
 }
+
 
 

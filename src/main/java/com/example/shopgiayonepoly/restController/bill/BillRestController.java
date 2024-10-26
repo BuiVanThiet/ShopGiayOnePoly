@@ -25,7 +25,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/bill-api")
-public class BillRestController extends BaseBill {
+public class    BillRestController extends BaseBill {
     @GetMapping("/get-idbill")
     @ResponseBody
     public Integer getIdBillFromSession(HttpSession session) {

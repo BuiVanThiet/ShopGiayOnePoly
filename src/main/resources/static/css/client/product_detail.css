@@ -1,6 +1,7 @@
 .thumbnail-active {
     border: 2px solid #007bff;
 }
+
 .btn-color-circle {
     width: 60px;
     height: 60px;
@@ -18,7 +19,8 @@
     outline: none;
     border: 2px solid black;
 }
-.btn-size-square{
+
+.btn-size-square {
     width: 100%;
     height: 50px;
     margin-right: 10px;
@@ -29,7 +31,165 @@
     line-height: 45px;
     transition: all 0.3s ease;
 }
+
 .btn-size-square:focus, .btn-size-square:active {
     outline: none;
     border: 3px solid #2222c4;
+}
+
+/*button add cart*/
+.btn-add-cart {
+    width: 100%;
+    height: 50px;
+    line-height: 40px;
+    font-size: 15px;
+    border: 0.5px;
+    border-radius: 2px;
+    color: white;
+    font-weight: lighter;
+    background-color: #004698;
+}
+
+.btn-add-cart:hover {
+
+    background-color: #053870;
+}
+
+/**/
+
+/* Phong cách chung cho modal */
+.line-item-container {
+    display: flex;
+    justify-content: space-between; /* Giữ khoảng cách giữa các phần tử */
+}
+
+.item-img {
+    flex: 0 0 35%; /* 35% chiều rộng cho hình ảnh */
+    display: flex; /* Để căn giữa ảnh nếu cần */
+    align-items: center; /* Căn giữa theo chiều dọc */
+    justify-content: center; /* Căn giữa theo chiều ngang */
+}
+
+.item-info {
+    flex: 0 0 65%; /* 65% chiều rộng cho thông tin sản phẩm */
+    padding-left: 20px; /* Thêm khoảng cách giữa ảnh và thông tin */
+}
+
+/* Để hình ảnh không bị biến dạng */
+.item-img img {
+    max-width: 100%;
+    height: auto; /* Đảm bảo hình ảnh không bị méo */
+}
+
+
+.modal .modal-dialog {
+    max-width: 600px;
+    margin: auto;
+}
+
+.modal .modal-content {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+}
+
+.modal .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+    padding: 15px;
+    text-align: center;
+}
+
+.modal .modal-title {
+    font-size: 20px;
+    color: white;
+    font-weight: inherit;
+}
+
+.modal .btn-close {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+}
+
+/* Nội dung modal */
+.modal .modal-body {
+    padding: 20px;
+}
+
+.item.line-item {
+    display: flex;
+    gap: 15px;
+    padding: 10px 0;
+}
+
+/* Phong cách cho phần hình ảnh sản phẩm */
+.item .left .item-img img {
+    width: 100px;
+    height: auto;
+    border-radius: 4px;
+}
+
+/* Phong cách cho phần thông tin sản phẩm */
+.item .right .item-info h3 {
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+.item .item-price {
+    color: #e74c3c;
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+
+.item .item-desc .variant-option .text {
+    margin-left: 5px;
+    color: #666;
+}
+
+/* Phong cách cho số lượng sản phẩm */
+.item .item-quan {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.qty .qty-btn {
+    background-color: #ddd;
+    border: none;
+    padding: 5px 10px;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.item-quantity {
+    width: 40px;
+    text-align: center;
+    border: none;
+    background-color: #f1f1f1;
+    font-size: 1rem;
+    margin: 0 5px;
+}
+
+/* Phong cách cho các nút trong modal */
+.popup_action {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.popup_action .btn {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 15px;
+    border-radius: 4px;
+    text-decoration: none;
+}
+
+.popup_action .btn:hover {
+    background-color: #0056b3;
 }

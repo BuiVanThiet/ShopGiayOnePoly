@@ -1,7 +1,9 @@
 package com.example.shopgiayonepoly.repositores;
 
+import com.example.shopgiayonepoly.dto.response.client.ColorClientResponse;
 import com.example.shopgiayonepoly.dto.response.client.ProductDetailClientRespone;
 import com.example.shopgiayonepoly.dto.response.client.ProductIClientResponse;
+import com.example.shopgiayonepoly.dto.response.client.SizeClientResponse;
 import com.example.shopgiayonepoly.entites.Bill;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -53,35 +55,64 @@ public interface ClientRepository extends JpaRepository<Bill, Integer> {
     public List<ProductIClientResponse> GetTop12ProductWithPriceLowest();
 
     @Query(value = """
-            SELECT 
-                pd.id AS productDetailId,
-                p.id AS productId,
-                p.name_product AS productName,
-                p.code_product AS productCode,
-                p.describe AS productDescription,
-                pd.price AS price,
-                pd.import_price AS importPrice,
-                pd.quantity AS quantity,
-                pd.describe AS productDetailDescription,
-                pd.high AS height,
-                pd.width AS width,
-                pd.wight AS weight,  -- Đã sửa từ 'wight' thành 'weight'
-                pd.lenght_product AS length,  -- Đã sửa từ 'lenght_product' thành 'length'
-                c.name_color AS colorName,  
-                s.name_size AS sizeName,
-                i.name_image AS productImage
-            FROM 
-                product_detail pd
-                JOIN product p ON pd.id_product = p.id
-                LEFT JOIN color c ON pd.id_color = c.id
-                LEFT JOIN size s ON pd.id_size = s.id
-                LEFT JOIN sale_product sp ON pd.id_sale_product = sp.id
-                LEFT JOIN category_product cp ON p.id = cp.id_product
-                LEFT JOIN image i ON cp.id_category = i.id
-            WHERE 
-                p.id = :productId
-            """, nativeQuery = true)
+            SELECT new com.example.shopgiayonepoly.dto.response.client.ProductDetailClientRespone(
+                pd.id,
+                p.id,
+                p.nameProduct,
+                pd.price,
+                pd.quantity,
+                p.describe,
+                c.nameColor,
+                s.nameSize,
+                i.nameImage
+            )
+            FROM ProductDetail pd
+            JOIN pd.product p
+            LEFT JOIN pd.color c
+            LEFT JOIN pd.size s
+            LEFT JOIN pd.saleProduct sp
+            LEFT JOIN p.images i
+            WHERE p.id = :productId
+            """)
     public List<ProductDetailClientRespone> findProductDetailByProductId(@Param("productId") Integer productId);
 
+    @Query(value = """
+            select DISTINCT new com.example.shopgiayonepoly.dto.response.client.ColorClientResponse(
+            c.id,
+            c.nameColor
+            )
+            FROM ProductDetail pd
+            JOIN pd.color c
+            WHERE pd.product.id = :productId
+            AND c.nameColor IS NOT NULL
+            """)
+    public List<ColorClientResponse> findDistinctColorsByProductId(@Param("productId") Integer productId);
+
+    @Query(value = """
+            select DISTINCT new com.example.shopgiayonepoly.dto.response.client.SizeClientResponse(
+            s.id,
+            s.nameSize
+            )
+            FROM ProductDetail pd
+            JOIN pd.size s
+            WHERE pd.product.id = :productId
+            AND s.nameSize IS NOT NULL
+            """)
+    public List<SizeClientResponse> findDistinctSizesByProductId(@Param("productId") Integer productId);
+
+
+    @Query("""
+            select new com.example.shopgiayonepoly.dto.response.client.ProductDetailClientRespone(
+            pd.price,
+            pd.quantity
+                
+            ) FROM ProductDetail pd
+             WHERE pd.color.id = :colorId AND pd.size.id = :sizeId
+             AND pd.product.id = :productId
+            """)
+    ProductDetailClientRespone findByProductDetailColorAndSizeAndProductId(
+            @Param("colorId") Integer colorId,
+            @Param("sizeId") Integer sizeId,
+            @Param("productId") Integer productId);
 
 }

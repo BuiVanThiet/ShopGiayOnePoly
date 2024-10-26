@@ -13,46 +13,38 @@ import java.math.BigDecimal;
 
 public class ProductDetailClientRespone {
     private Integer productDetailId;
-    private Long productId;
+    private Integer productId;
     private String productName;
-    private String productCode;
-    private String productDescription;
     private BigDecimal price;
-    private BigDecimal importPrice;
     private Integer quantity;
     private String productDetailDescription;
     private String colorName;
     private String sizeName;
-    private BigDecimal discountPercentage;
-    private String productImage;
+    private String productImage;  // Hình ảnh sản phẩm, nếu cần
 
     public ProductDetailClientRespone(Integer productDetailId,
-                                      Long productId,
+                                      Integer productId,
                                       String productName,
-                                      String productCode,
-                                      String productDescription,
                                       BigDecimal price,
-                                      BigDecimal importPrice,
                                       Integer quantity,
                                       String productDetailDescription,
                                       String colorName,
                                       String sizeName,
-                                      BigDecimal discountPercentage,
                                       String productImage) {
         this.productDetailId = productDetailId;
         this.productId = productId;
         this.productName = productName;
-        this.productCode = productCode;
-        this.productDescription = productDescription;
         this.price = price;
-        this.importPrice = importPrice;
         this.quantity = quantity;
         this.productDetailDescription = productDetailDescription;
         this.colorName = colorName;
         this.sizeName = sizeName;
-        this.discountPercentage = discountPercentage;
         this.productImage = productImage;
     }
 
+    public ProductDetailClientRespone(BigDecimal price, Integer quantity) {
+        this.price = price;
+        this.quantity = quantity;
+    }
 }
 
