@@ -15,7 +15,7 @@
         <h2>Hồ Sơ Của Tôi</h2>
         <p class="description">Quản lý thông tin hồ sơ để bảo mật tài khoản</p>
         <hr>
-        <form id="updateProfileForm" th:action="@{/onepoly/userProfile}" method="post" th:object="${userProfile}">
+        <form id="updateProfileForm" th:action="@{/onepoly/userProfileUpdate}" method="post" th:object="${userProfile}">
             <input type="hidden" id="provinceHiden" th:value="${userProfile.province}">
             <input type="hidden" id="districtHiden" th:value="${userProfile.district}">
             <input type="hidden" id="wardHiden" th:value="${userProfile.ward}">
