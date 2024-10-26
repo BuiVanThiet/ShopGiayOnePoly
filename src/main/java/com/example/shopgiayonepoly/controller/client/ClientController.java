@@ -112,8 +112,6 @@ public class ClientController {
         return ResponseEntity.ok(productDetailClientRespone);
     }
 
-
-    //    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @GetMapping("/cerateProduct")
     public String homeManage(Model model, HttpSession session) {
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
@@ -135,7 +133,8 @@ public class ClientController {
     public String getLogoutClient(HttpSession session, Model model) {
         session.removeAttribute("clientLogin");
         model.addAttribute("errorMessage", "");
-        return "login/loginClient";
+//        return "login/loginClient";
+        return "client/homepage";
     }
 
     @PostMapping("/login")
@@ -263,14 +262,10 @@ public class ClientController {
         return "client/UserProfile";
     }
 
-    @PostMapping("/userProfile")
-    public String updateProfile(@Valid UserProfileUpdateRequest userProfile, BindingResult bindingResult,
+    @PostMapping("/userProfileUpdate")
+    public String updateProfile(UserProfileUpdateRequest userProfile,
                                 HttpSession session, @RequestParam("nameImage") MultipartFile nameImage, Model model) throws IOException {
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("userProfile", userProfile);
-            return "client/userProfile";
-        }
         if (clientLoginResponse != null) {
             String acount = clientLoginResponse.getAcount();
             Customer customer = customerRegisterRepository.findByAcount(acount);
@@ -301,7 +296,7 @@ public class ClientController {
             return "redirect:/onepoly/login";
         }
 
-        return "client/UserProfile";
+        return "redirect:/onepoly/UserProfile";
     }
 
 }
