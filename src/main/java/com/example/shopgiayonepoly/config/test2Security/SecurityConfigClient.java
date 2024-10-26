@@ -36,6 +36,7 @@ public class SecurityConfigClient {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/onepoly/products").hasAnyRole("Quản trị viên", "Nhân viên bán hàng")
+                        .requestMatchers("/onepoly/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .csrf(csrf -> csrf.disable())
@@ -52,7 +53,7 @@ public class SecurityConfigClient {
                         .permitAll()
                 )
                 .logout(logout -> logout
-                        .logoutUrl("/logout")
+                        .logoutUrl("/onepoly/logout")
                         .logoutSuccessUrl("/login?logout")
                 )
                 .exceptionHandling(exceptionHandling -> exceptionHandling
