@@ -660,6 +660,8 @@ function loadInfomationHistoryByBillId() {
 
 //hien thong tin return bill
 function loadInfomationReturnBillFromBillManage() {
+    $('#input-exchangeAndReturnFee').remove();
+    $('#input-discountedAmount').remove();
     $.ajax({
         type: "GET",
         url: "/return-exchange-bill-api/infomation-return-bill-from-bill-manage",
@@ -687,6 +689,10 @@ function loadInfomationReturnBillFromBillManage() {
                 totalExchangeCustomer = response.totalExchange-(response.totalReturn-response.exchangeAndReturnFee+response.discountedAmount);
             }
             $('#total-exchange-customer').text(totalExchangeCustomer.toLocaleString('en-US') + ' VNĐ')
+
+            $('#span-exchangeAndReturnFee').text(response.exchangeAndReturnFee.toLocaleString('en-US') + ' VNĐ');
+            $('#span-discountedAmount').text(response.discountedAmount.toLocaleString('en-US') + ' VNĐ');
+
             loadReturnBillFromBillManage(1);
             maxPageReturnBillFromBillManage();
             loadExchangeBillFromBillManage(1);

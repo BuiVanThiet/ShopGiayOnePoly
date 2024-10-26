@@ -51,9 +51,19 @@ public class ReturnExchangeBillRestController extends BaseBill {
         if(returnBillDetailResponses == null) {
             returnBillDetailResponses =  new ArrayList<>();
         }
+        if(returnBillDetailResponses.size() <= 0) {
+            System.out.println("khong co san pham tra!");
+            for (int i = 0; i < this.exchangeBillDetailResponses.size(); i++) {
+                ExchangeBillDetailResponse responseProductExchange = this.exchangeBillDetailResponses.get(i);
+                getReduceProductDetail(responseProductExchange.getProductDetail().getId(),-responseProductExchange.getQuantityExchange());
+            }
+            totalExchange = BigDecimal.valueOf(0);
+            exchangeAndReturnFee = BigDecimal.valueOf(0);
+            discountedAmount =  BigDecimal.valueOf(0);
+
+            session.setAttribute("exchangeBillDetailResponses", null);
+        }
         Pageable pageable = PageRequest.of(pageNumber-1,2);
-//        System.out.println(returnBillDetailResponse.getProductDetail().toString());
-//        System.out.println(returnBillDetailResponse.getProductDetail().getProduct().toString());
         return getConvertListToPageReturnBill(returnBillDetailResponses,pageable).getContent();
     }
 
@@ -203,7 +213,14 @@ public class ReturnExchangeBillRestController extends BaseBill {
             response.setDiscountRatioPercentage((BigDecimal) objectSave[4]);
             response.setQuantityBuy((Integer) objectSave[5]);
         }
-        response.setTotalReturn(totalReturn.subtract(exchangeAndReturnFee).add(discountedAmount));
+        if (totalReturn.compareTo(BigDecimal.ZERO) == 0) {
+            response.setExchangeAndReturnFee(BigDecimal.valueOf(0));
+            response.setDiscountedAmount(BigDecimal.valueOf(0));
+        }else {
+            response.setExchangeAndReturnFee(exchangeAndReturnFee);
+            response.setDiscountedAmount(discountedAmount);
+        }
+        response.setTotalReturn(totalReturn);
         response.setTotalExchange(totalExchange);
         session.setAttribute("discountRatioPercentage", response.getDiscountRatioPercentage().divide(BigDecimal.valueOf(100))); // Reset lại dữ liệu trong session mỗi lần tải trang
         System.out.println(response.toString());
@@ -219,7 +236,7 @@ public class ReturnExchangeBillRestController extends BaseBill {
         quantity = 0;
         idProductDetail = 0;
         totalReturn = BigDecimal.valueOf(0);
-
+        totalExchange = BigDecimal.valueOf(0);
         exchangeAndReturnFee =  BigDecimal.valueOf(0);
         discountedAmount =  BigDecimal.valueOf(0);
 
@@ -478,7 +495,7 @@ public class ReturnExchangeBillRestController extends BaseBill {
         if(this.productDetailCheckMark2Request == null) {
             this.productDetailCheckMark2Request = new ProductDetailCheckMark2Request("",null,null,null,null,null,null,null);
         }
-        if(this.productDetails == null) {
+        if (this.productDetails == null) {
             this.productDetails = this.billDetailService.findProductDetailSaleTest(this.productDetailCheckMark2Request,(Integer) session.getAttribute("IdBill"));
         }
         System.out.println("Số lượng 1 trang la " + productDetails.size());
@@ -490,6 +507,7 @@ public class ReturnExchangeBillRestController extends BaseBill {
         if(this.productDetailCheckMark2Request == null) {
             this.productDetailCheckMark2Request = new ProductDetailCheckMark2Request("",null,null,null,null,null,null,null);
         }
+        System.out.println("Thong tin loc " + productDetailCheckMark2Request.toString());
         Integer maxPageProduct = (int) Math.ceil((double) this.billDetailService.findProductDetailSaleTest(this.productDetailCheckMark2Request,(Integer) session.getAttribute("IdBill")).size() / 4);
         System.out.println("so trang cua san pham " + maxPageProduct);
         return maxPageProduct;
@@ -497,7 +515,7 @@ public class ReturnExchangeBillRestController extends BaseBill {
     @PostMapping("/filter-product-deatail")
     public ResponseEntity<?> getFilterProduct(@RequestBody ProductDetailCheckMark2Request productDetailCheckRequest2, HttpSession session) {
         this.productDetailCheckMark2Request = productDetailCheckRequest2;
-        System.out.println("Thong tin loc " + productDetailCheckRequest2.toString());
+//        System.out.println("Thong tin loc " + productDetailCheckRequest2.toString());
         return ResponseEntity.ok("Done");
     }
     @PostMapping("/exchange")
@@ -634,13 +652,13 @@ public class ReturnExchangeBillRestController extends BaseBill {
     //Phụ phí
     @GetMapping("/exchangeAndReturnFee/{monney}")
     public ResponseEntity<?> getExchangeAndReturnFee(@PathVariable("monney") String money) {
-        this.exchangeAndReturnFee = new BigDecimal(money);
-        return ResponseEntity.ok("done");
+            this.exchangeAndReturnFee = new BigDecimal(money);
+            return ResponseEntity.ok("done");
     }
     @GetMapping("/discountedAmount/{monney}")
     public ResponseEntity<?> getDiscountedAmount(@PathVariable("monney") String money) {
-        this.discountedAmount = new BigDecimal(money);
-        return ResponseEntity.ok("done");
+            this.discountedAmount = new BigDecimal(money);
+            return ResponseEntity.ok("done");
     }
 
     private void getReduceProductDetail(Integer id, Integer quantityExchange) {

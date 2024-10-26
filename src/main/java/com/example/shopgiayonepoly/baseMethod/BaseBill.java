@@ -59,6 +59,8 @@ public abstract class BaseBill {
     protected SaleProductService saleProductService;
     @Autowired
     protected ExchangeBillDetailService exchangeBillDetailService;
+    @Autowired
+    protected CustomerService customerService;
 
     //bien cuc bo cua bill
     protected Bill billPay;
@@ -350,6 +352,31 @@ public abstract class BaseBill {
             bill.setPriceDiscount(discount);
             // Lưu hóa đơn
             this.billService.save(bill);
+        }
+    }
+
+    //validate Bigdecimal
+    protected String validateBigDecimal(String val) {
+        try {
+            if(val.trim().equals("") || val == null) {
+                return "/404";
+            }
+            new BigDecimal(val);
+            return "";
+        } catch (NumberFormatException e) {
+            return "/404";
+        }
+    }
+    //validate Integer
+    protected String validateInteger(String val) {
+        try {
+            if(val.trim().equals("") || val == null) {
+                return "/404";
+            }
+            Integer.parseInt(val);
+            return "";
+        } catch (NumberFormatException e) {
+            return "/404";
         }
     }
 
