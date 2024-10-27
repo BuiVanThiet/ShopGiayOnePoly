@@ -3,14 +3,13 @@ package com.example.shopgiayonepoly.controller.client;
 import com.example.shopgiayonepoly.dto.request.RegisterRequest;
 import com.example.shopgiayonepoly.dto.request.UserProfileUpdateRequest;
 import com.example.shopgiayonepoly.dto.response.ClientLoginResponse;
-import com.example.shopgiayonepoly.dto.response.client.ColorClientResponse;
-import com.example.shopgiayonepoly.dto.response.client.ProductDetailClientRespone;
-import com.example.shopgiayonepoly.dto.response.client.ProductIClientResponse;
-import com.example.shopgiayonepoly.dto.response.client.SizeClientResponse;
+import com.example.shopgiayonepoly.dto.response.client.*;
+import com.example.shopgiayonepoly.entites.Cart;
 import com.example.shopgiayonepoly.entites.Customer;
+import com.example.shopgiayonepoly.entites.ProductDetail;
 import com.example.shopgiayonepoly.implement.CustomerRegisterImplement;
-import com.example.shopgiayonepoly.repositores.ClientSecurityResponsetory;
-import com.example.shopgiayonepoly.repositores.CustomerRegisterRepository;
+import com.example.shopgiayonepoly.repositores.*;
+import com.example.shopgiayonepoly.service.CartService;
 import com.example.shopgiayonepoly.service.ClientService;
 import com.example.shopgiayonepoly.service.CustomerService;
 import jakarta.servlet.http.HttpSession;
@@ -28,7 +27,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/onepoly")
@@ -45,6 +46,15 @@ public class ClientController {
     CustomerService customerService;
     @Autowired
     ClientService clientService;
+    @Autowired
+    ProductDetailRepository productDetailRepository;
+    @Autowired
+    CustomerRepository customerRepository;
+    @Autowired
+    CartService cartService;
+    @Autowired
+    CartRepository cartRepository;
+
 
     @GetMapping("/home")
     public String getFormHomeClient(HttpSession session, Model model) {
@@ -115,6 +125,72 @@ public class ClientController {
         return "client/product_detail";
     }
 
+    @PostMapping("/add-to-cart")
+    public String addToCart(@RequestParam Integer productDetailId,
+                            @RequestParam("quantity") int quantity,
+                            HttpSession session,
+                            Model model) {
+        if (quantity <= 0) {
+            model.addAttribute("errorMessage", "Số lượng sản phẩm không hợp lệ.");
+            return "redirect:/product-detail/" + productDetailId;
+        }
+
+        // Kiểm tra sản phẩm có tồn tại không
+        ProductDetail productDetail = productDetailRepository.findById(productDetailId).orElse(null);
+        if (productDetail == null) {
+            model.addAttribute("errorMessage", "Sản phẩm không tồn tại.");
+            return "redirect:/product-detail/" + productDetailId;
+        }
+
+        // Lấy thông tin đăng nhập của khách hàng từ session
+        ClientLoginResponse clientLogin = (ClientLoginResponse) session.getAttribute("clientLogin");
+        if (clientLogin != null) {
+            Integer idCustomerLogin = clientLogin.getId();
+            Customer customer = customerRepository.findById(idCustomerLogin).orElse(null);
+
+            // Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa
+            CartResponse existingCartItem = cartService.findByCustomerIDAndProductDetail(idCustomerLogin, productDetailId);
+
+            if (existingCartItem != null) {
+                // Cập nhật số lượng nếu sản phẩm đã tồn tại trong giỏ hàng
+                existingCartItem.setQuantity(existingCartItem.getQuantity() + quantity);
+                Cart cart = new Cart();
+                cart.setId(existingCartItem.getId());
+                cart.setCustomer(customer);
+                cart.setProductDetail(productDetail);
+                cart.setQuantity(existingCartItem.getQuantity()); // Cập nhật số lượng mới
+                cartRepository.save(cart);
+            } else {
+                // Tạo mới sản phẩm trong giỏ hàng nếu chưa tồn tại
+                Cart newCartItem = new Cart();
+                newCartItem.setCustomer(customer);
+                newCartItem.setProductDetail(productDetail);
+                newCartItem.setQuantity(quantity);
+                cartRepository.save(newCartItem);
+            }
+        } else {
+            // Nếu chưa đăng nhập, lưu giỏ hàng vào session
+            Map<Integer, Integer> sessionCart = (Map<Integer, Integer>) session.getAttribute("sessionCart");
+            if (sessionCart == null) {
+                sessionCart = new HashMap<>();
+            }
+
+            // Cập nhật số lượng spct trong session
+            sessionCart.put(productDetailId, sessionCart.getOrDefault(productDetailId, 0) + quantity);
+            session.setAttribute("sessionCart", sessionCart);
+        }
+
+        return "redirect:/cart";
+    }
+
+    @GetMapping("/cart")
+    public String getFromCart(){
+        return "client/cart";
+    }
+
+
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @GetMapping("/cerateProduct")
     public String homeManage(Model model, HttpSession session) {
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");

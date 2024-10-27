@@ -72,18 +72,16 @@
 
 .item-info {
     flex: 0 0 65%; /* 65% chiều rộng cho thông tin sản phẩm */
-    padding-left: 20px; /* Thêm khoảng cách giữa ảnh và thông tin */
+    padding-left: 30px; /* Thêm khoảng cách giữa ảnh và thông tin */
 }
-
-/* Để hình ảnh không bị biến dạng */
-.item-img img {
-    max-width: 100%;
-    height: auto; /* Đảm bảo hình ảnh không bị méo */
+.right{
+    position: absolute;
+    left: 220px;
 }
-
 
 .modal .modal-dialog {
-    max-width: 600px;
+    max-width: 700px;
+    max-height: 500px;
     margin: auto;
 }
 
@@ -176,17 +174,22 @@
 
 /* Phong cách cho các nút trong modal */
 .popup_action {
+    margin-left: 30px;
     margin-top: 20px;
     display: flex;
     justify-content: flex-end;
-    gap: 10px;
+    gap: 5px;
+    padding: 5px;
+}
+.popup_action>a{
+    width: 200px;
 }
 
 .popup_action .btn {
     background-color: #007bff;
     color: #fff;
     padding: 10px 15px;
-    border-radius: 4px;
+    border-radius: 2px;
     text-decoration: none;
 }
 

@@ -80,13 +80,13 @@
                         </div>
                         <!--                        Quantity-->
 
-                        <div class="d-flex mt-3">
+                        <div class="d-flex mt-2">
                             <p class="fs-10 fw-light" style="margin-right: 5px">Màu sắc /</p>
                             <p class="fs-10" style="margin-left: 5px" id="selected-color">Chọn màu</p>
                         </div>
 
                         <!-- Danh sách màu sắc -->
-                        <div class="d-flex mt-3 flex-wrap">
+                        <div class="d-flex mt-2 flex-wrap">
                             <div th:each="color : ${colors}" class="col-auto mb-2" style="margin-right: 10px">
                                 <button class="btn-color-circle color-btn"
                                         onclick="changeColor(this)"
@@ -99,17 +99,17 @@
                             </div>
                         </div>
 
-
                         <!-- Hiển thị kích thước đã chọn -->
-                        <div class="d-flex mt-3">
+                        <div class="d-flex mt-2">
                             <p class="fs-10 fw-light" style="margin-right: 5px">Kích thước /</p>
                             <p class="fs-10" style="margin-left: 5px" id="selected-size">Chọn kích thước</p>
                             <a href="#" class="fs-10" style="margin-left: auto;" data-bs-toggle="modal"
                                data-bs-target="#sizeGuideModal">Hướng dẫn chọn size</a>
+                            <hr>
                         </div>
 
                         <!-- Danh sách kích thước -->
-                        <div class="d-flex mt-3 row" style="margin-top: 20px">
+                        <div class="d-flex mt-2 row" style="margin-top: 20px">
                             <div th:each="size: ${sizes}" class="col-3 mb-2" style="margin-right: 10px">
                                 <button class="btn-size-square size-btn"
                                         onclick="changeSize(this)"
@@ -121,7 +121,7 @@
                                    th:text="${size}"></a>
                             </div>
                         </div>
-                        <div class="d-flex mt-3">
+                        <div class="d-flex mt-2">
                             <label style="color: #f30909">Số lượng hiện tại: </label>
                             <p id="quantity-display" style="color: #f10c0c">Số lượng</p>
                         </div>
@@ -132,56 +132,75 @@
                         </div>
 
                         <!-- Modal -->
-                        <div class="modal fade" id="addCartModal" tabindex="-1" aria-labelledby="addCartModalLabel" aria-hidden="true">
+                        <div class="modal fade" id="addCartModal" tabindex="-1" aria-labelledby="addCartModalLabel"
+                             aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered">
                                 <div class="modal-content">
                                     <div class="modal-header" style="background: #004698">
-                                        <h5 class="modal-title text-center" id="addCartModalLabel">Thêm sản phẩm vào giỏ hàng</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                                            <span class="material-icons" style="color: white; font-size: 24px;">close</span>
+                                        <h5 class="modal-title text-center" id="addCartModalLabel">Thêm sản phẩm vào giỏ
+                                            hàng</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close">
+                                            <span class="material-icons"
+                                                  style="color: white; font-size: 24px;">close</span>
                                         </button>
                                     </div>
                                     <div class="modal-body">
-                                        <div class="item line-item line-item-container" data-variant-id="1130140024" data-pro-id="1056862617">
+                                        <div class="item line-item line-item-container" data-variant-id="1130140024"
+                                             data-pro-id="1056862617">
                                             <div class="left">
                                                 <div class="item-img">
                                                     <a href="/products/giay-tay-nam-preth-cognac">
-                                                        <img src="/img/client/product/SPCT_IMG_1.png" width="100%"; alt="GIÀY TÂY NAM PRETH">
+                                                        <img src="/img/client/product/SPCT_IMG_1.png"
+                                                             style="width:220px;height: 220px  " ;
+                                                             alt="">
                                                     </a>
                                                 </div>
                                             </div>
                                             <div class="right">
                                                 <div class="item-info">
                                                     <h3 th:text="${productDetail[0].productName}">Tên sản phẩm</h3>
-                                                    <div id="price-modal" class="item-price">
-                                                        <span>1,375,000₫</span>
+                                                    <div class="fw-lighter"
+                                                         style="font-size: 25px;font-weight: lighter">
+                                                        <span id="price-modal">₫</span>
                                                     </div>
                                                     <div class="item-desc">
                                                         <div class="variant-option">
                                                             <span class="title">Màu sắc:</span>
-                                                            <span class="text">COGNAC</span>
+                                                            <span id="color-modal" class="text">Color</span>
                                                         </div>
                                                         <div class="variant-option">
                                                             <span class="title">Kích thước:</span>
-                                                            <span class="text">39</span>
+                                                            <span id="size-modal" class="text">Size</span>
                                                         </div>
                                                     </div>
                                                     <div class="item-quan">
                                                         <span class="txt_qty d-none">1</span>
-                                                        <div class="qty quantity-partent qty-click">
-                                                            <button type="button" class="qtyminus qty-btn">
-                                                                <!-- SVG icon -->
+                                                        <div class="qty quantity-partent qty-click btn-group"
+                                                             role="group" aria-label="Quantity controls">
+                                                            <!-- Nút giảm số lượng với biểu tượng trừ -->
+                                                            <button id="qtyminus" type="button"
+                                                                    class=" qty-btn btn btn-outline-secondary">
+                                                                <i class="fas fa-minus"></i>
                                                             </button>
-                                                            <input readonly data-vid="1130140024" data-quantity="1" data-product="1056862617" type="text" size="4" min="1" value="1" class="tc line-item-qty item-quantity">
-                                                            <button type="button" class="qtyplus qty-btn">
-                                                                <!-- SVG icon -->
+                                                            <input readonly data-vid="1130140024" data-quantity="1"
+                                                                   data-product="1056862617" type="text" size="4"
+                                                                   min="1" value="1"
+                                                                   class="tc line-item-qty item-quantity form-control text-center">
+                                                            <!-- Nút tăng số lượng với biểu tượng cộng -->
+                                                            <button id="qtyplus" type="button"
+                                                                    class="qty-btn btn btn-outline-secondary">
+                                                                <i class="fas fa-plus"></i>
                                                             </button>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="popup_action">
-                                                    <button id="stay" class="btn" data-bs-dismiss="modal">Thêm vào giỏ</button>
-                                                    <a href="/cart" id="go_cart" class="btn">Đi đến giỏ hàng</a>
+                                                    <a href="/onepoly/cart" id="go_cart" class="btn">Đi
+                                                        đến giỏ hàng</a>
+                                                    <a id="stay" class="btn" data-bs-dismiss="modal">Thêm vào giỏ
+                                                    </a>
+
                                                 </div>
                                             </div>
                                         </div>
@@ -195,7 +214,8 @@
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5 class="modal-title" style="color: black" id="sizeGuideModalLabel">Hướng dẫn chọn size</h5>
+                                        <h5 class="modal-title" style="color: black" id="sizeGuideModalLabel">Hướng dẫn
+                                            chọn size</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 aria-label="Close"></button>
                                     </div>
@@ -300,7 +320,7 @@
                         </div>
 
 
-                        <div class="mt-5">
+                        <div class="mt-3">
                             <hr>
                             <div class="form-group">
                                 <label id="describeProductDetailLabel">Mô tả chi tiết sản phẩm</label>
