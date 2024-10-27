@@ -368,66 +368,131 @@
                             </h1>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <div class="modal-body">
-                            <div class="row">
-<!--                                <div class="col-3">-->
-<!--                                    <div class="card">-->
-<!--                                        <div class="card-body text-center">-->
-<!--                                            <label for="upload" class="btn btn">-->
-<!--                                                Chọn ảnh-->
-<!--                                            </label>-->
-<!--                                            <input type="file" id="upload" class="form-control d-none" accept="image/*"-->
-<!--                                                   onchange="previewImage(event)">-->
-<!--                                            <div class="mt-3" id="image-preview">-->
-<!--                                                &lt;!&ndash; Hình ảnh sẽ được hiển thị ở đây sau khi chọn &ndash;&gt;-->
-<!--                                            </div>-->
-<!--                                        </div>-->
-<!--                                    </div>-->
-<!--                                </div>-->
-                                <div class="col-6 mb-3">
-                                    <label class="form-label">Họ và tên</label>
-                                    <input type="text" class="form-control" placeholder="Nhập họ và tên khách hàng ...">
+
+                        <form th:object="${customerShort}" th:action="${'/staff/bill/add-quickly-customer'}" method="post">
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-6 mb-3">
+                                        <label class="form-label">Họ và tên</label>
+                                        <input type="text" th:field="${customerShort.nameCustomer}" class="form-control" placeholder="Nhập họ và tên khách hàng ...">
+                                        <span class="text-danger" id="error-nameCustomer-short">Mời nhập tên khách hàng!</span>
+                                    </div>
+                                    <div class="col-6 mb-3">
+                                        <label class="form-label">Số điện thoại</label>
+                                        <input type="text" th:field="${customerShort.numberPhone}" class="form-control" placeholder="Nhập số điện thoại khách hàng ...">
+                                        <span class="text-danger" id="error-numberPhoneCustomer-short">Mời nhập SĐT khách hàng!</span>
+                                    </div>
+                                    <div class="col-12 mb-3">
+                                        <label class="form-label">Email</label>
+                                        <input type="text" th:field="${customerShort.email}" class="form-control" placeholder="Nhập email khách hàng ...">
+                                        <span class="text-danger" id="error-emailCustomer-short">Mời nhập email khách hàng!</span>
+                                    </div>
+                                    <div class="col-4 mb-3">
+                                        <label class="form-label">Tỉnh/Thành phố</label>
+                                        <select class="form-select" id="provinceSelect-add-customer" name="province">
+                                            <option selected>Chọn tỉnh/thành phố</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-4 mb-3" id="districtSelectContainer-add-customer" style="display: none;">
+                                        <label class="form-label">Quận/Huyện</label>
+                                        <select class="form-select" id="districtSelect-add-customer" name="district">
+                                            <option selected>Chọn quận/huyện</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-4 mb-3" id="wardSelectContainer-add-customer" style="display: none;">
+                                        <label class="form-label">Xã/Phường/Thị Trấn</label>
+                                        <select class="form-select" id="wardSelect-add-customer" name="ward">
+                                            <option selected>Chọn xã/phường/thị trấn</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-12 mb-3">
+                                        <p>Địa chỉ cụ thể: </p>
+                                        <textarea class="form-control" th:field="${customerShort.addResDetail}"></textarea>
+                                        <span class="text-danger" id="error-addResDetailCustomer-short">Mời nhập địa chỉ chi tiết khách hàng!</span>
+                                    </div>
+                                    <input type="hidden" name="status" value="1">
                                 </div>
-                                <div class="col-6 mb-3">
-                                    <label class="form-label">Số điện thoại</label>
-                                    <input type="text" class="form-control" placeholder="Nhập số điện thoại khách hàng ...">
-                                </div>
-                                <div class="col-12 mb-3">
-                                    <label class="form-label">Email</label>
-                                    <input type="text" class="form-control" placeholder="Nhập email khách hàng ...">
-                                </div>
-                                <div class="col-4 mb-3">
-                                    <label class="form-label">Tỉnh/Thành phố</label>
-                                    <select class="form-select" id="provinceSelect-add-customer">
-                                        <option selected>Chọn tỉnh/thành phố</option>
-                                    </select>
-                                </div>
-                                <div class="col-4 mb-3" id="districtSelectContainer-add-customer" style="display: none;">
-                                    <label class="form-label">Quận/Huyện</label>
-                                    <select class="form-select" id="districtSelect-add-customer">
-                                        <option selected>Chọn quận/huyện</option>
-                                    </select>
-                                </div>
-                                <div class="col-4 mb-3" id="wardSelectContainer-add-customer" style="display: none;">
-                                    <label class="form-label">Xã/Phường/Thị Trấn</label>
-                                    <select class="form-select" id="wardSelect-add-customer">
-                                        <option selected>Chọn xã/phường/thị trấn</option>
-                                    </select>
-                                </div>
-                                <div class="col-12 mb-3">
-                                    <p>Địa chỉ cụ thể: </p>
-                                    <textarea class="form-control"></textarea>
-                                </div>
-                                <script>
-                                    function loadAPIAddRess() {
-                                        initializeLocationDropdowns('provinceSelect-add-customer','districtSelect-add-customer','wardSelect-add-customer','districtSelectContainer-add-customer','wardSelectContainer-add-customer',0,0,0)
-                                    }
-                                </script>
                             </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-outline-success">Thêm</button>
-                        </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-outline-success" id="btnAddCustomerShort" disabled>Thêm</button>
+                            </div>
+                            <script>
+                                var nameCustomerInput = document.getElementById('nameCustomer');
+                                var numberPhoneInput = document.getElementById('numberPhone');
+                                var emailInput = document.getElementById('email');
+                                var addResDetailInput = document.getElementById('addResDetail');
+                                var provinceSelect = document.getElementById("provinceSelect-add-customer");
+                                var districtSelect = document.getElementById("districtSelect-add-customer");
+                                var wardSelect = document.getElementById("wardSelect-add-customer");
+
+                                var errorNameCustomer = document.getElementById('error-nameCustomer-short');
+                                var errorNumberPhone = document.getElementById('error-numberPhoneCustomer-short');
+                                var errorEmail = document.getElementById('error-emailCustomer-short');
+                                var errorAddResDetail = document.getElementById('error-addResDetailCustomer-short');
+
+                                var btnAddCustomerShort = document.getElementById('btnAddCustomerShort');
+                                var checkSelectAddRes = 0;
+                                function loadAPIAddRess() {
+                                    initializeLocationDropdowns('provinceSelect-add-customer','districtSelect-add-customer','wardSelect-add-customer','districtSelectContainer-add-customer','wardSelectContainer-add-customer',0,0,0)
+                                }
+
+                                nameCustomerInput.addEventListener('input', function () {
+                                    validateAllFormAddCustomerShort();
+                                });
+
+                                numberPhoneInput.addEventListener('input', function () {
+                                    validateAllFormAddCustomerShort();
+                                });
+
+                                emailInput.addEventListener('input', function () {
+                                    validateAllFormAddCustomerShort();
+                                });
+
+                                addResDetailInput.addEventListener('input', function () {
+                                    validateAllFormAddCustomerShort();
+                                });
+
+                                provinceSelect.addEventListener("change", function() {
+                                    districtSelect.value = '';
+                                    wardSelect.value = '';
+                                    validateAllFormAddCustomerShort();
+                                });
+
+                                districtSelect.addEventListener("change", function() {
+                                    wardSelect.value = '';
+                                    validateAllFormAddCustomerShort();
+                                });
+
+
+                                wardSelect.addEventListener("change", function() {
+                                    validateAllFormAddCustomerShort();
+                                });
+
+
+                                function validateAllFormAddCustomerShort() {
+                                    validateNameCustomer(nameCustomerInput.value.trim(),errorNameCustomer);
+                                    validateNumberPhone(numberPhoneInput.value.trim(),errorNumberPhone);
+                                    validateEmail(emailInput.value.trim(),errorEmail);
+                                    validateAddRessDetail(addResDetailInput.value.trim(),errorAddResDetail);
+                                    validateProvince(provinceSelect);
+                                    validateDistrict(districtSelect);
+                                    validateWard(wardSelect);
+                                    console.log(provinceSelect.value)
+                                    if(validateNameCustomer(nameCustomerInput.value.trim(),errorNameCustomer) == true &&
+                                        validateNumberPhone(numberPhoneInput.value.trim(),errorNumberPhone) == true &&
+                                        validateEmail(emailInput.value.trim(),errorEmail) == true &&
+                                        validateAddRessDetail(addResDetailInput.value.trim(),errorAddResDetail) == true &&
+                                        validateProvince(provinceSelect) == true &&
+                                        validateDistrict(districtSelect) == true &&
+                                        validateWard(wardSelect) == true
+                                    ) {
+                                        btnAddCustomerShort.disabled = false;
+                                    }else {
+                                        btnAddCustomerShort.disabled = true;
+                                    }
+                                }
+                            </script>
+                        </form>
                     </div>
                 </div>
             </div>

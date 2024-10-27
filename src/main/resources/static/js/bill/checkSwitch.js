@@ -39,10 +39,12 @@ document.getElementById('flexSwitchCheckDefault').addEventListener('change', fun
                     <div class="col-12">
                         <label class="form-label">Tên khách hàng</label>
                         <input type="text" class="form-control" value="${client.name}" id="nameCustomer">
+                        <span class="text-danger" id="error-name-customer-ship" style="display: none"></span>
                     </div>
                     <div class="col-12">
                         <label class="form-label">Số điện thoại</label>
                         <input type="text" class="form-control" value="${client.numberPhone}" id="phoneCustomer">
+                        <span class="text-danger" id="error-numberPhone-customer-ship" style="display: none"></span>
                     </div>
                     <!-- Các phần khác của form -->
                     <div class="col-4">
@@ -66,12 +68,14 @@ document.getElementById('flexSwitchCheckDefault').addEventListener('change', fun
                     <div class="mb-12">
                         <p>Địa chỉ cụ thể: </p>
                         <textarea class="form-control" id="addRessDetailCustomer">${client.addressDetail}</textarea>
+                        <span class="text-danger" id="error-addResDetail-customer-ship" style="display: none"></span>
                     </div>
                 </div>
             </div>
         `;
-                attachInputListeners();
                 initializeLocationDropdowns('provinceSelect-transport','districtSelect-transport','wardSelect-transport','districtSelectContainer-transport','wardSelectContainer-transport',provinceID,districtID,wardID)
+                validateInformationShip();
+                attachInputListeners();
                 console.log('Thong tin sau khi chon api ' + provinceTransport + '-' + districtTransport + '-' + wardTransport)
 
             },
@@ -107,6 +111,7 @@ document.getElementById('flexSwitchCheckDefault').addEventListener('change', fun
     }
 });
 
+
 function setClientShip(name,numberPhone,province,district,ward,addressDetail) {
     $('#idCity-staff').val(province)
     $('#idDistrict-staff').val(district)
@@ -114,67 +119,108 @@ function setClientShip(name,numberPhone,province,district,ward,addressDetail) {
     $('#customerShip').val(name+','+numberPhone+','+province+','+district+','+ward+','+addressDetail);
 }
 
-function attachInputListeners() {
-    const nameInput = document.getElementById('nameCustomer');
-    const phoneInput = document.getElementById('phoneCustomer');
-    const addressTextarea = document.getElementById('addRessDetailCustomer');
+function validateInformationShip() {
+    // Khai báo các phần tử DOM sử dụng trong mã
+    var nameInputCheckSwitch = document.getElementById('nameCustomer');
+    var phoneInputCheckSwitch = document.getElementById('phoneCustomer');
+    var addressTextareaCheckSwitch = document.getElementById('addRessDetailCustomer');
 
-    if (nameInput) {
-        nameInput.addEventListener('input', function() {
-            var nameCheck = this.value.trim();
+    var provinceCheckSwitch = document.getElementById('provinceSelect-transport');
+    var districtCheckSwitch = document.getElementById('wardSelect-transport');
+    var wardCheckSwitch = document.getElementById('wardSelect-transport');
+
+// Khai báo các phần tử hiển thị lỗi
+    var errorNameCustomerShipCheckSwitch = document.getElementById('error-name-customer-ship');
+    var errorNumberPhoneCustomerShipCheckSwitch = document.getElementById('error-numberPhone-customer-ship');
+    var errorAddResDetailCustomerShipCheckSwitch = document.getElementById('error-addResDetail-customer-ship');
+
+    console.log(phoneInputCheckSwitch.value.trim())
+    validateNameCustomer(nameInputCheckSwitch.value.trim(),errorNameCustomerShipCheckSwitch);
+    validateNumberPhone(phoneInputCheckSwitch.value.trim(),errorNumberPhoneCustomerShipCheckSwitch);
+    validateAddRessDetail(addressTextareaCheckSwitch.value.trim(),errorAddResDetailCustomerShipCheckSwitch);
+
+    validateProvince(provinceCheckSwitch);
+    validateDistrict(districtCheckSwitch);
+    validateWard(wardCheckSwitch);
+    console.log('da vao day')
+    if(validateNameCustomer(nameInputCheckSwitch.value.trim(),errorNameCustomerShipCheckSwitch) == true &&
+        validateNumberPhone(phoneInputCheckSwitch.value.trim(),errorNumberPhoneCustomerShipCheckSwitch) == true &&
+        validateAddRessDetail(addressTextareaCheckSwitch.value.trim(),errorAddResDetailCustomerShipCheckSwitch) == true &&
+        validateProvince(checkProvince) == true &&
+        validateDistrict(checkDistrict) == true &&
+        validateWard(checkWard) == true
+    ) {
+        btnCreateBill.disabled = false;
+    }else {
+        btnCreateBill.disabled = true;
+    }
+}
+
+function attachInputListeners() {
+    // Khai báo các phần tử DOM sử dụng trong mã
+    var nameInputCheckSwitch = document.getElementById('nameCustomer');
+    var phoneInputCheckSwitch = document.getElementById('phoneCustomer');
+    var addressTextareaCheckSwitch = document.getElementById('addRessDetailCustomer');
+
+    var provinceCheckSwitch = document.getElementById('provinceSelect-transport');
+    var districtCheckSwitch = document.getElementById('wardSelect-transport');
+    var wardCheckSwitch = document.getElementById('wardSelect-transport');
+
+
+    if (nameInputCheckSwitch) {
+        nameInputCheckSwitch.addEventListener('input', function() {
+            validateInformationShip();
             nameCustomer = this.value.trim();
-            if(nameCheck === '' || nameCheck.length < 1){
-                console.log('rong ne')
-                btnCreateBill.disabled = true;
-            }else {
-                console.log('ko rong ne')
-                btnCreateBill.disabled = false;
-            }
             setClientShip(nameCustomer,numberPhoneCustomer,provinceID,districtID,wardID,addRessDetailCustomer)
+            setClientShip(nameInputCheckSwitch.value.trim(),phoneInputCheckSwitch.value.trim(),provinceID,districtID,wardID,addressTextareaCheckSwitch.value.trim());
             console.log('Tên khách hàng đã thay đổi: ' + this.value);
         });
     }
 
-    if (phoneInput) {
-        phoneInput.addEventListener('input', function() {
+    if (phoneInputCheckSwitch) {
+        phoneInputCheckSwitch.addEventListener('input', function() {
+            validateInformationShip();
             numberPhoneCustomer = this.value.trim();
-            var numberPhoneCheck = this.value.trim();
-
-            // Biểu thức chính quy cho số điện thoại:
-            // Số điện thoại bắt đầu bằng số, có thể có 10 đến 12 chữ số
-            var phoneRegex = /^[0-9]{10,12}$/;
-
-            // Kiểm tra không rỗng và phải là số INT hợp lệ
-            if (numberPhoneCheck === '' || numberPhoneCheck.length === 0) {
-                console.log('Số điện thoại không được để trống');
-                btnCreateBill.disabled = true;
-            } else if (!phoneRegex.test(numberPhoneCheck)) {
-                console.log('Số điện thoại không hợp lệ. Phải là số và có từ 10 đến 12 chữ số.');
-                btnCreateBill.disabled = true;
-            } else {
-                console.log('Số điện thoại hợp lệ');
-                btnCreateBill.disabled = false;
-            }
             setClientShip(nameCustomer,numberPhoneCustomer,provinceID,districtID,wardID,addRessDetailCustomer);
             console.log('Số điện thoại đã thay đổi: ' + this.value);
         });
     }
 
-    if (addressTextarea) {
-        addressTextarea.addEventListener('input', function() {
+    if (addressTextareaCheckSwitch) {
+        addressTextareaCheckSwitch.addEventListener('input', function() {
+            validateInformationShip();
             addRessDetailCustomer = this.value.trim();
-            var addRessDetailCheck = this.value.trim();
-            if(addRessDetailCheck === '' || addRessDetailCheck.length < 1){
-                console.log('rong ne')
-                btnCreateBill.disabled = true;
-            }else {
-                console.log('ko rong ne')
-                btnCreateBill.disabled = false;
-            }
             setClientShip(nameCustomer,numberPhoneCustomer,provinceID,districtID,wardID,addRessDetailCustomer)
             console.log('Địa chỉ cụ thể đã thay đổi: ' + this.value);
         });
     }
+
+    if (provinceCheckSwitch) {
+        provinceCheckSwitch.addEventListener("change", function() {
+            checkDistrict.value = '';
+            checkWard.value = '';
+            validateInformationShip();
+            console.log('Địa chỉ cụ thể đã thay đổi: ' + this.value);
+        });
+    }
+    //
+    if (districtCheckSwitch) {
+        districtCheckSwitch.addEventListener("change", function() {
+            checkWard.value = '';
+            validateInformationShip();
+            console.log('Địa chỉ cụ thể đã thay đổi: ' + this.value);
+        });
+    }
+    //
+    if (wardCheckSwitch) {
+        wardCheckSwitch.addEventListener("change", function() {
+            validateInformationShip();
+            console.log('Địa chỉ cụ thể đã thay đổi: ' + this.value);
+        });
+    }
+
+
+
 }
 
 
