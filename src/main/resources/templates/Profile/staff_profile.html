@@ -14,7 +14,7 @@
     <section>
         <h1 class="text-center">Hồ Sơ Của Tôi</h1>
         <div class="container bg-white p-4 rounded shadow-sm">
-            <form id="updateStaffProfileForm" th:action="@{/profile/updateStaffProfile}" method="post" th:object="${staffProfile}" enctype="multipart/form-data">
+            <form th:object="${staffProfile}"  id="updateStaffProfileForm" th:action="@{/profile/UpdateStaffProfile}" method="post" enctype="multipart/form-data">
                 <input type="hidden" id="provinceHiden" th:value="${staffProfile.province}">
                 <input type="hidden" id="districtHiden" th:value="${staffProfile.district}">
                 <input type="hidden" id="wardHiden" th:value="${staffProfile.ward}">
@@ -22,13 +22,6 @@
                 <div class="row">
                     <!-- Form bên trái -->
                     <div class="col-md-8">
-<!--                        <div class="row mb-3">-->
-<!--                            <label class="col-sm-4 col-form-label">Tên đăng nhập</label>-->
-<!--                            <div class="col-sm-8">-->
-<!--                                <label class="col-sm-4 col-form-label" style="margin-left: 11px;" th:text="${staffProfile.account}"></label>-->
-<!--                            </div>-->
-<!--                        </div>-->
-
                         <div class="row mb-3">
                             <label class="col-sm-4 col-form-label">Họ và tên</label>
                             <div class="col-sm-8">
@@ -36,14 +29,6 @@
                                 <div class="error-message" id="fullName-error" style="color: red;"></div>
                             </div>
                         </div>
-
-<!--                        <div class="row mb-3">-->
-<!--                            <label class="col-sm-4 col-form-label">Mật khẩu</label>-->
-<!--                            <div class="col-sm-8">-->
-<!--                                <input type="text" class="form-control" name="password" th:value="${staffProfile.password}" placeholder="Nhập password">-->
-<!--                                <div class="error-message" id="password-error" style="color: red;"></div>-->
-<!--                            </div>-->
-<!--                        </div>-->
 
                         <div class="row mb-3">
                             <label class="col-sm-4 col-form-label">Email</label>
@@ -57,7 +42,7 @@
                             <label class="col-sm-4 col-form-label">Số điện thoại</label>
                             <div class="col-sm-8">
                                 <input type="text" class="form-control" id="numberPhone" name="numberPhone" th:field="*{numberPhone}" placeholder="Nhập số điện thoại">
-                                <p th:if="${#fields.hasErrors('numberPhone')}" class="text-danger" th:errors="*{numberPhone}"></p>
+                                <div th:if="${#fields.hasErrors('numberPhone')}" class="text-danger" th:errors="*{numberPhone}"></div>
                             </div>
                         </div>
 

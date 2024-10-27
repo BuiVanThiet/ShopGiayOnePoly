@@ -40,7 +40,9 @@ public class StaffProfileController {
             staffProfile.setNumberPhone(staff.getNumberPhone());
             staffProfile.setGender(staff.getGender());
             staffProfile.setBirthDay(staff.getBirthDay());
-            staffProfile.setImageStaffString(staff.getImage());
+            staffProfile.setImageStaffString(staff.getImage()); // Đặt giá trị mặc định
+
+            staffProfile.setStatus(staff.getStatus());
 
             String[] partStaff = staff.getAddress().split(",\\s*");
             staffProfile.setProvince(partStaff[2]);
@@ -70,22 +72,23 @@ public class StaffProfileController {
         return "Profile/staff_profile";
     }
 
-    @PostMapping("/updateStaffProfile")
+    @PostMapping("/UpdateStaffProfile")
     public String updateStaffProfile(@Valid @ModelAttribute("staffProfile") StaffProfileRequest staffProfile,
                                      BindingResult bindingResult,
-                                     HttpSession session,
                                      @RequestParam("nameImageStaff") MultipartFile nameImage,
+                                     HttpSession session,
                                      Model model) throws IOException {
         Staff staff = (Staff) session.getAttribute("staffLogin");
         System.out.println("Staff từ model: " + staff);
-
+        staffProfile.setImageStaffString(staff.getImage());
         if(bindingResult.hasErrors()){
+            System.out.println("loi ne");
             model.addAttribute("staffProfile", staffProfile);
+            System.out.println(staffProfile);
+
             return "Profile/staff_profile";
         }
         if (staff != null) {
-
-            // Cập nhật thông tin staff dựa trên dữ liệu từ form
             staff.setEmail(staffProfile.getEmail());
             staff.setNumberPhone(staffProfile.getNumberPhone());
             staff.setGender(staffProfile.getGender());
@@ -101,8 +104,7 @@ public class StaffProfileController {
                 String imageId = staffService.uploadFile(nameImage, staff.getId());
                 String randomImageName = extractRandomImageName(imageId); // Lấy tên ngẫu nhiên từ đường dẫn
                 staff.setImage(randomImageName); // Cập nhật tên ảnh vào staff
-                System.out.println("Đường dẫn ảnh mới: " + imageId);
-                System.out.println("Tên ảnh ngẫu nhiên: " + randomImageName);
+                System.out.println("Tên ảnh: " + randomImageName);
             } else {
                 // Nếu không có ảnh mới, giữ nguyên ảnh cũ
                 System.out.println("Không có ảnh mới, giữ nguyên ảnh cũ: " + staff.getImage());
@@ -125,6 +127,24 @@ public class StaffProfileController {
         String fileName = fileNameWithExtension.split("\\.")[0]; // tách phần mở rộng
 
         return fileName; // trả về tên ảnh ngẫu nhiên
+    }
+
+    @ModelAttribute("staffProfile")
+    public StaffProfileRequest prepareStaffProfile(HttpSession session) {
+        Staff staff = (Staff) session.getAttribute("staffLogin");
+        StaffProfileRequest staffProfile = new StaffProfileRequest();
+
+        if (staff != null) {
+            // Gán giá trị từ staff cho staffProfile trước khi ràng buộc
+            staffProfile.setStatus(staff.getStatus());
+            staffProfile.setFullName(staff.getFullName());
+            staffProfile.setEmail(staff.getEmail());
+            staffProfile.setNumberPhone(staff.getNumberPhone());
+            staffProfile.setGender(staff.getGender());
+            staffProfile.setBirthDay(staff.getBirthDay());
+            // Gán các trường khác cần thiết từ staff vào staffProfile
+        }
+        return staffProfile;
     }
 
     @ModelAttribute("staffInfo")

@@ -108,7 +108,7 @@ function validate(cash) {
                 erorrCash.innerText = '';
                 btnCreateBill.disabled = false;
                 surplusMoneySpan.style.display = 'block';
-                surplusMoney.innerText = formatNumber(cashClientNumber - totalAmountNumber);
+                surplusMoney.innerText = formatNumber(cashClientNumber - totalAmountNumber).toLocaleString('en-US') + ' VNĐ';
                 textSurplusMoney.value = cashClientNumber - totalAmountNumber;
                 cashClientText.value = cashClientNumber;
                 cashAccount.value = 0;

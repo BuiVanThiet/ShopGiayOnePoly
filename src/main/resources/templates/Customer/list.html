@@ -98,7 +98,7 @@
         <article class="container-xxl bd-gutter my-md-4 bd-layout">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h1 class="center">Danh sách khách hàng</h1>
-                <a href="/customer/create" class="btn btn-primary">Thêm mới khách hàng</a>
+                <a href="/customer/create" class="btn btn-primary btn-primary-customer">Thêm mới khách hàng</a>
             </div>
 
             <!-- Search Bar -->
@@ -106,7 +106,7 @@
                 <div class="input-group">
                     <input type="text" name="key" class="form-control" placeholder="Tìm kiếm..."
                            aria-label="Tìm kiếm">
-                    <button class="btn btn-primary" type="submit">
+                    <button class="btn btn-primary btn-primary-customer" type="submit">
                         <i class="fas fa-search"></i>
                     </button>
                 </div>
@@ -139,15 +139,15 @@
                     <td th:text="${customer.status == 1 ? 'Hoạt động' : 'Ngưng hoạt động'}"></td>
                     <td>
                         <a th:href="@{/customer/edit/{id}(id=${customer.id})}"
-                           class="btn btn-sm btn-outline-primary me-1">
+                           class="btn btn-sm btn-outline-primary btn-outline-primary-customer me-1">
                             <i class="fas fa-edit" title="Sửa"></i>
                         </a>
                         <a th:href="@{/customer/detail/{id}(id=${customer.id})}"
-                           class="btn btn-sm btn-outline-info me-1">
+                           class="btn btn-sm btn-outline-info btn-outline-info-customer me-1">
                             <i class="fas fa-info-circle" title="Chi tiết"></i>
                         </a>
                         <a th:href="@{/customer/delete/{id}(id=${customer.id})}"
-                           class="btn btn-sm btn-outline-danger"
+                           class="btn btn-sm btn-outline-danger btn-outline-danger-customer"
                            onclick="return confirm('Bạn có chắc chắn muốn xóa khách hàng?')">
                             <i class="fas fa-trash" title="Xóa"></i>
                         </a>

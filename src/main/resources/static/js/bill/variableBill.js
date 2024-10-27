@@ -78,3 +78,96 @@ function createBillPDF(id) {
         }
     })
 }
+
+function isValidString(str) {
+    const regex = /^[A-Za-z0-9\s\u00C0-\u00FF\u0100-\u017F\u0180-\u024F\u1E00-\u1EFF]*$/;
+    if (regex.test(str)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+//validate nameCustomer
+function validateNameCustomer(value,inputError) {
+    var nameCheck = value;
+    if(nameCheck === '' || nameCheck.length < 1){
+        console.log('rong ne')
+        inputError.style.display = 'block';
+        inputError.innerText = 'Mời nhập tên khách hàng!';
+        return false;
+    } else if (!isValidString(nameCheck)) {
+        inputError.style.display = 'block';
+        inputError.innerText = 'Tên khách hàng không hợp lệ!';
+        return false;
+    } else {
+        inputError.style.display = 'none';
+        inputError.innerText = '';
+        return true;
+    }
+}
+//validate NumberPhone
+function validateNumberPhone(value,inputError) {
+    var numberPhoneCheck = value.trim();
+    var phoneRegex = /^[0-9]{10,12}$/;
+    if(numberPhoneCheck === '' || numberPhoneCheck.length < 1){
+        console.log('rong ne')
+        inputError.style.display = 'block';
+        inputError.innerText = 'Mời nhập SĐT khách hàng!';
+        return false;
+    } else if (!phoneRegex.test(numberPhoneCheck)) {
+        inputError.style.display = 'block';
+        inputError.innerText = 'SĐT khách hàng không hợp lệ!';
+        return false;
+    } else {
+        inputError.style.display = 'none';
+        inputError.innerText = '';
+        return true;
+    }
+}
+//validate email
+function validateEmail(value,inputError) {
+    var emailCheck = value.trim();
+    var emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if(emailCheck === '' || emailCheck.length < 1){
+        console.log('rong ne')
+        inputError.style.display = 'block';
+        inputError.innerText = 'Mời nhập email khách hàng!';
+        return false;
+    } else if (!emailRegex.test(emailCheck)) {
+        inputError.style.display = 'block';
+        inputError.innerText = 'Email khách hàng không hợp lệ!';
+        return false;
+    } else {
+        inputError.style.display = 'none';
+        inputError.innerText = '';
+        return true;
+    }
+}
+
+//validateAddress deatil
+function validateAddRessDetail(value,inputError) {
+    var addRessCheck = value.trim();
+    if(addRessCheck === '' || addRessCheck.length < 1){
+        console.log('rong ne')
+        inputError.style.display = 'block';
+        inputError.innerText = 'Mời nhập địa chỉ chi tiết khách hàng!';
+        return false;
+    } else {
+        inputError.style.display = 'none';
+        inputError.innerText = '';
+        return true;
+    }
+}
+
+// validate select api
+function validateProvince(select) {
+    return select.value.trim() !== "";
+}
+function validateDistrict(select) {
+    return select.value.trim()!== "";
+}
+function validateWard(select) {
+    return select.value.trim() !== "";
+}
+
