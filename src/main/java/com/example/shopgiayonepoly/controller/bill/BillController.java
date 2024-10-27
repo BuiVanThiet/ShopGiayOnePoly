@@ -1,6 +1,7 @@
 package com.example.shopgiayonepoly.controller.bill;
 
 import com.example.shopgiayonepoly.baseMethod.BaseBill;
+import com.example.shopgiayonepoly.dto.request.bill.CustomerShortRequest;
 import com.example.shopgiayonepoly.dto.response.bill.BillTotalInfornationResponse;
 import com.example.shopgiayonepoly.entites.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -62,15 +63,13 @@ public class BillController extends BaseBill {
 
         modelMap.addAttribute("bill",(Integer) session.getAttribute("IdBill") == null ? new Bill() : this.billService.findById((Integer)session.getAttribute("IdBill")).orElse(new Bill()));
         modelMap.addAttribute("client",(Integer)session.getAttribute("IdClient"));
-        Bill bill = this.billService.findById((Integer) session.getAttribute("IdBill")).orElse(null);
+        Bill bill = this.billService.findById((Integer) session.getAttribute("IdBill") == null ? -1 : (Integer) session.getAttribute("IdBill")).orElse(null);
         if (bill != null) {
             bill.setBillType(1);
             this.billService.save(bill);
         }
         this.mess = "";
         this.colorMess = "";
-
-        modelMap.addAttribute("page","/Bill/index");
 
         System.out.println("nhung san pham  ap dung dot giam gia");
         for (ProductDetail productDetail: saleProductService.getAllProductDetailWithDiscount()) {
@@ -81,6 +80,7 @@ public class BillController extends BaseBill {
         for (ProductDetail productDetail: saleProductService.getAllProductDetailByPage()) {
             System.out.println("id" + productDetail.getId());
         }
+        System.out.println("id bill dau tien la " + session.getAttribute("IdBill"));
         this.productDetailCheckMark2Request = null;
 //        displayProductDetailsWithCurrentPrice();
         return "Bill/index";
@@ -370,7 +370,47 @@ public class BillController extends BaseBill {
 //            ClientBillInformationResponse clientBillInformationResponse = clientBillInformationResponses.get(0);
 //            bill.setAddRess(clientBillInformationResponse.getAddressDetail());
 //        }
-        bill.setAddRess(customerShip.trim());
+        if(customerShip.trim().equals("Không có")) {
+            bill.setAddRess(customerShip.trim());
+        }else {
+            String getAddRessDetail = customerShip.trim();
+            String[] part = getAddRessDetail.split(",\\s*");
+            String name = part[0];
+            String numberPhone = part[1];
+            String province = part[2];
+            String district = part[3];
+            String ward = part[4];
+            String addResDetail = String.join(", ", java.util.Arrays.copyOfRange(part, 5, part.length));
+            String regexNameCustomer = "[\\p{L}\\p{Nd}\\s]+";
+
+            if (name.matches(regexNameCustomer) == false) {
+                return "redirect:/404";
+            }
+
+            String validateProvince = validateInteger(province);
+            if(!validateProvince.trim().equals("")) {
+                return "redirect:"+validateProvince;
+            }
+
+            String validateDistrict = validateInteger(district);
+            if(!validateDistrict.trim().equals("")) {
+                return "redirect:"+validateDistrict;
+            }
+
+            String validateWard = validateInteger(ward);
+            if(!validateWard.trim().equals("")) {
+                return "redirect:"+validateWard;
+            }
+
+            String regexNumberPhone = "^(0?)(3[2-9]|5[689]|7[06-9]|8[1-6]|9[0-46-9])[0-9]{7}$";
+            if (!numberPhone.trim().matches(regexNumberPhone)) {
+                return "redirect:"+validateWard;
+            }
+
+            System.out.println("thong tin ship " + name+"-"+numberPhone+"-"+province+"-"+district+"-"+ward+"-"+addResDetail);
+
+            bill.setAddRess(customerShip.trim());
+        }
 
         BillTotalInfornationResponse billTotalInfornationResponse = this.billService.findBillVoucherById(bill.getId());
         BigDecimal cashAll = bill.getCash().add(bill.getAcountMoney().add(bill.getShippingPrice()));
@@ -866,7 +906,7 @@ public class BillController extends BaseBill {
     }
 
     @PostMapping("/add-quickly-customer")
-    public String getAddQuicklyCustomer(HttpSession session) {
+    public String getAddQuicklyCustomer(@ModelAttribute(name = "customerShort")CustomerShortRequest customerShortRequest, HttpSession session) {
         Staff staff = (Staff) session.getAttribute("staffLogin");
         if(staff == null) {
             return "redirect:/login";
@@ -881,11 +921,63 @@ public class BillController extends BaseBill {
             return "redirect:/404";
         }
 
+        String regexNameCustomer = "[\\p{L}\\p{Nd}\\s]+";
 
+        if (customerShortRequest.getNameCustomer().matches(regexNameCustomer) == false) {
+            return "redirect:/404";
+        }
 
-        this.mess = "Đã thêm nhanh khách hàng!";
-        this.colorMess = "1";
-        return "redirect:/staff/bill/bill-detail/"+idBill;
+        String validateProvince = validateInteger(customerShortRequest.getProvince());
+        if(!validateProvince.trim().equals("")) {
+            return "redirect:"+validateProvince;
+        }
+
+        String validateDistrict = validateInteger(customerShortRequest.getDistrict());
+        if(!validateDistrict.trim().equals("")) {
+            return "redirect:"+validateDistrict;
+        }
+
+        String validateWard = validateInteger(customerShortRequest.getWard());
+        if(!validateWard.trim().equals("")) {
+            return "redirect:"+validateWard;
+        }
+
+        String regexNumberPhone = "^(0?)(3[2-9]|5[689]|7[06-9]|8[1-6]|9[0-46-9])[0-9]{7}$";
+        if (!customerShortRequest.getNumberPhone().trim().matches(regexNumberPhone)) {
+            return "redirect:/404";
+        }
+
+        String regexEmail = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+        if(!customerShortRequest.getEmail().trim().matches(regexEmail)) {
+            return "redirect:/404";
+        }
+
+        Bill bill = this.billService.findById(idBill).orElse(null);
+
+        System.out.println("thong tin them nhanh la " + customerShortRequest.toString() + customerShortRequest.getStatus());
+
+        if (bill != null && bill.getStatus() == 0) {
+            Customer customer = new Customer();
+            customer.setFullName(customerShortRequest.getNameCustomer());
+            customer.setNumberPhone(customerShortRequest.getNumberPhone());
+            customer.setEmail(customerShortRequest.getEmail());
+            customer.setAddRess(customerShortRequest.getWard().trim()+","+customerShortRequest.getDistrict().trim()+","+customerShortRequest.getProvince().trim()+","+customerShortRequest.getAddResDetail());
+            customer.setCreateDate(new Date());
+            customer.setUpdateDate(new Date());
+            customer.setStatus(1);
+
+            Customer customerSave = this.customerService.save(customer);
+
+            bill.setUpdateDate(new Date());
+            bill.setCustomer(customerSave);
+            this.billService.save(bill);
+
+            this.mess = "Đã thêm nhanh khách hàng!";
+            this.colorMess = "1";
+            return "redirect:/staff/bill/bill-detail/"+idBill;
+        }else {
+            return "redirect:/404";
+        }
     }
 
     @GetMapping("/manage-bill")
@@ -897,6 +989,11 @@ public class BillController extends BaseBill {
     public Staff staff(HttpSession session){
         Staff staff = (Staff) session.getAttribute("staffLogin");
         return staff;
+    }
+
+    @ModelAttribute("customerShort")
+    public CustomerShortRequest customerShortRequest(){
+        return new CustomerShortRequest();
     }
 
 }
