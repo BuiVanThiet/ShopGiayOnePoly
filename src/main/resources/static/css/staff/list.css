@@ -353,42 +353,42 @@ h1.center {
 }
 
 /* Buttons */
-.btn-primary {
+.btn-primary-staff {
     background-color: #aec6cf; /* Light pastel teal */
     border: none;
     font-weight: bold;
 }
 
-.btn-primary:hover {
+.btn-primary-staff:hover {
     background-color: #89a3b2; /* Darker pastel teal for hover */
 }
 
-.btn-outline-primary {
+.btn-outline-primary-staff {
     border-color: #aec6cf; /* Pastel teal */
     color: #aec6cf;
 }
 
-.btn-outline-primary:hover {
+.btn-outline-primary-staff:hover {
     background-color: #aec6cf;
     color: #fff;
 }
 
-.btn-outline-info {
+.btn-outline-info-staff {
     border-color: #77dd77; /* Soft pastel green */
     color: #77dd77;
 }
 
-.btn-outline-info:hover {
+.btn-outline-info-staff:hover {
     background-color: #77dd77;
     color: #fff;
 }
 
-.btn-outline-danger {
+.btn-outline-danger-staff {
     border-color: #ffb7b2; /* Soft pastel red/pink */
     color: #ffb7b2;
 }
 
-.btn-outline-danger:hover {
+.btn-outline-danger-staff:hover {
     background-color: #ffb7b2;
     color: #fff;
 }
@@ -399,12 +399,12 @@ h1.center {
     box-shadow: none;
 }
 
-.input-group .btn-primary {
+.input-group .btn-primary-staff {
     background-color: #aec6cf;
     border: none;
 }
 
-.input-group .btn-primary:hover {
+.input-group .btn-primary-staff:hover {
     background-color: #89a3b2;
 }
 
