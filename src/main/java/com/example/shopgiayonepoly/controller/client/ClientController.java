@@ -14,15 +14,10 @@ import com.example.shopgiayonepoly.repositores.CustomerRegisterRepository;
 import com.example.shopgiayonepoly.service.ClientService;
 import com.example.shopgiayonepoly.service.CustomerService;
 import jakarta.servlet.http.HttpSession;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -208,99 +203,99 @@ public class ClientController {
         }
     }
 
-    //
-    @GetMapping("/userProfile")
-    public String formProfile(Model model, HttpSession session) {
+
+//    @GetMapping("/userProfile")
+//    public String formProfile(Model model, HttpSession session) {
+////        ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
 //        ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
-        ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
-        if (clientLoginResponse != null) {
-            String acount = clientLoginResponse.getAcount();
-
-            Customer customer = customerRegisterRepository.findByAcount(acount);
-            // Kiểm tra nếu tìm thấy thông tin khách hàng
-            if (customer != null) {
-                // Cập nhật thông tin vào UserProfileUpdateRequest
-                UserProfileUpdateRequest userProfile = new UserProfileUpdateRequest();
-                userProfile.setAccount(customer.getAcount());
-                userProfile.setPassword(customer.getPassword());
-                userProfile.setFullName(customer.getFullName());
-                userProfile.setEmail(customer.getEmail());
-                userProfile.setNumberPhone(customer.getNumberPhone());
-                userProfile.setGender(customer.getGender());
-                userProfile.setBirthDay(customer.getBirthDay());
-
-                String[] part = customer.getAddRess().split(",\\s*");
-                userProfile.setProvince(part[2]);
-                userProfile.setDistrict(part[1]);
-                userProfile.setWard(part[0]);
-                userProfile.setAddRessDetail(String.join(", ", java.util.Arrays.copyOfRange(part, 3, part.length)));
-                userProfile.setImageString(customer.getImage());
-
-                // Lấy thông tin ngày sinh
-                LocalDate birthDay = customer.getBirthDay(); // Giả sử birthDay là kiểu LocalDate
-                if (birthDay != null) {
-                    model.addAttribute("birthDayDay", birthDay.getDayOfMonth());
-                    model.addAttribute("birthDayMonth", birthDay.getMonthValue());
-                    model.addAttribute("birthDayYear", birthDay.getYear());
-                } else {
-                    // Gán giá trị mặc định nếu không có thông tin ngày sinh
-                    model.addAttribute("birthDayDay", "");
-                    model.addAttribute("birthDayMonth", "");
-                    model.addAttribute("birthDayYear", "");
-                }
-
-                // Đưa DTO vào model để hiển thị lên form
-                model.addAttribute("userProfile", userProfile);
-                model.addAttribute("clientLogin", clientLoginResponse);
-                model.addAttribute("loginInfoClient", clientLoginResponse);
-            } else {
-                // Nếu không tìm thấy, đưa ra thông báo lỗi
-                model.addAttribute("errorMessage", "Không tìm thấy thông tin tài khoản.");
-            }
-        } else {
-            // Nếu người dùng chưa đăng nhập, chuyển hướng về trang login
-            return "redirect:/onepoly/login";
-        }
-
-        // Trả về view userProfile để hiển thị thông tin
-        return "client/UserProfile";
-    }
-
-    @PostMapping("/userProfileUpdate")
-    public String updateProfile(UserProfileUpdateRequest userProfile,
-                                HttpSession session, @RequestParam("nameImage") MultipartFile nameImage, Model model) throws IOException {
-        ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
-        if (clientLoginResponse != null) {
-            String acount = clientLoginResponse.getAcount();
-            Customer customer = customerRegisterRepository.findByAcount(acount);
-            if (customer != null) {
-                // Cập nhật thông tin người dùng
-                customer.setFullName(userProfile.getFullName());
-                customer.setPassword(userProfile.getPassword());
-                customer.setEmail(userProfile.getEmail());
-                customer.setNumberPhone(userProfile.getNumberPhone());
-                customer.setGender(userProfile.getGender());
-                customer.setBirthDay(userProfile.getBirthDay());
-                customer.setAddRess(userProfile.getWard() + "," + userProfile.getDistrict() + "," + userProfile.getProvince() + "," + userProfile.getAddRessDetail());
-
-                // Kiểm tra nếu người dùng có nhập ảnh không
-                if (!nameImage.isEmpty()) {
-                    customer.setImage(nameImage.getOriginalFilename()); // Lưu tên file
-                    customerService.uploadFile(nameImage, customer.getId()); // Tải file lên
-                }
-                model.addAttribute("clientLogin", clientLoginResponse);
-                model.addAttribute("userProfile", userProfile);
-                model.addAttribute("clientLogin", clientLoginResponse);
-                customerRegisterRepository.save(customer);
-                model.addAttribute("successMessage", "Cập nhật thông tin thành công.");
-            } else {
-                model.addAttribute("errorMessage", "Không tìm thấy thông tin tài khoản.");
-            }
-        } else {
-            return "redirect:/onepoly/login";
-        }
-
-        return "redirect:/onepoly/UserProfile";
-    }
+//        if (clientLoginResponse != null) {
+//            String acount = clientLoginResponse.getAcount();
+//
+//            Customer customer = customerRegisterRepository.findByAcount(acount);
+//            // Kiểm tra nếu tìm thấy thông tin khách hàng
+//            if (customer != null) {
+//                // Cập nhật thông tin vào UserProfileUpdateRequest
+//                UserProfileUpdateRequest userProfile = new UserProfileUpdateRequest();
+//                userProfile.setAccount(customer.getAcount());
+//                userProfile.setPassword(customer.getPassword());
+//                userProfile.setFullName(customer.getFullName());
+//                userProfile.setEmail(customer.getEmail());
+//                userProfile.setNumberPhone(customer.getNumberPhone());
+//                userProfile.setGender(customer.getGender());
+//                userProfile.setBirthDay(customer.getBirthDay());
+//
+//                String[] part = customer.getAddRess().split(",\\s*");
+//                userProfile.setProvince(part[2]);
+//                userProfile.setDistrict(part[1]);
+//                userProfile.setWard(part[0]);
+//                userProfile.setAddRessDetail(String.join(", ", java.util.Arrays.copyOfRange(part, 3, part.length)));
+//                userProfile.setImageString(customer.getImage());
+//
+//                // Lấy thông tin ngày sinh
+//                LocalDate birthDay = customer.getBirthDay(); // Giả sử birthDay là kiểu LocalDate
+//                if (birthDay != null) {
+//                    model.addAttribute("birthDayDay", birthDay.getDayOfMonth());
+//                    model.addAttribute("birthDayMonth", birthDay.getMonthValue());
+//                    model.addAttribute("birthDayYear", birthDay.getYear());
+//                } else {
+//                    // Gán giá trị mặc định nếu không có thông tin ngày sinh
+//                    model.addAttribute("birthDayDay", "");
+//                    model.addAttribute("birthDayMonth", "");
+//                    model.addAttribute("birthDayYear", "");
+//                }
+//
+//                // Đưa DTO vào model để hiển thị lên form
+//                model.addAttribute("userProfile", userProfile);
+//                model.addAttribute("clientLogin", clientLoginResponse);
+//                model.addAttribute("loginInfoClient", clientLoginResponse);
+//            } else {
+//                // Nếu không tìm thấy, đưa ra thông báo lỗi
+//                model.addAttribute("errorMessage", "Không tìm thấy thông tin tài khoản.");
+//            }
+//        } else {
+//            // Nếu người dùng chưa đăng nhập, chuyển hướng về trang login
+//            return "redirect:/onepoly/login";
+//        }
+//
+//        // Trả về view userProfile để hiển thị thông tin
+//        return "client/UserProfile";
+//    }
+//
+//    @PostMapping("/userProfileUpdate")
+//    public String updateProfile(UserProfileUpdateRequest userProfile,
+//                                HttpSession session, @RequestParam("nameImage") MultipartFile nameImage, Model model) throws IOException {
+//        ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
+//        if (clientLoginResponse != null) {
+//            String acount = clientLoginResponse.getAcount();
+//            Customer customer = customerRegisterRepository.findByAcount(acount);
+//            if (customer != null) {
+//                // Cập nhật thông tin người dùng
+//                customer.setFullName(userProfile.getFullName());
+//                customer.setPassword(userProfile.getPassword());
+//                customer.setEmail(userProfile.getEmail());
+//                customer.setNumberPhone(userProfile.getNumberPhone());
+//                customer.setGender(userProfile.getGender());
+//                customer.setBirthDay(userProfile.getBirthDay());
+//                customer.setAddRess(userProfile.getWard() + "," + userProfile.getDistrict() + "," + userProfile.getProvince() + "," + userProfile.getAddRessDetail());
+//
+//                // Kiểm tra nếu người dùng có nhập ảnh không
+//                if (!nameImage.isEmpty()) {
+//                    customer.setImage(nameImage.getOriginalFilename()); // Lưu tên file
+//                    customerService.uploadFile(nameImage, customer.getId()); // Tải file lên
+//                }
+//                model.addAttribute("clientLogin", clientLoginResponse);
+//                model.addAttribute("userProfile", userProfile);
+//                model.addAttribute("clientLogin", clientLoginResponse);
+//                customerRegisterRepository.save(customer);
+//                model.addAttribute("successMessage", "Cập nhật thông tin thành công.");
+//            } else {
+//                model.addAttribute("errorMessage", "Không tìm thấy thông tin tài khoản.");
+//            }
+//        } else {
+//            return "redirect:/onepoly/login";
+//        }
+//
+//        return "redirect:/onepoly/UserProfile";
+//    }
 
 }

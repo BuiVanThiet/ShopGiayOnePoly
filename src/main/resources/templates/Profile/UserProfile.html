@@ -15,7 +15,7 @@
         <h2>Hồ Sơ Của Tôi</h2>
         <p class="description">Quản lý thông tin hồ sơ để bảo mật tài khoản</p>
         <hr>
-        <form id="updateProfileForm" th:action="@{/onepoly/userProfileUpdate}" method="post" th:object="${userProfile}">
+        <form id="updateProfileForm" th:action="@{/profile/userProfileUpdate}" method="post" th:object="${userProfile}" enctype="multipart/form-data">
             <input type="hidden" id="provinceHiden" th:value="${userProfile.province}">
             <input type="hidden" id="districtHiden" th:value="${userProfile.district}">
             <input type="hidden" id="wardHiden" th:value="${userProfile.ward}">
@@ -152,7 +152,7 @@
         </form>
     </div>
     </section>
-    <script th:src="@{/js/customer/addRessApiCustomer.js}" type="text/javascript"></script>
+    <script th:src="@{/js/profile/ApiAddRess.js}" type="text/javascript"></script>
     <script th:src="@{/js/profile/UserProfile.js}" type="text/javascript"></script>
 </div>
 </body>

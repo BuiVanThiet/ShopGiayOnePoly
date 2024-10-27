@@ -21,6 +21,6 @@ function logout() {
 
 function profile() {
     // Gửi yêu cầu đăng xuất đến server
-    window.location.href = '/onepoly/userProfile';
+    window.location.href = '/profile/userProfile';
 }
 
