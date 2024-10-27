@@ -1,6 +1,5 @@
 
 document.getElementById('updateStaffProfileForm').addEventListener('submit', function (event) {
-    event.preventDefault(); // Ngăn chặn form gửi mặc định
 
     const day = document.getElementById('dob-day').value;
     const month = document.getElementById('dob-month').value;
@@ -17,9 +16,9 @@ document.getElementById('updateStaffProfileForm').addEventListener('submit', fun
     })
         .then(response => response.text())
         .then(data => {
-            // Xử lý phản hồi từ server
-            // Có thể hiển thị thông báo thành công hoặc xử lý dữ liệu khác
-            console.log(data);
+            // // Xử lý phản hồi từ server
+            // // Có thể hiển thị thông báo thành công hoặc xử lý dữ liệu khác
+            // console.log(data);
         })
         .catch(error => {
             console.error('Error:', error);
