@@ -1,5 +1,6 @@
 package com.example.shopgiayonepoly.service;
 
+import com.example.shopgiayonepoly.dto.request.ProductUpdateRequet;
 import com.example.shopgiayonepoly.dto.response.ProductRespose;
 import com.example.shopgiayonepoly.entites.CategoryProduct;
 import com.example.shopgiayonepoly.entites.Image;
@@ -46,5 +47,7 @@ public interface ProductService {
     List<CategoryProduct> findAllCategoryByProductId(@Param("productId") Integer productId);
 
     List<ProductRespose> findAllProductsWithOneImage();
+
+//     void updateProduct(ProductUpdateRequet productDTO);
 
 }

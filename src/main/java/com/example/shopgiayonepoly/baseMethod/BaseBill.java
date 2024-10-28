@@ -112,7 +112,11 @@ public abstract class BaseBill {
         ProductDetail detail = this.billService.getProductDteailById(idProductDetial);
         detail.setUpdateDate(new Date());
         Integer quantityNew = detail.getQuantity()-quantity;
-        detail.setQuantity(quantityNew);
+        if(quantityNew <= 0) {
+            detail.setQuantity(0);
+        }else {
+            detail.setQuantity(quantityNew);
+        }
         this.productDetailService.save(detail);
     }
     //update

@@ -38,7 +38,7 @@ function loadBillDetail(page)  {
 
                 response.forEach(function(billDetail, index) {
                     var imagesHtml = '';
-                    totalWeight += billDetail.productDetail.wight * billDetail.quantity;
+                    totalWeight += billDetail.productDetail.weight * billDetail.quantity;
                     console.log('can nang cua san pham la ' + totalWeight)
 
                     billDetail.productDetail.product.images.forEach(function(image, imgIndex) {

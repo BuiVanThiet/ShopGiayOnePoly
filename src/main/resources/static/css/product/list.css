@@ -1,359 +1,359 @@
-.body-product {
-    background-color: #f0f2f5;
-    font-family: 'Poppins', sans-serif;
-}
+/*.body-product {*/
+/*    background-color: #f0f2f5;*/
+/*    font-family: 'Poppins', sans-serif;*/
+/*}*/
 
-.h1-product {
-    font-size: 2.8rem;
-    font-weight: 700;
-    text-align: center;
-    margin-bottom: 2rem;
-    color: #3b3f5c;
-}
+/*.h1-product {*/
+/*    font-size: 2.8rem;*/
+/*    font-weight: 700;*/
+/*    text-align: center;*/
+/*    margin-bottom: 2rem;*/
+/*    color: #3b3f5c;*/
+/*}*/
 
-.product-search-section {
-    background-color: #ffffff;
-    padding: 25px;
-    border-radius: 15px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-    margin-bottom: 30px;
-    transition: box-shadow 0.3s ease-in-out;
-}
+/*.product-search-section {*/
+/*    background-color: #ffffff;*/
+/*    padding: 25px;*/
+/*    border-radius: 15px;*/
+/*    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);*/
+/*    margin-bottom: 30px;*/
+/*    transition: box-shadow 0.3s ease-in-out;*/
+/*}*/
 
-.product-search-section:hover {
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
-}
+/*.product-search-section:hover {*/
+/*    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);*/
+/*}*/
 
-.product-search-bar {
-    display: flex;
-    flex-direction: column; /* Hiển thị các nhóm theo chiều dọc */
-    gap: 1.5rem;
-}
+/*.product-search-bar {*/
+/*    display: flex;*/
+/*    flex-direction: column; !* Hiển thị các nhóm theo chiều dọc *!*/
+/*    gap: 1.5rem;*/
+/*}*/
 
-.text-area-product,
-.product-input-group,
-.product-select-group {
-    display: flex;
-    justify-content: space-between; /* Đặt các thẻ trên cùng một dòng */
-    gap: 1.5rem;
-}
+/*.text-area-product,*/
+/*.product-input-group,*/
+/*.product-select-group {*/
+/*    display: flex;*/
+/*    justify-content: space-between; !* Đặt các thẻ trên cùng một dòng *!*/
+/*    gap: 1.5rem;*/
+/*}*/
 
-.text-area-product textarea,
-.product-input-group input,
-.product-select-group select {
-    flex: 1; /* Đặt độ rộng của các thẻ input/select bằng nhau */
-}
-
-
-.product-search-bar input,textarea {
-    flex: 1;
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    transition: all 0.3s ease;
-}
-
-.product-search-bar input:focus, textarea:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-    outline: none;
-}
-
-.product-btn-add {
-    background-image: linear-gradient(45deg, #007bff, #00bfff);
-    color: white;
-    padding: 12px 20px;
-    border: none;
-    border-radius: 8px;
-    transition: background-image 0.3s ease, transform 0.3s ease;
-}
-
-.product-btn-add:hover {
-    background-image: linear-gradient(45deg, #0056b3, #0099ff);
-    transform: translateY(-3px);
-}
-.product-btn-edit {
-    background-image: linear-gradient(45deg, #007bff, #00bfff);
-    color: white;
-    padding: 12px 20px;
-    border: none;
-    border-radius: 8px;
-    transition: background-image 0.3s ease, transform 0.3s ease;
-}
-
-.product-btn-edit:hover {
-    background-image: linear-gradient(45deg, #0056b3, #0099ff);
-    transform: translateY(-3px);
-}
-.product-btn-listDelete {
-    background-image: linear-gradient(45deg, #007bff, #00bfff);
-    color: white;
-    padding: 12px 20px;
-    border: none;
-    border-radius: 8px;
-    transition: background-image 0.3s ease, transform 0.3s ease;
-}
-
-.product-btn-listDelete:hover {
-    background-image: linear-gradient(45deg, #0056b3, #0099ff);
-    transform: translateY(-3px);
-}
-.product-btn-listActive {
-    background-image: linear-gradient(45deg, #007bff, #00bfff);
-    color: white;
-    padding: 12px 20px;
-    border: none;
-    border-radius: 8px;
-    transition: background-image 0.3s ease, transform 0.3s ease;
-}
-
-.product-btn-listActive:hover {
-    background-image: linear-gradient(45deg, #0056b3, #0099ff);
-    transform: translateY(-3px);
-}
-
-.product-table {
-    background-color: #fff;
-    border-radius: 15px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-}
-
-.product-table th {
-    background-color: #007bff;
-    color: #ffffff;
-    text-align: center;
-    font-weight: 600;
-}
-
-.product-table td {
-    text-align: center;
-    vertical-align: middle;
-    padding: 15px;
-}
-
-.table-striped tbody tr:nth-of-type(odd) {
-    background-color: #f8f9fa;
-}
-
-.product-table tbody tr:hover {
-    background-color: #e2e6ea;
-    transition: background-color 0.3s ease;
-}
-
-.product-icon-edit, .product-icon-delete, .product-icon-save {
-    cursor: pointer;
-    font-size: 1.2rem;
-    margin-right: 15px;
-    transition: color 0.3s ease, transform 0.3s ease;
-}
-
-.product-icon-edit {
-    color: #28a745;
-}
-.product-icon-save {
-    color: #2857a7;
-}
-.product-icon-edit:hover {
-    color: #218838;
-    transform: scale(1.2);
-}
-
-.product-icon-save:hover {
-    color: #218838;
-    transform: scale(1.2);
-}
-
-.product-icon-delete {
-    color: #dc3545;
-}
-
-.product-icon-delete:hover {
-    color: #c82333;
-    transform: scale(1.2);
-}
-
-@media (max-width: 768px) {
-    .product-search-bar {
-        flex-direction: column;
-    }
-}
-/* CSS cho biểu tượng trạng thái */
-.product-status-icon {
-    font-size: 24px;
-    cursor: pointer;
-    color: #007bff; /* Màu cho trạng thái bật */
-}
-
-.product-status-icon.fa-toggle-on {
-    color: #28a745; /* Màu cho biểu tượng bật */
-}
-
-.product-status-icon.fa-toggle-off {
-    color: #dc3545; /* Màu cho biểu tượng tắt */
-}
-
-.product-status-icon:hover {
-    color: #0056b3; /* Màu khi di chuột qua */
-}
-.inputUpdate-product{
-    border-radius: 10px;
-}
-
-.combobox-container {
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-.combobox-header {
-    display: flex;
-    justify-content: space-between; /* Đặt khoảng cách giữa text và mũi tên */
-    align-items: center;
-    padding: 10px;
-    cursor: pointer;
-    background-color: #f9f9f9;
-    border-bottom: none;
-}
-
-.arrow {
-    font-size: 14px;
-    transition: transform 0.3s ease; /* Hiệu ứng khi mũi tên xoay */
-}
-
-.combobox-content {
-    display: none; /* Ẩn nội dung ban đầu */
-    padding: 10px;
-    background-color: #f1f1f1;
-    transition: max-height 0.3s ease; /* Hiệu ứng khi mở rộng nội dung */
-    overflow: hidden; /* Giúp ẩn phần nội dung thừa khi thu gọn */
-}
-
-.combobox-content p {
-    margin: 0;
-}
-
-.select-product{
-    border-radius: 8px;
-    height: 50px;
-}
-.modal-product {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Làm mờ nền */
-    display: flex;
-    justify-content: center;  /* Căn giữa theo chiều ngang */
-    align-items: center;      /* Căn giữa theo chiều dọc */
-    z-index: 1000;            /* Đảm bảo modal luôn ở trên các thành phần khác */
-}
-
-.modal-content-product {
-    background-color: white;
-    padding: 20px;
-    border-radius: 5px;
-    text-align: center;
-    max-width: 500px; /* Chiều rộng tối đa */
-    width: auto; /* Chiều rộng tùy theo nội dung */
-    height: auto; /* Chiều cao tùy theo nội dung */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Hiệu ứng đổ bóng */
-}
-
-/* Style chung cho các nút */
-.modal-button-product {
-    background-color: #007bff; /* Màu nền xanh dương */
-    border: none; /* Xóa viền mặc định */
-    color: white; /* Màu chữ */
-    padding: 10px 20px; /* Khoảng cách bên trong nút */
-    font-size: 16px; /* Cỡ chữ */
-    border-radius: 5px; /* Bo góc nút */
-    cursor: pointer; /* Con trỏ thay đổi khi hover */
-    transition: background-color 0.3s ease; /* Hiệu ứng chuyển màu khi hover */
-    margin: 10px; /* Khoảng cách giữa các nút */
-}
-
-/* Hiệu ứng khi hover */
-.modal-button-product:hover {
-    background-color: #0056b3; /* Màu nền đậm hơn khi hover */
-}
-
-/* Style cho nút Hủy (nút màu xám) */
-.modal-button-product.cancel {
-    background-color: #6c757d; /* Màu xám */
-}
-
-.modal-button-product.cancel:hover {
-    background-color: #5a6268; /* Màu xám đậm hơn khi hover */
-}
+/*.text-area-product textarea,*/
+/*.product-input-group input,*/
+/*.product-select-group select {*/
+/*    flex: 1; !* Đặt độ rộng của các thẻ input/select bằng nhau *!*/
+/*}*/
 
 
-.dropdown-btn {
-    padding: 12px;
-    transition: all 0.3s ease;
-    font-size: 16px;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between; /* Căn chỉnh mũi tên */
-    align-items: center; /* Căn giữa mũi tên theo chiều dọc */
-    width: 100%; /* Chiếm toàn bộ chiều rộng */
-}
+/*.product-search-bar input,textarea {*/
+/*    flex: 1;*/
+/*    padding: 12px;*/
+/*    border-radius: 8px;*/
+/*    border: 1px solid #ccc;*/
+/*    transition: all 0.3s ease;*/
+/*}*/
+
+/*.product-search-bar input:focus, textarea:focus {*/
+/*    border-color: #007bff;*/
+/*    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);*/
+/*    outline: none;*/
+/*}*/
+
+/*.product-btn-add {*/
+/*    background-image: linear-gradient(45deg, #007bff, #00bfff);*/
+/*    color: white;*/
+/*    padding: 12px 20px;*/
+/*    border: none;*/
+/*    border-radius: 8px;*/
+/*    transition: background-image 0.3s ease, transform 0.3s ease;*/
+/*}*/
+
+/*.product-btn-add:hover {*/
+/*    background-image: linear-gradient(45deg, #0056b3, #0099ff);*/
+/*    transform: translateY(-3px);*/
+/*}*/
+/*.product-btn-edit {*/
+/*    background-image: linear-gradient(45deg, #007bff, #00bfff);*/
+/*    color: white;*/
+/*    padding: 12px 20px;*/
+/*    border: none;*/
+/*    border-radius: 8px;*/
+/*    transition: background-image 0.3s ease, transform 0.3s ease;*/
+/*}*/
+
+/*.product-btn-edit:hover {*/
+/*    background-image: linear-gradient(45deg, #0056b3, #0099ff);*/
+/*    transform: translateY(-3px);*/
+/*}*/
+/*.product-btn-listDelete {*/
+/*    background-image: linear-gradient(45deg, #007bff, #00bfff);*/
+/*    color: white;*/
+/*    padding: 12px 20px;*/
+/*    border: none;*/
+/*    border-radius: 8px;*/
+/*    transition: background-image 0.3s ease, transform 0.3s ease;*/
+/*}*/
+
+/*.product-btn-listDelete:hover {*/
+/*    background-image: linear-gradient(45deg, #0056b3, #0099ff);*/
+/*    transform: translateY(-3px);*/
+/*}*/
+/*.product-btn-listActive {*/
+/*    background-image: linear-gradient(45deg, #007bff, #00bfff);*/
+/*    color: white;*/
+/*    padding: 12px 20px;*/
+/*    border: none;*/
+/*    border-radius: 8px;*/
+/*    transition: background-image 0.3s ease, transform 0.3s ease;*/
+/*}*/
+
+/*.product-btn-listActive:hover {*/
+/*    background-image: linear-gradient(45deg, #0056b3, #0099ff);*/
+/*    transform: translateY(-3px);*/
+/*}*/
+
+/*.product-table {*/
+/*    background-color: #fff;*/
+/*    border-radius: 15px;*/
+/*    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);*/
+/*    overflow: hidden;*/
+/*}*/
+
+/*.product-table th {*/
+/*    background-color: #007bff;*/
+/*    color: #ffffff;*/
+/*    text-align: center;*/
+/*    font-weight: 600;*/
+/*}*/
+
+/*.product-table td {*/
+/*    text-align: center;*/
+/*    vertical-align: middle;*/
+/*    padding: 15px;*/
+/*}*/
+
+/*.table-striped tbody tr:nth-of-type(odd) {*/
+/*    background-color: #f8f9fa;*/
+/*}*/
+
+/*.product-table tbody tr:hover {*/
+/*    background-color: #e2e6ea;*/
+/*    transition: background-color 0.3s ease;*/
+/*}*/
+
+/*.product-icon-edit, .product-icon-delete, .product-icon-save {*/
+/*    cursor: pointer;*/
+/*    font-size: 1.2rem;*/
+/*    margin-right: 15px;*/
+/*    transition: color 0.3s ease, transform 0.3s ease;*/
+/*}*/
+
+/*.product-icon-edit {*/
+/*    color: #28a745;*/
+/*}*/
+/*.product-icon-save {*/
+/*    color: #2857a7;*/
+/*}*/
+/*.product-icon-edit:hover {*/
+/*    color: #218838;*/
+/*    transform: scale(1.2);*/
+/*}*/
+
+/*.product-icon-save:hover {*/
+/*    color: #218838;*/
+/*    transform: scale(1.2);*/
+/*}*/
+
+/*.product-icon-delete {*/
+/*    color: #dc3545;*/
+/*}*/
+
+/*.product-icon-delete:hover {*/
+/*    color: #c82333;*/
+/*    transform: scale(1.2);*/
+/*}*/
+
+/*@media (max-width: 768px) {*/
+/*    .product-search-bar {*/
+/*        flex-direction: column;*/
+/*    }*/
+/*}*/
+/*!* CSS cho biểu tượng trạng thái *!*/
+/*.product-status-icon {*/
+/*    font-size: 24px;*/
+/*    cursor: pointer;*/
+/*    color: #007bff; !* Màu cho trạng thái bật *!*/
+/*}*/
+
+/*.product-status-icon.fa-toggle-on {*/
+/*    color: #28a745; !* Màu cho biểu tượng bật *!*/
+/*}*/
+
+/*.product-status-icon.fa-toggle-off {*/
+/*    color: #dc3545; !* Màu cho biểu tượng tắt *!*/
+/*}*/
+
+/*.product-status-icon:hover {*/
+/*    color: #0056b3; !* Màu khi di chuột qua *!*/
+/*}*/
+/*.inputUpdate-product{*/
+/*    border-radius: 10px;*/
+/*}*/
+
+/*.combobox-container {*/
+/*    border: 1px solid #ccc;*/
+/*    border-radius: 5px;*/
+/*}*/
+
+/*.combobox-header {*/
+/*    display: flex;*/
+/*    justify-content: space-between; !* Đặt khoảng cách giữa text và mũi tên *!*/
+/*    align-items: center;*/
+/*    padding: 10px;*/
+/*    cursor: pointer;*/
+/*    background-color: #f9f9f9;*/
+/*    border-bottom: none;*/
+/*}*/
+
+/*.arrow {*/
+/*    font-size: 14px;*/
+/*    transition: transform 0.3s ease; !* Hiệu ứng khi mũi tên xoay *!*/
+/*}*/
+
+/*.combobox-content {*/
+/*    display: none; !* Ẩn nội dung ban đầu *!*/
+/*    padding: 10px;*/
+/*    background-color: #f1f1f1;*/
+/*    transition: max-height 0.3s ease; !* Hiệu ứng khi mở rộng nội dung *!*/
+/*    overflow: hidden; !* Giúp ẩn phần nội dung thừa khi thu gọn *!*/
+/*}*/
+
+/*.combobox-content p {*/
+/*    margin: 0;*/
+/*}*/
+
+/*.select-product{*/
+/*    border-radius: 8px;*/
+/*    height: 50px;*/
+/*}*/
+/*.modal-product {*/
+/*    position: fixed;*/
+/*    top: 0;*/
+/*    left: 0;*/
+/*    width: 100%;*/
+/*    height: 100%;*/
+/*    background-color: rgba(0, 0, 0, 0.5); !* Làm mờ nền *!*/
+/*    display: flex;*/
+/*    justify-content: center;  !* Căn giữa theo chiều ngang *!*/
+/*    align-items: center;      !* Căn giữa theo chiều dọc *!*/
+/*    z-index: 1000;            !* Đảm bảo modal luôn ở trên các thành phần khác *!*/
+/*}*/
+
+/*.modal-content-product {*/
+/*    background-color: white;*/
+/*    padding: 20px;*/
+/*    border-radius: 5px;*/
+/*    text-align: center;*/
+/*    max-width: 500px; !* Chiều rộng tối đa *!*/
+/*    width: auto; !* Chiều rộng tùy theo nội dung *!*/
+/*    height: auto; !* Chiều cao tùy theo nội dung *!*/
+/*    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); !* Hiệu ứng đổ bóng *!*/
+/*}*/
+
+/*!* Style chung cho các nút *!*/
+/*.modal-button-product {*/
+/*    background-color: #007bff; !* Màu nền xanh dương *!*/
+/*    border: none; !* Xóa viền mặc định *!*/
+/*    color: white; !* Màu chữ *!*/
+/*    padding: 10px 20px; !* Khoảng cách bên trong nút *!*/
+/*    font-size: 16px; !* Cỡ chữ *!*/
+/*    border-radius: 5px; !* Bo góc nút *!*/
+/*    cursor: pointer; !* Con trỏ thay đổi khi hover *!*/
+/*    transition: background-color 0.3s ease; !* Hiệu ứng chuyển màu khi hover *!*/
+/*    margin: 10px; !* Khoảng cách giữa các nút *!*/
+/*}*/
+
+/*!* Hiệu ứng khi hover *!*/
+/*.modal-button-product:hover {*/
+/*    background-color: #0056b3; !* Màu nền đậm hơn khi hover *!*/
+/*}*/
+
+/*!* Style cho nút Hủy (nút màu xám) *!*/
+/*.modal-button-product.cancel {*/
+/*    background-color: #6c757d; !* Màu xám *!*/
+/*}*/
+
+/*.modal-button-product.cancel:hover {*/
+/*    background-color: #5a6268; !* Màu xám đậm hơn khi hover *!*/
+/*}*/
 
 
-/* Kiểu danh sách tùy chọn */
-.dropdown-content {
-    display: none; /* Ẩn danh sách ban đầu */
-    position: absolute;
-    background-color: #f1f1f1;
-    min-width: 100%; /* Chiếm toàn bộ chiều rộng */
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-}
-
-.dropdown-content label {
-    display: block;
-    padding: 10px;
-    cursor: pointer;
-}
-
-.dropdown-content label:hover {
-    background-color: #ddd;
-}
-
-.arrow {
-    margin-left: 10px; /* Khoảng cách giữa chữ và mũi tên */
-    transition: transform 0.3s; /* Hiệu ứng xoay mũi tên */
-}
-
-/* Hiển thị dropdown khi bấm nút */
-.show-product {
-    display: block;
-}
+/*.dropdown-btn {*/
+/*    padding: 12px;*/
+/*    transition: all 0.3s ease;*/
+/*    font-size: 16px;*/
+/*    cursor: pointer;*/
+/*    display: flex;*/
+/*    justify-content: space-between; !* Căn chỉnh mũi tên *!*/
+/*    align-items: center; !* Căn giữa mũi tên theo chiều dọc *!*/
+/*    width: 100%; !* Chiếm toàn bộ chiều rộng *!*/
+/*}*/
 
 
-.rotate-product {
-    transform: rotate(180deg); /* Xoay mũi tên khi mở dropdown */
-}
-.image-preview-product {
-    display: flex;
-    flex-wrap: nowrap; /* Hiển thị theo hàng ngang, không ngắt dòng */
-    gap: 10px;
-    overflow-x: auto; /* Thêm thanh cuộn ngang nếu ảnh vượt quá kích thước màn hình */
-}
+/*!* Kiểu danh sách tùy chọn *!*/
+/*.dropdown-content {*/
+/*    display: none; !* Ẩn danh sách ban đầu *!*/
+/*    position: absolute;*/
+/*    background-color: #f1f1f1;*/
+/*    min-width: 100%; !* Chiếm toàn bộ chiều rộng *!*/
+/*    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);*/
+/*    z-index: 1;*/
+/*}*/
 
-.image-preview-container {
-    position: relative;
-    width: 205.1px;
-    height: 205.1px;
-    margin-top: 10px;
-}
+/*.dropdown-content label {*/
+/*    display: block;*/
+/*    padding: 10px;*/
+/*    cursor: pointer;*/
+/*}*/
 
-.image-preview-container img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    border: 1px solid #ccc;
-}
+/*.dropdown-content label:hover {*/
+/*    background-color: #ddd;*/
+/*}*/
+
+/*.arrow {*/
+/*    margin-left: 10px; !* Khoảng cách giữa chữ và mũi tên *!*/
+/*    transition: transform 0.3s; !* Hiệu ứng xoay mũi tên *!*/
+/*}*/
+
+/*!* Hiển thị dropdown khi bấm nút *!*/
+/*.show-product {*/
+/*    display: block;*/
+/*}*/
+
+
+/*.rotate-product {*/
+/*    transform: rotate(180deg); !* Xoay mũi tên khi mở dropdown *!*/
+/*}*/
+/*.image-preview-product {*/
+/*    display: flex;*/
+/*    flex-wrap: nowrap; !* Hiển thị theo hàng ngang, không ngắt dòng *!*/
+/*    gap: 10px;*/
+/*    overflow-x: auto; !* Thêm thanh cuộn ngang nếu ảnh vượt quá kích thước màn hình *!*/
+/*}*/
+
+/*.image-preview-container {*/
+/*    position: relative;*/
+/*    width: 205.1px;*/
+/*    height: 205.1px;*/
+/*    margin-top: 10px;*/
+/*}*/
+
+/*.image-preview-container img {*/
+/*    width: 100%;*/
+/*    height: 100%;*/
+/*    object-fit: contain;*/
+/*    border: 1px solid #ccc;*/
+/*}*/
 
 
 

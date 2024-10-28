@@ -143,6 +143,8 @@ function loadInformationBillByIdBill() {
                 }else {
                     $('#confirm-button').show() ;
                 }
+                $('#nameBtnConfirm').text('Xác nhận');
+                $('#confirm-button').attr('data-action', 'confirm1');
             }else if (response.status == 2) {
                 statusBill = 'Đã xác nhận';
                 $('#cancel-button').show();
@@ -154,6 +156,8 @@ function loadInformationBillByIdBill() {
                 $('#btn-buy-product').hide();
                 $('#startCamera').hide();
                 $('#table-product-buy th:last-child').hide();
+                $('#nameBtnConfirm').text('Giao hàng');
+                $('#confirm-button').attr('data-action', 'confirm2');
             }else if (response.status == 3) {
                 statusBill = 'Giao hàng';
                 $('#cancel-button').show();
@@ -165,6 +169,8 @@ function loadInformationBillByIdBill() {
                 $('#btn-buy-product').hide();
                 $('#startCamera').hide();
                 $('#table-product-buy th:last-child').hide();
+                $('#nameBtnConfirm').text('Khách nhận đợc hàng');
+                $('#confirm-button').attr('data-action', 'confirm3');
             }else if (response.status == 4) {
                 statusBill = 'Khách đã nhận được hàng';
                 $('#cancel-button').show();
@@ -176,6 +182,8 @@ function loadInformationBillByIdBill() {
                 $('#btn-buy-product').hide();
                 $('#startCamera').hide();
                 $('#table-product-buy th:last-child').hide();
+                $('#nameBtnConfirm').text('Hoàn thành');
+                $('#confirm-button').attr('data-action', 'confirm4');
             }else if (response.status == 5) {
                 statusBill = 'Hoàn thành';
                 $('#cancel-button').hide();
@@ -289,11 +297,12 @@ function loadInformationBillByIdBill() {
             // }
 
             if(response.paymentStatus == 0) {
-                if(response.status = 6) {
-                    $('#btn-payment-confirm').hide();
-                }
                 $('#btn-payment-confirm').show();
             }else {
+                $('#btn-payment-confirm').hide();
+            }
+
+            if(response.status == 6) {
                 $('#btn-payment-confirm').hide();
             }
 
@@ -504,19 +513,31 @@ function actionModal() {
 
             if (action === 'cancel') {
                 modalTitle.textContent = 'Xác nhận hủy đơn';
-                modalBody.textContent = 'Bạn có chắc muốn hủy đơn hàng này không?';
+                modalBody.textContent = 'Bạn có chắc muốn hủy đơn hàng này?';
                 confirmButton.setAttribute('onclick', "confirmBill('cancel')");
-            } else if (action === 'confirm') {
+            } else if (action === 'confirm1') {
                 modalTitle.textContent = 'Xác nhận đơn hàng';
-                modalBody.textContent = 'Bạn có chắc muốn xác nhận đơn hàng này không?';
+                modalBody.textContent = 'Bạn có chắc muốn xác nhận đơn hàng này?';
+                confirmButton.setAttribute('onclick', "confirmBill('agree')");
+            }else if (action === 'confirm2') {
+                modalTitle.textContent = 'Xác nhận đơn hàng';
+                modalBody.textContent = 'Bạn có chắc muốn giao đơn hàng này?';
+                confirmButton.setAttribute('onclick', "confirmBill('agree')");
+            }else if (action === 'confirm3') {
+                modalTitle.textContent = 'Xác nhận đơn hàng';
+                modalBody.textContent = 'Bạn có chắc khách đã nhận được đơn hàng này?';
+                confirmButton.setAttribute('onclick', "confirmBill('agree')");
+            }else if (action === 'confirm4') {
+                modalTitle.textContent = 'Xác nhận đơn hàng';
+                modalBody.textContent = 'Bạn có chắc muốn hoàn thành đơn hàng này?';
                 confirmButton.setAttribute('onclick', "confirmBill('agree')");
             }else if (action === 'confirm-return-bill') {
                 modalTitle.textContent = 'Xác nhận đổi-trả hàng';
-                modalBody.textContent = 'Bạn muốn xác nhận đơn đổi-trả hàng này sao?';
+                modalBody.textContent = 'Bạn muốn xác nhận đơn đổi-trả hàng này?';
                 confirmButton.setAttribute('onclick', "confirmBill('agreeReturnBill')");
             }else if (action === 'cancel-return-bill') {
                 modalTitle.textContent = 'Xác nhận đổi-trả hàng';
-                modalBody.textContent = 'Bạn hủy đơn đổi-trả hàng này sao?';
+                modalBody.textContent = 'Bạn hủy đơn đổi-trả hàng này?';
                 confirmButton.setAttribute('onclick', "confirmBill('cancelReturnBill')");
             }
         });

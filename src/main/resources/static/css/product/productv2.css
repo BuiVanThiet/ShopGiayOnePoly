@@ -113,7 +113,7 @@ body-product {
     display: flex;
     align-items: center;
     gap: 1rem;
-    padding: 0.5rem;
+    /*padding: 0.5rem;*/
     width: 100%;
     box-sizing: border-box;
     margin-bottom: 30px;
@@ -196,7 +196,6 @@ body-product {
 .table-product tbody.list-view-product tr {
     display: table-row;
 }
-
 .form-group-product {
     display: flex;
     flex-wrap: wrap; /* Cho phép các thẻ xuống dòng khi không còn chỗ */
@@ -206,19 +205,47 @@ body-product {
 
 .form-group-product .form-control-product {
     width: calc(16.66% - 20px); /* 100% / 6 = 16.66%, trừ đi khoảng cách */
-    height: 200px;
-    border-radius: 10px;
+    height: 200px; /* Chiều cao của khung hình */
     text-align: center;
     box-sizing: border-box;
     margin: 10px;
     margin-bottom: 50px; /* Thêm khoảng cách giữa các thẻ */
+    position: relative; /* Để điều chỉnh vị trí cho các slide */
+    overflow: hidden; /* Ẩn các phần bên ngoài khung hình */
 }
 
-.form-group-product .form-control-product img {
-    width: 100%;
-    height: 100%;
-    border-radius: 10px;
+.image-slider {
+    position: relative;
+    overflow: hidden; /* Ẩn các hình ảnh vượt ra ngoài */
+    height: 100%; /* Chiều cao sẽ chiếm toàn bộ chiều cao của form-control-product */
 }
+
+.slides {
+    display: flex; /* Hiển thị các slide theo hàng ngang */
+    transition: transform 0.5s ease; /* Thêm hiệu ứng chuyển động cho trượt */
+}
+
+.slide {
+    min-width: 100%; /* Đảm bảo mỗi slide chiếm toàn bộ chiều rộng */
+    height: 100%; /* Chiều cao sẽ chiếm toàn bộ chiều cao của image-slider */
+}
+
+.slide img {
+    width: 100%; /* Đảm bảo hình ảnh chiếm toàn bộ chiều rộng của slide */
+    height: auto; /* Đảm bảo chiều cao tự động để giữ nguyên tỉ lệ */
+    max-height: 100%; /* Đảm bảo chiều cao tối đa không vượt quá khung hình */
+    object-fit: contain; /* Giữ nguyên tỉ lệ hình ảnh */
+}
+.update-product{
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
 .fa-list-product{
     color: blue;
+}
+.product-image-container {
+    position: relative; /* Để điều chỉnh vị trí cho các slide */
+    overflow: hidden; /* Ẩn các phần bên ngoài khung hình */
 }
