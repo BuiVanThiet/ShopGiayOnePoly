@@ -41,13 +41,12 @@ function getAllBilByStatus(value) {
                         // Nếu hóa đơn được tạo trong vòng 3 ngày, hiển thị thêm 2 nút Đổi hàng và Trả hàng
                         if (dayDiff <= 3) {
                             btnDrop += `
-                            <li><a class="dropdown-item" href="#">Đổi hàng</a></li>
-                            <li><a class="dropdown-item" href="/staff/return-bill/bill/${bill.id}">Trả hàng</a></li>
+                            <li><a class="dropdown-item" href="/staff/return-bill/bill/${bill.id}">Đổi-Trả hàng</a></li>
                         `;
                         }
                     } else if (bill.status == 6) {
                         btnDrop = `
-                            <li><a href="/staff/bill/bill-status-index/${bill.id}" class="btn btn-primary">Xem chi tiết</a></li>
+                            <li><a href="/staff/bill/bill-status-index/${bill.id}" class="dropdown-item">Xem chi tiết</a></li>
                             <li><a class="dropdown-item" href="#">Xuất hóa đơn</a></li>
                         `;
                     }else {

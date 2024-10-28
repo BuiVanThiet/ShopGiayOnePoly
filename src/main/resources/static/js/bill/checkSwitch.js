@@ -32,6 +32,9 @@ document.getElementById('flexSwitchCheckDefault').addEventListener('change', fun
                 numberPhoneCustomer = client.numberPhone;
                 addRessDetailCustomer = client.addressDetail;
                 console.log(provinceID + '-' + districtID + '-' + wardID)
+                selectCheckProvince = client.city;
+                selectCheckDistrict = client.district;
+                selectCheckWard = client.commune;
                 setClientShip(nameCustomer,numberPhoneCustomer,provinceID,districtID,wardID,addRessDetailCustomer)
                 dynamicContent.innerHTML = `
             <div class="">
@@ -50,19 +53,19 @@ document.getElementById('flexSwitchCheckDefault').addEventListener('change', fun
                     <div class="col-4">
                         <label class="form-label">Tỉnh/Thành phố</label>
                         <select class="form-select" id="provinceSelect-transport">
-                            <option selected>Chọn tỉnh/thành phố</option>
+                            <option value="" selected>Chọn tỉnh/thành phố</option>
                         </select>
                     </div>
                     <div class="col-4" id="districtSelectContainer-transport" style="display: none;">
                         <label class="form-label">Quận/Huyện</label>
                         <select class="form-select" id="districtSelect-transport">
-                            <option selected>Chọn quận/huyện</option>
+                            <option value="" selected>Chọn quận/huyện</option>
                         </select>
                     </div>
                     <div class="col-4" id="wardSelectContainer-transport" style="display: none;">
                         <label class="form-label">Xã/Phường/Thị Trấn</label>
                         <select class="form-select" id="wardSelect-transport">
-                            <option selected>Chọn xã/phường/thị trấn</option>
+                            <option value="" selected>Chọn xã/phường/thị trấn</option>
                         </select>
                     </div>
                     <div class="mb-12">
@@ -73,10 +76,10 @@ document.getElementById('flexSwitchCheckDefault').addEventListener('change', fun
                 </div>
             </div>
         `;
+                console.log('Thong tin sau khi chon api ' + provinceTransport + '-' + districtTransport + '-' + wardTransport)
+                attachInputListeners();
                 initializeLocationDropdowns('provinceSelect-transport','districtSelect-transport','wardSelect-transport','districtSelectContainer-transport','wardSelectContainer-transport',provinceID,districtID,wardID)
                 validateInformationShip();
-                attachInputListeners();
-                console.log('Thong tin sau khi chon api ' + provinceTransport + '-' + districtTransport + '-' + wardTransport)
 
             },
             error: function() {
@@ -139,16 +142,20 @@ function validateInformationShip() {
     validateNumberPhone(phoneInputCheckSwitch.value.trim(),errorNumberPhoneCustomerShipCheckSwitch);
     validateAddRessDetail(addressTextareaCheckSwitch.value.trim(),errorAddResDetailCustomerShipCheckSwitch);
 
-    validateProvince(provinceCheckSwitch);
-    validateDistrict(districtCheckSwitch);
-    validateWard(wardCheckSwitch);
+    validateProvinceCheckSwitch(selectCheckProvince);
+    validateDistrictCheckSwitch(selectCheckDistrict);
+    validateWardCheckSwitch(selectCheckWard);
     console.log('da vao day')
+    console.log('provinceCheckSwitch ' + selectCheckProvince)
+    console.log('districtCheckSwitch ' + selectCheckDistrict)
+    console.log('wardCheckSwitch ' + selectCheckWard)
+
     if(validateNameCustomer(nameInputCheckSwitch.value.trim(),errorNameCustomerShipCheckSwitch) == true &&
         validateNumberPhone(phoneInputCheckSwitch.value.trim(),errorNumberPhoneCustomerShipCheckSwitch) == true &&
         validateAddRessDetail(addressTextareaCheckSwitch.value.trim(),errorAddResDetailCustomerShipCheckSwitch) == true &&
-        validateProvince(checkProvince) == true &&
-        validateDistrict(checkDistrict) == true &&
-        validateWard(checkWard) == true
+        validateProvinceCheckSwitch(selectCheckProvince) == true &&
+        validateDistrictCheckSwitch(selectCheckDistrict) == true &&
+        validateWardCheckSwitch(selectCheckWard) == true
     ) {
         btnCreateBill.disabled = false;
     }else {
@@ -163,9 +170,8 @@ function attachInputListeners() {
     var addressTextareaCheckSwitch = document.getElementById('addRessDetailCustomer');
 
     var provinceCheckSwitch = document.getElementById('provinceSelect-transport');
-    var districtCheckSwitch = document.getElementById('wardSelect-transport');
+    var districtCheckSwitch = document.getElementById('districtSelect-transport');
     var wardCheckSwitch = document.getElementById('wardSelect-transport');
-
 
     if (nameInputCheckSwitch) {
         nameInputCheckSwitch.addEventListener('input', function() {
@@ -197,31 +203,50 @@ function attachInputListeners() {
 
     if (provinceCheckSwitch) {
         provinceCheckSwitch.addEventListener("change", function() {
-            checkDistrict.value = '';
-            checkWard.value = '';
+            selectCheckProvince = this.value.trim();
+            selectCheckDistrict = '';
+            selectCheckWard='';
             validateInformationShip();
-            console.log('Địa chỉ cụ thể đã thay đổi: ' + this.value);
+            console.log('Địa chỉ cụ thể đã thay đổi 1: ' + this.value);
         });
     }
     //
     if (districtCheckSwitch) {
         districtCheckSwitch.addEventListener("change", function() {
-            checkWard.value = '';
+            selectCheckDistrict = this.value.trim();
+            selectCheckWard='';
             validateInformationShip();
-            console.log('Địa chỉ cụ thể đã thay đổi: ' + this.value);
+            console.log('Địa chỉ cụ thể đã thay đổi 2: ' + this.value);
         });
     }
     //
     if (wardCheckSwitch) {
         wardCheckSwitch.addEventListener("change", function() {
+            selectCheckWard=this.value.trim();
             validateInformationShip();
-            console.log('Địa chỉ cụ thể đã thay đổi: ' + this.value);
+            console.log('Địa chỉ cụ thể đã thay đổi 3: ' + this.value);
         });
     }
 
 
 
 }
+
+var selectCheckProvince = '';
+var selectCheckDistrict = '';
+var selectCheckWard = '';
+
+
+function validateProvinceCheckSwitch(select) {
+    return select.trim() !== "";
+}
+function validateDistrictCheckSwitch(select) {
+    return select.trim()!== "";
+}
+function validateWardCheckSwitch(select) {
+    return select.trim() !== "";
+}
+
 
 
 
