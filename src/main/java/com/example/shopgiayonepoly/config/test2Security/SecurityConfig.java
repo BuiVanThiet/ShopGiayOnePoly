@@ -40,7 +40,7 @@ public class SecurityConfig {
                         .requestMatchers("/login-api/**", "/ajax/**", "/css/**", "/img/**", "/js/**", "/loading/**", "/toast/**").permitAll()
                         .requestMatchers("/bill-api/**","/register-api/**", "/register", "/login", "/logout","/return-exchange-bill-api/**","/sale/**","/api-client/**").permitAll()
                         .requestMatchers("/onepoly/**").permitAll()
-                        .requestMatchers("/profile/**").permitAll()
+                        .requestMatchers("/profile/**","/forgotPassword/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .csrf(csrf -> csrf.disable())
