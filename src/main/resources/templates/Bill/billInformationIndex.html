@@ -120,7 +120,7 @@
                         data-action="confirm"
                         data-bs-target="#infoBill"
                         data-bs-toggle="modal">
-                    <i class="bi bi-bag-check"></i> Xác nhận
+                    <i class="bi bi-bag-check"></i> <span id="nameBtnConfirm">Xác nhận</span>
                 </button>
             </div>
 
@@ -459,13 +459,13 @@
                     </div>
                     <div class="modal-footer">
                         <form id="payMoney">
-                            <input type="hidden" id="cashPay" value="0.00">
-                            <input type="hidden" id="cashAcountPay" value="0.00">
-                            <input type="hidden" id="cashBillPay" value="0.00">
+                            <input type="hidden" id="cashPay" value="0">
+                            <input type="hidden" id="cashAcountPay" value="0">
+                            <input type="hidden" id="cashBillPay" value="0">
                             <input type="hidden" id="notePay" value="">
                             <input type="hidden" id="payStatus" value="1">
                             <input type="hidden" id="payMethod" value="1">
-                            <input type="hidden" id="surplusMoneyPay" value="0.00">
+                            <input type="hidden" id="surplusMoneyPay" value="0">
                             <button type="submit" class="btn btn-outline-success" data-bs-dismiss="modal" aria-label="Close" id="btnPaymentInBill">Thanh toán</button>
                         </form>
                     </div>

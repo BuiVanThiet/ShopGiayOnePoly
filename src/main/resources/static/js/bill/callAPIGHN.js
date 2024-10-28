@@ -9,7 +9,7 @@ function fetchProvinces(provinceSelect, provinceID, callback) {
         url: 'https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/province',
         method: 'GET',
         headers: {
-            'Token': '4ad62142-6630-11ef-8e53-0a00184fe694'
+            'Token': '0fc88a8e-6633-11ef-8e53-0a00184fe694'
         },
         success: function(response) {
             const provinces = response.data;
@@ -32,7 +32,7 @@ function fetchDistricts(selectedProvinceID, districtSelect, districtID, callback
         url: 'https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/district',
         method: 'GET',
         headers: {
-            'Token': '4ad62142-6630-11ef-8e53-0a00184fe694'
+            'Token': '0fc88a8e-6633-11ef-8e53-0a00184fe694'
         },
         data: {
             province_id: selectedProvinceID
@@ -58,7 +58,7 @@ function fetchWards(selectedDistrictID, wardSelect, wardID, callback) {
         url: 'https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/ward',
         method: 'GET',
         headers: {
-            'Token': '4ad62142-6630-11ef-8e53-0a00184fe694'
+            'Token': '0fc88a8e-6633-11ef-8e53-0a00184fe694'
         },
         data: {
             district_id: selectedDistrictID
@@ -454,11 +454,11 @@ function totalShip(province, district, ward) {
         type: "GET",
         url: "https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/available-services",
         headers: {
-            'Token': '4ad62142-6630-11ef-8e53-0a00184fe694'
+            'Token': '0fc88a8e-6633-11ef-8e53-0a00184fe694'
         },
         data: {
-            shop_id: 194419,
-            from_district: 1482,
+            shop_id: 195165,
+            from_district: 3440,
             to_district: district
         },
         success: function (response) {
@@ -473,8 +473,8 @@ function totalShip(province, district, ward) {
                         type: "GET",
                         url: "https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/fee",
                         headers: {
-                            'Token': '4ad62142-6630-11ef-8e53-0a00184fe694',
-                            'shop_id': '194419'
+                            'Token': '0fc88a8e-6633-11ef-8e53-0a00184fe694',
+                            'shop_id': '195165'
                         },
                         data: {
                             service_id: serviceId,

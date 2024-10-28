@@ -33,14 +33,8 @@ public class ProductDetail extends Base {
     private Integer quantity;
     @Column(name = "describe")
     private String describe;
-    @Column(name = "high")
-    private Double high;
-    @Column(name = "width")
-    private Double width;
-    @Column(name = "wight")
-    private Double wight;
-    @Column(name = "lenght_product")
-    private Double leng_product;
+    @Column(name = "weight")
+    private Double weight;
     @ManyToOne
     @JoinColumn(name = "id_sale_product")
     private SaleProduct saleProduct;

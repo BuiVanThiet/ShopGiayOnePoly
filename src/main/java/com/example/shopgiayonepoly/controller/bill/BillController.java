@@ -236,7 +236,13 @@ public class BillController extends BaseBill {
         this.colorMess = "1";
         customer.setId(Integer.parseInt(idClient));
         bill.setCustomer(customer);
-        this.billService.save(bill);
+        if(bill.getStatus() == 0) {
+            this.billService.save(bill);
+        }else {
+            this.mess = "Thêm khách hàng vào hóa đơn thất bại!";
+            this.colorMess = "3";
+            return ResponseEntity.ok(thongBao);
+        }
         return ResponseEntity.ok(thongBao);
     }
 
@@ -287,7 +293,13 @@ public class BillController extends BaseBill {
             this.colorMess = "1";
             bill.setCustomer(null);
         }
-        this.billService.save(bill);
+        if(bill.getStatus() == 0) {
+            this.billService.save(bill);
+        }else {
+            this.mess = "Xóa khách hàng vào hóa đơn thất bại!";
+            this.colorMess = "3";
+            return ResponseEntity.ok(thongBao);
+        }
         return ResponseEntity.ok(thongBao);
     }
 
@@ -364,6 +376,9 @@ public class BillController extends BaseBill {
         if (bill == null) {
             return "redirect:/404";
         }
+        if (bill.getStatus() != 0) {
+            return "redirect:/404";
+        }
 
 //        if(bill.getCustomer() != null) {
 //            List<ClientBillInformationResponse> clientBillInformationResponses = this.billService.getClientBillInformationResponse(bill.getCustomer().getId());
@@ -435,10 +450,16 @@ public class BillController extends BaseBill {
         if(bill.getPaymentMethod() == 1 || bill.getBillType() == 2) {
             bill.setUpdateDate(new Date());
             if(bill.getBillType() == 2) {
+                if (bill.getPaymentStatus() == 1) {
+                    return "redirect:/404";
+                }
                 bill.setPaymentStatus(0);
                 bill.setStatus(1);
                 bill.setPaymentMethod(1);
             }else {
+                if (bill.getPaymentStatus() == 1) {
+                    return "redirect:/404";
+                }
                 bill.setPaymentStatus(1);
                 bill.setStatus(5);
                 if (bill.getCash().compareTo(bill.getTotalAmount().subtract(bill.getPriceDiscount())) < 0) {
@@ -518,6 +539,16 @@ public class BillController extends BaseBill {
         BigDecimal accountMoney = new BigDecimal(totalPrice);
 
         Integer returnFrom = (Integer) session.getAttribute("pageReturn");
+
+        if (billPay == null) {
+            return "redirect:/404";
+        }
+        if(billPay.getStatus() >= 5) {
+            return "redirect:/404";
+        }
+        if (billPay.getPaymentStatus() == 1) {
+            return "redirect:/404";
+        }
 
         if(returnFrom == 1) {
             if(paymentStatus == 1) {
@@ -606,7 +637,7 @@ public class BillController extends BaseBill {
         thongBao.put("message","Xóa sản phẩm trong hóa đơn thành công!");
         thongBao.put("check","1");
         BillDetail billDetail = this.billDetailService.findById(Integer.parseInt(id)).orElse(null);
-        this.getUpdateQuantityProduct(billDetail.getProductDetail().getId(),-billDetail.getQuantity());
+
 
         Integer idBill = (Integer) session.getAttribute("IdBill");
 
@@ -624,6 +655,17 @@ public class BillController extends BaseBill {
             thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }
+
+        if(bill.getStatus() >= 2 || bill.getPaymentStatus() == 1) {
+            thongBao.put("message","Không thể xóa sản phẩm!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+
+        if (bill.getStatus() == 0) {
+            this.getUpdateQuantityProduct(billDetail.getProductDetail().getId(),-billDetail.getQuantity());
+        }
+
         bill.setStaff(staffLogin);
         this.billDetailService.delete(billDetail);
         BigDecimal total = this.billDetailService.getTotalAmountByIdBill(bill.getId());
@@ -741,6 +783,12 @@ public class BillController extends BaseBill {
             return ResponseEntity.ok(thongBao);
         }
 
+        if(billById.getStatus() >= 2 || billById.getPaymentStatus() == 1) {
+            thongBao.put("message","Không thể mua sản phẩm!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+
         BillDetail billDetailSave = getBuyProduct(billById,productDetail,Integer.parseInt(quantity));
         if (billDetailSave.getQuantity() > 10) {
             thongBao.put("message","Số lượng mua sản phẩm này không được quá 10 số lượng!");
@@ -760,7 +808,9 @@ public class BillController extends BaseBill {
 
         this.billDetailService.save(billDetailSave);
         this.setTotalAmount(billDetailSave.getBill());
-        this.getUpdateQuantityProduct(productDetail.getId(),Integer.parseInt(quantity));
+        if(billById.getStatus() == 0) {
+            this.getUpdateQuantityProduct(productDetail.getId(),Integer.parseInt(quantity));
+        }
         System.out.println("da mua san pham !");
         getDeleteVoucherByBill(billById.getId());
 
@@ -797,6 +847,18 @@ public class BillController extends BaseBill {
         Bill bill = this.billService.findById(idBill).orElse(null);
         if(bill == null) {
             thongBao.put("message","Hóa đơn không tồn tại!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+
+        if(bill.getStatus() > 1) {
+            thongBao.put("message","Không xóa được mã giảm giá!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+
+        if(bill.getPaymentStatus() == 1) {
+            thongBao.put("message","Không xóa được mã giảm giá!");
             thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }
@@ -843,6 +905,18 @@ public class BillController extends BaseBill {
         Bill bill = this.billService.findById(idBill).orElse(null);
         if(bill == null) {
             thongBao.put("message","Hóa đơn không tồn tại!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+
+        if(bill.getStatus() > 1) {
+            thongBao.put("message","Không thêm được mã giảm giá!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+
+        if(bill.getPaymentStatus() == 1) {
+            thongBao.put("message","Không thêm được mã giảm giá!");
             thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }
@@ -955,6 +1029,10 @@ public class BillController extends BaseBill {
         Bill bill = this.billService.findById(idBill).orElse(null);
 
         System.out.println("thong tin them nhanh la " + customerShortRequest.toString() + customerShortRequest.getStatus());
+        if(bill.getStatus() > 1) {
+            return "redirect:/404";
+
+        }
 
         if (bill != null && bill.getStatus() == 0) {
             Customer customer = new Customer();

@@ -150,7 +150,10 @@ public class    BillRestController extends BaseBill {
 
         this.setTotalAmount(billDetail.getBill());
         System.out.println("dang o phuong thuc " + billDetailAjax.getMethod());
-        this.getUpdateQuantityProduct(productDetail.getId(),quantityUpdate);
+        Bill bill = billDetail.getBill();
+        if(bill.getStatus() == 0) {
+            this.getUpdateQuantityProduct(productDetail.getId(),quantityUpdate);
+        }
 
         getDeleteVoucherByBill(billDetail.getBill().getId());
 
@@ -207,7 +210,10 @@ public class    BillRestController extends BaseBill {
         System.out.println("Thong tin bill: " + billDetail.getBill().toString());
 
         this.setTotalAmount(billById);
-        this.getUpdateQuantityProduct(productDetail.getId(),1);
+        Bill bill = billDetail.getBill();
+        if(bill.getStatus() == 0) {
+            this.getUpdateQuantityProduct(productDetail.getId(),1);
+        }
 
         getDeleteVoucherByBill(billDetail.getBill().getId());
 
@@ -708,11 +714,13 @@ public class    BillRestController extends BaseBill {
     @PostMapping("/update-customer-ship")
     public ResponseEntity<Map<String,String>> getUpdateclientBillInformation(@RequestBody ClientBillInformationResponse clientBillInformationResponse,HttpSession session) {
         Map<String,String> thongBao = new HashMap<>();
+        String regexNameCustomer = "[\\p{L}\\p{Nd}\\s]+";
 
         if(
                 clientBillInformationResponse.getName().trim().equals("")
                         || clientBillInformationResponse.getName().trim() == null
                         || clientBillInformationResponse.getName().trim().length() > 50
+                        || !clientBillInformationResponse.getName().trim().matches(regexNameCustomer)
         ) {
             thongBao.put("message","Tên người nhận hàng không đúng định dạng!");
             thongBao.put("check","3");
@@ -725,13 +733,13 @@ public class    BillRestController extends BaseBill {
             return ResponseEntity.ok(thongBao);
         }
 
-        String regexEmail = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
-
-        if (!clientBillInformationResponse.getEmail().trim().matches(regexEmail)) {
-            thongBao.put("message","Email sai định dạng!");
-            thongBao.put("check","3");
-            return ResponseEntity.ok(thongBao);
-        }
+//        String regexEmail = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+//
+//        if (!clientBillInformationResponse.getEmail().trim().matches(regexEmail)) {
+//            thongBao.put("message","Email sai định dạng!");
+//            thongBao.put("check","3");
+//            return ResponseEntity.ok(thongBao);
+//        }
 
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if(staffLogin == null) {
@@ -762,6 +770,7 @@ public class    BillRestController extends BaseBill {
                 +clientBillInformationResponse.getDistrict()+","
                 +clientBillInformationResponse.getCommune()+","
                 +clientBillInformationResponse.getAddressDetail());
+        bill.setStaff(staffLogin);
         this.billService.save(bill);
         thongBao.put("message","Sửa thông tin giao hàng thành công!");
         thongBao.put("check","1");
@@ -848,17 +857,47 @@ public class    BillRestController extends BaseBill {
         }
 
         if(content.equals("cancel")) {
+            Bill billSave = this.billService.save(bill);
+            if(billSave.getStatus() >= 2) {
+                for (BillDetail billDetail: this.billDetailService.findAll()) {
+                    if(billDetail.getBill().getId() == billSave.getId()) {
+                        this.getUpdateQuantityProduct(billDetail.getProductDetail().getId(),-(billDetail.getQuantity()));
+                    }
+                }
+            }
             bill.setUpdateDate(new Date());
             bill.setStatus(6);
             mess = "Hóa đơn đã được hủy!";
             colorMess = "3";
             this.billService.save(bill);
+
+            if (billSave.getVoucher() == null) {
+                this.getSubtractVoucher(billSave.getVoucher(),-1);
+            }
             this.setBillStatus(bill.getId(),bill.getStatus(),session);
         }else if (content.equals("agree")) {
             if(bill.getStatus() == 4 && bill.getPaymentStatus() == 0) {
                 mess = "Đơn hàng chưa được thanh toán!";
                 colorMess = "3";
             }else {
+                if(bill.getStatus() == 1) {
+                    for (BillDetail billDetail: this.billDetailService.findAll()) {
+                        if(billDetail.getBill().getId() == bill.getId()) {
+                            for (ProductDetail productDetail: this.productDetailService.findAll()) {
+                                if (productDetail.getId() == billDetail.getProductDetail().getId()) {
+                                    if((productDetail.getQuantity()-billDetail.getQuantity()) < 0) {
+                                        System.out.println(productDetail.toString());
+                                        System.out.println(productDetail.getProduct());
+                                        System.out.println((productDetail.getQuantity()-billDetail.getQuantity())+"khong hop le");
+                                        thongBao.put("message","Hóa đơn không hợp lệ!");
+                                        thongBao.put("check","3");
+                                        return ResponseEntity.ok(thongBao);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
                 bill.setUpdateDate(new Date());
                 bill.setStatus(bill.getStatus()+1);
                 mess = "Hóa đơn đã được xác nhận!";
@@ -866,7 +905,14 @@ public class    BillRestController extends BaseBill {
                 if(bill.getStatus() == 2) {
                     getInsertPriceDiscount(bill.getId());
                 }
-                this.billService.save(bill);
+                Bill billSave = this.billService.save(bill);
+                if(billSave.getStatus() == 2) {
+                    for (BillDetail billDetail: this.billDetailService.findAll()) {
+                        if(billDetail.getBill().getId() == billSave.getId()) {
+                            this.getUpdateQuantityProduct(billDetail.getProductDetail().getId(),billDetail.getQuantity());
+                        }
+                    }
+                }
                 this.setBillStatus(bill.getId(),bill.getStatus(),session);
             }
         }else if (content.equals("agreeReturnBill")) {
@@ -887,6 +933,7 @@ public class    BillRestController extends BaseBill {
                     this.getUpdateQuantityProduct(exchangeBillDetail.getProductDetail().getId(),-(exchangeBillDetail.getQuantityExchange()));
                 }
             }
+
             this.setBillStatus(bill.getId(),203,session);
         }
         thongBao.put("message",mess);
@@ -982,7 +1029,25 @@ public class    BillRestController extends BaseBill {
                 thongBao.put("check","3");
                 return ResponseEntity.ok(thongBao);
             }
-            BigDecimal cash = BigDecimal.valueOf(Long.parseLong(cashPay)).subtract(BigDecimal.valueOf(Long.parseLong(surplusMoneyPay)));
+            if(billPayment.getStatus() >= 5) {
+                thongBao.put("message","Hóa đơn này không thanh toán được!");
+                thongBao.put("check","3");
+                return ResponseEntity.ok(thongBao);
+            }
+            if(billPayment.getPaymentStatus() == 1) {
+                thongBao.put("message","Hóa đơn này không thanh toán được!");
+                thongBao.put("check","3");
+                return ResponseEntity.ok(thongBao);
+            }
+            BigDecimal cash;
+            try {
+                cash = new BigDecimal(cashPay).subtract(new BigDecimal(surplusMoneyPay));
+            } catch (NumberFormatException e) {
+                thongBao.put("message","Số tiền thanh toán không hợp lệ!");
+                thongBao.put("check","3");
+                return ResponseEntity.ok(thongBao);
+            }
+            cash = new BigDecimal(cashPay).subtract(new BigDecimal(surplusMoneyPay));
             billPayment.setCash(cash);
             if(billPayment.getNote().trim().equals("")) {
                 billPayment.setNote("Thanh toán bằng tiền mặt!");
@@ -995,7 +1060,7 @@ public class    BillRestController extends BaseBill {
             billPayment.setPaymentMethod(checkPayMethod);
             billPayment.setPaymentStatus(Integer.parseInt(payStatus));
             billPayment.setUpdateDate(new Date());
-            billPayment.setSurplusMoney(BigDecimal.valueOf(Long.parseLong(surplusMoneyPay)));
+            billPayment.setSurplusMoney(new BigDecimal(surplusMoneyPay));
 
             int result = billPayment.getCash().compareTo(billPayment.getTotalAmount().add(billPayment.getShippingPrice()).subtract(billPayment.getPriceDiscount()));
 
@@ -1111,18 +1176,20 @@ public class    BillRestController extends BaseBill {
     @GetMapping("/bill-pdf/{idBill}")
     public ResponseEntity<byte[]> getBillDetails(@PathVariable("idBill") String idBill,HttpSession session) throws Exception {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        System.out.println("da vao phuong thuc xuat pdf");
         if(staffLogin == null) {
+            System.out.println("pdf: neu khong dang nhap vao day");
             return null;
         }
 
-        Integer idBillInteger = Integer.getInteger(idBill);
-        String validateIdBill = validateInteger(idBillInteger != null ? idBillInteger.toString() : "");
+        String validateIdBill = validateInteger(idBill);
         if (!validateIdBill.trim().equals("")) {
+            System.out.println("pdf: neu id khong dung vao day");
             return null;
         }
         // Lấy chi tiết hóa đơn và thông tin hóa đơn từ service
-        List<Object[]> billDetails = this.billService.getBillDetailByIdBillPDF(idBillInteger);
-        List<Object[]> billInfoList = this.billService.getBillByIdCreatePDF(idBillInteger);
+        List<Object[]> billDetails = this.billService.getBillDetailByIdBillPDF(Integer.parseInt(idBill));
+        List<Object[]> billInfoList = this.billService.getBillByIdCreatePDF(Integer.parseInt(idBill));
 
         // Kiểm tra dữ liệu
         if (billInfoList == null || billDetails.isEmpty()) {
