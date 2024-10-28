@@ -81,6 +81,7 @@ public class StaffProfileController {
         Staff staff = (Staff) session.getAttribute("staffLogin");
         System.out.println("Staff từ model: " + staff);
         staffProfile.setImageStaffString(staff.getImage());
+
         if(bindingResult.hasErrors()){
             System.out.println("loi ne");
             model.addAttribute("staffProfile", staffProfile);

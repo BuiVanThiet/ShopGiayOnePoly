@@ -25,39 +25,39 @@
                     <div class="row mb-3">
                         <label class="col-sm-4 col-form-label">Tên đăng nhập</label>
                         <div class="col-sm-8">
-                            <label class="col-sm-4 col-form-label" style="margin-left: 11px;"th:text="${userProfile.account}"></label>
+                            <input class="form-control" th:field="*{account}" readonly>
                         </div>
                     </div>
 
                     <div class="row mb-3">
                         <label class="col-sm-4 col-form-label">Họ và tên</label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control" name="fullName" th:value="${userProfile.fullName}" placeholder="Nhập họ và tên">
-                            <div class="error-message" id="fullName-error" style="color: red;"></div>
+                            <input type="text" class="form-control" name="fullName" th:field="*{fullName}" placeholder="Nhập họ và tên">
+                            <p th:if="${#fields.hasErrors('fullName')}" class="text-danger" th:errors="*{fullName}"></p>
                         </div>
                     </div>
 
                     <div class="row mb-3">
                         <label class="col-sm-4 col-form-label">Mật khẩu</label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control" id="password" name="password" th:value="${userProfile.password}" placeholder="Nhập password">
-                            <div class="error-message" id="password-error" style="color: red;"></div>
+                            <input type="text" class="form-control" id="password" name="password" th:field="*{password}" placeholder="Nhập password">
+                            <p th:if="${#fields.hasErrors('password')}" class="text-danger" th:errors="*{password}"></p>
                         </div>
                     </div>
 
                     <div class="row mb-3">
                         <label class="col-sm-4 col-form-label">Email</label>
                         <div class="col-sm-8">
-                            <input type="email" class="form-control" id="email" name="email" th:value="${userProfile.email}" placeholder="Nhập email">
-                            <div class="error-message" id="email-error" style="color: red;"></div>
+                            <input type="text" class="form-control" id="email" name="email" th:field="*{email}" placeholder="Nhập email">
+                            <p th:if="${#fields.hasErrors('email')}" class="text-danger" th:errors="*{email}"></p>
                         </div>
                     </div>
 
                     <div class="row mb-3">
                         <label class="col-sm-4 col-form-label">Số điện thoại</label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control" id="sdt" name="numberPhone" th:value="${userProfile.numberPhone}" placeholder="Nhập số điện thoại">
-                            <div class="error-message" id="sdt-error" style="color: red;"></div>
+                            <input type="text" class="form-control" id="sdt" name="numberPhone" th:field="*{numberPhone}" placeholder="Nhập số điện thoại">
+                            <p th:if="${#fields.hasErrors('numberPhone')}" class="text-danger" th:errors="*{numberPhone}"></p>
                         </div>
                     </div>
 
@@ -80,7 +80,6 @@
                         <div class="col-sm-2">
                             <select class="form-select" id="dob-day" name="dob-day">
                                 <option value="" disabled>Ngày</option>
-                                <!-- Tạo tùy chọn cho ngày -->
                                 <th:block th:each="day : ${#numbers.sequence(1, 31)}">
                                     <option th:value="${day}" th:text="${day}"
                                             th:selected="${day == birthDayDay}"></option>
@@ -90,7 +89,6 @@
                         <div class="col-sm-3">
                             <select class="form-select" id="dob-month" name="dob-month">
                                 <option value="" disabled>Tháng</option>
-                                <!-- Tạo tùy chọn cho tháng -->
                                 <th:block th:each="month : ${#numbers.sequence(1, 12)}">
                                     <option th:value="${month}" th:text="${month}"
                                             th:selected="${month == birthDayMonth}"></option>
@@ -100,7 +98,6 @@
                         <div class="col-sm-3">
                             <select class="form-select" id="dob-year" name="dob-year">
                                 <option value="" disabled>Năm</option>
-                                <!-- Tạo tùy chọn cho năm -->
                                 <th:block th:each="year : ${#numbers.sequence(1900, 2024)}">
                                     <option th:value="${year}" th:text="${year}"
                                             th:selected="${year == birthDayYear}"></option>
