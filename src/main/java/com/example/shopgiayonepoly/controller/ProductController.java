@@ -1,6 +1,8 @@
 package com.example.shopgiayonepoly.controller;
 
 import com.cloudinary.Cloudinary;
+import com.cloudinary.api.ApiResponse;
+import com.example.shopgiayonepoly.dto.request.ProductUpdateRequet;
 import com.example.shopgiayonepoly.entites.*;
 import com.example.shopgiayonepoly.service.CategoryService;
 import com.example.shopgiayonepoly.service.ProductService;
@@ -44,28 +46,22 @@ public class ProductController {
     @Autowired
     CategoryService categoryService;
 
-    @GetMapping("/product")
-    public String list(Model model) {
-        model.addAttribute("productList", productService.getProductNotStatus0());
-        model.addAttribute("productAdd", new Product());
-        model.addAttribute("materialList", materialService.findAll());
-        model.addAttribute("manufacturerList", manufacturerService.findAll());
-        model.addAttribute("originList", originService.findAll());
-        model.addAttribute("soleList", soleService.findAll());
-        model.addAttribute("categoryList", categoryService.findAll());
-        return "/Product/product";
-    }
+//    @GetMapping("/product")
+//    public String list(Model model) {
+//        model.addAttribute("productList", productService.getProductNotStatus0());
+//        model.addAttribute("productAdd", new Product());
+//        model.addAttribute("materialList", materialService.findAll());
+//        model.addAttribute("manufacturerList", manufacturerService.findAll());
+//        model.addAttribute("originList", originService.findAll());
+//        model.addAttribute("soleList", soleService.findAll());
+//        model.addAttribute("categoryList", categoryService.findAll());
+//        return "/Product/product";
+//    }
 
     @GetMapping("/product/productv2")
     public String productv2(Model model) {
-//        model.addAttribute("productList", productService.getProductNotStatus0());
-        model.addAttribute("productAdd", new Product());
-        model.addAttribute("materialList", materialService.findAll());
-        model.addAttribute("manufacturerList", manufacturerService.findAll());
-        model.addAttribute("originList", originService.findAll());
-        model.addAttribute("soleList", soleService.findAll());
-        model.addAttribute("categoryList", categoryService.findAll());
-        model.addAttribute("productList", productService.findAllProductsWithOneImage());
+        model.addAttribute("productList", productService.getProductNotStatus0());
+//        model.addAttribute("listImage", productService.findAllImagesByProductId(productID));
         return "/Product/productv2";
     }
 
@@ -81,20 +77,13 @@ public class ProductController {
         return "/Product/create";
     }
 
+    @GetMapping("/api/productList")
+    @ResponseBody
+    public List<Product> getProductList() {
+        return productService.findAll(); // Trả về danh sách sản phẩm
+    }
 
 
-//    @GetMapping("/product/delete")
-//    public ResponseEntity<List<Product>> listProductDelete() {
-//        List<Product> deletedProducts = productService.getProductDelete();
-//        return new ResponseEntity<>(deletedProducts, HttpStatus.OK);
-//    }
-//
-//    @GetMapping("/product/active")
-//    public ResponseEntity<List<Product>> listActive() {
-//        List<Product> listProductActive = productService.getProductNotStatus0();
-//        return new ResponseEntity<>(listProductActive, HttpStatus.OK);
-//    }
-//
 
     @RequestMapping("/product/add")
     public String add(@ModelAttribute("productAdd") Product product,
@@ -178,63 +167,6 @@ public class ProductController {
             return ResponseEntity.notFound().build();
         }
     }
-//
-//    @PostMapping("/product/update-status")
-//    @ResponseBody
-//    public ResponseEntity<String> updateStatus(@RequestBody Map<String, Object> payload) {
-//        try {
-//            int id;
-//            int status;
-//
-//            // Lấy id và status từ payload, kiểm tra kiểu dữ liệu
-//            if (payload.get("id") instanceof Integer) {
-//                id = (Integer) payload.get("id");
-//            } else {
-//                id = Integer.parseInt((String) payload.get("id"));
-//            }
-//
-//            if (payload.get("status") instanceof Integer) {
-//                status = (Integer) payload.get("status");
-//            } else {
-//                status = Integer.parseInt((String) payload.get("status"));
-//            }
-//
-//            // Gọi service để cập nhật trạng thái trong cơ sở dữ liệu
-//            productService.updateStatus(id, status);
-//
-//            return ResponseEntity.ok("Cập nhật trạng thái thành công");
-//        } catch (NumberFormatException e) {
-//            return ResponseEntity.badRequest().body("Có lỗi xảy ra khi cập nhật trạng thái");
-//        }
-//    }
-//
-//    @PostMapping("/update-product")
-//    @ResponseBody
-//    public ResponseEntity<String> updateProduct(@RequestBody Map<String, Object> payload) {
-//        try {
-//            int id;
-//            String codeProduct;
-//            String nameProduct;
-//
-//            // Lấy giá trị từ payload
-//            if (payload.get("id") instanceof Integer) {
-//                id = (Integer) payload.get("id");
-//            } else {
-//                id = Integer.parseInt((String) payload.get("id"));
-//            }
-//
-//            codeProduct = (String) payload.get("codeProduct");
-//            nameProduct = (String) payload.get("nameProduct");
-//
-//            // Gọi service để cập nhật dữ liệu màu sắc trong cơ sở dữ liệu
-//            productService.updateProduct(id, codeProduct, nameProduct);
-//
-//            return ResponseEntity.ok("Cập nhật dữ liệu thành công");
-//        } catch (Exception e) {
-//            return ResponseEntity.badRequest().body("Cập nhật dữ liệu thất bại");
-//        }
-//    }
-//
     @PostMapping("/product/delete")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> deleteProduct(@RequestBody Map<String, Object> payload) {

@@ -1,11 +1,17 @@
 package com.example.shopgiayonepoly.implement;
 
 
+import com.example.shopgiayonepoly.dto.request.ProductUpdateRequet;
 import com.example.shopgiayonepoly.dto.response.ProductRespose;
 import com.example.shopgiayonepoly.entites.CategoryProduct;
 import com.example.shopgiayonepoly.entites.Image;
 import com.example.shopgiayonepoly.entites.Product;
+import com.example.shopgiayonepoly.repositores.CategoryRepository;
 import com.example.shopgiayonepoly.repositores.ProductRepository;
+import com.example.shopgiayonepoly.repositores.attribute.ManufacturerRepository;
+import com.example.shopgiayonepoly.repositores.attribute.MaterialRepository;
+import com.example.shopgiayonepoly.repositores.attribute.OriginRepository;
+import com.example.shopgiayonepoly.repositores.attribute.SoleRepository;
 import com.example.shopgiayonepoly.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +29,16 @@ import java.util.Optional;
 public class ProductImplement implements ProductService {
     @Autowired
     ProductRepository productRepository;
+    @Autowired
+    private MaterialRepository materialRepository;
+    @Autowired
+    private ManufacturerRepository manufacturerRepository;
+    @Autowired
+    private OriginRepository originRepository;
+    @Autowired
+    private SoleRepository soleRepository;
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     @Override
     public List<Product> findAll() {
@@ -123,5 +139,38 @@ public class ProductImplement implements ProductService {
         return productRepository.findAllProductsWithOneImage();
     }
 
-
+//    @Override
+//    public void updateProduct(ProductUpdateRequet productDTO) {
+//        Optional<Product> optionalProduct = productRepository.findById(productDTO.getId());
+//        if (optionalProduct.isPresent()) {
+//            Product product = optionalProduct.get();
+//
+//            // Cập nhật các thuộc tính cơ bản
+//            product.setCodeProduct(productDTO.getCodeProduct());
+//            product.setNameProduct(productDTO.getNameProduct());
+//            product.setDescribe(productDTO.getDescribe());
+//            product.setStatus(productDTO.getStatus());
+//
+//            // Cập nhật các khóa ngoại
+//            materialRepository.findById(productDTO.ge()).ifPresent(product::setMaterial);
+//            manufacturerRepository.findById(productDTO.getManufacturerId()).ifPresent(product::setManufacturer);
+//            originRepository.findById(productDTO.getOriginId()).ifPresent(product::setOrigin);
+//            soleRepository.findById(productDTO.getSoleId()).ifPresent(product::setSole);
+//
+//            // Cập nhật danh sách categories
+//            Set<Category> categories = new HashSet<>();
+//            for (Long categoryId : productDTO.getCategoryIds()) {
+//                categoryRepository.findById(categoryId).ifPresent(categories::add);
+//            }
+//            product.setCategories(categories);
+//
+//            // Cập nhật danh sách images
+//            List<Image> images = productDTO.getImages().stream()
+//                    .map(imageDTO -> new Image(imageDTO.getUrl(), product))
+//                    .collect(Collectors.toList());
+//            product.setImages(images);
+//
+//            productRepository.save(product); // Lưu sản phẩm sau khi cập nhật
+//        }
+//    }
 }

@@ -30,11 +30,21 @@
                        onclick="showGridViewProduct()"></i>
                 </div>
             </div>
+            <div class="update-product">
+                <button id="save-button" onclick="saveChanges()" style="display: none;">Lưu lại</button>
+                <button id="cancel-button" onclick="cancelChanges()" style="display: none;">Hủy</button>
+            </div>
+
             <div class="form-group-product" style="display: none">
-                <div th:each="image : ${productList}" class="form-control-product">
-                    <img th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728725582/' + ${image.image}"
-                         alt="Ảnh sản phẩm">
-                    <p th:text="${image.nameProduct}"></p>
+                <div th:each="product : ${productList}" class="form-control-product">
+                    <p th:text="${product.nameProduct}"></p>
+                    <div class="image-slider">
+                        <div class="slides">
+                            <div class="slide" th:each="image : ${product.images}">
+                                <img th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728725582/' + ${image.nameImage}" alt="Ảnh sản phẩm">
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <table class="table-product">
@@ -55,28 +65,32 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="product, iterStat : ${productList}" th:id="'row-product-' + ${iterStat.index}"
-                    th:data-id="${product.id}">
+                <tr th:each="product, iterStat : ${productList}" th:id="'row-product-' + ${iterStat.index}" th:data-id="${product.id}">
                     <td>
                         <input type="checkbox" class="select-row-product"/>
                     </td>
-                    <td th:text="${product.codeProduct}"></td>
-                    <td>
-                        <img alt="Lỗi hiển thị"
-                             th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728725582/' + ${product.image}"/>
+                    <td data-column="codeProduct" th:text="${product.codeProduct}"></td>
+                    <td data-column="nameProduct">
+                        <div class="product-image-container">
+                            <div class="image-slider">
+                                <div class="slides">
+                                    <div class="slide" th:each="image : ${product.images}">
+                                        <img th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728725582/' + ${image.nameImage}" alt="Ảnh sản phẩm">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div th:text="${product.nameProduct}"></div>
                     </td>
-                    <td th:text="${product.material.nameMaterial}"></td>
-                    <td th:text="${product.manufacturer.nameManufacturer}"></td>
-                    <td th:text="${product.origin.nameOrigin}"></td>
-                    <td th:text="${product.sole.nameSole}"></td>
-                    <td th:text="${product.describe}"></td>
-                    <td th:text="${product.status == 1 ? 'Đang bán' : (product.status == 2 ? 'Ngừng bán' : '')}"></td>
+                    <td data-column="material" th:text="${product.material.nameMaterial}"></td>
+                    <td data-column="manufacturer" th:text="${product.manufacturer.nameManufacturer}"></td>
+                    <td data-column="origin" th:text="${product.origin.nameOrigin}"></td>
+                    <td data-column="sole" th:text="${product.sole.nameSole}"></td>
+                    <td data-column="describe" th:text="${product.describe}"></td>
+                    <td data-column="status" th:text="${product.status == 1 ? 'Đang bán' : (product.status == 2 ? 'Ngừng bán' : '')}"></td>
                     <td>
                         <div class="dropdown-product">
-                            <i class="fa fa-ellipsis-v fa-ellipsis-v-product" aria-hidden="true"
-                               onclick="toggleDropdownProduct(event, this)"></i>
-                            <!-- Menu hiện ra khi bấm vào icon -->
+                            <i class="fa fa-ellipsis-v fa-ellipsis-v-product" aria-hidden="true" onclick="toggleDropdownProduct(event, this)"></i>
                             <div class="dropdown-menu-product">
                                 <a href="#">Xem chi tiết</a>
                                 <a href="#">Chỉnh sửa</a>
@@ -86,7 +100,9 @@
                     </td>
                 </tr>
                 </tbody>
+
             </table>
+
             <a class="add-button-product" style="text-decoration: none;" href="/staff/product/create"><i
                     class="fas fa-plus"></i> Thêm sản phẩm</a>
         </div>
