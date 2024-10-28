@@ -14,34 +14,34 @@
 </head>
 <body>
 <section>
-<div class="row">
-    <div class="col-4">
-        <label>Tỉnh</label>
-        <select id="province" class="form-select">
-            <option value="">Chọn Tỉnh</option>
-        </select>
+    <div class="row">
+        <div class="col-4">
+            <label>Tỉnh</label>
+            <select id="province" class="form-select">
+                <option value="">Chọn Tỉnh</option>
+            </select>
+        </div>
+        <div class="col-4">
+            <label>Huyện</label>
+            <select id="district" class="form-select">
+                <option value="">Chọn Huyện</option>
+            </select>
+        </div>
+        <div class="col-4">
+            <label>Xã, Phường</label>
+            <select id="ward" class="form-select">
+                <option value="">Chọn Xã, Phường</option>
+            </select>
+        </div>
     </div>
-    <div class="col-4">
-        <label>Huyện</label>
-        <select id="district" class="form-select">
-            <option value="">Chọn Huyện</option>
-        </select>
-    </div>
-    <div class="col-4">
-        <label>Xã, Phường</label>
-        <select id="ward" class="form-select">
-            <option value="">Chọn Xã, Phường</option>
-        </select>
-    </div>
-</div>
-<label>Phí ship</label>
-<span id="shippingFee"></span>
+    <label>Phí ship</label>
+    <span id="shippingFee"></span>
 </section>
 </body>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const apiKey = '0fc88a8e-6633-11ef-8e53-0a00184fe694';
-        const shopId = '194418';
+        const shopId = '195165';
         function fetchProvinces() {
             fetch('https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/province', {
                 headers: {
@@ -136,13 +136,13 @@
         fetchProvinces();
 
         function calculateShippingFee(serviceId) {
-            const fromDistrictId = 1582;
+            const fromDistrictId = 3440;
             const toDistrictId = document.getElementById("district").value;
             const toWardCode = document.getElementById("ward").value;
-            const weight = 800;
-            const length = 300;
-            const width = 300;
-            const height = 300;
+            const weight = 200;
+            const length = 30;
+            const width = 20;
+            const height = 10;
 
             if (!fromDistrictId || !toDistrictId || !toWardCode || !serviceId || !shopId) {
                 console.error('Thiếu thông tin cần thiết');
