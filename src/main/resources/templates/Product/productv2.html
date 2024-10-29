@@ -17,12 +17,14 @@
             </div>
 
             <div class="search-bar-product">
-                <select class="search-select-product">
-                    <option value="category1">Category 1</option>
-                    <option value="category2">Category 2</option>
-                    <option value="category3">Category 3</option>
+                <select class="search-select-product" onchange="fetchProductsByCategoryAndSearch(this.value, document.querySelector('.search-input-product').value)">
+                    <option value="0">Chọn danh mục</option>
+                    <th:block th:each="category : ${categoryList}">
+                        <option th:value="${category.id}" th:text="${category.nameCategory}"></option>
+                    </th:block>
                 </select>
                 <input type="text" class="search-input-product" placeholder="Tìm kiếm">
+
                 <div class="icon-group-product">
                     <i class="fa fa-list icon-product fa-list-product" aria-hidden="true"
                        onclick="showListViewProduct()"></i>
@@ -31,12 +33,12 @@
                 </div>
             </div>
             <div class="update-product">
-                <button id="save-button" onclick="saveChanges()" style="display: none;">Lưu lại</button>
-                <button id="cancel-button" onclick="cancelChanges()" style="display: none;">Hủy</button>
+                <button id="btn-save-product" class="btn-save-product" style="display: none" onclick="saveChanges()">Lưu lại</button>
+                <button id="btn-cancel-product" class="btn-cancel-product " style="display: none" onclick="cancelChanges()">Hủy bỏ</button>
             </div>
 
             <div class="form-group-product" style="display: none">
-                <div th:each="product : ${productList}" class="form-control-product">
+                <div th:each="product : ${productList}" id="form-control-product" class="form-control-product">
                     <p th:text="${product.nameProduct}"></p>
                     <div class="image-slider">
                         <div class="slides">
@@ -64,7 +66,7 @@
                     <th style="width: 30px"></th>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody id="product-table-body">
                 <tr th:each="product, iterStat : ${productList}" th:id="'row-product-' + ${iterStat.index}" th:data-id="${product.id}">
                     <td>
                         <input type="checkbox" class="select-row-product"/>
@@ -100,8 +102,11 @@
                     </td>
                 </tr>
                 </tbody>
-
             </table>
+
+            <div id="pagination-controls" class="pageable-product">
+                <ul id="pagination-product" class="pagination-product"></ul>
+            </div>
 
             <a class="add-button-product" style="text-decoration: none;" href="/staff/product/create"><i
                     class="fas fa-plus"></i> Thêm sản phẩm</a>

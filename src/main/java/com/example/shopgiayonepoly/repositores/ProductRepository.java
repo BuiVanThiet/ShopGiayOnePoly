@@ -40,6 +40,29 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
                      "p.manufacturer,p.origin,p.sole, p.describe, p.createDate,p.updateDate,p.status")
     List<ProductRespose> findAllProductsWithOneImage();
 
+    @Query("SELECT p FROM Product p " +
+            "LEFT JOIN CategoryProduct cp ON p.id = cp.idProduct " +
+            "WHERE ( :idCategory = 0 AND :searchTerm IS NOT NULL AND ( " +
+            "LOWER(p.codeProduct) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(p.nameProduct) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(p.material.nameMaterial) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(p.manufacturer.nameManufacturer) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(p.origin.nameOrigin) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(p.sole.nameSole) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(p.describe) LIKE LOWER(CONCAT('%', :searchTerm, '%')))) OR " +
+            "( :idCategory = 0 AND :searchTerm IS NULL) OR " +
+            "( :idCategory <> 0 AND :searchTerm IS NULL AND cp.idCategory = :idCategory) OR " +
+            "( :idCategory <> 0 AND :searchTerm IS NOT NULL AND cp.idCategory = :idCategory AND ( " +
+            "LOWER(p.codeProduct) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(p.nameProduct) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(p.material.nameMaterial) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(p.manufacturer.nameManufacturer) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(p.origin.nameOrigin) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(p.sole.nameSole) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(p.describe) LIKE LOWER(CONCAT('%', :searchTerm, '%')))) " +
+            "AND p.status <> 0")
+    List<Product> findProducts(@Param("idCategory") Integer idCategory, @Param("searchTerm") String searchTerm);
+
 
 
 
