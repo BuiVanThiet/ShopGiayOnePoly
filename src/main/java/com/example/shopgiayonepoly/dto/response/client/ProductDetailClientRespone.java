@@ -20,7 +20,7 @@ public class ProductDetailClientRespone {
     private String productDetailDescription;
     private String colorName;
     private String sizeName;
-    private String productImage;  // Hình ảnh sản phẩm, nếu cần
+    private String productImage;
 
     public ProductDetailClientRespone(Integer productDetailId,
                                       Integer productId,
@@ -41,8 +41,8 @@ public class ProductDetailClientRespone {
         this.sizeName = sizeName;
         this.productImage = productImage;
     }
-
-    public ProductDetailClientRespone(BigDecimal price, Integer quantity) {
+    public ProductDetailClientRespone(Integer id, BigDecimal price, Integer quantity) {
+        this.productDetailId = id;
         this.price = price;
         this.quantity = quantity;
     }

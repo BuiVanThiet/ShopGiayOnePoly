@@ -103,14 +103,16 @@ public interface ClientRepository extends JpaRepository<Bill, Integer> {
 
     @Query("""
             select new com.example.shopgiayonepoly.dto.response.client.ProductDetailClientRespone(
+            pd.id,
             pd.price,
             pd.quantity
-                
+            
             ) FROM ProductDetail pd
              WHERE pd.color.id = :colorId AND pd.size.id = :sizeId
              AND pd.product.id = :productId
             """)
     ProductDetailClientRespone findByProductDetailColorAndSizeAndProductId(
+
             @Param("colorId") Integer colorId,
             @Param("sizeId") Integer sizeId,
             @Param("productId") Integer productId);

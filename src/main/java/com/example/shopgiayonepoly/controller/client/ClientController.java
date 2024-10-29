@@ -14,6 +14,7 @@ import com.example.shopgiayonepoly.service.ClientService;
 import com.example.shopgiayonepoly.service.CustomerService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -121,20 +122,24 @@ public class ClientController {
     }
 
     @PostMapping("/add-to-cart")
-    public String addToCart(@RequestParam Integer productDetailId,
-                            @RequestParam("quantity") int quantity,
-                            HttpSession session,
-                            Model model) {
+    public ResponseEntity<?> addToCart(
+            @RequestParam("productDetailId") Integer productDetailId,
+            @RequestParam("quantity") Integer quantity,
+            HttpSession session) {
+        Map<String, Object> response = new HashMap<>();
+
         if (quantity <= 0) {
-            model.addAttribute("errorMessage", "Số lượng sản phẩm không hợp lệ.");
-            return "redirect:/product-detail/" + productDetailId;
+            response.put("success", false);
+            response.put("message", "Số lượng sản phẩm không hợp lệ.");
+            return ResponseEntity.badRequest().body(response);
         }
 
         // Kiểm tra sản phẩm có tồn tại không
         ProductDetail productDetail = productDetailRepository.findById(productDetailId).orElse(null);
         if (productDetail == null) {
-            model.addAttribute("errorMessage", "Sản phẩm không tồn tại.");
-            return "redirect:/product-detail/" + productDetailId;
+            response.put("success", false);
+            response.put("message", "Sản phẩm không tồn tại.");
+            return ResponseEntity.badRequest().body(response);
         }
 
         // Lấy thông tin đăng nhập của khách hàng từ session
@@ -170,20 +175,21 @@ public class ClientController {
                 sessionCart = new HashMap<>();
             }
 
-            // Cập nhật số lượng spct trong session
+            // Cập nhật số lượng sản phẩm trong session
             sessionCart.put(productDetailId, sessionCart.getOrDefault(productDetailId, 0) + quantity);
             session.setAttribute("sessionCart", sessionCart);
         }
 
-        return "redirect:/cart";
+        response.put("success", true);
+        response.put("message", "Thêm sản phẩm vào giỏ hàng thành công.");
+        return ResponseEntity.ok(response);
     }
+
 
     @GetMapping("/cart")
     public String getFromCart(){
         return "client/cart";
     }
-
-
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @GetMapping("/cerateProduct")
