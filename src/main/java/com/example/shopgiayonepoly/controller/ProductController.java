@@ -1,8 +1,6 @@
 package com.example.shopgiayonepoly.controller;
 
 import com.cloudinary.Cloudinary;
-import com.cloudinary.api.ApiResponse;
-import com.example.shopgiayonepoly.dto.request.ProductUpdateRequet;
 import com.example.shopgiayonepoly.entites.*;
 import com.example.shopgiayonepoly.service.CategoryService;
 import com.example.shopgiayonepoly.service.ProductService;
@@ -61,7 +59,7 @@ public class ProductController {
     @GetMapping("/product/productv2")
     public String productv2(Model model) {
         model.addAttribute("productList", productService.getProductNotStatus0());
-//        model.addAttribute("listImage", productService.findAllImagesByProductId(productID));
+        model.addAttribute("categoryList", categoryService.findAll());
         return "/Product/productv2";
     }
 
@@ -206,8 +204,15 @@ public class ProductController {
         }
     }
 
+    @GetMapping("/product/search")
+    @ResponseBody
+    public List<Product> searchProducts(Integer idCategory, String searchTerm) {
+            return productService.findProducts(idCategory, searchTerm);
+    }
+
+
     @ModelAttribute("staffInfo")
-    public Staff staff(HttpSession session){
+    public Staff staff(HttpSession session) {
         Staff staff = (Staff) session.getAttribute("staffLogin");
         return staff;
     }
