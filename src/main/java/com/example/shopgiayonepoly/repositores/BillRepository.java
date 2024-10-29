@@ -389,4 +389,7 @@ select case
 
     @Query("select pd from ProductDetail  pd where pd.id = :idCheck")
     ProductDetail getProductDteailById(@Param("idCheck") Integer id);
+
+    @Query("SELECT COUNT(b) FROM Bill b WHERE b.status = 5 AND MONTH(b.createDate) = MONTH(CURRENT_DATE) AND YEAR(b.createDate) = YEAR(CURRENT_DATE)")
+    long invoicePaid();
 }

@@ -270,38 +270,69 @@ h1.center {
 }
 
 /* Table Styles */
-.table {
+/*.table {*/
+/*    background-color: #ffffff;*/
+/*    border: 1px solid #dee2e6;*/
+/*    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.05); !* Softer shadow *!*/
+/*}*/
+
+/*.table-hover tbody tr:hover {*/
+/*    background-color: #e0f7fa; !* Light pastel cyan on hover *!*/
+/*}*/
+
+/*.table-striped tbody tr:nth-of-type(odd) {*/
+/*    background-color: #f2f2f2; !* Soft grey stripes *!*/
+/*}*/
+
+/*.table-dark {*/
+/*    background-color: #c3d9df; !* Light pastel grey *!*/
+/*    color: #4f6d7a; !* Darker blue-grey *!*/
+/*}*/
+
+/*.table-dark th {*/
+/*    border-color: #b3cde0; !* Border to match the pastel theme *!*/
+/*}*/
+
+/*!* Table Cells *!*/
+/*td {*/
+/*    vertical-align: middle;*/
+/*    font-size: 14px;*/
+/*}*/
+
+/*th {*/
+/*    color: #6d9eeb; !* Pastel blue for header text *!*/
+/*}*/
+
+.table-customer {
     background-color: #ffffff;
     border: 1px solid #dee2e6;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.05); /* Softer shadow */
 }
 
-.table-hover tbody tr:hover {
+.table-customer-hover tbody tr:hover {
     background-color: #e0f7fa; /* Light pastel cyan on hover */
 }
 
-.table-striped tbody tr:nth-of-type(odd) {
+.table-customer-striped tbody tr:nth-of-type(odd) {
     background-color: #f2f2f2; /* Soft grey stripes */
 }
 
-.table-dark {
+.table-customer-dark {
     background-color: #c3d9df; /* Light pastel grey */
     color: #4f6d7a; /* Darker blue-grey */
 }
 
-.table-dark th {
+.table-customer-dark th {
     border-color: #b3cde0; /* Border to match the pastel theme */
 }
 
 /* Table Cells */
-td {
+.table-customer td {
     vertical-align: middle;
     font-size: 14px;
 }
 
-th {
-    color: #6d9eeb; /* Pastel blue for header text */
-}
+
 
 /* Pagination */
 .pagination .page-link {

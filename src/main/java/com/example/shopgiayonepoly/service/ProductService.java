@@ -48,6 +48,6 @@ public interface ProductService {
 
     List<ProductRespose> findAllProductsWithOneImage();
 
-//     void updateProduct(ProductUpdateRequet productDTO);
+    List<Product> findProducts(Integer idCategory, String searchTerm);
 
 }

@@ -126,8 +126,7 @@
                             <p id="quantity-display" style="color: #f10c0c">Số lượng</p>
                         </div>
                         <div class="add-cart">
-                            <button class="btn-add-cart" id="btn-add-cart" data-bs-toggle="modal"
-                                    data-bs-target="#addCartModal">Thêm vào giỏ
+                            <button class="btn-add-cart" id="btn-add-cart" onclick="showCartModal()">Thêm vào giỏ
                             </button>
                         </div>
 
@@ -146,61 +145,46 @@
                                         </button>
                                     </div>
                                     <div class="modal-body">
-                                        <div class="item line-item line-item-container" data-variant-id="1130140024"
-                                             data-pro-id="1056862617">
+                                        <!-- ID sản phẩm chi tiết ẩn -->
+                                        <input type="hidden" id="productDetailID-hidden" name="productDetailId">
+                                        <div class="item line-item line-item-container">
                                             <div class="left">
                                                 <div class="item-img">
-                                                    <a href="/products/giay-tay-nam-preth-cognac">
+                                                    <a href="#">
                                                         <img src="/img/client/product/SPCT_IMG_1.png"
-                                                             style="width:220px;height: 220px  " ;
-                                                             alt="">
+                                                             alt="product image" style="width:220px;height:220px;">
                                                     </a>
                                                 </div>
                                             </div>
                                             <div class="right">
                                                 <div class="item-info">
-                                                    <h3 th:text="${productDetail[0].productName}">Tên sản phẩm</h3>
-                                                    <div class="fw-lighter"
-                                                         style="font-size: 25px;font-weight: lighter">
+                                                    <h3 id="product-name">Tên sản phẩm</h3>
+                                                    <div style="font-size: 25px;">
                                                         <span id="price-modal">₫</span>
                                                     </div>
                                                     <div class="item-desc">
                                                         <div class="variant-option">
-                                                            <span class="title">Màu sắc:</span>
-                                                            <span id="color-modal" class="text">Color</span>
+                                                            <span>Màu sắc: </span>
+                                                            <span id="color-modal">Color</span>
                                                         </div>
                                                         <div class="variant-option">
-                                                            <span class="title">Kích thước:</span>
-                                                            <span id="size-modal" class="text">Size</span>
+                                                            <span>Kích thước: </span>
+                                                            <span id="size-modal">Size</span>
                                                         </div>
                                                     </div>
                                                     <div class="item-quan">
-                                                        <span class="txt_qty d-none">1</span>
-                                                        <div class="qty quantity-partent qty-click btn-group"
-                                                             role="group" aria-label="Quantity controls">
-                                                            <!-- Nút giảm số lượng với biểu tượng trừ -->
-                                                            <button id="qtyminus" type="button"
-                                                                    class=" qty-btn btn btn-outline-secondary">
-                                                                <i class="fas fa-minus"></i>
-                                                            </button>
-                                                            <input readonly data-vid="1130140024" data-quantity="1"
-                                                                   data-product="1056862617" type="text" size="4"
-                                                                   min="1" value="1"
-                                                                   class="tc line-item-qty item-quantity form-control text-center">
-                                                            <!-- Nút tăng số lượng với biểu tượng cộng -->
-                                                            <button id="qtyplus" type="button"
-                                                                    class="qty-btn btn btn-outline-secondary">
-                                                                <i class="fas fa-plus"></i>
-                                                            </button>
-                                                        </div>
+                                                        <button id="qtyminus" class="btn btn-outline-secondary">-
+                                                        </button>
+                                                        <input type="text" readonly value="1" name="quantity-add-cart"
+                                                               class="item-quantity form-control text-center">
+                                                        <button id="qtyplus" class="btn btn-outline-secondary">+
+                                                        </button>
                                                     </div>
                                                 </div>
                                                 <div class="popup_action">
-                                                    <a href="/onepoly/cart" id="go_cart" class="btn">Đi
-                                                        đến giỏ hàng</a>
-                                                    <a id="stay" class="btn" data-bs-dismiss="modal">Thêm vào giỏ
-                                                    </a>
-
+                                                    <a href="/onepoly/cart" id="go_cart" class="btn">Đi đến giỏ hàng</a>
+                                                    <a id="add-to-cart" class="btn" onclick="addToCart()"
+                                                       data-bs-dismiss="modal">Thêm vào giỏ</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -369,6 +353,7 @@
             </div>
         </div>
     </section>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script th:src="@{/ajax/client/product-detail.js}" type="text/javascript"></script>
 </div>
 </body>
