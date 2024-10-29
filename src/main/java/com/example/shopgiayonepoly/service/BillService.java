@@ -56,4 +56,6 @@ public interface BillService {
     List<Object[]> getInfomationBillReturn(Integer id);
 
     ProductDetail getProductDteailById(Integer id);
+
+    String getDiscountBill(Integer idBill);
 }

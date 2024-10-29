@@ -190,7 +190,39 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
              AND (:statusCheck IS NULL OR bill.status IN (:statusCheck))
         """)
     List<BillResponseManage> getAllBillByStatusDiss0(@Param("nameCheck") String nameCheck, @Param("statusCheck") List<Integer> statusCheck);
-    @Query(""" 
+//    @Query("""
+//    select
+//     new com.example.shopgiayonepoly.dto.response.bill.InformationBillByIdBillResponse(
+//     b.id,
+//     b.createDate,
+//     b.updateDate,
+//     b.status,
+//     b.codeBill,
+//     b.billType,
+//     b.shippingPrice,
+//     b.totalAmount,
+//     v,
+//     case
+//            when v.discountType = 1 then
+//                case
+//                    when b.totalAmount * (v.priceReduced / 100) > v.pricesMax then
+//                        v.pricesMax
+//                    else
+//                        b.totalAmount * (v.priceReduced / 100)
+//                end
+//            when v.discountType = 2 then
+//                v.priceReduced
+//            else
+//                0.00
+//        end,
+//        b.paymentStatus,
+//        b.note
+//     )
+//     from Bill b
+//     left join b.voucher v
+//     where b.id = :idCheck
+//""")
+@Query(""" 
     select 
      new com.example.shopgiayonepoly.dto.response.bill.InformationBillByIdBillResponse(
      b.id,
@@ -202,7 +234,17 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
      b.shippingPrice,
      b.totalAmount,
      v,
-     case 
+     b.priceDiscount,
+        b.paymentStatus,
+        b.note
+     )
+     from Bill b
+     left join b.voucher v
+     where b.id = :idCheck
+""")
+    InformationBillByIdBillResponse getInformationBillByIdBill(@Param("idCheck") Integer idBill);
+    @Query("""
+select case 
             when v.discountType = 1 then
                 case 
                     when b.totalAmount * (v.priceReduced / 100) > v.pricesMax then
@@ -214,15 +256,9 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
                 v.priceReduced
             else 
                 0.00
-        end,
-        b.paymentStatus,
-        b.note
-     )
-     from Bill b
-     left join b.voucher v
-     where b.id = :idCheck
+        end from Bill b left join b.voucher v where b.id = :idBillCheck
 """)
-    InformationBillByIdBillResponse getInformationBillByIdBill(@Param("idCheck") Integer idBill);
+    String getDiscountBill(@Param("idBillCheck") Integer idBill);
 
     @Query(value = """
         (select
@@ -333,7 +369,7 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
            END AS customer_status,
            b.price_discount AS discount_amount,
            CASE
-               WHEN b.total_amount > 0 THEN ROUND((b.price_discount / b.total_amount) * 100, 2)
+               WHEN b.total_amount > 0 THEN (b.price_discount / b.total_amount) * 100
                ELSE 0
            END AS discount_ratio_percentage,
            SUM(bd.quantity) AS total_products

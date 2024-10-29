@@ -4,6 +4,7 @@ import com.example.shopgiayonepoly.baseMethod.BaseBill;
 import com.example.shopgiayonepoly.dto.request.bill.*;
 import com.example.shopgiayonepoly.dto.response.bill.*;
 import com.example.shopgiayonepoly.entites.*;
+import com.example.shopgiayonepoly.service.EmailSenderService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -110,6 +111,17 @@ public class    BillRestController extends BaseBill {
         System.out.println("id billdetail la: " + billDetail.getId());
         System.out.println("so luong moi la: " + billDetailAjax.getQuantity());
         ProductDetail productDetail   = this.billDetailService.getProductDetailById(billDetail.getProductDetail().getId());
+        Bill bill = billDetail.getBill();
+        if(bill == null || bill.getId() == null || bill.getStatus() > 2 || bill.getPaymentStatus() == 1) {
+            thongBao.put("message","Không thể điều chỉnh số lượng mua!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+        if(!billDetailAjax.getMethod().equals("cong") && !billDetailAjax.getMethod().equals("tru")) {
+            thongBao.put("message","Sai phương thức!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
         if(billDetailAjax.getQuantity() <= 0) {
             System.out.println("Sản phẩm không được giảm nhỏ hơn 0!");
             thongBao.put("message","Sản phẩm không được giảm nhỏ hơn 0!");
@@ -150,7 +162,6 @@ public class    BillRestController extends BaseBill {
 
         this.setTotalAmount(billDetail.getBill());
         System.out.println("dang o phuong thuc " + billDetailAjax.getMethod());
-        Bill bill = billDetail.getBill();
         if(bill.getStatus() == 0) {
             this.getUpdateQuantityProduct(productDetail.getId(),quantityUpdate);
         }
@@ -758,7 +769,12 @@ public class    BillRestController extends BaseBill {
 
         Bill bill = this.billService.findById(idBill).orElse(null);
         if(bill == null) {
-            thongBao.put("message","Hóa đươn không tồn tại!");
+            thongBao.put("message","Hóa đơn không tồn tại!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+        if(bill.getStatus() >= 2 || bill.getPaymentStatus() == 1) {
+            thongBao.put("message","Không thể đổi được thng tin giao hàng hóa đơn này!");
             thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }
@@ -857,7 +873,7 @@ public class    BillRestController extends BaseBill {
         }
 
         if(content.equals("cancel")) {
-            Bill billSave = this.billService.save(bill);
+            Bill billSave = bill;
             if(billSave.getStatus() >= 2) {
                 for (BillDetail billDetail: this.billDetailService.findAll()) {
                     if(billDetail.getBill().getId() == billSave.getId()) {
@@ -865,13 +881,20 @@ public class    BillRestController extends BaseBill {
                     }
                 }
             }
+
+            if(billSave.getStatus() == 0 || billSave.getStatus() > 5) {
+                thongBao.put("message","Hóa đơn không hợp lệ!");
+                thongBao.put("check","3");
+                return ResponseEntity.ok(thongBao);
+            }
+
             bill.setUpdateDate(new Date());
             bill.setStatus(6);
             mess = "Hóa đơn đã được hủy!";
             colorMess = "3";
             this.billService.save(bill);
 
-            if (billSave.getVoucher() == null) {
+            if (billSave.getVoucher() != null) {
                 this.getSubtractVoucher(billSave.getVoucher(),-1);
             }
             this.setBillStatus(bill.getId(),bill.getStatus(),session);
@@ -880,6 +903,11 @@ public class    BillRestController extends BaseBill {
                 mess = "Đơn hàng chưa được thanh toán!";
                 colorMess = "3";
             }else {
+                if (bill.getStatus() == 0 || bill.getStatus() > 5) {
+                    thongBao.put("message","Hóa đơn không hợp lệ!");
+                    thongBao.put("check","3");
+                    return ResponseEntity.ok(thongBao);
+                }
                 if(bill.getStatus() == 1) {
                     for (BillDetail billDetail: this.billDetailService.findAll()) {
                         if(billDetail.getBill().getId() == bill.getId()) {
@@ -916,6 +944,12 @@ public class    BillRestController extends BaseBill {
                 this.setBillStatus(bill.getId(),bill.getStatus(),session);
             }
         }else if (content.equals("agreeReturnBill")) {
+            if (bill.getStatus() != 7) {
+                thongBao.put("message","Hóa đơn không hợp lệ!");
+                thongBao.put("check","3");
+                return ResponseEntity.ok(thongBao);
+            }
+
             bill.setUpdateDate(new Date());
             bill.setStatus(8);
             mess = "Hóa đơn đã được xác nhận!";
@@ -923,6 +957,11 @@ public class    BillRestController extends BaseBill {
             this.billService.save(bill);
             this.setBillStatus(bill.getId(),202,session);
         }else if(content.equals("cancelReturnBill")) {
+            if (bill.getStatus() != 7) {
+                thongBao.put("message","Hóa đơn không hợp lệ!");
+                thongBao.put("check","3");
+                return ResponseEntity.ok(thongBao);
+            }
             bill.setUpdateDate(new Date());
             bill.setStatus(9);
             mess = "Hóa đơn đã được hủy!";

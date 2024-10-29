@@ -43,7 +43,7 @@ function loadBillDetail(page)  {
 
                     billDetail.productDetail.product.images.forEach(function(image, imgIndex) {
                         imagesHtml += `
-                            <div class="carousel-item ${imgIndex === 0 ? 'active' : ''}" data-bs-interval="30000">
+                            <div class="carousel-item ${imgIndex === 0 ? 'active' : ''}" data-bs-interval="10000">
                                 <img style="height: auto; width: 100px;" src="https://res.cloudinary.com/dfy4umpja/image/upload/f_auto,q_auto/${image.nameImage}" class="d-block w-100" alt="Lỗi ảnh">
                             </div>`;
                     });
@@ -53,18 +53,18 @@ function loadBillDetail(page)  {
                     if(billDetail.priceRoot == billDetail.price) {
                         priceSaleAndRoot = `
                                 <div>
-                                    <span>${billDetail.price.toLocaleString('en-US')} VNĐ</span>
+                                    <span>${Math.trunc(billDetail.price).toLocaleString('en-US')} VNĐ</span>
                                 </div>`;
                     }else {
                         priceSaleAndRoot = `
                                 <div>
-                                    <span class="text-decoration-line-through">${billDetail.priceRoot.toLocaleString('en-US')} VNĐ</span>
+                                    <span class="text-decoration-line-through">${Math.trunc(billDetail.priceRoot).toLocaleString('en-US')} VNĐ</span>
                                     <br>
-                                    <span class="text-danger fs-5">${billDetail.price.toLocaleString('en-US')} VNĐ</span>
+                                    <span class="text-danger fs-5">${Math.trunc(billDetail.price).toLocaleString('en-US')} VNĐ</span>
                                 </div>`;
                     }
                     var btnDeleteProduct = '';
-                    if(billDetail.bill.status == 2 || billDetail.bill.status == 3 || billDetail.bill.status == 4 ||  billDetail.bill.status == 6 ||  billDetail.bill.status == 7) {
+                    if(billDetail.bill.status == 2 || billDetail.bill.status == 3 || billDetail.bill.status == 4 ||  billDetail.bill.status == 6 || billDetail.bill.paymentStatus == 1) {
                         btnDeleteProduct = `
                        `;
                     }else if (billDetail.bill.status == 1 || billDetail.bill.status == 0){
@@ -89,7 +89,7 @@ function loadBillDetail(page)  {
                         `;
                     }
                     var btnBuyProduct = '';
-                    if(billDetail.bill.status > 1) {
+                    if(billDetail.bill.status > 1 || billDetail.bill.paymentStatus == 1) {
                         btnBuyProduct =`
                                     <div class="number" id="pageNumber">${billDetail.quantity}</div>
                         `
@@ -115,8 +115,8 @@ function loadBillDetail(page)  {
                         <tr class="${rowClass}">
                             <th scope="row" class="text-center align-middle">${index + 1}</th>
                             <td class="text-center align-middle">
-                                <div class="carousel slide" data-bs-ride="carousel">
-                                    <div class="carousel-inner carousel-inner-bill-custom">
+                                <div class="carousel slide d-flex justify-content-center align-items-center" data-bs-ride="carousel">
+                                    <div style="width: 150px;" class="carousel-inner carousel-inner-bill-custom">
                                         ${imagesHtml}
                                     </div>
                                 </div>
@@ -141,7 +141,7 @@ function loadBillDetail(page)  {
                                </div>
                             </td>
                             <td class="text-center align-middle">
-                                ${billDetail.totalAmount.toLocaleString('en-US') + ' VNĐ'}
+                                ${Math.trunc(billDetail.totalAmount).toLocaleString('en-US') + ' VNĐ'}
                             </td>
                                     ${btnDeleteProduct} 
                                
@@ -199,9 +199,9 @@ function paymentInformation() {
             console.log(response)
 
             // Cập nhật thông tin vào các phần tử HTML
-            $('#subTotal').text(response.totalAmount.toLocaleString('en-US') + ' VNĐ');
-            $('#discountAmount').text(response.discount.toLocaleString('en-US') + ' VNĐ');
-            $('#totalAmount').text((response.finalAmount+shipPrice).toLocaleString('en-US') + ' VNĐ');
+            $('#subTotal').text(Math.trunc(response.totalAmount).toLocaleString('en-US') + ' VNĐ');
+            $('#discountAmount').text(Math.trunc(response.discount).toLocaleString('en-US') + ' VNĐ');
+            $('#totalAmount').text(Math.trunc(response.finalAmount+shipPrice).toLocaleString('en-US') + ' VNĐ');
             $('#priceDiscount').val(response.discount);
 
             totalBill = response.finalAmount-response.discount;
@@ -516,15 +516,15 @@ function updateProductTable(response) {
                 // Gán giá đã giảm và giá gốc vào biến priceSaleAndRoot
                 priceSaleAndRoot = `
                 <div>
-                    <span class="text-decoration-line-through fs-6">${productDetail[9].toLocaleString('en-US')} VNĐ</span>
+                    <span class="text-decoration-line-through fs-6">${Math.trunc(productDetail[9]).toLocaleString('en-US')} VNĐ</span>
                     <br>
-                    <span class="text-danger fs-5">${productDetail[12].toLocaleString('en-US')} VNĐ</span>
+                    <span class="text-danger fs-5">${Math.trunc(productDetail[12]).toLocaleString('en-US')} VNĐ</span>
                 </div>`;
             } else {
                 // Nếu không có chương trình giảm giá, chỉ hiển thị giá gốc
                 priceSaleAndRoot = `
                 <div>
-                    <span class="fs-5">${productDetail[9].toLocaleString('en-US')} VNĐ</span>
+                    <span class="fs-5">${Math.trunc(productDetail[9]).toLocaleString('en-US')} VNĐ</span>
                 </div>`;
             }
 
@@ -552,7 +552,7 @@ function updateProductTable(response) {
             var nameImage = productDetail[17].split(',');
             nameImage.forEach(function (imageProduct,indexImage) {
                 imagesHtml += `
-                      <div  data-bs-interval="30000" class="carousel-item ${indexImage === 0 ? 'active' : ''}">
+                      <div  data-bs-interval="10000" class="carousel-item ${indexImage === 0 ? 'active' : ''}">
                         <img src="https://res.cloudinary.com/dfy4umpja/image/upload/v1724519685/${imageProduct.trim()}" class="d-block w-100" alt="Product Image 1">
                       </div>
                      `;
@@ -615,9 +615,9 @@ function updateProductTable(response) {
                   <div class="card card-bill-custom" style="max-width: 800px; margin: auto; height: 500px;">
                     <!-- Mall label in the top-left corner -->
                     ${saleBadge}
-                    <div style="height: 150px;" class="mb-2">
-                      <div id="productCarousel1" class="carousel slide" data-bs-ride="carousel">
-                        <div class="carousel-inner" style="height: 150px;"> <!-- Đặt chiều cao cố định cho carousel -->
+                    <div class="mb-2 ">
+                      <div id="productCarousel1" class="carousel slide d-flex justify-content-center align-items-center" data-bs-ride="carousel">
+                        <div class="carousel-inner" style="height: auto; width: 150px;"> <!-- Đặt chiều cao cố định cho carousel -->
                           ${imagesHtml}
                         </div>
                       </div>

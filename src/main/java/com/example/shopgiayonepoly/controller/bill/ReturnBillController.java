@@ -20,6 +20,11 @@ public class ReturnBillController extends BaseBill {
     public String getIndexReturnBill(@PathVariable("idBill") String idBill,HttpSession session) {
         this.productDetailCheckMark2Request = null;
 
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return null;
+        }
+
         String validateIdBill = validateInteger(idBill);
         if(!validateIdBill.trim().equals("")) {
             this.mess = "Lỗi đinh dạng hóa đơn!";

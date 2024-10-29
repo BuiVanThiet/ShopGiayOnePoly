@@ -131,4 +131,8 @@ public class BillImplement implements BillService {
     public ProductDetail getProductDteailById(Integer id) {
         return billRepository.getProductDteailById(id);
     }
+    @Override
+    public String getDiscountBill(Integer idBill) {
+        return this.billRepository.getDiscountBill(idBill);
+    }
 }
