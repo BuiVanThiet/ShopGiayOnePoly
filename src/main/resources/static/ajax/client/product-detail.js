@@ -67,22 +67,20 @@ function getProductDetail(productId, colorId, sizeId) {
             sizeId: sizeId
         },
         success: function (data) {
-            console.log(data);
+            console.log("ProductDetail:", data); // In ra đối tượng để kiểm tra cấu trúc
             if (data) {
-                $('#quantity-display').text(data.quantity); // Cập nhật số lượng
-                $('#price-display').text(data.price.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'})); // Cập nhật giá
-                $('#price-modal').text(data.price.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'})); // Cập nhật giá
+                $('#productDetailID-hidden').val(data.productDetailId);
+                console.log('Id sản phẩm chi tiết: ' + data.productDetailId);
+                const quantity = data.quantity || 0; // Đảm bảo giá trị số lượng là hợp lệ
+                $('#quantity-display').text(quantity);
+                $('#price-display').text(data.price.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'}));
+                $('#price-modal').text(data.price.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'}));
             } else {
-                $('#quantity-display').text(0); // Nếu không có dữ liệu, hiển thị số lượng là 0
-                $('#price-display').text("0"); // Hiển thị thông báo không có giá
-                $('#price-modal').text("0"); // Hiển thị thông báo không có giá
+                console.log("Dữ liệu đầu vào không được cập nhật");
+                $('#quantity-display').text(0);
+                $('#price-display').text("0");
+                $('#price-modal').text("0");
             }
-        },
-        error: function () {
-            console.log("Không tìm thấy thông tin sản phẩm.");
-            $('#quantity-display').text(0); // Đặt số lượng về 0 khi có lỗi
-            $('#price-display').text("0"); // Hiển thị thông báo không có giá
-            $('#price-modal').text("0"); // Hiển thị thông báo không có giá
         }
     });
 }
@@ -104,7 +102,7 @@ function changeSize(button) {
 document.addEventListener("DOMContentLoaded", function () {
     const quantityInput = document.querySelector('.item-quantity');
     const maxQuantityText = $('#quantity-display').text().trim();
-    const maxQuantity = parseInt(maxQuantityText); // Chuyển đổi sang số nguyên
+    const maxQuantity = parseInt(maxQuantityText) || 0;
     console.log("value max: " + maxQuantity);
 
     const btnMinus = document.getElementById('qtyminus');
@@ -126,4 +124,48 @@ document.addEventListener("DOMContentLoaded", function () {
         // }
     });
 });
+
+function showCartModal() {
+    $('#addCartModal').modal('show');
+}
+
+function addToCart(productDetailId, quantityBuy) {
+    $.ajax({
+        url: '/add-to-cart',
+        type: 'POST',
+        data: {
+            productDetailId: productDetailId,
+            quantity: quantityBuy
+        },
+        success: function (data) {
+            // Kiểm tra nếu `data.success` tồn tại
+            if (data && data.success) {
+                $('#addCartModal').modal('show');
+                window.location.href = '/onepoly/cart';
+            } else {
+                alert(data.message || 'Có lỗi xảy ra khi thêm vào giỏ hàng.');
+            }
+        },
+        error: function (error) {
+            console.error('Error:', error);
+            alert('Có lỗi xảy ra khi thêm vào giỏ hàng.');
+        }
+    });
+}
+
+$(document).on("click", "#add-to-cart", function (event) {
+    event.preventDefault();
+    const productDetailId = document.getElementById("productDetailID-hidden").value; // Lấy giá trị từ input hidden
+    const quantity = $(".item-quantity").val(); // Lấy số lượng từ modal
+
+    // Kiểm tra productDetailId và quantity trước khi gọi addToCart
+    if (productDetailId && quantity) {
+        addToCart(productDetailId, quantity);
+    } else {
+        alert("Vui lòng kiểm tra thông tin sản phẩm và số lượng.");
+    }
+});
+
+
+
 
