@@ -109,7 +109,7 @@ function validateNameCustomer(value,inputError) {
 //validate NumberPhone
 function validateNumberPhone(value,inputError) {
     var numberPhoneCheck = value.trim();
-    var phoneRegex = /^[0-9]{10,12}$/;
+    var phoneRegex = /^(0[3|5|7|8|9])+([0-9]{8})$/;
     if(numberPhoneCheck === '' || numberPhoneCheck.length < 1){
         console.log('rong ne')
         inputError.style.display = 'block';

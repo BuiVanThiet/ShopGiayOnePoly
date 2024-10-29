@@ -299,7 +299,14 @@ function loadInformationBillByIdBill() {
             if(response.paymentStatus == 0) {
                 $('#btn-payment-confirm').show();
             }else {
+                $('#form-action-voucher').hide();
+                $('#form-final-voucher').show();
+                $('#title-voucher').text(voucher);
                 $('#btn-payment-confirm').hide();
+                $('#table-product-buy th:last-child').hide();
+                $('#btn-buy-product').hide();
+                $('#startCamera').hide();
+                $('#btn-modal-customer').hide();
             }
 
             if(response.status == 6) {
@@ -311,12 +318,12 @@ function loadInformationBillByIdBill() {
             $('#informationStatusBill').text(statusBill)
             $('#informationCodeBill').text(response.codeBill);
             $('#informationTypeBill').text(typeBill)
-            $('#informationShipPriceBill').text(response.shipPrice.toLocaleString('en-US') + ' VNĐ')
-            $('#informationPriceProductBill').text(response.totalPriceProduct.toLocaleString('en-US') + ' VNĐ')
-            $('#informationPriceAllBill').text((response.totalPriceProduct+response.shipPrice-response.maximumReduction).toLocaleString('en-US') + ' VNĐ')
+            $('#informationShipPriceBill').text(Math.trunc(response.shipPrice).toLocaleString('en-US') + ' VNĐ')
+            $('#informationPriceProductBill').text(Math.trunc(response.totalPriceProduct).toLocaleString('en-US') + ' VNĐ')
+            $('#informationPriceAllBill').text(Math.trunc(response.totalPriceProduct+response.shipPrice-response.maximumReduction).toLocaleString('en-US') + ' VNĐ')
             $('#nameVoucherApply').val(voucher);
             $('#voucher-chosen').text(voucher)
-            $('#informationPriceReduction').text(response.maximumReduction.toLocaleString('en-US') + ' VNĐ');
+            $('#informationPriceReduction').text(Math.trunc(response.maximumReduction).toLocaleString('en-US') + ' VNĐ');
             $('#noteByBill').text(response.note);
             totalBill = response.totalPriceProduct-response.maximumReduction;
 
@@ -392,6 +399,7 @@ function loadCustomerShipInBill() {
         //     setTimeout(loadCustomerShipInBill, 5000);  // Gửi lại sau 5 giây
         // }
     })
+    validateAllFormAddCustomerShort();
 }
 
 function getBillStatus(response) {
@@ -455,6 +463,7 @@ function updateAddressShip() {
         success: function (response) {
             checkUpdateCustomer = true;
             loadInformationBillByIdBill();
+            loadCustomerShipInBill()
             showToast(response.message,response.check);
         },
         error: function (xhr) {
@@ -581,7 +590,6 @@ function paymentBill() {
                 loadInfomationPaymentByBillId();
                 loadInfomationHistoryByBillId();
                 loadBillStatusByBillId();
-                $('#cancel-button').remove();
                 showToast(response.message,response.check);
             }
         },
@@ -608,7 +616,7 @@ function loadInfomationPaymentByBillId() {
                     tableInfomationPayment.append(`
                     <tr>
                         <th scope="row">${index+1}</th>
-                        <td>${item[2].toLocaleString('en-US')} VNĐ</td>
+                        <td>${Math.trunc(item[2]).toLocaleString('en-US')} VNĐ</td>
                         <td>${formattedDateTime}</td>
                         <td>${item[3]}</td>
                         <td>${item[4]}</td>
@@ -689,12 +697,12 @@ function loadInfomationReturnBillFromBillManage() {
         success: function (response) {
             $('#code-bill').text(response.codeBill)
             $('#customer-buy-product').text(response.nameCustomer)
-            $('#discount-voucher').text(response.discount.toLocaleString('en-US') + ' VNĐ')
-            $('#divide-equally-product').text(response.discountRatioPercentage+ ' %')
-            $('#total-return').text((response.totalReturn-response.exchangeAndReturnFee+response.discountedAmount).toLocaleString('en-US') + ' VNĐ')
+            $('#discount-voucher').text(Math.trunc(response.discount).toLocaleString('en-US') + ' VNĐ')
+            $('#divide-equally-product').text(Math.trunc(response.discountRatioPercentage)+ ' %')
+            $('#total-return').text(Math.trunc(Math.trunc(response.totalReturn-response.exchangeAndReturnFee+response.discountedAmount)).toLocaleString('en-US') + ' VNĐ')
             $('#node-return').val(response.noteReturn);
             $('#node-return').attr('disabled', true);
-            $('#total-exchange').text(response.totalExchange.toLocaleString('en-US') + ' VNĐ')
+            $('#total-exchange').text(Math.trunc(response.totalExchange).toLocaleString('en-US') + ' VNĐ')
 
             var totalReturnCustomer = 0;
             if(((response.totalReturn-response.exchangeAndReturnFee+response.discountedAmount)-response.totalExchange) <= 0) {
@@ -702,17 +710,17 @@ function loadInfomationReturnBillFromBillManage() {
             }else {
                 totalReturnCustomer = (response.totalReturn-response.exchangeAndReturnFee+response.discountedAmount) -response.totalExchange;
             }
-            $('#total-return-customer').text(totalReturnCustomer.toLocaleString('en-US') + ' VNĐ')
+            $('#total-return-customer').text(Math.trunc(totalReturnCustomer).toLocaleString('en-US') + ' VNĐ')
             var totalExchangeCustomer = 0;
             if((response.totalExchange-(response.totalReturn-response.exchangeAndReturnFee+response.discountedAmount)) <= 0) {
                 totalExchangeCustomer = 0;
             }else {
                 totalExchangeCustomer = response.totalExchange-(response.totalReturn-response.exchangeAndReturnFee+response.discountedAmount);
             }
-            $('#total-exchange-customer').text(totalExchangeCustomer.toLocaleString('en-US') + ' VNĐ')
+            $('#total-exchange-customer').text(Math.trunc(totalExchangeCustomer).toLocaleString('en-US') + ' VNĐ')
 
-            $('#span-exchangeAndReturnFee').text(response.exchangeAndReturnFee.toLocaleString('en-US') + ' VNĐ');
-            $('#span-discountedAmount').text(response.discountedAmount.toLocaleString('en-US') + ' VNĐ');
+            $('#span-exchangeAndReturnFee').text(Math.trunc(response.exchangeAndReturnFee).toLocaleString('en-US') + ' VNĐ');
+            $('#span-discountedAmount').text(Math.trunc(response.discountedAmount).toLocaleString('en-US') + ' VNĐ');
 
             loadReturnBillFromBillManage(1);
             maxPageReturnBillFromBillManage();
@@ -756,7 +764,7 @@ function loadReturnBillFromBillManage(page) {
 
                     billReturn.productDetail.product.images.forEach(function(image, imgIndex) {
                         imagesHtml += `
-                            <div class="carousel-item ${imgIndex === 0 ? 'active' : ''}" data-bs-interval="30000">
+                            <div class="carousel-item ${imgIndex === 0 ? 'active' : ''}" data-bs-interval="10000">
                                 <img style="height: auto; width: 100px;" src="https://res.cloudinary.com/dfy4umpja/image/upload/f_auto,q_auto/${image.nameImage}" class="d-block w-100" alt="Lỗi ảnh">
                             </div>`;
                     });
@@ -764,8 +772,8 @@ function loadReturnBillFromBillManage(page) {
                         <tr>
                             <th scope="row" class="text-center align-middle">${index + 1}</th>
                             <td class="text-center align-middle">
-                                <div class="carousel slide" data-bs-ride="carousel">
-                                    <div class="carousel-inner carousel-inner-bill-custom">
+                                <div class="carousel slide d-flex justify-content-center align-items-center" data-bs-ride="carousel">
+                                    <div style="width: 150px;" class="carousel-inner carousel-inner-bill-custom">
                                         ${imagesHtml}
                                     </div>
                                 </div>
@@ -782,13 +790,13 @@ function loadReturnBillFromBillManage(page) {
                             </td>
 
                             <td class="text-center align-middle">
-                                ${billReturn.priceBuy.toLocaleString('en-US') + ' VNĐ'}
+                                ${Math.trunc(billReturn.priceBuy).toLocaleString('en-US') + ' VNĐ'}
                             </td>
                             <td class="text-center align-middle">
                                  ${billReturn.quantityReturn}
                             </td>
                             <td class="text-center align-middle">
-                                ${billReturn.totalReturn.toLocaleString('en-US') + ' VNĐ'}
+                                ${Math.trunc(billReturn.totalReturn).toLocaleString('en-US') + ' VNĐ'}
                             </td>
                         </tr>`);
                 });
@@ -844,28 +852,28 @@ function loadExchangeBillFromBillManage(page) {
                     var imagesHtml = '';
                     exchange.productDetail.product.images.forEach(function(image, imgIndex) {
                         imagesHtml += `
-                            <div class="carousel-item ${imgIndex === 0 ? 'active' : ''}" data-bs-interval="30000">
+                            <div class="carousel-item ${imgIndex === 0 ? 'active' : ''}" data-bs-interval="10000">
                                 <img style="height: auto; width: 100px;" src="https://res.cloudinary.com/dfy4umpja/image/upload/f_auto,q_auto/${image.nameImage}" class="d-block w-100" alt="Lỗi ảnh">
                             </div>`;
                     });
                     var price = '';
                     if(exchange.priceAtTheTimeOfExchange == exchange.priceRootAtTime) {
                         price = `<div>
-                                    <span>${exchange.priceAtTheTimeOfExchange.toLocaleString('en-US')} VNĐ</span>
+                                    <span>${Math.trunc(exchange.priceAtTheTimeOfExchange).toLocaleString('en-US')} VNĐ</span>
                                 </div>`;
                     }else {
                         price = ` <div>
-                                    <span class="text-decoration-line-through">${ exchange.priceRootAtTime.toLocaleString('en-US')} VNĐ</span>
+                                    <span class="text-decoration-line-through">${Math.trunc(exchange.priceRootAtTime).toLocaleString('en-US')} VNĐ</span>
                                     <br>
-                                    <span class="text-danger fs-5">${exchange.priceAtTheTimeOfExchange.toLocaleString('en-US')} VNĐ</span>
+                                    <span class="text-danger fs-5">${Math.trunc(exchange.priceAtTheTimeOfExchange).toLocaleString('en-US')} VNĐ</span>
                                 </div>`;
                     }
                     tbody.append(`
                         <tr>
                             <th scope="row" class="text-center align-middle">${index + 1}</th>
                             <td class="text-center align-middle">
-                                <div class="carousel slide" data-bs-ride="carousel">
-                                    <div class="carousel-inner carousel-inner-bill-custom">
+                                <div class="carousel slide d-flex justify-content-center align-items-center" data-bs-ride="carousel">
+                                    <div style="width: 150px;" class="carousel-inner carousel-inner-bill-custom">
                                         ${imagesHtml}
                                     </div>
                                 </div>
@@ -890,7 +898,7 @@ function loadExchangeBillFromBillManage(page) {
                                  </div>
                             </td>
                             <td class="text-center align-middle">
-                                ${exchange.totalExchange.toLocaleString('en-US') + ' VNĐ'}
+                                ${Math.trunc(exchange.totalExchange).toLocaleString('en-US') + ' VNĐ'}
                             </td>
                            
                         </tr>`);

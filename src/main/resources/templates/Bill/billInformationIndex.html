@@ -267,7 +267,7 @@
                         <button id="btn-payment-confirm" type="button"
                                 data-bs-toggle="modal" data-bs-target="#infoPayment"
                                 class="btn btn-outline-warning me-2">
-                            <i class="bi bi-cash"></i> Xác nhận thanh toán
+                            <i class="bi bi-cash"  ></i> Xác nhận thanh toán
                         </button>
                     </div>
                 </div>
@@ -343,9 +343,11 @@
                                 <label class="form-label">Tên khách hàng</label>
                                 <input type="text" class="form-control" value="" id="nameCustomerShip">
                             </div>
+                            <span class="text-danger" id="error-nameCustomer-short">Mời nhập tên khách hàng!</span>
                             <div class="col-12">
                                 <label class="form-label">Số điện thoại</label>
                                 <input type="text" class="form-control" value="" id="phoneCustomerShip">
+                                <span class="text-danger" id="error-numberPhoneCustomer-short">Mời nhập SĐT khách hàng!</span>
                             </div>
                             <!-- Các phần khác của form -->
                             <div class="col-4">
@@ -369,14 +371,17 @@
                             <div class="mb-12">
                                 <p>Địa chỉ cụ thể: </p>
                                 <textarea class="form-control" id="addResDetailCustomerShip"></textarea>
+                                <span class="text-danger" id="error-addResDetailCustomer-short">Mời nhập địa chỉ chi tiết khách hàng!</span>
                             </div>
                             <input type="hidden" id="moneyShipUpdate">
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-outline-success" data-bs-dismiss="modal" aria-label="Close">Sửa</button>
+                        <button type="submit" id="btnUpdateCustomerShip" class="btn btn-outline-success" data-bs-dismiss="modal" aria-label="Close">Sửa</button>
                     </div>
                 </form>
+                <script th:src="@{/js/bill/validateUpdateCustomer.js}" type="text/javascript"></script>
+
             </div>
         </div>
     </div>

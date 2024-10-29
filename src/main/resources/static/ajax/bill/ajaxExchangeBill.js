@@ -390,15 +390,15 @@ function updateProductTable(response) {
                 // Gán giá đã giảm và giá gốc vào biến priceSaleAndRoot
                 priceSaleAndRoot = `
                 <div>
-                    <span class="text-decoration-line-through fs-6">${productDetail[9].toLocaleString('en-US')} VNĐ</span>
+                    <span class="text-decoration-line-through fs-6">${Math.trunc(productDetail[9]).toLocaleString('en-US')} VNĐ</span>
                     <br>
-                    <span class="text-danger fs-5">${productDetail[12].toLocaleString('en-US')} VNĐ</span>
+                    <span class="text-danger fs-5">${Math.trunc(productDetail[12]).toLocaleString('en-US')} VNĐ</span>
                 </div>`;
             } else {
                 // Nếu không có chương trình giảm giá, chỉ hiển thị giá gốc
                 priceSaleAndRoot = `
                 <div>
-                    <span class="fs-5">${productDetail[9].toLocaleString('en-US')} VNĐ</span>
+                    <span class="fs-5">${Math.trunc(productDetail[9]).toLocaleString('en-US')} VNĐ</span>
                 </div>`;
             }
 
@@ -426,7 +426,7 @@ function updateProductTable(response) {
             var nameImage = productDetail[17].split(',');
             nameImage.forEach(function (imageProduct,indexImage) {
                 imagesHtml += `
-                      <div  data-bs-interval="30000" class="carousel-item ${indexImage === 0 ? 'active' : ''}">
+                      <div  data-bs-interval="10000" class="carousel-item ${indexImage === 0 ? 'active' : ''}">
                         <img src="https://res.cloudinary.com/dfy4umpja/image/upload/v1724519685/${imageProduct.trim()}" class="d-block w-100" alt="Product Image 1">
                       </div>
                      `;
@@ -442,9 +442,9 @@ function updateProductTable(response) {
                   <div class="card card-bill-custom" style="max-width: 800px; margin: auto; height: 500px;">
                     <!-- Mall label in the top-left corner -->
                     ${saleBadge}
-                    <div style="height: 150px;" class="mb-2">
-                      <div id="productCarousel1" class="carousel slide" data-bs-ride="carousel">
-                        <div class="carousel-inner" style="height: 150px;"> <!-- Đặt chiều cao cố định cho carousel -->
+                    <div class="mb-2 ">
+                      <div id="productCarousel1" class="carousel slide d-flex justify-content-center align-items-center" data-bs-ride="carousel">
+                        <div class="carousel-inner" style="height: auto; width: 150px;"> <!-- Đặt chiều cao cố định cho carousel -->
                           ${imagesHtml}
                         </div>
                       </div>
@@ -572,28 +572,28 @@ function loadExchangeBill(page) {
                     var imagesHtml = '';
                     exchange.productDetail.product.images.forEach(function(image, imgIndex) {
                         imagesHtml += `
-                            <div class="carousel-item ${imgIndex === 0 ? 'active' : ''}" data-bs-interval="30000">
+                            <div class="carousel-item ${imgIndex === 0 ? 'active' : ''}" data-bs-interval="10000">
                                 <img style="height: auto; width: 100px;" src="https://res.cloudinary.com/dfy4umpja/image/upload/f_auto,q_auto/${image.nameImage}" class="d-block w-100" alt="Lỗi ảnh">
                             </div>`;
                     });
                     var price = '';
                     if(exchange.priceAtTheTimeOfExchange == exchange.priceRootAtTime) {
                         price = `<div>
-                                    <span>${exchange.priceAtTheTimeOfExchange.toLocaleString('en-US')} VNĐ</span>
+                                    <span>${Math.trunc(exchange.priceAtTheTimeOfExchange).toLocaleString('en-US')} VNĐ</span>
                                 </div>`;
                     }else {
                         price = ` <div>
-                                    <span class="text-decoration-line-through">${ exchange.priceRootAtTime.toLocaleString('en-US')} VNĐ</span>
+                                    <span class="text-decoration-line-through">${Math.trunc(exchange.priceRootAtTime).toLocaleString('en-US')} VNĐ</span>
                                     <br>
-                                    <span class="text-danger fs-5">${exchange.priceAtTheTimeOfExchange.toLocaleString('en-US')} VNĐ</span>
+                                    <span class="text-danger fs-5">${Math.trunc(exchange.priceAtTheTimeOfExchange).toLocaleString('en-US')} VNĐ</span>
                                 </div>`;
                     }
                     tbody.append(`
                         <tr>
                             <th scope="row" class="text-center align-middle">${index + 1}</th>
                             <td class="text-center align-middle">
-                                <div class="carousel slide" data-bs-ride="carousel">
-                                    <div class="carousel-inner carousel-inner-bill-custom">
+                                <div class="carousel slide d-flex justify-content-center align-items-center" data-bs-ride="carousel">
+                                    <div style="width: 150px;" class="carousel-inner carousel-inner-bill-custom">
                                         ${imagesHtml}
                                     </div>
                                 </div>
@@ -620,7 +620,7 @@ function loadExchangeBill(page) {
                                  </div>
                             </td>
                             <td class="text-center align-middle">
-                                ${exchange.totalExchange.toLocaleString('en-US') + ' VNĐ'}
+                                ${Math.trunc(exchange.totalExchange).toLocaleString('en-US') + ' VNĐ'}
                             </td>
                             <td class="text-center align-middle">
                                 <button type="button"
@@ -752,7 +752,6 @@ function updateQuantityExchange(id, quantity,method) {
             getMaxPageProduct();
             loadExchangeBill(pageExchange);
             loadInfomationReturnBill();
-
             showToast(response.message,response.check)
         },
         error: function (xhr) {

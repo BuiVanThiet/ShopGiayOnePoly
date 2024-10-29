@@ -61,6 +61,8 @@ public abstract class BaseBill {
     protected ExchangeBillDetailService exchangeBillDetailService;
     @Autowired
     protected CustomerService customerService;
+    @Autowired
+    protected EmailSenderService emailSenderService;
 
     //bien cuc bo cua bill
     protected Bill billPay;
@@ -104,7 +106,12 @@ public abstract class BaseBill {
             bill.setTotalAmount(BigDecimal.valueOf(0));
         }
         System.out.println("Thong tin bill: " + bill.toString());
-        this.billService.save(bill);
+        Bill billSave = this.billService.save(bill);
+        if(billSave.getStatus() == 1) {
+            System.out.println("gia duoc giam been xoa " + this.billService.getDiscountBill(billSave.getId()));
+            billSave.setPriceDiscount(new BigDecimal(this.billService.getDiscountBill(billSave.getId())));
+            this.billService.save(billSave);
+        }
     }
 
     //    sua lai so luong san pham khi duoc dua vao hoa don
@@ -319,6 +326,7 @@ public abstract class BaseBill {
                     System.out.println("phai xoa thoii");
                     this.getSubtractVoucher(bill.getVoucher(),-1);
                     bill.setVoucher(null);
+                    bill.setPriceDiscount(new BigDecimal(0));
                     bill.setUpdateDate(new Date());
                     this.billService.save(bill);
                 }

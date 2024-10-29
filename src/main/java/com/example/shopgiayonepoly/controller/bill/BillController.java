@@ -454,8 +454,14 @@ public class BillController extends BaseBill {
                     return "redirect:/404";
                 }
                 bill.setPaymentStatus(0);
-                bill.setStatus(1);
+//                su dung cai nay khi can test nhanh ben online
+//                bill.setStatus(1);
+
+                bill.setStatus(2);
                 bill.setPaymentMethod(1);
+                if(bill.getNote().length() < 0 || bill.getNote() == null || bill.getNote().trim().equals("")) {
+                    bill.setNote("Giao hàng!");
+                }
             }else {
                 if (bill.getPaymentStatus() == 1) {
                     return "redirect:/404";
@@ -540,17 +546,19 @@ public class BillController extends BaseBill {
 
         Integer returnFrom = (Integer) session.getAttribute("pageReturn");
 
-        if (billPay == null) {
-            return "redirect:/404";
-        }
-        if(billPay.getStatus() >= 5) {
-            return "redirect:/404";
-        }
-        if (billPay.getPaymentStatus() == 1) {
-            return "redirect:/404";
-        }
-
         if(returnFrom == 1) {
+            if (billPay == null) {
+                System.out.println("day la khong co bill");
+                return "redirect:/404";
+            }
+            if(billPay.getStatus() >= 5) {
+                System.out.println("day la trang thai da hoan thanh");
+                return "redirect:/404";
+            }
+            if (billPay.getPaymentStatus() == 1) {
+                System.out.println("day la bill da thanh toan");
+                return "redirect:/404";
+            }
             if(paymentStatus == 1) {
                 this.billPay.setAcountMoney(accountMoney.divide(BigDecimal.valueOf(100)));
                 this.billPay.setPaymentStatus(1);
@@ -570,8 +578,20 @@ public class BillController extends BaseBill {
                 return "Bill/errorBill";
             }
         }else {
+            this.billPay = (Bill) session.getAttribute("billPaymentRest");
+            if (billPay == null) {
+                System.out.println("day la khong co bill");
+                return "redirect:/404";
+            }
+            if(billPay.getStatus() >= 5) {
+                System.out.println("day la trang thai da hoan thanh");
+                return "redirect:/404";
+            }
+            if (billPay.getPaymentStatus() == 1) {
+                System.out.println("day la bill da thanh toan");
+                return "redirect:/404";
+            }
             if(paymentStatus == 1) {
-                this.billPay = (Bill) session.getAttribute("billPaymentRest");
                 this.billPay.setAcountMoney(accountMoney.divide(BigDecimal.valueOf(100)));
                 this.billPay.setPaymentStatus(1);
                 this.billPay.setSurplusMoney(BigDecimal.valueOf(0.00));
@@ -811,6 +831,7 @@ public class BillController extends BaseBill {
         if(billById.getStatus() == 0) {
             this.getUpdateQuantityProduct(productDetail.getId(),Integer.parseInt(quantity));
         }
+
         System.out.println("da mua san pham !");
         getDeleteVoucherByBill(billById.getId());
 
@@ -876,7 +897,12 @@ public class BillController extends BaseBill {
         bill.setVoucher(null);
         bill.setUpdateDate(new Date());
         bill.setStaff(staffLogin);
-        this.billService.save(bill);
+        Bill billSave = this.billService.save(bill);
+        if(billSave.getStatus() == 1) {
+            System.out.println("gia duoc giam been xoa " + this.billService.getDiscountBill(billSave.getId()));
+            billSave.setPriceDiscount(new BigDecimal(this.billService.getDiscountBill(billSave.getId())));
+            this.billService.save(billSave);
+        }
         return ResponseEntity.ok(thongBao);
     }
 
@@ -942,7 +968,12 @@ public class BillController extends BaseBill {
         bill.setVoucher(voucher);
         bill.setUpdateDate(new Date());
         bill.setStaff(staffLogin);
-        this.billService.save(bill);
+        Bill billSave = this.billService.save(bill);
+        if(billSave.getStatus() == 1) {
+            System.out.println("gia duoc giam been them " + this.billService.getDiscountBill(billSave.getId()));
+            billSave.setPriceDiscount(new BigDecimal(this.billService.getDiscountBill(billSave.getId())));
+            this.billService.save(billSave);
+        }
         thongBao.put("message","Thêm mã giảm giá thành công!");
         thongBao.put("check","1");
         this.getSubtractVoucher(voucher,1);

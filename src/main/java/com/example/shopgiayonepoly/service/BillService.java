@@ -57,5 +57,6 @@ public interface BillService {
 
     ProductDetail getProductDteailById(Integer id);
 
+    String getDiscountBill(Integer idBill);
     long invoicePaid();
 }
