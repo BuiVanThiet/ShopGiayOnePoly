@@ -63,7 +63,8 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
             "AND p.status <> 0")
     List<Product> findProducts(@Param("idCategory") Integer idCategory, @Param("searchTerm") String searchTerm);
 
-
+    @Query("SELECT DISTINCT p.nameProduct FROM Product p")
+    List<String> findAllNameProduct();
 
 
 }

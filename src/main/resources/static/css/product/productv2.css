@@ -65,9 +65,13 @@ body-product {
     word-wrap: break-word;
     word-break: break-word;
     white-space: normal;
+
 }
 .table-product th {
     background-color: #c0c0c0;
+}
+.table-product tr {
+    border-bottom: 1px solid #ddd;
 }
 .table-product td {
     background-color: white;
@@ -205,6 +209,7 @@ body-product {
 .pageable-product{
     display: flex;
     justify-content: center;
+    margin-top: 20px;
 }
 
 .form-group-product .form-control-product {

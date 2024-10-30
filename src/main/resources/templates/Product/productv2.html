@@ -55,6 +55,7 @@
                     <th style="width: 30px;">
                         <input type="checkbox" id="select-all-product" onclick="toggleSelectAllProduct(this)">
                     </th>
+                    <th style="width: 70px">Ảnh</th>
                     <th style="width: 70px">Mã</th>
                     <th style="width: 150px">Tên</th>
                     <th style="width: 150px">Chất liệu</th>
@@ -67,23 +68,25 @@
                 </tr>
                 </thead>
                 <tbody id="product-table-body">
-                <tr th:each="product, iterStat : ${productList}" th:id="'row-product-' + ${iterStat.index}" th:data-id="${product.id}">
+                <tr th:each="product, iterStat : ${productList}" th:id="'row-product-' + ${iterStat.index}"
+                    th:data-id="${product.id}">
                     <td>
                         <input type="checkbox" class="select-row-product"/>
                     </td>
-                    <td data-column="codeProduct" th:text="${product.codeProduct}"></td>
-                    <td data-column="nameProduct">
+                    <td>
                         <div class="product-image-container">
                             <div class="image-slider">
                                 <div class="slides">
                                     <div class="slide" th:each="image : ${product.images}">
-                                        <img th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728725582/' + ${image.nameImage}" alt="Ảnh sản phẩm">
+                                        <img th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728725582/' + ${image.nameImage}"
+                                             alt="Ảnh sản phẩm">
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div th:text="${product.nameProduct}"></div>
                     </td>
+                    <td data-column="codeProduct" th:text="${product.codeProduct}"></td>
+                    <td data-column="nameProduct" th:text="${product.nameProduct}"></td>
                     <td data-column="material" th:text="${product.material.nameMaterial}"></td>
                     <td data-column="manufacturer" th:text="${product.manufacturer.nameManufacturer}"></td>
                     <td data-column="origin" th:text="${product.origin.nameOrigin}"></td>

@@ -5,7 +5,10 @@ import com.example.shopgiayonepoly.dto.response.bill.BillResponseManage;
 import com.example.shopgiayonepoly.dto.response.bill.BillTotalInfornationResponse;
 import com.example.shopgiayonepoly.dto.response.bill.ClientBillInformationResponse;
 import com.example.shopgiayonepoly.dto.response.bill.InformationBillByIdBillResponse;
-import com.example.shopgiayonepoly.entites.*;
+import com.example.shopgiayonepoly.entites.Bill;
+import com.example.shopgiayonepoly.entites.Customer;
+import com.example.shopgiayonepoly.entites.ProductDetail;
+import com.example.shopgiayonepoly.entites.Voucher;
 import com.example.shopgiayonepoly.repositores.BillRepository;
 import com.example.shopgiayonepoly.service.BillService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -131,13 +134,15 @@ public class BillImplement implements BillService {
     public ProductDetail getProductDteailById(Integer id) {
         return billRepository.getProductDteailById(id);
     }
+
     @Override
     public String getDiscountBill(Integer idBill) {
         return this.billRepository.getDiscountBill(idBill);
 
-
+    }
     @Override
     public long invoicePaid() {
         return billRepository.invoicePaid();
     }
+
 }
