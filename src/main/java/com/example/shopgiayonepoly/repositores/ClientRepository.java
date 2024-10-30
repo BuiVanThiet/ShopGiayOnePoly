@@ -100,19 +100,33 @@ public interface ClientRepository extends JpaRepository<Bill, Integer> {
             """)
     public List<SizeClientResponse> findDistinctSizesByProductId(@Param("productId") Integer productId);
 
-
     @Query("""
             select new com.example.shopgiayonepoly.dto.response.client.ProductDetailClientRespone(
             pd.id,
+            pd.product.id,
+            pd.product.nameProduct,
             pd.price,
-            pd.quantity
-            
+            pd.quantity,
+            pd.describe,
+            c.nameColor,
+            s.nameSize,
+            MIN(i.nameImage)
             ) FROM ProductDetail pd
-             WHERE pd.color.id = :colorId AND pd.size.id = :sizeId
-             AND pd.product.id = :productId
+            LEFT JOIN pd.size s
+            LEFT JOIN pd.color c 
+            LEFT JOIN pd.product.images i 
+            WHERE pd.color.id = :colorId AND pd.size.id = :sizeId
+            AND pd.product.id = :productId
+            GROUP BY pd.id,
+                     pd.product.id,
+                     pd.product.nameProduct,
+                     pd.price,
+                     pd.quantity,
+                     pd.describe,
+                     c.nameColor,
+                     s.nameSize
             """)
     ProductDetailClientRespone findByProductDetailColorAndSizeAndProductId(
-
             @Param("colorId") Integer colorId,
             @Param("sizeId") Integer sizeId,
             @Param("productId") Integer productId);

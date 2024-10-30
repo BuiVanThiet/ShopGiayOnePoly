@@ -291,6 +291,7 @@ function uploadPayMethod() {
     $.ajax({
         type:'POST',
         url:'/bill-api/uploadPaymentMethod',
+        // POST must be contentType  data: JSON.stringify({ payMethod: payMethodUpLoad }),
         contentType: "application/json",
         data: JSON.stringify({ payMethod: payMethodUpLoad }),
         success: function (respon) {

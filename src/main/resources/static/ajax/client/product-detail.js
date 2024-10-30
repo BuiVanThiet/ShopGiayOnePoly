@@ -67,8 +67,9 @@ function getProductDetail(productId, colorId, sizeId) {
             sizeId: sizeId
         },
         success: function (data) {
-            console.log("ProductDetail:", data); // In ra đối tượng để kiểm tra cấu trúc
+
             if (data) {
+                console.log("ProductDetail: ", data); // In ra đối tượng để kiểm tra cấu trúc
                 $('#productDetailID-hidden').val(data.productDetailId);
                 console.log('Id sản phẩm chi tiết: ' + data.productDetailId);
                 const quantity = data.quantity || 0; // Đảm bảo giá trị số lượng là hợp lệ
@@ -76,11 +77,14 @@ function getProductDetail(productId, colorId, sizeId) {
                 $('#price-display').text(data.price.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'}));
                 $('#price-modal').text(data.price.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'}));
             } else {
-                console.log("Dữ liệu đầu vào không được cập nhật");
                 $('#quantity-display').text(0);
                 $('#price-display').text("0");
                 $('#price-modal').text("0");
             }
+        }, error: function (xhr) {
+            console.log("Dữ liệu đầu vào không được cập nhật");
+
+            console.log("Error" + xhr.responseText)
         }
     });
 }
@@ -119,9 +123,11 @@ document.addEventListener("DOMContentLoaded", function () {
     // Sự kiện khi bấm nút cộng
     btnPlus.addEventListener("click", function () {
         let currentValue = parseInt(quantityInput.value);
-        // if (currentValue < maxQuantity) {
-        quantityInput.value = currentValue + 1;
-        // }
+        if (currentValue <= 10) {
+            quantityInput.value = currentValue + 1;
+        } else {
+            alert("Không  thể lớn hơn 10 sản phẩm")
+        }
     });
 });
 
@@ -129,21 +135,32 @@ function showCartModal() {
     $('#addCartModal').modal('show');
 }
 
-function addToCart(productDetailId, quantityBuy) {
+function addToCart() {
+    // Lấy productDetailId
+    var productDetailId = $('#productDetailID-hidden').val();
+
+    // Lấy quantity
+    var quantityBuy = parseInt($('input[name="quantity"]').val());
+
+    if (isNaN(quantityBuy) || quantityBuy <= 0) {
+        alert("Số lượng không hợp lệ, phải lớn hơn 0.");
+        return;
+    }
+
     $.ajax({
-        url: '/add-to-cart',
+        url: '/onepoly/add-to-cart',
         type: 'POST',
-        data: {
+        contentType: "application/json",
+        data: JSON.stringify({
             productDetailId: productDetailId,
             quantity: quantityBuy
-        },
+        }),
         success: function (data) {
-            // Kiểm tra nếu `data.success` tồn tại
             if (data && data.success) {
-                $('#addCartModal').modal('show');
-                window.location.href = '/onepoly/cart';
+                alert("Sản phẩm đã được thêm vào giỏ hàng!");
+                    window.location.href = '/onepoly/cart';
             } else {
-                alert(data.message || 'Có lỗi xảy ra khi thêm vào giỏ hàng.');
+                console.log(data.message || 'Có lỗi xảy ra khi thêm vào giỏ hàng.');
             }
         },
         error: function (error) {
@@ -153,18 +170,110 @@ function addToCart(productDetailId, quantityBuy) {
     });
 }
 
-$(document).on("click", "#add-to-cart", function (event) {
-    event.preventDefault();
-    const productDetailId = document.getElementById("productDetailID-hidden").value; // Lấy giá trị từ input hidden
-    const quantity = $(".item-quantity").val(); // Lấy số lượng từ modal
+// Hàm lấy danh sách sản phẩm trong giỏ hàng
+// function fetchCartItems() {
+//     $.ajax({
+//         url: '/onepoly/cart-items',
+//         type: 'GET',
+//         success: function (cartItems) {
+//             displayCartItems(cartItems);
+//         },
+//         error: function (error) {
+//             console.error('Error fetching cart items:', error);
+//         }
+//     });
+// }
+//
+// // Hàm hiển thị các sản phẩm trong giỏ hàng
+// function displayCartItems(cartItems) {
+//     const cartItemsContainer = $('#cartItemsContainer');
+//     cartItemsContainer.empty();
+//     cartItems.forEach(item => {
+//         const cartItemHTML = `
+//                 <div class="cart-item-body">
+//                     <div class="cart-item-body-inner">
+//                         <div class="cart-item-body">
+//                             <div class="cart-item-body-item-product" style="margin-right: 100px">
+//                                 <div class="cart-item-body-item-product-inner">
+//                                     <a title="${item.productName}" href="/products/giay-the-thao-nam-mwc-natt--5734?c=nau">
+//                                         <img class="cart-item-body-item-product-thumb"
+//                                              src="${item.imageName}" alt="Product Image">
+//                                     </a>
+//                                     <div class="cart-item-body-item-product-info">
+//                                         <a class="cart-item-body-item-product-name">${item.productName}</a>
+//                                         <p class="cart-item-body-item-product-options">Màu: ${item.color}</p>
+//                                         <p class="cart-item-body-item-product-options">Kích thước: ${item.size}</p>
+//                                     </div>
+//                                 </div>
+//                             </div>
+//                             <div class="cart-item--prices" style="margin-right: 180px">
+//                                 <span class="cart-item--price-item">${item.price} đ</span>
+//                             </div>
+//                             <div class="cart-item--quantity" style="margin-right: 160px">
+//                                 <div class="cart-item--quantity-actions">
+//                                     <button class="button btn-decrement" onclick="updateQuantity(${item.productDetailId}, -1)">-</button>
+//                                     <div class="number">${item.quantity}</div>
+//                                     <button class="button btn-increment" onclick="updateQuantity(${item.productDetailId}, 1)">+</button>
+//                                 </div>
+//                             </div>
+//                             <div class="cart-item--total" style="margin-right: 180px">
+//                                 <span>${item.totalPrice} đ</span>
+//                             </div>
+//                             <div class="cart-item--actions">
+//                                 <button class="cart-item--action-item" onclick="removeItem(${item.productDetailId})">Xóa</button>
+//                             </div>
+//                         </div>
+//                     </div>
+//                 </div>
+//                 <div class="cart-item-body-space"></div>
+//             `;
+//         cartItemsContainer.append(cartItemHTML);
+//     });
+// }
 
-    // Kiểm tra productDetailId và quantity trước khi gọi addToCart
-    if (productDetailId && quantity) {
-        addToCart(productDetailId, quantity);
-    } else {
-        alert("Vui lòng kiểm tra thông tin sản phẩm và số lượng.");
-    }
-});
+// Hàm cập nhật số lượng sản phẩm trong giỏ hàng
+window.updateQuantity = function (productDetailId, change) {
+    $.ajax({
+        url: '/onepoly/update-cart',
+        type: 'POST',
+        contentType: "application/json",
+        data: JSON.stringify({productDetailId: productDetailId, change: change}),
+        success: function (data) {
+            if (data.success) {
+                fetchCartItems(); // Cập nhật lại danh sách giỏ hàng
+            } else {
+                console.log(data.message || 'Có lỗi xảy ra khi cập nhật số lượng.');
+            }
+        },
+        error: function (error) {
+            console.error('Error updating quantity:', error);
+            alert('Có lỗi xảy ra khi cập nhật số lượng.');
+        }
+    });
+};
+
+// Hàm xóa sản phẩm khỏi giỏ hàng
+window.removeItem = function (productDetailId) {
+    $.ajax({
+        url: '/onepoly/remove-from-cart',
+        type: 'POST',
+        contentType: "application/json",
+        data: JSON.stringify({productDetailId: productDetailId}),
+        success: function (data) {
+            if (data.success) {
+                alert("Sản phẩm đã được xóa khỏi giỏ hàng!");
+                fetchCartItems(); // Cập nhật lại danh sách giỏ hàng
+            } else {
+                console.log(data.message || 'Có lỗi xảy ra khi xóa sản phẩm.');
+            }
+        },
+        error: function (error) {
+            console.error('Error removing item:', error);
+            alert('Có lỗi xảy ra khi xóa sản phẩm.');
+        }
+    });
+};
+
 
 
 
