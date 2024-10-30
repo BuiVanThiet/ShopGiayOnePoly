@@ -309,9 +309,10 @@ function displayPage(page) {
             `).join('');
 
             row.innerHTML = `
-                <td><input type="checkbox" class="select-row-product"/></td>
-                <td data-column="codeProduct">${product.codeProduct}</td>
-                <td data-column="nameProduct">
+                <td>
+                        <input type="checkbox" class="select-row-product"/>
+                </td>
+                <td>
                     <div class="product-image-container">
                         <div class="image-slider">
                             <div class="slides">
@@ -319,8 +320,9 @@ function displayPage(page) {
                             </div>
                         </div>
                     </div>
-                    <div>${product.nameProduct}</div>
                 </td>
+                <td data-column="codeProduct">${product.codeProduct}</td>
+                <td data-column="nameProduct">${product.nameProduct}</td>
                 <td data-column="material">${product.material.nameMaterial}</td>
                 <td data-column="manufacturer">${product.manufacturer.nameManufacturer}</td>
                 <td data-column="origin">${product.origin.nameOrigin}</td>
@@ -340,6 +342,13 @@ function displayPage(page) {
             `;
 
             tableBody.appendChild(row);
+            // Thiết lập sự kiện cho checkbox
+            const checkbox = row.querySelector('.select-row-product');
+            checkbox.addEventListener('change', function() {
+                toggleEditableRow(checkbox);
+                const allChecked = document.querySelectorAll('.select-row-product:checked').length === document.querySelectorAll('.select-row-product').length;
+                document.getElementById('select-all-product').checked = allChecked;
+            });
         });
     }
     initImageSlidersTable();
@@ -460,55 +469,3 @@ function changePage(newPage) {
 
 // Khởi động hiển thị trang đầu tiên
 fetchProductsByCategoryAndSearch(0, '');
-
-// function filterProductsByCategory(idCategory) {
-//     fetch(`http://localhost:8080/staff/product/category/${idCategory}`)
-//         .then(response => response.json())
-//         .then(data => {
-//             const tableBody = document.getElementById("product-table-body");
-//             tableBody.innerHTML = ""; // Clear existing rows
-//
-//             data.forEach((product, index) => {
-//                 const row = document.createElement("tr");
-//                 row.id = `row-product-${index}`;
-//                 row.dataset.id = product.id;
-//                 row.innerHTML = `
-//                     <td><input type="checkbox" class="select-row-product"/></td>
-//                     <td data-column="codeProduct">${product.codeProduct}</td>
-//                     <td data-column="nameProduct">
-//                         <div class="product-image-container">
-//                             <div class="image-slider">
-//                                 <div class="slides">
-//                                     ${product.images.map(image => `
-//                                         <div class="slide">
-//                                             <img src="https://res.cloudinary.com/dfy4umpja/image/upload/v1728725582/${image.nameImage}" alt="Ảnh sản phẩm">
-//                                         </div>
-//                                     `).join('')}
-//                                 </div>
-//                             </div>
-//                         </div>
-//                         <div>${product.nameProduct}</div>
-//                     </td>
-//                     <td data-column="material">${product.material.nameMaterial}</td>
-//                     <td data-column="manufacturer">${product.manufacturer.nameManufacturer}</td>
-//                     <td data-column="origin">${product.origin.nameOrigin}</td>
-//                     <td data-column="sole">${product.sole.nameSole}</td>
-//                     <td data-column="describe">${product.describe}</td>
-//                     <td data-column="status">${product.status === 1 ? 'Đang bán' : (product.status === 2 ? 'Ngừng bán' : '')}</td>
-//                     <td>
-//                         <div class="dropdown-product">
-//                             <i class="fa fa-ellipsis-v fa-ellipsis-v-product" aria-hidden="true" onclick="toggleDropdownProduct(event, this)"></i>
-//                             <div class="dropdown-menu-product">
-//                                 <a href="#">Xem chi tiết</a>
-//                                 <a href="#">Chỉnh sửa</a>
-//                                 <a href="#">Xóa</a>
-//                             </div>
-//                         </div>
-//                     </td>
-//                 `;
-//                 tableBody.appendChild(row);
-//             });
-//         })
-//         .catch(error => console.error('Error fetching products by category:', error));
-// }
-

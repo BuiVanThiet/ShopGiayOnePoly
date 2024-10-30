@@ -49,5 +49,6 @@ public interface ProductService {
     List<ProductRespose> findAllProductsWithOneImage();
 
     List<Product> findProducts(Integer idCategory, String searchTerm);
+    List<String> findAllNameProduct();
 
 }

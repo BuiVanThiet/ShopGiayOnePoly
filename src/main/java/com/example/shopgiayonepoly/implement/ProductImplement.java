@@ -144,4 +144,9 @@ public class ProductImplement implements ProductService {
             return productRepository.findProducts(idCategory, searchTerm);
     }
 
+    @Override
+    public List<String> findAllNameProduct() {
+        return  productRepository.findAllNameProduct();
+    }
+
 }
