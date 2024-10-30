@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +51,6 @@ public class ClientController {
     CartService cartService;
     @Autowired
     CartRepository cartRepository;
-
 
     @GetMapping("/home")
     public String getFormHomeClient(HttpSession session, Model model) {
@@ -123,11 +123,11 @@ public class ClientController {
 
     @PostMapping("/add-to-cart")
     public ResponseEntity<?> addToCart(
-            @RequestParam("productDetailId") Integer productDetailId,
-            @RequestParam("quantity") Integer quantity,
+            @RequestBody Map<String, Integer> requestData,
             HttpSession session) {
+        Integer productDetailId = requestData.get("productDetailId");
+        Integer quantity = requestData.get("quantity");
         Map<String, Object> response = new HashMap<>();
-
         if (quantity <= 0) {
             response.put("success", false);
             response.put("message", "Số lượng sản phẩm không hợp lệ.");
@@ -187,9 +187,35 @@ public class ClientController {
 
 
     @GetMapping("/cart")
-    public String getFromCart(){
-        return "client/cart";
+    public String getFromCart(HttpSession session, Model model) {
+        List<CartItemResponse> cartItems = new ArrayList<>();
+        // Kiểm tra nếu người dùng đã đăng nhập
+        ClientLoginResponse clientLogin = (ClientLoginResponse) session.getAttribute("clientLogin");
+        if (clientLogin != null) {
+            Integer customerId = clientLogin.getId();
+            cartItems = cartService.getCartItemsForCustomer(customerId);
+        } else {
+            // Lấy giỏ hàng từ session nếu chưa đăng nhập
+            Map<Integer, Integer> sessionCart = (Map<Integer, Integer>) session.getAttribute("sessionCart");
+            if (sessionCart != null) {
+                for (Map.Entry<Integer, Integer> entry : sessionCart.entrySet()) {
+                    Integer productDetailId = entry.getKey();
+                    Integer quantity = entry.getValue();
+                    ProductDetail productDetail = productDetailRepository.findById(productDetailId).orElse(null);
+
+                    if (productDetail != null) {
+                        cartItems.add(new CartItemResponse(productDetail, quantity));
+                    }
+                }
+            }
+        }
+
+        model.addAttribute("cartItems", cartItems); // Gửi dữ liệu đến view
+        return "client/cart"; // Trả về view giỏ hàng
     }
+
+
+
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @GetMapping("/cerateProduct")

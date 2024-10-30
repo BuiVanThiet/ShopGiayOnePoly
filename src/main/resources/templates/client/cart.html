@@ -32,55 +32,16 @@
                     </div>
                     <div class="cart-item-outer">
                         <div class="cart-item-body">
-                            <div class="cart-item-body-inner">
-                                <div class="cart-item-body">
-                                    <div class="cart-item-body-item-product" style="margin-right: 100px">
-                                        <div class="cart-item-body-item-product-inner">
-                                            <a title="Giày Thể Thao Nam MWC 5734 - Giày Thể Thao Nam Phong Cách Năng Động Trẻ Trung."
-                                               href="/products/giay-the-thao-nam-mwc-natt--5734?c=nau">
-                                                <img class="cart-item-body-item-product-thumb"
-                                                     src="/img/client/product/SPCT_IMG_1.png" alt="Product Image">
-                                            </a>
-                                            <div class="cart-item-body-item-product-info">
-                                                <a class="cart-item-body-item-product-name">Tên sản phẩm</a>
-                                                <p class="cart-item-body-item-product-options">Màu: Nâu</p>
-                                                <p class="cart-item-body-item-product-options">Kích thước: 39</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="cart-item--prices" style="margin-right: 180px">
-                                        <span class="cart-item--price-item">375.000 đ</span>
-                                    </div>
-                                    <div class="cart-item--quantity" style="margin-right: 160px">
-                                        <div class="cart-item--quantity-actions">
-                                            <button onclick="increase(4766, 49837, -1)"
-                                                    class="cart-item--quantity-actions--item cart-item--quantity-actions--item-minus">
-                                                <svg viewBox="0 0 10 10">
-                                                    <polygon
-                                                            points="4.5 4.5 3.5 4.5 0 4.5 0 5.5 3.5 5.5 4.5 5.5 10 5.5 10 4.5"></polygon>
-                                                </svg>
-                                            </button>
-                                            <input id="4766-49837" class="cart-item--quantity-actions--input"
-                                                   type="number" min="1" value="1">
-                                            <button onclick="increase(4766, 49837, 1)"
-                                                    class="cart-item--quantity-actions--item cart-item--quantity-actions--item-plus">
-                                                <svg viewBox="0 0 10 10">
-                                                    <polygon
-                                                            points="10 4.5 5.5 4.5 5.5 0 4.5 0 4.5 4.5 0 4.5 0 5.5 4.5 5.5 4.5 10 5.5 10 5.5 5.5 10 5.5"></polygon>
-                                                </svg>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="cart-item--total" style="margin-right: 180px">
-                                        <span>375.000 đ</span>
-                                    </div>
-                                    <div class="cart-item--actions">
-                                        <button class="cart-item--action-item" onclick="removeItem(49837)">Xóa</button>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                         <div class="cart-item-body-space"></div>
+                    </div>
+                </div>
+            </div>
+            <div id="cartItemsContainer">
+                <h2>Giỏ Hàng</h2>
+                <div th:each="item : ${cartItems}">
+                    <div class="cart-item">
+                        <p th:text="${item.quantity}"></p>
                     </div>
                 </div>
             </div>
@@ -245,13 +206,13 @@
                     <span class="cart-final--bottom-checkout--btn btnDatHang">Đặt hàng</span>
                 </button>
             </div>
-</div>
-</section>
+        </section>
 
-
-<script th:src="@{/ajax/client/cart.js}" type="text/javascript"></script>
-<script th:src="@{/js/client/cart.js}" type="text/javascript"></script>
-</section>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script th:src="@{/ajax/client/product-detail.js}" type="text/javascript"></script>
+        <script th:src="@{/ajax/client/cart.js}" type="text/javascript"></script>
+        <script th:src="@{/js/client/cart.js}" type="text/javascript"></script>
+    </section>
 
 </div>
 </body>

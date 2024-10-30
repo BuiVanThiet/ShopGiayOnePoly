@@ -21,7 +21,6 @@ public class ProductDetailClientRespone {
     private String colorName;
     private String sizeName;
     private String productImage;
-
     public ProductDetailClientRespone(Integer productDetailId,
                                       Integer productId,
                                       String productName,
