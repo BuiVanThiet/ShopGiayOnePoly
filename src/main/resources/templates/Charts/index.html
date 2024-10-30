@@ -22,19 +22,21 @@
       <div class="col-md-4">
         <div class="rectangle">
           <h6>Doanh số hôm nay</h6>
-          <p class="data-from-be" ></p>
+          <p class="data-from-be"><span th:text="${billOfTheDay} + ' Đơn hàng /'"></span>
+            <span th:text="${totalPriceToday +'VND'}"></span></p>
         </div>
       </div>
       <div class="col-md-4">
         <div class="rectangle">
           <h6>Doanh số tháng này</h6>
-          <p class="data-from-be"><span th:text="${paidBillCount}"></span> đơn hàng</p>
+          <p class="data-from-be"><span th:text="${monthlyBill} + ' Đơn hàng /'"></span>
+            <span  class="total-amount" th:text="${totalMonthlyBill} +'VND'"></span></p>
         </div>
       </div>
       <div class="col-md-4">
         <div class="rectangle">
           <h6>Hàng bán được tháng này</h6>
-          <p class="data-from-be" ></p>
+          <p class="data-from-be"><span th:text="${totalMonthlyInvoiceProducts} + ' Sản phẩm'"></span></p>
         </div>
       </div>
     </div>
