@@ -22,4 +22,5 @@ public interface CustomerRegisterRepository extends JpaRepository<Customer,Integ
     //doi mk
     @Query("select c from Customer c where c.email = :emailCheck")
     Customer getCustomerByEmail(@Param("emailCheck") String email);
+
 }

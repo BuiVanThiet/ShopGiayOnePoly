@@ -1,18 +1,16 @@
 package com.example.shopgiayonepoly.controller;
 
 import java.text.NumberFormat;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
 import com.example.shopgiayonepoly.entites.Staff;
-import com.example.shopgiayonepoly.service.BillService;
 import com.example.shopgiayonepoly.service.CanvasjsChartService;
 import com.example.shopgiayonepoly.service.ChartService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,8 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/chart")
 public class ChartController {
-    @Autowired
-    CanvasjsChartService canvasjsChartService;
     @Autowired
     ChartService chartService;
 
@@ -32,9 +28,18 @@ public class ChartController {
         long totalMonthlyInvoiceProducts = chartService.totalMonthlyInvoiceProducts();
         long billOfTheDay = chartService.billOfTheDay();
         long totalPriceToday = chartService.totalPriceToday();
+        List<Date> findLastBillDates = chartService.findLastBillDates();
         // chuyển tiền sang VND
         NumberFormat numberFormat = NumberFormat.getInstance(new Locale("vi", "VN"));
         String formattedTotalMonthlyBill = numberFormat.format(totalMonthlyBill);
+        String formattedTotalPriceToday = numberFormat.format(totalPriceToday);
+
+        List<String> findLastDates = new ArrayList<>();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        for (Date date : findLastBillDates) {
+            findLastDates.add(sdf.format(date));
+        }
+
         // Hóa đơn tháng này
         model.addAttribute("monthlyBill", monthlyBill);
         // Tổng tiền hóa đơn tháng này
@@ -44,16 +49,12 @@ public class ChartController {
         // Số hóa đơn hôm nay
         model.addAttribute("billOfTheDay", billOfTheDay);
         // Tổng giá sản phẩm đã bán trong hôm nay
-        model.addAttribute("totalPriceToday",totalPriceToday);
-        System.out.println(monthlyBill);
-        return "/Charts/index";
-    }
+        model.addAttribute("totalPriceToday",formattedTotalPriceToday);
 
-    @GetMapping("/")
-    public String springMVC(ModelMap modelMap) {
-        List<List<Map<Object, Object>>> canvasjsDataList = canvasjsChartService.getCanvasjsChartData();
-        modelMap.addAttribute("dataPointsList", canvasjsDataList);
-        return "/Charts/index";  // Đây là tên của tệp HTML (Thymeleaf) bạn đã tạo
+        model.addAttribute("findLastDates", findLastDates);
+
+        System.out.println(monthlyBill);
+        return "Charts/index";
     }
 
     @ModelAttribute("staffInfo")
