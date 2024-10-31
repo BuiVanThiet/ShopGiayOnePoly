@@ -10,7 +10,7 @@
 
 <body>
 <div layout:fragment="content">
-    <article class="container-xxl mt-5">
+    <article class=" bd-gutter mt-5 my-md-4 bd-layout">
         <div class="container-product">
             <div class="header-product">
                 Danh sách sản phẩm
@@ -97,7 +97,7 @@
                         <div class="dropdown-product">
                             <i class="fa fa-ellipsis-v fa-ellipsis-v-product" aria-hidden="true" onclick="toggleDropdownProduct(event, this)"></i>
                             <div class="dropdown-menu-product">
-                                <a href="#">Xem chi tiết</a>
+                                <a th:href="@{/staff/product/detail/{idProduct}(idProduct=${product.id})}">Xem chi tiết</a>
                                 <a href="#">Chỉnh sửa</a>
                                 <a href="#">Xóa</a>
                             </div>

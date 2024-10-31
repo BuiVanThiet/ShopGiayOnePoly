@@ -1,11 +1,11 @@
 package com.example.shopgiayonepoly.implement;
 
 
-import com.example.shopgiayonepoly.dto.request.ProductUpdateRequet;
 import com.example.shopgiayonepoly.dto.response.ProductRespose;
 import com.example.shopgiayonepoly.entites.CategoryProduct;
 import com.example.shopgiayonepoly.entites.Image;
 import com.example.shopgiayonepoly.entites.Product;
+import com.example.shopgiayonepoly.entites.ProductDetail;
 import com.example.shopgiayonepoly.repositores.CategoryRepository;
 import com.example.shopgiayonepoly.repositores.ProductRepository;
 import com.example.shopgiayonepoly.repositores.attribute.ManufacturerRepository;
@@ -141,12 +141,22 @@ public class ProductImplement implements ProductService {
 
     @Override
     public List<Product> findProducts(Integer idCategory, String searchTerm) {
-            return productRepository.findProducts(idCategory, searchTerm);
+        return productRepository.findProducts(idCategory, searchTerm);
     }
 
     @Override
     public List<String> findAllNameProduct() {
-        return  productRepository.findAllNameProduct();
+        return productRepository.findAllNameProduct();
+    }
+
+    @Override
+    public List<ProductDetail> findAllProductDetailByIDProduct(@Param("idProduct") Integer idProduct) {
+        return productRepository.findAllProductDetailByIDProduct(idProduct);
+    }
+
+    @Override
+    public List<ProductDetail> searchProductDetailsByKeyword(@Param("searchTerm") String searchTerm,@Param("idProduct") Integer idProduct){
+        return productRepository.searchProductDetailsByKeyword(searchTerm, idProduct);
     }
 
 }

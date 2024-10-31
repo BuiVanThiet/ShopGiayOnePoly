@@ -4,6 +4,7 @@ import com.example.shopgiayonepoly.dto.response.ProductRespose;
 import com.example.shopgiayonepoly.entites.CategoryProduct;
 import com.example.shopgiayonepoly.entites.Image;
 import com.example.shopgiayonepoly.entites.Product;
+import com.example.shopgiayonepoly.entites.ProductDetail;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -65,6 +66,20 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     @Query("SELECT DISTINCT p.nameProduct FROM Product p")
     List<String> findAllNameProduct();
+
+    @Query("SELECT pd FROM ProductDetail pd WHERE pd.product.id = :idProduct ")
+    List<ProductDetail> findAllProductDetailByIDProduct(@Param("idProduct") Integer idProduct);
+
+    @Query("SELECT pd FROM ProductDetail pd " +
+            "WHERE (LOWER(pd.color.nameColor) LIKE LOWER(CONCAT('%', :searchTerm, '%')) " +
+            "OR LOWER(pd.size.nameSize) LIKE LOWER(CONCAT('%', :searchTerm, '%')) " +
+            "OR CAST(pd.price AS string) LIKE CONCAT('%', :searchTerm, '%') " +
+            "OR CAST(pd.import_price AS string) LIKE CONCAT('%', :searchTerm, '%') " +
+            "OR CAST(pd.quantity AS string) LIKE CONCAT('%', :searchTerm, '%') " +
+            "OR LOWER(pd.describe) LIKE LOWER(CONCAT('%', :searchTerm, '%')) " +
+            "OR CAST(pd.weight AS string) LIKE CONCAT('%', :searchTerm, '%')) " +
+            "AND pd.product.id = :idProduct")
+    List<ProductDetail> searchProductDetailsByKeyword(@Param("searchTerm") String searchTerm,@Param("idProduct") Integer idProduct);
 
 
 }

@@ -5,6 +5,7 @@ import com.example.shopgiayonepoly.dto.response.ProductRespose;
 import com.example.shopgiayonepoly.entites.CategoryProduct;
 import com.example.shopgiayonepoly.entites.Image;
 import com.example.shopgiayonepoly.entites.Product;
+import com.example.shopgiayonepoly.entites.ProductDetail;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -50,5 +51,9 @@ public interface ProductService {
 
     List<Product> findProducts(Integer idCategory, String searchTerm);
     List<String> findAllNameProduct();
+
+    List<ProductDetail> findAllProductDetailByIDProduct(@Param("idProduct") Integer idProduct);
+
+    List<ProductDetail> searchProductDetailsByKeyword(@Param("searchTerm") String searchTerm,@Param("idProduct") Integer idProduct);
 
 }
