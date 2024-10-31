@@ -41,6 +41,8 @@ public class SecurityConfig {
                         .requestMatchers("/send-email-bill","/bill-api/**","/register-api/**", "/register", "/login", "/logout","/return-exchange-bill-api/**","/sale/**","/api-client/**").permitAll()
                         .requestMatchers("/onepoly/**").permitAll()
                         .requestMatchers("/profile/**","/forgotPassword/**").permitAll()
+                        .requestMatchers("/staff/product/**").permitAll()
+                        .requestMatchers("/product-api/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .csrf(csrf -> csrf.disable())
