@@ -250,6 +250,7 @@ public class ClientController {
         ClientLoginResponse clientLoginResponse = this.clientLoginResponse.getCustomerByEmailAndAcount(username, username);
         if (clientLoginResponse != null && passwordEncoder.matches(password, passwordEncoder.encode(clientLoginResponse.getPassword()))) {
             session.setAttribute("clientLogin", clientLoginResponse);
+            System.out.println(clientLoginResponse.toString());
             return "redirect:/onepoly/home";
         } else {
             model.addAttribute("usernameLogin", username);

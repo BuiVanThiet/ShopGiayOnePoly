@@ -139,9 +139,6 @@ public class BillImplement implements BillService {
     public String getDiscountBill(Integer idBill) {
         return this.billRepository.getDiscountBill(idBill);
     }
-    @Override
-    public long invoicePaid() {
-        return billRepository.invoicePaid();
-    }
+
 
 }

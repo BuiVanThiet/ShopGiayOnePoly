@@ -29,7 +29,7 @@ body {
 }
 
 .sidebar-custom-manage:hover {
-    width: 260px;
+    width: 300px;
 }
 
 .sidebar-custom-manage .sidebar-custom-manage-header {
@@ -109,7 +109,7 @@ body {
     color: #ffffff;
     font-weight: 500;
     white-space: nowrap;
-    padding: 15px 10px;
+    padding: 10px 10px;
     text-decoration: none;
     transition: 0.2s ease;
     font-size: 1rem;
@@ -135,9 +135,12 @@ body {
 
 .user-profile img {
     width: 42px;
+    height: 42px; /* Đảm bảo ảnh luôn có tỷ lệ vuông */
+    object-fit: cover; /* Đảm bảo nội dung ảnh vừa khít mà không bị méo */
     border-radius: 50%;
     border: 2px solid #fff;
 }
+
 
 .user-profile h3 {
     font-size: 1rem;
@@ -157,4 +160,14 @@ body {
 .sidebar-custom-manage:hover .user-account {
     background: #fff;
     border-radius: 4px;
+}
+
+.submenu {
+    max-height: 0; /* Bắt đầu với chiều cao 0 */
+    overflow: hidden;
+    transition: max-height 0.5s ease-out; /* Thời gian chuyển động 0.3s */
+}
+
+.submenu.open {
+    max-height: 300px; /* Chiều cao tối đa khi mở, có thể điều chỉnh */
 }

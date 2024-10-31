@@ -557,6 +557,7 @@ function loadExchangeBill(page) {
             tbody.empty(); // Xóa các dòng cũ
 
             if(response.length == 0) {
+                $('#form-input-money-discount').hide(); // Ẩn phần tử khi trang đã tải
                 // Nếu không có dữ liệu, hiển thị ảnh
                 noDataContainer.html(`
                 <img src="https://res.cloudinary.com/dfy4umpja/image/upload/v1725477250/jw3etgwdqqxtkevcxisq.png"
@@ -566,6 +567,7 @@ function loadExchangeBill(page) {
                 noDataContainer.show();
                 tbody.closest('table').hide(); // Ẩn table nếu không có dữ liệu
             }else {
+                $('#form-input-money-discount').show(); // Ẩn phần tử khi trang đã tải
                 noDataContainer.hide();
                 tbody.closest('table').show();
                 response.forEach(function (exchange,index) {

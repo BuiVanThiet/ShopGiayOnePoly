@@ -267,50 +267,64 @@
     </div>
     <ul class="sidebar-custom-manage-links" style="margin: 0 !important;padding: 0 !important;">
         <h4>
-            <span>Chức năng quản lý 1</span>
             <div class="menu-separator"></div>
         </h4>
-        <li>
-            <a href="#">
-                <span class="material-symbols-outlined"> dashboard </span>
-                chức năng bé hơn 1
-            </a>
-        </li>
-        <li>
-            <a href="#"><span class="material-symbols-outlined"> overview </span>chức năng bé hơn 2</a>
-        </li>
         <li>
             <a href="/chart/form"><span class="material-symbols-outlined"> monitoring </span>Thống kê</a>
         </li>
         <h4>
-            <span>General</span>
             <div class="menu-separator"></div>
         </h4>
         <li>
             <a href="/staff/list"><span class="material-symbols-outlined"> person </span>Nhan vien</a>
         </li>
+        <h4>
+            <div class="menu-separator"></div>
+        </h4>
         <li>
             <a href="/customer/list"><span class="material-symbols-outlined"> person </span>Khach hang</a>
         </li>
+        <h4>
+            <div class="menu-separator"></div>
+        </h4>
         <li>
             <a href="/staff/product/productv2"><span class="material-symbols-outlined"> steps </span>Sản phẩm</a>
         </li>
+        <h4>
+            <div class="menu-separator"></div>
+        </h4>
         <li>
-            <a href="#"><span class="material-symbols-outlined"> view_cozy </span>Thuộc tính sản phẩm</a>
+            <a href="#" onclick="toggleSubmenu(event)">
+                <span class="material-symbols-outlined"> view_cozy </span>Thuộc tính sản phẩm
+            </a>
+            <!-- Danh sách con ẩn/hiện -->
+            <ul class="submenu">
+                <li><a href="#"> <span class="material-symbols-outlined"> view_cozy </span>Chức năng con 1</a></li>
+                <li><a href="#"> <span class="material-symbols-outlined"> view_cozy </span>Chức năng con 2</a></li>
+                <li><a href="#"> <span class="material-symbols-outlined"> view_cozy </span>Chức năng con 3</a></li>
+            </ul>
         </li>
+        <h4>
+            <div class="menu-separator"></div>
+        </h4>
         <li>
             <a href="/voucher/list"><span class="material-symbols-outlined"> local_offer </span>Phiếu giảm giá</a>
         </li>
+        <h4>
+            <div class="menu-separator"></div>
+        </h4>
         <li>
             <a href="/sale-product/list"><span class="material-symbols-outlined"> percent </span>Đợt giảm giá</a>
         </li>
-
+        <h4>
+            <div class="menu-separator"></div>
+        </h4>
         <li>
             <a href="#"><span class="material-symbols-outlined">
                 notifications_active </span>Notifications</a>
         </li>
         <h4>
-            <span>Hóa đơn</span>
+            <span></span>
             <div class="menu-separator"></div>
         </h4>
         <li>
@@ -321,6 +335,9 @@
                 Bán Hàng
             </a>
         </li>
+        <h4>
+            <div class="menu-separator"></div>
+        </h4>
         <li>
             <a href="/staff/bill/manage-bill">
                   <span class="material-symbols-outlined">
@@ -330,11 +347,11 @@
             </a>
         </li>
         <h4>
-            <span>Account</span>
+            <span>Tài khoản</span>
             <div class="menu-separator"></div>
         </h4>
         <li>
-            <a href="/profile/staffProfile"><span class="material-symbols-outlined"> account_circle </span>Profile</a>
+            <a href="/profile/staffProfile"><span class="material-symbols-outlined"> account_circle </span>Hồ sơ</a>
         </li>
         <li>
             <a th:if="${#authorization.expression('!isAuthenticated()')}" th:href="@{/login/login}"><span
@@ -348,7 +365,7 @@
     </ul>
     <div class="user-account" th:if="${staffInfo != null}">
         <div class="user-profile">
-            <img src="/img/homeManage/profile-img.jpg" alt="Profile Image"/>
+            <img th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728721025/'+${staffInfo.image}" alt="Profile Image"/>
             <div class="user-detail">
                 <h3 th:text="${staffInfo.fullName}"></h3>
                 <span th:text="${staffInfo.role.nameRole}"></span>
@@ -389,6 +406,7 @@
         crossorigin="anonymous"></script>
 <!--scriploading-->
 <script src="/loading/actionLoading.js"></script>
+<script th:src="@{/js/homeManage/action.js}" type="text/javascript"></script>
 
 <!-- đây là scrip bên màn tạo mới hóa đơn  -->
 <!-- scrip thu vien cua cau hình QR -->

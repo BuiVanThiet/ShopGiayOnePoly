@@ -13,6 +13,8 @@ import java.io.IOException;
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
-        response.sendRedirect(request.getContextPath() + "/?accessDenied=true");
+        // Ghi nhận thông tin lỗi
+        System.out.println("Access denied for user: " + request.getUserPrincipal().getName());
+        response.sendError(HttpServletResponse.SC_FORBIDDEN, "Bạn không có quyền truy cập vào trang này.");
     }
 }
