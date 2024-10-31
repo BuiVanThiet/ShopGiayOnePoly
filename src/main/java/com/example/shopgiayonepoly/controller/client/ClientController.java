@@ -23,10 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping("/onepoly")
@@ -55,12 +52,13 @@ public class ClientController {
     @GetMapping("/home")
     public String getFormHomeClient(HttpSession session, Model model) {
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
-        model.addAttribute("clientLogin", clientLoginResponse);
-        session.removeAttribute("clientInfo");
+//        model.addAttribute("clientLogin", clientLoginResponse);
+//        session.removeAttribute("clientInfo");
         List<ProductIClientResponse> listProductHighest = clientService.GetTop12ProductWithPriceHighest();
         List<ProductIClientResponse> listProductLowest = clientService.GetTop12ProductWithPriceLowest();
         model.addAttribute("listProductHighest", listProductHighest);
         model.addAttribute("listProductLowest", listProductLowest);
+        model.addAttribute("clientLogin", clientLoginResponse);
         return "client/homepage";
     }
 
@@ -111,6 +109,7 @@ public class ClientController {
     public String getFormProductDetail(@PathVariable("productID") Integer id,
                                        HttpSession session,
                                        Model model) {
+        ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
         List<ProductDetailClientRespone> productDetailClientRespones = clientService.findProductDetailByProductId(id);
         List<ColorClientResponse> colors = clientService.findDistinctColorsByProductId(id);
         List<SizeClientResponse> sizes = clientService.findDistinctSizesByProductId(id);
@@ -118,13 +117,16 @@ public class ClientController {
         model.addAttribute("colors", colors);
         model.addAttribute("sizes", sizes);
         model.addAttribute("productID", id);
+        model.addAttribute("clientLogin", clientLoginResponse);
         return "client/product_detail";
     }
 
     @PostMapping("/add-to-cart")
     public ResponseEntity<?> addToCart(
             @RequestBody Map<String, Integer> requestData,
+            Model model,
             HttpSession session) {
+        ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
         Integer productDetailId = requestData.get("productDetailId");
         Integer quantity = requestData.get("quantity");
         Map<String, Object> response = new HashMap<>();
@@ -159,6 +161,9 @@ public class ClientController {
                 cart.setCustomer(customer);
                 cart.setProductDetail(productDetail);
                 cart.setQuantity(existingCartItem.getQuantity()); // Cập nhật số lượng mới
+                cart.setStatus(1);
+                cart.setCreateDate(new Date());
+                cart.setUpdateDate(new Date()); //
                 cartRepository.save(cart);
             } else {
                 // Tạo mới sản phẩm trong giỏ hàng nếu chưa tồn tại
@@ -166,6 +171,7 @@ public class ClientController {
                 newCartItem.setCustomer(customer);
                 newCartItem.setProductDetail(productDetail);
                 newCartItem.setQuantity(quantity);
+                newCartItem.setStatus(1);
                 cartRepository.save(newCartItem);
             }
         } else {
@@ -179,15 +185,16 @@ public class ClientController {
             sessionCart.put(productDetailId, sessionCart.getOrDefault(productDetailId, 0) + quantity);
             session.setAttribute("sessionCart", sessionCart);
         }
-
+        model.addAttribute("clientLogin", clientLoginResponse);
         response.put("success", true);
         response.put("message", "Thêm sản phẩm vào giỏ hàng thành công.");
         return ResponseEntity.ok(response);
     }
 
-
     @GetMapping("/cart")
     public String getFromCart(HttpSession session, Model model) {
+        ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
+
         List<CartItemResponse> cartItems = new ArrayList<>();
         // Kiểm tra nếu người dùng đã đăng nhập
         ClientLoginResponse clientLogin = (ClientLoginResponse) session.getAttribute("clientLogin");
@@ -209,13 +216,10 @@ public class ClientController {
                 }
             }
         }
-
+        model.addAttribute("clientLogin", clientLoginResponse);
         model.addAttribute("cartItems", cartItems); // Gửi dữ liệu đến view
         return "client/cart"; // Trả về view giỏ hàng
     }
-
-
-
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @GetMapping("/cerateProduct")
