@@ -51,4 +51,7 @@ h2 {
     object-fit: cover;     /* Đảm bảo ảnh vừa khung mà không bị méo */
     border: 2px solid #ddd; /* Đường viền xung quanh ảnh */
 }
+.form-control-plaintext {
+    margin-left: 12px;
+}
 

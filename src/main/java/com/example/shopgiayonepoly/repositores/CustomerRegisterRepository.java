@@ -19,5 +19,4 @@ public interface CustomerRegisterRepository extends JpaRepository<Customer,Integ
 
     @Query("SELECT c FROM Customer c WHERE c.acount = :acount")
     Customer findByAcount(@Param("acount") String acount);
-
 }

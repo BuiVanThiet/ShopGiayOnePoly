@@ -5,6 +5,10 @@ import com.example.shopgiayonepoly.service.ChartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 @Service
 public class ChartImplement implements ChartService {
     @Autowired
@@ -34,4 +38,10 @@ public class ChartImplement implements ChartService {
     public long totalPriceToday() {
         return chartRepository.totalPriceToday();
     }
+
+    @Override
+    public List<Date> findLastBillDates() {
+        return chartRepository.findLastBillDates();
+    }
+
 }

@@ -139,4 +139,5 @@ public class BillImplement implements BillService {
     public String getDiscountBill(Integer idBill) {
         return this.billRepository.getDiscountBill(idBill);
     }
+
 }
