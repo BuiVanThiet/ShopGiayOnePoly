@@ -17,4 +17,24 @@ public class CustomerRegisterImplement implements CustomerRegisterService {
         return "Đăng ký thành công!";
     }
 
+    @Override
+    public boolean existsByEmail(String email) {
+        return customerRegisterRepository.existsByEmail(email);
+    }
+
+    @Override
+    public boolean existsByAcount(String acount) {
+        return customerRegisterRepository.existsByAcount(acount);
+    }
+
+    @Override
+    public Customer findByAcount(String acount) {
+        return customerRegisterRepository.findByAcount(acount);
+    }
+
+    @Override
+    public <S extends Customer> S save(S entity) {
+        return customerRegisterRepository.save(entity);
+    }
+
 }

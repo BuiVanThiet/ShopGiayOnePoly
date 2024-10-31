@@ -44,7 +44,7 @@
         @GetMapping("/logout")
         public String logout(HttpSession session) {
             // Xóa thông tin khỏi session khi đăng xuất
-            session.invalidate();
+            session.removeAttribute("staffLogin");
             return "redirect:/login";
         }
 

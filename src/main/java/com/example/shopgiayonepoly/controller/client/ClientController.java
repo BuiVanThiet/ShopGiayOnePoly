@@ -9,15 +9,15 @@ import com.example.shopgiayonepoly.entites.Customer;
 import com.example.shopgiayonepoly.entites.ProductDetail;
 import com.example.shopgiayonepoly.implement.CustomerRegisterImplement;
 import com.example.shopgiayonepoly.repositores.*;
-import com.example.shopgiayonepoly.service.CartService;
-import com.example.shopgiayonepoly.service.ClientService;
-import com.example.shopgiayonepoly.service.CustomerService;
+import com.example.shopgiayonepoly.service.*;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -36,9 +36,9 @@ public class ClientController {
     @Autowired
     PasswordEncoder passwordEncoder;
     @Autowired
-    CustomerRegisterImplement customerRegisterImplement;
+    CustomerRegisterService customerRegisterService;
     @Autowired
-    CustomerRegisterRepository customerRegisterRepository;
+    StaffRegisterService staffRegisterService;
     @Autowired
     CustomerService customerService;
     @Autowired
@@ -215,8 +215,6 @@ public class ClientController {
     }
 
 
-
-
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @GetMapping("/cerateProduct")
     public String homeManage(Model model, HttpSession session) {
@@ -247,6 +245,20 @@ public class ClientController {
     public String processLogin(@RequestParam String username,
                                @RequestParam String password,
                                HttpSession session, Model model) {
+        if (username == null || username.trim().isEmpty()) {
+            model.addAttribute("usernameError", "Tên tài khoản không được để trống");
+        }
+
+        if (password == null || password.trim().isEmpty()) {
+            model.addAttribute("passwordError", "Mật khẩu không được để trống");
+        }
+
+        // Nếu có lỗi, trả về trang đăng nhập với các thông báo lỗi
+        if (model.containsAttribute("usernameError") || model.containsAttribute("passwordError")) {
+            model.addAttribute("usernameLogin", username); // Giữ lại giá trị username
+            return "login/loginClient"; // Trả về trang đăng nhập
+        }
+        
         ClientLoginResponse clientLoginResponse = this.clientLoginResponse.getCustomerByEmailAndAcount(username, username);
         if (clientLoginResponse != null && passwordEncoder.matches(password, passwordEncoder.encode(clientLoginResponse.getPassword()))) {
             session.setAttribute("clientLogin", clientLoginResponse);
@@ -260,10 +272,19 @@ public class ClientController {
 
     @GetMapping("/register")
     public String formRegister(Model model, HttpSession session) {
+        RegisterRequest registerRequest = new RegisterRequest();
+        // Lấy giá trị từ session và set vào RegisterRequest
         String acount = (String) session.getAttribute("acount");
         String email = (String) session.getAttribute("email");
-        model.addAttribute("acount", acount != null ? acount : "");
-        model.addAttribute("email", email != null ? email : "");
+        if (acount != null) {
+            registerRequest.setAcount(acount);
+        }
+        if (email != null) {
+            registerRequest.setEmail(email);
+        }
+
+        // Thêm đối tượng registerRequest vào model
+        model.addAttribute("registerRequest", registerRequest);
         model.addAttribute("errorMessage", session.getAttribute("errorMessage"));
 
         // Xóa session sau khi dùng xong
@@ -274,18 +295,40 @@ public class ClientController {
     }
 
     @PostMapping("/register")
-    public String register(RegisterRequest registerRequest, Model model, HttpSession session) {
-        // Lưu thông tin vào session để giữ lại khi có lỗi
+    public String register(@ModelAttribute("registerRequest") @Valid RegisterRequest registerRequest,
+                           BindingResult bindingResult, Model model, HttpSession session) {
+
         session.setAttribute("acount", registerRequest.getAcount());
         session.setAttribute("email", registerRequest.getEmail());
 
-        if (customerRegisterRepository.existsByEmail(registerRequest.getEmail())) {
-            session.setAttribute("errorMessage", "Email đã tồn tại. Vui lòng chọn email khác.");
-            return "redirect:/onepoly/register";
+        if (customerRegisterService.existsByAcount(registerRequest.getAcount())) {
+            model.addAttribute("errorMessage", "Tên đăng nhập  đã tồn tại.");
+            return "client/register";
         }
-        if (customerRegisterRepository.existsByAcount(registerRequest.getAcount())) {
-            session.setAttribute("errorMessage", "Tên đăng nhập đã tồn tại. Vui lòng chọn Tên đăng nhập khác.");
-            return "redirect:/onepoly/register";
+
+        if (staffRegisterService.existsByAcount(registerRequest.getAcount())) {
+            model.addAttribute("errorMessage", "Tên đăng nhập đã tồn tại.");
+            return "client/register";
+        }
+
+        if (customerRegisterService.existsByEmail(registerRequest.getEmail()) ) {
+            model.addAttribute("errorMessage", "Email đã tồn tại.");
+            return "client/register";
+        }
+
+        if (staffRegisterService.existsByEmail(registerRequest.getEmail()) ) {
+            model.addAttribute("errorMessage", "Email đã tồn tại.");
+            return "client/register";
+        }
+
+        if (!registerRequest.getPassword().equals(registerRequest.getConfirmPassword())) {
+            model.addAttribute("errorMessage", "Mật khẩu và xác nhận mật khẩu không trùng khớp.");
+            return "client/register";
+        }
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("registerRequest", registerRequest);
+            return "client/register";  // Trả về template trực tiếp, không dùng redirect
         }
 
         Customer customer = new Customer();
@@ -296,20 +339,15 @@ public class ClientController {
         customer.setNumberPhone(" ");
         customer.setGender(1);
         customer.setStatus(1);
+        customerRegisterService.save(customer);
 
-        String message = customerRegisterImplement.registerCustomer(customer);
-
-        if (message.equals("Đăng ký thành công!")) {
-            session.setAttribute("successMessage", message);
-            session.removeAttribute("acount");
-            session.removeAttribute("email");
-            session.removeAttribute("errorMessage");
-            return "redirect:/onepoly/login";
-        } else {
-            session.setAttribute("errorMessage", message);
-            return "redirect:/onepoly/register";
-        }
+        session.removeAttribute("acount");
+        session.removeAttribute("email");
+        session.removeAttribute("errorMessage");
+        return "redirect:/onepoly/login";
     }
+
+
 
 
 //    @GetMapping("/userProfile")
