@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -37,9 +38,14 @@ public class StaffController {
 //    }
 
     @GetMapping("/list")
-    public String getListStaffByPage(@RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber, Model model) {
+    public String getListStaffByPage(@RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber, Model model,HttpSession session) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        Page<Staff> pageStaff = staffService.getAllStaffByPage(pageable);
+        Staff staff = (Staff) session.getAttribute("staffLogin");
+        if(staff == null || staff.getId() == null) {
+            return "redirect:/login";
+        }
+
+        Page<Staff> pageStaff = staffService.getAllStaffByPage(pageable, staff.getId());
         model.addAttribute("pageStaff", pageStaff);
         model.addAttribute("staff", new StaffRequest());
         return "Staff/list";
