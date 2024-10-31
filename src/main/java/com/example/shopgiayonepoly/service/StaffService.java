@@ -17,7 +17,7 @@ import java.util.Optional;
 public interface StaffService {
     List<StaffResponse> getAllStaff();
 
-    public Page<Staff> getAllStaffByPage(Pageable pageable);
+    public Page<Staff> getAllStaffByPage(Pageable pageable, Integer id);
 
     public List<StaffResponse> searchStaffByKeyword(String key);
 
