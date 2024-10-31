@@ -458,7 +458,7 @@ public class ReturnExchangeBillRestController extends BaseBill {
         returnBill.setCustomerPayment(totalExchange);
 
         returnBill.setExchangeAndReturnFee(exchangeAndReturnFee);
-        returnBill.setDiscountedAmount(discountedAmount);
+        returnBill.setDiscountedAmount(exchangeBillDetailResponses.size() > 0 ? discountedAmount : new BigDecimal(0));
 
         returnBill.setReason("hi ae");
         returnBill.setStatus(0);
