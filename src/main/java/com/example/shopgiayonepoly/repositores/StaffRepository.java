@@ -66,8 +66,8 @@ public interface StaffRepository extends JpaRepository<Staff, Integer> {
     @Query(value = "update Staff set status =0 where id=:id")
     public void deleteBySetStatus(@Param("id") Integer id);
 
-    @Query("select v from Staff v where v.status =1 or v.status = 2")
-    public Page<Staff> getAllStaffByPage(Pageable pageable);
+    @Query("select v from Staff v where (v.status = 1 or v.status = 2) and v.id <> :idLogin")
+    public Page<Staff> getAllStaffByPage(Pageable pageable,@Param("idLogin") Integer id);
 
     boolean existsByCodeStaff(String codeStaff);
 

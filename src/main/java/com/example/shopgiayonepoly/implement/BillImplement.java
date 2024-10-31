@@ -140,5 +140,4 @@ public class BillImplement implements BillService {
         return this.billRepository.getDiscountBill(idBill);
     }
 
-
 }
