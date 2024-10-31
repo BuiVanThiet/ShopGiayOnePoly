@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,8 +34,8 @@ public class StaffImplement implements StaffService {
     }
 
     @Override
-    public Page<Staff> getAllStaffByPage(Pageable pageable) {
-        return staffRepository.getAllStaffByPage(pageable);
+    public Page<Staff> getAllStaffByPage(Pageable pageable,Integer id) {
+        return staffRepository.getAllStaffByPage(pageable, id);
     }
 
     @Override
