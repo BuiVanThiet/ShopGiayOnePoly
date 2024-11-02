@@ -1,163 +1,88 @@
-/* Reset styles */
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-.cart-item-body-inner {
-    display: flex; /* Đặt flexbox cho hàng */
-    align-items: center; /* Căn giữa hàng */
-    justify-content: space-between; /* Phân phối không gian giữa các phần tử */
-    padding: 10px; /* Thêm khoảng cách cho các phần tử */
-}
-
-.cart-item--prices,
-.cart-item--total,
-.cart-item--actions {
-    margin-left: 10px; /* Thêm khoảng cách giữa các phần tử */
-}
-
-/* Container for cart list */
-.cart-list {
-    width: 100%;
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-/* Header styles */
-.cart-list-header {
-    display: flex;
-    justify-content: space-between;
-    background-color: #eaeaea;
-    padding: 10px;
-}
-
-/* Specific widths for header columns */
-.cart-list-header-title,
-.cart-list-header-price,
-.cart-list-header-quantity,
-.cart-list-header-amount,
-.cart-list-header-action {
-    flex: 1; /* Ensure each column takes up the same space */
-    text-align: center; /* Center the content */
-    font-weight: bold;
-}
-
-/* Adjust product item body */
-.cart-item-body {
-    display: flex;
-    padding: 15px;
-    align-items: center;
-}
-
-/* Ensure quantity and total columns match header */
-.cart-item--quantity,
-.cart-item--total,
-.cart-item--actions {
-    flex: 1; /* Ensure each column has the same size as the header */
-    text-align: center; /* Center the content */
-}
-
-/* Product details */
-.cart-item-body-item-product {
-    display: flex;
-    align-items: center;
-}
-
-.cart-item-body-item-product-inner {
-    display: flex;
-    align-items: center;
-}
-
-.cart-item-body-item-product-thumb {
-    width: 80px; /* Size of the product image */
-    height: auto;
-    margin-right: 10px;
-}
-
-/* Product information */
-.cart-item-body-item-product-info {
+.cart-actions__checkout {
     display: flex;
     flex-direction: column;
+    align-items: flex-end;
+    padding: 20px;
+    background-color: #efecec; /* Nền nhạt */
+    border-top: 1px solid #dee2e6; /* Viền trên */
+    width: 100%;
+    height: 180px;
+    margin-left: auto;
 }
 
-.cart-item-body-item-product-name {
-    font-weight: bold;
+.cart-actions__total {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    font-size: 20px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.cart-actions__total .title {
+    color: #333030;
+}
+
+.cart-actions__total .js-total-price {
+    color: #333030;
+}
+
+.cart-actions__btn {
+    display: flex;
+    gap: 15px
+}
+
+.btn-continue, .btn-checkout {
+    padding: 10px 20px;
+    border: none;
+    font-size: 1em;
+    height: 60px;
+    width: 230px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-continue {
+    background-color: #ffffff; /* Màu xanh dương */
+    color: #413f3f; /* Màu chữ trắng */
+    text-decoration: none;
+}
+
+.btn-continue:hover {
+    background-color: #efefef; /* Màu xanh đậm khi hover */
+}
+
+.btn-checkout {
+    background-color: #092e80; /* Màu đỏ */
+    color: #fff;
+}
+
+.btn-checkout:hover {
+    background-color: #3e3ed4; /* Màu khi hover, thay đổi thành màu khác nếu cần */
+}
+
+.u-btn--primary {
+    text-transform: uppercase;
+}
+/*Voucher cart*/
+
+.cart-voucher {
+    background-color: #f7f7f7;
+    padding: 20px;
+    border-radius: 8px;
+    height: 150px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.voucher-label {
+    font-size: 1rem;
     color: #333;
 }
 
-/* Options for product */
-.cart-item-body-item-product-options {
-    margin-left: 10px;
-}
-
-.cart-item--prices {
-    text-align: center;
-}
-
-.cart-item--quantity {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-}
-
-.cart-item--quantity-actions {
-    display: flex;
-    align-items: center;
-}
-
-.cart-item--quantity-actions--item {
-    background-color: #f0f0f0;
-    border: none;
+.cart-voucher input.form-control {
     border-radius: 5px;
-    padding: 5px 10px;
-    cursor: pointer;
-    transition: background-color 0.3s; /* Smooth transition for hover effect */
 }
 
-.cart-item--quantity-actions--item:hover {
-    background-color: #ddd;
-}
-
-/* Quantity input */
-.cart-item--quantity-actions--input {
-    width: 50px;
-    text-align: center;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    margin: 0 5px;
-}
-
-/* Total price */
-.cart-item--total {
-    text-align: center;
-    font-weight: bold;
-    color: #333; /* Changed color for better visibility */
-}
-
-/* Actions for the item */
-.cart-item--actions {
-    text-align: center;
-}
-
-.cart-item--action-item {
-    background-color: #ff4c4c;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s; /* Smooth transition for hover effect */
-}
-
-.cart-item--action-item:hover {
-    background-color: #e04343;
-}
-
-/* Space between items */
-.cart-item-body-space {
-    height: 10px;
+.cart-voucher button.btn {
+    padding: 8px 16px;
 }

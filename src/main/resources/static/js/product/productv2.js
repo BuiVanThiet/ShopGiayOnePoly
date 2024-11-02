@@ -86,7 +86,7 @@ function toggleSaveButton() {
 
 // Hủy bỏ chọn tất cả và đặt lại trạng thái các ô
 function cancelChanges() {
-    fetch('/api/productList') // Endpoint trả về JSON từ cơ sở dữ liệu
+    fetch('/product-api/productList') // Endpoint trả về JSON từ cơ sở dữ liệu
         .then(response => response.json())
         .then(data => {
             // Xóa các hàng hiện tại trong tbody
@@ -164,7 +164,7 @@ function saveChanges() {
     });
 
     // Gửi dữ liệu đến server qua AJAX
-    fetch('/api/updateProducts', {
+    fetch('/product-api/updateProducts', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -250,7 +250,7 @@ document.querySelector('.search-input-product').addEventListener('input', functi
 
 // Hàm tìm kiếm sản phẩm theo danh mục và ô input
 function fetchProductsByCategoryAndSearch(idCategory, searchTerm) {
-    fetch(`http://localhost:8080/staff/product/search?idCategory=${idCategory}&searchTerm=${searchTerm}`)
+    fetch(`/product-api/search?idCategory=${idCategory}&searchTerm=${searchTerm}`)
         .then(response => response.json())
         .then(data => {
             products = data;
@@ -333,7 +333,7 @@ function displayPage(page) {
                     <div class="dropdown-product">
                         <i class="fa fa-ellipsis-v fa-ellipsis-v-product" aria-hidden="true" onclick="toggleDropdownProduct(event, this)"></i>
                         <div class="dropdown-menu-product">
-                            <a href="#">Xem chi tiết</a>
+                            <a href="/staff/product/detail/${product.id}">Xem chi tiết</a>
                             <a href="#">Chỉnh sửa</a>
                             <a href="#">Xóa</a>
                         </div>

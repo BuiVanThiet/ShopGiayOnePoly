@@ -41,6 +41,8 @@ public class SecurityConfig {
                         .requestMatchers("/send-email-bill","/bill-api/**","/register-api/**", "/register", "/login", "/logout","/return-exchange-bill-api/**","/sale/**","/api-client/**").permitAll()
                         .requestMatchers("/onepoly/**").permitAll()
                         .requestMatchers("/profile/**","/forgotPassword/**").permitAll()
+                        .requestMatchers("/staff/product/**").permitAll()
+                        .requestMatchers("/product-api/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .csrf(csrf -> csrf.disable())
@@ -61,8 +63,13 @@ public class SecurityConfig {
                         .logoutSuccessUrl("/login?logout")
                 )
                 .exceptionHandling(exceptionHandling -> exceptionHandling
-                        .accessDeniedHandler(accessDeniedHandler())  // Xử lý khi quyền bị từ chối
+                        .accessDeniedHandler(new CustomAccessDeniedHandler())  // Xử lý khi quyền bị từ chối
                 )
+//                .exceptionHandling(exceptionHandling -> exceptionHandling
+//                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+//                            response.sendRedirect("/error?status=403"); // Chuyển hướng đến trang lỗi 403
+//                        })
+//                )
                 .build();
     }
 
@@ -96,8 +103,8 @@ public class SecurityConfig {
     }
 
     // Xử lý khi quyền bị từ chối
-    @Bean
-    public AccessDeniedHandler accessDeniedHandler() {
-        return new CustomAccessDeniedHandler();
-    }
+//    @Bean
+//    public AccessDeniedHandler accessDeniedHandler() {
+//        return new CustomAccessDeniedHandler();
+//    }
 }

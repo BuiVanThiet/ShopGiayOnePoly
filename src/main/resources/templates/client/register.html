@@ -22,27 +22,30 @@
       <p th:text="${successMessage}"></p>
     </div>
 
-    <form th:action="@{/onepoly/register}" method="post">
+    <form th:action="@{/onepoly/register}" method="post" th:object="${registerRequest}">
 
       <div class="input-box">
-            <span class="icon">
-              <ion-icon name="person-circle"></ion-icon>
-            </span>
-        <input type="text" name="acount" th:value="${acount}" placeholder="Tên đăng nhập"/>
+        <span class="icon"><ion-icon name="person-circle"></ion-icon></span>
+        <input type="text" th:field="*{acount}" placeholder="Tên đăng nhập"/>
+        <p th:if="${#fields.hasErrors('acount')}" th:errors="*{acount}" class="error-message"></p>
       </div>
 
       <div class="input-box">
-            <span class="icon">
-              <ion-icon name="mail"></ion-icon>
-            </span>
-        <input type="email" name="email"  th:value="${email}"  placeholder="Email"/>
+        <span class="icon"><ion-icon name="mail"></ion-icon></span>
+        <input type="text" th:field="*{email}" placeholder="Email"/>
+        <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="error-message"></p>
       </div>
 
       <div class="input-box">
-            <span class="icon">
-              <ion-icon name="lock-closed"></ion-icon>
-            </span>
-        <input type="password" name="password" required placeholder="Mật khẩu"/>
+        <span class="icon"><ion-icon name="lock-closed"></ion-icon></span>
+        <input type="password" th:field="*{password}" placeholder="Mật khẩu"/>
+        <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="error-message"></p>
+      </div>
+
+      <div class="input-box">
+        <span class="icon"><ion-icon name="lock-closed"></ion-icon></span>
+        <input type="password" th:field="*{confirmPassword}" placeholder="Xác nhận mật khẩu"/>
+        <p th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}" class="error-message"></p>
       </div>
 
       <button type="submit" class="btn-register">Đăng ký</button>

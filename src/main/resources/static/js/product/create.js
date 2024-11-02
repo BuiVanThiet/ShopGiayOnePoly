@@ -177,7 +177,7 @@ function submitQuickAdd() {
     };
 
     // Gửi yêu cầu POST đến API
-    fetch('http://localhost:8080/staff/attribute/quickly-add', {
+    fetch('/product-api/attribute/quickly-add', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -190,7 +190,7 @@ function submitQuickAdd() {
 }
 
 function reloadOptions() {
-    const url = `http://localhost:8080/staff/attribute/list?type=${currentType}`; // URL API với tham số `type`
+    const url = `/product-api/attribute/list?type=${currentType}`; // URL API với tham số `type`
 
     // Gửi yêu cầu GET đến API để lấy danh sách thuộc tính mới
     fetch(url)

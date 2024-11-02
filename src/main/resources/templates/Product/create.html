@@ -9,16 +9,16 @@
 
 <body class="body-createProduct">
 <div layout:fragment="content">
-  <article class="container-xxl mt-5">
+  <article class=" bd-gutter mt-5 my-md-4 bd-layout">
     <div class="container-createProduct">
-      <div class="content-createProduct">
-        <div class="main-content-createProduct">
-          <h1 class="h1-createProduct">Tạo sản phẩm mới</h1>
-          <form th:action="@{/product/add}" th:object="${product}" method="POST" enctype="multipart/form-data">
+      <form th:action="@{/staff/product/add}" th:object="${product}" method="POST" enctype="multipart/form-data">
+        <div class="content-createProduct">
+          <div class="main-content-createProduct">
+            <h1 class="h1-createProduct">Tạo sản phẩm mới</h1>
             <div class="form-group-createProduct">
               <div class="form-control-createProduct">
                 <label>Mã sản phẩm</label>
-                <input type="text"/>
+                <input type="text" name="codeProduct"/>
               </div>
               <div class="form-control-createProduct">
                 <label for="myInput-nameProduct">Tên sản phẩm</label>
@@ -33,24 +33,30 @@
               </div>
               <div class="form-control-createProduct">
                 <label for="myInput-category">Danh mục</label>
-                <input name="category" type="text" id="myInput-category"
-                       onfocus="showDropdown(event)"
-                       onkeyup="filterFunction(event)" autocomplete="off">
-                <ul id="dataList-category" class="dropdown-content-createProduct">
-                  <th:block  th:each="category : ${categoryList}">
-                    <li style="display: flex; justify-content: space-between">
-                      <span th:text="${category.nameCategory}"></span>
-                      <input style="width: 20px" type="checkbox" class="category-checkbox">
-                    </li>
-                  </th:block>
-                </ul>
+                <div style="display: flex">
+                  <input type="text" id="myInput-category"
+                         onfocus="showDropdown(event)"
+                         onkeyup="filterFunction(event)" autocomplete="off">
+                  <ul id="dataList-category" class="dropdown-content-createProduct">
+                    <th:block th:each="category : ${categoryList}">
+                      <li style="display: flex; justify-content: space-between">
+                        <span th:text="${category.nameCategory}"></span>
+                        <input style="width: 20px" type="checkbox" name="categories" th:value="${category.id}">
+                      </li>
+                    </th:block>
+                  </ul>
+                  <div class="btn-add-quickly"
+                       onclick="openQuickAddForm('Thêm mới danh mục', 'Mã danh mục', 'Tên danh mục', 'Nhập mã danh mục', 'Nhập tên danh mục', 'category')">
+                    <span class="material-symbols-outlined">add</span>
+                  </div>
+                </div>
               </div>
             </div>
             <div class="form-group-createProduct">
               <div class="form-control-createProduct">
                 <label>Chất liệu</label>
                 <div style="display: flex">
-                  <select id="materialSelect">
+                  <select id="materialSelect" name="material">
                     <option value="0">Chọn chất liệu</option>
                     <th:block th:each="material : ${materialList}">
                       <option th:text="${material.nameMaterial}" th:value="${material.id}"></option>
@@ -65,7 +71,7 @@
               <div class="form-control-createProduct">
                 <label>Hãng</label>
                 <div style="display: flex">
-                  <select id="manufacturerSelect">
+                  <select id="manufacturerSelect" name="manufacturer">
                     <option value="0">Chọn hãng</option>
                     <th:block th:each="manufacturer : ${manufacturerList}">
                       <option th:text="${manufacturer.nameManufacturer}" th:value="${manufacturer.id}"></option>
@@ -80,7 +86,7 @@
               <div class="form-control-createProduct">
                 <label>Xuất xứ</label>
                 <div style="display: flex">
-                  <select id="originSelect">
+                  <select id="originSelect" name="origin">
                     <option value="0">Chọn xuất xứ</option>
                     <th:block th:each="origin : ${originList}">
                       <option th:text="${origin.nameOrigin}" th:value="${origin.id}"></option>
@@ -97,7 +103,7 @@
               <div class="form-control-createProduct">
                 <label>Loại đế</label>
                 <div style="display: flex">
-                  <select id="soleSelect">
+                  <select id="soleSelect" name="sole">
                     <option value="0">Chọn loại đế</option>
                     <th:block th:each="sole : ${soleList}">
                       <option th:text="${sole.nameSole}" th:value="${sole.id}"></option>
@@ -111,37 +117,49 @@
               </div>
               <div class="form-control-createProduct">
                 <label for="myInput-color">Màu sắc</label>
-                <input name="color" type="text" id="myInput-color"
-                       onfocus="showDropdown(event)"
-                       onkeyup="filterFunction(event)" autocomplete="off">
-                <ul id="dataList-color" class="dropdown-content-createProduct">
-                  <th:block  th:each="color : ${colorList}">
-                    <li style="display: flex; justify-content: space-between">
-                      <span th:text="${color.nameColor}"></span>
-                      <input style="width: 20px" type="checkbox" >
-                    </li>
-                  </th:block>
-                </ul>
+                <div style="display: flex">
+                  <input  type="text" id="myInput-color"
+                         onfocus="showDropdown(event)"
+                         onkeyup="filterFunction(event)" autocomplete="off">
+                  <ul id="dataList-color" class="dropdown-content-createProduct">
+                    <th:block th:each="color : ${colorList}">
+                      <li style="display: flex; justify-content: space-between">
+                        <span th:text="${color.nameColor}"></span>
+                        <input style="width: 20px" type="checkbox">
+                      </li>
+                    </th:block>
+                  </ul>
+                  <div class="btn-add-quickly"
+                       onclick="openQuickAddForm('Thêm mới màu sắc', 'Mã màu sắc', 'Tên màu sắc', 'Nhập mã màu sắc', 'Nhập tên màu sắc', 'color')">
+                    <span class="material-symbols-outlined">add</span>
+                  </div>
+                </div>
               </div>
               <div class="form-control-createProduct">
                 <label for="myInput-size">Kích cỡ</label>
-                <input name="size" type="text" id="myInput-size"
-                       onfocus="showDropdown(event)"
-                       onkeyup="filterFunction(event)" autocomplete="off">
-                <ul id="dataList-size" class="dropdown-content-createProduct">
-                  <th:block  th:each="size : ${sizeList}">
-                    <li style="display: flex; justify-content: space-between">
-                      <span th:text="${size.nameSize}"></span>
-                      <input style="width: 20px" type="checkbox" >
-                    </li>
-                  </th:block>
-                </ul>
+                <div style="display: flex">
+                  <input name="size" type="text" id="myInput-size"
+                         onfocus="showDropdown(event)"
+                         onkeyup="filterFunction(event)" autocomplete="off">
+                  <ul id="dataList-size" class="dropdown-content-createProduct">
+                    <th:block th:each="size : ${sizeList}">
+                      <li style="display: flex; justify-content: space-between">
+                        <span th:text="${size.nameSize}"></span>
+                        <input style="width: 20px" type="checkbox">
+                      </li>
+                    </th:block>
+                  </ul>
+                  <div class="btn-add-quickly"
+                       onclick="openQuickAddForm('Thêm mới kích cỡ', 'Mã kích cỡ', 'Tên kích cỡ', 'Nhập mã kích cỡ', 'Nhập tên kích cỡ', 'size')">
+                    <span class="material-symbols-outlined">add</span>
+                  </div>
+                </div>
               </div>
             </div>
             <div class="form-group-createProduct">
               <div class="form-control-createProduct description-createProduct">
                 <label>Mô tả</label>
-                <textarea rows="4"></textarea>
+                <textarea rows="4" name="describe"></textarea>
               </div>
             </div>
             <div class="upload-section-createProduct"
@@ -150,44 +168,45 @@
                 <div class="upload-item-createProduct">
                   <i class="fas fa-cloud-upload-alt"></i>
                   <p>Nhấp để thêm ảnh</p>
-                  <input type="file" id="file-input-createProduct" accept="image/*" multiple style="display: none;"
+                  <input type="file" id="file-input-createProduct" name="imageFiles" accept="image/*" multiple
+                         style="display: none;"
                          onchange="previewImages(event)">
                 </div>
               </div>
               <div id="image-preview-createProduct" class="image-preview-createProduct"></div>
             </div>
-          </form>
-        </div>
-        <div class="main-content-createProduct" id="table-productDetail-createProduct">
-          <table class="table-createProduct">
-            <thead>
-            <tr>
-              <th style="width: 10px;">
-                <input type="checkbox" id="select-all-createProduct" onclick="toggleSelectAll(this)">
-              </th>
-              <th style="width: 300px">Tên sản phẩm</th>
-              <th style="width: 100px">Màu sắc</th>
-              <th style="width: 150px">Kích cỡ</th>
-              <th style="width: 200px">Giá bán</th>
-              <th style="width: 200px">Giá nhập</th>
-              <th style="width: 150px">Số lượng</th>
-              <th style="width: 150px">Trọng lượng</th>
-              <th style="width: 150px">Chiều cao</th>
-              <th style="width: 150px">Chiều dài</th>
-              <th style="width: 150px">Chiều rộng</th>
-              <th style="width: 10px"><span class="material-symbols-outlined">delete_forever</span></th>
-            </tr>
-            </thead>
-            <tbody>
+          </div>
+          <div class="main-content-createProduct" id="table-productDetail-createProduct">
+            <table class="table-createProduct">
+              <thead>
+              <tr>
+                <th style="width: 10px;">
+                  <input type="checkbox" id="select-all-createProduct" onclick="toggleSelectAll(this)">
+                </th>
+                <th style="width: 300px">Tên sản phẩm</th>
+                <th style="width: 100px">Màu sắc</th>
+                <th style="width: 150px">Kích cỡ</th>
+                <th style="width: 200px">Giá bán</th>
+                <th style="width: 200px">Giá nhập</th>
+                <th style="width: 150px">Số lượng</th>
+                <th style="width: 150px">Trọng lượng</th>
+                <th style="width: 150px">Chiều cao</th>
+                <th style="width: 150px">Chiều dài</th>
+                <th style="width: 150px">Chiều rộng</th>
+                <th style="width: 10px"><span class="material-symbols-outlined">delete_forever</span></th>
+              </tr>
+              </thead>
+              <tbody>
 
-            </tbody>
-          </table>
+              </tbody>
+            </table>
+          </div>
+          <div class="buttons-createProduct">
+            <button class="create-btn-createProduct">Tạo sản phẩm mới</button>
+            <button class="cancel-btn-createProduct">Hủy bỏ</button>
+          </div>
         </div>
-        <div class="buttons-createProduct">
-          <button class="create-btn-createProduct">Tạo sản phẩm mới</button>
-          <button class="cancel-btn-createProduct">Hủy bỏ</button>
-        </div>
-      </div>
+      </form>
     </div>
     <!-- Form Thêm Thuộc Tính -->
     <div id="quickAddForm" class="quick-add-form" style="display:none;">
