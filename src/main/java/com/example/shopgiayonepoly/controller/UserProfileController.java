@@ -1,5 +1,6 @@
 package com.example.shopgiayonepoly.controller;
 
+import com.example.shopgiayonepoly.config.PasswordEncoderConfig;
 import com.example.shopgiayonepoly.dto.request.StaffProfileRequest;
 import com.example.shopgiayonepoly.dto.request.UserProfileUpdateRequest;
 import com.example.shopgiayonepoly.dto.response.ClientLoginResponse;
@@ -26,6 +27,7 @@ public class UserProfileController {
     CustomerRegisterRepository customerRegisterRepository;
     @Autowired
     CustomerService customerService;
+
     @GetMapping("/userProfile")
     public String formProfile(Model model, HttpSession session) {
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
@@ -44,7 +46,6 @@ public class UserProfileController {
 
         UserProfileUpdateRequest userProfile = new UserProfileUpdateRequest();
         userProfile.setAccount(customer.getAcount());
-        userProfile.setPassword(customer.getPassword());
         userProfile.setFullName(customer.getFullName());
         userProfile.setEmail(customer.getEmail());
         userProfile.setNumberPhone(customer.getNumberPhone());
@@ -87,10 +88,35 @@ public class UserProfileController {
         String acount = clientLoginResponse.getAcount();
         Customer customer = customerRegisterRepository.findByAcount(acount);
 
+        // Kiểm tra hợp lệ cho fullName
+        if (userProfile.getFullName() == null || userProfile.getFullName().trim().isEmpty()) {
+            bindingResult.rejectValue("fullName", "error.userProfile", "Họ và tên không được để trống");
+
+        } else if (!userProfile.getFullName().matches("^[\\p{L}\\s]+$")) {
+            bindingResult.rejectValue("fullName", "error.userProfile", "Họ và tên chỉ được nhập chữ cái");
+
+        } else if (userProfile.getFullName().length() < 5 || userProfile.getFullName().length() > 100) {
+            bindingResult.rejectValue("fullName", "error.userProfile", "Họ và tên phải có độ dài từ 5 đến 100 ký tự");
+
+        }
+
+        // Kiểm tra hợp lệ cho email
+        if (userProfile.getEmail() == null || userProfile.getEmail().isEmpty()) {
+            bindingResult.rejectValue("email", "error.userProfile", "Email không được để trống");
+        } else if (!userProfile.getEmail().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
+            bindingResult.rejectValue("email", "error.userProfile", "Email không hợp lệ");
+        }
+
+        // Kiểm tra hợp lệ cho số điện thoại
+        if (userProfile.getNumberPhone() == null || userProfile.getNumberPhone().isEmpty()) {
+            bindingResult.rejectValue("numberPhone", "error.userProfile", "Số điện thoại không được để trống");
+        } else if (!userProfile.getNumberPhone().matches("^(0|\\+84)(\\d{9})$")) {
+            bindingResult.rejectValue("numberPhone", "error.userProfile", "Số điện thoại không hợp lệ");
+        }
+
         if (bindingResult.hasErrors()) {
             model.addAttribute("userProfile", userProfile);
             model.addAttribute("clientLogin", clientLoginResponse);
-
             model.addAttribute("birthDayDay", day);
             model.addAttribute("birthDayMonth", month);
             model.addAttribute("birthDayYear", year);
@@ -98,8 +124,8 @@ public class UserProfileController {
         }
         if (customer != null) {
             // Cập nhật thông tin người dùng
+            customer.setAcount(userProfile.getAccount());
             customer.setFullName(userProfile.getFullName());
-            customer.setPassword(userProfile.getPassword());
             customer.setEmail(userProfile.getEmail());
             customer.setNumberPhone(userProfile.getNumberPhone());
             customer.setGender(userProfile.getGender());
@@ -126,6 +152,50 @@ public class UserProfileController {
 
         return "redirect:/profile/userProfile";
     }
+    @PostMapping("/updatePassword")
+    public String updatePassword(@Valid @ModelAttribute("userProfile") UserProfileUpdateRequest userProfile,
+                                 BindingResult bindingResult,
+                                 HttpSession session,
+                                 Model model) {
+        ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
+
+        if (clientLoginResponse == null) {
+            return "login/loginClient";
+        }
+
+        String acount = clientLoginResponse.getAcount();
+        Customer customer = customerRegisterRepository.findByAcount(acount);
+
+        if (customer != null) {
+            if (!userProfile.getCurrentPassword().equals(customer.getPassword())) {
+                bindingResult.rejectValue("currentPassword", "error.userProfile", "Mật khẩu hiện tại không đúng");
+            }
+
+            // Kiểm tra mật khẩu mới và xác nhận
+            if (!userProfile.getNewPassword().equals(userProfile.getConfirmPassword())) {
+                bindingResult.rejectValue("confirmPassword", "error.userProfile", "Mật khẩu xác nhận không khớp");
+            }
+
+            if (bindingResult.hasErrors()) {
+                model.addAttribute("clientLogin", clientLoginResponse);
+                model.addAttribute("userProfile", userProfile);
+                model.addAttribute("showPasswordForm", true);
+                return "Profile/UserProfile"; // Quay lại trang với các lỗi validation
+            }
+
+            // Cập nhật mật khẩu
+            customer.setPassword(userProfile.getNewPassword()); // Lưu mật khẩu mới
+            customerRegisterRepository.save(customer);
+
+            model.addAttribute("clientLogin", clientLoginResponse);
+            model.addAttribute("userProfile", userProfile);
+            model.addAttribute("successMessage", "Cập nhật mật khẩu thành công.");
+        } else {
+            model.addAttribute("errorMessage", "Không tìm thấy thông tin tài khoản.");
+        }
+
+        return "redirect:/profile/userProfile"; // Chuyển hướng về trang thông tin tài khoản
+    }
 
     @ModelAttribute("userProfile")
     public UserProfileUpdateRequest populateUserProfile(HttpSession session) {
@@ -135,9 +205,9 @@ public class UserProfileController {
             Customer customer = customerRegisterRepository.findByAcount(account);
             if (customer != null) {
                 UserProfileUpdateRequest userProfile = new UserProfileUpdateRequest();
-                userProfile.setPassword(customer.getPassword());
                 userProfile.setFullName(customer.getFullName());
                 userProfile.setEmail(customer.getEmail());
+                userProfile.setCurrentPassword(customer.getPassword());
                 userProfile.setNumberPhone(customer.getNumberPhone());
                 userProfile.setGender(customer.getGender());
                 userProfile.setImageString(customer.getImage());
