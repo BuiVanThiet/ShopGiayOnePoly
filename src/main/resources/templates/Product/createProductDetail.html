@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{Home/home_manege}">
+
+<head>
+    <title>Thêm chi tiết</title>
+</head>
+
+<body class="body-createProductDetail">
+<div layout:fragment="content">
+    <article class=" bd-gutter mt-5 my-md-4 bd-layout">
+        <div class="container-createProductDetail">
+                <div class="content-createProductDetail">
+                    <div class="main-content-createProductDetail">
+                        <h1 class="h1-createProductDetail" th:text="${'Thêm chi tiết  ' + product.get().nameProduct}"></h1>
+                        <div class="form-group-createProductDetail">
+                            <div class="form-control-createProductDetail">
+                                <label for="myInput-color">Màu sắc</label>
+                                <div style="display: flex">
+                                    <input  type="text" id="myInput-color"
+                                            onfocus="showDropdown(event)"
+                                            onkeyup="filterFunction(event)" autocomplete="off">
+                                    <ul id="dataList-color" class="dropdown-content-createProductDetail">
+                                        <th:block th:each="color : ${colorList}">
+                                            <li style="display: flex; justify-content: space-between">
+                                                <span th:text="${color.nameColor}"></span>
+                                                <input th:value="${color.id}"  style="width: 20px" type="checkbox">
+                                            </li>
+                                        </th:block>
+                                    </ul>
+                                    <div class="btn-add-quickly"
+                                         onclick="openQuickAddForm('Thêm mới màu sắc', 'Mã màu sắc', 'Tên màu sắc', 'Nhập mã màu sắc', 'Nhập tên màu sắc', 'color')">
+                                        <span class="material-symbols-outlined">add</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-control-createProductDetail">
+                                <label for="myInput-size">Kích cỡ</label>
+                                <div style="display: flex">
+                                    <input name="size" type="text" id="myInput-size"
+                                           onfocus="showDropdown(event)"
+                                           onkeyup="filterFunction(event)" autocomplete="off">
+                                    <ul id="dataList-size" class="dropdown-content-createProductDetail">
+                                        <th:block th:each="size : ${sizeList}">
+                                            <li style="display: flex; justify-content: space-between">
+                                                <span th:text="${size.nameSize}"></span>
+                                                <input th:value="${size.id}" style="width: 20px" type="checkbox">
+                                            </li>
+                                        </th:block>
+                                    </ul>
+                                    <div class="btn-add-quickly"
+                                         onclick="openQuickAddForm('Thêm mới kích cỡ', 'Mã kích cỡ', 'Tên kích cỡ', 'Nhập mã kích cỡ', 'Nhập tên kích cỡ', 'size')">
+                                        <span class="material-symbols-outlined">add</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="main-content-createProductDetail" id="table-productDetail-createProductDetail">
+                        <table class="table-createProductDetail" id="productDetailTable">
+                            <thead>
+                            <tr>
+                                <th style="width: 30px;">
+                                    <input type="checkbox"  >
+                                </th>
+                                <th style="width: 150px">Màu sắc</th>
+                                <th style="width: 150px">Kích cỡ</th>
+                                <th style="width: 150px">Giá bán</th>
+                                <th style="width: 150px">Giá nhập</th>
+                                <th style="width: 150px">Số lượng</th>
+                                <th style="width: 150px">Trọng lượng</th>
+                                <th style="width: 300px">Mô tả</th>
+                                <th style="width: 30px"><span class="material-symbols-outlined">delete_forever</span></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="buttons-createProductDetail">
+                        <button type="button" class="create-btn-createProductDetail" onclick="addProductDetail(this.id)" th:id="${product.get().id}">Tạo sản phẩm mới</button>
+                        <button type="button" class="cancel-btn-createProductDetail" >Hủy bỏ</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <!-- Form Thêm Thuộc Tính -->
+        <div id="quickAddForm" class="quick-add-form" style="display:none;">
+            <div class="quick-add-content">
+                <h3 id="formTitle">Thêm thuộc tính</h3>
+                <label id="label1">Mã</label>
+                <input type="text" id="input1" placeholder="Nhập mã"/>
+                <label id="label2">Tên</label>
+                <input type="text" id="input2" placeholder="Nhập tên"/>
+                <button onclick="submitQuickAdd()">Thêm</button>
+                <button onclick="closeQuickAddForm()">Đóng</button>
+            </div>
+        </div>
+    </article>
+
+    <script th:src="@{/js/product/createProductDetail.js}" type="text/javascript"></script>
+</div>
+</body>
+
+</html>

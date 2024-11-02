@@ -3,6 +3,7 @@ package com.example.shopgiayonepoly.restController;
 import com.example.shopgiayonepoly.baseMethod.BaseProduct;
 import com.example.shopgiayonepoly.dto.request.AttributeRequet;
 import com.example.shopgiayonepoly.entites.*;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -196,5 +197,17 @@ public class ProductRestController extends BaseProduct {
             default:
                 return ResponseEntity.badRequest().body("Loại thuộc tính không hợp lệ!");
         }
+    }
+
+
+
+    @GetMapping("/max-product-id")
+    public Integer getMaxProductId(HttpSession session) {
+        if(session.getAttribute("idProductSave") == null) {
+            System.out.println("id san pham khong ton tai ");
+            return null;
+        }
+        System.out.println("da co id san pham ");
+        return (Integer) session.getAttribute("idProductSave");
     }
 }

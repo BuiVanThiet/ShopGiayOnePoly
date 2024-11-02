@@ -20,16 +20,16 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
     <link rel="stylesheet" th:href="@{/pagination/stylePagination.css}" type="text/css">
     <link rel="stylesheet" th:href="@{/css/attribute/attribute.css}" type="text/css">
-    <link rel="stylesheet" th:href="@{/css/product/list.css}" type="text/css">
     <link rel="stylesheet" th:href="@{/css/voucher/home.css}" type="text/css">
     <link rel="stylesheet" th:href="@{/css/sale_product/home.css}" type="text/css">
 
     <link rel="stylesheet" th:href="@{/css/profile/profile_home.css}" type="text/css">
 
 
-    <link rel="stylesheet" th:href="@{/css/product/productv2.css}" type="text/css">
+    <link rel="stylesheet" th:href="@{/css/product/product.css}" type="text/css">
     <link rel="stylesheet" th:href="@{/css/product/productDetail.css}" type="text/css">
     <link rel="stylesheet" th:href="@{/css/product/create.css}" type="text/css">
+    <link rel="stylesheet" th:href="@{/css/product/createProductDetail.css}" type="text/css">
 
     <link rel="stylesheet" th:href="@{/css/customer/list.css}" type="text/css">
     <link rel="stylesheet" th:href="@{/css/staff/list.css}" type="text/css">
@@ -290,7 +290,7 @@
             <div class="menu-separator"></div>
         </h4>
         <li>
-            <a href="/staff/product/productv2"><span class="material-symbols-outlined"> steps </span>Sản phẩm</a>
+            <a href="/staff/product"><span class="material-symbols-outlined"> steps </span>Sản phẩm</a>
         </li>
         <h4>
             <div class="menu-separator"></div>
@@ -301,9 +301,13 @@
             </a>
             <!-- Danh sách con ẩn/hiện -->
             <ul class="submenu">
-                <li><a href="#"> <span class="material-symbols-outlined"> view_cozy </span>Chức năng con 1</a></li>
-                <li><a href="#"> <span class="material-symbols-outlined"> view_cozy </span>Chức năng con 2</a></li>
-                <li><a href="#"> <span class="material-symbols-outlined"> view_cozy </span>Chức năng con 3</a></li>
+                <li><a href="/attribute/color">Màu sắc</a></li>
+                <li><a href="/attribute/size">Kích cỡ</a></li>
+                <li><a href="/attribute/origin">Xuất sứ</a></li>
+                <li><a href="/attribute/manufacturer">Nhà sản xuất</a></li>
+                <li><a href="/attribute/material">Chất liệu</a></li>
+                <li><a href="/attribute/sole">Loại đế</a></li>
+                <li><a href="/attribute/category">Danh mục</a></li>
             </ul>
         </li>
         <h4>

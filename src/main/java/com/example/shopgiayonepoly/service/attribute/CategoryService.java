@@ -1,10 +1,9 @@
-package com.example.shopgiayonepoly.service;
+package com.example.shopgiayonepoly.service.attribute;
 
 import com.example.shopgiayonepoly.entites.Category;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -34,6 +33,5 @@ public interface CategoryService {
     void updateCategory(int id, String codeCategory, String nameCategory);
 
     Set<Category> findCategoriesByIds(List<Integer> ids);
-
 
 }
