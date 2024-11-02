@@ -65,4 +65,6 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
 
     @Query("select v from Customer v where v.status = 1 or v.status = 2")
     public Page<Customer> getAllCustomrByPage(Pageable pageable);
+
+    boolean existsByEmail(String email);
 }
