@@ -1,6 +1,5 @@
 package com.example.shopgiayonepoly.dto.response;
 
-import com.example.shopgiayonepoly.dto.base.BaseDTO;
 import com.example.shopgiayonepoly.entites.Manufacturer;
 import com.example.shopgiayonepoly.entites.Material;
 import com.example.shopgiayonepoly.entites.Origin;
@@ -18,7 +17,7 @@ import java.util.Date;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductRespose {
+public class ProductResponse {
     private Integer id;
     private String codeProduct;
     private String nameProduct;

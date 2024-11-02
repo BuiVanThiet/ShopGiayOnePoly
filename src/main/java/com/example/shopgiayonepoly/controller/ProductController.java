@@ -2,9 +2,11 @@ package com.example.shopgiayonepoly.controller;
 
 import com.cloudinary.Cloudinary;
 import com.example.shopgiayonepoly.baseMethod.BaseProduct;
+import com.example.shopgiayonepoly.dto.response.ProductDetailResponse;
 import com.example.shopgiayonepoly.entites.*;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -21,11 +23,11 @@ public class ProductController extends BaseProduct {
     private final Cloudinary cloudinary;
 
 
-    @GetMapping("/productv2")
-    public String productv2(Model model) {
+    @GetMapping("")
+    public String product(Model model) {
         model.addAttribute("productList", productService.getProductNotStatus0());
         model.addAttribute("categoryList", categoryService.findAll());
-        return "/Product/productv2";
+        return "/Product/product";
     }
 
     @GetMapping("/create")
@@ -43,11 +45,20 @@ public class ProductController extends BaseProduct {
         return "/Product/create";
     }
 
+    @GetMapping("/create/product-detail/{idProduct}")
+    public String createProductDetail(Model model, @PathVariable("idProduct") Integer idProduct) {
+        model.addAttribute("product", productRepository.findById(idProduct));
+        model.addAttribute("colorList", colorService.findAll());
+        model.addAttribute("sizeList", sizeService.findAll());
+        return "/Product/createProductDetail";
+    }
+
 
     @RequestMapping("/add")
-    public String add(@ModelAttribute("product") Product product,
-                      @RequestParam List<Integer> categories,
-                      @RequestParam("imageFiles") List<MultipartFile> imageFiles) throws IOException {
+    public ResponseEntity<String> add(@ModelAttribute("product") Product product,
+                                      @RequestParam List<Integer> categories,
+                                      @RequestParam("imageFiles") List<MultipartFile> imageFiles,
+                                      HttpSession session) throws IOException    {
 
         // Gán danh mục cho sản phẩm
         Set<Category> selectedCategories = categoryService.findCategoriesByIds(categories);
@@ -82,16 +93,26 @@ public class ProductController extends BaseProduct {
         product.setImages(newImages);
 
         // Lưu sản phẩm vào cơ sở dữ liệu
-        productService.save(product);
-
-        return "redirect:/staff/product/productv2"; // Chuyển hướng sau khi hoàn tất
+        Product productSave = productService.save(product);
+        session.setAttribute("idProductSave",productSave.getId());
+        System.out.println("da them san pham ");
+        return ResponseEntity.ok("Sản phẩm đã được thêm thành công");
     }
 
     @GetMapping("/detail/{idProduct}")
     public String viewProductDetail(@PathVariable("idProduct") Integer idProduct, Model model) {
-        List<ProductDetail> productDetails = productService.findAllProductDetailByIDProduct(idProduct);
+        List<ProductDetailResponse> productDetails = productService.findAllProductDetailByIDProduct(idProduct);
         model.addAttribute("productDetailList", productDetails);
         return "/Product/productDetail";
+    }
+
+    @PostMapping("/add-productDetail")
+    public String addMultipleProductDetails(@RequestBody List<ProductDetail> productDetails, Model model) {
+        System.out.println("da tehm san pham chi tiet");
+        productDetailRepository.saveAll(productDetails);
+        model.addAttribute("productList", productService.getProductNotStatus0());
+        model.addAttribute("categoryList", categoryService.findAll());
+        return "product";
     }
     @ModelAttribute("staffInfo")
     public Staff staff(HttpSession session) {

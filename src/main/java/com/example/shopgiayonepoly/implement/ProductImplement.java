@@ -1,17 +1,13 @@
 package com.example.shopgiayonepoly.implement;
 
 
-import com.example.shopgiayonepoly.dto.response.ProductRespose;
+import com.example.shopgiayonepoly.dto.response.ProductDetailResponse;
+import com.example.shopgiayonepoly.dto.response.ProductResponse;
 import com.example.shopgiayonepoly.entites.CategoryProduct;
 import com.example.shopgiayonepoly.entites.Image;
 import com.example.shopgiayonepoly.entites.Product;
 import com.example.shopgiayonepoly.entites.ProductDetail;
-import com.example.shopgiayonepoly.repositores.CategoryRepository;
 import com.example.shopgiayonepoly.repositores.ProductRepository;
-import com.example.shopgiayonepoly.repositores.attribute.ManufacturerRepository;
-import com.example.shopgiayonepoly.repositores.attribute.MaterialRepository;
-import com.example.shopgiayonepoly.repositores.attribute.OriginRepository;
-import com.example.shopgiayonepoly.repositores.attribute.SoleRepository;
 import com.example.shopgiayonepoly.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,16 +25,6 @@ import java.util.Optional;
 public class ProductImplement implements ProductService {
     @Autowired
     ProductRepository productRepository;
-    @Autowired
-    private MaterialRepository materialRepository;
-    @Autowired
-    private ManufacturerRepository manufacturerRepository;
-    @Autowired
-    private OriginRepository originRepository;
-    @Autowired
-    private SoleRepository soleRepository;
-    @Autowired
-    private CategoryRepository categoryRepository;
 
     @Override
     public List<Product> findAll() {
@@ -135,7 +121,7 @@ public class ProductImplement implements ProductService {
     }
 
     @Override
-    public List<ProductRespose> findAllProductsWithOneImage(){
+    public List<ProductResponse> findAllProductsWithOneImage() {
         return productRepository.findAllProductsWithOneImage();
     }
 
@@ -150,13 +136,18 @@ public class ProductImplement implements ProductService {
     }
 
     @Override
-    public List<ProductDetail> findAllProductDetailByIDProduct(@Param("idProduct") Integer idProduct) {
+    public List<ProductDetailResponse> findAllProductDetailByIDProduct(@Param("idProduct") Integer idProduct) {
         return productRepository.findAllProductDetailByIDProduct(idProduct);
     }
 
     @Override
-    public List<ProductDetail> searchProductDetailsByKeyword(@Param("searchTerm") String searchTerm,@Param("idProduct") Integer idProduct){
+    public List<ProductDetail> searchProductDetailsByKeyword(@Param("searchTerm") String searchTerm, @Param("idProduct") Integer idProduct) {
         return productRepository.searchProductDetailsByKeyword(searchTerm, idProduct);
+    }
+
+    @Override
+    public Integer findMaxIdProduct() {
+        return productRepository.findMaxIdProduct();
     }
 
 }

@@ -1,8 +1,8 @@
-package com.example.shopgiayonepoly.implement;
+package com.example.shopgiayonepoly.implement.attribute;
 
 import com.example.shopgiayonepoly.entites.Category;
-import com.example.shopgiayonepoly.repositores.CategoryRepository;
-import com.example.shopgiayonepoly.service.CategoryService;
+import com.example.shopgiayonepoly.repositores.attribute.CategoryRepository;
+import com.example.shopgiayonepoly.service.attribute.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -92,10 +92,10 @@ public class CategoryImplement implements CategoryService {
             throw new RuntimeException("Màu sắc có " + id + " Không tồn tại.");
         }
     }
+
     @Override
     public Set<Category> findCategoriesByIds(List<Integer> ids) {
         return new HashSet<>(categoryRepository.findAllById(ids));
     }
-
 
 }
