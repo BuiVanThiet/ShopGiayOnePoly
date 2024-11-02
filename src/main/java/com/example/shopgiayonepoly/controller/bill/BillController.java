@@ -457,7 +457,7 @@ public class BillController extends BaseBill {
 //                su dung cai nay khi can test nhanh ben online
 //                bill.setStatus(1);
 
-                bill.setStatus(2);
+                bill.setStatus(1);
                 bill.setPaymentMethod(1);
                 if(bill.getNote().length() < 0 || bill.getNote() == null || bill.getNote().trim().equals("")) {
                     bill.setNote("Giao hàng!");

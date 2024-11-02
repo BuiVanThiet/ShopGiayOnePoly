@@ -1,8 +1,9 @@
 package com.example.shopgiayonepoly.service;
 
+import com.example.shopgiayonepoly.dto.request.MonthlyStatistics;
+
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 public interface ChartService {
     long monthlyBill();
@@ -11,4 +12,5 @@ public interface ChartService {
     long billOfTheDay();
     long totalPriceToday();
     List<Date> findLastBillDates();
+    List<MonthlyStatistics> findMonthlyStatistics();
 }

@@ -4,6 +4,8 @@ import com.example.shopgiayonepoly.dto.request.CustomerRequest;
 import com.example.shopgiayonepoly.dto.response.CustomerResponse;
 import com.example.shopgiayonepoly.entites.Customer;
 import com.example.shopgiayonepoly.entites.Staff;
+import com.example.shopgiayonepoly.repositores.CustomerRepository;
+import com.example.shopgiayonepoly.repositores.StaffRepository;
 import com.example.shopgiayonepoly.service.CustomerService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -27,6 +29,12 @@ import java.util.List;
 public class CustomerController {
     @Autowired
     CustomerService customerService;
+
+    @Autowired
+    StaffRepository staffRepository;
+
+    @Autowired
+    CustomerRepository customerRepository;
 
     private final int pageSize = 5;
 
@@ -82,6 +90,8 @@ public class CustomerController {
         // Kiểm tra email
         if (customerRequest.getEmail() == null || customerRequest.getEmail().isEmpty()) {
             result.rejectValue("email", "error.customer", "Email không được để trống!");
+        } else if (customerRepository.existsByEmail(customerRequest.getEmail()) || staffRepository.existsByEmail(customerRequest.getEmail())) {
+            result.rejectValue("email", "error.customer", "Email đã được sử dụng!");
         }
         // Kiểm tra ngày sinh
         if (customerRequest.getBirthDay() == null) {
@@ -169,6 +179,8 @@ public class CustomerController {
         // Kiểm tra email
         if (customerRequest.getEmail() == null || customerRequest.getEmail().isEmpty()) {
             result.rejectValue("email", "error.customer", "Email không được để trống!");
+        } else if (customerRepository.existsByEmail(customerRequest.getEmail()) || staffRepository.existsByEmail(customerRequest.getEmail())) {
+            result.rejectValue("email", "error.customer", "Email đã được sử dụng!");
         }
         // Kiểm tra ngày sinh
         if (customerRequest.getBirthDay() == null) {

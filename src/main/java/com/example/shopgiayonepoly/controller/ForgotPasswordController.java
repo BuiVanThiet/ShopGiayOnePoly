@@ -2,9 +2,11 @@ package com.example.shopgiayonepoly.controller;
 
 import com.example.shopgiayonepoly.baseMethod.BaseEmail;
 import com.example.shopgiayonepoly.entites.Customer;
+import com.example.shopgiayonepoly.entites.Staff;
 import com.example.shopgiayonepoly.entites.Token;
 import com.example.shopgiayonepoly.repositores.CustomerRegisterRepository;
 import com.example.shopgiayonepoly.service.CustomerService;
+import com.example.shopgiayonepoly.service.StaffService;
 import com.example.shopgiayonepoly.service.TokenService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,13 +18,13 @@ import java.util.Date;
 
 @Controller
 @RequestMapping ("/forgotPassword")
-public class forgotPasswordController extends BaseEmail {
+public class ForgotPasswordController extends BaseEmail {
     @Autowired
     CustomerRegisterRepository customerRegisterRepository;
     @Autowired
-    TokenService tokenService;
-    @Autowired
     CustomerService customerService;
+    @Autowired
+    StaffService staffService;
 
     @GetMapping("/form")
     public String formForgotPassword(ModelMap modelMap){
@@ -80,18 +82,24 @@ public class forgotPasswordController extends BaseEmail {
                         return "errorTemplate/404";
                     }else {
                         session.setAttribute("idCustomerChangerPassword",customer.getId());
-                        modelMap.addAttribute("action","/forgotPassword/exchange-password-customer/"+token.getId());
+                        modelMap.addAttribute("action","/forgotPassword/exchange-password/"+token.getId());
                         return "client/exchangePassword";
                     }
                 }else {
-                    System.out.println("trang cua staff");
-                    return "errorTemplate/404";
+                    Staff staff = this.staffService.getStaffByID(token.getNameTable().trim().equals("staff") ? token.getIdAccount() : -1);
+                    if(staff == null) {
+                        return "errorTemplate/404";
+                    }else {
+                        session.setAttribute("idStaffChangerPassword",staff.getId());
+                        modelMap.addAttribute("action","/forgotPassword/exchange-password/"+token.getId());
+                        return "Home/exhcnagePassWordStaff";
+                    }
                 }
             }
         }
     }
 
-    @PostMapping("/exchange-password-customer/{idToken}")
+    @PostMapping("/exchange-password/{idToken}")
     public String getExchangePassWord(
             @PathVariable("idToken") String idToken,
             @RequestParam(value = "passwordOrder1",required = false) String passwordOrder1,
@@ -105,10 +113,15 @@ public class forgotPasswordController extends BaseEmail {
             e.printStackTrace();
             return "errorTemplate/404";
         }
+
         Token token = this.tokenService.findById(Integer.parseInt(idToken)).orElse(null);
+        modelMap.addAttribute("passwordOrder1",passwordOrder1);
+        modelMap.addAttribute("passwordOrder2",passwordOrder2);
+
         if (token == null || token.getStatus() == 0) {
             return "errorTemplate/404";
         }else {
+
             long timeCreated = token.getCreateDate().getTime();
             long currentTime = System.currentTimeMillis();
             if (currentTime - timeCreated > 10 * 60 * 1000) { // 10 phút
@@ -119,8 +132,6 @@ public class forgotPasswordController extends BaseEmail {
                     if(customer == null) {
                         return "errorTemplate/404";
                     }else {
-                        modelMap.addAttribute("passwordOrder1",passwordOrder1);
-                        modelMap.addAttribute("passwordOrder2",passwordOrder2);
                         if (session.getAttribute("idCustomerChangerPassword") == null) {
                             return "errorTemplate/404";
                         }
@@ -160,21 +171,49 @@ public class forgotPasswordController extends BaseEmail {
                         }
                     }
                 }else {
-                    return "errorTemplate/404";
+                    Staff staff = this.staffService.getStaffByID(token.getNameTable().trim().equals("staff") ? token.getIdAccount() : -1);
+                    if (staff == null) {
+                        return "errorTemplate/404";
+                    }else {
+                        if (session.getAttribute("idStaffChangerPassword") == null) {
+                            return "errorTemplate/404";
+                        }
+
+                        if (staff == null || staff.getId() == null) {
+                            return "errorTemplate/404";
+                        }
+                        if(passwordOrder1 == null) {
+                            modelMap.addAttribute("messPassWord1","Mời nhập mật khẩu cần đổi!");
+                            modelMap.addAttribute("messPassWord2","");
+                            return "Home/exhcnagePassWordStaff";
+                        }else {
+                            if(passwordOrder1.trim().equals("")) {
+                                modelMap.addAttribute("messPassWord1","Mời nhập mật khẩu cần đổi!");
+                                modelMap.addAttribute("messPassWord2","");
+                                return "Home/exhcnagePassWordStaff";
+                            }else {
+                                if(!passwordOrder2.trim().equals(passwordOrder1)) {
+                                    modelMap.addAttribute("messPassWord1","");
+                                    modelMap.addAttribute("messPassWord2","Xác nhận mật khẩu phải giống mới mật khẩu mới!");
+                                    return "Home/exhcnagePassWordStaff";
+                                }else {
+                                    modelMap.addAttribute("messPassWord1","");
+                                    modelMap.addAttribute("messPassWord2","");
+                                    modelMap.addAttribute("passwordOrder1","");
+                                    modelMap.addAttribute("passwordOrder2","");
+                                    staff.setPassword(passwordOrder1);
+                                    staff.setUpdateDate(new Date());
+                                    token.setStatus(0);
+                                    token.setUpdateDate(new Date());
+                                    this.tokenService.saveOrUpdate(token);
+                                    this.staffService.save(staff);
+                                    return "redirect:/login";
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
-    }
-
-
-    public void setUpToken(Integer id, String nameTable, String email) {
-        Token token = new Token();
-        token.setIdAccount(id);
-        token.setNameTable(nameTable);
-        token.setEmailSend(email);
-        token.setStatus(1);
-        // Không thiết lập token.setId() ở đây
-        Token tokenSave = this.tokenService.saveGetId(token); // Gọi phương thức lưu
-        this.templateEmailExchangePassWord(tokenSave.getEmailSend(), "http://localhost:8080/forgotPassword/changepassword/" + tokenSave.getId());
     }
 }

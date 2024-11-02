@@ -62,3 +62,19 @@
     border: 2px solid #ddd; /* Đường viền xung quanh ảnh */
     margin-bottom: 15px; /* Khoảng cách dưới ảnh */
 }
+
+.hidden {
+    display: none;
+}
+
+.btn-icon {
+    cursor: pointer;
+}
+
+.row {
+    align-items: center; /* Giữ cho label và input thẳng hàng */
+}
+
+.text-danger {
+    font-size: 0.81rem; /* Kích thước chữ nhỏ hơn cho thông báo lỗi */
+}

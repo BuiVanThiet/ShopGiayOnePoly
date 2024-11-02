@@ -37,3 +37,42 @@ document.getElementById('staff-file-upload').addEventListener('change', function
     }
 });
 
+document.addEventListener('DOMContentLoaded', function () {
+    // Xử lý hiển thị form đổi mật khẩu
+    const editButton = document.getElementById('editButton');
+    const closeButton = document.getElementById('closeButton');
+    const passwordChangeForm = document.getElementById('passwordChangeForm');
+
+    editButton.addEventListener('click', function () {
+        passwordChangeForm.classList.remove('hidden'); // Hiện form
+        editButton.classList.add('hidden'); // Ẩn nút Chỉnh sửa
+        closeButton.classList.remove('hidden'); // Hiện nút Đóng
+    });
+
+    closeButton.addEventListener('click', function () {
+        passwordChangeForm.classList.add('hidden'); // Ẩn form
+        editButton.classList.remove('hidden'); // Hiện nút Chỉnh sửa
+        closeButton.classList.add('hidden'); // Ẩn nút Đóng
+    });
+
+    // Xử lý hiển thị mật khẩu khi nhấn vào icon mắt
+    function togglePasswordVisibility(toggleButtonId, inputId) {
+        const toggleButton = document.getElementById(toggleButtonId);
+        const input = document.getElementById(inputId);
+
+        toggleButton.addEventListener('click', function () {
+            if (input.type === 'password') {
+                input.type = 'text';
+                toggleButton.querySelector('i').classList.replace('fa-eye-slash', 'fa-eye');
+            } else {
+                input.type = 'password';
+                toggleButton.querySelector('i').classList.replace('fa-eye', 'fa-eye-slash');
+            }
+        });
+    }
+
+    // Áp dụng toggle cho các trường mật khẩu
+    togglePasswordVisibility('toggleCurrentPassword', 'currentPassword');
+    togglePasswordVisibility('toggleNewPassword', 'newPassword');
+    togglePasswordVisibility('toggleRetypePassword', 'confirmPassword');
+});

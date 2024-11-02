@@ -71,4 +71,5 @@ public interface StaffRepository extends JpaRepository<Staff, Integer> {
 
     boolean existsByCodeStaff(String codeStaff);
 
+    boolean existsByEmail(String email);
 }

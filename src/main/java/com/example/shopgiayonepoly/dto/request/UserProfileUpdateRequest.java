@@ -23,18 +23,15 @@ public class UserProfileUpdateRequest extends BaseDTO {
 
     private String account;
 
-    @NotBlank(message = "Mật khẩu không được để trống")
-    private String password;
+    private String currentPassword; // Mật khẩu hiện tại
+    private String newPassword;      // Mật khẩu mới
+    private String confirmPassword;  // Xác nhận mật khẩu mới
 
-    @NotBlank(message = "Họ và tên không được để trống")
     private String fullName;
 
-    @NotBlank(message = "Email không được để trống")
-    @Email(message = "Email không hợp lệ")
     private String email;
 
-    @NotBlank(message = "Số điện thoại không được để trống")
-    @Pattern(regexp = "^(0|\\+84)(\\d{9})$", message = "Số điện thoại không hợp lệ")
+
     private String numberPhone;
 
     private Integer gender;
