@@ -3,6 +3,8 @@ package com.example.shopgiayonepoly.controller;
 import com.example.shopgiayonepoly.dto.request.StaffRequest;
 import com.example.shopgiayonepoly.dto.response.StaffResponse;
 import com.example.shopgiayonepoly.entites.Staff;
+import com.example.shopgiayonepoly.repositores.CustomerRepository;
+import com.example.shopgiayonepoly.repositores.StaffRepository;
 import com.example.shopgiayonepoly.service.StaffService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -27,6 +29,12 @@ import java.util.List;
 public class StaffController {
     @Autowired
     StaffService staffService;
+
+    @Autowired
+    StaffRepository staffRepository;
+
+    @Autowired
+    CustomerRepository customerRepository;
 
     private final int pageSize = 5;
 
@@ -92,15 +100,21 @@ public class StaffController {
         } else if (!staffRequest.getNumberPhone().matches("^(0[3|5|7|8|9])+([0-9]{8})$")) {
             result.rejectValue("numberPhone", "error.staff", "Số điện thoại không hợp lệ!");
         }
-        // Kiểm tra email
-        if (staffRequest.getEmail() == null || staffRequest.getEmail().isEmpty()) {
-            result.rejectValue("email", "error.customer", "Email không được để trống!");
-        }
+//        // Kiểm tra email
+//        if (staffRequest.getEmail() == null || staffRequest.getEmail().isEmpty()) {
+//            result.rejectValue("email", "error.customer", "Email không được để trống!");
+//        }
         // Kiểm tra ngày sinh
         if (staffRequest.getBirthDay() == null) {
             result.rejectValue("birthDay", "error.customer", "Ngày sinh không được để trống!");
         } else if (staffRequest.getBirthDay().isAfter(LocalDate.now())) {
             result.rejectValue("birthDay", "error.customer", "Ngày sinh không được lớn hơn ngày hiện tại!");
+        }
+        // Kiểm tra email
+        if (staffRequest.getEmail() == null || staffRequest.getEmail().isEmpty()) {
+            result.rejectValue("email", "error.staff", "Email không được để trống!");
+        } else if (customerRepository.existsByEmail(staffRequest.getEmail()) || staffRepository.existsByEmail(staffRequest.getEmail())) {
+            result.rejectValue("email", "error.staff", "Email đã được sử dụng!");
         }
         if (result.hasErrors()) {
             model.addAttribute("mes", "Thêm thất bại");
@@ -177,14 +191,6 @@ public class StaffController {
         } else if (!staffRequest.getFullName().matches("^[\\p{L} ]+$")) {
             result.rejectValue("fullName", "error.staff", "Tên chỉ được chứa ký tự chữ cái và dấu cách!");
         }
-// Kiểm tra mã
-        if (staffRequest.getCodeStaff() == null || staffRequest.getCodeStaff().trim().isEmpty()) {
-            result.rejectValue("codeStaff", "error.staff", "Mã không được để trống!"); // Thông báo nếu mã rỗng hoặc chỉ chứa khoảng trắng
-        } else if (staffRequest.getCodeStaff().length() < 3 || staffRequest.getCodeStaff().length() > 10) {
-            result.rejectValue("codeStaff", "error.staff", "Mã phải có độ dài từ 3 đến 10 ký tự!");
-        } else if (staffService.existsByCodeStaff(staffRequest.getCodeStaff())) {
-            result.rejectValue("codeStaff", "error.staff", "Mã đã tồn tại!"); // Thông báo nếu mã đã tồn tại
-        }
 // Kiểm tra số điện thoại
         if (staffRequest.getNumberPhone() == null || staffRequest.getNumberPhone().isEmpty()) {
             result.rejectValue("numberPhone", "error.staff", "Số điện thoại không được để trống!");
@@ -193,7 +199,9 @@ public class StaffController {
         }
         // Kiểm tra email
         if (staffRequest.getEmail() == null || staffRequest.getEmail().isEmpty()) {
-            result.rejectValue("email", "error.customer", "Email không được để trống!");
+            result.rejectValue("email", "error.staff", "Email không được để trống!");
+        } else if (customerRepository.existsByEmail(staffRequest.getEmail()) || staffRepository.existsByEmail(staffRequest.getEmail())) {
+            result.rejectValue("email", "error.staff", "Email đã được sử dụng!");
         }
         // Kiểm tra ngày sinh
         if (staffRequest.getBirthDay() == null) {
