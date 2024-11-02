@@ -14,7 +14,8 @@
         <div class="d-flex" style="width: 100%; height: 230px; background-color: #ffffff; margin-left: 30px">
             <div class="w-50 p-3">
                 <p class="text-dark fs-5 fw-lighter" style="margin-top: 100px;">ONE POLY - NHỊP BƯỚC BẢN THÂN</p>
-                <p class="text-dark fw-lighter">Chuẩn phong cách, thanh lịch trong từng bước chân! Trải nghiệm những thiết kế tuyệt vời với giày thể thao trong bộ sưu tập ONE POLY "Nhịp bước bản thân".</p>
+                <p class="text-dark fw-lighter">Chuẩn phong cách, thanh lịch trong từng bước chân! Trải nghiệm những
+                    thiết kế tuyệt vời với giày thể thao trong bộ sưu tập ONE POLY "Nhịp bước bản thân".</p>
             </div>
         </div>
 
@@ -41,7 +42,13 @@
                                     <input type="email" class="form-control" id="Mail" placeholder="Mail" required>
                                 </div>
                                 <div class="col-md-12">
-                                    <textarea type="text" class="form-control" name="addressShip" id="addressShip" placeholder="Địa chỉ nhận hàng" required></textarea>
+                                    <textarea type="text" class="form-control" name="addressShip" id="addressShow"
+                                              placeholder="Địa chỉ nhận hàng" required></textarea>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <textarea type="text" class="form-control" name="addressShip" id="addressShip"
+                                              placeholder="Địa chỉ lấy" required></textarea>
                                 </div>
                                 <div class="col-4">
                                     <label>Tỉnh</label>
@@ -63,7 +70,8 @@
                                 </div>
                             </div>
                             <div class="d-flex flex-row justify-content-end mt-3">
-                                <button id="btnDatHang" onclick="payBill()" class="shopee-button-solid shopee-button-solid--primary">
+                                <button id="btnDatHang" onclick="payBill()"
+                                        class="shopee-button-solid shopee-button-solid--primary">
                                     <span class="cart-final--bottom-checkout--btn btnDatHang">Đặt hàng</span>
                                 </button>
                             </div>
@@ -76,19 +84,22 @@
                             <div class="item line-item line-item-container d-flex" data-line="1">
                                 <div class="left">
                                     <div class="item-img">
-                                        <img src="/img/client/product/SPCT_IMG_1.png" alt="" style="width: 150px; height: auto;">
+                                        <img src="/img/client/product/SPCT_IMG_1.png" alt=""
+                                             style="width: 150px; height: auto;">
                                     </div>
                                 </div>
                                 <div class="right" style="margin-left: 50px;">
                                     <div class="item-info">
                                         <h3 th:text="${item.productDetail.product.nameProduct}"></h3>
                                         <div class="item-price">
-                                            <span id="spanPriceCartItem" th:text="${item.productDetail.price}" class="price-item"></span>
+                                            <span id="spanPriceCartItem" th:text="${item.productDetail.price}"
+                                                  class="price-item"></span>
                                         </div>
                                         <div class="item-desc">
                                             <div class="variant-option">
                                                 <span class="title">Màu sắc:</span>
-                                                <span class="text" th:text="${item.productDetail.color.nameColor}"></span>
+                                                <span class="text"
+                                                      th:text="${item.productDetail.color.nameColor}"></span>
                                             </div>
                                             <div class="variant-option">
                                                 <span class="title">Kích thước:</span>
@@ -99,15 +110,22 @@
                                             <div class="item-quan">
                                                 <span class="txt_qty d-none">1</span>
                                                 <div class="qty quantity-parent qty-click d-flex align-items-center btn-group">
-                                                    <button type="button" class="qtyminus qty-btn btn btn-outline-secondary">&minus;</button>
-                                                    <p class="tc line-item-qty item-quantity text-center form-control m-0 bg-light" style="width: 60px; border: none;" th:text="${item.quantity}"></p>
-                                                    <button type="button" class="qtyplus qty-btn btn btn-outline-primary">&plus;</button>
+                                                    <button type="button"
+                                                            class="qtyminus qty-btn btn btn-outline-secondary">&minus;
+                                                    </button>
+                                                    <p class="tc line-item-qty item-quantity text-center form-control m-0 bg-light"
+                                                       style="width: 60px; border: none;"
+                                                       th:text="${item.quantity}"></p>
+                                                    <button type="button"
+                                                            class="qtyplus qty-btn btn btn-outline-primary">&plus;
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <button type="button" class="btn-close position-absolute end-0 top-0 mt-2 me-3" aria-label="Close"></button>
+                                <button type="button" class="btn-close position-absolute end-0 top-0 mt-2 me-3"
+                                        aria-label="Close"></button>
                             </div>
                             <hr>
                         </div>
@@ -130,7 +148,8 @@
                                     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center border-bottom"></div>
                                     <div class="d-flex flex-row justify-content-between m-2">
                                         <span style="color:#ee4d2d">TỔNG</span>
-                                        <span id="spanTotalPriceBill" th:text="${totalPrice}" style="color:#ee4d2d"></span>
+                                        <span id="spanTotalPriceBill" th:text="${totalPrice}"
+                                              style="color:#ee4d2d"></span>
                                     </div>
                                 </div>
                             </div>

@@ -191,7 +191,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const ward = document.getElementById("ward").options[document.getElementById("ward").selectedIndex].text;
 
         const fullAddress = `${ward}, ${district}, ${province}`;
-        document.getElementById("addressShip").value = fullAddress;
+        document.getElementById("addressShow").value = fullAddress;
     }
 
     document.getElementById("province").addEventListener("change", function () {
