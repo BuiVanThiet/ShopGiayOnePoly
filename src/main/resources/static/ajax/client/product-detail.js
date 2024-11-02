@@ -1,7 +1,7 @@
 let selectedColorId; // Biến toàn cục để lưu ID màu sắc đã chọn
 let selectedSizeId;  // Biến toàn cục để lưu ID kích thước đã chọn
 
-// Lấy ID sản phẩm từ input hidden
+    // Lấy ID sản phẩm từ input hidden
 const productId = document.getElementById("product-id").value;
 
 // Khởi tạo các sự kiện khi trang đã tải xong
@@ -24,8 +24,6 @@ function attachClickEvent(selector, handler) {
         });
     });
 }
-
-// Hàm đặt màu tạm thời
 // Hàm đặt màu tạm thời
 function setTemporaryColor(color, colorId) {
     selectedColorId = colorId; // Lưu ID màu đã chọn
@@ -40,7 +38,6 @@ function setTemporaryColor(color, colorId) {
         getProductDetail(productId, selectedColorId, selectedSizeId); // Gọi API với ID màu sắc
     }
 }
-
 // Hàm đặt kích thước tạm thời
 function setTemporarySize(size, sizeId) {
     selectedSizeId = sizeId; // Lưu ID kích thước đã chọn
@@ -158,7 +155,7 @@ function addToCart() {
         success: function (data) {
             if (data && data.success) {
                 alert("Sản phẩm đã được thêm vào giỏ hàng!");
-                    window.location.href = '/onepoly/cart';
+                window.location.href = '/onepoly/cart';
             } else {
                 console.log(data.message || 'Có lỗi xảy ra khi thêm vào giỏ hàng.');
             }
@@ -169,67 +166,6 @@ function addToCart() {
         }
     });
 }
-
-// Hàm lấy danh sách sản phẩm trong giỏ hàng
-// function fetchCartItems() {
-//     $.ajax({
-//         url: '/onepoly/cart-items',
-//         type: 'GET',
-//         success: function (cartItems) {
-//             displayCartItems(cartItems);
-//         },
-//         error: function (error) {
-//             console.error('Error fetching cart items:', error);
-//         }
-//     });
-// }
-//
-// // Hàm hiển thị các sản phẩm trong giỏ hàng
-// function displayCartItems(cartItems) {
-//     const cartItemsContainer = $('#cartItemsContainer');
-//     cartItemsContainer.empty();
-//     cartItems.forEach(item => {
-//         const cartItemHTML = `
-//                 <div class="cart-item-body">
-//                     <div class="cart-item-body-inner">
-//                         <div class="cart-item-body">
-//                             <div class="cart-item-body-item-product" style="margin-right: 100px">
-//                                 <div class="cart-item-body-item-product-inner">
-//                                     <a title="${item.productName}" href="/products/giay-the-thao-nam-mwc-natt--5734?c=nau">
-//                                         <img class="cart-item-body-item-product-thumb"
-//                                              src="${item.imageName}" alt="Product Image">
-//                                     </a>
-//                                     <div class="cart-item-body-item-product-info">
-//                                         <a class="cart-item-body-item-product-name">${item.productName}</a>
-//                                         <p class="cart-item-body-item-product-options">Màu: ${item.color}</p>
-//                                         <p class="cart-item-body-item-product-options">Kích thước: ${item.size}</p>
-//                                     </div>
-//                                 </div>
-//                             </div>
-//                             <div class="cart-item--prices" style="margin-right: 180px">
-//                                 <span class="cart-item--price-item">${item.price} đ</span>
-//                             </div>
-//                             <div class="cart-item--quantity" style="margin-right: 160px">
-//                                 <div class="cart-item--quantity-actions">
-//                                     <button class="button btn-decrement" onclick="updateQuantity(${item.productDetailId}, -1)">-</button>
-//                                     <div class="number">${item.quantity}</div>
-//                                     <button class="button btn-increment" onclick="updateQuantity(${item.productDetailId}, 1)">+</button>
-//                                 </div>
-//                             </div>
-//                             <div class="cart-item--total" style="margin-right: 180px">
-//                                 <span>${item.totalPrice} đ</span>
-//                             </div>
-//                             <div class="cart-item--actions">
-//                                 <button class="cart-item--action-item" onclick="removeItem(${item.productDetailId})">Xóa</button>
-//                             </div>
-//                         </div>
-//                     </div>
-//                 </div>
-//                 <div class="cart-item-body-space"></div>
-//             `;
-//         cartItemsContainer.append(cartItemHTML);
-//     });
-// }
 
 // Hàm cập nhật số lượng sản phẩm trong giỏ hàng
 window.updateQuantity = function (productDetailId, change) {
