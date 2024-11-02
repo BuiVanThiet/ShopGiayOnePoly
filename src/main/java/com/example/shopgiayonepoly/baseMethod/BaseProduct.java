@@ -19,13 +19,10 @@ public abstract class BaseProduct {
     protected ManufacturerService manufacturerService;
     @Autowired
     protected SoleService soleService;
-
     @Autowired
     protected CategoryService categoryService;
-
     @Autowired
     protected ColorService colorService;
-
     @Autowired
     protected SizeService sizeService;
 

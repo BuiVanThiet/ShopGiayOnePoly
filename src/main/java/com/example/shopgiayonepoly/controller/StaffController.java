@@ -1,5 +1,6 @@
 package com.example.shopgiayonepoly.controller;
 
+import com.example.shopgiayonepoly.baseMethod.BaseEmail;
 import com.example.shopgiayonepoly.dto.request.StaffRequest;
 import com.example.shopgiayonepoly.dto.response.StaffResponse;
 import com.example.shopgiayonepoly.entites.Staff;
@@ -26,7 +27,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/staff")
-public class StaffController {
+public class StaffController extends BaseEmail {
     @Autowired
     StaffService staffService;
 
@@ -265,6 +266,14 @@ public class StaffController {
     public String deleteStaff(RedirectAttributes ra, @PathVariable("id") Integer id) {
         staffService.deleteStaff(id);
         ra.addFlashAttribute("mes", "Xóa thành công nhan vien với ID là: " + id);
+        return "redirect:/staff/list";
+    }
+
+    @GetMapping("/exchange-pass-word/{id}")
+    public String getExchangePassWord(@PathVariable("id") String id) {
+        Staff staff = this.staffService.getStaffByID(Integer.parseInt(id));
+
+        setUpToken(Integer.parseInt(id),"staff",staff.getEmail());
         return "redirect:/staff/list";
     }
 

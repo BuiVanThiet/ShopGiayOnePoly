@@ -169,8 +169,8 @@ public interface BillDetailRepository extends JpaRepository<BillDetail,Integer> 
     LEFT JOIN category_product cp ON p.id = cp.id_product
     LEFT JOIN category cat ON cp.id_category = cat.id
     LEFT JOIN image im on im.id_product = p.id
-    WHERE pd.status = 1
-      AND p.status = 1
+    WHERE pd.status <> 0
+      AND p.status <> 0
       -- Tìm kiếm gần đúng theo tên sản phẩm
       AND (:nameProduct IS NULL OR p.name_product LIKE CONCAT('%', :nameProduct, '%'))
       -- Lọc theo danh mục
