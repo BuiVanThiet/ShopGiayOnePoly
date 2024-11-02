@@ -16,23 +16,23 @@ public interface ChartRepository extends JpaRepository<Bill, Integer> {
     @Query("SELECT COALESCE(COUNT(b), 0) " +  // Thay đổi COUNT(b) thành COALESCE(COUNT(b), 0)
             "FROM Bill b " +
             "WHERE b.status = 5 " +
-            "AND MONTH(b.createDate) = MONTH(CURRENT_DATE) " +
-            "AND YEAR(b.createDate) = YEAR(CURRENT_DATE)")
+            "AND MONTH(b.updateDate) = MONTH(CURRENT_DATE) " +
+            "AND YEAR(b.updateDate) = YEAR(CURRENT_DATE)")
     long monthlyBill();
 
     @Query("SELECT COALESCE(SUM(b.totalAmount), 0) " +  // Thay đổi SUM(b.totalAmount) thành COALESCE(SUM(b.totalAmount), 0)
             "FROM Bill b " +
             "WHERE b.status = 5 " +
-            "AND MONTH(b.createDate) = MONTH(CURRENT_DATE) " +
-            "AND YEAR(b.createDate) = YEAR(CURRENT_DATE)")
+            "AND MONTH(b.updateDate) = MONTH(CURRENT_DATE) " +
+            "AND YEAR(b.updateDate) = YEAR(CURRENT_DATE)")
     Long totalMonthlyBill();
 
     @Query("SELECT COALESCE(SUM(bd.quantity), 0) " +  // Thay đổi SUM(bd.quantity) thành COALESCE(SUM(bd.quantity), 0)
             "FROM BillDetail bd " +
             "JOIN bd.bill b " +
             "WHERE b.status = 5 " +
-            "AND MONTH(b.createDate) = MONTH(CURRENT_DATE) " +
-            "AND YEAR(b.createDate) = YEAR(CURRENT_DATE)")
+            "AND MONTH(b.updateDate) = MONTH(CURRENT_DATE) " +
+            "AND YEAR(b.updateDate) = YEAR(CURRENT_DATE)")
     long totalMonthlyInvoiceProducts();
 
     @Query("SELECT COALESCE(COUNT(b), 0) " +  // Thay đổi COUNT(b) thành COALESCE(COUNT(b), 0)
@@ -55,4 +55,14 @@ public interface ChartRepository extends JpaRepository<Bill, Integer> {
             "ORDER BY CAST(MAX(b.updateDate) AS date)")
     List<Date> findLastBillDates();
     // Lấy ngày cuối tháng có hóa đơn
+    @Query(value = "SELECT " +
+            "FORMAT(MAX(b.update_date), 'dd-MM-yyyy') AS Thang, " +  // Lấy ngày cuối cùng có hóa đơn
+            "COUNT(DISTINCT b.id) AS HoaDonThang, " +  // Đếm tổng số hóa đơn duy nhất cho mỗi tháng
+            "SUM(bd.quantity) AS soLuong " +  // Tính tổng số lượng sản phẩm từ bill_detail cho mỗi tháng
+            "FROM bill b " +
+            "LEFT JOIN bill_detail bd ON b.id = bd.id_bill " +  // Sử dụng LEFT JOIN để đảm bảo tất cả hóa đơn được bao gồm
+            "WHERE b.status = 5 " +  // Chỉ lấy những hóa đơn có trạng thái thanh toán thành công
+            "GROUP BY FORMAT(b.update_date, 'MM-yyyy') " +  // Nhóm theo tháng và năm
+            "ORDER BY MAX(b.update_date)", nativeQuery = true)
+    List<Object[]> findMonthlyStatistics();
 }

@@ -82,6 +82,32 @@ public class StaffProfileController {
         System.out.println("Staff từ model: " + staff);
         staffProfile.setImageStaffString(staff.getImage());
 
+        // Kiểm tra hợp lệ cho fullName
+        if (staffProfile.getFullName() == null || staffProfile.getFullName().trim().isEmpty()) {
+            bindingResult.rejectValue("fullName", "error.staffProfile", "Họ và tên không được để trống");
+
+        } else if (!staffProfile.getFullName().matches("^[\\p{L}\\s]+$")) {
+            bindingResult.rejectValue("fullName", "error.staffProfile", "Họ và tên chỉ được nhập chữ cái");
+
+        } else if (staffProfile.getFullName().length() < 5 || staffProfile.getFullName().length() > 100) {
+            bindingResult.rejectValue("fullName", "error.staffProfile", "Họ và tên phải có độ dài từ 5 đến 100 ký tự");
+
+        }
+
+        // Kiểm tra hợp lệ cho email
+        if (staffProfile.getEmail() == null || staffProfile.getEmail().isEmpty()) {
+            bindingResult.rejectValue("email", "error.staffProfile", "Email không được để trống");
+        } else if (!staffProfile.getEmail().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
+            bindingResult.rejectValue("email", "error.staffProfile", "Email không hợp lệ");
+        }
+
+        // Kiểm tra hợp lệ cho số điện thoại
+        if (staffProfile.getNumberPhone() == null || staffProfile.getNumberPhone().isEmpty()) {
+            bindingResult.rejectValue("numberPhone", "error.staffProfile", "Số điện thoại không được để trống");
+        } else if (!staffProfile.getNumberPhone().matches("^(0|\\+84)(\\d{9})$")) {
+            bindingResult.rejectValue("numberPhone", "error.staffProfile", "Số điện thoại không hợp lệ");
+        }
+
         if(bindingResult.hasErrors()){
             System.out.println("loi ne");
             model.addAttribute("staffProfile", staffProfile);
@@ -91,6 +117,7 @@ public class StaffProfileController {
         }
         if (staff != null) {
             staff.setEmail(staffProfile.getEmail());
+            staff.setFullName(staffProfile.getFullName());
             staff.setNumberPhone(staffProfile.getNumberPhone());
             staff.setGender(staffProfile.getGender());
             staff.setBirthDay(staffProfile.getBirthDay());
@@ -130,8 +157,53 @@ public class StaffProfileController {
         return fileName; // trả về tên ảnh ngẫu nhiên
     }
 
+    @PostMapping("/updatePasswordStaff")
+    public String updatePassword(@Valid @ModelAttribute("staffProfile") StaffProfileRequest staffProfile,
+                                 BindingResult bindingResult,
+                                 HttpSession session,
+                                 Model model) {
+        Staff staff = (Staff) session.getAttribute("staffLogin");
+
+        if (staff == null) {
+            model.addAttribute("errorMessage", "Không tìm thấy thông tin tài khoản nhân viên.");
+            return "redirect:/login"; // Chuyển hướng về trang đăng nhập nếu không tìm thấy nhân viên
+        }
+
+        // Kiểm tra mật khẩu hiện tại
+        if (staffProfile.getCurrentPassword() == null || staffProfile.getCurrentPassword().isEmpty()) {
+            bindingResult.rejectValue("currentPassword", "error.userProfile", "Mật khẩu hiện tại không được để trống");
+        } else if (!staffProfile.getCurrentPassword().equals(staff.getPassword())) {
+            bindingResult.rejectValue("currentPassword", "error.userProfile", "Mật khẩu hiện tại không đúng");
+        }
+
+        // Kiểm tra mật khẩu mới và xác nhận
+        if (staffProfile.getNewPassword() == null || staffProfile.getNewPassword().isEmpty()) {
+            bindingResult.rejectValue("newPassword", "error.userProfile", "Mật khẩu mới không được để trống");
+        }
+
+        if (staffProfile.getConfirmPassword() == null || staffProfile.getConfirmPassword().isEmpty()) {
+            bindingResult.rejectValue("confirmPassword", "error.userProfile", "Mật khẩu xác nhận không được để trống");
+        } else if (!staffProfile.getNewPassword().equals(staffProfile.getConfirmPassword())) {
+            bindingResult.rejectValue("confirmPassword", "error.userProfile", "Mật khẩu xác nhận không khớp");
+        }
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("staffProfile", staffProfile);
+            model.addAttribute("showPasswordForm", true);
+            return "Profile/staff_profile"; // Quay lại trang với các lỗi validation
+        }
+
+        // Cập nhật mật khẩu mới
+        staff.setPassword(staffProfile.getNewPassword());
+        staffService.save(staff); // Lưu thông tin nhân viên sau khi cập nhật
+
+        model.addAttribute("successMessage", "Đã cập nhật mật khẩu thành công.");
+        return "redirect:/profile/staffProfile"; // Chuyển hướng về trang hồ sơ sau khi cập nhật
+    }
+
     @ModelAttribute("staffProfile")
-    public StaffProfileRequest prepareStaffProfile(HttpSession session) {
+    public StaffProfileRequest prepareStaffProfile(HttpSession session,
+                                                   Model model) {
         Staff staff = (Staff) session.getAttribute("staffLogin");
         StaffProfileRequest staffProfile = new StaffProfileRequest();
 
@@ -143,6 +215,16 @@ public class StaffProfileController {
             staffProfile.setNumberPhone(staff.getNumberPhone());
             staffProfile.setGender(staff.getGender());
             staffProfile.setBirthDay(staff.getBirthDay());
+            LocalDate birthDayStaff = staff.getBirthDay();
+            if (birthDayStaff != null) {
+                model.addAttribute("birthDayDay", birthDayStaff.getDayOfMonth());
+                model.addAttribute("birthDayMonth", birthDayStaff.getMonthValue());
+                model.addAttribute("birthDayYear", birthDayStaff.getYear());
+            } else {
+                model.addAttribute("birthDayDay", "");
+                model.addAttribute("birthDayMonth", "");
+                model.addAttribute("birthDayYear", "");
+            }
             // Gán các trường khác cần thiết từ staff vào staffProfile
         }
         return staffProfile;

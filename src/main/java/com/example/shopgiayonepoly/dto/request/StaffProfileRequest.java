@@ -23,14 +23,14 @@ public class StaffProfileRequest extends BaseDTO {
 
     private String fullName;
 
-    private String password;
+    private String currentPassword;
 
-    @NotEmpty(message = "Email không được để trống")
-    @Email(message = "Đây không phải là email")
+    private String newPassword;
+
+    private String confirmPassword;
+
     private String email;
 
-    @Pattern(regexp = "^(0[1-9])+([0-9]{8})$", message = "Số điện thoại không hợp lệ")
-    @NotEmpty(message = "Số điện thoại không được để trống")
     private String numberPhone;
 
     private Integer gender;

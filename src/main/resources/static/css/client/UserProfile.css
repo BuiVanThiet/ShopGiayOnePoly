@@ -54,4 +54,20 @@ h2 {
 .form-control-plaintext {
     margin-left: 12px;
 }
+.hidden {
+    display: none;
+}
+
+.btn-icon {
+    cursor: pointer;
+}
+
+.row {
+    align-items: center; /* Giữ cho label và input thẳng hàng */
+}
+
+.text-danger {
+    margin-top: -0.5rem; /* Khoảng cách giữa input và thông báo lỗi */
+    font-size: 0.81rem; /* Kích thước chữ nhỏ hơn cho thông báo lỗi */
+}
 
