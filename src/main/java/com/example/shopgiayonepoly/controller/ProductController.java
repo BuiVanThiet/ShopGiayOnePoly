@@ -4,8 +4,10 @@ import com.cloudinary.Cloudinary;
 import com.example.shopgiayonepoly.baseMethod.BaseProduct;
 import com.example.shopgiayonepoly.dto.response.ProductDetailResponse;
 import com.example.shopgiayonepoly.entites.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Controller
@@ -54,66 +57,64 @@ public class ProductController extends BaseProduct {
     }
 
 
-    @RequestMapping("/add")
-    public ResponseEntity<String> add(@ModelAttribute("product") Product product,
-                                      @RequestParam List<Integer> categories,
-                                      @RequestParam("imageFiles") List<MultipartFile> imageFiles,
-                                      HttpSession session) throws IOException    {
+    @PostMapping("/add-product-with-details")
+    public ResponseEntity<String> addProductWithDetails(
+            @ModelAttribute Product product,
+            @RequestParam("productDetails") String productDetailsJson,
+            @RequestParam("imageFiles") List<MultipartFile> imageFiles) throws IOException {
+
+        // Chuyển đổi productDetailsJson từ JSON thành List<ProductDetail>
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<ProductDetail> productDetails = Arrays.asList(objectMapper.readValue(productDetailsJson, ProductDetail[].class));
 
         // Gán danh mục cho sản phẩm
-        Set<Category> selectedCategories = categoryService.findCategoriesByIds(categories);
+        Set<Category> selectedCategories = new HashSet<>(categoryService.findCategoriesByIds(
+                product.getCategories().stream().map(Category::getId).collect(Collectors.toList())));
         product.setCategories(selectedCategories);
         product.setStatus(1);
 
-        // Tạo danh sách ảnh mới
+        // Xử lý ảnh
         List<Image> newImages = new ArrayList<>();
-
-        // Duyệt qua từng file ảnh
         for (MultipartFile multipartFile : imageFiles) {
             if (!multipartFile.isEmpty()) {
-                // Tạo tên ảnh duy nhất bằng UUID
                 String nameImage = UUID.randomUUID().toString();
-
                 cloudinary.uploader()
                         .upload(multipartFile.getBytes(), Map.of("public_id", nameImage))
                         .get("url")
                         .toString();
 
-                // Tạo đối tượng Image và gán sản phẩm cho ảnh
                 Image image = new Image();
                 image.setNameImage(nameImage);
-                image.setProduct(product); // Gán sản phẩm cho ảnh
+                image.setProduct(product);
                 image.setStatus(1);
-                // Thêm ảnh vào danh sách
                 newImages.add(image);
             }
         }
-
-        // Gán danh sách ảnh mới vào sản phẩm
         product.setImages(newImages);
 
-        // Lưu sản phẩm vào cơ sở dữ liệu
-        Product productSave = productService.save(product);
-        session.setAttribute("idProductSave",productSave.getId());
-        System.out.println("da them san pham ");
-        return ResponseEntity.ok("Sản phẩm đã được thêm thành công");
+        // Lưu sản phẩm
+        Product savedProduct = productService.save(product);
+        if (savedProduct == null) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi khi thêm sản phẩm");
+        }
+
+        // Cập nhật ID sản phẩm cho các chi tiết sản phẩm và lưu
+        productDetails.forEach(detail -> detail.setProduct(savedProduct));
+        productDetailRepository.saveAll(productDetails);
+
+        return ResponseEntity.ok("Sản phẩm và chi tiết sản phẩm đã được thêm thành công");
     }
+
+
 
     @GetMapping("/detail/{idProduct}")
     public String viewProductDetail(@PathVariable("idProduct") Integer idProduct, Model model) {
-        List<ProductDetailResponse> productDetails = productService.findAllProductDetailByIDProduct(idProduct);
+        List<ProductDetail> productDetails = productService.findAllProductDetailByIDProduct(idProduct);
         model.addAttribute("productDetailList", productDetails);
         return "/Product/productDetail";
     }
 
-    @PostMapping("/add-productDetail")
-    public String addMultipleProductDetails(@RequestBody List<ProductDetail> productDetails, Model model) {
-        System.out.println("da tehm san pham chi tiet");
-        productDetailRepository.saveAll(productDetails);
-        model.addAttribute("productList", productService.getProductNotStatus0());
-        model.addAttribute("categoryList", categoryService.findAll());
-        return "product";
-    }
+
     @ModelAttribute("staffInfo")
     public Staff staff(HttpSession session) {
         Staff staff = (Staff) session.getAttribute("staffLogin");
