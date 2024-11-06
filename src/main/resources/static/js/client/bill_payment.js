@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
     const apiKey = '0fc88a8e-6633-11ef-8e53-0a00184fe694';
     const shopId = '195165';
+    const fromDistrictId = 3440; // Mã huyện cố định của kho hàng
 
     function fetchProvinces() {
         fetch('https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/province', {
@@ -79,33 +80,10 @@ document.addEventListener("DOMContentLoaded", function () {
             .catch(error => console.error('Error:', error));
     }
 
-    document.getElementById("province").addEventListener("change", function () {
-        let provinceId = this.value;
-        if (provinceId) {
-            fetchDistricts(provinceId);
-        }
-    });
-
-    document.getElementById("district").addEventListener("change", function () {
-        let districtId = this.value;
-        if (districtId) {
-            fetchWards(districtId);
-        }
-    });
-
-    fetchProvinces();
-
-    function calculateShippingFee(serviceId) {
-        const fromDistrictId = 3440;
-        const toDistrictId = document.getElementById("district").value;
-        const toWardCode = document.getElementById("ward").value;
-        const weight = 200;
-        const length = 30;
-        const width = 20;
-        const height = 10;
-
-        if (!fromDistrictId || !toDistrictId || !toWardCode || !serviceId || !shopId) {
-            console.error('Thiếu thông tin cần thiết');
+    function calculateShippingFee(serviceId, toDistrictId, toWardCode) {
+        // Kiểm tra các thông tin cần thiết
+        if (!serviceId || !toDistrictId || !toWardCode) {
+            console.error('Thiếu thông tin cần thiết để tính phí ship');
             document.getElementById("spanShippingFee").textContent = "Không thể tính phí ship";
             return;
         }
@@ -121,17 +99,22 @@ document.addEventListener("DOMContentLoaded", function () {
                 "insurance_value": 1000000,
                 "to_district_id": parseInt(toDistrictId),
                 "to_ward_code": toWardCode,
-                "weight": weight,
-                "length": length,
-                "width": width,
-                "height": height,
+                "weight": 200,
+                "length": 30,
+                "width": 20,
+                "height": 10,
                 "from_district_id": fromDistrictId
             })
         })
             .then(response => response.json())
             .then(data => {
                 if (data.code === 200) {
-                    document.getElementById("spanShippingFee").textContent = `${data.data.total} VND`;
+                    // Cập nhật phí vận chuyển
+                    const shippingFee = data.data.total;
+                    document.getElementById("spanShippingFee").textContent = `${shippingFee} VND`;
+
+                    // Tính lại tổng tiền sau khi cập nhật phí vận chuyển
+                    calculateTotalPrice();
                 } else {
                     console.error('Lỗi tính phí ship:', data.message);
                     document.getElementById("spanShippingFee").textContent = "Không thể tính phí ship";
@@ -140,15 +123,14 @@ document.addEventListener("DOMContentLoaded", function () {
             .catch(error => console.error('Error:', error));
     }
 
-    function getAvailableServices() {
-        const fromDistrictId = 1582;
-        const toDistrictId = document.getElementById("district").value;
 
-        if (!fromDistrictId || !toDistrictId || !shopId) {
+    function getAvailableServices(toDistrictId, toWardCode) {
+        if (!toDistrictId || !toWardCode) {
             console.error('Thiếu thông tin cần thiết để lấy dịch vụ');
             document.getElementById("spanShippingFee").textContent = "Không thể lấy dịch vụ vận chuyển";
             return;
         }
+
         fetch('https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/available-services', {
             method: 'POST',
             headers: {
@@ -163,16 +145,12 @@ document.addEventListener("DOMContentLoaded", function () {
         })
             .then(response => response.json())
             .then(data => {
-                if (data.code === 200 && data.data) {
-                    if (data.data.length > 0) {
-                        const serviceId = data.data[0].service_id;
-                        calculateShippingFee(serviceId);
-                    } else {
-                        document.getElementById("spanShippingFee").textContent = "Không có dịch vụ vận chuyển";
-                    }
+                if (data.code === 200 && data.data.length > 0) {
+                    const serviceId = data.data[0].service_id;
+                    calculateShippingFee(serviceId, toDistrictId, toWardCode);
                 } else {
-                    console.error('Lỗi:', data.message);
-                    document.getElementById("spanShippingFee").textContent = "Không thể lấy dịch vụ vận chuyển";
+                    console.error('Không có dịch vụ vận chuyển:', data.message);
+                    document.getElementById("spanShippingFee").textContent = "Không có dịch vụ vận chuyển";
                 }
             })
             .catch(error => {
@@ -181,82 +159,74 @@ document.addEventListener("DOMContentLoaded", function () {
             });
     }
 
-    document.getElementById("ward").addEventListener("change", function () {
-        getAvailableServices();
-    });
-
     function updateAddress() {
+        const fullName = document.getElementById("FullName").value;
+        const phone = document.getElementById("Phone").value;
+        const mail = document.getElementById("Mail").value;
+
+        const provinceId = document.getElementById("province").value;
+        const districtId = document.getElementById("district").value;
+        const wardCode = document.getElementById("ward").value;
+
         const province = document.getElementById("province").options[document.getElementById("province").selectedIndex].text;
         const district = document.getElementById("district").options[document.getElementById("district").selectedIndex].text;
         const ward = document.getElementById("ward").options[document.getElementById("ward").selectedIndex].text;
 
         const fullAddress = `${ward}, ${district}, ${province}`;
         document.getElementById("addressShow").value = fullAddress;
+
+        const endAddress = document.getElementById("addressShow").value;
+        const addressParts = endAddress.split(',');
+        const lastPart = addressParts[addressParts.length - 1].trim();
+
+        const address = `${fullName},${phone},${mail},${provinceId},${districtId},${wardCode},${fullAddress},${lastPart}`;
+        document.getElementById("addressShip").value = address;
+
+        console.log(address);
     }
 
+    function calculateTotalPrice() {
+        // Lấy giá trị từ các phần tử
+        const totalPriceCartItem = parseFloat(document.getElementById("spanTotalPriceCartItem").textContent.replace(/[^0-9.]/g, '').replace(',', '.')) || 0; // Thay dấu phẩy bằng dấu chấm
+        const priceVoucher = parseFloat(document.getElementById("spanPriceVoucher").textContent.replace(/[^0-9.]/g, '').replace(',', '.')) || 0; // Thay dấu phẩy bằng dấu chấm
+        const shippingFee = parseFloat(document.getElementById("spanShippingFee").textContent.replace(/[^0-9.]/g, '').replace(',', '.')) || 0; // Thay dấu phẩy bằng dấu chấm
+
+        console.log("Ship: " + shippingFee); // In phí vận chuyển ra console
+
+        // Tính tổng tiền
+        const totalPriceBill = totalPriceCartItem - priceVoucher + shippingFee;
+
+        console.log("totalPriceBill: " + totalPriceBill); // In tổng tiền ra console
+
+        // Cập nhật giá trị tổng tiền vào phần tử hiển thị
+        document.getElementById("spanTotalPriceBill").textContent = totalPriceBill.toFixed(2); // Định dạng thành 2 chữ số thập phân
+    }
+
+// Gọi hàm tính tổng tiền
+
+
+    document.getElementById("FullName").addEventListener("input", updateAddress);
+    document.getElementById("Phone").addEventListener("input", updateAddress);
+    document.getElementById("Mail").addEventListener("input", updateAddress);
     document.getElementById("province").addEventListener("change", function () {
-        let provinceId = this.value;
-        if (provinceId) {
-            fetchDistricts(provinceId);
-            updateAddress(); // Cập nhật địa chỉ khi thay đổi tỉnh
-        }
+        const provinceId = this.value;
+        if (provinceId) fetchDistricts(provinceId);
+        updateAddress(); // Gọi hàm cập nhật địa chỉ khi chọn tỉnh
     });
 
     document.getElementById("district").addEventListener("change", function () {
-        let districtId = this.value;
-        if (districtId) {
-            fetchWards(districtId);
-            updateAddress(); // Cập nhật địa chỉ khi thay đổi huyện
-        }
+        const districtId = this.value;
+        if (districtId) fetchWards(districtId);
+        updateAddress(); // Gọi hàm cập nhật địa chỉ khi chọn huyện
+        calculateTotalPrice();
     });
 
     document.getElementById("ward").addEventListener("change", function () {
-        getAvailableServices();
-        updateAddress(); // Cập nhật địa chỉ khi thay đổi xã
+        const districtId = document.getElementById("district").value;
+        const wardCode = document.getElementById("ward").value;
+        getAvailableServices(districtId, wardCode);
+        updateAddress(); // Gọi hàm cập nhật địa chỉ khi chọn xã/phường
+        calculateTotalPrice();
     });
-
     fetchProvinces();
 });
-
-function calculatorTotalPrice() {
-    // Lấy giá trị từ các phần tử HTML và chuyển đổi sang kiểu số
-    const totalPriceCart = parseFloat(document.getElementById("spanTotalPriceCartItem").textContent.replace(/[^\d.-]/g, '')) || 0;
-    const priceVoucher = parseFloat(document.getElementById("spanPriceVoucher").textContent.replace(/[^\d.-]/g, '')) || 0;
-    const shippingFree = parseFloat(document.getElementById("spanShippingFee").textContent.replace(/[^\d.-]/g, '')) || 0;
-
-    // Tính toán giá trị của totalPriceBill
-    const totalPriceBill = totalPriceCart - priceVoucher + shippingFree;
-
-    document.getElementById("spanTotalPriceBill").textContent = totalPriceBill.toLocaleString('vi-VN', {
-        style: 'currency',
-        currency: 'VND'
-    });
-
-
-}
-
-const observer = new MutationObserver(calculatorTotalPrice);
-
-// Cấu hình cho observer
-const config = {
-    childList: true, // Theo dõi sự thay đổi của các nút con
-    characterData: true, // Theo dõi sự thay đổi của dữ liệu ký tự
-    subtree: true // Theo dõi toàn bộ cây con
-};
-
-// Các phần tử cần theo dõi
-const totalPriceCartItem = document.getElementById("spanTotalPriceCartItem");
-const priceVoucher = document.getElementById("spanPriceVoucher");
-const shippingFee = document.getElementById("spanShippingFee");
-
-// Bắt đầu theo dõi
-if (totalPriceCartItem) {
-    observer.observe(totalPriceCartItem, config);
-}
-if (priceVoucher) {
-    observer.observe(priceVoucher, config);
-}
-if (shippingFee) {
-    observer.observe(shippingFee, config);
-}
-calculatorTotalPrice();

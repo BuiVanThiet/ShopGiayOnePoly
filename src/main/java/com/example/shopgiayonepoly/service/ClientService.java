@@ -6,6 +6,7 @@ import com.example.shopgiayonepoly.dto.response.client.ProductIClientResponse;
 import com.example.shopgiayonepoly.dto.response.client.SizeClientResponse;
 import org.springframework.data.repository.query.Param;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface ClientService {
@@ -25,4 +26,6 @@ public interface ClientService {
             @Param("colorId") Integer colorId,
             @Param("sizeId") Integer sizeId,
             @Param("productId") Integer productId);
+    BigDecimal findDiscountedPriceByProductDetailId(@Param("productDetailId") Integer productDetailId);
+
 }

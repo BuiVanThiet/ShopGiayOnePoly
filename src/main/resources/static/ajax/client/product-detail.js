@@ -1,7 +1,7 @@
 let selectedColorId; // Biến toàn cục để lưu ID màu sắc đã chọn
 let selectedSizeId;  // Biến toàn cục để lưu ID kích thước đã chọn
 
-    // Lấy ID sản phẩm từ input hidden
+// Lấy ID sản phẩm từ input hidden
 const productId = document.getElementById("product-id").value;
 
 // Khởi tạo các sự kiện khi trang đã tải xong
@@ -20,10 +20,11 @@ function attachClickEvent(selector, handler) {
         button.addEventListener("click", function () {
             const value = button.innerText.trim(); // Lấy giá trị và loại bỏ khoảng trắng
             const id = button.getAttribute('data-color-id') || button.getAttribute('data-size-id'); // Lấy ID từ data-color-id hoặc data-size-id
-            handler(value, id); // Gọi hàm handler với giá trị và ID
+            handler(value, id);
         });
     });
 }
+
 // Hàm đặt màu tạm thời
 function setTemporaryColor(color, colorId) {
     selectedColorId = colorId; // Lưu ID màu đã chọn
@@ -38,6 +39,7 @@ function setTemporaryColor(color, colorId) {
         getProductDetail(productId, selectedColorId, selectedSizeId); // Gọi API với ID màu sắc
     }
 }
+
 // Hàm đặt kích thước tạm thời
 function setTemporarySize(size, sizeId) {
     selectedSizeId = sizeId; // Lưu ID kích thước đã chọn
@@ -64,27 +66,45 @@ function getProductDetail(productId, colorId, sizeId) {
             sizeId: sizeId
         },
         success: function (data) {
-
             if (data) {
-                console.log("ProductDetail: ", data); // In ra đối tượng để kiểm tra cấu trúc
-                $('#productDetailID-hidden').val(data.productDetailId);
-                console.log('Id sản phẩm chi tiết: ' + data.productDetailId);
-                const quantity = data.quantity || 0; // Đảm bảo giá trị số lượng là hợp lệ
+                console.log("ProductDetail: ", data);
+
+                // Lấy quantity và cập nhật vào HTML
+                const quantity = data.quantity || 0;
                 $('#quantity-display').text(quantity);
-                $('#price-display').text(data.price.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'}));
-                $('#price-modal').text(data.price.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'}));
+
+                // Hiển thị giá khi quantity > 0, nếu không hiển thị 0
+                if (quantity > 0) {
+                    $('#productDetailID-hidden').val(data.productDetailId);
+                    $('#price-display').text(data.price.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'}));
+
+                    // Gọi priceDiscount nếu có
+                    $('#price-apply-discount').text(data.priceDiscount.toLocaleString('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND'
+                    }));
+                    $('#price-modal').text(data.priceDiscount.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'}));
+                } else {
+                    // Khi quantity = 0, đặt giá về 0 hoặc hiển thị thông báo khác
+                    $('#price-display').text("0");
+                    $('#price-apply-discount').text("0");
+                    $('#price-modal').text("0");
+                }
             } else {
+                // Nếu không có dữ liệu, hiển thị 0 cho các giá trị
                 $('#quantity-display').text(0);
                 $('#price-display').text("0");
+                $('#price-apply-discount').text("0");
                 $('#price-modal').text("0");
             }
-        }, error: function (xhr) {
+        },
+        error: function (xhr) {
             console.log("Dữ liệu đầu vào không được cập nhật");
-
-            console.log("Error" + xhr.responseText)
+            console.log("Error" + xhr.responseText);
         }
     });
 }
+
 
 // Hàm changeColor - xử lý thay đổi màu sắc
 function changeColor(button) {
@@ -159,6 +179,7 @@ function addToCart() {
             } else {
                 console.log(data.message || 'Có lỗi xảy ra khi thêm vào giỏ hàng.');
             }
+            window.location.href = '/onepoly/cart';
         },
         error: function (error) {
             console.error('Error:', error);
