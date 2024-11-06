@@ -1,84 +1,113 @@
 .row {
-    max-width: 97%; /* Chiều rộng tối đa cho toàn bộ trang */
-    margin: 0 auto; /* Căn giữa phần body */
+    max-width: 97%;
+    margin: 0 auto;
 }
+
 .fixed-container {
-    width: 100%; /* Hoặc một giá trị cố định ví dụ 800px */
-    height: 720px; /* Chiều cao cố định, bạn có thể điều chỉnh theo nhu cầu */ /* Thêm thanh cuộn dọc nếu nội dung vượt quá chiều cao */ /* Màu nền cho thẻ cố định */
-    padding: 20px; /* Khoảng cách bên trong */
-    border-radius: 8px; /* Bo góc cho thẻ */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Đổ bóng cho thẻ */
+    width: 100%;
+    height: 720px;
+    overflow-y: auto;
+    background-color: #e0e0e073;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
+
 .custom-heading {
     margin-top: 40px;
-    font-weight: bold;/* Điều chỉnh khoảng cách từ trên xuống */
+    font-weight: bold;
+    color: #333;
 }
 
 .rectangle {
     height: 70px;
     border: 1px solid black;
     display: flex;
-    flex-direction: column; /* Sắp xếp các thành phần theo cột */
-    justify-content: flex-start; /* Bắt đầu từ phía trên cùng */
-    align-items: flex-start; /* Căn bên trái */
-    padding: 10px; /* Khoảng cách bên trong */
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 10px;
     margin-top: 20px;
     border-radius: 15px;
     font-weight: bold;
+    background-color: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
-
 
 .rectangle h6 {
     font-weight: bold;
+    color: #444;
 }
-/* CSS cho nội dung truyền từ BE */
+
 .data-from-be {
     margin-top: auto;
     font-size: 14px;
     color: #555;
 }
 
-/* CSS cho thẻ bộ lọc */
-/* CSS cho phần form bộ lọc không dùng Bootstrap */
 .filter-section {
-    margin-bottom: 20px;
-    padding: 15px;
     border-radius: 5px;
     display: flex;
+    justify-content: flex-end; /* Căn phần tử sang bên phải */
     align-items: center;
-    justify-content: flex-end;
+    margin-right: 25px;
 }
 
 .button-group {
-    display: flex; /* Sắp xếp các nút theo hàng ngang */
-    gap: 10px; /* Khoảng cách giữa các nút */
+    display: flex;
+    gap: 10px;
 }
 
 .custom-btn {
-    padding: 4px 10px; /* Kích thước nút */
-    background-color: white; /* Màu nền nút */
-    border: 1px solid rgb(0, 123, 255); /* Viền nút */
-    border-radius: 5px; /* Bo góc cho nút */
-    font-size: 14px; /* Kích thước chữ */
+    padding: 4px 10px;
+    background-color: white;
+    border: 1px solid rgb(0, 123, 255);
+    border-radius: 5px;
+    font-size: 14px;
     cursor: pointer;
     transition: background-color 0.3s, color 0.3s;
     color: rgb(0, 123, 255);
-    outline: none; /* Bỏ viền khi nhấn */
+    outline: none;
     box-shadow: none;
 }
 
-.custom-btn:focus {
-    outline: none; /* Bỏ outline khi nhấn */
-    box-shadow: none; /* Bỏ hiệu ứng viền cam */
+.custom-btn:hover, .custom-btn.active {
+    background-color: rgb(0, 123, 255);
+    color: white;
 }
 
-.custom-btn:hover {
-    background-color: rgb(0, 123, 255); /* Màu nền khi hover */
-    color: white; /* Màu chữ khi hover */
+.custom-heading {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    font-weight: bold;
 }
 
-.custom-btn.active {
-    background-color: rgb(0, 123, 255); /* Màu nền khi nút active */
-    color: white; /* Màu chữ khi nút active */
+.rectangle {
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin-bottom: 20px;
 }
 
+.button-group {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.custom-btn {
+    margin: 5px;
+}
+
+.fixed-container {
+    margin-top: 20px;
+}
+
+/* Thêm nền và bo góc cho div.col-md-6 */
+.col-md-6 {
+    background-color: #e0e0e091; /* Chọn màu nền tùy thích */
+    border-radius: 8px; /* Bo góc */
+    padding: 20px; /* Thêm padding cho khoảng cách nội dung */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Thêm bóng đổ cho đẹp mắt */
+}

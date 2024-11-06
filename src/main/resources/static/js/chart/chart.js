@@ -161,7 +161,7 @@ function AnnualStatistics() {
             });
 
             var options = {
-                title: 'Biểu đồ thống kê sản phẩm và hóa đơn theo tháng',
+                title: 'Biểu đồ thống kê sản phẩm và hóa đơn theo năm',
                 titleTextStyle: {
                     alignment: 'center'
                 },
