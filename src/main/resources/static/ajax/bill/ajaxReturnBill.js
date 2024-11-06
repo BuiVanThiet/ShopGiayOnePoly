@@ -1,3 +1,4 @@
+var pageReturn = 1;
 function loadBillDetailFromReturnBill(page) {
     $.ajax({
         type: "GET",
@@ -262,7 +263,8 @@ function addProductReturn() {
         success: function (response) {
             loadBillDetailFromReturnBill(1);
             maxPageBillDetailByIdBill();
-            loadReturnBill(1);
+            pageReturn = 1;
+            loadReturnBill(pageReturn);
             maxPageReturnBill();
             loadInfomationReturnBill()
             showToast(response.message,response.check);
@@ -281,7 +283,7 @@ function ressetListReturnBill() {
         success: function (response) {
             loadBillDetailFromReturnBill(1);
             maxPageBillDetailByIdBill();
-            loadReturnBill(1);
+            loadReturnBill(pageReturn);
             maxPageReturnBill();
             loadInfomationReturnBill();
         },
@@ -332,7 +334,8 @@ function remoBillReturn(idProductDetail,quantity) {
         success: function (response) {
             loadBillDetailFromReturnBill(1);
             maxPageBillDetailByIdBill();
-            loadReturnBill(1);
+            pageReturn = 1;
+            loadReturnBill(pageReturn);
             maxPageReturnBill();
             loadInfomationReturnBill()
             loadProduct(1);
@@ -357,8 +360,8 @@ function increaseOrDecreaseProductReturn(idProductReturn,quantity,method) {
         success: function (response) {
             loadBillDetailFromReturnBill(1);
             maxPageBillDetailByIdBill();
-            loadReturnBill(1);
-            maxPageReturnBill();
+            loadReturnBill(pageReturn);
+            // maxPageReturnBill();
             loadInfomationReturnBill()
             showToast(response.message,response.check);
         },

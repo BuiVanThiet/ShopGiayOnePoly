@@ -60,7 +60,11 @@ function handlePageClick(pageNumber, elementId, totalPages) {
     }else if (elementId == 'billDetailPageMax-returnBill') {
         loadBillDetailFromReturnBill(pageNumber);
     }else if (elementId == 'billReturnPageMax-returnBill') {
-        loadReturnBill(pageNumber);
+        pageReturn = pageNumber;
+        loadReturnBill(pageReturn);
+    }else if (elementId == 'billExchangePageMax-exchangeBill') {
+        pageExchange = pageNumber;
+        loadExchangeBill(pageExchange);
     }
 
     createPagination(elementId, totalPages, pageNumber); // Cập nhật phân trang

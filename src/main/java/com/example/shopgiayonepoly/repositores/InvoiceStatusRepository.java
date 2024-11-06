@@ -16,8 +16,13 @@ public interface InvoiceStatusRepository extends JpaRepository<InvoiceStatus,Int
         select
         	status,
         	create_date,
-        	(select code_staff+'-'+full_name from staff where id = (SUBSTRING(invoice_status.note, 1, CHARINDEX(',', invoice_status.note) - 1))),
-        	SUBSTRING(invoice_status.note, CHARINDEX(',', invoice_status.note) + 1, LEN(invoice_status.note))
+            CASE
+            WHEN LEFT(invoice_status.note, CHARINDEX(',', invoice_status.note) - 1) = N'Không có' THEN N'Không có'
+            ELSE (select code_staff + '-' + full_name
+                  from staff
+                  where id = (SUBSTRING(invoice_status.note, 1, CHARINDEX(',', invoice_status.note) - 1)))
+            END AS staff_info,
+            SUBSTRING(invoice_status.note, CHARINDEX(',', invoice_status.note) + 1, LEN(invoice_status.note)) AS note_details
         	from invoice_status where id_bill = :idCheck
 """,nativeQuery = true)
     List<Object[]> getHistoryByBill(@Param("idCheck") Integer idCheck);

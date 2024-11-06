@@ -153,7 +153,7 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
         where 
         bill.status <> 0 and
         (concat(COALESCE(bill.codeBill, ''), COALESCE(bill.customer.fullName, ''), COALESCE(bill.customer.numberPhone, '')) like %:nameCheck%)
-         AND (:statusCheck IS NULL OR bill.status IN (:statusCheck))
+         AND (:statusCheck IS NULL OR bill.status IN (:statusCheck)) order by bill.updateDate desc
     """)
     Page<BillResponseManage> getAllBillByStatusDiss0(@Param("nameCheck") String nameCheck, @Param("statusCheck") List<Integer> statusCheck, Pageable pageable);
     //    @Query("""
@@ -266,7 +266,15 @@ select case
         	b.update_date,
         	(b.cash+b.surplus_money) AS so_tien,
         	N'Tiền mặt'  payment_method,
-        	(select s.code_staff+'-'+s.full_name from staff s where s.id = (SUBSTRING(invo.note, 1, CHARINDEX(',', invo.note) - 1)))
+            CASE
+            WHEN LEFT(invo.note, CHARINDEX(',', invo.note) - 1) = N'Không có' THEN N'Không có'
+            ELSE ISNULL(
+                (select s.code_staff + '-' + s.full_name
+                 from staff s
+                 where s.id = (SUBSTRING(invo.note, 1, CHARINDEX(',', invo.note) - 1))),
+                N'Không có'
+            )
+        END AS staff_info
         from bill b
         join invoice_status invo
         on invo.id_bill = b.id
@@ -277,7 +285,15 @@ select case
         	b.update_date,
         	b.acount_money AS so_tien,
         	N'Tiền tài khoản'  payment_method,
-        	(select s.code_staff+'-'+s.full_name from staff s where s.id = (SUBSTRING(invo.note, 1, CHARINDEX(',', invo.note) - 1)))
+            CASE
+            WHEN LEFT(invo.note, CHARINDEX(',', invo.note) - 1) = N'Không có' THEN N'Không có'
+            ELSE ISNULL(
+                (select s.code_staff + '-' + s.full_name
+                 from staff s
+                 where s.id = (SUBSTRING(invo.note, 1, CHARINDEX(',', invo.note) - 1))),
+                N'Không có'
+            )
+        END AS staff_info
         from bill b
         join invoice_status invo
         on invo.id_bill = b.id

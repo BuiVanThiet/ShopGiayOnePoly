@@ -51,6 +51,7 @@ document.getElementById('startCamera').addEventListener('click', () => {
                                 loadBillDetail(pageBillDetail);
                                 paymentInformation();
                                 loadVoucherByBill(1);
+                                resetFilterProductSale();
 
                             // Cập nhật lại bảng hóa đơn và các chức năng khác
                             //     loadBillStatusByBillId();

@@ -700,7 +700,8 @@ function getExchangeProduct() {
         success: function (response) {
             loadProduct(1);
             getMaxPageProduct();
-            loadExchangeBill(1);
+            pageExchange = 1;
+            loadExchangeBill(pageExchange);
             maxPageExchangeBill();
             showToast(response.message,response.check)
             loadInfomationReturnBill();
@@ -725,7 +726,8 @@ function removeProductExchange(id,quantity) {
         success: function (response) {
             loadProduct(1);
             getMaxPageProduct();
-            loadExchangeBill(1);
+            pageExchange = 1
+            loadExchangeBill(pageExchange);
             maxPageExchangeBill();
             loadInfomationReturnBill();
 
