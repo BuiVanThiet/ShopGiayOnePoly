@@ -50,8 +50,8 @@ public interface ProductService {
     List<Product> findProducts(Integer idCategory, String searchTerm);
     List<String> findAllNameProduct();
 
-    List<ProductDetailResponse> findAllProductDetailByIDProduct(@Param("idProduct") Integer idProduct);
+    List<ProductDetail> findAllProductDetailByIDProduct(@Param("idProduct") Integer idProduct);
 
     List<ProductDetail> searchProductDetailsByKeyword(@Param("searchTerm") String searchTerm,@Param("idProduct") Integer idProduct);
-    Integer findMaxIdProduct();
+
 }

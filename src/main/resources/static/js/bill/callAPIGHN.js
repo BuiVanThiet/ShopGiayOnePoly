@@ -504,7 +504,7 @@ function totalShip(province, district, ward) {
                                 updateMoneyShipWait(shipMoneyBillWait);
                             }
                             console.log('đay là số tiền ship: ' + response.data.total);
-                            setClientShip(nameCustomer,numberPhoneCustomer,provinceTransport,districtTransport,wardTransport,addRessDetailCustomer)
+                            setClientShip(nameCustomer,numberPhoneCustomer,emailCustomer,provinceTransport,districtTransport,wardTransport,addRessDetailCustomer)
                             paymentInformation();
                         },
                         error: function (xhr) {

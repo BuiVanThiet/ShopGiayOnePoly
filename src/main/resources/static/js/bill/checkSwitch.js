@@ -12,6 +12,7 @@ document.getElementById('flexSwitchCheckDefault').addEventListener('change', fun
     const shipSpan = document.getElementById('shipSpan'); // Xác định thẻ div cần ẩn/hiện
 
     if (this.checked) {
+        checkSwitch = true;
         getUpdateTypeBill('2');
         // document.getElementById('moneyTransport').value = totalBill;
         formErorrCash.style.display = 'none';
@@ -29,13 +30,14 @@ document.getElementById('flexSwitchCheckDefault').addEventListener('change', fun
                 districtID = parseInt(client.district);
                 wardID = parseInt(client.commune);
                 nameCustomer = client.name;
+                emailCustomer = client.email;
                 numberPhoneCustomer = client.numberPhone;
                 addRessDetailCustomer = client.addressDetail;
                 console.log(provinceID + '-' + districtID + '-' + wardID)
                 selectCheckProvince = client.city;
                 selectCheckDistrict = client.district;
                 selectCheckWard = client.commune;
-                setClientShip(nameCustomer,numberPhoneCustomer,provinceID,districtID,wardID,addRessDetailCustomer)
+                setClientShip(nameCustomer,numberPhoneCustomer,emailCustomer,provinceID,districtID,wardID,addRessDetailCustomer)
                 dynamicContent.innerHTML = `
             <div class="">
                 <div class="row">
@@ -48,6 +50,11 @@ document.getElementById('flexSwitchCheckDefault').addEventListener('change', fun
                         <label class="form-label">Số điện thoại</label>
                         <input type="text" class="form-control" value="${client.numberPhone}" id="phoneCustomer">
                         <span class="text-danger" id="error-numberPhone-customer-ship" style="display: none"></span>
+                    </div>
+                      <div class="col-12">
+                        <label class="form-label">Email</label>
+                        <input type="text" class="form-control" value="${client.email}" id="emailCustomer">
+                        <span class="text-danger" id="error-email-customer-ship" style="display: none"></span>
                     </div>
                     <!-- Các phần khác của form -->
                     <div class="col-4">
@@ -88,6 +95,7 @@ document.getElementById('flexSwitchCheckDefault').addEventListener('change', fun
         });
         checkTypeBill = false;
     } else {
+        checkSwitch = false;
         checkTypeBill = true;
         document.getElementById('form-payMethod-bill').style.display = 'flex';
         getUpdateTypeBill('1');
@@ -115,17 +123,25 @@ document.getElementById('flexSwitchCheckDefault').addEventListener('change', fun
 });
 
 
-function setClientShip(name,numberPhone,province,district,ward,addressDetail) {
-    $('#idCity-staff').val(province)
-    $('#idDistrict-staff').val(district)
-    $('#idCommune-staff').val(ward)
-    $('#customerShip').val(name+','+numberPhone+','+province+','+district+','+ward+','+addressDetail);
+function setClientShip(name,numberPhone,email,province,district,ward,addressDetail) {
+    console.log(name)
+    console.log(numberPhone)
+    console.log(email)
+    console.log(province)
+    console.log(district)
+    console.log(ward)
+    console.log(addressDetail)
+    // $('#idCity-staff').val(province)
+    // $('#idDistrict-staff').val(district)
+    // $('#idCommune-staff').val(ward)
+    $('#customerShip').val(name+','+numberPhone+','+email+','+province+','+district+','+ward+','+addressDetail);
 }
 
 function validateInformationShip() {
     // Khai báo các phần tử DOM sử dụng trong mã
     var nameInputCheckSwitch = document.getElementById('nameCustomer');
     var phoneInputCheckSwitch = document.getElementById('phoneCustomer');
+    var emailInputCheckSwitch = document.getElementById('emailCustomer');
     var addressTextareaCheckSwitch = document.getElementById('addRessDetailCustomer');
 
     var provinceCheckSwitch = document.getElementById('provinceSelect-transport');
@@ -135,12 +151,14 @@ function validateInformationShip() {
 // Khai báo các phần tử hiển thị lỗi
     var errorNameCustomerShipCheckSwitch = document.getElementById('error-name-customer-ship');
     var errorNumberPhoneCustomerShipCheckSwitch = document.getElementById('error-numberPhone-customer-ship');
+    var errorEmailCustomerShipCheckSwitch = document.getElementById('error-email-customer-ship');
     var errorAddResDetailCustomerShipCheckSwitch = document.getElementById('error-addResDetail-customer-ship');
 
     console.log(phoneInputCheckSwitch.value.trim())
     validateNameCustomer(nameInputCheckSwitch.value.trim(),errorNameCustomerShipCheckSwitch);
     validateNumberPhone(phoneInputCheckSwitch.value.trim(),errorNumberPhoneCustomerShipCheckSwitch);
     validateAddRessDetail(addressTextareaCheckSwitch.value.trim(),errorAddResDetailCustomerShipCheckSwitch);
+    validateEmail(emailInputCheckSwitch.value.trim(),errorEmailCustomerShipCheckSwitch)
 
     validateProvinceCheckSwitch(selectCheckProvince);
     validateDistrictCheckSwitch(selectCheckDistrict);
@@ -152,6 +170,7 @@ function validateInformationShip() {
 
     if(validateNameCustomer(nameInputCheckSwitch.value.trim(),errorNameCustomerShipCheckSwitch) == true &&
         validateNumberPhone(phoneInputCheckSwitch.value.trim(),errorNumberPhoneCustomerShipCheckSwitch) == true &&
+        validateEmail(emailInputCheckSwitch.value.trim(),errorEmailCustomerShipCheckSwitch) == true &&
         validateAddRessDetail(addressTextareaCheckSwitch.value.trim(),errorAddResDetailCustomerShipCheckSwitch) == true &&
         validateProvinceCheckSwitch(selectCheckProvince) == true &&
         validateDistrictCheckSwitch(selectCheckDistrict) == true &&
@@ -167,6 +186,7 @@ function attachInputListeners() {
     // Khai báo các phần tử DOM sử dụng trong mã
     var nameInputCheckSwitch = document.getElementById('nameCustomer');
     var phoneInputCheckSwitch = document.getElementById('phoneCustomer');
+    var emailInputCheckSwitch = document.getElementById('emailCustomer');
     var addressTextareaCheckSwitch = document.getElementById('addRessDetailCustomer');
 
     var provinceCheckSwitch = document.getElementById('provinceSelect-transport');
@@ -177,8 +197,7 @@ function attachInputListeners() {
         nameInputCheckSwitch.addEventListener('input', function() {
             validateInformationShip();
             nameCustomer = this.value.trim();
-            setClientShip(nameCustomer,numberPhoneCustomer,provinceID,districtID,wardID,addRessDetailCustomer)
-            setClientShip(nameInputCheckSwitch.value.trim(),phoneInputCheckSwitch.value.trim(),provinceID,districtID,wardID,addressTextareaCheckSwitch.value.trim());
+            setClientShip(nameInputCheckSwitch.value.trim(),phoneInputCheckSwitch.value.trim(),emailInputCheckSwitch.value.trim(),provinceID,districtID,wardID,addressTextareaCheckSwitch.value.trim());
             console.log('Tên khách hàng đã thay đổi: ' + this.value);
         });
     }
@@ -187,8 +206,17 @@ function attachInputListeners() {
         phoneInputCheckSwitch.addEventListener('input', function() {
             validateInformationShip();
             numberPhoneCustomer = this.value.trim();
-            setClientShip(nameCustomer,numberPhoneCustomer,provinceID,districtID,wardID,addRessDetailCustomer);
+            setClientShip(nameCustomer,numberPhoneCustomer,emailCustomer,provinceID,districtID,wardID,addRessDetailCustomer);
             console.log('Số điện thoại đã thay đổi: ' + this.value);
+        });
+    }
+
+    if (emailInputCheckSwitch) {
+        emailInputCheckSwitch.addEventListener('input', function() {
+            validateInformationShip();
+            emailCustomer = this.value.trim();
+            setClientShip(nameCustomer,numberPhoneCustomer,emailCustomer,provinceID,districtID,wardID,addRessDetailCustomer);
+            console.log('email khách hàng đã thay đổi: ' + this.value);
         });
     }
 
@@ -196,7 +224,7 @@ function attachInputListeners() {
         addressTextareaCheckSwitch.addEventListener('input', function() {
             validateInformationShip();
             addRessDetailCustomer = this.value.trim();
-            setClientShip(nameCustomer,numberPhoneCustomer,provinceID,districtID,wardID,addRessDetailCustomer)
+            setClientShip(nameCustomer,numberPhoneCustomer,emailCustomer,provinceID,districtID,wardID,addRessDetailCustomer)
             console.log('Địa chỉ cụ thể đã thay đổi: ' + this.value);
         });
     }

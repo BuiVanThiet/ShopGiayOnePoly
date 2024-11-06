@@ -1,6 +1,5 @@
 package com.example.shopgiayonepoly.dto.response.client;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,30 +15,61 @@ public class ProductDetailClientRespone {
     private Integer productId;
     private String productName;
     private BigDecimal price;
+    private BigDecimal priceDiscount;
     private Integer quantity;
     private String productDetailDescription;
     private String colorName;
     private String sizeName;
     private String productImage;
+    private Integer idSaleProduct;
+
     public ProductDetailClientRespone(Integer productDetailId,
                                       Integer productId,
                                       String productName,
                                       BigDecimal price,
+                                      BigDecimal priceDiscount,
                                       Integer quantity,
                                       String productDetailDescription,
                                       String colorName,
                                       String sizeName,
-                                      String productImage) {
+                                      Integer idSaleProduct) {
         this.productDetailId = productDetailId;
         this.productId = productId;
         this.productName = productName;
         this.price = price;
+        this.priceDiscount = priceDiscount;
+        this.quantity = quantity;
+        this.productDetailDescription = productDetailDescription;
+        this.colorName = colorName;
+        this.sizeName = sizeName;
+        this.idSaleProduct = idSaleProduct;
+    }
+
+    public ProductDetailClientRespone(
+            Integer productDetailId,
+            Integer productId,
+            String productName,
+            BigDecimal price,
+            BigDecimal priceDiscount,
+            Integer quantity,
+            String productDetailDescription,
+            String colorName,
+            String sizeName,
+            String productImage) {
+        this.productDetailId = productDetailId;
+        this.productId = productId;
+        this.productName = productName;
+        this.price = price;
+        this.priceDiscount = priceDiscount;
         this.quantity = quantity;
         this.productDetailDescription = productDetailDescription;
         this.colorName = colorName;
         this.sizeName = sizeName;
         this.productImage = productImage;
     }
+
+
+
     public ProductDetailClientRespone(Integer id, BigDecimal price, Integer quantity) {
         this.productDetailId = id;
         this.price = price;
