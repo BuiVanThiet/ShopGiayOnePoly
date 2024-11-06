@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MonthlyStatistics {
+public class Statistics {
     private String month; // Tháng (MM-yyyy)
     private int invoiceCount; // Số lượng hóa đơn
     private int productCount;

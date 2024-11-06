@@ -2,6 +2,7 @@ package com.example.shopgiayonepoly.dto.request;
 
 import com.example.shopgiayonepoly.dto.base.BaseDTO;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
@@ -36,11 +37,13 @@ public class StaffProfileRequest extends BaseDTO {
     private Integer gender;
 
     private LocalDate birthDay;
-
+    @NotBlank(message = "Vui lòng chọn thành phố!")
     private String province;
 
+    @NotBlank(message = "Vui lòng chọn huyện!")
     private String district;
 
+    @NotBlank(message = "Vui lòng chọn xã!")
     private String ward;
 
     private String addRessDetail;

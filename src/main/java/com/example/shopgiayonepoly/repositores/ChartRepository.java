@@ -65,4 +65,47 @@ public interface ChartRepository extends JpaRepository<Bill, Integer> {
             "GROUP BY FORMAT(b.update_date, 'MM-yyyy') " +  // Nhóm theo tháng và năm
             "ORDER BY MAX(b.update_date)", nativeQuery = true)
     List<Object[]> findMonthlyStatistics();
+
+    @Query(value = "SELECT " +
+            "FORMAT(b.update_date, 'dd-MM-yyyy') AS ngay, " +
+            "COUNT(DISTINCT b.id) AS hoaDonHomNay, " +
+            "SUM(bd.quantity) AS soLuong " +
+            "FROM bill b " +
+            "LEFT JOIN bill_detail bd ON b.id = bd.id_bill " +
+            "WHERE b.status = 5 " +
+            "AND CAST(b.update_date AS date) = CAST(GETDATE() AS date) " +
+            "GROUP BY FORMAT(b.update_date, 'dd-MM-yyyy') " +
+            "ORDER BY MAX(b.update_date)",
+            nativeQuery = true)
+    List<Object[]> findTodayStatistics();
+
+    @Query(value =
+            "WITH DateRange AS ( " +
+                    "    SELECT CAST(GETDATE() AS DATE) AS Ngay " +
+                    "    UNION ALL " +
+                    "    SELECT DATEADD(DAY, -1, Ngay) FROM DateRange WHERE Ngay > DATEADD(DAY, -6, GETDATE()) " +
+                    ") " +
+                    "SELECT " +
+                    "    FORMAT(dr.Ngay, 'dd-MM-yyyy') AS Ngay,  " +
+                    "    COALESCE(COUNT(DISTINCT b.id), 0) AS HoaDon,  " +
+                    "    COALESCE(SUM(bd.quantity), 0) AS SoLuong " +
+                    "FROM DateRange dr " +
+                    "LEFT JOIN bill b ON CAST(b.update_date AS DATE) = dr.Ngay AND b.status = 5  " +
+                    "LEFT JOIN bill_detail bd ON b.id = bd.id_bill  " +
+                    "GROUP BY dr.Ngay " +
+                    "ORDER BY dr.Ngay DESC " +
+                    "OPTION (MAXRECURSION 0)", nativeQuery = true)
+    List<Object[]> findLast7DaysStatistics();
+
+    @Query(value = "SELECT " +
+            "FORMAT(MAX(b.update_date), 'dd-MM-yyyy') AS NgayCuoiNam, " +
+            "COUNT(DISTINCT b.id) AS HoaDonTheoNam, " +
+            "SUM(bd.quantity) AS TongSoLuong " +
+            "FROM bill b " +
+            "LEFT JOIN bill_detail bd ON b.id = bd.id_bill " +
+            "WHERE b.status = 5 " +
+            "AND YEAR(b.update_date) BETWEEN YEAR(GETDATE()) - 6 AND YEAR(GETDATE()) " +
+            "GROUP BY YEAR(b.update_date)",
+            nativeQuery = true)
+    List<Object[]> getAnnualStatistics();
 }

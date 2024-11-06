@@ -2,7 +2,13 @@
     max-width: 97%; /* Chiều rộng tối đa cho toàn bộ trang */
     margin: 0 auto; /* Căn giữa phần body */
 }
-
+.fixed-container {
+    width: 100%; /* Hoặc một giá trị cố định ví dụ 800px */
+    height: 720px; /* Chiều cao cố định, bạn có thể điều chỉnh theo nhu cầu */ /* Thêm thanh cuộn dọc nếu nội dung vượt quá chiều cao */ /* Màu nền cho thẻ cố định */
+    padding: 20px; /* Khoảng cách bên trong */
+    border-radius: 8px; /* Bo góc cho thẻ */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Đổ bóng cho thẻ */
+}
 .custom-heading {
     margin-top: 40px;
     font-weight: bold;/* Điều chỉnh khoảng cách từ trên xuống */
