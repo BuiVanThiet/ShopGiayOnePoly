@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Repository
@@ -55,26 +56,33 @@ public interface ClientRepository extends JpaRepository<Bill, Integer> {
     public List<ProductIClientResponse> GetTop12ProductWithPriceLowest();
 
     @Query(value = """
-            SELECT new com.example.shopgiayonepoly.dto.response.client.ProductDetailClientRespone(
-                pd.id,
-                p.id,
-                p.nameProduct,
-                pd.price,
-                pd.quantity,
-                p.describe,
-                c.nameColor,
-                s.nameSize,
-                i.nameImage
-            )
-            FROM ProductDetail pd
-            JOIN pd.product p
-            LEFT JOIN pd.color c
-            LEFT JOIN pd.size s
-            LEFT JOIN pd.saleProduct sp
-            LEFT JOIN p.images i
-            WHERE p.id = :productId
+               SELECT new com.example.shopgiayonepoly.dto.response.client.ProductDetailClientRespone(
+                   pd.id,
+                   p.id,
+                   p.nameProduct,
+                   pd.price,
+                   CASE
+                       WHEN pd.saleProduct IS NOT NULL AND pd.saleProduct.discountType = 1
+                           THEN pd.price - (pd.price * (CAST(pd.saleProduct.discountValue AS double) / 100))
+                       WHEN pd.saleProduct IS NOT NULL AND pd.saleProduct.discountType = 2
+                           THEN pd.price - CAST(pd.saleProduct.discountValue AS double)
+                       ELSE pd.price
+                   END,
+                   pd.quantity,
+                   p.describe,
+                   c.nameColor,
+                   s.nameSize,
+                   sp.id
+               )
+               FROM ProductDetail pd
+               JOIN pd.product p
+               LEFT JOIN pd.color c
+               LEFT JOIN pd.size s
+               LEFT JOIN pd.saleProduct sp
+               WHERE p.id = :productId
             """)
     public List<ProductDetailClientRespone> findProductDetailByProductId(@Param("productId") Integer productId);
+
 
     @Query(value = """
             select DISTINCT new com.example.shopgiayonepoly.dto.response.client.ColorClientResponse(
@@ -101,34 +109,57 @@ public interface ClientRepository extends JpaRepository<Bill, Integer> {
     public List<SizeClientResponse> findDistinctSizesByProductId(@Param("productId") Integer productId);
 
     @Query("""
-            select new com.example.shopgiayonepoly.dto.response.client.ProductDetailClientRespone(
-            pd.id,
-            pd.product.id,
-            pd.product.nameProduct,
-            pd.price,
-            pd.quantity,
-            pd.describe,
-            c.nameColor,
-            s.nameSize,
-            MIN(i.nameImage)
-            ) FROM ProductDetail pd
-            LEFT JOIN pd.size s
-            LEFT JOIN pd.color c 
-            LEFT JOIN pd.product.images i 
-            WHERE pd.color.id = :colorId AND pd.size.id = :sizeId
-            AND pd.product.id = :productId
-            GROUP BY pd.id,
-                     pd.product.id,
-                     pd.product.nameProduct,
-                     pd.price,
-                     pd.quantity,
-                     pd.describe,
-                     c.nameColor,
-                     s.nameSize
-            """)
+    SELECT new com.example.shopgiayonepoly.dto.response.client.ProductDetailClientRespone(
+        pd.id,
+        pd.product.id,
+        pd.product.nameProduct,
+        pd.price,
+        CASE
+            WHEN pd.saleProduct IS NOT NULL AND pd.saleProduct.discountType = 1
+                THEN pd.price - (pd.price * (CAST(pd.saleProduct.discountValue AS double) / 100))
+            WHEN pd.saleProduct IS NOT NULL AND pd.saleProduct.discountType = 2
+                THEN pd.price - CAST(pd.saleProduct.discountValue AS double)
+            ELSE pd.price
+        END as priceDiscount, 
+        pd.quantity,
+        pd.describe,
+        c.nameColor,
+        s.nameSize,
+        MIN(i.nameImage)
+    ) 
+    FROM ProductDetail pd
+    LEFT JOIN pd.size s
+    LEFT JOIN pd.color c 
+    LEFT JOIN pd.saleProduct sp
+    LEFT JOIN pd.product.images i 
+    WHERE pd.color.id = :colorId AND pd.size.id = :sizeId
+    AND pd.product.id = :productId
+    GROUP BY pd.id,
+             pd.product.id,
+             pd.product.nameProduct,
+             pd.price,
+             pd.quantity,
+             pd.describe,
+             c.nameColor,
+             s.nameSize,
+             pd.saleProduct,
+             sp.discountType,
+             sp.discountValue
+             
+""")
     ProductDetailClientRespone findByProductDetailColorAndSizeAndProductId(
             @Param("colorId") Integer colorId,
             @Param("sizeId") Integer sizeId,
             @Param("productId") Integer productId);
+    @Query("SELECT CASE " +
+           "WHEN pd.saleProduct IS NOT NULL AND pd.saleProduct.discountType = 1 " +
+           "THEN pd.price - (pd.price * (pd.saleProduct.discountValue / 100)) " +
+           "WHEN pd.saleProduct IS NOT NULL AND pd.saleProduct.discountType = 2 " +
+           "THEN pd.price - pd.saleProduct.discountValue " +
+           "ELSE pd.price END " +
+           "FROM ProductDetail pd " +
+           "WHERE pd.id = :productDetailId")
+    BigDecimal findDiscountedPriceByProductDetailId(@Param("productDetailId") Integer productDetailId);
+
 
 }
