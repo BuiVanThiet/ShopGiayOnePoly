@@ -69,18 +69,18 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     @Query("SELECT DISTINCT p.nameProduct FROM Product p")
     List<String> findAllNameProduct();
 
-//    @Query("SELECT pd FROM ProductDetail pd WHERE pd.product.id = :idProduct " +
-//            "GROUP BY pd.id, pd.product.id, pd.size.id, pd.color.id, pd.status, pd.describe, pd.createDate, pd.updateDate, " +
-//            "pd.price, pd.import_price, pd.weight, pd.saleProduct.id, pd.quantity")
-//    List<ProductDetail> findAllProductDetailByIDProduct(@Param("idProduct") Integer idProduct);
+    @Query("SELECT pd FROM ProductDetail pd WHERE pd.product.id = :idProduct " +
+            "GROUP BY pd.id, pd.product.id, pd.size.id, pd.color.id, pd.status, pd.describe, pd.createDate, pd.updateDate, " +
+            "pd.price, pd.import_price, pd.weight, pd.saleProduct.id, pd.quantity")
+    List<ProductDetail> findAllProductDetailByIDProduct(@Param("idProduct") Integer idProduct);
 
-    @Query("SELECT new com.example.shopgiayonepoly.dto.response.ProductDetailResponse( pd.product, pd.color.nameColor, pd.size.nameSize, pd.status, pd.describe, " +
-            "pd.price, pd.import_price, pd.weight, pd.saleProduct.id, SUM(pd.quantity) ) " +
-            "FROM ProductDetail pd " +
-            "WHERE pd.product.id = :idProduct " +
-            "GROUP BY pd.product, pd.color.nameColor, pd.size.nameSize, pd.status, pd.describe, " +
-            "pd.price, pd.import_price, pd.weight, pd.saleProduct.id")
-    List<ProductDetailResponse> findAllProductDetailByIDProduct(@Param("idProduct") Integer idProduct);
+//    @Query("SELECT new com.example.shopgiayonepoly.dto.response.ProductDetailResponse( pd.product, pd.color.nameColor, pd.size.nameSize, pd.status, pd.describe, " +
+//            "pd.price, pd.import_price, pd.weight, pd.saleProduct.id, SUM(pd.quantity) ) " +
+//            "FROM ProductDetail pd " +
+//            "WHERE pd.product.id = :idProduct " +
+//            "GROUP BY pd.product, pd.color.nameColor, pd.size.nameSize, pd.status, pd.describe, " +
+//            "pd.price, pd.import_price, pd.weight, pd.saleProduct.id")
+//    List<ProductDetailResponse> findAllProductDetailByIDProduct(@Param("idProduct") Integer idProduct);
 
     @Query("SELECT pd FROM ProductDetail pd " +
             "WHERE (LOWER(pd.color.nameColor) LIKE LOWER(CONCAT('%', :searchTerm, '%')) " +

@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/return-exchange-bill-api")
@@ -169,7 +171,8 @@ public class ReturnExchangeBillRestController extends BaseBill {
 //                newReturnBillDetailResponse.setPriceBuy(request.getPriceBuy());
 //                newReturnBillDetailResponse.setTotalReturn(request.getPriceBuy().multiply(BigDecimal.valueOf(request.getQuantityReturn())));
                 newReturnBillDetailResponse.setTotalReturn(roundedPrice.multiply(BigDecimal.valueOf(request.getQuantityReturn())));
-
+                newReturnBillDetailResponse.setCreateDate(LocalDateTime.now());
+                System.out.println(newReturnBillDetailResponse.toString());
                 this.returnBillDetailResponses.add(newReturnBillDetailResponse);
                 session.setAttribute("returnBillDetailResponses", returnBillDetailResponses); // Cập nhật session
 
@@ -192,7 +195,7 @@ public class ReturnExchangeBillRestController extends BaseBill {
                 // Cập nhật số lượng và tổng tiền của sản phẩm
                 existingReturnBillDetailResponse.setQuantityReturn(newQuantity);
                 existingReturnBillDetailResponse.setTotalReturn(existingReturnBillDetailResponse.getPriceBuy().multiply(BigDecimal.valueOf(newQuantity)));
-
+                existingReturnBillDetailResponse.setCreateDate(LocalDateTime.now());
                 // Cập nhật lại phần tử trong danh sách
                 returnBillDetailResponses.set(index, existingReturnBillDetailResponse);
                 thongBao.put("message", "Cập nhật số lượng sản phẩm thành công!");
@@ -631,6 +634,8 @@ public class ReturnExchangeBillRestController extends BaseBill {
     }
 
     protected Page<ReturnBillDetailResponse> getConvertListToPageReturnBill(List<ReturnBillDetailResponse> list, Pageable pageable) {
+        list.sort(Comparator.comparing(ReturnBillDetailResponse::getCreateDate).reversed());
+
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), list.size());
         List<ReturnBillDetailResponse> sublist = list.subList(start, end);
@@ -834,11 +839,15 @@ public class ReturnExchangeBillRestController extends BaseBill {
             exchangeBillDetailResponse.setPriceAtTheTimeOfExchange(BigDecimal.valueOf(Long.parseLong(priceProductSale)));
             exchangeBillDetailResponse.setTotalExchange(exchangeBillDetailResponse.getPriceAtTheTimeOfExchange().multiply(BigDecimal.valueOf(exchangeBillDetailResponse.getQuantityExchange())));
             exchangeBillDetailResponse.setPriceRootAtTime(BigDecimal.valueOf(Long.parseLong(priceProductRoot)));
+            exchangeBillDetailResponse.setCreateDate(LocalDateTime.now());
+            System.out.println(exchangeBillDetailResponse.toString()+"them cua exchange");
             this.exchangeBillDetailResponses.add(exchangeBillDetailResponse);
         }else {
             exchangeBillDetailResponse = exchangeBillDetailResponses.get(indexExchange);
             exchangeBillDetailResponse.setQuantityExchange(exchangeBillDetailResponse.getQuantityExchange()+Integer.parseInt(quantity));
             exchangeBillDetailResponse.setTotalExchange(exchangeBillDetailResponse.getPriceAtTheTimeOfExchange().multiply(BigDecimal.valueOf(exchangeBillDetailResponse.getQuantityExchange())));
+            exchangeBillDetailResponse.setCreateDate(LocalDateTime.now());
+            System.out.println(exchangeBillDetailResponse.toString()+"them cua exchange");
             this.exchangeBillDetailResponses.set(indexExchange,exchangeBillDetailResponse);
         }
         //cap nhat lai so luong san pham
@@ -947,6 +956,12 @@ public class ReturnExchangeBillRestController extends BaseBill {
 
             if((exchangeBillDetailResponse.getQuantityExchange()+quantityUpdate) < 1) {
                 thongBao.put("message","Sản phẩm đổi ít nhất là 1!");
+                thongBao.put("check","3");
+                return ResponseEntity.ok(thongBao);
+            }
+
+            if((exchangeBillDetailResponse.getQuantityExchange()+quantityUpdate) > 10) {
+                thongBao.put("message","Giới hạn mỗi món không quá 10!");
                 thongBao.put("check","3");
                 return ResponseEntity.ok(thongBao);
             }
@@ -1077,6 +1092,7 @@ public class ReturnExchangeBillRestController extends BaseBill {
 
 
     protected Page<ExchangeBillDetailResponse> getConvertListToPageExchangeBill(List<ExchangeBillDetailResponse> list, Pageable pageable) {
+        list.sort(Comparator.comparing(ExchangeBillDetailResponse::getCreateDate).reversed());
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), list.size());
         List<ExchangeBillDetailResponse> sublist = list.subList(start, end);

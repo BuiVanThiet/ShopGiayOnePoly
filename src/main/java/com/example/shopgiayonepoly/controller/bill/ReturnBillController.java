@@ -1,6 +1,7 @@
 package com.example.shopgiayonepoly.controller.bill;
 
 import com.example.shopgiayonepoly.baseMethod.BaseBill;
+import com.example.shopgiayonepoly.entites.Bill;
 import com.example.shopgiayonepoly.entites.Staff;
 import com.example.shopgiayonepoly.entites.baseEntity.Base;
 import jakarta.servlet.http.HttpSession;
@@ -30,6 +31,12 @@ public class ReturnBillController extends BaseBill {
             this.mess = "Lỗi đinh dạng hóa đơn!";
             this.colorMess = "3";
             return "redirect:"+validateIdBill;
+        }
+
+        Bill bill = this.billService.findById(Integer.parseInt(idBill)).orElse(null);
+
+        if (bill == null || bill.getId() == null || bill.getStatus() != 5) {
+            return "redirect:/404";
         }
 
         session.setAttribute("IdBill",Integer.parseInt(idBill));

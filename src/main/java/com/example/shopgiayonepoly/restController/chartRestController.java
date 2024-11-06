@@ -1,6 +1,6 @@
 package com.example.shopgiayonepoly.restController;
 
-import com.example.shopgiayonepoly.dto.request.MonthlyStatistics;
+import com.example.shopgiayonepoly.dto.request.Statistics;
 import com.example.shopgiayonepoly.service.ChartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,8 +14,23 @@ import java.util.List;
 public class chartRestController {
     @Autowired
     ChartService chartService;
-    @GetMapping("/statistics")
-    public List<MonthlyStatistics> getStatistics() {
-        return chartService.findMonthlyStatistics(); // Trả về dữ liệu thống kê
+    @GetMapping("/MonthlyStatistics")
+    public List<Statistics> getStatistics() {
+        return chartService.findMonthlyStatistics();
+    }
+
+    @GetMapping("/TodayStatistics")
+    public List<Statistics> getTodayStatisticsList(){
+        return chartService.findTodayStatistics();
+    }
+
+    @GetMapping("/Last7DaysStatistics")
+    public List<Statistics> getLast7DaysStatistics(){
+        return chartService.findLast7DaysStatistics();
+    }
+
+    @GetMapping("/AnnualStatistics")
+    public List<Statistics> getAnnualStatistics(){
+        return chartService.getAnnualStatistics();
     }
 }

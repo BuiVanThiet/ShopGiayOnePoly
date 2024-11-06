@@ -125,18 +125,21 @@
                                 <select class="form-select" id="province" name="province">
                                     <option value="">Chọn tỉnh/thành phố</option>
                                 </select>
+                                <div class="text-danger" th:errors="*{province}"></div>
                             </div>
                             <div class="col-4 mb-3">
                                 <label class="form-label">Quận/Huyện</label>
                                 <select class="form-select" id="district" name="district">
                                     <option value="">Chọn quận/huyện</option>
                                 </select>
+                                <div class="text-danger" th:errors="*{district}"></div>
                             </div>
                             <div class="col-4 mb-3">
                                 <label class="form-label">Xã/Phường/Thị Trấn</label>
                                 <select class="form-select" id="ward" name="ward">
                                     <option value="">Chọn xã/phường/thị trấn</option>
                                 </select>
+                                <div class="text-danger" th:errors="*{ward}"></div>
                             </div>
                         </div>
                     </div>

@@ -200,14 +200,4 @@ public class ProductRestController extends BaseProduct {
     }
 
 
-
-    @GetMapping("/max-product-id")
-    public Integer getMaxProductId(HttpSession session) {
-        if(session.getAttribute("idProductSave") == null) {
-            System.out.println("id san pham khong ton tai ");
-            return null;
-        }
-        System.out.println("da co id san pham ");
-        return (Integer) session.getAttribute("idProductSave");
-    }
 }

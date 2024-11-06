@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -124,6 +125,7 @@ public abstract class BaseBill {
         }else {
             detail.setQuantity(quantityNew);
         }
+        System.out.println("da update so luong san pham");
         this.productDetailService.save(detail);
     }
     //update
@@ -191,47 +193,57 @@ public abstract class BaseBill {
     }
 
     //danh cho khi them san pham vao bill
-    protected BillDetail getBuyProduct(Bill idBill,ProductDetail idProductDetail,Integer quantity) {
+    protected BillDetail getBuyProduct(Bill idBill, ProductDetail idProductDetail, Integer quantity) {
         BillDetail billDetail;
+        Integer idBillDetail = this.billDetailService.getBillDetailExist(idBill.getId(), idProductDetail.getId());
+        BigDecimal priceCheck;
 
-        Integer idBillDetail = this.billDetailService.getBillDetailExist(idBill.getId(),idProductDetail.getId());
-        if(idBillDetail != null) {
+        // Trường hợp tồn tại BillDetail
+        if (idBillDetail != -1) {
             billDetail = this.billDetailService.findById(idBillDetail).orElse(new BillDetail());
-            billDetail.setQuantity(billDetail.getQuantity()+quantity);
+
+            // Kiểm tra nếu sản phẩm có giảm giá
+            if (idProductDetail.getSaleProduct() != null) {
+                priceCheck = getPriceAfterDiscount(idProductDetail);
+            } else {
+                priceCheck = billDetail.getPrice() != null ? billDetail.getPrice() : BigDecimal.ZERO;
+            }
+
+            // Kiểm tra sự thay đổi của giá
+            if (priceCheck.compareTo(billDetail.getPrice() != null ? billDetail.getPrice() : BigDecimal.ZERO) != 0) {
+                billDetail = new BillDetail();
+                billDetail.setBill(idBill);
+                billDetail.setProductDetail(idProductDetail);
+                billDetail.setQuantity(quantity);
+                billDetail.setPrice(priceCheck);
+                billDetail.setPriceRoot(idProductDetail.getPrice() != null ? idProductDetail.getPrice() : BigDecimal.ZERO);
+                billDetail.setTotalAmount(priceCheck.multiply(BigDecimal.valueOf(quantity)));
+                billDetail.setStatus(1);
+                return billDetail;
+            }
+
+            // Cập nhật số lượng và tổng tiền nếu giá không thay đổi
+            billDetail.setQuantity(billDetail.getQuantity() + quantity);
             billDetail.setTotalAmount(billDetail.getPrice().multiply(BigDecimal.valueOf(billDetail.getQuantity())));
-        }else {
+        } else {
+            // Trường hợp không tồn tại BillDetail
             billDetail = new BillDetail();
             billDetail.setBill(idBill);
             billDetail.setProductDetail(idProductDetail);
             billDetail.setQuantity(quantity);
-            BigDecimal priceBuy;
-            if (idProductDetail.getSaleProduct() != null) {
-                if (idProductDetail.getSaleProduct().getDiscountType() == 1) {
-                    // Tính phần trăm giảm (discountValue là %)
-                    BigDecimal percent = idProductDetail.getSaleProduct().getDiscountValue().divide(new BigDecimal("100"));
 
-                    // Tính số tiền giảm: Lấy giá gốc nhân với phần trăm giảm
-                    BigDecimal pricePercent = idProductDetail.getPrice().multiply(percent);
+            BigDecimal priceBuy = idProductDetail.getSaleProduct() != null
+                    ? getPriceAfterDiscount(idProductDetail)
+                    : idProductDetail.getPrice() != null ? idProductDetail.getPrice() : BigDecimal.ZERO;
 
-                    // Tính giá sau khi giảm
-                    priceBuy = idProductDetail.getPrice().subtract(pricePercent);
-                } else {
-                    // Trường hợp giảm trực tiếp theo giá trị cụ thể
-                    priceBuy = idProductDetail.getPrice().subtract(idProductDetail.getSaleProduct().getDiscountValue());
-                }
-                billDetail.setPrice(priceBuy);
-            } else {
-                // Không có giảm giá
-                priceBuy = idProductDetail.getPrice();
-                billDetail.setPrice(priceBuy);
-            }
-
-            billDetail.setPriceRoot(idProductDetail.getPrice());
-            billDetail.setTotalAmount(billDetail.getPrice().multiply(BigDecimal.valueOf(billDetail.getQuantity())));
+            billDetail.setPrice(priceBuy);
+            billDetail.setPriceRoot(idProductDetail.getPrice() != null ? idProductDetail.getPrice() : BigDecimal.ZERO);
+            billDetail.setTotalAmount(priceBuy.multiply(BigDecimal.valueOf(quantity)));
             billDetail.setStatus(1);
         }
-        return  billDetail;
+        return billDetail;
     }
+
 
     //quet san pham co thay doi gia khong
     protected void displayProductDetailsWithCurrentPrice() {
@@ -241,27 +253,39 @@ public abstract class BaseBill {
         // Lặp qua từng ProductDetail để tính toán giá hiện tại
         for (ProductDetail productDetail : productDetails) {
             BigDecimal currentPrice = productDetail.getPrice(); // Giá gốc
-            // Kiểm tra xem có giảm giá hay không
+            // Kiểm tra xem có giảm giá và đợt giảm giá còn trong thời gian áp dụng hay không
             if (productDetail.getSaleProduct() != null) {
                 SaleProduct saleProduct = productDetail.getSaleProduct();
-                // Kiểm tra loại giảm giá (1 = giảm theo %, 2 = giảm theo giá trị cụ thể)
-                if (saleProduct.getDiscountType() == 1) {
-                    // Tính phần trăm giảm
-                    BigDecimal percent = saleProduct.getDiscountValue().divide(new BigDecimal("100"));
-                    BigDecimal discountAmount = productDetail.getPrice().multiply(percent);
-                    currentPrice = productDetail.getPrice().subtract(discountAmount); // Tính giá sau giảm
-                } else if (saleProduct.getDiscountType() == 2) {
-                    // Giảm theo giá trị cụ thể
-                    currentPrice = productDetail.getPrice().subtract(saleProduct.getDiscountValue());
+                LocalDate now = LocalDate.now(); // Thời gian hiện tại dưới dạng LocalDate
+
+                // Giả sử startDate và endDate là kiểu LocalDate, không cần chuyển đổi
+                LocalDate startDate = saleProduct.getStartDate();
+                LocalDate endDate = saleProduct.getEndDate();
+
+                // Kiểm tra ngày bắt đầu và kết thúc giảm giá
+                if ((startDate == null || !now.isBefore(startDate)) &&
+                        (endDate == null || !now.isAfter(endDate))) {
+
+                    // Kiểm tra loại giảm giá (1 = giảm theo %, 2 = giảm theo giá trị cụ thể)
+                    if (saleProduct.getDiscountType() == 1) {
+                        // Tính phần trăm giảm
+                        BigDecimal percent = saleProduct.getDiscountValue().divide(new BigDecimal("100"));
+                        BigDecimal discountAmount = productDetail.getPrice().multiply(percent);
+                        currentPrice = productDetail.getPrice().subtract(discountAmount); // Tính giá sau giảm
+                    } else if (saleProduct.getDiscountType() == 2) {
+                        // Giảm theo giá trị cụ thể
+                        currentPrice = productDetail.getPrice().subtract(saleProduct.getDiscountValue());
+                    }
                 }
             }
+
             // Lấy tất cả BillDetail từ repository
             List<BillDetail> billDetails = this.billDetailService.findAll();
             // Lặp qua các BillDetail và lọc những bill có status == 0
             for (BillDetail billDetail : billDetails) {
                 Bill bill = billDetail.getBill();
                 // Kiểm tra nếu status của bill == 0
-                if (bill.getPaymentStatus() == 0) {
+                if (bill.getStatus() == 0) {
                     // So sánh ID của ProductDetail và BillDetail để kiểm tra tính hợp lệ
                     if (billDetail.getProductDetail().getId().equals(productDetail.getId())) {
                         // Sử dụng compareTo() để so sánh giá
@@ -291,6 +315,8 @@ public abstract class BaseBill {
             }
         }
     }
+
+
 
     //them vao lich su neu co su thay doi
     protected void getAddHistory(
@@ -390,6 +416,38 @@ public abstract class BaseBill {
         } catch (NumberFormatException e) {
             return "/404";
         }
+    }
+
+    //so sanh gia
+    protected BigDecimal getPriceAfterDiscount(ProductDetail productDetail) {
+        BigDecimal priceBuy = productDetail.getPrice();
+
+        // Kiểm tra nếu SaleProduct không phải null
+        if (productDetail.getSaleProduct() != null) {
+            LocalDate startDate = productDetail.getSaleProduct().getStartDate();
+            LocalDate endDate = productDetail.getSaleProduct().getEndDate();
+            LocalDate today = LocalDate.now();
+
+            // Kiểm tra ngày hiện tại có nằm trong khoảng startDate và endDate hay không
+            if (startDate != null && endDate != null && (today.isEqual(startDate) || today.isEqual(endDate) || (today.isAfter(startDate) && today.isBefore(endDate)))) {
+                BigDecimal discountValue = productDetail.getSaleProduct().getDiscountValue();
+
+                if (productDetail.getSaleProduct().getDiscountType() == 1) {
+                    // Tính phần trăm giảm (discountValue là %)
+                    BigDecimal percent = discountValue.divide(BigDecimal.valueOf(100));
+                    BigDecimal pricePercent = productDetail.getPrice().multiply(percent);
+                    priceBuy = productDetail.getPrice().subtract(pricePercent);
+                } else {
+                    // Trường hợp giảm trực tiếp theo giá trị cụ thể
+                    priceBuy = productDetail.getPrice().subtract(discountValue);
+                }
+                // Đảm bảo giá sau khi giảm không âm
+                return priceBuy.max(BigDecimal.ZERO);
+            }
+        }
+
+        // Nếu không có khuyến mãi hoặc khuyến mãi không còn hiệu lực, trả về giá gốc
+        return productDetail.getPrice();
     }
 
 

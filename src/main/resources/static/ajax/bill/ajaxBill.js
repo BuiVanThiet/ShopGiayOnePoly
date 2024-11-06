@@ -109,6 +109,19 @@ function loadBillDetail(page)  {
                         checkQuantityOrder = true;
                     }
 
+                    if(getPriceAfterDiscount(billDetail.productDetail) != billDetail.price) {
+                        btnBuyProduct =`
+                                    <div class="number" id="pageNumber">${billDetail.quantity}</div>
+                        `
+                    }
+
+                    if(billDetail.bill.paymentStatus == 1) {
+                        btnBuyProduct =`
+                                    <div class="number" id="pageNumber">${billDetail.quantity}</div>
+                        `
+                        btnDeleteProduct = '';
+                    }
+
 
 
                     tbody.append(`
@@ -147,14 +160,17 @@ function loadBillDetail(page)  {
                                
                         </tr>`);
                 });
-                if(cashClient != null) {
-                    cashClient.value='';
-                    formErorrCash.style.display = 'block';
-                    erorrCash.innerText = 'Mời nhập đủ giá!';
-                }
+                console.log('swith dang: ' + checkSwitch)
+                if(checkSwitch == false) {
+                    if(cashClient != null) {
+                        cashClient.value='';
+                        formErorrCash.style.display = 'block';
+                        erorrCash.innerText = 'Mời nhập đủ giá!';
+                    }
 
-                if(payMethodChecked === 1 || payMethodChecked === 3) {
-                    btnCreateBill.disabled = true;
+                    if(payMethodChecked === 1 || payMethodChecked === 3) {
+                        btnCreateBill.disabled = true;
+                    }
                 }
 
                 // Khởi tạo lại tất cả các carousel sau khi cập nhật DOM
@@ -1329,7 +1345,9 @@ function deleteBillDetail(id) {
             loadVoucherByBill(1);
             maxPageBillDetailByIdBill();
             maxPageVoucher();
-
+            if(loadInformationBillByIdBill()) {
+                loadInformationBillByIdBill();
+            }
             checkUpdateCustomer = true;
 
             totalShip(provinceTransport,districtTransport,wardTransport);
