@@ -13,7 +13,7 @@
 <div layout:fragment="content">
     <section>
         <h1 class="text-center">Hồ Sơ Của Tôi</h1>
-        <div class="container bg-white p-4 rounded shadow-sm">
+        <div class="container-profile-info bg-white p-4 rounded shadow-sm">
             <form th:object="${staffProfile}"  id="updateStaffProfileForm" th:action="@{/profile/UpdateStaffProfile}" method="post" enctype="multipart/form-data">
                 <input type="hidden" id="provinceHiden" th:value="${staffProfile.province}">
                 <input type="hidden" id="districtHiden" th:value="${staffProfile.district}">
@@ -105,18 +105,21 @@
                                 <select class="form-select" id="province" name="province">
                                     <option value="">Chọn tỉnh/thành phố</option>
                                 </select>
+                                <div class="text-danger" th:errors="*{province}"></div>
                             </div>
                             <div class="col-4 mb-3">
                                 <label class="form-label">Quận/Huyện</label>
                                 <select class="form-select" id="district" name="district">
                                     <option value="">Chọn quận/huyện</option>
                                 </select>
+                                <div class="text-danger" th:errors="*{district}"></div>
                             </div>
                             <div class="col-4 mb-3">
                                 <label class="form-label">Xã/Phường/Thị Trấn</label>
                                 <select class="form-select" id="ward" name="ward">
                                     <option value="">Chọn xã/phường/thị trấn</option>
                                 </select>
+                                <div class="text-danger" th:errors="*{ward}"></div>
                             </div>
                         </div>
                     </div>
