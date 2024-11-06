@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface BillDetailRepository extends JpaRepository<BillDetail,Integer> {
@@ -23,8 +24,8 @@ public interface BillDetailRepository extends JpaRepository<BillDetail,Integer> 
     @Query("select pdt from ProductDetail pdt where pdt.id = :idCheck")
     ProductDetail getProductDetailById(@Param("idCheck") Integer idCheck);
 
-    @Query("select bdt.id from BillDetail bdt where bdt.bill.id = :idBillCheck and bdt.productDetail.id = :idPDTCheck")
-    Integer getBillDetailExist(@Param("idBillCheck") Integer idBillCheck, @Param("idPDTCheck") Integer idPDTCheck);
+    @Query("select bdt.id from BillDetail bdt where bdt.bill.id = :idBillCheck and bdt.productDetail.id = :idPDTCheck order by bdt.updateDate desc")
+    List<Integer> getBillDetailExist(@Param("idBillCheck") Integer idBillCheck, @Param("idPDTCheck") Integer idPDTCheck);
     @Query("select bdt from BillDetail bdt where bdt.bill.id = :idBill")
     List<BillDetail> getBillDetailByIdBill(@Param("idBill") Integer idBills);
 
@@ -148,8 +149,8 @@ public interface BillDetailRepository extends JpaRepository<BillDetail,Integer> 
         CASE
             WHEN sp.start_date <= CAST(GETDATE() AS DATE) AND sp.end_date >= CAST(GETDATE() AS DATE) THEN
                 CASE
-                    WHEN sp.discount_type = 1 THEN N'Giảm ' + CAST(sp.discount_value AS NVARCHAR) + N' %'
-                    WHEN sp.discount_type = 2 THEN N'Giảm ' + CAST(sp.discount_value AS NVARCHAR) + N' VNĐ'
+                    WHEN sp.discount_type = 1 THEN N'Giảm ' + CAST(CAST(sp.discount_value AS INT) AS NVARCHAR) + N' %'
+                    WHEN sp.discount_type = 2 THEN N'Giảm ' + FORMAT(CAST(sp.discount_value AS INT), '#,###') + N' VNĐ'
                     ELSE N'Không giảm'
                 END
             ELSE N'Không giảm'

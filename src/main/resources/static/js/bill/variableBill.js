@@ -30,6 +30,7 @@ var provinceID;
 var districtID;
 var wardID;
 var nameCustomer='';
+var emailCustomer = '';
 var numberPhoneCustomer = '';
 var addRessDetailCustomer = '';
 var checkFormBill = document.getElementById('checkFormBill');
@@ -37,6 +38,8 @@ var shipMoneyBillWait = 0;
 var checkUpdateCustomer = false;
 
 var checkQuantityOrder = false;
+
+var checkSwitch = false;
 
 // ep kieu ngay
 function formatDateTime(dateString) {
@@ -159,6 +162,7 @@ function validateAddRessDetail(value,inputError) {
         return true;
     }
 }
+//validate Emial
 
 // validate select api
 function validateProvince(select) {
@@ -169,5 +173,37 @@ function validateDistrict(select) {
 }
 function validateWard(select) {
     return select.value.trim() !== "";
+}
+
+//checkGia
+function getPriceAfterDiscount(productDetail) {
+    let priceBuy = productDetail.price;
+
+    // Kiểm tra nếu SaleProduct không phải null
+    if (productDetail.saleProduct && productDetail.saleProduct.id !== null) {
+        const startDate = new Date(productDetail.saleProduct.startDate);
+        const endDate = new Date(productDetail.saleProduct.endDate);
+        const today = new Date();
+
+        // Kiểm tra nếu ngày hiện tại nằm trong khoảng startDate và endDate
+        if (startDate && endDate && (today >= startDate && today <= endDate)) {
+            const discountValue = productDetail.saleProduct.discountValue;
+
+            if (productDetail.saleProduct.discountType === 1) {
+                // Tính phần trăm giảm (discountValue là %)
+                const percent = discountValue / 100;
+                const pricePercent = productDetail.price * percent;
+                priceBuy = productDetail.price - pricePercent;
+            } else {
+                // Giảm trực tiếp theo giá trị cụ thể
+                priceBuy = productDetail.price - discountValue;
+            }
+            // Đảm bảo giá sau khi giảm không âm
+            priceBuy = Math.max(priceBuy, 0);
+        }
+    }
+
+    // Trả về giá sau khi giảm hoặc giá gốc nếu không có khuyến mãi
+    return priceBuy;
 }
 

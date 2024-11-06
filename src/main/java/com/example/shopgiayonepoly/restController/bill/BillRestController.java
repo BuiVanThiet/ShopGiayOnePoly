@@ -136,7 +136,7 @@ public class    BillRestController extends BaseBill {
         }
         if(billDetailAjax.getQuantity() > 10 && billDetailAjax.getMethod().equals("cong")) {
             System.out.println("Hiện tại cửa hàng chỉ bán mỗi sản phẩm số lượng không quá 10!");
-            thongBao.put("message","Hiện tại cửa hàng chỉ bán mỗi sản phẩm số lượng không quá 10!");
+            thongBao.put("message","Số lượng mua mỗi món không được quá 10!");
             thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }
@@ -195,7 +195,13 @@ public class    BillRestController extends BaseBill {
 
         Bill billById = this.billService.findById(idBill).orElse(null);
         if (billById == null) {
-            this.mess = "Hóa đươn không tồn tại!";
+            this.mess = "Hóa đơn không tồn tại!";
+            this.colorMess = "3";
+            return ResponseEntity.ok(thongBao);
+        }
+
+        if (billById.getPaymentStatus() == 1) {
+            this.mess = "Hóa đã thanh toán!";
             this.colorMess = "3";
             return ResponseEntity.ok(thongBao);
         }
@@ -210,7 +216,7 @@ public class    BillRestController extends BaseBill {
         BillDetail billDetail = getBuyProduct(billById,productDetail,1);
 
         Integer idBillDetail = this.billDetailService.getBillDetailExist(billById.getId(),productDetail.getId());
-        if(idBillDetail != null) {
+        if(idBillDetail != -1) {
             thongBao.put("message","Sửa số lượng sản phẩm thành công!");
             thongBao.put("check","1");
         }else {
@@ -222,9 +228,10 @@ public class    BillRestController extends BaseBill {
 
         this.setTotalAmount(billById);
         Bill bill = billDetail.getBill();
-        if(bill.getStatus() == 0) {
+        if(bill.getStatus()  == 1 || bill.getStatus() == 0) {
             this.getUpdateQuantityProduct(productDetail.getId(),1);
         }
+        
 
         getDeleteVoucherByBill(billDetail.getBill().getId());
 
@@ -682,11 +689,12 @@ public class    BillRestController extends BaseBill {
             String[] part = getAddRessDetail.split(",\\s*");
             String fullName = part[0];
             String numberPhone = part[1];
-            String province = part[2];
-            String district = part[3];
-            String ward = part[4];
-            String addRessDetail = String.join(", ", java.util.Arrays.copyOfRange(part, 5, part.length));
-            ClientBillInformationResponse clientBillInformationResponse = new ClientBillInformationResponse(fullName,numberPhone,bill.getCustomer().getEmail(),province,district,ward,addRessDetail);
+            String email = part[2];
+            String province = part[3];
+            String district = part[4];
+            String ward = part[5];
+            String addRessDetail = String.join(", ", java.util.Arrays.copyOfRange(part, 6, part.length));
+            ClientBillInformationResponse clientBillInformationResponse = new ClientBillInformationResponse(fullName,numberPhone,email,province,district,ward,addRessDetail);
             System.out.println("thong tin cua doi tuong ship " + clientBillInformationResponse.toString());
             return clientBillInformationResponse;
         }
@@ -782,6 +790,7 @@ public class    BillRestController extends BaseBill {
         bill.setUpdateDate(new Date());
         bill.setAddRess(clientBillInformationResponse.getName()+","
                 +clientBillInformationResponse.getNumberPhone()+","
+                +clientBillInformationResponse.getEmail()+","
                 +clientBillInformationResponse.getCity()+","
                 +clientBillInformationResponse.getDistrict()+","
                 +clientBillInformationResponse.getCommune()+","

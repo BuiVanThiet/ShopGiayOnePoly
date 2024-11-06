@@ -382,6 +382,7 @@ function loadCustomerShipInBill() {
                 $('#customerNotSystem').hide();
                 $('#customerSystem').show();
                 $('#nameCustomerShip').val(response.name);
+                $('#emailCustomerShip').val(response.email);
                 $('#phoneCustomerShip').val(response.numberPhone);
                 $('#addResDetailCustomerShip').val(response.addressDetail);
                 $('#nameCustomerNotModal').text(response.name);
@@ -455,6 +456,7 @@ function updateAddressShip() {
         data: JSON.stringify({
             name: $('#nameCustomerShip').val().trim(),
             numberPhone: $('#phoneCustomerShip').val().trim() || null, // Sử dụng || null để xử lý trường hợp không có giá trị
+            email: $('#emailCustomerShip').val().trim() || null,
             city: parseInt($('#provinceSelect-transport-Ship').val().trim()) || null,
             district: parseInt($('#districtSelect-transport-Ship').val().trim()) || null,
             commune: parseInt($('#wardSelect-transport-Ship').val().trim()) || null,
@@ -590,6 +592,8 @@ function paymentBill() {
                 loadInfomationPaymentByBillId();
                 loadInfomationHistoryByBillId();
                 loadBillStatusByBillId();
+                loadBillDetail(1);
+                maxPageBillDetailByIdBill()
                 showToast(response.message,response.check);
             }
         },

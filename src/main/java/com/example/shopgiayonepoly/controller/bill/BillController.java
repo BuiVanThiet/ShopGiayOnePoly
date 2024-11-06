@@ -106,6 +106,10 @@ public class BillController extends BaseBill {
             return "redirect:/404";
         }
 
+        if(bill.getStatus() != 0) {
+            return "redirect:/404";
+        }
+
         bill.setBillType(1);
         this.billService.save(bill);
         if(bill.getCustomer() != null){
@@ -392,10 +396,10 @@ public class BillController extends BaseBill {
             String[] part = getAddRessDetail.split(",\\s*");
             String name = part[0];
             String numberPhone = part[1];
-            String province = part[2];
-            String district = part[3];
-            String ward = part[4];
-            String addResDetail = String.join(", ", java.util.Arrays.copyOfRange(part, 5, part.length));
+            String province = part[3];
+            String district = part[4];
+            String ward = part[5];
+            String addResDetail = String.join(", ", java.util.Arrays.copyOfRange(part, 6, part.length));
             String regexNameCustomer = "[\\p{L}\\p{Nd}\\s]+";
 
             if (name.matches(regexNameCustomer) == false) {
@@ -457,7 +461,7 @@ public class BillController extends BaseBill {
 //                su dung cai nay khi can test nhanh ben online
 //                bill.setStatus(1);
 
-                bill.setStatus(1);
+                bill.setStatus(2);
                 bill.setPaymentMethod(1);
                 if(bill.getNote().length() < 0 || bill.getNote() == null || bill.getNote().trim().equals("")) {
                     bill.setNote("Giao hàng!");
@@ -687,6 +691,14 @@ public class BillController extends BaseBill {
         }
 
         bill.setStaff(staffLogin);
+        if(bill.getStatus() == 1) {
+            List<BillDetail> checkBillDetailList = this.billDetailService.getBillDetailByIdBill(bill.getId());
+            if(checkBillDetailList.size() <= 1) {
+                thongBao.put("message","Đơn chờ xác nhận tối thiểu phải có 1 sản phẩm!");
+                thongBao.put("check","3");
+                return ResponseEntity.ok(thongBao);
+            }
+        }
         this.billDetailService.delete(billDetail);
         BigDecimal total = this.billDetailService.getTotalAmountByIdBill(bill.getId());
         bill.setUpdateDate(new Date());
@@ -994,10 +1006,16 @@ public class BillController extends BaseBill {
             return "redirect:/404";
         }
 
+        if(bill.getStatus() == 0) {
+            return "redirect:/404";
+        }
+
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if(staffLogin == null) {
             return "redirect:/login";
         }
+
+
 
         session.setAttribute("IdBill",Integer.parseInt(idBill));
         modelMap.addAttribute("client", (Integer) session.getAttribute("IdClient"));
@@ -1097,6 +1115,7 @@ public class BillController extends BaseBill {
     @ModelAttribute("staffInfo")
     public Staff staff(HttpSession session){
         Staff staff = (Staff) session.getAttribute("staffLogin");
+        this.displayProductDetailsWithCurrentPrice();
         return staff;
     }
 
