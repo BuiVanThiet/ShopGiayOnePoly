@@ -136,7 +136,7 @@ public class ProductImplement implements ProductService {
     }
 
     @Override
-    public List<ProductDetailResponse> findAllProductDetailByIDProduct(@Param("idProduct") Integer idProduct) {
+    public List<ProductDetail> findAllProductDetailByIDProduct(@Param("idProduct") Integer idProduct) {
         return productRepository.findAllProductDetailByIDProduct(idProduct);
     }
 
@@ -145,9 +145,5 @@ public class ProductImplement implements ProductService {
         return productRepository.searchProductDetailsByKeyword(searchTerm, idProduct);
     }
 
-    @Override
-    public Integer findMaxIdProduct() {
-        return productRepository.findMaxIdProduct();
-    }
 
 }
