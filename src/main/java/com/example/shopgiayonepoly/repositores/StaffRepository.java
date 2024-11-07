@@ -18,56 +18,91 @@ import java.util.List;
 @Repository
 public interface StaffRepository extends JpaRepository<Staff, Integer> {
     @Query("""
-        select new com.example.shopgiayonepoly.dto.response.StaffResponse(
-            s.id,
-            s.createDate,
-            s.updateDate,
-            s.status,
-            "image1",
-            s.codeStaff,
-            s.fullName,
-            s.address,
-            s.gender,   
-            s.birthDay,
-            s.numberPhone,
-            s.email,
-            s.role
-        ) 
-        from Staff s
-    """)
+                select new com.example.shopgiayonepoly.dto.response.StaffResponse(
+                                   s.id,
+                                    s.createDate,
+                                    s.updateDate,
+                                    s.status,
+                                    s.image,
+                                    s.codeStaff,
+                                    s.fullName,
+                                    SUBSTRING(s.address, CHARINDEX(',', s.address, CHARINDEX(',', s.address, CHARINDEX(',', s.address) + 1) + 1) + 1, LEN(s.address)),      
+                                    s.gender,   
+                                    s.birthDay,
+                                    s.numberPhone,
+                                    s.email,
+                                    s.role
+                                    )
+                                from Staff s
+            """)
     public List<StaffResponse> getAllStaff();
 
 
     @Query("""
-            select new com.example.shopgiayonepoly.dto.response.StaffResponse(
-            s.id,
-            s.createDate,
-            s.updateDate,
-            s.status,
-            "image1",
-            s.codeStaff,
-            s.fullName,
-            s.address,
-            s.gender,
-            s.birthDay,
-            s.numberPhone,
-            s.email,
-            s.role
-    )  
-    from Staff s where concat(s.fullName, s.codeStaff, s.numberPhone, s.email) like %:key%
-    """)
+                    select new com.example.shopgiayonepoly.dto.response.StaffResponse(
+                    s.id,
+                    s.createDate,
+                    s.updateDate,
+                    s.status,
+                    "image1",
+                    s.codeStaff,
+                    s.fullName,
+                    s.address,
+                    s.gender,
+                    s.birthDay,
+                    s.numberPhone,
+                    s.email,
+                    s.role
+            )  
+            from Staff s where concat(s.fullName, s.codeStaff, s.numberPhone, s.email) like %:key%
+            """)
     public List<StaffResponse> searchStaffByKeyword(@Param("key") String key);
 
-    @Query("select s from Staff s where (s.fullName like %:key% or s.codeStaff like %:key% or s.numberPhone like %:key% or s.email like %:key%)")
-    public Page<Staff> searchStaffByKeywordPage(@Param("key") String key, Pageable pageable);
+    @Query("""
+                        select new com.example.shopgiayonepoly.dto.response.StaffResponse(
+                                    s.id,
+                                    s.createDate,
+                                    s.updateDate,
+                                    s.status,
+                                    s.image,
+                                    s.codeStaff,
+                                    s.fullName,
+                                    SUBSTRING(s.address, CHARINDEX(',', s.address, CHARINDEX(',', s.address, CHARINDEX(',', s.address) + 1) + 1) + 1, LEN(s.address)),      
+                                    s.gender,   
+                                    s.birthDay,
+                                    s.numberPhone,
+                                    s.email,
+                                    s.role
+                                    )
+                                from Staff s where (s.fullName like %:key% or s.codeStaff like %:key% or s.numberPhone like %:key% or s.email like %:key%)
+                        """)
+    public Page<StaffResponse> searchStaffByKeywordPage(@Param("key") String key, Pageable pageable);
 
+    //select s from Staff s where (s.fullName like %:key% or s.codeStaff like %:key% or s.numberPhone like %:key% or s.email like %:key%)
     @Modifying
     @Transactional
     @Query(value = "update Staff set status =0 where id=:id")
     public void deleteBySetStatus(@Param("id") Integer id);
 
-    @Query("select v from Staff v where (v.status = 1 or v.status = 2) and v.id <> :idLogin")
-    public Page<Staff> getAllStaffByPage(Pageable pageable,@Param("idLogin") Integer id);
+    @Query("""
+            select new com.example.shopgiayonepoly.dto.response.StaffResponse(
+                                    s.id,
+                                    s.createDate,
+                                    s.updateDate,
+                                    s.status,
+                                    s.image,
+                                    s.codeStaff,
+                                    s.fullName,
+                                    SUBSTRING(s.address, CHARINDEX(',', s.address, CHARINDEX(',', s.address, CHARINDEX(',', s.address) + 1) + 1) + 1, LEN(s.address)),      
+                                    s.gender,   
+                                    s.birthDay,
+                                    s.numberPhone,
+                                    s.email,
+                                    s.role
+                                    )
+                                from Staff s where (s.status = 1 or s.status = 2) and s.id <> :idLogin
+            """)
+    public Page<StaffResponse> getAllStaffByPage(Pageable pageable, @Param("idLogin") Integer id);
 
     boolean existsByCodeStaff(String codeStaff);
 

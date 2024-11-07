@@ -48,7 +48,7 @@ public class CustomerController {
     @GetMapping("/list")
     public String getListCustomrByPage(@RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber, Model model) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        Page<Customer> pageCustomer = customerService.getAllCustomerByPage(pageable);
+        Page<CustomerResponse> pageCustomer = customerService.getAllCustomerByPage(pageable);
         model.addAttribute("pageCustomer", pageCustomer);
         model.addAttribute("customer", new CustomerRequest());
         return "Customer/list";
@@ -58,7 +58,7 @@ public class CustomerController {
     public String searchCustomerByKey(@RequestParam(name = "key") String key, @RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber, Model model) {
         String trimmedKey = key != null ? key.trim() : null;
         Pageable pageableSearch = PageRequest.of(pageNumber, pageSize);
-        Page<Customer> pageCustomer = customerService.searchCustomerByKeywordPage(trimmedKey, pageableSearch);
+        Page<CustomerResponse> pageCustomer = customerService.searchCustomerByKeywordPage(trimmedKey, pageableSearch);
 //        model.addAttribute("customerList", searchCustomer);
         model.addAttribute("pageCustomer", pageCustomer);
         model.addAttribute("customer", new CustomerRequest());

@@ -54,7 +54,7 @@ public class StaffController extends BaseEmail {
             return "redirect:/login";
         }
 
-        Page<Staff> pageStaff = staffService.getAllStaffByPage(pageable, staff.getId());
+        Page<StaffResponse> pageStaff = staffService.getAllStaffByPage(pageable, staff.getId());
         model.addAttribute("pageStaff", pageStaff);
         model.addAttribute("staff", new StaffRequest());
         return "Staff/list";
@@ -64,7 +64,7 @@ public class StaffController extends BaseEmail {
     public String searchStaffByKey(@RequestParam(name = "key") String key, @RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber, Model model) {
         String trimmedKey = key != null ? key.trim() : null;
         Pageable pageableSearch = PageRequest.of(pageNumber, pageSize);
-        Page<Staff> pageStaff = staffService.searchStaffByKeywordPage(trimmedKey, pageableSearch);
+        Page<StaffResponse> pageStaff = staffService.searchStaffByKeywordPage(trimmedKey, pageableSearch);
 //        model.addAttribute("staffList", searchStaff);
         model.addAttribute("pageStaff", pageStaff);
         model.addAttribute("staff", new StaffRequest());
@@ -148,6 +148,7 @@ public class StaffController extends BaseEmail {
         }
 //        staff.setImage("fileName");
         System.out.println(staff.toString());
+        System.out.println("Hello");
 //        staffService.uploadFile(staffRequest.getNameImage(),staffSave.getId());
         return "redirect:/staff/list";
     }
