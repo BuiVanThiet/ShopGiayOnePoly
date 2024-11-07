@@ -1,5 +1,6 @@
 package com.example.shopgiayonepoly.service;
 
+import com.example.shopgiayonepoly.dto.request.ProductInfoDto;
 import com.example.shopgiayonepoly.dto.request.Statistics;
 
 import java.util.Date;
@@ -25,4 +26,5 @@ public interface ChartService {
     List<Statistics> findLast7DaysStatistics();
 
     List<Statistics> getAnnualStatistics();
+    List<ProductInfoDto> getProductSales();
 }
