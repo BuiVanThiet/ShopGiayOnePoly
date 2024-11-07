@@ -18,13 +18,15 @@
             <div class="form-group-createProduct">
               <div class="form-control-createProduct">
                 <label>Mã sản phẩm</label>
-                <input type="text" name="codeProduct"/>
+                <input id="codeProduct" type="text" name="codeProduct"/>
+                <p style="display: block; color: red; margin-bottom: 0px" id="errorText-codeProduct">* Mã sản phẩm không được để trống</p>
               </div>
               <div class="form-control-createProduct">
                 <label for="myInput-nameProduct">Tên sản phẩm</label>
                 <input name="nameProduct" type="text" id="myInput-nameProduct"
                        onfocus="showDropdown(event)"
                        onkeyup="filterFunction(event)" autocomplete="off">
+                <p style="display: block; color: red; margin-bottom: 0px" id="errorText-nameProduct">* Mã sản phẩm không được để trống</p>
                 <ul id="dataList-nameProduct" class="dropdown-content-createProduct">
                   <th:block th:each="nameProduct: ${nameProductList}">
                     <li th:text="${nameProduct}" th:value="${nameProduct}" onclick="selectNameProduct(this)"></li>
@@ -50,6 +52,7 @@
                     <span class="material-symbols-outlined">add</span>
                   </div>
                 </div>
+                <p style="display: block; color: red; margin-bottom: 0px" id="errorText-category">* Mã sản phẩm không được để trống</p>
               </div>
             </div>
             <div class="form-group-createProduct">
@@ -67,6 +70,7 @@
                     <span class="material-symbols-outlined">add</span>
                   </div>
                 </div>
+                <p style="display: block; color: red; margin-bottom: 0px" id="errorText-material">* Mã sản phẩm không được để trống</p>
               </div>
               <div class="form-control-createProduct">
                 <label>Hãng</label>
@@ -200,7 +204,7 @@
           </div>
           <div class="buttons-createProduct">
             <button type="button" class="create-btn-createProduct" onclick="addProductWithDetails()">Tạo sản phẩm mới</button>
-            <button type="button" class="cancel-btn-createProduct" >Hủy bỏ</button>
+            <button type="button" class="cancel-btn-createProduct" onclick="resetFormAndTable()" >Hủy bỏ</button>
           </div>
         </div>
       </form>
@@ -219,7 +223,8 @@
     </div>
   </article>
 
-  <script th:src="@{/js/product/create.js}" type="text/javascript"></script>
+  <script src="/js/product/validateCreate.js"></script>
+  <script src="/js/product/create.js"></script>
 </div>
 </body>
 
