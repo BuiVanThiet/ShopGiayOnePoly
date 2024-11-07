@@ -102,11 +102,15 @@ function loadBillDetail(page)  {
                     }
                     // Kiểm tra nếu số lượng mua lớn hơn số lượng tồn kho
                     var rowClass = '';
+                    var textErrorQuantity = '';
                     if (billDetail.quantity > billDetail.productDetail.quantity && billDetail.bill.status == 1) {
                         rowClass = 'table-danger';  // Thêm class CSS để làm nổi bật dòng
                         checkQuantityOrder = false;
+                        textErrorQuantity = 'Số lượng trong kho không đủ!';
                     }else {
+                        rowClass = '';
                         checkQuantityOrder = true;
+                        textErrorQuantity = '';
                     }
 
                     if(getPriceAfterDiscount(billDetail.productDetail) != billDetail.price) {
@@ -121,7 +125,6 @@ function loadBillDetail(page)  {
                         `
                         btnDeleteProduct = '';
                     }
-
 
 
                     tbody.append(`
@@ -142,6 +145,9 @@ function loadBillDetail(page)  {
                                     Tên màu: ${billDetail.productDetail.color.nameColor}
                                     <br>
                                     Tên size: ${billDetail.productDetail.size.nameSize}
+                                    <br>
+                                    <br>
+                                    <span class="text-danger fs-4">${textErrorQuantity}</span>
                                 </div>
                             </td>
 
@@ -231,7 +237,7 @@ function paymentInformation() {
                 totalCash.value = response.finalAmount;
             }
             if (response.voucherId) {
-                $('#voucherName').text(response.nameVoucher);
+                $('#voucherName').text('Phiếu giảm giá: '+response.nameVoucher);
                 $('#textVoucher').val(response.nameVoucher);
                 $('#discountContainer').show();
             } else {
@@ -1127,9 +1133,10 @@ function loadVoucherByBill(page) {
                             <div class="d-flex justify-content-between align-items-center">
                                 <!-- Voucher Info -->
                                 <div>
-                                    <p class="fs-6 fw-bold mb-1 text-danger">Mã Voucher: ${voucher.codeVoucher}</p>
-                                    <p class="fs-5 text-muted mb-0">Khuyến mãi: ${voucher.nameVoucher}</p>
-                                    <p class="fs-5 text-muted mb-0">Số lượng: ${voucher.quantity}</p>
+                                    <p class="fs-5 fw-bold mb-1 text-danger">Mã Voucher: ${voucher.codeVoucher}</p>
+                                    <p class="fs-6 text-muted mb-0">Khuyến mãi: ${voucher.nameVoucher}</p>
+                                    <p class="fs-6 text-muted mb-0">Giá trị áp dụng: ${Math.trunc(voucher.pricesApply).toLocaleString('en-US')} VNĐ</p>
+                                    <p class="fs-6 text-muted mb-0">Số lượng: ${voucher.quantity}</p>
                                 </div>
                                 
                                 <!-- Button to Select Voucher -->

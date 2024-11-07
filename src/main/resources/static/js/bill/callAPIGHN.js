@@ -485,7 +485,8 @@ function totalShip(province, district, ward) {
                             height: 20,
                             length: 60,
                             weight: totalWeight,
-                            width: 15
+                            width: 15,
+                            from_district_id: 3440
                         },
                         success: function (response) {
                             console.log(response.data);

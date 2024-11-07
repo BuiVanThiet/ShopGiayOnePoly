@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -75,6 +76,8 @@ public abstract class BaseBill {
     protected Integer[] statusBillCheck = null;
     protected SearchBillByStatusRequest searchBillByStatusRequest;
     protected String keyBillmanage = "";
+    protected Date keyStartDate;
+    protected Date keyEndDate;
     protected ProductDetailCheckRequest productDetailCheckRequest;
     protected ProductDetailCheckMark2Request productDetailCheckMark2Request;
 

@@ -129,7 +129,9 @@ public class BillController extends BaseBill {
         this.mess = "";
         this.colorMess  = "";
 
-        getDeleteVoucherByBill(Integer.parseInt(idBill));
+        if(bill.getStatus() == 0) {
+            getDeleteVoucherByBill(Integer.parseInt(idBill));
+        }
 
         this.productDetailCheckMark2Request = null;
         return "Bill/index";
@@ -707,7 +709,9 @@ public class BillController extends BaseBill {
 
         this.billService.save(bill);
 
-        getDeleteVoucherByBill((Integer) session.getAttribute("IdBill"));
+        if(bill.getStatus() == 0) {
+            getDeleteVoucherByBill((Integer) session.getAttribute("IdBill"));
+        }
 
         return ResponseEntity.ok(thongBao);
     }
@@ -845,7 +849,9 @@ public class BillController extends BaseBill {
         }
 
         System.out.println("da mua san pham !");
-        getDeleteVoucherByBill(billById.getId());
+        if(billById.getStatus() == 0) {
+            getDeleteVoucherByBill((Integer) session.getAttribute("IdBill"));
+        }
 
         return ResponseEntity.ok(thongBao);
     }
@@ -1109,6 +1115,8 @@ public class BillController extends BaseBill {
 
     @GetMapping("/manage-bill")
     public String getIndexManageBill() {
+//        keyBillmanage= "";
+//        searchBillByStatusRequest = null;
         return "Bill/manageBillIndex";
     }
 
