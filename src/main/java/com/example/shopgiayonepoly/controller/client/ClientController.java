@@ -47,6 +47,8 @@ public class ClientController {
     BillRepository billRepository;
     @Autowired
     BillDetailRepository billDetailRepository;
+    @Autowired
+    VoucherService voucherService;
 
     @GetMapping("/home")
     public String getFormHomeClient(HttpSession session, Model model) {
@@ -199,8 +201,7 @@ public class ClientController {
     }
 
     @GetMapping("/cart")
-    public String getFromCart(HttpSession session,
-                              Model model) {
+    public String getFromCart(HttpSession session, Model model) {
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
         List<Cart> cartItems = new ArrayList<>();
 
@@ -208,7 +209,6 @@ public class ClientController {
             Integer customerId = clientLoginResponse.getId();
             cartItems = cartService.getCartItemsForCustomer(customerId);
         } else {
-            // Lấy giỏ hàng từ session nếu chưa đăng nhập
             Map<Integer, Integer> sessionCart = (Map<Integer, Integer>) session.getAttribute("sessionCart");
             if (sessionCart != null) {
                 for (Map.Entry<Integer, Integer> entry : sessionCart.entrySet()) {
@@ -225,46 +225,35 @@ public class ClientController {
 
         BigDecimal totalPriceCartItem = BigDecimal.ZERO;
         for (Cart item : cartItems) {
-            // Lấy giá sau khi giảm (nếu có)
             BigDecimal finalPrice = clientService.findDiscountedPriceByProductDetailId(item.getProductDetail().getId());
-
-            // Nếu finalPrice là null, dùng giá gốc của sản phẩm
             if (finalPrice == null) {
                 finalPrice = item.getProductDetail().getPrice();
             }
-
-            // In ra giá sau khi giảm
-            System.out.println("Giá sau khi giảm của sản phẩm (ID: " + item.getProductDetail().getId() + "): " + finalPrice);
-
-            // Tính tổng giá cho sản phẩm trong giỏ hàng dựa trên số lượng và giá sau giảm
             BigDecimal itemTotalPrice = finalPrice.multiply(BigDecimal.valueOf(item.getQuantity()));
-
-            // Cộng dồn vào tổng giá giỏ hàng
             totalPriceCartItem = totalPriceCartItem.add(itemTotalPrice);
-
-            // In ra tổng giá cho từng sản phẩm trong giỏ hàng
-            System.out.println("Tổng giá của sản phẩm (ID: " + item.getProductDetail().getId() + "): " + itemTotalPrice);
         }
-
-        // In ra tổng giá của giỏ hàng
-        System.out.println("Tổng giá của giỏ hàng: " + totalPriceCartItem);
 
         session.setAttribute("totalPrice", totalPriceCartItem);
         session.setAttribute("cartItems", cartItems);
         model.addAttribute("clientLogin", clientLoginResponse);
         model.addAttribute("cartItems", cartItems);
         model.addAttribute("totalPrice", totalPriceCartItem);
+
+        // Lấy danh sách voucher áp dụng cho tổng giá giỏ hàng
+        List<Voucher> applicableVouchers = voucherService.findApplicableVouchers(totalPriceCartItem);
+        model.addAttribute("applicableVouchers", applicableVouchers);
+
         return "client/cart";
     }
 
 
+
     @GetMapping("/payment")
     public String getFormPayment(HttpSession session, Model model) {
-        // Lấy danh sách Cart từ session
         List<Cart> cartItems = Optional.ofNullable((List<Cart>) session.getAttribute("cartItems")).orElseGet(ArrayList::new);
 
-        // Lấy totalPrice từ session, nếu không có thì thiết lập giá trị mặc định
         BigDecimal totalPrice = (BigDecimal) session.getAttribute("totalPrice");
+        Double weight = 0.0;
         if (totalPrice == null) {
             totalPrice = BigDecimal.ZERO; // Hoặc giá trị mặc định khác
         }
@@ -276,10 +265,12 @@ public class ClientController {
             int quantity = c.getQuantity();
             BigDecimal totalAmount = price.multiply(BigDecimal.valueOf(quantity));
             calculatedTotalPrice = calculatedTotalPrice.add(totalAmount);
-
+            Double itemWeight = c.getProductDetail().getWeight() * quantity;
+            weight += itemWeight;
             // In ra giá và tổng giá của từng sản phẩm
             System.out.println("Product ID: " + c.getProductDetail().getId());
             System.out.println("Price item: " + price);
+            System.out.println("Weight: " + weight);
             System.out.println("Quantity: " + quantity);
             System.out.println("Total amount for this item: " + totalAmount);
         }
@@ -315,12 +306,12 @@ public class ClientController {
 
         // Thêm các thông tin còn lại vào model
         model.addAttribute("cartItems", cartItems);
+        model.addAttribute("weight", weight);
         model.addAttribute("totalPrice", totalPrice); // Thêm totalPrice vào model
         System.out.println("Total price: " + totalPrice);
 
         return "client/bill_payment";
     }
-
 
 
     @PostMapping("/payment")
@@ -413,7 +404,6 @@ public class ClientController {
                         billDetail.setQuantity(quantity);
                         billDetail.setPriceRoot(productDetail.getPrice());
                         billDetail.setPrice(productDetail.getPrice());
-
                         BigDecimal totalAmount = productDetail.getPrice().multiply(BigDecimal.valueOf(quantity));
                         billDetail.setTotalAmount(totalAmount);
                         billDetail.setStatus(1);
@@ -422,19 +412,10 @@ public class ClientController {
                         billDetails.add(billDetail);
                     }
                 }
-
-                // Áp dụng mã giảm giá
-                if (priceVoucher != null && priceVoucher.compareTo(BigDecimal.ZERO) > 0) {
-                    totalAmountBill = totalAmountBill.subtract(priceVoucher);
-                    if (totalAmountBill.compareTo(BigDecimal.ZERO) < 0) {
-                        totalAmountBill = BigDecimal.ZERO;
-                    }
-                }
-
                 // Cập nhật thông tin hóa đơn
                 bill.setAddRess(address);
                 bill.setShippingPrice(shippingPrice);
-                bill.setTotalAmount(totalAmountBill.subtract(shippingPrice));
+                bill.setTotalAmount(totalAmountBill);
                 bill.setPaymentMethod(0);
                 bill.setBillType(2);
                 bill.setPaymentStatus(0);
@@ -447,6 +428,7 @@ public class ClientController {
 
         // In ra tổng tiền hóa đơn
         System.out.println("Tổng tiền hóa đơn sau giảm giá: " + totalAmountBill);
+        System.out.println("Weight: " + totalAmountBill);
 
         // Lưu hóa đơn
         billRepository.save(bill);

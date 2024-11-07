@@ -97,6 +97,15 @@
                 </div>
             </div>
         </div>
+        <h3>Danh sách Voucher áp dụng</h3>
+        <ul>
+            <li th:each="voucher : ${applicableVouchers}">
+                <span th:text="${voucher.nameVoucher}">Voucher Name</span> -
+                <span th:text="${voucher.priceReduced}">Discount Value</span>
+                <span th:text="${voucher.describe}">Description</span>
+            </li>
+        </ul>
+
         <div class="cart-actions__checkout">
             <div class="cart-actions__total summary-total">
                 <span class="title"><strong>TẠM TÍNH</strong>

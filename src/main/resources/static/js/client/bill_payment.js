@@ -2,6 +2,29 @@ document.addEventListener("DOMContentLoaded", function () {
     const apiKey = '0fc88a8e-6633-11ef-8e53-0a00184fe694';
     const shopId = '195165';
     const fromDistrictId = 3440; // Mã huyện cố định của kho hàng
+    const weightText = $('#weightShip').text().trim();
+    if (weightText === "") {
+        alert("Không có thông tin về cân nặng.");
+        return;
+    }
+
+    const weight = parseFloat(weightText.replace(/[^0-9.-]+/g, ''));
+    if (isNaN(weight)) {
+        alert("Cân nặng không hợp lệ.");
+        return;
+    }
+    const totalPriceCartItemText = $('#spanTotalPriceCartItem').text().trim();
+    if (totalPriceCartItemText === "") {
+        alert("Không có thông tin về cân nặng.");
+        return;
+    }
+    const totalPriceCartItem = parseFloat(totalPriceCartItemText.replace(/[^0-9.-]+/g, ''));
+    if (isNaN(totalPriceCartItem)) {
+        alert("Giá tổng tiền tại ship không hợp lệ.");
+        return;
+    }
+    console.log("Weight ship: "+weight)
+    console.log("Total amount ship: "+totalPriceCartItem)
 
     function fetchProvinces() {
         fetch('https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/province', {
@@ -96,10 +119,10 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             body: JSON.stringify({
                 "service_id": serviceId,
-                "insurance_value": 1000000,
+                "insurance_value": totalPriceCartItem,
                 "to_district_id": parseInt(toDistrictId),
                 "to_ward_code": toWardCode,
-                "weight": 200,
+                "weight": weight,
                 "length": 30,
                 "width": 20,
                 "height": 10,

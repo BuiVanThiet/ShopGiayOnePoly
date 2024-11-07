@@ -22,6 +22,7 @@ public interface VoucherService {
     public List<Voucher> getAllVoucherDelete();
 
     public Page<Voucher> getVoucherExpiredByPage(Pageable pageable);
+
     public void updateVoucherExpired(@Param("id") Integer id);
 
     public void createNewVoucher(VoucherRequest voucherRequest);
@@ -35,9 +36,13 @@ public interface VoucherService {
     public void restoreStatusVoucher(Integer id);
 
     public Page<Voucher> searchVoucherByKeyword(String key, Pageable pageable);
+
     Page<Voucher> searchVoucherByTypeVoucher(@Param("types") int type, Pageable pageable);
 
     public void updateVoucherStatusForExpired();
+
     public VoucherResponse getDetailVoucherByID(@Param("id") Integer id);
+
+    List<Voucher> findApplicableVouchers(BigDecimal totalPrice);
 
 }
