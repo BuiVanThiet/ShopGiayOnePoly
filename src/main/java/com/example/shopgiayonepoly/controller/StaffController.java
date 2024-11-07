@@ -53,7 +53,7 @@ public class StaffController {
             return "redirect:/login";
         }
 
-        Page<Staff> pageStaff = staffService.getAllStaffByPage(pageable, staff.getId());
+        Page<StaffResponse> pageStaff = staffService.getAllStaffByPage(pageable, staff.getId());
         model.addAttribute("pageStaff", pageStaff);
         model.addAttribute("staff", new StaffRequest());
         return "Staff/list";
@@ -63,7 +63,7 @@ public class StaffController {
     public String searchStaffByKey(@RequestParam(name = "key") String key, @RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber, Model model) {
         String trimmedKey = key != null ? key.trim() : null;
         Pageable pageableSearch = PageRequest.of(pageNumber, pageSize);
-        Page<Staff> pageStaff = staffService.searchStaffByKeywordPage(trimmedKey, pageableSearch);
+        Page<StaffResponse> pageStaff = staffService.searchStaffByKeywordPage(trimmedKey, pageableSearch);
 //        model.addAttribute("staffList", searchStaff);
         model.addAttribute("pageStaff", pageStaff);
         model.addAttribute("staff", new StaffRequest());

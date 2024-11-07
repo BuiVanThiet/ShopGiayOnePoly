@@ -34,7 +34,7 @@ public class StaffImplement implements StaffService {
     }
 
     @Override
-    public Page<Staff> getAllStaffByPage(Pageable pageable,Integer id) {
+    public Page<StaffResponse> getAllStaffByPage(Pageable pageable,Integer id) {
         return staffRepository.getAllStaffByPage(pageable, id);
     }
 
@@ -44,7 +44,7 @@ public class StaffImplement implements StaffService {
     }
 
     @Override
-    public Page<Staff> searchStaffByKeywordPage(String key, Pageable pageable) {
+    public Page<StaffResponse> searchStaffByKeywordPage(String key, Pageable pageable) {
         return staffRepository.searchStaffByKeywordPage(key, pageable);
     }
 

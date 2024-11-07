@@ -34,7 +34,7 @@ public class CustomerImplement implements CustomerService {
     }
 
     @Override
-    public Page<Customer> getAllCustomerByPage(Pageable pageable) {
+    public Page<CustomerResponse> getAllCustomerByPage(Pageable pageable) {
         return customerRepository.getAllCustomrByPage(pageable);
     }
 
@@ -44,7 +44,7 @@ public class CustomerImplement implements CustomerService {
     }
 
     @Override
-    public Page<Customer> searchCustomerByKeywordPage(String key, Pageable pageable) {
+    public Page<CustomerResponse> searchCustomerByKeywordPage(String key, Pageable pageable) {
         return customerRepository.searchCustomerByKeywordPage(key, pageable);
     }
 

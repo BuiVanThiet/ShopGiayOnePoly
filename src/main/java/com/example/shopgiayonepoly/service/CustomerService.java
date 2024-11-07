@@ -17,11 +17,11 @@ import java.util.Optional;
 public interface CustomerService {
     List<CustomerResponse> getAllCustomer();
 
-    public Page<Customer> getAllCustomerByPage(Pageable pageable);
+    public Page<CustomerResponse> getAllCustomerByPage(Pageable pageable);
 
     public List<CustomerResponse> searchCustomerByKeyword(String key);
 
-    public Page<Customer> searchCustomerByKeywordPage(String key, Pageable pageable);
+    public Page<CustomerResponse> searchCustomerByKeywordPage(String key, Pageable pageable);
 
     <S extends Customer> S save(S entity);
 

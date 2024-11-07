@@ -17,11 +17,11 @@ import java.util.Optional;
 public interface StaffService {
     List<StaffResponse> getAllStaff();
 
-    public Page<Staff> getAllStaffByPage(Pageable pageable, Integer id);
+    public Page<StaffResponse> getAllStaffByPage(Pageable pageable, Integer id);
 
     public List<StaffResponse> searchStaffByKeyword(String key);
 
-    public Page<Staff> searchStaffByKeywordPage(String key, Pageable pageable);
+    public Page<StaffResponse> searchStaffByKeywordPage(String key, Pageable pageable);
 
     <S extends Staff> S save(S entity);
 

@@ -17,54 +17,85 @@ import java.util.List;
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, Integer> {
     @Query("""
-        select new com.example.shopgiayonepoly.dto.response.CustomerResponse(
-            c.id,
-            c.createDate,
-            c.updateDate,
-            c.status,
-            "image1",
-            c.fullName,
-            c.gender,
-            c.birthDay,
-            c.numberPhone,
-            c.email,
-            c.addRess
-        ) 
-        from Customer c 
-        left join AddressShip addRess on c.id = addRess.customer.id
-    """)
+                select new com.example.shopgiayonepoly.dto.response.CustomerResponse(
+                    c.id,
+                    c.createDate,
+                    c.updateDate,
+                    c.status,
+                    c.image,
+                    c.fullName,
+                    c.gender,
+                    c.birthDay,
+                    c.numberPhone,
+                    c.email,
+                    SUBSTRING(c.addRess, CHARINDEX(',', c.addRess, CHARINDEX(',', c.addRess, CHARINDEX(',', c.addRess) + 1) + 1) + 1, LEN(c.addRess))        
+                ) 
+                from Customer c 
+                left join AddressShip addRess on c.id = addRess.customer.id
+            """)
     public List<CustomerResponse> getAllCustomer();
 
     @Query("""
-        select new com.example.shopgiayonepoly.dto.response.CustomerResponse(
-            c.id,
-            c.createDate,
-            c.updateDate,
-            c.status,
-            "image1",
-            c.fullName,
-            c.gender,
-            c.birthDay,
-            c.numberPhone,
-            c.email,
-            c.addRess
-        ) 
-        from Customer c 
-        where concat(c.fullName, c.numberPhone, c.email) like %:key%
-    """)
+                select new com.example.shopgiayonepoly.dto.response.CustomerResponse(
+                    c.id,
+                    c.createDate,
+                    c.updateDate,
+                    c.status,
+                    c.image,
+                    c.fullName,
+                    c.gender,
+                    c.birthDay,
+                    c.numberPhone,
+                    c.email,
+                    SUBSTRING(c.addRess, CHARINDEX(',', c.addRess, CHARINDEX(',', c.addRess, CHARINDEX(',', c.addRess) + 1) + 1) + 1, LEN(c.addRess))        
+                    ) 
+                from Customer c 
+                where concat(c.fullName, c.numberPhone, c.email) like %:key%
+            """)
     public List<CustomerResponse> searchCustomerByKeyword(@Param("key") String key);
 
-    @Query("select c from Customer c where (c.fullName like %:key% or c.numberPhone like %:key% or c.email like %:key%)")
-    public Page<Customer> searchCustomerByKeywordPage(@Param("key") String key, Pageable pageable);
-
+    @Query("""
+                    select new com.example.shopgiayonepoly.dto.response.CustomerResponse(
+                                c.id,
+                                c.createDate,
+                                c.updateDate,
+                                c.status,
+                                c.image,
+                                c.fullName,
+                                c.gender,
+                                c.birthDay,
+                                c.numberPhone,
+                                c.email,
+                                SUBSTRING(c.addRess, CHARINDEX(',', c.addRess, CHARINDEX(',', c.addRess, CHARINDEX(',', c.addRess) + 1) + 1) + 1, LEN(c.addRess))        
+                                ) 
+                            from Customer c 
+                            where concat(c.fullName, c.numberPhone, c.email) like %:key%
+            """)
+    public Page<CustomerResponse> searchCustomerByKeywordPage(@Param("key") String key, Pageable pageable);
 
     @Modifying
     @Transactional
     @Query(value = "update Customer set status =0 where id=:id")
     public void deleteBySetStatus(@Param("id") Integer id);
 
-    @Query("select v from Customer v where v.status = 1 or v.status = 2")
-    public Page<Customer> getAllCustomrByPage(Pageable pageable);
+    @Query("""
+            select new com.example.shopgiayonepoly.dto.response.CustomerResponse(
+                                c.id,
+                                c.createDate,
+                                c.updateDate,
+                                c.status,
+                                c.image,
+                                c.fullName,
+                                c.gender,
+                                c.birthDay,
+                                c.numberPhone,
+                                c.email,
+                                SUBSTRING(c.addRess, CHARINDEX(',', c.addRess, CHARINDEX(',', c.addRess, CHARINDEX(',', c.addRess) + 1) + 1) + 1, LEN(c.addRess))        
+                                ) 
+                            from Customer c where c.status = 1 or c.status = 2
+            """)
+    public Page<CustomerResponse> getAllCustomrByPage(Pageable pageable);
 
+    //"select v from Customer v where v.status = 1 or v.status = 2"
     boolean existsByEmail(String email);
 }
