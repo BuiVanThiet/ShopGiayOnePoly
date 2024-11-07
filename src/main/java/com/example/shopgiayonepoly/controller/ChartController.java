@@ -4,6 +4,7 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import com.example.shopgiayonepoly.dto.request.ProductInfoDto;
 import com.example.shopgiayonepoly.entites.Staff;
 import com.example.shopgiayonepoly.service.CanvasjsChartService;
 import com.example.shopgiayonepoly.service.ChartService;
@@ -52,6 +53,10 @@ public class ChartController {
         model.addAttribute("totalPriceToday",formattedTotalPriceToday);
 
         model.addAttribute("findLastDates", findLastDates);
+
+        List<ProductInfoDto> productSales = chartService.getProductSales();
+        model.addAttribute("productSales", productSales);
+        System.out.println(productSales);
 
         System.out.println(monthlyBill);
         return "Charts/index";

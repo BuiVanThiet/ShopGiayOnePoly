@@ -14,8 +14,8 @@
     <title>Thống kê</title>
     <style>
         #chart_div {
-            width: 100%; /* Đặt chiều rộng là 100% của phần tử chứa */
-            height: 500px; /* Đặt chiều cao cho biểu đồ */
+            width: 100%;
+            height: 500px;
         }
     </style>
 </head>
@@ -25,62 +25,90 @@
 <main class="container">
     <div layout:fragment="content">
         <h2 class="text-center custom-heading">THỐNG KÊ</h2>
-        <div class="fixed-container">
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="rectangle">
-                        <h6>Doanh số hôm nay</h6>
-                        <p class="data-from-be">
-                            <span th:text="${billOfTheDay} + ' Đơn hàng /'"></span>
-                            <span th:text="${totalPriceToday} + 'VND'"></span>
-                        </p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="rectangle">
-                        <h6>Doanh số tháng này</h6>
-                        <p class="data-from-be">
-                            <span th:text="${monthlyBill} + ' Đơn hàng /'"></span>
-                            <span class="total-amount" th:text="${totalMonthlyBill} +'VND'"></span>
-                        </p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="rectangle">
-                        <h6>Hàng bán được tháng này</h6>
-                        <p class="data-from-be">
-                            <span th:text="${totalMonthlyInvoiceProducts} + ' Sản phẩm'"></span>
-                        </p>
-                    </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="rectangle">
+                    <h6>Doanh số hôm nay</h6>
+                    <p class="data-from-be">
+                        <span th:text="${billOfTheDay} + ' Đơn hàng /'"></span>
+                        <span th:text="${totalPriceToday} + ' VND'"></span>
+                    </p>
                 </div>
             </div>
-
-            <div class="filter-section">
-                <div class="button-group" role="group" aria-label="Thời gian lọc">
-                    <button type="button" class="custom-btn btn btn-primary" onclick="filterData('today')">Hôm nay
-                    </button>
-                    <button type="button" class="custom-btn btn btn-primary" onclick="filterData('last7days')">7 Ngày
-                    </button>
-                    <button type="button" class="custom-btn btn btn-primary" onclick="filterData('month')">Tháng
-                    </button>
-                    <button type="button" class="custom-btn btn btn-primary" onclick="filterData('year')">Năm</button>
+            <div class="col-md-4">
+                <div class="rectangle">
+                    <h6>Doanh số tháng này</h6>
+                    <p class="data-from-be">
+                        <span th:text="${monthlyBill} + ' Đơn hàng /'"></span>
+                        <span th:text="${totalMonthlyBill} + ' VND'"></span>
+                    </p>
                 </div>
             </div>
-
-            <div class="row mt-4">
-                <div class="col-md-12">
-                    <div id="chart_div"></div>
+            <div class="col-md-4">
+                <div class="rectangle">
+                    <h6>Hàng bán được tháng này</h6>
+                    <p class="data-from-be">
+                        <span th:text="${totalMonthlyInvoiceProducts} + ' Sản phẩm'"></span>
+                    </p>
                 </div>
             </div>
-
-            <script th:src="@{/js/chart/chart.js}"></script>
         </div>
+
+        <div class="filter-section">
+            <div class="button-group" role="group" aria-label="Thời gian lọc">
+                <button type="button" class="custom-btn btn btn-primary" onclick="filterData('today')">Hôm nay</button>
+                <button type="button" class="custom-btn btn btn-primary" onclick="filterData('last7days')">7 Ngày</button>
+                <button type="button" class="custom-btn btn btn-primary" onclick="filterData('month')">Tháng</button>
+                <button type="button" class="custom-btn btn btn-primary" onclick="filterData('year')">Năm</button>
+            </div>
         </div>
+
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div id="chart_div"></div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <h4 class="text-center">Chi Tiết Doanh Số</h4>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="thead-dark">
+                    <tr>
+                        <th>STT</th>
+                        <th>Ảnh</th>
+                        <th>Tên sản phẩm</th>
+                        <th>Giá bán</th>
+                        <th>Tổng số lượng</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    <tr th:each="item, stat : ${productSales}">
+                        <td th:text="${stat.index + 1}">1</td>
+                        <td>
+                            <!-- Chỉ hiển thị một ảnh ngẫu nhiên cho mỗi sản phẩm -->
+                            <img id="randomImage-[[${stat.index}]]"
+                                 th:src="${item.imageUrls[0]}"
+                                 alt="Product Image" width="100" height="100"/>
+                        </td>
+                        <td th:text="${item.productName}">Sản phẩm A</td>
+                        <td th:text="${item.getDiscountedPrice}">100,000 VND</td>
+                        <td th:text="${item.totalQuantity}">10</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <script th:src="@{/js/chart/chart.js}"></script>
+    </div>
 </main>
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
 
+</body>
 </html>

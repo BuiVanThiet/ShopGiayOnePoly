@@ -1,5 +1,6 @@
 package com.example.shopgiayonepoly.restController;
 
+import com.example.shopgiayonepoly.dto.request.ProductInfoDto;
 import com.example.shopgiayonepoly.dto.request.Statistics;
 import com.example.shopgiayonepoly.service.ChartService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,5 +33,10 @@ public class chartRestController {
     @GetMapping("/AnnualStatistics")
     public List<Statistics> getAnnualStatistics(){
         return chartService.getAnnualStatistics();
+    }
+
+    @GetMapping("/top-products")
+    public List<ProductInfoDto> getTopProducts() {
+        return chartService.getProductSales();
     }
 }
