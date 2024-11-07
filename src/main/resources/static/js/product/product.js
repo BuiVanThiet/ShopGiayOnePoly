@@ -48,14 +48,9 @@ function toggleSelectAllProduct(selectAllCheckbox) {
 // Thêm sự kiện 'change' cho tất cả các checkbox có class 'select-row-product'
 document.querySelectorAll('.select-row-product').forEach((checkbox) => {
     checkbox.addEventListener('change', function() {
-        // Kiểm tra nếu tất cả các checkbox đều được chọn để cập nhật trạng thái của 'select-all-product'
         const allChecked = document.querySelectorAll('.select-row-product:checked').length === document.querySelectorAll('.select-row-product').length;
         document.getElementById('select-all-product').checked = allChecked;
-
-        // Cập nhật hàng hiện tại theo trạng thái của checkbox
         toggleEditableRow(checkbox);
-
-        // Gọi hàm toggleSaveButton để cập nhật hiển thị các nút
         toggleSaveButton();
     });
 });
@@ -88,9 +83,6 @@ function toggleEditableRow(checkbox) {
         }
     });
 }
-
-
-// Hiển thị/ẩn nút "Lưu lại" và "Hủy" dựa trên checkbox được chọn
 
 
 
@@ -214,8 +206,6 @@ function fetchProductsByCategoryAndSearch(idCategory, searchTerm) {
         .catch(error => console.error('Error:', error));
 }
 
-
-// Hàm hiển thị trang
 // Hàm hiển thị trang
 function displayPage(page) {
     const itemsPerPage = isGridView ? itemsPerPageGrid : itemsPerPageList;

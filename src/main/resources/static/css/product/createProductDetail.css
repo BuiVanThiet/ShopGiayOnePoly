@@ -172,7 +172,7 @@
 .dropdown-content-createProductDetail {
     display: none; /* Mặc định ẩn */
     position: absolute;
-    max-height: 100px; /* Giới hạn chiều cao */
+    max-height: 165px; /* Giới hạn chiều cao */
     overflow-y: auto; /* Thêm thanh cuộn dọc */
     background-color: #f9f9f9;
     border: 1px solid #ddd;

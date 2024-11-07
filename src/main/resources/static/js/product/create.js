@@ -62,17 +62,18 @@ function previewImages(event) {
         reader.readAsDataURL(file);
     }
 }
-// Đóng dropdown khi click ngoài
-window.onclick = function(event) {
-    var dropdowns = document.getElementsByClassName("dropdown-content-createProduct");
 
-    // Kiểm tra xem click không phải trên ô input hoặc bên trong dropdown
-    if (!event.target.matches('.form-control-createProduct input')) {
-        for (var i = 0; i < dropdowns.length; i++) {
-            dropdowns[i].classList.remove('show-createProduct'); // Ẩn tất cả dropdown
-        }
-    }
-}
+// Đóng dropdown khi click ngoài
+// window.onclick = function(event) {
+//     var dropdowns = document.getElementsByClassName("dropdown-content-createProduct");
+//
+//     // Kiểm tra xem click không phải trên ô input hoặc bên trong dropdown
+//     if (!event.target.matches('.dropdown-content-createProduct')) {
+//         for (var i = 0; i < dropdowns.length; i++) {
+//             dropdowns[i].classList.remove('show-createProduct'); // Ẩn tất cả dropdown
+//         }
+//     }
+// }
 
 function showDropdown(event) {
     var input = event.target;
@@ -116,12 +117,15 @@ function filterFunction(event) {
     var ul = document.getElementById(listId);
     var li = ul.getElementsByTagName("li");
 
-    // Lọc các sản phẩm dựa trên giá trị nhập vào
+    // Lọc các mục dựa trên giá trị nhập vào
     for (var i = 0; i < li.length; i++) {
         var txtValue = li[i].textContent || li[i].innerText;
+
+        // Nếu có kết quả phù hợp, hiển thị, nếu không thì ẩn
         li[i].style.display = txtValue.toUpperCase().indexOf(filter) > -1 ? "" : "none";
     }
 }
+
 function selectNameProduct(item) {
     var input = document.getElementById("myInput-nameProduct");
     input.value = item.textContent; // Đặt giá trị của ô input thành giá trị được chọn
@@ -177,9 +181,18 @@ function submitQuickAdd() {
         },
         body: JSON.stringify(data)
     })
-    alert("thêm thuộc tính thành công");
-    closeQuickAddForm();
-    reloadOptions();
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Lỗi khi thêm thuộc tính');
+            }
+            alert("Thêm thuộc tính thành công");
+            closeQuickAddForm(); // Đóng form thêm thuộc tính
+            reloadOptions(); // Tải lại danh sách thuộc tính mới cho select
+        })
+        .catch(error => {
+            console.error('Lỗi:', error);
+            alert('Có lỗi xảy ra khi thêm thuộc tính');
+        });
 }
 
 function reloadOptions() {
@@ -194,53 +207,147 @@ function reloadOptions() {
             return response.json();
         })
         .then(data => {
-            // Cập nhật `select` dựa trên `currentType`
-            let selectElement;
-            const placeholderOption = document.createElement("option");
-            placeholderOption.value = "0";
+            // Xử lý theo loại thuộc tính (size, color, sole)
+            if (currentType === 'category') {
+                // Làm mới dropdown cho màu sắc
+                const dataList = document.getElementById("dataList-category");
+                dataList.innerHTML = ''; // Xóa các li cũ
 
-            // Xác định select element tương ứng với `currentType`
-            switch (currentType) {
-                case 'color':
-                    selectElement = document.getElementById("colorSelect");
-                    placeholderOption.textContent = "Chọn màu sắc";
-                    break;
-                case 'size':
-                    selectElement = document.getElementById("sizeSelect");
-                    placeholderOption.textContent = "Chọn kích cỡ";
-                    break;
-                default:
-                    console.error('Loại thuộc tính không hợp lệ');
-                    return;
+                // Thêm các li mới từ dữ liệu nhận được
+                data.forEach(item => {
+                    const li = document.createElement("li");
+                    li.style.display = "flex";
+                    li.style.justifyContent = "space-between";
+
+                    const span = document.createElement("span");
+                    span.textContent = item.nameCategory;
+                    li.appendChild(span);
+
+                    const checkbox = document.createElement("input");
+                    checkbox.type = "checkbox";
+                    checkbox.value = item.id;
+                    checkbox.style.width = "20px";
+                    li.appendChild(checkbox);
+
+                    dataList.appendChild(li);
+                });
+            } else if (currentType === 'color') {
+                // Làm mới dropdown cho màu sắc
+                const dataList = document.getElementById("dataList-color");
+                dataList.innerHTML = ''; // Xóa các li cũ
+
+                // Thêm các li mới từ dữ liệu nhận được
+                data.forEach(item => {
+                    const li = document.createElement("li");
+                    li.style.display = "flex";
+                    li.style.justifyContent = "space-between";
+
+                    const span = document.createElement("span");
+                    span.textContent = item.nameColor;
+                    li.appendChild(span);
+
+                    const checkbox = document.createElement("input");
+                    checkbox.type = "checkbox";
+                    checkbox.value = item.id;
+                    checkbox.style.width = "20px";
+                    li.appendChild(checkbox);
+
+                    dataList.appendChild(li);
+                });
+            } else if (currentType === 'size') {
+                // Làm mới dropdown cho kích cỡ
+                const dataList = document.getElementById("dataList-size");
+                dataList.innerHTML = ''; // Xóa các li cũ
+
+                // Thêm các li mới từ dữ liệu nhận được
+                data.forEach(item => {
+                    const li = document.createElement("li");
+                    li.style.display = "flex";
+                    li.style.justifyContent = "space-between";
+
+                    const span = document.createElement("span");
+                    span.textContent = item.nameSize;
+                    li.appendChild(span);
+
+                    const checkbox = document.createElement("input");
+                    checkbox.type = "checkbox";
+                    checkbox.value = item.id;
+                    checkbox.style.width = "20px";
+                    li.appendChild(checkbox);
+
+                    dataList.appendChild(li);
+                });
+            } else if (currentType === 'sole') {
+                // Làm mới select cho loại đế
+                const selectElement = document.getElementById("soleSelect");
+                selectElement.innerHTML = ''; // Xóa các option cũ
+                const placeholderOption = document.createElement("option");
+                placeholderOption.value = "0";
+                placeholderOption.textContent = "Chọn loại đế";
+                selectElement.appendChild(placeholderOption);
+
+                // Thêm các option mới từ dữ liệu nhận được
+                data.forEach(item => {
+                    const option = document.createElement("option");
+                    option.value = item.id;
+                    option.textContent = item.nameSole;
+                    selectElement.appendChild(option);
+                });
+            } else if (currentType === 'material') {
+                // Làm mới select cho loại đế
+                const selectElement = document.getElementById("materialSelect");
+                selectElement.innerHTML = ''; // Xóa các option cũ
+                const placeholderOption = document.createElement("option");
+                placeholderOption.value = "0";
+                placeholderOption.textContent = "Chọn chất liệu";
+                selectElement.appendChild(placeholderOption);
+
+                // Thêm các option mới từ dữ liệu nhận được
+                data.forEach(item => {
+                    const option = document.createElement("option");
+                    option.value = item.id;
+                    option.textContent = item.nameMaterial;
+                    selectElement.appendChild(option);
+                });
+            } else if (currentType === 'manufacturer') {
+                // Làm mới select cho loại đế
+                const selectElement = document.getElementById("manufacturerSelect");
+                selectElement.innerHTML = ''; // Xóa các option cũ
+                const placeholderOption = document.createElement("option");
+                placeholderOption.value = "0";
+                placeholderOption.textContent = "Chọn hãng";
+                selectElement.appendChild(placeholderOption);
+
+                // Thêm các option mới từ dữ liệu nhận được
+                data.forEach(item => {
+                    const option = document.createElement("option");
+                    option.value = item.id;
+                    option.textContent = item.nameManufacturer;
+                    selectElement.appendChild(option);
+                });
+            } else if (currentType === 'origin') {
+                // Làm mới select cho loại đế
+                const selectElement = document.getElementById("originSelect");
+                selectElement.innerHTML = ''; // Xóa các option cũ
+                const placeholderOption = document.createElement("option");
+                placeholderOption.value = "0";
+                placeholderOption.textContent = "Chọn xuất xứ";
+                selectElement.appendChild(placeholderOption);
+
+                // Thêm các option mới từ dữ liệu nhận được
+                data.forEach(item => {
+                    const option = document.createElement("option");
+                    option.value = item.id;
+                    option.textContent = item.nameOrigin;
+                    selectElement.appendChild(option);
+                });
             }
-
-            // Xóa các option cũ
-            selectElement.innerHTML = '';
-
-            // Thêm option mặc định
-
-
-            selectElement.appendChild(placeholderOption);
-
-            // Thêm các option mới từ dữ liệu nhận được
-            data.forEach(item => {
-                const option = document.createElement("option");
-                option.value = item.id;
-
-                // Sử dụng các trường tương ứng để đặt tên hiển thị của từng loại
-                if (currentType === 'color') {
-                    option.textContent = item.nameColor;
-                } else if (currentType === 'size') {
-                    option.textContent = item.nameSize;
-                }
-
-                selectElement.appendChild(option);
-            });
         })
         .catch((error) => {
             console.error('Lỗi:', error);
         });
 }
+
 
 
 // Close the dropdown when clicking outside
@@ -396,6 +503,17 @@ async function addProductWithDetails() {
     }
 }
 
+function resetFormAndTable() {
+    // Đặt lại tất cả các trường input trong form
+    document.getElementById('createProductForm').reset();
+
+    // Làm trống phần preview ảnh nếu có
+    document.getElementById('image-preview-createProduct').innerHTML = '';
+
+    // Làm trống các hàng trong bảng sản phẩm chi tiết
+    const tableBody = document.getElementById('productDetailTable').querySelector('tbody');
+    tableBody.innerHTML = '';
+}
 
 
 

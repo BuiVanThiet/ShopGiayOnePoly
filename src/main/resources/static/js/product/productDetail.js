@@ -166,7 +166,7 @@ function displayPage(page) {
 
             // Set up event for checkbox
             const checkbox = row.querySelector('.select-row-productDetail');
-            checkbox.addEventListener('change', function () {
+            checkbox.addEventListener('change', function() {
                 toggleEditableRow(checkbox);
                 const allChecked = document.querySelectorAll('.select-row-productDetail:checked').length === document.querySelectorAll('.select-row-productDetail').length;
                 document.getElementById('select-all-productDetail').checked = allChecked;
@@ -176,7 +176,14 @@ function displayPage(page) {
         // Handle case when no product details are available
         tableBody.innerHTML = '<tr><td colspan="10">No products found.</td></tr>';
     }
-
+    document.querySelectorAll('.select-row-productDetail').forEach((checkbox) => {
+        checkbox.addEventListener('change', function() {
+            toggleEditableRow(checkbox);
+            const allChecked = document.querySelectorAll('.select-row-productDetail:checked').length === document.querySelectorAll('.select-row-productDetail').length;
+            document.getElementById('select-all-productDetail').checked = allChecked;
+            toggleSaveButton();
+        });
+    });
     updatePaginationControls(totalPages, page);
 }
 
