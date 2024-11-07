@@ -2,7 +2,7 @@ function payBill() {
     const addressShip = $('#addressShip').val();
     const shippingPriceText = $('#spanShippingFee').text().trim();
     const voucherPriceText = $('#spanPriceVoucher').text().trim();
-    const totalAmountBillText = $('#spanTotalPriceBill').text().trim(); // Lấy giá trị từ thẻ spanTotalPriceBill
+    const totalAmountBillText = $('#spanTotalPriceCartItem').text().trim(); // Lấy giá trị từ thẻ spanTotalPriceBill
     const noteBill = $('#noteBill').val();
 
     const shippingPrice = parseFloat(shippingPriceText.replace(/[^0-9.-]+/g, ''));

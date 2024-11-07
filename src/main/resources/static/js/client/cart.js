@@ -9,7 +9,7 @@ function calculateTotal() {
     const priceCartItemElement = document.querySelectorAll('.price-item');
     const totalPriceElement = document.getElementById('spanTotalPriceCart');
     const priceCartItem = parseFloat(priceCartItemElement.textContent.replace(/\D/g, '') || '0');
-    totalPriceElement.textContent = formatCurrency(totalPrice);
+    totalPriceElement.textContent = formatCurrency(priceCartItem);
 }
 
 const observer = new MutationObserver(calculateTotal);
