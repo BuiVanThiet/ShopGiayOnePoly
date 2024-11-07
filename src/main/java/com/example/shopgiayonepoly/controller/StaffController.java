@@ -148,6 +148,7 @@ public class StaffController extends BaseEmail {
         }
 //        staff.setImage("fileName");
         System.out.println(staff.toString());
+        System.out.println("Hello");
 //        staffService.uploadFile(staffRequest.getNameImage(),staffSave.getId());
         return "redirect:/staff/list";
     }
