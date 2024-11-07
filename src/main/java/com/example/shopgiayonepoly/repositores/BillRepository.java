@@ -12,6 +12,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -64,17 +67,20 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
     BillTotalInfornationResponse findBillVoucherById(@Param("billId") Integer billId);
 
     @Query("SELECT v FROM Voucher v " +
-            "WHERE (SELECT b.totalAmount FROM Bill b WHERE b.id = :idBill) >= v.pricesApply " +
+            "WHERE (SELECT b.totalAmount FROM Bill b WHERE b.id = :idBillCheck) >= v.pricesApply " +
             "AND v.status <> 0 " +
-            "AND (v.id <> (SELECT b.voucher.id FROM Bill b WHERE b.id = :idBill) OR (SELECT b.voucher.id FROM Bill b WHERE b.id = :idBill) IS NULL) " +
-            "and concat(v.nameVoucher,v.codeVoucher) LIKE %:keyword%")
-    Page<Voucher> getVoucherByBill(@Param("idBill") Integer idBill, @Param("keyword") String keyword, Pageable pageable);
+            "AND (v.id <> (SELECT b.voucher.id FROM Bill b WHERE b.id = :idBillCheck) OR (SELECT b.voucher.id FROM Bill b WHERE b.id = :idBillCheck) IS NULL) " +
+            "AND CONCAT(v.nameVoucher, v.codeVoucher) LIKE %:keyword% " +
+            "ORDER BY v.priceReduced DESC")
+    Page<Voucher> getVoucherByBill(@Param("idBillCheck") Integer idBillCheck, @Param("keyword") String keyword, Pageable pageable);
+
     @Query("SELECT v FROM Voucher v " +
             "WHERE (SELECT b.totalAmount FROM Bill b WHERE b.id = :idBillCheck) >= v.pricesApply " +
             "AND v.status <> 0 " +
             "AND (v.id <> (SELECT b.voucher.id FROM Bill b WHERE b.id = :idBillCheck) OR (SELECT b.voucher.id FROM Bill b WHERE b.id = :idBillCheck) IS NULL) " +
-            "and concat(v.nameVoucher,v.codeVoucher) LIKE %:keyword%")
-    List<Voucher> getVoucherByBill(@Param("idBillCheck") Integer idBill, @Param("keyword") String keyword);
+            "AND CONCAT(v.nameVoucher, v.codeVoucher) LIKE %:keyword% " +
+            "ORDER BY v.priceReduced DESC")
+    List<Voucher> getVoucherByBill(@Param("idBillCheck") Integer idBillCheck, @Param("keyword") String keyword);
 
     @Query("select new com.example.shopgiayonepoly.dto.response.bill.ClientBillInformationResponse(cuss.fullName,cuss.numberPhone,cuss.email,cuss.addRess,cuss.addRess,cuss.addRess,cuss.addRess) from Customer cuss where cuss.id = :idClient")
     List<ClientBillInformationResponse> getClientBillInformationResponse(@Param("idClient") Integer idBill);
@@ -136,8 +142,7 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
             bill.cash, 
             bill.acountMoney, 
             bill.note, 
-            bill.totalAmount - bill.priceDiscount
-            , 
+            bill.totalAmount - bill.priceDiscount, 
             bill.paymentMethod, 
             bill.billType, 
             bill.paymentStatus, 
@@ -150,12 +155,19 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
         LEFT JOIN bill.customer customer
         LEFT JOIN bill.staff staff
         LEFT JOIN bill.voucher voucher
-        where 
-        bill.status <> 0 and
-        (concat(COALESCE(bill.codeBill, ''), COALESCE(bill.customer.fullName, ''), COALESCE(bill.customer.numberPhone, '')) like %:nameCheck%)
-         AND (:statusCheck IS NULL OR bill.status IN (:statusCheck))
+        where
+            bill.status <> 0 and
+            (concat(COALESCE(bill.codeBill, ''), COALESCE(bill.customer.fullName, ''), COALESCE(bill.customer.numberPhone, '')) like %:nameCheck%)
+            AND (:statusCheck IS NULL OR bill.status IN (:statusCheck))
+            AND (bill.updateDate between :startDate and :endDate)
+            order by bill.updateDate desc
     """)
-    Page<BillResponseManage> getAllBillByStatusDiss0(@Param("nameCheck") String nameCheck, @Param("statusCheck") List<Integer> statusCheck, Pageable pageable);
+    Page<BillResponseManage> getAllBillByStatusDiss0(
+            @Param("nameCheck") String nameCheck,
+            @Param("statusCheck") List<Integer> statusCheck,
+            @Param("startDate") Date startDate,
+            @Param("endDate") Date endDate,
+            Pageable pageable);
     //    @Query("""
 //        select
 //        new com.example.shopgiayonepoly.dto.response.bill.BillResponseManage(
@@ -184,12 +196,19 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
             LEFT JOIN bill.customer customer
             LEFT JOIN bill.staff staff
             LEFT JOIN bill.voucher voucher
-            where 
-             bill.status <> 0 and
-             (concat(COALESCE(bill.codeBill, ''), COALESCE(bill.customer.fullName, ''), COALESCE(bill.customer.numberPhone, '')) like %:nameCheck%) 
-             AND (:statusCheck IS NULL OR bill.status IN (:statusCheck))
+            where
+                bill.status <> 0 and
+                (concat(COALESCE(bill.codeBill, ''), COALESCE(bill.customer.fullName, ''), COALESCE(bill.customer.numberPhone, '')) like %:nameCheck%)
+                AND (:statusCheck IS NULL OR bill.status IN (:statusCheck))
+                AND (bill.updateDate between :startDate and :endDate)
+                order by bill.updateDate desc
         """)
-    List<BillResponseManage> getAllBillByStatusDiss0(@Param("nameCheck") String nameCheck, @Param("statusCheck") List<Integer> statusCheck);
+    List<BillResponseManage> getAllBillByStatusDiss0(
+            @Param("nameCheck") String nameCheck,
+            @Param("statusCheck") List<Integer> statusCheck,
+            @Param("startDate") Date startDate,
+            @Param("endDate") Date endDate
+            );
 //    @Query("""
 //    select
 //     new com.example.shopgiayonepoly.dto.response.bill.InformationBillByIdBillResponse(
@@ -266,7 +285,15 @@ select case
         	b.update_date,
         	(b.cash+b.surplus_money) AS so_tien,
         	N'Tiền mặt'  payment_method,
-        	(select s.code_staff+'-'+s.full_name from staff s where s.id = (SUBSTRING(invo.note, 1, CHARINDEX(',', invo.note) - 1)))
+            CASE
+            WHEN LEFT(invo.note, CHARINDEX(',', invo.note) - 1) = N'Không có' THEN N'Không có'
+            ELSE ISNULL(
+                (select s.code_staff + '-' + s.full_name
+                 from staff s
+                 where s.id = (SUBSTRING(invo.note, 1, CHARINDEX(',', invo.note) - 1))),
+                N'Không có'
+            )
+        END AS staff_info
         from bill b
         join invoice_status invo
         on invo.id_bill = b.id
@@ -277,7 +304,15 @@ select case
         	b.update_date,
         	b.acount_money AS so_tien,
         	N'Tiền tài khoản'  payment_method,
-        	(select s.code_staff+'-'+s.full_name from staff s where s.id = (SUBSTRING(invo.note, 1, CHARINDEX(',', invo.note) - 1)))
+            CASE
+            WHEN LEFT(invo.note, CHARINDEX(',', invo.note) - 1) = N'Không có' THEN N'Không có'
+            ELSE ISNULL(
+                (select s.code_staff + '-' + s.full_name
+                 from staff s
+                 where s.id = (SUBSTRING(invo.note, 1, CHARINDEX(',', invo.note) - 1))),
+                N'Không có'
+            )
+        END AS staff_info
         from bill b
         join invoice_status invo
         on invo.id_bill = b.id

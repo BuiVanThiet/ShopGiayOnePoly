@@ -2,9 +2,13 @@ package com.example.shopgiayonepoly.controller;
 
 import com.cloudinary.Cloudinary;
 import com.example.shopgiayonepoly.baseMethod.BaseProduct;
+import com.example.shopgiayonepoly.dto.response.ProductDetailResponse;
 import com.example.shopgiayonepoly.entites.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Controller
@@ -21,11 +26,11 @@ public class ProductController extends BaseProduct {
     private final Cloudinary cloudinary;
 
 
-    @GetMapping("/productv2")
-    public String productv2(Model model) {
+    @GetMapping("")
+    public String product(Model model) {
         model.addAttribute("productList", productService.getProductNotStatus0());
         model.addAttribute("categoryList", categoryService.findAll());
-        return "/Product/productv2";
+        return "/Product/product";
     }
 
     @GetMapping("/create")
@@ -43,49 +48,64 @@ public class ProductController extends BaseProduct {
         return "/Product/create";
     }
 
+    @GetMapping("/create/product-detail/{idProduct}")
+    public String createProductDetail(Model model, @PathVariable("idProduct") Integer idProduct) {
+        model.addAttribute("product", productRepository.findById(idProduct));
+        model.addAttribute("colorList", colorService.findAll());
+        model.addAttribute("sizeList", sizeService.findAll());
+        return "/Product/createProductDetail";
+    }
 
-    @RequestMapping("/add")
-    public String add(@ModelAttribute("product") Product product,
-                      @RequestParam List<Integer> categories,
-                      @RequestParam("imageFiles") List<MultipartFile> imageFiles) throws IOException {
+
+    @PostMapping("/add-product-with-details")
+    public ResponseEntity<String> addProductWithDetails(
+            @ModelAttribute Product product,
+            @RequestParam("productDetails") String productDetailsJson,
+            @RequestParam("imageFiles") List<MultipartFile> imageFiles) throws IOException {
+
+        // Chuyển đổi productDetailsJson từ JSON thành List<ProductDetail>
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<ProductDetail> productDetails = Arrays.asList(objectMapper.readValue(productDetailsJson, ProductDetail[].class));
 
         // Gán danh mục cho sản phẩm
-        Set<Category> selectedCategories = categoryService.findCategoriesByIds(categories);
+        Set<Category> selectedCategories = new HashSet<>(categoryService.findCategoriesByIds(
+                product.getCategories().stream().map(Category::getId).collect(Collectors.toList())));
         product.setCategories(selectedCategories);
         product.setStatus(1);
 
-        // Tạo danh sách ảnh mới
+        // Xử lý ảnh
         List<Image> newImages = new ArrayList<>();
-
-        // Duyệt qua từng file ảnh
         for (MultipartFile multipartFile : imageFiles) {
             if (!multipartFile.isEmpty()) {
-                // Tạo tên ảnh duy nhất bằng UUID
                 String nameImage = UUID.randomUUID().toString();
-
                 cloudinary.uploader()
                         .upload(multipartFile.getBytes(), Map.of("public_id", nameImage))
                         .get("url")
                         .toString();
 
-                // Tạo đối tượng Image và gán sản phẩm cho ảnh
                 Image image = new Image();
                 image.setNameImage(nameImage);
-                image.setProduct(product); // Gán sản phẩm cho ảnh
+                image.setProduct(product);
                 image.setStatus(1);
-                // Thêm ảnh vào danh sách
                 newImages.add(image);
             }
         }
-
-        // Gán danh sách ảnh mới vào sản phẩm
         product.setImages(newImages);
 
-        // Lưu sản phẩm vào cơ sở dữ liệu
-        productService.save(product);
+        // Lưu sản phẩm
+        Product savedProduct = productService.save(product);
+        if (savedProduct == null) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi khi thêm sản phẩm");
+        }
 
-        return "redirect:/staff/product/productv2"; // Chuyển hướng sau khi hoàn tất
+        // Cập nhật ID sản phẩm cho các chi tiết sản phẩm và lưu
+        productDetails.forEach(detail -> detail.setProduct(savedProduct));
+        productDetailRepository.saveAll(productDetails);
+
+        return ResponseEntity.ok("Sản phẩm và chi tiết sản phẩm đã được thêm thành công");
     }
+
+
 
     @GetMapping("/detail/{idProduct}")
     public String viewProductDetail(@PathVariable("idProduct") Integer idProduct, Model model) {
@@ -93,6 +113,8 @@ public class ProductController extends BaseProduct {
         model.addAttribute("productDetailList", productDetails);
         return "/Product/productDetail";
     }
+
+
     @ModelAttribute("staffInfo")
     public Staff staff(HttpSession session) {
         Staff staff = (Staff) session.getAttribute("staffLogin");

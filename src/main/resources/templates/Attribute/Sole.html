@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{Home/home_manege}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Product Management Page">
+    <meta name="keywords" content="ecommerce, product management, online store">
+    <title>Quản lý đế giày</title>
+</head>
+<body class="body-attribute">
+<div layout:fragment="content">
+    <article class="container-xxl mt-5">
+        <h1 class="h1-attribute">Quản lý đế giày</h1>
+        <div class="combobox-container">
+            <div class="combobox-header" onclick="toggleDiv()">
+                <span></span>
+                <span class="arrow" id="arrow">&#9660;</span> <!-- Mũi tên -->
+            </div>
+            <div id="collapsibleDiv" class="combobox-content">
+                <form th:object="${soleAdd}" method="post" action="/attribute/sole/add">
+                    <div class="attribute-search-section search-section ">
+                        <div class="attribute-search-bar search-bar ">
+                            <input id="codeSoleInput" th:field="*{codeSole}" type="text" placeholder="Mã đế giày" required/>
+                            <input id="nameSoleInput" th:field="*{nameSole}" type="text" placeholder="Tên đế giày" required/>
+                            <button type="submit" class="attribute-btn-add btn-add">Thêm đế giày</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <br>
+
+        <div style="text-align: right;">
+            <button type="submit" class="attribute-btn-listDelete">Danh sách đã xóa</button>
+            <button type="submit" class="attribute-btn-listActive" style="display: none;">Danh sách hoạt động</button>
+        </div>
+        <br>
+        <table id="soleTable" class="attribute-table table table-bordered table-striped table-hover ">
+            <thead>
+            <tr>
+                <th>Mã đế giày</th>
+                <th>Tên đế giày</th>
+                <th>Ngày tạo</th>
+                <th>Ngày sửa</th>
+                <th>Trạng thái</th>
+                <th>Hành động</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="sole, iterStat : ${soleList}" th:id="'row-' + ${iterStat.index}" th:data-id="${sole.id}">
+                <td>
+                    <span th:text="${sole.codeSole}" th:id="'code-text-' + ${iterStat.index}"></span>
+                    <input class="inputUpdate-attribute" type="text" th:value="${sole.codeSole}" th:id="'code-input-' + ${iterStat.index}"
+                           style="display:none;">
+                </td>
+                <td>
+                    <span th:text="${sole.nameSole}" th:id="'name-text-' + ${iterStat.index}"></span>
+                    <input class="inputUpdate-attribute" type="text" th:value="${sole.nameSole}" th:id="'name-input-' + ${iterStat.index}"
+                           style="display:none;">
+                </td>
+                <td>[[${sole.createDate}]]</td>
+                <td>[[${sole.updateDate}]]</td>
+                <td>
+                    <i class="attribute-status-icon status-icon fas"
+                       th:classappend="${sole.status == 1 ? 'fa-toggle-on' : (sole.status == 2 ? 'fa-toggle-off' : '')}"
+                       th:data-status="${sole.status}"
+                       th:data-index="${iterStat.index}"
+                       onclick="toggleStatus(this)"
+                       title="Toggle Status"></i>
+                </td>
+                <td>
+                    <a href="#" th:onclick="'editRow(' + ${iterStat.index} + ')'"
+                       th:id="'edit-btn-' + ${iterStat.index}">
+                        <i class="attribute-icon-edit icon-edit fas fa-edit" title="Edit"></i>
+                    </a>
+                    <a href="#" th:onclick="'saveRow(' + ${iterStat.index} + ')'" style="display:none; sole: white; text-decoration: none"
+                       th:id="'save-btn-' + ${iterStat.index}">
+                        <i class="attribute-icon-save icon-save fas fa-save" title="Save"></i>
+                    </a>
+                    <a href="#" th:data-index="${iterStat.index}" onclick="deleteByID(this)">
+                        <i class="attribute-icon-delete icon-delete fas fa-trash" title="Delete"></i>
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </article>
+    <script th:src="@{/js/attribute/attribute.js}" type="text/javascript"></script>
+    <script th:src="@{/ajax/attribute/soleAjax.js}" type="text/javascript"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.18.1/umd/index.js"></script>
+
+</div>
+
+</body>
+</html>

@@ -23,6 +23,12 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 
 @RestController
@@ -72,7 +78,10 @@ public class    BillRestController extends BaseBill {
         if (!validateIdBill.trim().equals("")) {
             return null;
         }
-
+        Bill bill = this.billService.findById(idBill).orElse(null);
+        if (bill == null || bill.getId() == null) {
+            return null;
+        }
         String validatePagenumber = validateInteger(pageNumber);
         if (!validatePagenumber.trim().equals("")) {
             return null;
@@ -83,9 +92,9 @@ public class    BillRestController extends BaseBill {
         productDetailCheckRequest = new ProductDetailCheckRequest("",null,null,null,null,null,null);
         // Lấy danh sách BillDetail
         List<BillDetail> billDetailList = this.billDetailService.getBillDetailByIdBill(idBill, pageable).getContent();
-
-        getDeleteVoucherByBill(idBill);
-
+        if(bill.getStatus() == 0) {
+            getDeleteVoucherByBill(idBill);
+        }
         return billDetailList;
     }
 
@@ -136,7 +145,7 @@ public class    BillRestController extends BaseBill {
         }
         if(billDetailAjax.getQuantity() > 10 && billDetailAjax.getMethod().equals("cong")) {
             System.out.println("Hiện tại cửa hàng chỉ bán mỗi sản phẩm số lượng không quá 10!");
-            thongBao.put("message","Hiện tại cửa hàng chỉ bán mỗi sản phẩm số lượng không quá 10!");
+            thongBao.put("message","Số lượng mua mỗi món không được quá 10!");
             thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }
@@ -166,7 +175,9 @@ public class    BillRestController extends BaseBill {
             this.getUpdateQuantityProduct(productDetail.getId(),quantityUpdate);
         }
 
-        getDeleteVoucherByBill(billDetail.getBill().getId());
+        if(billDetail.getBill().getStatus() == 0) {
+            getDeleteVoucherByBill(billDetail.getBill().getId());
+        }
 
         return ResponseEntity.ok(thongBao);
     }
@@ -195,7 +206,13 @@ public class    BillRestController extends BaseBill {
 
         Bill billById = this.billService.findById(idBill).orElse(null);
         if (billById == null) {
-            this.mess = "Hóa đươn không tồn tại!";
+            this.mess = "Hóa đơn không tồn tại!";
+            this.colorMess = "3";
+            return ResponseEntity.ok(thongBao);
+        }
+
+        if (billById.getPaymentStatus() == 1) {
+            this.mess = "Hóa đã thanh toán!";
             this.colorMess = "3";
             return ResponseEntity.ok(thongBao);
         }
@@ -210,7 +227,7 @@ public class    BillRestController extends BaseBill {
         BillDetail billDetail = getBuyProduct(billById,productDetail,1);
 
         Integer idBillDetail = this.billDetailService.getBillDetailExist(billById.getId(),productDetail.getId());
-        if(idBillDetail != null) {
+        if(idBillDetail != -1) {
             thongBao.put("message","Sửa số lượng sản phẩm thành công!");
             thongBao.put("check","1");
         }else {
@@ -222,11 +239,13 @@ public class    BillRestController extends BaseBill {
 
         this.setTotalAmount(billById);
         Bill bill = billDetail.getBill();
-        if(bill.getStatus() == 0) {
+        if(bill.getStatus()  == 1 || bill.getStatus() == 0) {
             this.getUpdateQuantityProduct(productDetail.getId(),1);
         }
 
-        getDeleteVoucherByBill(billDetail.getBill().getId());
+        if(billDetail.getBill().getStatus() == 0) {
+            getDeleteVoucherByBill(billDetail.getBill().getId());
+        }
 
         return ResponseEntity.ok(thongBao);
     }
@@ -575,7 +594,7 @@ public class    BillRestController extends BaseBill {
             searchBillByStatusRequest = new SearchBillByStatusRequest(null);
         }
         System.out.println(searchBillByStatusRequest.getStatusSearch());
-        return this.billService.getAllBillByStatusDiss0(keyBillmanage,searchBillByStatusRequest,pageable).getContent();
+        return this.billService.getAllBillByStatusDiss0(keyBillmanage,searchBillByStatusRequest,keyStartDate,keyEndDate,pageable).getContent();
     }
 
     @GetMapping("/manage-bill-max-page")
@@ -587,7 +606,7 @@ public class    BillRestController extends BaseBill {
         if(searchBillByStatusRequest == null) {
             searchBillByStatusRequest = new SearchBillByStatusRequest();
         }
-        Integer page = (int) Math.ceil((double) this.billService.getAllBillByStatusDiss0(keyBillmanage,searchBillByStatusRequest).size() / 5);
+        Integer page = (int) Math.ceil((double) this.billService.getAllBillByStatusDiss0(keyBillmanage,searchBillByStatusRequest,keyStartDate,keyEndDate).size() / 5);
         System.out.println("so trang toi da cua quan ly hoa don " + page);
         return page;
     }
@@ -615,7 +634,38 @@ public class    BillRestController extends BaseBill {
         }
         String keyword = billSearch.get("keywordBill");
         this.keyBillmanage = keyword;
+        String startDateStr = billSearch.get("startDate");
+        String endDateStr = billSearch.get("endDate");
+
         System.out.println("du lieu loc vc " + keyword);
+        System.out.println("starDate-bill-manage: "+billSearch.get("startDate"));
+        System.out.println("endDate-bill-manage: "+billSearch.get("endDate"));
+        try {
+            // Định dạng để parse chuỗi thành đối tượng Date
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            Calendar calendar = Calendar.getInstance();
+
+            // Chuyển đổi chuỗi startDateStr thành Date và đặt thời gian bắt đầu của ngày
+            Date startDate = formatter.parse(startDateStr);
+            calendar.setTime(startDate);
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+            this.keyStartDate = calendar.getTime();
+
+            // Chuyển đổi chuỗi endDateStr thành Date và đặt thời gian kết thúc của ngày
+            Date endDate = formatter.parse(endDateStr);
+            calendar.setTime(endDate);
+            calendar.set(Calendar.HOUR_OF_DAY, 23);
+            calendar.set(Calendar.MINUTE, 59);
+            calendar.set(Calendar.SECOND, 59);
+            calendar.set(Calendar.MILLISECOND, 999);
+            this.keyEndDate = calendar.getTime();
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Invalid date format. Please use 'yyyy-MM-dd'.");
+        }
         return ResponseEntity.ok("done");
     }
 
@@ -677,16 +727,18 @@ public class    BillRestController extends BaseBill {
         if (bill == null) {
             return null;
         }
-        if (bill.getCustomer() != null && !bill.getAddRess().equals("Không có")) {
+
+        if (!bill.getAddRess().equals("Không có")) {
             String getAddRessDetail = bill.getAddRess();
             String[] part = getAddRessDetail.split(",\\s*");
             String fullName = part[0];
             String numberPhone = part[1];
-            String province = part[2];
-            String district = part[3];
-            String ward = part[4];
-            String addRessDetail = String.join(", ", java.util.Arrays.copyOfRange(part, 5, part.length));
-            ClientBillInformationResponse clientBillInformationResponse = new ClientBillInformationResponse(fullName,numberPhone,bill.getCustomer().getEmail(),province,district,ward,addRessDetail);
+            String email = part[2];
+            String province = part[3];
+            String district = part[4];
+            String ward = part[5];
+            String addRessDetail = String.join(", ", java.util.Arrays.copyOfRange(part, 6, part.length));
+            ClientBillInformationResponse clientBillInformationResponse = new ClientBillInformationResponse(fullName,numberPhone,email,province,district,ward,addRessDetail);
             System.out.println("thong tin cua doi tuong ship " + clientBillInformationResponse.toString());
             return clientBillInformationResponse;
         }
@@ -782,6 +834,7 @@ public class    BillRestController extends BaseBill {
         bill.setUpdateDate(new Date());
         bill.setAddRess(clientBillInformationResponse.getName()+","
                 +clientBillInformationResponse.getNumberPhone()+","
+                +clientBillInformationResponse.getEmail()+","
                 +clientBillInformationResponse.getCity()+","
                 +clientBillInformationResponse.getDistrict()+","
                 +clientBillInformationResponse.getCommune()+","
@@ -903,6 +956,13 @@ public class    BillRestController extends BaseBill {
                 mess = "Đơn hàng chưa được thanh toán!";
                 colorMess = "3";
             }else {
+                if(bill.getVoucher() != null) {
+                    if(bill.getVoucher().getPricesApply().compareTo(bill.getTotalAmount()) > 0) {
+                        thongBao.put("message","Mời đổi mã giảm giá trước khi xác nhận đơn hàng!");
+                        thongBao.put("check","3");
+                        return ResponseEntity.ok(thongBao);
+                    }
+                }
                 if (bill.getStatus() == 0 || bill.getStatus() > 5) {
                     thongBao.put("message","Hóa đơn không hợp lệ!");
                     thongBao.put("check","3");

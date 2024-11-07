@@ -7,7 +7,7 @@
     padding: 20px; /* Padding cho body */
 }
 
-.container {
+.container-profile-info {
     background-color: #ffffff; /* Màu nền trắng */
     padding: 20px;
     border: 1px solid #333; /* Đường viền đậm 1px */
@@ -15,11 +15,11 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Đổ bóng nhẹ cho container */
 }
 
-.description {
-    margin-top: 0;
-    font-size: 14px;
-    color: #666;
-}
+/*.description-profile-info {*/
+/*    margin-top: 0;*/
+/*    font-size: 14px;*/
+/*    color: #666;*/
+/*}*/
 
 .profile-info img {
     display: block;
@@ -61,4 +61,20 @@
     object-fit: cover; /* Đảm bảo ảnh vừa khung mà không bị méo */
     border: 2px solid #ddd; /* Đường viền xung quanh ảnh */
     margin-bottom: 15px; /* Khoảng cách dưới ảnh */
+}
+
+.hidden {
+    display: none;
+}
+
+.btn-icon {
+    cursor: pointer;
+}
+
+.row {
+    align-items: center; /* Giữ cho label và input thẳng hàng */
+}
+
+.text-danger {
+    font-size: 0.81rem; /* Kích thước chữ nhỏ hơn cho thông báo lỗi */
 }

@@ -1,4 +1,4 @@
-package com.example.shopgiayonepoly.repositores;
+package com.example.shopgiayonepoly.repositores.attribute;
 
 import com.example.shopgiayonepoly.entites.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,6 +14,4 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
 
     @Query("select category from Category category where category.status = 0")
     List<Category> getCategoryDelete();
-
-
 }

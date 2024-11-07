@@ -60,9 +60,6 @@ public class ClientRestController {
             @RequestParam Integer productId,
             @RequestParam Integer colorId,
             @RequestParam Integer sizeId) {
-        System.out.println("productId " + productId);
-        System.out.println("colorId " + colorId);
-        System.out.println("sizeId " + sizeId);
         ProductDetailClientRespone productDetail = clientService.findByProductDetailColorAndSizeAndProductId(colorId, sizeId, productId);
         if (productDetail != null) {
             return productDetail;

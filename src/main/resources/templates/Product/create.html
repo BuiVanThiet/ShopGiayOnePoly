@@ -11,20 +11,22 @@
 <div layout:fragment="content">
   <article class=" bd-gutter mt-5 my-md-4 bd-layout">
     <div class="container-createProduct">
-      <form th:action="@{/staff/product/add}" th:object="${product}" method="POST" enctype="multipart/form-data">
+      <form th:action="@{/staff/product/add}" id="createProductForm" th:object="${product}" method="POST" enctype="multipart/form-data">
         <div class="content-createProduct">
           <div class="main-content-createProduct">
             <h1 class="h1-createProduct">Tạo sản phẩm mới</h1>
             <div class="form-group-createProduct">
               <div class="form-control-createProduct">
                 <label>Mã sản phẩm</label>
-                <input type="text" name="codeProduct"/>
+                <input id="codeProduct" type="text" name="codeProduct"/>
+                <p style="display: block; color: red; margin-bottom: 0px" id="errorText-codeProduct">* Mã sản phẩm không được để trống</p>
               </div>
               <div class="form-control-createProduct">
                 <label for="myInput-nameProduct">Tên sản phẩm</label>
                 <input name="nameProduct" type="text" id="myInput-nameProduct"
                        onfocus="showDropdown(event)"
                        onkeyup="filterFunction(event)" autocomplete="off">
+                <p style="display: block; color: red; margin-bottom: 0px" id="errorText-nameProduct">* Mã sản phẩm không được để trống</p>
                 <ul id="dataList-nameProduct" class="dropdown-content-createProduct">
                   <th:block th:each="nameProduct: ${nameProductList}">
                     <li th:text="${nameProduct}" th:value="${nameProduct}" onclick="selectNameProduct(this)"></li>
@@ -50,6 +52,7 @@
                     <span class="material-symbols-outlined">add</span>
                   </div>
                 </div>
+                <p style="display: block; color: red; margin-bottom: 0px" id="errorText-category">* Mã sản phẩm không được để trống</p>
               </div>
             </div>
             <div class="form-group-createProduct">
@@ -67,6 +70,7 @@
                     <span class="material-symbols-outlined">add</span>
                   </div>
                 </div>
+                <p style="display: block; color: red; margin-bottom: 0px" id="errorText-material">* Mã sản phẩm không được để trống</p>
               </div>
               <div class="form-control-createProduct">
                 <label>Hãng</label>
@@ -125,7 +129,7 @@
                     <th:block th:each="color : ${colorList}">
                       <li style="display: flex; justify-content: space-between">
                         <span th:text="${color.nameColor}"></span>
-                        <input style="width: 20px" type="checkbox">
+                        <input th:value="${color.id}"  style="width: 20px" type="checkbox">
                       </li>
                     </th:block>
                   </ul>
@@ -145,7 +149,7 @@
                     <th:block th:each="size : ${sizeList}">
                       <li style="display: flex; justify-content: space-between">
                         <span th:text="${size.nameSize}"></span>
-                        <input style="width: 20px" type="checkbox">
+                        <input th:value="${size.id}" style="width: 20px" type="checkbox">
                       </li>
                     </th:block>
                   </ul>
@@ -177,23 +181,20 @@
             </div>
           </div>
           <div class="main-content-createProduct" id="table-productDetail-createProduct">
-            <table class="table-createProduct">
+            <table class="table-createProduct" id="productDetailTable">
               <thead>
               <tr>
-                <th style="width: 10px;">
-                  <input type="checkbox" id="select-all-createProduct" onclick="toggleSelectAll(this)">
+                <th style="width: 30px;">
+                  <input type="checkbox"  >
                 </th>
-                <th style="width: 300px">Tên sản phẩm</th>
-                <th style="width: 100px">Màu sắc</th>
+                <th style="width: 150px">Màu sắc</th>
                 <th style="width: 150px">Kích cỡ</th>
-                <th style="width: 200px">Giá bán</th>
-                <th style="width: 200px">Giá nhập</th>
+                <th style="width: 150px">Giá bán</th>
+                <th style="width: 150px">Giá nhập</th>
                 <th style="width: 150px">Số lượng</th>
                 <th style="width: 150px">Trọng lượng</th>
-                <th style="width: 150px">Chiều cao</th>
-                <th style="width: 150px">Chiều dài</th>
-                <th style="width: 150px">Chiều rộng</th>
-                <th style="width: 10px"><span class="material-symbols-outlined">delete_forever</span></th>
+                <th style="width: 300px">Mô tả</th>
+                <th style="width: 30px"><span class="material-symbols-outlined">delete_forever</span></th>
               </tr>
               </thead>
               <tbody>
@@ -202,8 +203,8 @@
             </table>
           </div>
           <div class="buttons-createProduct">
-            <button class="create-btn-createProduct">Tạo sản phẩm mới</button>
-            <button class="cancel-btn-createProduct">Hủy bỏ</button>
+            <button type="button" class="create-btn-createProduct" onclick="addProductWithDetails()">Tạo sản phẩm mới</button>
+            <button type="button" class="cancel-btn-createProduct" onclick="resetFormAndTable()" >Hủy bỏ</button>
           </div>
         </div>
       </form>
@@ -222,7 +223,8 @@
     </div>
   </article>
 
-  <script th:src="@{/js/product/create.js}" type="text/javascript"></script>
+  <script src="/js/product/validateCreate.js"></script>
+  <script src="/js/product/create.js"></script>
 </div>
 </body>
 

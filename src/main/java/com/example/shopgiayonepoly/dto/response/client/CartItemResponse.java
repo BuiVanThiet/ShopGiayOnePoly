@@ -1,8 +1,6 @@
 package com.example.shopgiayonepoly.dto.response.client;
 
-import com.example.shopgiayonepoly.entites.Image;
 import com.example.shopgiayonepoly.entites.ProductDetail;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,12 +15,11 @@ public class CartItemResponse {
     private String productName;
     private String color;
     private String size;
-    private String imageName; // Để lưu tên hoặc URL của hình ảnh
+    private String imageName;
     private BigDecimal price;
     private Integer quantity;
     private BigDecimal totalPrice;
 
-    // Constructor nhận vào ProductDetail và quantity
     public CartItemResponse(ProductDetail productDetail, Integer quantity) {
         this.productDetailId = productDetail.getId();
         this.productName = productDetail.getProduct().getNameProduct();

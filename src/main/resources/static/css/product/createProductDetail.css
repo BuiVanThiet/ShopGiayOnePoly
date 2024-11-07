@@ -1,0 +1,312 @@
+.body-createProductDetail {
+    font-family: 'Arial', sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+}
+
+.h1-createProductDetail {
+    display: flex;
+    justify-content: center;
+}
+
+.container-createProductDetail {
+    display: flex;
+}
+
+.content-createProductDetail {
+    flex-grow: 1;
+    padding: 20px;
+}
+
+.main-content-createProductDetail {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.main-content-createProductDetail h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.form-group-createProductDetail {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.form-group-createProductDetail .form-control-createProductDetail {
+    width: 31.5%;
+    position: relative;
+}
+
+.form-group-createProductDetail .description-createProductDetail {
+    width: 100%;
+}
+
+.form-group-createProductDetail .form-control-createProductDetail input,
+.form-group-createProductDetail .form-control-createProductDetail select {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #e0e0e0;
+    border-radius: 5px;
+    outline: none;
+}
+
+.form-group-createProductDetail .form-control-createProductDetail textarea {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #e0e0e0;
+    border-radius: 5px;
+    outline: none;
+    resize: none;
+}
+
+.upload-section-createProductDetail {
+    text-align: center;
+    padding: 10px;
+    border: 2px dashed #e0e0e0;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.upload-section-createProductDetail i {
+    font-size: 40px;
+    color: #6c63ff;
+}
+
+.upload-container-createProductDetail {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.upload-item-createProductDetail {
+    flex: 1 0 30%;
+    max-width: 150px;
+    text-align: center;
+    margin: 10px;
+    cursor: pointer;
+}
+
+.image-preview-createProductDetail img {
+    width: 190px;
+    height: 190px;
+    margin: 10px;
+    border-radius: 5px;
+    object-fit: contain;
+}
+
+.buttons-createProductDetail {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.buttons-createProductDetail button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+.buttons-createProductDetail .create-btn-createProductDetail {
+    background-color: #6c63ff;
+    color: #fff;
+}
+
+.buttons-createProductDetail .cancel-btn-createProductDetail {
+    background-color: #e0e0e0;
+    color: #000;
+}
+
+.cancel-btn-createProductDetail:hover {
+    background-color: red;
+}
+
+.material-symbols-outlined:hover {
+    color: red;
+}
+
+.combobox-container-createProductDetail {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.combobox-toggle-createProductDetail {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #e0e0e0;
+    border-radius: 5px;
+    outline: none;
+}
+
+.combobox-options-createProductDetail {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 99.8%;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    z-index: 1000;
+    border-radius: 5px;
+    max-height: 180px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.combobox-options-createProductDetail label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 8px;
+    cursor: pointer;
+}
+.dropdown-content-createProductDetail {
+    display: none; /* Mặc định ẩn */
+    position: absolute;
+    max-height: 165px; /* Giới hạn chiều cao */
+    overflow-y: auto; /* Thêm thanh cuộn dọc */
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    z-index: 1;
+    list-style-type: none;
+    padding-left: 0;
+    width: 100%;
+    margin-top: 0;
+    border-radius: 10px;
+}
+
+.dropdown-content-createProductDetail li {
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.dropdown-content-createProductDetail li:hover {
+    background-color: #f1f1f1;
+}
+
+/* Hiển thị dropdown */
+.show-createProductDetail {
+    display: block;
+}
+
+.btn-add-quickly {
+    display: flex;
+    justify-content: center;
+    background-color: yellow;
+    border-radius: 5px;
+    width: 50px;
+    align-items: center;
+}
+.quick-add-form {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.quick-add-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 400px;
+    text-align: center;
+}
+
+.quick-add-content h3 {
+    margin-top: 0;
+}
+
+.quick-add-content input {
+    width: 100%;
+    padding: 8px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.quick-add-content button {
+    padding: 10px 15px;
+    margin-top: 10px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.quick-add-content button:last-child {
+    background-color: #dc3545;
+    margin-left: 8px;
+}
+.custom-dropdown-createProductDetail {
+    border: 1px solid #ccc;
+    padding: 10px;
+    width: 200px;
+    cursor: pointer;
+    position: relative;
+}
+
+.dropdown-selected-createProductDetail {
+    padding: 5px;
+}
+
+.dropdown-options-createProductDetail {
+    display: none;
+    border: 1px solid #ccc;
+    position: absolute;
+    background: white;
+    z-index: 1000;
+    width: 100%;
+}
+
+.dropdown-options-createProductDetail label {
+    display: block;
+    padding: 5px;
+}
+
+.dropdown-options-createProductDetail input {
+    margin-right: 10px;
+}
+
+.custom-dropdown-createProductDetail.active .dropdown-options-createProductDetail {
+    display: block;
+}
+.table-createProductDetail {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-createProductDetail th, .table-createProductDetail td {
+    padding: 10px;
+    text-align: center;
+    vertical-align: middle;
+    word-wrap: break-word;
+    word-break: break-word;
+    white-space: normal;
+
+}
+.table-createProductDetail th {
+    background-color: #c0c0c0;
+}
+.table-createProductDetail tr {
+    border-bottom: 1px solid #ddd;
+}
+.table-createProductDetail td {
+    background-color: white;
+}
+

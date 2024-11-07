@@ -77,7 +77,8 @@ public class BillDetailImplement implements com.example.shopgiayonepoly.service.
     }
     @Override
     public Integer getBillDetailExist(Integer idBill, Integer idPDT) {
-        return this.billDetailRepository.getBillDetailExist(idBill,idPDT);
+        List<Integer> result = this.billDetailRepository.getBillDetailExist(idBill, idPDT);
+        return result.isEmpty() ? -1 : result.get(0);
     }
     @Override
     public List<BillDetail> getBillDetailByIdBill(Integer idBill) {

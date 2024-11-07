@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,9 +44,9 @@ public interface BillService {
 //    Page<BillResponseManage> getAllBillByStatusDiss0(String nameCheck, Integer status, Pageable pageable);
 //
 //    List<BillResponseManage> getAllBillByStatusDiss0(String nameCheck, Integer status);
-    Page<BillResponseManage> getAllBillByStatusDiss0(String nameCheck, SearchBillByStatusRequest searchBillByStatusRequest, Pageable pageable);
+    Page<BillResponseManage> getAllBillByStatusDiss0(String nameCheck, SearchBillByStatusRequest searchBillByStatusRequest, Date start, Date end, Pageable pageable);
 
-    List<BillResponseManage> getAllBillByStatusDiss0(String nameCheck, SearchBillByStatusRequest searchBillByStatusRequest);
+    List<BillResponseManage> getAllBillByStatusDiss0(String nameCheck, SearchBillByStatusRequest searchBillByStatusRequest,Date  start,Date  end);
 
     InformationBillByIdBillResponse getInformationBillByIdBill(Integer idBill);
 

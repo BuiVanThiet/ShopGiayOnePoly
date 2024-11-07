@@ -1,6 +1,7 @@
 package com.example.shopgiayonepoly.repositores;
 
-import com.example.shopgiayonepoly.dto.response.ProductRespose;
+import com.example.shopgiayonepoly.dto.response.ProductDetailResponse;
+import com.example.shopgiayonepoly.dto.response.ProductResponse;
 import com.example.shopgiayonepoly.entites.CategoryProduct;
 import com.example.shopgiayonepoly.entites.Image;
 import com.example.shopgiayonepoly.entites.Product;
@@ -15,7 +16,7 @@ import java.util.Optional;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Integer> {
-    @Query("select product from Product product where product.status <> 0")
+    @Query("select product from Product product where product.status <> 0 order by product.id desc ")
     List<Product> getProductNotStatus0();
 
     @Query("select product from Product product where product.status = 0")
@@ -33,13 +34,13 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     @Query("SELECT categoryProduct FROM CategoryProduct categoryProduct WHERE categoryProduct.product.id = :productId")
     List<CategoryProduct> findAllCategoryByProductId(@Param("productId") Integer productId);
 
-    @Query("SELECT new com.example.shopgiayonepoly.dto.response.ProductRespose(p.id,p.codeProduct, p.nameProduct,p.material," +
+    @Query("SELECT new com.example.shopgiayonepoly.dto.response.ProductResponse(p.id,p.codeProduct, p.nameProduct,p.material," +
             "p.manufacturer,p.origin,p.sole, p.describe, p.createDate,p.updateDate,p.status, MIN(i.nameImage)) " +
             "FROM Product p " +
             "LEFT JOIN p.images i LEFT JOIN p.material LEFT JOIN p.origin LEFT JOIN p.manufacturer LEFT JOIN p.sole  WHERE p.status <> 0" +
             "GROUP BY p.id,p.codeProduct, p.nameProduct,p.material,"+
                      "p.manufacturer,p.origin,p.sole, p.describe, p.createDate,p.updateDate,p.status")
-    List<ProductRespose> findAllProductsWithOneImage();
+    List<ProductResponse> findAllProductsWithOneImage();
 
     @Query("SELECT p FROM Product p " +
             "LEFT JOIN CategoryProduct cp ON p.id = cp.idProduct " +
@@ -61,14 +62,25 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
             "LOWER(p.origin.nameOrigin) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
             "LOWER(p.sole.nameSole) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
             "LOWER(p.describe) LIKE LOWER(CONCAT('%', :searchTerm, '%')))) " +
-            "AND p.status <> 0")
+            "AND p.status <> 0 " +
+            "order by p.id desc ")
     List<Product> findProducts(@Param("idCategory") Integer idCategory, @Param("searchTerm") String searchTerm);
 
     @Query("SELECT DISTINCT p.nameProduct FROM Product p")
     List<String> findAllNameProduct();
 
-    @Query("SELECT pd FROM ProductDetail pd WHERE pd.product.id = :idProduct ")
+    @Query("SELECT pd FROM ProductDetail pd WHERE pd.product.id = :idProduct " +
+            "GROUP BY pd.id, pd.product.id, pd.size.id, pd.color.id, pd.status, pd.describe, pd.createDate, pd.updateDate, " +
+            "pd.price, pd.import_price, pd.weight, pd.saleProduct.id, pd.quantity")
     List<ProductDetail> findAllProductDetailByIDProduct(@Param("idProduct") Integer idProduct);
+
+//    @Query("SELECT new com.example.shopgiayonepoly.dto.response.ProductDetailResponse( pd.product, pd.color.nameColor, pd.size.nameSize, pd.status, pd.describe, " +
+//            "pd.price, pd.import_price, pd.weight, pd.saleProduct.id, SUM(pd.quantity) ) " +
+//            "FROM ProductDetail pd " +
+//            "WHERE pd.product.id = :idProduct " +
+//            "GROUP BY pd.product, pd.color.nameColor, pd.size.nameSize, pd.status, pd.describe, " +
+//            "pd.price, pd.import_price, pd.weight, pd.saleProduct.id")
+//    List<ProductDetailResponse> findAllProductDetailByIDProduct(@Param("idProduct") Integer idProduct);
 
     @Query("SELECT pd FROM ProductDetail pd " +
             "WHERE (LOWER(pd.color.nameColor) LIKE LOWER(CONCAT('%', :searchTerm, '%')) " +
@@ -81,5 +93,6 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
             "AND pd.product.id = :idProduct")
     List<ProductDetail> searchProductDetailsByKeyword(@Param("searchTerm") String searchTerm,@Param("idProduct") Integer idProduct);
 
-
+    @Query("SELECT MAX(p.id) FROM Product p")
+    Integer findMaxIdProduct();
 }

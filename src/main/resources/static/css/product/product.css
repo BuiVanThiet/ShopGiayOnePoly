@@ -65,7 +65,6 @@ body-product {
     word-wrap: break-word;
     word-break: break-word;
     white-space: normal;
-
 }
 .table-product th {
     background-color: #c0c0c0;
@@ -241,7 +240,7 @@ body-product {
 
 .slide img {
     width: 100%; /* Đảm bảo hình ảnh chiếm toàn bộ chiều rộng của slide */
-    height: auto; /* Đảm bảo chiều cao tự động để giữ nguyên tỉ lệ */
+    height: 100%; /* Đảm bảo chiều cao tự động để giữ nguyên tỉ lệ */
     max-height: 100%; /* Đảm bảo chiều cao tối đa không vượt quá khung hình */
     object-fit: contain; /* Giữ nguyên tỉ lệ hình ảnh */
 }

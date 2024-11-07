@@ -102,4 +102,10 @@ public class VoucherServiceImplement implements VoucherService {
         return voucherRepository.getDetailVoucherByID(id);
     }
 
+    @Override
+    public List<Voucher> findApplicableVouchers(BigDecimal totalPrice) {
+        LocalDate today = LocalDate.now();
+        return voucherRepository.findApplicableVouchers(totalPrice, today);
+    }
+
 }

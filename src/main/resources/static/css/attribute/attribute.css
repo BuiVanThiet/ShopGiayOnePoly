@@ -89,6 +89,7 @@
     border-radius: 15px;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
     overflow: hidden;
+    width: 100%;
 }
 
 .attribute-table th {
@@ -102,6 +103,28 @@
     text-align: center;
     vertical-align: middle;
     padding: 15px;
+    word-wrap: break-word;
+    word-break: break-word;
+    white-space: normal;
+}
+
+.attribute-table td:nth-child(1) {
+    width: 150px; /* Cột 1 chiếm 30% */
+}
+.attribute-table td:nth-child(2) {
+    width: 300px; /* Cột 1 chiếm 30% */
+}
+.attribute-table td:nth-child(3) {
+    width: 250px; /* Cột 1 chiếm 30% */
+}
+.attribute-table td:nth-child(4) {
+    width: 250px; /* Cột 1 chiếm 30% */
+}
+.attribute-table td:nth-child(5) {
+    width: 100px; /* Cột 1 chiếm 30% */
+}
+.attribute-table td:nth-child(6) {
+    width: 150px; /* Cột 1 chiếm 30% */
 }
 
 .table-striped tbody tr:nth-of-type(odd) {

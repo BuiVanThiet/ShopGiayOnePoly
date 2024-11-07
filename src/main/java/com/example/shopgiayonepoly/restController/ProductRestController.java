@@ -3,6 +3,7 @@ package com.example.shopgiayonepoly.restController;
 import com.example.shopgiayonepoly.baseMethod.BaseProduct;
 import com.example.shopgiayonepoly.dto.request.AttributeRequet;
 import com.example.shopgiayonepoly.entites.*;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -197,4 +198,6 @@ public class ProductRestController extends BaseProduct {
                 return ResponseEntity.badRequest().body("Loại thuộc tính không hợp lệ!");
         }
     }
+
+
 }

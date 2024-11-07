@@ -69,17 +69,15 @@
                         <input type="hidden" id="product-id" th:value="${productID}">
                         <div class="d-flex align-items-center">
                             <p class="fs-2 fw-light mb-0" th:text="${productDetail[0].productName}">Tên sản phẩm</p>
-                            <!--                            <a class="text-success text-decoration-none fs-10 p-1"-->
-                            <!--                               style="margin-left: 20px; font-size: 15px;">-->
-                            <!--                                <span th:text="${productDetail[0].quantity > 0 ? 'Còn hàng' : 'Hết hàng'}">Tình trạng</span>-->
-                            <!--                            </a>-->
                         </div>
                         <!--                        Price-->
+                        <div class="mt-2 fs-2" style="color: red">
+                            <span class="price-item-detail text-red-money20" id="price-apply-discount"><sup>₫</sup></span>
+                        </div>
                         <div class="mt-2 fs-2" style="color: red">
                             <span class="price-item-detail text-red-money20" id="price-display"><sup>₫</sup></span>
                         </div>
                         <!--                        Quantity-->
-
                         <div class="d-flex mt-2">
                             <p class="fs-10 fw-light" style="margin-right: 5px">Màu sắc /</p>
                             <p class="fs-10" style="margin-left: 5px" id="selected-color">Chọn màu</p>
@@ -90,7 +88,7 @@
                             <div th:each="color : ${colors}" class="col-auto mb-2" style="margin-right: 10px">
                                 <button class="btn-color-circle color-btn"
                                         onclick="changeColor(this)"
-                                        th:data-color-id="${color.idColor}"> <!-- Thêm thuộc tính data-color-id -->
+                                        th:data-color-id="${color.idColor}">
                                     <span th:text="${color.nameColor}">Màu</span>
                                 </button>
                                 <!-- Biến tạm để lưu màu sắc -->

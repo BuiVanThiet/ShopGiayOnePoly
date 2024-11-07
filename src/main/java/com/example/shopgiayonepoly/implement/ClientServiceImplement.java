@@ -9,6 +9,7 @@ import com.example.shopgiayonepoly.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -52,6 +53,11 @@ public class ClientServiceImplement implements ClientService {
     @Override
     public ProductDetailClientRespone findByProductDetailColorAndSizeAndProductId(Integer colorId, Integer sizeId, Integer productId) {
         return clientRepository.findByProductDetailColorAndSizeAndProductId(colorId, sizeId, productId);
+    }
+
+    @Override
+    public BigDecimal findDiscountedPriceByProductDetailId(Integer productDetailId) {
+        return clientRepository.findDiscountedPriceByProductDetailId(productDetailId);
     }
 
 

@@ -10,17 +10,23 @@ import lombok.ToString;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @ToString
-public class ExchangeBillDetailResponse extends BaseDTO implements Serializable {
+public class ExchangeBillDetailResponse implements Serializable {
     private static final long serialVersionUID = 1L;
+    private Integer id;
     private ProductDetail productDetail;
     private ReturnBillExchangeBill exchangeBill;
     private Integer quantityExchange;
     private BigDecimal priceAtTheTimeOfExchange;
     private BigDecimal totalExchange;
     private BigDecimal priceRootAtTime;
+    private LocalDateTime createDate;
+    private LocalDateTime updateDate;
+    private Integer status;
 }

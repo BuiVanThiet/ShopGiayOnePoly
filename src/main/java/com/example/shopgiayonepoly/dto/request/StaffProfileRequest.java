@@ -2,6 +2,7 @@ package com.example.shopgiayonepoly.dto.request;
 
 import com.example.shopgiayonepoly.dto.base.BaseDTO;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
@@ -23,24 +24,26 @@ public class StaffProfileRequest extends BaseDTO {
 
     private String fullName;
 
-    private String password;
+    private String currentPassword;
 
-    @NotEmpty(message = "Email không được để trống")
-    @Email(message = "Đây không phải là email")
+    private String newPassword;
+
+    private String confirmPassword;
+
     private String email;
 
-    @Pattern(regexp = "^(0[1-9])+([0-9]{8})$", message = "Số điện thoại không hợp lệ")
-    @NotEmpty(message = "Số điện thoại không được để trống")
     private String numberPhone;
 
     private Integer gender;
 
     private LocalDate birthDay;
-
+    @NotBlank(message = "Vui lòng chọn thành phố!")
     private String province;
 
+    @NotBlank(message = "Vui lòng chọn huyện!")
     private String district;
 
+    @NotBlank(message = "Vui lòng chọn xã!")
     private String ward;
 
     private String addRessDetail;

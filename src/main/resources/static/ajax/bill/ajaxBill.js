@@ -102,13 +102,29 @@ function loadBillDetail(page)  {
                     }
                     // Kiểm tra nếu số lượng mua lớn hơn số lượng tồn kho
                     var rowClass = '';
+                    var textErrorQuantity = '';
                     if (billDetail.quantity > billDetail.productDetail.quantity && billDetail.bill.status == 1) {
                         rowClass = 'table-danger';  // Thêm class CSS để làm nổi bật dòng
                         checkQuantityOrder = false;
+                        textErrorQuantity = 'Số lượng trong kho không đủ!';
                     }else {
+                        rowClass = '';
                         checkQuantityOrder = true;
+                        textErrorQuantity = '';
                     }
 
+                    if(getPriceAfterDiscount(billDetail.productDetail) != billDetail.price) {
+                        btnBuyProduct =`
+                                    <div class="number" id="pageNumber">${billDetail.quantity}</div>
+                        `
+                    }
+
+                    if(billDetail.bill.paymentStatus == 1) {
+                        btnBuyProduct =`
+                                    <div class="number" id="pageNumber">${billDetail.quantity}</div>
+                        `
+                        btnDeleteProduct = '';
+                    }
 
 
                     tbody.append(`
@@ -129,6 +145,9 @@ function loadBillDetail(page)  {
                                     Tên màu: ${billDetail.productDetail.color.nameColor}
                                     <br>
                                     Tên size: ${billDetail.productDetail.size.nameSize}
+                                    <br>
+                                    <br>
+                                    <span class="text-danger fs-4">${textErrorQuantity}</span>
                                 </div>
                             </td>
 
@@ -147,14 +166,17 @@ function loadBillDetail(page)  {
                                
                         </tr>`);
                 });
-                if(cashClient != null) {
-                    cashClient.value='';
-                    formErorrCash.style.display = 'block';
-                    erorrCash.innerText = 'Mời nhập đủ giá!';
-                }
+                console.log('swith dang: ' + checkSwitch)
+                if(checkSwitch == false) {
+                    if(cashClient != null) {
+                        cashClient.value='';
+                        formErorrCash.style.display = 'block';
+                        erorrCash.innerText = 'Mời nhập đủ giá!';
+                    }
 
-                if(payMethodChecked === 1 || payMethodChecked === 3) {
-                    btnCreateBill.disabled = true;
+                    if(payMethodChecked === 1 || payMethodChecked === 3) {
+                        btnCreateBill.disabled = true;
+                    }
                 }
 
                 // Khởi tạo lại tất cả các carousel sau khi cập nhật DOM
@@ -215,7 +237,7 @@ function paymentInformation() {
                 totalCash.value = response.finalAmount;
             }
             if (response.voucherId) {
-                $('#voucherName').text(response.nameVoucher);
+                $('#voucherName').text('Phiếu giảm giá: '+response.nameVoucher);
                 $('#textVoucher').val(response.nameVoucher);
                 $('#discountContainer').show();
             } else {
@@ -1111,9 +1133,10 @@ function loadVoucherByBill(page) {
                             <div class="d-flex justify-content-between align-items-center">
                                 <!-- Voucher Info -->
                                 <div>
-                                    <p class="fs-6 fw-bold mb-1 text-danger">Mã Voucher: ${voucher.codeVoucher}</p>
-                                    <p class="fs-5 text-muted mb-0">Khuyến mãi: ${voucher.nameVoucher}</p>
-                                    <p class="fs-5 text-muted mb-0">Số lượng: ${voucher.quantity}</p>
+                                    <p class="fs-5 fw-bold mb-1 text-danger">Mã Voucher: ${voucher.codeVoucher}</p>
+                                    <p class="fs-6 text-muted mb-0">Khuyến mãi: ${voucher.nameVoucher}</p>
+                                    <p class="fs-6 text-muted mb-0">Giá trị áp dụng: ${Math.trunc(voucher.pricesApply).toLocaleString('en-US')} VNĐ</p>
+                                    <p class="fs-6 text-muted mb-0">Số lượng: ${voucher.quantity}</p>
                                 </div>
                                 
                                 <!-- Button to Select Voucher -->
@@ -1329,7 +1352,9 @@ function deleteBillDetail(id) {
             loadVoucherByBill(1);
             maxPageBillDetailByIdBill();
             maxPageVoucher();
-
+            if(loadInformationBillByIdBill()) {
+                loadInformationBillByIdBill();
+            }
             checkUpdateCustomer = true;
 
             totalShip(provinceTransport,districtTransport,wardTransport);

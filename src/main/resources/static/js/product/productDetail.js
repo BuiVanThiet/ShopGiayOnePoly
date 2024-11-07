@@ -87,7 +87,7 @@ function toggleSaveButton() {
 // Hủy bỏ chọn tất cả và đặt lại trạng thái các ô
 
 
-const itemsPerPage = 5; // Display 5 products per page
+const itemsPerPage = 10; // Display 5 products per page
 let currentPage = 1;
 let productDetails = [];
 // Lấy thẻ p
@@ -125,7 +125,7 @@ function fetchProductDetails(searchTerm, idProduct) {
 
 // Function: Display the current page
 function displayPage(page) {
-    const itemsPerPage = 5;
+    const itemsPerPage = 10;
     const totalPages = Math.ceil(productDetails.length / itemsPerPage);
     const start = (page - 1) * itemsPerPage;
     const end = start + itemsPerPage;
@@ -166,7 +166,7 @@ function displayPage(page) {
 
             // Set up event for checkbox
             const checkbox = row.querySelector('.select-row-productDetail');
-            checkbox.addEventListener('change', function () {
+            checkbox.addEventListener('change', function() {
                 toggleEditableRow(checkbox);
                 const allChecked = document.querySelectorAll('.select-row-productDetail:checked').length === document.querySelectorAll('.select-row-productDetail').length;
                 document.getElementById('select-all-productDetail').checked = allChecked;
@@ -176,7 +176,14 @@ function displayPage(page) {
         // Handle case when no product details are available
         tableBody.innerHTML = '<tr><td colspan="10">No products found.</td></tr>';
     }
-
+    document.querySelectorAll('.select-row-productDetail').forEach((checkbox) => {
+        checkbox.addEventListener('change', function() {
+            toggleEditableRow(checkbox);
+            const allChecked = document.querySelectorAll('.select-row-productDetail:checked').length === document.querySelectorAll('.select-row-productDetail').length;
+            document.getElementById('select-all-productDetail').checked = allChecked;
+            toggleSaveButton();
+        });
+    });
     updatePaginationControls(totalPages, page);
 }
 
@@ -184,7 +191,7 @@ function displayPage(page) {
 function updatePaginationControls(totalPages, page) {
     const pagination = document.getElementById('pagination-productDetail');
     pagination.innerHTML = '';
-    const itemsPerPage =5;
+    const itemsPerPage =10;
     // Các nút phân trang tiếp tục như trong code gốc
     // Tạo nút "Trang trước"
     const prevButton = document.createElement('button');
@@ -250,7 +257,7 @@ function updatePaginationControls(totalPages, page) {
 
 // Function: Change page
 function changePage(newPage) {
-    const itemsPerPage = 5;
+    const itemsPerPage = 10;
     const totalPages = Math.ceil(productDetails.length / itemsPerPage);
 
     if (newPage >= 1 && newPage <= totalPages) {
