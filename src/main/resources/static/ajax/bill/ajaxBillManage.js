@@ -138,7 +138,8 @@ function loadInformationBillByIdBill() {
                 $('#btn-modal-customer').show();
                 $('#btn-buy-product').show();
                 $('#startCamera').show();
-                if(checkQuantityOrder == false) {
+                var checkVoucher = checkVoucherPriceApply(response);
+                if(checkQuantityOrder == false || checkVoucher == false) {
                     $('#confirm-button').hide();
                 }else {
                     $('#confirm-button').show() ;
@@ -309,7 +310,7 @@ function loadInformationBillByIdBill() {
                 $('#btn-modal-customer').hide();
             }
 
-            if(response.status == 6) {
+            if(response.status == 6 || checkQuantityOrder == false) {
                 $('#btn-payment-confirm').hide();
             }
 
@@ -932,6 +933,25 @@ function maxPageExchangeBillFromBillManage() {
         }
 
     })
+}
+
+//validate voucher
+function checkVoucherPriceApply(response) {
+    if(response.voucher) {
+        if(Math.trunc(response.totalPriceProduct) < Math.trunc(response.voucher.pricesApply)) {
+            $('#error-voucher').text('Mã giảm giá không khả dụng!');
+            $('#error-voucher').show();
+            return false;
+        }else {
+            $('#error-voucher').text('');
+            $('#error-voucher').hide();
+            return true;
+        }
+    }else {
+        $('#error-voucher').text('');
+        $('#error-voucher').hide();
+        return true;
+    }
 }
 
 $(document).ready(function () {

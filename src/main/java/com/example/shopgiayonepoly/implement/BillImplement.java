@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -99,13 +100,13 @@ public class BillImplement implements BillService {
 //        return this.billRepository.getAllBillByStatusDiss0(nameCheck,status);
 //    }
     @Override
-    public Page<BillResponseManage> getAllBillByStatusDiss0(String nameCheck, SearchBillByStatusRequest searchBillByStatusRequest, Pageable pageable) {
-        return this.billRepository.getAllBillByStatusDiss0(nameCheck,searchBillByStatusRequest.getStatusSearch(),pageable);
+    public Page<BillResponseManage> getAllBillByStatusDiss0(String nameCheck, SearchBillByStatusRequest searchBillByStatusRequest, Date start, Date end, Pageable pageable) {
+        return this.billRepository.getAllBillByStatusDiss0(nameCheck,searchBillByStatusRequest.getStatusSearch(),start,end,pageable);
     }
 
     @Override
-    public List<BillResponseManage> getAllBillByStatusDiss0(String nameCheck, SearchBillByStatusRequest searchBillByStatusRequest) {
-        return this.billRepository.getAllBillByStatusDiss0(nameCheck,searchBillByStatusRequest.getStatusSearch());
+    public List<BillResponseManage> getAllBillByStatusDiss0(String nameCheck, SearchBillByStatusRequest searchBillByStatusRequest,Date start, Date end) {
+        return this.billRepository.getAllBillByStatusDiss0(nameCheck,searchBillByStatusRequest.getStatusSearch(),start,end);
     }
     @Override
     public InformationBillByIdBillResponse getInformationBillByIdBill(Integer idBill) {
