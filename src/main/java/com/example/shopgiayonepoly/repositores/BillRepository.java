@@ -1,9 +1,6 @@
 package com.example.shopgiayonepoly.repositores;
 
-import com.example.shopgiayonepoly.dto.response.bill.BillResponseManage;
-import com.example.shopgiayonepoly.dto.response.bill.BillTotalInfornationResponse;
-import com.example.shopgiayonepoly.dto.response.bill.ClientBillInformationResponse;
-import com.example.shopgiayonepoly.dto.response.bill.InformationBillByIdBillResponse;
+import com.example.shopgiayonepoly.dto.response.bill.*;
 import com.example.shopgiayonepoly.entites.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -70,17 +67,48 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
             "WHERE (SELECT b.totalAmount FROM Bill b WHERE b.id = :idBillCheck) >= v.pricesApply " +
             "AND v.status <> 0 " +
             "AND (v.id <> (SELECT b.voucher.id FROM Bill b WHERE b.id = :idBillCheck) OR (SELECT b.voucher.id FROM Bill b WHERE b.id = :idBillCheck) IS NULL) " +
+            "and (CURRENT_TIMESTAMP between v.startDate and v.endDate) " +
             "AND CONCAT(v.nameVoucher, v.codeVoucher) LIKE %:keyword% " +
-            "ORDER BY v.priceReduced DESC")
+            "")
     Page<Voucher> getVoucherByBill(@Param("idBillCheck") Integer idBillCheck, @Param("keyword") String keyword, Pageable pageable);
 
     @Query("SELECT v FROM Voucher v " +
             "WHERE (SELECT b.totalAmount FROM Bill b WHERE b.id = :idBillCheck) >= v.pricesApply " +
             "AND v.status <> 0 " +
             "AND (v.id <> (SELECT b.voucher.id FROM Bill b WHERE b.id = :idBillCheck) OR (SELECT b.voucher.id FROM Bill b WHERE b.id = :idBillCheck) IS NULL) " +
+            "and (CURRENT_TIMESTAMP between v.startDate and v.endDate) " +
             "AND CONCAT(v.nameVoucher, v.codeVoucher) LIKE %:keyword% " +
-            "ORDER BY v.priceReduced DESC")
+            "")
     List<Voucher> getVoucherByBill(@Param("idBillCheck") Integer idBillCheck, @Param("keyword") String keyword);
+    @Query(value = """
+        SELECT 
+            v.id,
+            v.code_voucher,
+        	v.name_voucher,
+        	v.price_reduced,
+        	v.discount_type,
+        	v.prices_apply,
+        	v.quantity,
+        	v.status,
+            CASE
+                WHEN discount_type = 1 THEN
+                    CASE
+                        WHEN (b.total_amount * (price_reduced / 100)) > prices_max THEN prices_max
+                        ELSE b.total_amount * (price_reduced / 100)
+                    END
+                WHEN discount_type = 2 THEN price_reduced
+                ELSE 0
+            END AS discount_amount 
+        FROM voucher v 
+        left JOIN bill b ON b.id = :idBillCheck 
+        WHERE v.status <> 0
+        AND GETDATE() BETWEEN v.start_date AND v.end_date
+        and (v.id <> b.id_voucher or b.id_voucher is null )
+        AND v.prices_apply <= b.total_amount
+        and concat(v.name_voucher,v.code_voucher) like %:keyword% 
+        ORDER BY discount_amount DESC;
+""",nativeQuery = true)
+    List<Object[]> getVoucherByBillV2(@Param("idBillCheck") Integer idBillCheck, @Param("keyword") String keyword);
 
     @Query("select new com.example.shopgiayonepoly.dto.response.bill.ClientBillInformationResponse(cuss.fullName,cuss.numberPhone,cuss.email,cuss.addRess,cuss.addRess,cuss.addRess,cuss.addRess) from Customer cuss where cuss.id = :idClient")
     List<ClientBillInformationResponse> getClientBillInformationResponse(@Param("idClient") Integer idBill);
@@ -320,31 +348,108 @@ select case
 """, nativeQuery = true)
     List<Object[]> getInfoPaymentByIdBill(@Param("idCheck") Integer idCheck);
 
-    @Query(value = """
+//    @Query(value = """
+//    SELECT
+//    b.code_bill,
+//    b.create_date,
+//    -- đã sửa: Kiểm tra nếu tìm thấy dấu phẩy thì mới sử dụng SUBSTRING, nếu không trả về 'Không có'
+//    CASE
+//        WHEN CHARINDEX(',', b.address) > 0 THEN SUBSTRING(b.address, 1, CHARINDEX(',', b.address) - 1)
+//        ELSE 'Không có'
+//    END AS full_name,
+//
+//    -- đã sửa: Tương tự kiểm tra vị trí dấu phẩy tiếp theo, nếu không có trả về 'Không có'
+//    CASE
+//        WHEN CHARINDEX(',', b.address) > 0 AND CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) > 0 THEN
+//            SUBSTRING(b.address, CHARINDEX(',', b.address) + 1, CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) - CHARINDEX(',', b.address) - 1)
+//        ELSE 'Không có'
+//    END AS number_phone,
+//
+//    COALESCE(c.email, 'Không có') AS email,
+//
+//    -- đã sửa: Kiểm tra và sử dụng SUBSTRING khi có đủ dấu phẩy, nếu không trả về 'Không có'
+//    CASE
+//        WHEN CHARINDEX(',', c.addRess, CHARINDEX(',', c.addRess, CHARINDEX(',', c.addRess) + 1) + 1) > 0 THEN
+//            SUBSTRING(c.addRess, CHARINDEX(',', c.addRess, CHARINDEX(',', c.addRess, CHARINDEX(',', c.addRess) + 1) + 1) + 2, LEN(c.addRess))
+//        ELSE 'Không có'
+//    END AS addRess,
+//
+//    FORMAT(b.total_amount, 'N2') + ' VNĐ' AS total_amount,
+//    FORMAT(b.shipping_price, 'N2') + ' VNĐ' AS shipping_price,
+//
+//    FORMAT(
+//        CASE
+//            WHEN v.discount_type = 1 THEN
+//                CASE
+//                    WHEN b.total_amount * (v.price_reduced / 100) > v.prices_max THEN v.prices_max
+//                    ELSE b.total_amount * (v.price_reduced / 100)
+//                END
+//            WHEN v.discount_type = 2 THEN v.price_reduced
+//            ELSE 0
+//        END, 'N2') + ' VNĐ' AS discount_value,
+//
+//    FORMAT(
+//        CASE
+//            WHEN v.discount_type = 1 THEN
+//                CASE
+//                    WHEN b.total_amount * (v.price_reduced / 100) > v.prices_max THEN b.total_amount - v.prices_max + b.shipping_price
+//                    ELSE b.total_amount - (b.total_amount * (v.price_reduced / 100)) + b.shipping_price
+//                END
+//            WHEN v.discount_type = 2 THEN b.total_amount - v.price_reduced + b.shipping_price
+//            ELSE b.total_amount + b.shipping_price
+//        END, 'N2') + ' VNĐ' AS total_after_discount
+//    FROM bill b
+//    LEFT JOIN customer c ON c.id = b.id_customer
+//    LEFT JOIN voucher v ON v.id = b.id_voucher
+//    WHERE b.id = :idBill
+//""", nativeQuery = true)
+@Query(value = """
     SELECT
- b.code_bill,
+    b.code_bill,
     b.create_date,
     -- đã sửa: Kiểm tra nếu tìm thấy dấu phẩy thì mới sử dụng SUBSTRING, nếu không trả về 'Không có'
     CASE
-        WHEN CHARINDEX(',', b.address) > 0 THEN SUBSTRING(b.address, 1, CHARINDEX(',', b.address) - 1)
-        ELSE 'Không có'
-    END AS full_name,
-   
+            WHEN b.address != N'Không có' THEN
+                LEFT(b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) + 1) - 1)
+            ELSE
+                CASE
+                    WHEN b.id_customer IS NOT NULL THEN CAST(c.full_name AS NVARCHAR)
+                    ELSE N'khách lẻ'
+                END
+        END AS name_customer,
     -- đã sửa: Tương tự kiểm tra vị trí dấu phẩy tiếp theo, nếu không có trả về 'Không có'
+   CASE
+       WHEN b.address != N'Không có' THEN
+           SUBSTRING(b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) + 1,
+                     CHARINDEX(',', b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) + 1) - CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) - 1)
+       ELSE
+           CASE
+               WHEN b.id_customer IS NOT NULL THEN CAST(c.number_phone AS NVARCHAR)
+               ELSE N'Không có'
+           END
+    END AS number_phone_customer,
+   
     CASE
-        WHEN CHARINDEX(',', b.address) > 0 AND CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) > 0 THEN
-            SUBSTRING(b.address, CHARINDEX(',', b.address) + 1, CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) - CHARINDEX(',', b.address) - 1)
-        ELSE 'Không có'
-    END AS number_phone,
-   
-    COALESCE(c.email, 'Không có') AS email,
-   
+      WHEN b.address != N'Không có' THEN
+          SUBSTRING(b.address, CHARINDEX(',', b.address) + 1,
+                    CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) - CHARINDEX(',', b.address) - 1)
+      ELSE
+          CASE
+              WHEN b.id_customer IS NOT NULL THEN CAST(c.email AS NVARCHAR)
+              ELSE N'Không có'
+          END
+    END AS email_customer,
+
     -- đã sửa: Kiểm tra và sử dụng SUBSTRING khi có đủ dấu phẩy, nếu không trả về 'Không có'
     CASE
-        WHEN CHARINDEX(',', c.addRess, CHARINDEX(',', c.addRess, CHARINDEX(',', c.addRess) + 1) + 1) > 0 THEN
-            SUBSTRING(c.addRess, CHARINDEX(',', c.addRess, CHARINDEX(',', c.addRess, CHARINDEX(',', c.addRess) + 1) + 1) + 2, LEN(c.addRess))
-        ELSE 'Không có'
-    END AS addRess,
+            WHEN b.address != N'Không có' THEN
+                SUBSTRING(b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) + 1) + 1, LEN(b.address))
+            ELSE
+                CASE
+                    WHEN b.id_customer IS NOT NULL THEN SUBSTRING(c.address, CHARINDEX(',', c.address, CHARINDEX(',', c.address, CHARINDEX(',', c.address) + 1) + 1) + 1, LEN(c.address))
+                    ELSE N'Không có'
+                END
+        END AS addRes_customer,
    
     FORMAT(b.total_amount, 'N2') + ' VNĐ' AS total_amount,
     FORMAT(b.shipping_price, 'N2') + ' VNĐ' AS shipping_price,
@@ -380,7 +485,9 @@ select case
 
     @Query(value = """
         select
-        	 p.name_product,
+        	p.name_product +
+            N'-- Màu sắc: ' + cl.name_color +
+            N'-- Kích cỡ: ' + s.name_size AS product_info,
                 bd.quantity,
                             FORMAT(bd.price_root, 'N2') + ' VNĐ' AS price_root,
                             FORMAT(bd.price, 'N2') + ' VNĐ' AS price,
@@ -390,6 +497,8 @@ select case
         on pd.id = bd.id_product_detail
         join product p
         on pd.id_product = p.id
+        join color cl on cl.id = pd.id_color
+        join size s on s.id = pd.id_size
         where bd.id_bill = :idCheck
 """, nativeQuery = true)
     List<Object[]> getBillDetailByIdBillPDF(@Param("idCheck") Integer id);
@@ -397,11 +506,15 @@ select case
        SELECT
            b.id,
            b.code_bill,
-           CASE
-               WHEN b.id_customer IS NULL THEN N'Không có'
-               WHEN CHARINDEX(',', b.address) = 0 THEN b.address
-               ELSE LEFT(b.address, CHARINDEX(',', b.address) - 1)
-           END AS customer_status,
+            CASE
+             WHEN b.address != N'Không có' THEN
+                 LEFT(b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) + 1) - 1)
+             ELSE
+                 CASE
+                     WHEN b.id_customer IS NOT NULL THEN CAST(c.full_name AS NVARCHAR)
+                     ELSE N'khách lẻ'
+                 END
+         END AS name_customer,
            b.price_discount AS discount_amount,
            CASE
                WHEN b.total_amount > 0 THEN (b.price_discount / b.total_amount) * 100
@@ -411,17 +524,122 @@ select case
        FROM bill b
        LEFT JOIN voucher v ON v.id = b.id_voucher
        LEFT JOIN bill_detail bd ON bd.id_bill = b.id
+       LEFT JOIN customer c ON c.id = b.id_customer
        WHERE b.id = :idBill
        GROUP BY
            b.id,
            b.code_bill,
            b.id_customer,
+           c.full_name,
            b.address,
            b.total_amount,
            b.price_discount;
 """,nativeQuery = true)
     List<Object[]> getInfomationBillReturn(@Param("idBill") Integer id);
+    @Query(value = """
+    select
+    	e.id,
+    	b.id,
+    	e.code_return_bill_exchange_bill,
+    	b.code_bill,
+    	CASE
+            WHEN b.address != N'Không có' THEN
+                LEFT(b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) + 1) - 1)
+            ELSE
+                CASE
+                    WHEN b.id_customer IS NOT NULL THEN CAST(c.full_name AS NVARCHAR)
+                    ELSE N'khách lẻ'
+                END
+        END AS name_customer,
 
+        CASE
+            WHEN b.address != N'Không có' THEN
+                SUBSTRING(b.address, CHARINDEX(',', b.address) + 1,
+                          CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) - CHARINDEX(',', b.address) - 1)
+            ELSE
+                CASE
+                    WHEN b.id_customer IS NOT NULL THEN CAST(c.email AS NVARCHAR)
+                    ELSE N'Không có'
+                END
+        END AS email_customer,
+    
+        CASE
+            WHEN b.address != 'Không có' THEN
+                SUBSTRING(b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) + 1,
+                          CHARINDEX(',', b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) + 1) - CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) - 1)
+            ELSE
+                CASE
+                    WHEN b.id_customer IS NOT NULL THEN CAST(c.number_phone AS NVARCHAR)
+                    ELSE N'Không có'
+                END
+        END AS number_phone_customer,
+    
+    	  CASE
+            WHEN b.address != N'Không có' THEN
+                SUBSTRING(b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) + 1) + 1, LEN(b.address))
+            ELSE
+                CASE
+                    WHEN b.id_customer IS NOT NULL THEN SUBSTRING(c.address, CHARINDEX(',', c.address, CHARINDEX(',', c.address, CHARINDEX(',', c.address) + 1) + 1) + 1, LEN(c.address))
+                    ELSE N'Không có'
+                END
+        END AS addRes_customer,
+    	e.customer_refund,
+    	e.reason,
+    	e.update_date,
+    	e.status,
+    	e.customer_payment,
+    	e.exchange_and_return_fee,
+    	e.discounted_amount
+    from return_bill_exchange_bill e
+    left join bill b on b.id = e.id_bill
+    left join customer c on b.id_customer = c.id
+    where e.id = :idCheck and e.status = 1
+""",nativeQuery = true)
+    List<Object[]> getInformationPDF_Return_Exchange_Bill(@Param("idCheck") Integer idCheck);
+    @Query(value = """
+    SELECT
+        p.name_product +
+        N'-- Màu sắc: ' + cl.name_color +
+        N'-- Kích cỡ: ' + s.name_size AS product_info,
+        rb.quantity_return,
+        FORMAT(bd.price, 'N2') + ' VNĐ' AS price_root,
+        FORMAT(rb.price_buy, 'N2') + ' VNĐ' AS price_return,
+        FORMAT(rb.total_return, 'N2') + ' VNĐ' AS total_amount
+    FROM
+    return_bill_detail rb
+        LEFT JOIN return_bill_exchange_bill rbr ON rbr.id = rb.id_return_bill
+        LEFT JOIN bill b ON rbr.id_bill = b.id
+        LEFT JOIN bill_detail bd ON bd.id_bill = b.id
+        JOIN product_detail pd ON pd.id = rb.id_product_detail
+        LEFT JOIN product p ON pd.id_product = p.id
+        LEFT JOIN color cl ON cl.id = pd.id_color
+        LEFT JOIN size s ON s.id = pd.id_size
+    WHERE
+    rb.id_return_bill = :idReturnBillCheck
+""",nativeQuery = true)
+    List<Object[]> getListProductReturn(@Param("idReturnBillCheck") Integer idReturnBillCheck);
+    @Query(value = """
+
+    SELECT
+        p.name_product +
+        N'-- Màu sắc: ' + cl.name_color +
+        N'-- Kích cỡ: ' + s.name_size AS product_info,
+        eb.quantity_exchange,
+        FORMAT(CAST(eb.price_root_at_time AS DECIMAL(18, 2)), 'N2') + ' VNĐ' AS price_root,
+        FORMAT(CAST(eb.price_at_the_time_of_exchange AS DECIMAL(18, 2)), 'N2') + ' VNĐ' AS price_exchange,
+        FORMAT(CAST(eb.total_exchange AS DECIMAL(18, 2)), 'N2') + ' VNĐ' AS total_amount_exchange
+    FROM
+    exchange_bill_detail eb
+        LEFT JOIN return_bill_exchange_bill rbr ON rbr.id = eb.id_exchang_bill
+        LEFT JOIN bill b ON rbr.id_bill = b.id
+        LEFT JOIN bill_detail bd ON bd.id_bill = b.id  
+        JOIN product_detail pd ON pd.id = eb.id_product_detail
+        LEFT JOIN product p ON pd.id_product = p.id
+        LEFT JOIN color cl ON cl.id = pd.id_color
+        LEFT JOIN size s ON s.id = pd.id_size
+    WHERE eb.id_exchang_bill = :idExchangeBillCheck
+""",nativeQuery = true)
+    List<Object[]> getListProductExchange(@Param("idExchangeBillCheck") Integer idReturnBillCheck);
     @Query("select pd from ProductDetail  pd where pd.id = :idCheck")
     ProductDetail getProductDteailById(@Param("idCheck") Integer id);
 }

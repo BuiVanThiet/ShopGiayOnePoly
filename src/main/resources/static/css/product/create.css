@@ -39,6 +39,7 @@
 }
 
 .form-group-createProduct .form-control-createProduct {
+    position: relative;
     width: 31.5%;
 }
 
@@ -54,22 +55,6 @@
     border-radius: 5px;
     outline: none;
 }
-
-
-
-/*.form-control-createProduct select{*/
-/*    width: 100%;  !* Đảm bảo select có chiều rộng đầy đủ *!*/
-/*    max-width: 300px;  !* Giới hạn chiều rộng tối đa của select *!*/
-/*    white-space: nowrap;  !* Ngăn nội dung trong option bị ngắt dòng *!*/
-/*    overflow-x: auto;  !* Thêm thanh cuộn ngang khi nội dung quá dài *!*/
-/*    text-overflow: ellipsis;*/
-/*}*/
-
-/*.form-control-createProduct option{*/
-/*    white-space: nowrap;  !* Ngăn ngắt dòng cho nội dung trong option *!*/
-/*    overflow: hidden;  !* Ẩn phần nội dung bị tràn *!*/
-/*    text-overflow: ellipsis;*/
-/*}*/
 
 
 
@@ -190,14 +175,14 @@
 .dropdown-content-createProduct {
     display: none; /* Mặc định ẩn */
     position: absolute;
-    max-height: 165px; /* Giới hạn chiều cao */
-    overflow-y: auto; /* Thêm thanh cuộn dọc */
-    overflow-x: auto;
+    max-height: 165px;
+    overflow-y: auto;
     background-color: #f9f9f9;
     border: 1px solid #ddd;
     z-index: 1;
     list-style-type: none;
     padding-left: 0;
+    top: calc(100% + 5px); /* Cách ô input một khoảng 5px */
     width: 100%;
     margin-top: 0;
     border-radius: 10px;

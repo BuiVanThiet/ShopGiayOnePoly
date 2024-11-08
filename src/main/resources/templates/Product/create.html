@@ -10,15 +10,15 @@
 <body class="body-createProduct">
 <div layout:fragment="content">
   <article class=" bd-gutter mt-5 my-md-4 bd-layout">
+    <h1 class="h1-createProduct">Tạo sản phẩm mới</h1>
     <div class="container-createProduct">
-      <form th:action="@{/staff/product/add}" id="createProductForm" th:object="${product}" method="POST" enctype="multipart/form-data">
+      <form id="createProductForm" th:object="${product}" method="POST" enctype="multipart/form-data">
         <div class="content-createProduct">
           <div class="main-content-createProduct">
-            <h1 class="h1-createProduct">Tạo sản phẩm mới</h1>
             <div class="form-group-createProduct">
               <div class="form-control-createProduct">
                 <label>Mã sản phẩm</label>
-                <input id="codeProduct" type="text" name="codeProduct"/>
+                <input id="codeProduct" type="text" name="codeProduct" autocomplete="off"/>
                 <p style="display: block; color: red; margin-bottom: 0px" id="errorText-codeProduct">* Mã sản phẩm không được để trống</p>
               </div>
               <div class="form-control-createProduct">
@@ -26,10 +26,11 @@
                 <input name="nameProduct" type="text" id="myInput-nameProduct"
                        onfocus="showDropdown(event)"
                        onkeyup="filterFunction(event)" autocomplete="off">
-                <p style="display: block; color: red; margin-bottom: 0px" id="errorText-nameProduct">* Mã sản phẩm không được để trống</p>
+                <p style="display: block; color: red; margin-bottom: 0px" id="errorText-nameProduct">* Tên sản phẩm không được để trống</p>
                 <ul id="dataList-nameProduct" class="dropdown-content-createProduct">
                   <th:block th:each="nameProduct: ${nameProductList}">
-                    <li th:text="${nameProduct}" th:value="${nameProduct}" onclick="selectNameProduct(this)"></li>
+                    <li th:text="${nameProduct}" th:value="${nameProduct}"
+                        onclick="selectAttribute(this, 'myInput-nameProduct', 'v')"></li>
                   </th:block>
                 </ul>
               </div>
@@ -43,7 +44,7 @@
                     <th:block th:each="category : ${categoryList}">
                       <li style="display: flex; justify-content: space-between">
                         <span th:text="${category.nameCategory}"></span>
-                        <input style="width: 20px" type="checkbox" name="categories" th:value="${category.id}">
+                        <input class="category-checkbox" style="width: 20px" type="checkbox" name="categories" th:value="${category.id}">
                       </li>
                     </th:block>
                   </ul>
@@ -52,77 +53,92 @@
                     <span class="material-symbols-outlined">add</span>
                   </div>
                 </div>
-                <p style="display: block; color: red; margin-bottom: 0px" id="errorText-category">* Mã sản phẩm không được để trống</p>
+                <p style="display: block; color: red; margin-bottom: 0px" id="errorText-category">* Vui lòng chọn danh mục</p>
               </div>
             </div>
             <div class="form-group-createProduct">
               <div class="form-control-createProduct">
                 <label>Chất liệu</label>
                 <div style="display: flex">
-                  <select id="materialSelect" name="material">
-                    <option value="0">Chọn chất liệu</option>
-                    <th:block th:each="material : ${materialList}">
-                      <option th:text="${material.nameMaterial}" th:value="${material.id}"></option>
+                  <input data-material-id="" type="text" id="myInput-material"
+                         onfocus="showDropdown(event)"
+                         onkeyup="filterFunction(event)" autocomplete="off">
+                  <ul id="dataList-material" class="dropdown-content-createProduct">
+                    <th:block th:each="material: ${materialList}">
+                      <li th:text="${material.nameMaterial}" th:value="${material.id}"
+                          onclick="selectAttribute(this, 'myInput-material', 'material')"></li>
                     </th:block>
-                  </select>
+                  </ul>
                   <div class="btn-add-quickly"
                        onclick="openQuickAddForm('Thêm mới chất liệu', 'Mã chất liệu', 'Tên chất liệu', 'Nhập mã chất liệu', 'Nhập tên chất liệu', 'material')">
                     <span class="material-symbols-outlined">add</span>
                   </div>
                 </div>
-                <p style="display: block; color: red; margin-bottom: 0px" id="errorText-material">* Mã sản phẩm không được để trống</p>
+                <p style="display: block; color: red; margin-bottom: 0px" id="errorText-material">* Vui lòng chọn chất liệu</p>
               </div>
               <div class="form-control-createProduct">
                 <label>Hãng</label>
                 <div style="display: flex">
-                  <select id="manufacturerSelect" name="manufacturer">
-                    <option value="0">Chọn hãng</option>
-                    <th:block th:each="manufacturer : ${manufacturerList}">
-                      <option th:text="${manufacturer.nameManufacturer}" th:value="${manufacturer.id}"></option>
+                  <input data-manufacturer-id="" type="text" id="myInput-manufacturer"
+                         onfocus="showDropdown(event)"
+                         onkeyup="filterFunction(event)" autocomplete="off">
+                  <ul id="dataList-manufacturer" class="dropdown-content-createProduct">
+                    <th:block th:each="manufacturer: ${manufacturerList}">
+                      <li th:text="${manufacturer.nameManufacturer}" th:value="${manufacturer.id}"
+                          onclick="selectAttribute(this, 'myInput-manufacturer', 'manufacturer')"></li>
                     </th:block>
-                  </select>
+                  </ul>
                   <div class="btn-add-quickly"
                        onclick="openQuickAddForm('Thêm mới hãng', 'Mã hãng', 'Tên hãng', 'Nhập mã hãng', 'Nhập tên hãng', 'manufacturer')">
                     <span class="material-symbols-outlined">add</span>
                   </div>
                 </div>
+                <p style="display: block; color: red; margin-bottom: 0px" id="errorText-manufacturer">* Vui lòng chọn hãng</p>
               </div>
               <div class="form-control-createProduct">
                 <label>Xuất xứ</label>
                 <div style="display: flex">
-                  <select id="originSelect" name="origin">
-                    <option value="0">Chọn xuất xứ</option>
-                    <th:block th:each="origin : ${originList}">
-                      <option th:text="${origin.nameOrigin}" th:value="${origin.id}"></option>
+                  <input data-origin-id="" type="text" id="myInput-origin"
+                         onfocus="showDropdown(event)"
+                         onkeyup="filterFunction(event)" autocomplete="off">
+                  <ul id="dataList-origin" class="dropdown-content-createProduct">
+                    <th:block th:each="origin: ${originList}">
+                      <li th:text="${origin.nameOrigin}" th:value="${origin.id}"
+                          onclick="selectAttribute(this, 'myInput-origin','origin')"></li>
                     </th:block>
-                  </select>
+                  </ul>
                   <div class="btn-add-quickly"
                        onclick="openQuickAddForm('Thêm mới xuất xứ', 'Mã xuất xứ', 'Tên xuất xứ', 'Nhập mã xuất xứ', 'Nhập tên xuất xứ', 'origin')">
                     <span class="material-symbols-outlined">add</span>
                   </div>
                 </div>
+                <p style="display: block; color: red; margin-bottom: 0px" id="errorText-origin">* Vui lòng chọn xuất xứ</p>
               </div>
             </div>
             <div class="form-group-createProduct">
               <div class="form-control-createProduct">
-                <label>Loại đế</label>
+                <label for="myInput-nameProduct">Loại đế</label>
                 <div style="display: flex">
-                  <select id="soleSelect" name="sole">
-                    <option value="0">Chọn loại đế</option>
-                    <th:block th:each="sole : ${soleList}">
-                      <option th:text="${sole.nameSole}" th:value="${sole.id}"></option>
+                  <input type="text" id="myInput-sole"
+                         onfocus="showDropdown(event)"
+                         onkeyup="filterFunction(event)" autocomplete="off">
+                  <ul id="dataList-sole" class="dropdown-content-createProduct">
+                    <th:block th:each="sole: ${soleList}">
+                      <li th:text="${sole.nameSole}" th:value="${sole.id}"
+                          onclick="selectAttribute(this, 'myInput-sole', 'sole')"></li>
                     </th:block>
-                  </select>
+                  </ul>
                   <div class="btn-add-quickly"
                        onclick="openQuickAddForm('Thêm mới đế giày', 'Mã đế giày', 'Tên đế giày', 'Nhập mã đế giày', 'Nhập tên đế giày', 'sole')">
                     <span class="material-symbols-outlined">add</span>
                   </div>
                 </div>
+                <p style="display: block; color: red; margin-bottom: 0px" id="errorText-sole">* Vui lòng chọn loại đế</p>
               </div>
               <div class="form-control-createProduct">
                 <label for="myInput-color">Màu sắc</label>
                 <div style="display: flex">
-                  <input  type="text" id="myInput-color"
+                  <input type="text" id="myInput-color"
                          onfocus="showDropdown(event)"
                          onkeyup="filterFunction(event)" autocomplete="off">
                   <ul id="dataList-color" class="dropdown-content-createProduct">
@@ -142,7 +158,7 @@
               <div class="form-control-createProduct">
                 <label for="myInput-size">Kích cỡ</label>
                 <div style="display: flex">
-                  <input name="size" type="text" id="myInput-size"
+                  <input type="text" id="myInput-size"
                          onfocus="showDropdown(event)"
                          onkeyup="filterFunction(event)" autocomplete="off">
                   <ul id="dataList-size" class="dropdown-content-createProduct">
@@ -185,7 +201,7 @@
               <thead>
               <tr>
                 <th style="width: 30px;">
-                  <input type="checkbox"  >
+                  <input type="checkbox" id="select-all-productDetail" onclick="toggleSelectAllproductDetail(this)">
                 </th>
                 <th style="width: 150px">Màu sắc</th>
                 <th style="width: 150px">Kích cỡ</th>
@@ -197,13 +213,13 @@
                 <th style="width: 30px"><span class="material-symbols-outlined">delete_forever</span></th>
               </tr>
               </thead>
-              <tbody>
+              <tbody id="productDetail-table-body">
 
               </tbody>
             </table>
           </div>
           <div class="buttons-createProduct">
-            <button type="button" class="create-btn-createProduct" onclick="addProductWithDetails()">Tạo sản phẩm mới</button>
+            <button type="button" id="create-btn-createProduct" class="create-btn-createProduct" style="display: none" onclick="addProductWithDetails()">Tạo sản phẩm mới</button>
             <button type="button" class="cancel-btn-createProduct" onclick="resetFormAndTable()" >Hủy bỏ</button>
           </div>
         </div>
@@ -222,7 +238,6 @@
       </div>
     </div>
   </article>
-
   <script src="/js/product/validateCreate.js"></script>
   <script src="/js/product/create.js"></script>
 </div>
