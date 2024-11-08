@@ -187,10 +187,16 @@
 .dropdown-content-createProductDetail li {
     padding: 8px 12px;
     cursor: pointer;
+    display: flex;
+    justify-content: space-between;
 }
 
 .dropdown-content-createProductDetail li:hover {
     background-color: #f1f1f1;
+}
+
+.dropdown-content-createProductDetail input {
+    width: 20px;
 }
 
 /* Hiển thị dropdown */

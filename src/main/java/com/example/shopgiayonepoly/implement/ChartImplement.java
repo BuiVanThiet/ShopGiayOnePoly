@@ -8,9 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 @Service
 public class ChartImplement implements ChartService {
@@ -116,13 +118,19 @@ public class ChartImplement implements ChartService {
         List<Object[]> result = chartRepository.getProductSales();
         List<ProductInfoDto> productSales = new ArrayList<>();
 
+        NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+
         for (Object[] row : result) {
             String productName = (String) row[0];
             String colorName = (String) row[1];
             String sizeName = (String) row[2];
-            BigDecimal discountedPrice = (BigDecimal) row[3];
-            int totalQuantity = (int) row[4];
-            String imageNames = (String) row[5]; // Chuỗi chứa tên ảnh, phân cách bởi dấu phẩy
+            BigDecimal OriginalPrice = (BigDecimal) row[3];
+            BigDecimal discountedPrice = (BigDecimal) row[4];
+            int totalQuantity = (int) row[5];
+            String imageNames = (String) row[6]; // Chuỗi chứa tên ảnh, phân cách bởi dấu phẩy
+
+            String originalPrice = currencyFormatter.format(OriginalPrice).replace("₫", "VND");
+            String promotionalPrice = currencyFormatter.format(discountedPrice).replace("₫", "VND");
 
             // Tạo danh sách URL ảnh
             List<String> imageUrls = new ArrayList<>();
@@ -136,7 +144,7 @@ public class ChartImplement implements ChartService {
 
             // Tạo đối tượng ProductInfoDto và thêm vào danh sách
             ProductInfoDto productInfoDto = new ProductInfoDto(
-                    productName, colorName, sizeName, discountedPrice, totalQuantity, imageUrls);
+                    productName, colorName, sizeName, originalPrice, promotionalPrice, totalQuantity, imageUrls);
 
             productSales.add(productInfoDto); // Thêm đối tượng vào danh sách
         }

@@ -1,10 +1,7 @@
 package com.example.shopgiayonepoly.implement;
 
 import com.example.shopgiayonepoly.dto.request.bill.SearchBillByStatusRequest;
-import com.example.shopgiayonepoly.dto.response.bill.BillResponseManage;
-import com.example.shopgiayonepoly.dto.response.bill.BillTotalInfornationResponse;
-import com.example.shopgiayonepoly.dto.response.bill.ClientBillInformationResponse;
-import com.example.shopgiayonepoly.dto.response.bill.InformationBillByIdBillResponse;
+import com.example.shopgiayonepoly.dto.response.bill.*;
 import com.example.shopgiayonepoly.entites.Bill;
 import com.example.shopgiayonepoly.entites.Customer;
 import com.example.shopgiayonepoly.entites.ProductDetail;
@@ -139,6 +136,25 @@ public class BillImplement implements BillService {
     @Override
     public String getDiscountBill(Integer idBill) {
         return this.billRepository.getDiscountBill(idBill);
+    }
+    @Override
+    public List<Object[]> getVoucherByBillV2(Integer idBill, String keyword) {
+        return this.billRepository.getVoucherByBillV2(idBill,keyword);
+    }
+
+    @Override
+    public List<Object[]> getInformationPDF_Return_Exchange_Bill(Integer idCheck) {
+        return this.billRepository.getInformationPDF_Return_Exchange_Bill(idCheck);
+    }
+
+    @Override
+    public List<Object[]> getListProductReturn(Integer idCheck) {
+        return this.billRepository.getListProductReturn(idCheck);
+    }
+
+    @Override
+    public List<Object[]> getListProductExchange(Integer idCheck) {
+        return this.billRepository.getListProductExchange(idCheck);
     }
 
 }

@@ -1021,7 +1021,10 @@ public class BillController extends BaseBill {
             return "redirect:/login";
         }
 
-
+        ReturnBillExchangeBill returnBillExchangeBill = this.returnBillService.getReturnBillByIdBill(bill.getId());
+        if(returnBillExchangeBill != null || returnBillExchangeBill.getId() != null) {
+            modelMap.addAttribute("returnBillExchangeBill",returnBillExchangeBill);
+        }
 
         session.setAttribute("IdBill",Integer.parseInt(idBill));
         modelMap.addAttribute("client", (Integer) session.getAttribute("IdClient"));

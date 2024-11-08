@@ -533,6 +533,8 @@ public class ReturnExchangeBillRestController extends BaseBill {
             response.setDiscountRatioPercentage((BigDecimal) objectSave[4]);
             response.setQuantityBuy((Integer) objectSave[5]);
         }
+        response.setId(returnBill.getId());
+        response.setStatus(returnBill.getStatus());
         response.setNoteReturn(returnBill.getReason());
         response.setTotalReturn(returnBill.getCustomerRefund());
         response.setTotalExchange(returnBill.getCustomerPayment());

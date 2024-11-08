@@ -17,6 +17,11 @@
             width: 100%;
             height: 500px;
         }
+
+        th, td {
+            text-align: center; /* Căn giữa nội dung */
+            vertical-align: middle; /* Căn giữa theo chiều dọc */
+        }
     </style>
 </head>
 
@@ -58,7 +63,8 @@
         <div class="filter-section">
             <div class="button-group" role="group" aria-label="Thời gian lọc">
                 <button type="button" class="custom-btn btn btn-primary" onclick="filterData('today')">Hôm nay</button>
-                <button type="button" class="custom-btn btn btn-primary" onclick="filterData('last7days')">7 Ngày</button>
+                <button type="button" class="custom-btn btn btn-primary" onclick="filterData('last7days')">7 Ngày
+                </button>
                 <button type="button" class="custom-btn btn btn-primary" onclick="filterData('month')">Tháng</button>
                 <button type="button" class="custom-btn btn btn-primary" onclick="filterData('year')">Năm</button>
             </div>
@@ -70,38 +76,81 @@
             </div>
         </div>
 
-        <div class="col-md-6">
-            <h4 class="text-center">Chi Tiết Doanh Số</h4>
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead class="thead-dark">
-                    <tr>
-                        <th>STT</th>
-                        <th>Ảnh</th>
-                        <th>Tên sản phẩm</th>
-                        <th>Giá bán</th>
-                        <th>Tổng số lượng</th>
-                    </tr>
-                    </thead>
-                    <tbody>
+        <div class="row">
+            <div class="col-md-7 product-table">
+                <h4 class="text-center">Top 10 sản phẩm bán chạy</h4>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="thead-dark">
+                        <tr>
+                            <th>STT</th>
+                            <th>Ảnh</th>
+                            <th>Tên sản phẩm</th>
+                            <th>Giá bán</th>
+                            <th>Tổng số lượng</th>
+                        </tr>
+                        </thead>
+                        <tbody>
 
-                    <tr th:each="item, stat : ${productSales}">
-                        <td th:text="${stat.index + 1}">1</td>
-                        <td>
-                            <!-- Chỉ hiển thị một ảnh ngẫu nhiên cho mỗi sản phẩm -->
-                            <img id="randomImage-[[${stat.index}]]"
-                                 th:src="${item.imageUrls[0]}"
-                                 alt="Product Image" width="100" height="100"/>
-                        </td>
-                        <td th:text="${item.productName}">Sản phẩm A</td>
-                        <td th:text="${item.getDiscountedPrice}">100,000 VND</td>
-                        <td th:text="${item.totalQuantity}">10</td>
-                    </tr>
-                    </tbody>
-                </table>
+                        <tr th:each="item, stat : ${productSales}">
+                            <td th:text="${stat.index + 1}">1</td>
+                            <td>
+                                <!-- Mỗi sản phẩm sẽ có một id riêng cho ảnh -->
+                                <img th:id="'productImage_' + ${stat.index}" th:src="${item.imageUrls[0]}"
+                                     alt="Product Image" width="100" height="100">
+                            </td>
+                            <td>
+                                <span th:text="${item.productName}">Tên Sản Phẩm</span><br>
+                                <small>
+                                    Màu sắc: <span th:text="${item.colorName}">Màu</span><br>
+                                    Kích thước: <span th:text="${item.sizeName}">Size</span>
+                                </small>
+                            </td>
+                            <td th:if="${item.originalPrice == item.promotionalPrice}" th:text="${item.originalPrice}">
+                                Giá Gốc
+                            </td>
+                            <td th:if="${item.originalPrice != item.promotionalPrice}">
+                                <span th:text="${item.originalPrice}"
+                                      style="text-decoration: line-through; color: black;">Giá Gốc</span> <br>
+                                <!-- Giá gốc gạch ngang -->
+                                <span th:text="${item.promotionalPrice}" style="color: red;">Giá Khuyến Mãi</span>
+                                <!-- Giá khuyến mãi màu đỏ -->
+                            </td>
+
+                            <td th:text="${item.totalQuantity}">17</td>
+                        </tr>
+
+                        <script th:inline="javascript">
+                            // Truyền mảng productSales từ backend vào JavaScript
+                            var productItems = [[${productSales}]];
+
+                            document.addEventListener('DOMContentLoaded', function () {
+                                // Lặp qua từng sản phẩm để thay đổi ảnh
+                                productItems.forEach(function (item, index) {
+                                    var imageElement = document.getElementById("productImage_" + index); // Lấy ảnh của từng sản phẩm
+                                    var currentIndex = 0; // Biến theo dõi ảnh hiện tại
+
+                                    // Hàm để thay đổi ảnh mỗi 2 giây
+                                    function changeImage() {
+                                        var imageUrls = item.imageUrls; // Lấy mảng ảnh của sản phẩm hiện tại
+                                        currentIndex = (currentIndex + 1) % imageUrls.length; // Tăng index và quay lại đầu nếu hết mảng
+                                        imageElement.src = imageUrls[currentIndex]; // Cập nhật ảnh hiển thị
+                                    }
+
+                                    // Gọi hàm changeImage mỗi 10 giây cho mỗi sản phẩm
+                                    setInterval(changeImage, 10000);
+                                });
+                            });
+                        </script>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-md-5 pieChart">
+                <div id="piechart" style="width: 100%; height: 500px;"></div>
             </div>
         </div>
-
         <script th:src="@{/js/chart/chart.js}"></script>
     </div>
 </main>

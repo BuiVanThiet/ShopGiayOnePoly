@@ -1133,15 +1133,16 @@ function loadVoucherByBill(page) {
                             <div class="d-flex justify-content-between align-items-center">
                                 <!-- Voucher Info -->
                                 <div>
-                                    <p class="fs-5 fw-bold mb-1 text-danger">Mã Voucher: ${voucher.codeVoucher}</p>
-                                    <p class="fs-6 text-muted mb-0">Khuyến mãi: ${voucher.nameVoucher}</p>
-                                    <p class="fs-6 text-muted mb-0">Giá trị áp dụng: ${Math.trunc(voucher.pricesApply).toLocaleString('en-US')} VNĐ</p>
-                                    <p class="fs-6 text-muted mb-0">Số lượng: ${voucher.quantity}</p>
+                                    <p class="fs-5 fw-bold mb-1 text-danger">Mã Voucher: ${voucher[1]}</p>
+                                    <p class="fs-6 text-muted mb-0">Khuyến mãi: ${voucher[2]}</p>
+                                    <p class="fs-6 text-muted mb-0">Giá trị áp dụng: ${Math.trunc(voucher[5]).toLocaleString('en-US')} VNĐ</p>
+                                    <p class="fs-6 mb-0 text-danger">Giá trị được giảm: ${Math.trunc(voucher[8]).toLocaleString('en-US')} VNĐ</p>
+                                    <p class="fs-6 text-muted mb-0">Số lượng: ${voucher[6]}</p>
                                 </div>
-                                
+                           
                                 <!-- Button to Select Voucher -->
 <!--                                <a href="/bill/click-voucher-bill/" class="btn btn-outline-success btn-lg px-4">Chọn</a>-->
-                                <button class="btn btn-outline-success btn-lg px-4" data-bs-dismiss="modal" aria-label="Close" onclick="getAddVoucherInBill(${voucher.id})">Chọn</button>
+                                <button class="btn btn-outline-success btn-lg px-4" data-bs-dismiss="modal" aria-label="Close" onclick="getAddVoucherInBill(${voucher[0]})">Chọn</button>
                             </div>
                         </div>
                     </div>

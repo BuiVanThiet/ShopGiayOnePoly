@@ -60,12 +60,17 @@ public class ProductController extends BaseProduct {
     @PostMapping("/add-product-with-details")
     public ResponseEntity<String> addProductWithDetails(
             @ModelAttribute Product product,
-            @RequestParam("productDetails") String productDetailsJson,
+            @RequestParam(value = "productDetails", required = false) String productDetailsJson,
             @RequestParam("imageFiles") List<MultipartFile> imageFiles) throws IOException {
 
-        // Chuyển đổi productDetailsJson từ JSON thành List<ProductDetail>
-        ObjectMapper objectMapper = new ObjectMapper();
-        List<ProductDetail> productDetails = Arrays.asList(objectMapper.readValue(productDetailsJson, ProductDetail[].class));
+        // Khởi tạo danh sách chi tiết sản phẩm
+        List<ProductDetail> productDetails = new ArrayList<>();
+
+        // Chuyển đổi productDetailsJson từ JSON thành List<ProductDetail> nếu có dữ liệu
+        if (productDetailsJson != null && !productDetailsJson.isEmpty()) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            productDetails = Arrays.asList(objectMapper.readValue(productDetailsJson, ProductDetail[].class));
+        }
 
         // Gán danh mục cho sản phẩm
         Set<Category> selectedCategories = new HashSet<>(categoryService.findCategoriesByIds(
@@ -98,12 +103,15 @@ public class ProductController extends BaseProduct {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi khi thêm sản phẩm");
         }
 
-        // Cập nhật ID sản phẩm cho các chi tiết sản phẩm và lưu
-        productDetails.forEach(detail -> detail.setProduct(savedProduct));
-        productDetailRepository.saveAll(productDetails);
+        // Nếu có productDetails, cập nhật ID sản phẩm cho các chi tiết sản phẩm và lưu
+        if (!productDetails.isEmpty()) {
+            productDetails.forEach(detail -> detail.setProduct(savedProduct));
+            productDetailRepository.saveAll(productDetails);
+        }
 
         return ResponseEntity.ok("Sản phẩm và chi tiết sản phẩm đã được thêm thành công");
     }
+
 
 
 

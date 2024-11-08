@@ -86,29 +86,14 @@ function showDropdown(event) {
         dropdowns[i].classList.remove('show-createProduct'); // Đóng tất cả dropdown
     }
 
-    // Mở dropdown tương ứng với ô input hiện tại
+    // Mở dropdown tương ứng với ô input hiện tại và đặt vị trí ngay bên dưới input
     if (ul) {
+        ul.style.top = input.offsetHeight + 24 + "px"; // Đặt vị trí dropdown ngay dưới input
         ul.classList.add("show-createProduct"); // Hiển thị dropdown
     }
 }
 
 
-function showDropdownCategory(event) {
-    var input = event.target;
-    var listId = input.id.replace("myInput-", "dataList-"); // Tạo ID cho danh sách từ ID của input
-    var ul = document.getElementById(listId);
-
-    // Đóng tất cả dropdown khác
-    var dropdowns = document.getElementsByClassName("dropdown-content-createProduct");
-    for (var i = 0; i < dropdowns.length; i++) {
-        dropdowns[i].classList.remove('show-createProduct'); // Đóng tất cả dropdown
-    }
-
-    // Mở dropdown tương ứng với ô input hiện tại
-    if (ul) {
-        ul.classList.add("show-createProduct"); // Hiển thị dropdown
-    }
-}
 
 function filterFunction(event) {
     var input = event.target;
@@ -126,11 +111,18 @@ function filterFunction(event) {
     }
 }
 
-function selectNameProduct(item) {
-    var input = document.getElementById("myInput-nameProduct");
-    input.value = item.textContent; // Đặt giá trị của ô input thành giá trị được chọn
+function selectAttribute(item, inputId, dataType) {
+    const input = document.getElementById(inputId); // Lấy input dựa trên inputId
+    if (input) {
+        input.value = item.textContent; // Đặt giá trị của ô input thành giá trị được chọn
+        input.setAttribute(`data-${dataType}-id`, item.getAttribute('value')); // Cập nhật data-* dựa trên dataType
+    }
     closeAllDropdowns(); // Đóng tất cả dropdowns sau khi chọn
+    validate();
+
 }
+
+
 
 function closeAllDropdowns() {
     var dropdowns = document.getElementsByClassName("dropdown-content-createProduct");
@@ -365,7 +357,7 @@ window.onclick = function (event) {
 }
 
 
-function updateTableRows() {
+function insertTableProductDetail() {
     const selectedColors = Array.from(document.querySelectorAll('#dataList-color input[type="checkbox"]:checked'))
         .map(checkbox => {
             const colorName = checkbox.closest('li').querySelector('span').innerText;
@@ -405,6 +397,12 @@ function updateTableRows() {
     // Lắng nghe sự kiện thay đổi trên các ô có thể chỉnh sửa
     document.querySelectorAll('.editable-cell').forEach(cell => {
         cell.addEventListener('input', function (event) {
+            // Chỉ xử lý nếu hàng đang được chỉnh sửa có checkbox được chọn
+            const row = cell.closest('tr');
+            const checkbox = row.querySelector('.row-selector');
+
+            if (!checkbox.checked) return; // Nếu checkbox không được chọn, không làm gì
+
             const colIndex = cell.cellIndex;
             const newValue = cell.innerText;
             const selection = window.getSelection();
@@ -427,9 +425,8 @@ function updateTableRows() {
     });
 }
 
-// Gọi hàm updateTableRows khi chọn checkbox
 document.querySelectorAll('#dataList-color input[type="checkbox"], #dataList-size input[type="checkbox"]').forEach(checkbox => {
-    checkbox.addEventListener('change', updateTableRows);
+    checkbox.addEventListener('change', insertTableProductDetail);
 });
 
 function deleteRow(deleteButton) {
@@ -465,15 +462,22 @@ function checkAndUncheckOption(listSelector, value) {
 async function addProductWithDetails() {
     const formElement = document.getElementById('createProductForm');
     const formData = new FormData(formElement);
-
+    const originID = document.getElementById('myInput-origin').getAttribute('data-origin-id');
+    const materialID = document.getElementById('myInput-material').getAttribute('data-material-id');
+    const manufacturerID = document.getElementById('myInput-manufacturer').getAttribute('data-manufacturer-id');
+    const soleID = document.getElementById('myInput-sole').getAttribute('data-sole-id');
+    formData.append('origin', originID); // Thêm idOrigin vào phần dữ liệu sản phẩm
+    formData.append('material', materialID); // Thêm idOrigin vào phần dữ liệu sản phẩm
+    formData.append('manufacturer', manufacturerID); // Thêm idOrigin vào phần dữ liệu sản phẩm
+    formData.append('sole', soleID); // Thêm idOrigin vào phần dữ liệu sản phẩm
     // Thu thập dữ liệu chi tiết sản phẩm từ bảng và thêm vào FormData
     const rows = document.querySelectorAll('#productDetailTable tbody tr');
     const productDetails = [];
 
     rows.forEach(row => {
         const detail = {
-            color: { id: row.cells[1].getAttribute('data-color-id') }, // Truyền đối tượng color
-            size: { id: row.cells[2].getAttribute('data-size-id') }, // Truyền đối tượng size
+            color: {id: row.cells[1].getAttribute('data-color-id')}, // Truyền đối tượng color
+            size: {id: row.cells[2].getAttribute('data-size-id')}, // Truyền đối tượng size
             price: row.cells[3].innerText.trim(),
             import_price: row.cells[4].innerText.trim(),
             quantity: row.cells[5].innerText.trim(),
@@ -484,9 +488,12 @@ async function addProductWithDetails() {
         productDetails.push(detail);
     });
 
-    // Thêm mảng productDetails vào FormData
-    formData.append("productDetails", JSON.stringify(productDetails));
-
+    if (productDetails.length > 0) {
+        formData.append("productDetails", JSON.stringify(productDetails));
+    }
+    formData.forEach((value, key) => {
+        console.log(key, value);
+    });
     try {
         const response = await fetch('/staff/product/add-product-with-details', {
             method: 'POST',
@@ -501,6 +508,7 @@ async function addProductWithDetails() {
         console.error('Lỗi:', error);
         alert("Có lỗi xảy ra khi thêm sản phẩm hoặc chi tiết sản phẩm.");
     }
+
 }
 
 function resetFormAndTable() {
@@ -515,5 +523,21 @@ function resetFormAndTable() {
     tableBody.innerHTML = '';
 }
 
+
+function toggleSelectAllproductDetail(selectAllCheckbox) {
+    // Chọn tất cả các checkbox trong phần tbody của bảng sản phẩm
+    const checkboxes = document.querySelectorAll('#productDetail-table-body .row-selector');
+
+    checkboxes.forEach((checkbox) => {
+        checkbox.checked = selectAllCheckbox.checked; // Đánh dấu hoặc bỏ đánh dấu checkbox
+    });
+}
+
+document.querySelectorAll('.row-selector').forEach((checkbox) => {
+    checkbox.addEventListener('change', function () {
+        const allChecked = document.querySelectorAll('.row-selector:checked').length === document.querySelectorAll('.row-selector').length;
+        document.getElementById('select-all-productDetail').checked = allChecked;
+    });
+});
 
 

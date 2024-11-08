@@ -1,10 +1,7 @@
 package com.example.shopgiayonepoly.service;
 
 import com.example.shopgiayonepoly.dto.request.bill.SearchBillByStatusRequest;
-import com.example.shopgiayonepoly.dto.response.bill.BillResponseManage;
-import com.example.shopgiayonepoly.dto.response.bill.BillTotalInfornationResponse;
-import com.example.shopgiayonepoly.dto.response.bill.ClientBillInformationResponse;
-import com.example.shopgiayonepoly.dto.response.bill.InformationBillByIdBillResponse;
+import com.example.shopgiayonepoly.dto.response.bill.*;
 import com.example.shopgiayonepoly.entites.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -59,4 +56,12 @@ public interface BillService {
     ProductDetail getProductDteailById(Integer id);
 
     String getDiscountBill(Integer idBill);
+
+    List<Object[]> getVoucherByBillV2(Integer idBill, String keyword);
+
+    List<Object[]> getInformationPDF_Return_Exchange_Bill(Integer idCheck);
+
+    List<Object[]> getListProductReturn(Integer idCheck);
+
+    List<Object[]> getListProductExchange(Integer idCheck);
 }
