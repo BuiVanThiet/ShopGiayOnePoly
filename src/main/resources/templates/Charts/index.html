@@ -92,7 +92,7 @@
                         </thead>
                         <tbody>
 
-                        <tr th:each="item, stat : ${productSales}">
+                        <tr th:each="item, stat : ${productPage.content}">
                             <td th:text="${stat.index + 1}">1</td>
                             <td>
                                 <!-- Mỗi sản phẩm sẽ có một id riêng cho ảnh -->
@@ -110,11 +110,9 @@
                                 Giá Gốc
                             </td>
                             <td th:if="${item.originalPrice != item.promotionalPrice}">
-                                <span th:text="${item.originalPrice}"
-                                      style="text-decoration: line-through; color: black;">Giá Gốc</span> <br>
-                                <!-- Giá gốc gạch ngang -->
+                        <span th:text="${item.originalPrice}"
+                              style="text-decoration: line-through; color: black;">Giá Gốc</span> <br>
                                 <span th:text="${item.promotionalPrice}" style="color: red;">Giá Khuyến Mãi</span>
-                                <!-- Giá khuyến mãi màu đỏ -->
                             </td>
 
                             <td th:text="${item.totalQuantity}">17</td>
@@ -146,10 +144,30 @@
                         </tbody>
                     </table>
                 </div>
+                <div>
+                    <ul class="pagination justify-content-center">
+                        <!-- Nút Previous -->
+                        <li th:class="${productPage.hasPrevious() ? 'page-item' : 'page-item'}">
+                            <a th:href="@{/chart/form(page=${productPage.hasPrevious() ? productPage.number - 1 : productPage.totalPages - 1})}" class="page-link">Trước</a>
+                        </li>
+
+                        <!-- Hiển thị các số trang -->
+                        <li th:each="i : ${#numbers.sequence(0, productPage.totalPages - 1)}"
+                            th:class="${productPage.number == i ? 'page-item active' : 'page-item'}">
+                            <a th:href="@{/chart/form(page=${i})}" class="page-link" th:text="${i + 1}"></a>
+                        </li>
+
+                        <!-- Nút Next -->
+                        <li th:class="${productPage.hasNext() ? 'page-item' : 'page-item'}">
+                            <a th:href="@{/chart/form(page=${productPage.hasNext() ? productPage.number + 1 : 0})}" class="page-link">Sau</a>
+                        </li>
+                    </ul>
+                </div>
+
             </div>
-            <div class="col-md-5 pieChart">
-                <div id="piechart" style="width: 100%; height: 500px;"></div>
-            </div>
+<!--            <div class="col-md-5 pieChart">-->
+<!--                <div id="piechart" style="width: 100%; height: 500px;"></div>-->
+<!--            </div>-->
         </div>
         <script th:src="@{/js/chart/chart.js}"></script>
     </div>

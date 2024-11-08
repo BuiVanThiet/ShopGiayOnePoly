@@ -3,6 +3,8 @@ package com.example.shopgiayonepoly.repositores;
 import com.example.shopgiayonepoly.dto.request.ProductInfoDto;
 import com.example.shopgiayonepoly.entites.Bill;
 import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -162,4 +164,125 @@ public interface ChartRepository extends JpaRepository<Bill, Integer> {
             TotalQuantity DESC
         """, nativeQuery = true)
     List<Object[]> getProductSales();
+
+    @Query(value = """
+        WITH RankedProducts AS (
+            SELECT
+                pd.name_product AS ProductName,
+                c.name_color AS ColorName,
+                s.name_size AS SizeName,
+                CAST(pdt.price AS DECIMAL(10, 2)) AS OriginalPrice,
+                CAST(
+                    CASE
+                        WHEN sp.discount_type = 1 AND pdt.id_sale_product IS NOT NULL THEN pdt.price * (1 - sp.discount_value / 100.0)
+                        WHEN sp.discount_type = 2 AND pdt.id_sale_product IS NOT NULL THEN (pdt.price - sp.discount_value)
+                        ELSE pdt.price
+                    END
+                AS DECIMAL(10, 2)) AS DiscountedPrice,
+                SUM(bd.quantity) AS TotalQuantity,
+                STUFF(
+                    (SELECT DISTINCT ', ' + i.name_image
+                     FROM dbo.image i
+                     WHERE i.id_product = pd.id
+                     FOR XML PATH('')), 1, 2, '') AS ImageNames,
+                ROW_NUMBER() OVER (ORDER BY SUM(bd.quantity) DESC) AS RowNum
+            FROM
+                dbo.bill b
+            JOIN
+                dbo.bill_detail bd ON b.id = bd.id_bill
+            JOIN
+                dbo.product_detail pdt ON bd.id_product_detail = pdt.id
+            JOIN
+                dbo.product pd ON pdt.id_product = pd.id
+            JOIN
+                dbo.color c ON pdt.id_color = c.id
+            JOIN
+                dbo.size s ON pdt.id_size = s.id
+            LEFT JOIN
+                dbo.sale_product sp ON pdt.id_sale_product = sp.id
+            WHERE
+                b.status = 5
+            GROUP BY
+                pd.name_product,
+                c.name_color,
+                s.name_size,
+                pdt.price,
+                CAST(
+                    CASE
+                        WHEN sp.discount_type = 1 AND pdt.id_sale_product IS NOT NULL THEN pdt.price * (1 - sp.discount_value / 100.0)
+                        WHEN sp.discount_type = 2 AND pdt.id_sale_product IS NOT NULL THEN (pdt.price - sp.discount_value)
+                        ELSE pdt.price
+                    END
+                AS DECIMAL(10, 2)),
+                pd.id
+        )
+        SELECT
+            ProductName,
+            ColorName,
+            SizeName,
+            OriginalPrice,
+            DiscountedPrice,
+            TotalQuantity,
+            ImageNames
+        FROM RankedProducts
+        WHERE RowNum <= 10;
+        
+    """, countQuery = """
+        WITH RankedProducts AS (
+            SELECT
+                pd.name_product AS ProductName,
+                c.name_color AS ColorName,
+                s.name_size AS SizeName,
+                CAST(pdt.price AS DECIMAL(10, 2)) AS OriginalPrice,
+                CAST(
+                    CASE
+                        WHEN sp.discount_type = 1 AND pdt.id_sale_product IS NOT NULL THEN pdt.price * (1 - sp.discount_value / 100.0)
+                        WHEN sp.discount_type = 2 AND pdt.id_sale_product IS NOT NULL THEN (pdt.price - sp.discount_value)
+                        ELSE pdt.price
+                    END
+                AS DECIMAL(10, 2)) AS DiscountedPrice,
+                SUM(bd.quantity) AS TotalQuantity,
+                STUFF(
+                    (SELECT DISTINCT ', ' + i.name_image
+                     FROM dbo.image i
+                     WHERE i.id_product = pd.id
+                     FOR XML PATH('')), 1, 2, '') AS ImageNames,
+                ROW_NUMBER() OVER (ORDER BY SUM(bd.quantity) DESC) AS RowNum
+            FROM
+                dbo.bill b
+            JOIN
+                dbo.bill_detail bd ON b.id = bd.id_bill
+            JOIN
+                dbo.product_detail pdt ON bd.id_product_detail = pdt.id
+            JOIN
+                dbo.product pd ON pdt.id_product = pd.id
+            JOIN
+                dbo.color c ON pdt.id_color = c.id
+            JOIN
+                dbo.size s ON pdt.id_size = s.id
+            LEFT JOIN
+                dbo.sale_product sp ON pdt.id_sale_product = sp.id
+            WHERE
+                b.status = 5
+            GROUP BY
+                pd.name_product,
+                c.name_color,
+                s.name_size,
+                pdt.price,
+                CAST(
+                    CASE
+                        WHEN sp.discount_type = 1 AND pdt.id_sale_product IS NOT NULL THEN pdt.price * (1 - sp.discount_value / 100.0)
+                        WHEN sp.discount_type = 2 AND pdt.id_sale_product IS NOT NULL THEN (pdt.price - sp.discount_value)
+                        ELSE pdt.price
+                    END
+                AS DECIMAL(10, 2)),
+                pd.id
+        )
+        SELECT COUNT(*) 
+        FROM RankedProducts
+        WHERE RowNum <= 10;
+    """, nativeQuery = true)
+
+    Page<Object[]> getProductSalesPage(Pageable pageable);
+
 }

@@ -30,4 +30,6 @@ public interface ChartService {
     List<Statistics> getAnnualStatistics();
 
     List<ProductInfoDto> getProductSales();
+
+    Page<ProductInfoDto> getProductSalesPage(int page, int size);
 }

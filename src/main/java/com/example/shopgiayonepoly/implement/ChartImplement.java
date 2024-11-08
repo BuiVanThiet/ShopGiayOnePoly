@@ -5,14 +5,15 @@ import com.example.shopgiayonepoly.dto.request.Statistics;
 import com.example.shopgiayonepoly.repositores.ChartRepository;
 import com.example.shopgiayonepoly.service.ChartService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 @Service
 public class ChartImplement implements ChartService {
@@ -150,6 +151,58 @@ public class ChartImplement implements ChartService {
         }
 
         return productSales; // Trả về danh sách sản phẩm
+    }
+
+    @Override
+    public Page<ProductInfoDto> getProductSalesPage(int page, int size) {
+        // Tạo pageable với số trang và số sản phẩm trên mỗi trang
+        Pageable pageable = PageRequest.of(page, size);
+
+        // Lấy kết quả phân trang từ repository
+        Page<Object[]> productPage = chartRepository.getProductSalesPage(pageable);
+
+        // Định dạng tiền tệ cho Việt Nam
+        NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+
+        // Chuyển đổi Object[] sang ProductInfoDto
+        List<ProductInfoDto> productDtos = new ArrayList<>();
+        for (Object[] row : productPage.getContent()) {
+            ProductInfoDto productInfoDto = new ProductInfoDto();
+
+            // Lấy thông tin sản phẩm và gán vào DTO
+            productInfoDto.setProductName((String) row[0]);
+            productInfoDto.setColorName((String) row[1]);
+            productInfoDto.setSizeName((String) row[2]);
+
+            // Định dạng giá trị tiền tệ
+            BigDecimal originalPrice = (BigDecimal) row[3];
+            BigDecimal discountedPrice = (BigDecimal) row[4];
+            String originalPriceFormatted = currencyFormatter.format(originalPrice).replace("₫", "VND");
+            String promotionalPriceFormatted = currencyFormatter.format(discountedPrice).replace("₫", "VND");
+
+            productInfoDto.setOriginalPrice(originalPriceFormatted);
+            productInfoDto.setPromotionalPrice(promotionalPriceFormatted);
+
+            productInfoDto.setTotalQuantity((Integer) row[5]);
+
+            // Chuyển đổi chuỗi hình ảnh từ `STUFF` thành danh sách hình ảnh
+            String imageNames = (String) row[6];
+            List<String> imageUrls = new ArrayList<>();
+            if (imageNames != null && !imageNames.isEmpty()) {
+                String[] images = imageNames.split(", ");
+                for (String image : images) {
+                    // Kết hợp URL cố định của Cloudinary với tên ảnh
+                    imageUrls.add("https://res.cloudinary.com/dfy4umpja/image/upload/v1728721025/" + image);
+                }
+            }
+            productInfoDto.setImageUrls(imageUrls);
+
+            // Thêm đối tượng ProductInfoDto vào danh sách
+            productDtos.add(productInfoDto);
+        }
+
+        // Trả về page chứa danh sách DTO
+        return new PageImpl<>(productDtos, pageable, productPage.getTotalElements());
     }
 
 }
