@@ -94,7 +94,7 @@ public interface ChartRepository extends JpaRepository<Bill, Integer> {
                     "LEFT JOIN bill b ON CAST(b.update_date AS DATE) = dr.Ngay AND b.status = 5  " +
                     "LEFT JOIN bill_detail bd ON b.id = bd.id_bill  " +
                     "GROUP BY dr.Ngay " +
-                    "ORDER BY dr.Ngay DESC " +
+                    "ORDER BY dr.Ngay ASC " +
                     "OPTION (MAXRECURSION 0)", nativeQuery = true)
     List<Object[]> findLast7DaysStatistics();
 
@@ -111,56 +111,55 @@ public interface ChartRepository extends JpaRepository<Bill, Integer> {
     List<Object[]> getAnnualStatistics();
 
     @Query(value = """
-    SELECT TOP 10 
-        pd.name_product AS ProductName,
-        c.name_color AS ColorName,
-        s.name_size AS SizeName,
-        -- Ép kiểu giá đã giảm thành DECIMAL(10,2) để giới hạn hai chữ số thập phân
-        CAST(
-            CASE 
-                WHEN sp.discount_type = 1 AND pdt.id_sale_product IS NOT NULL THEN pdt.price * (1 - sp.discount_value / 100.0) -- Giảm theo phần trăm
-                WHEN sp.discount_type = 2 AND pdt.id_sale_product IS NOT NULL THEN (pdt.price - sp.discount_value)             -- Giảm trực tiếp
-                ELSE pdt.price                                                          -- Không có giảm giá
-            END 
-        AS DECIMAL(10,2)) AS DiscountedPrice,
-        SUM(bd.quantity) AS TotalQuantity, -- Tổng quantity khi gộp các sản phẩm giống nhau
-        -- Gộp các tên ảnh duy nhất
-        STUFF(
-            (SELECT DISTINCT ', ' + i.name_image
-             FROM dbo.image i
-             WHERE i.id_product = pd.id
-             FOR XML PATH('')), 1, 2, '') AS ImageNames -- Xóa dấu phẩy thừa ở đầu
-    FROM 
-        dbo.bill b
-    JOIN 
-        dbo.bill_detail bd ON b.id = bd.id_bill -- Kết nối với bảng bill_detail
-    JOIN 
-        dbo.product_detail pdt ON bd.id_product_detail = pdt.id -- Kết nối với bảng product_detail
-    JOIN 
-        dbo.product pd ON pdt.id_product = pd.id -- Kết nối với bảng product
-    JOIN 
-        dbo.color c ON pdt.id_color = c.id -- Kết nối với bảng color
-    JOIN 
-        dbo.size s ON pdt.id_size = s.id -- Kết nối với bảng size
-    LEFT JOIN 
-        dbo.sale_product sp ON pdt.id_sale_product = sp.id -- Kết nối với bảng sale_product chỉ khi có id_sale_product
-    WHERE 
-        b.status = 5 -- Lọc các bill có status = 5
-    GROUP BY 
-        pd.name_product, 
-        c.name_color, 
-        s.name_size, 
-        pdt.price,
-        CAST(
-            CASE 
-                WHEN sp.discount_type = 1 AND pdt.id_sale_product IS NOT NULL THEN pdt.price * (1 - sp.discount_value / 100.0)
-                WHEN sp.discount_type = 2 AND pdt.id_sale_product IS NOT NULL THEN (pdt.price - sp.discount_value)
-                ELSE pdt.price 
-            END 
-        AS DECIMAL(10,2)),
-        pd.id  -- Thêm pd.id vào GROUP BY
-    ORDER BY 
-        TotalQuantity DESC
-""", nativeQuery = true)
+        SELECT TOP 10
+            pd.name_product AS ProductName,
+            c.name_color AS ColorName,
+            s.name_size AS SizeName,
+            CAST(pdt.price AS DECIMAL(10,2)) AS OriginalPrice, -- Giá gốc
+            CAST(
+                CASE 
+                    WHEN sp.discount_type = 1 AND pdt.id_sale_product IS NOT NULL THEN pdt.price * (1 - sp.discount_value / 100.0) -- Giảm theo phần trăm
+                    WHEN sp.discount_type = 2 AND pdt.id_sale_product IS NOT NULL THEN (pdt.price - sp.discount_value)             -- Giảm trực tiếp
+                    ELSE pdt.price                                                          -- Không có giảm giá
+                END 
+            AS DECIMAL(10,2)) AS DiscountedPrice,
+            SUM(bd.quantity) AS TotalQuantity, -- Tổng quantity khi gộp các sản phẩm giống nhau
+            STUFF(
+                (SELECT DISTINCT ', ' + i.name_image
+                 FROM dbo.image i
+                 WHERE i.id_product = pd.id
+                 FOR XML PATH('')), 1, 2, '') AS ImageNames -- Xóa dấu phẩy thừa ở đầu
+        FROM 
+            dbo.bill b
+        JOIN 
+            dbo.bill_detail bd ON b.id = bd.id_bill
+        JOIN 
+            dbo.product_detail pdt ON bd.id_product_detail = pdt.id
+        JOIN 
+            dbo.product pd ON pdt.id_product = pd.id
+        JOIN 
+            dbo.color c ON pdt.id_color = c.id
+        JOIN 
+            dbo.size s ON pdt.id_size = s.id
+        LEFT JOIN 
+            dbo.sale_product sp ON pdt.id_sale_product = sp.id
+        WHERE 
+            b.status = 5
+        GROUP BY 
+            pd.name_product, 
+            c.name_color, 
+            s.name_size, 
+            pdt.price,
+            CAST(
+                CASE 
+                    WHEN sp.discount_type = 1 AND pdt.id_sale_product IS NOT NULL THEN pdt.price * (1 - sp.discount_value / 100.0)
+                    WHEN sp.discount_type = 2 AND pdt.id_sale_product IS NOT NULL THEN (pdt.price - sp.discount_value)
+                    ELSE pdt.price 
+                END 
+            AS DECIMAL(10,2)),
+            pd.id
+        ORDER BY 
+            TotalQuantity DESC
+        """, nativeQuery = true)
     List<Object[]> getProductSales();
 }

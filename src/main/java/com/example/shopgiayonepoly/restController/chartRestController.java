@@ -35,8 +35,8 @@ public class chartRestController {
         return chartService.getAnnualStatistics();
     }
 
-    @GetMapping("/top-products")
-    public List<ProductInfoDto> getTopProducts() {
-        return chartService.getProductSales();
-    }
+//    @GetMapping("/top-products")
+//    public List<ProductInfoDto> getTopProducts() {
+//        return chartService.getProductSales();
+//    }
 }

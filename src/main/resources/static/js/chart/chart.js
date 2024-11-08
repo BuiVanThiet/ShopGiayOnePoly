@@ -121,7 +121,7 @@ function Last7DaysStatistics() {
             });
 
             var options = {
-                title: 'Biểu đồ thống kê sản phẩm và hóa đơn 7 ngày gần nhất',
+                title: 'Biểu đồ thống kê sản phẩm và hóa đơn 7 ngày gần đây',
                 titleTextStyle: {
                     alignment: 'center'
                 },
@@ -129,7 +129,7 @@ function Last7DaysStatistics() {
                     title: 'Số lượng'
                 },
                 hAxis: {
-                    title: '7 ngày gần nhất'
+                    title: '7 ngày gần đây'
                 },
                 seriesType: 'bars',
                 series: {
@@ -184,4 +184,27 @@ function AnnualStatistics() {
             chart.draw(googleData, options);
         })
         .catch(error => console.error('Lỗi khi lấy dữ liệu:', error));
+}
+
+google.charts.load('current', {'packages':['corechart']});
+google.charts.setOnLoadCallback(drawChart);
+
+function drawChart() {
+
+    var data = google.visualization.arrayToDataTable([
+        ['Task', 'Hours per Day'],
+        ['Work',     11],
+        ['Eat',      2],
+        ['Commute',  2],
+        ['Watch TV', 2],
+        ['Sleep',    7]
+    ]);
+
+    var options = {
+        title: 'My Daily Activities'
+    };
+
+    var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+
+    chart.draw(data, options);
 }

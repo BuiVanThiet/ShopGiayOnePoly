@@ -10,11 +10,13 @@ import com.example.shopgiayonepoly.service.CanvasjsChartService;
 import com.example.shopgiayonepoly.service.ChartService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/chart")
@@ -23,7 +25,8 @@ public class ChartController {
     ChartService chartService;
 
     @GetMapping("/form")
-    public String form(Model model) {
+    public String form(
+                       Model model) {
         long monthlyBill = chartService.monthlyBill();
         long totalMonthlyBill = chartService.totalMonthlyBill();
         long totalMonthlyInvoiceProducts = chartService.totalMonthlyInvoiceProducts();
@@ -55,9 +58,7 @@ public class ChartController {
         model.addAttribute("findLastDates", findLastDates);
 
         List<ProductInfoDto> productSales = chartService.getProductSales();
-        model.addAttribute("productSales", productSales);
-        System.out.println(productSales);
-
+        model.addAttribute("productSales", productSales); // Dữ liệu của trang hiện tại
         System.out.println(monthlyBill);
         return "Charts/index";
     }

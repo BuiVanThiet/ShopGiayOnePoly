@@ -18,9 +18,12 @@ public class ProductInfoDto extends BaseDTO  {
 
     private String sizeName;
 
-    private BigDecimal discountedPrice;
+    private String originalPrice;
+
+    private String promotionalPrice;
 
     private int totalQuantity;
 
     private List<String> imageUrls;
+
 }
