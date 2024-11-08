@@ -105,9 +105,17 @@
 }
 
 /* Thêm nền và bo góc cho div.col-md-6 */
-.col-md-6 {
+.col-md-7 {
     background-color: #e0e0e091; /* Chọn màu nền tùy thích */
     border-radius: 8px; /* Bo góc */
     padding: 20px; /* Thêm padding cho khoảng cách nội dung */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Thêm bóng đổ cho đẹp mắt */
 }
+.col-md-5 {
+    background-color: #e0e0e091; /* Chọn màu nền tùy thích */
+    border-radius: 8px; /* Bo góc */
+    padding: 20px; /* Thêm padding cho khoảng cách nội dung */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Thêm bóng đổ cho đẹp mắt */
+}
+
+
