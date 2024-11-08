@@ -704,10 +704,22 @@ function loadInfomationReturnBillFromBillManage() {
             $('#customer-buy-product').text(response.nameCustomer)
             $('#discount-voucher').text(Math.trunc(response.discount).toLocaleString('en-US') + ' VNĐ')
             $('#divide-equally-product').text(Math.trunc(response.discountRatioPercentage)+ ' %')
-            $('#total-return').text(Math.trunc(Math.trunc(response.totalReturn-response.exchangeAndReturnFee+response.discountedAmount)).toLocaleString('en-US') + ' VNĐ')
+            $('#total-return').text(Math.trunc(Math.trunc(response.totalReturn)).toLocaleString('en-US') + ' VNĐ')
             $('#node-return').val(response.noteReturn);
             $('#node-return').attr('disabled', true);
             $('#total-exchange').text(Math.trunc(response.totalExchange).toLocaleString('en-US') + ' VNĐ')
+            console.log(response.id + 'day la id return bill')
+
+            if(response.status == 1) {
+                var buttonsPDFReturnExchange;
+                buttonsPDFReturnExchange = `
+                 <button class="btn btn-outline-danger me-2"
+                            onclick="createBillPDFReturnExchange(${response.id})">Xuất phiếu đổi-trả</button>
+                `;
+                $('#out-put-bill-return-exchange').html(buttonsPDFReturnExchange)
+            }else {
+                $('#out-put-bill-return-exchange').html('')
+            }
 
             var totalReturnCustomer = 0;
             if(((response.totalReturn-response.exchangeAndReturnFee+response.discountedAmount)-response.totalExchange) <= 0) {
