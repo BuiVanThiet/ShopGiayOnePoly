@@ -487,7 +487,7 @@ public class    BillRestController extends BaseBill {
     }
 
     @GetMapping("/voucher/{page}")
-    public List<Voucher> getVouCherList(@PathVariable("page") String pageNumber,HttpSession session) {
+    public List<Object[]> getVouCherList(@PathVariable("page") String pageNumber,HttpSession session) {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if(staffLogin == null) {
             return null;
@@ -502,7 +502,8 @@ public class    BillRestController extends BaseBill {
         System.out.println("da loc duoc " + this.keyVoucher);
         System.out.println(idBill);
         Page<Voucher> vouchers = this.billService.getVouCherByBill(idBill,keyVoucher,pageable);
-        return vouchers.getContent();
+        return this.convertListToPage(this.billService.getVoucherByBillV2(idBill,keyVoucher),pageable).getContent();
+//        return vouchers.getContent();
     }
 
     @PostMapping("/voucher-search")
@@ -532,10 +533,9 @@ public class    BillRestController extends BaseBill {
         System.out.println("id bill vung page voucgher " + idBill);
 
         // Đảm bảo danh sách không bị null
-        List<Voucher> vouchers = this.billService.getVoucherByBill(idBill,this.keyVoucher);
-        System.out.println(vouchers.size()+ "so luong voucher");
-
-        Integer maxPage = (int) Math.ceil((double) vouchers.size() / 5);
+//        List<Voucher> vouchers = this.billService.getVoucherByBill(idBill,this.keyVoucher);
+        List<Object[]> voucher = this.billService.getVoucherByBillV2(idBill,keyVoucher);
+        Integer maxPage = (int) Math.ceil((double) voucher.size() / 5);
         System.out.println("Số trang tối đa của voucher: " + maxPage);
         return maxPage;
     }
@@ -1273,7 +1273,7 @@ public class    BillRestController extends BaseBill {
 //    }
 
     @GetMapping("/bill-pdf/{idBill}")
-    public ResponseEntity<byte[]> getBillDetails(@PathVariable("idBill") String idBill,HttpSession session) throws Exception {
+    public ResponseEntity<byte[]> getbillPDF(@PathVariable("idBill") String idBill,HttpSession session) throws Exception {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         System.out.println("da vao phuong thuc xuat pdf");
         if(staffLogin == null) {
@@ -1324,6 +1324,65 @@ public class    BillRestController extends BaseBill {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
         headers.setContentDispositionFormData("inline", billInfo[0] + ".pdf");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(pdfBytes);
+    }
+
+    @GetMapping("/bill-return-exchange-pdf/{idBill}")
+    public ResponseEntity<byte[]> getBillReturnExchangePDF(@PathVariable("idBill") String idBill,HttpSession session) throws Exception {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        System.out.println("da vao phuong thuc xuat pdf");
+        if(staffLogin == null) {
+            System.out.println("pdf: neu khong dang nhap vao day");
+            return null;
+        }
+
+        String validateIdBill = validateInteger(idBill);
+        if (!validateIdBill.trim().equals("")) {
+            System.out.println("pdf: neu id khong dung vao day");
+            return null;
+        }
+        // Lấy chi tiết hóa đơn và thông tin hóa đơn từ service
+        List<Object[]> exchangeDetailList = this.billService.getListProductExchange(Integer.parseInt(idBill));
+        List<Object[]> returnDetailList = this.billService.getListProductReturn(Integer.parseInt(idBill));
+        List<Object[]> billInfoList = this.billService.getInformationPDF_Return_Exchange_Bill(Integer.parseInt(idBill));
+
+        // Kiểm tra dữ liệu
+        if (billInfoList == null || returnDetailList.isEmpty()) {
+            return ResponseEntity.status(404).body(null);
+        }
+
+        Object[] billInfo = billInfoList.get(0);
+
+        // Tạo PDF từ template
+        ByteArrayOutputStream pdfStream = pdfTemplateService.fillPdfReturnExchangeTemplate(billInfo,returnDetailList,exchangeDetailList);
+        byte[] pdfBytes = pdfStream.toByteArray();
+
+        // Đường dẫn thư mục và file
+        String directoryPath = "D:/danhSachHoaDonReturnExchange/";
+        String filePath = directoryPath + billInfo[2] + ".pdf";
+
+        // Kiểm tra và tạo thư mục nếu chưa tồn tại
+        File directory = new File(directoryPath);
+        if (!directory.exists()) {
+            directory.mkdirs();  // Tạo thư mục
+        }
+
+        // Lưu file PDF
+        try (FileOutputStream fos = new FileOutputStream(filePath)) {
+            fos.write(pdfBytes);
+            fos.flush();
+        } catch (IOException e) {
+            e.printStackTrace();  // Xử lý lỗi nếu có
+            return ResponseEntity.status(500).body(null);  // Trả về mã lỗi 500 nếu xảy ra lỗi khi ghi file
+        }
+
+        // Trả về phản hồi thành công
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("inline", billInfo[2] + ".pdf");
 
         return ResponseEntity.ok()
                 .headers(headers)

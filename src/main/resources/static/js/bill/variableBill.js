@@ -82,6 +82,32 @@ function createBillPDF(id) {
     })
 }
 
+function createBillPDFReturnExchange(id) {
+    if(id == null) {
+        id = parseInt($('#idBillCreatePDF').val());
+        console.log('id de tao oa don la ' + id)
+    }
+    $.ajax({
+        type: "GET",
+        url: "/bill-api/bill-return-exchange-pdf/"+id,
+        xhrFields: {
+            responseType: 'blob'  // Nhận PDF dưới dạng blob
+        },
+        success: function (response) {
+            // Tạo URL cho blob PDF
+            const pdfUrl = URL.createObjectURL(response);
+
+            // Mở tab mới và hiển thị PDF
+            const newTab = window.open();
+            newTab.document.write(`<iframe src="${pdfUrl}" width="100%" height="100%" style="border:none;"></iframe>`);
+
+        },
+        error: function (xhr) {
+            console.error('loi ' + xhr.responseType);
+        }
+    })
+}
+
 function isValidString(str) {
     const regex = /^[A-Za-z0-9\s\u00C0-\u00FF\u0100-\u017F\u0180-\u024F\u1E00-\u1EFF]*$/;
     if (regex.test(str)) {
