@@ -11,6 +11,7 @@ function showDropdown(event) {
 
     // Mở dropdown tương ứng với ô input hiện tại
     if (ul) {
+        ul.style.top = input.offsetHeight + 24 + "px"; // Đặt vị trí dropdown ngay dưới input
         ul.classList.add("show-createProductDetail"); // Hiển thị dropdown
     }
 }
