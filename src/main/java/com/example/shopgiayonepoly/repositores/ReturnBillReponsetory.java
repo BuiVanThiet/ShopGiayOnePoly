@@ -10,4 +10,15 @@ import org.springframework.stereotype.Repository;
 public interface ReturnBillReponsetory extends JpaRepository<ReturnBillExchangeBill,Integer> {
     @Query("select rb from ReturnBillExchangeBill rb where rb.bill.id = :idBill")
     ReturnBillExchangeBill getReturnBillByIdBill(@Param("idBill") Integer idBill);
+    @Query("""
+            select
+                           case
+                               when (rb.customerRefund - rb.exchangeAndReturnFee + rb.discountedAmount) - rb.customerPayment < 0
+                               then 'PhaiTraTien'
+                               else 'KhongPhaiTraTien'
+                           end
+                       from ReturnBillExchangeBill rb 
+                       where rb.id = :idCheck and rb.status = 0
+                       """)
+    String getStatusPaymentorNotPay(@Param("idCheck") Integer idCheck);
 }

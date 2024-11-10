@@ -60,4 +60,9 @@ public class ReturnBillImplement implements ReturnBillService {
     public ReturnBillExchangeBill getReturnBillByIdBill(Integer idBill) {
         return this.returnBillReponsetory.getReturnBillByIdBill(idBill);
     }
+
+    @Override
+    public String getStatusPaymentorNotPay(Integer id) {
+        return this.returnBillReponsetory.getStatusPaymentorNotPay(id);
+    }
 }

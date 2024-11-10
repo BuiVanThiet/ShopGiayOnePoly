@@ -19,7 +19,7 @@
         }
 
         .progress-container {
-            width: 2000px;
+            width: 2500px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -424,6 +424,7 @@
                                 <label class="form-label">Tiền Khách đưa</label>
                                 <div class="input-group mb-3">
                                     <input type="text" class="form-control" id="cashClient-billInfo">
+                                    <input type="text" class="form-control" id="cashClient-billInfo-exchange" style="display: none;">
                                     <span class="input-group-text">VNĐ</span>
                                 </div>
                             </div>
@@ -478,6 +479,16 @@
                             <input type="hidden" id="payMethod" value="1">
                             <input type="hidden" id="surplusMoneyPay" value="0">
                             <button type="submit" class="btn btn-outline-success" data-bs-dismiss="modal" aria-label="Close" id="btnPaymentInBill">Thanh toán</button>
+                        </form>
+                        <form id="payExchange" style="display: none;">
+                            <input type="hidden" id="cashPayExchange" value="0">
+                            <input type="hidden" id="cashAcountPayExchange" value="0">
+                            <input type="hidden" id="cashBillPayExchange" value="0">
+                            <input type="hidden" id="notePayExchange" value="">
+                            <input type="hidden" id="payStatusExchange" value="1">
+                            <input type="hidden" id="payMethodExchange" value="1">
+                            <input type="hidden" id="surplusMoneyPayExchange" value="0">
+                            <button type="submit" class="btn btn-outline-success" data-bs-dismiss="modal" aria-label="Close" id="btnPaymentInBillExchange">Thanh toán</button>
                         </form>
                     </div>
             </div>

@@ -76,6 +76,9 @@ function validate(cash) {
             checkButonCreateBill = false;
         } else {
             console.log('Neu la so thi vao day');
+            console.log('tong tien hoa don ' + totalAmountNumber)
+            console.log('TIEN NHAP ' + cashClientNumber)
+            console.log('tien tong cong la: ' + cashClientNumber-totalAmountNumber)
             // // Kiểm tra nếu dữ liệu là số nhỏ hơn 0
             // if (cashClientNumber < 500) {
             //     formErorrCash.style.display = 'block';
@@ -92,8 +95,7 @@ function validate(cash) {
                 textSurplusMoney.value = '0';
                 cashClientText.value = cashClientValue;
                 checkButonCreateBill = false;
-            }
-            else if (cashClientNumber < totalAmountNumber && parseNumber(payMethod.value) === 1) {
+            } else if (cashClientNumber < totalAmountNumber && parseNumber(payMethod.value) === 1) {
                 formErorrCash.style.display = 'block';
                 erorrCash.innerText = 'Tiền nhập vào phải bằng với hóa đơn!';
                 btnCreateBill.disabled = true;
@@ -113,9 +115,9 @@ function validate(cash) {
                 cashClientText.value = cashClientNumber;
                 cashAccount.value = 0;
                 checkButonCreateBill = true;
-            }else if (cashClientNumber - totalAmountNumber > 20000 && parseNumber(payMethod.value) === 3) {
+            }else if (totalAmountNumber - cashClientNumber < 10000 && parseNumber(payMethod.value) === 3) {
                 formErorrCash.style.display = 'block';
-                erorrCash.innerText = 'Để tạo hóa đơn điện tử cần dư ra 20,000 VNĐ!';
+                erorrCash.innerText = 'Để tạo hóa đơn điện tử cần dư ra 10,000 VNĐ!';
                 btnCreateBill.disabled = true;
                 surplusMoneySpan.style.display = 'none';
                 surplusMoney.innerText = '';
