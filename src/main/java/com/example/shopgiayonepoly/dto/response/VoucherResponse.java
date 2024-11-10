@@ -25,4 +25,6 @@ public class VoucherResponse extends BaseDTO {
     private Integer quantity;
 
 
+
+
 }

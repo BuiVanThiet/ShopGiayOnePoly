@@ -84,9 +84,9 @@ public interface VoucherRepository extends JpaRepository<Voucher, Integer> {
 
     @Query("SELECT v FROM Voucher v " +
            "WHERE v.pricesApply <= :totalPrice " +
-           "AND v.pricesMax >= :totalPrice " +
            "AND v.startDate <= :currentDate " +
-           "AND v.endDate >= :currentDate")
+           "AND v.endDate >= :currentDate " +
+           "AND v.status=1")
     List<Voucher> findApplicableVouchers(
             @Param("totalPrice") BigDecimal totalPrice,
             @Param("currentDate") LocalDate currentDate);
