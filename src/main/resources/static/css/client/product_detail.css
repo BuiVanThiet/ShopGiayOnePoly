@@ -74,14 +74,15 @@
     flex: 0 0 65%; /* 65% chiều rộng cho thông tin sản phẩm */
     padding-left: 30px; /* Thêm khoảng cách giữa ảnh và thông tin */
 }
-.right{
+
+.right {
     position: absolute;
     left: 220px;
 }
 
 .modal .modal-dialog {
     max-width: 700px;
-    max-height: 500px;
+    max-height: 900px;
     margin: auto;
 }
 
@@ -135,19 +136,20 @@
     margin: 0;
 }
 
-.item .item-price {
-    color: #e74c3c;
-    font-weight: bold;
-    margin-top: 5px;
+.price-current {
+    color: #d00909; /* Màu đỏ cho giá sau giảm */
 }
 
-
-.item .item-desc .variant-option .text {
-    margin-left: 5px;
-    color: #666;
+.price-original {
+    color: #4f4e4e; /* Màu xám cho giá gốc */
+    font-weight: lighter; /* Font nhẹ cho giá gốc */
+    font-size: 0.9em; /* Giảm một chút kích thước cho giá gốc */
 }
 
-/* Phong cách cho số lượng sản phẩm */
+.line-through {
+    text-decoration: line-through;
+}
+/* Css cho số lượng sản phẩm */
 .item .item-quan {
     display: flex;
     align-items: center;
@@ -176,18 +178,21 @@
 .popup_action {
     margin-left: 30px;
     margin-top: 20px;
+    margin-bottom: 200px;
     display: flex;
     justify-content: flex-end;
     gap: 5px;
     padding: 5px;
 }
-.popup_action>a{
+
+.popup_action > a {
     width: 200px;
 }
 
 .popup_action .btn {
     background-color: #007bff;
     color: #fff;
+    height: 50px;
     padding: 10px 15px;
     border-radius: 2px;
     text-decoration: none;
