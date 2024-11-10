@@ -2,6 +2,7 @@ package com.example.shopgiayonepoly.service;
 
 import com.example.shopgiayonepoly.dto.request.ProductInfoDto;
 import com.example.shopgiayonepoly.dto.request.Statistics;
+import com.example.shopgiayonepoly.dto.request.StatusBill;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -30,4 +31,8 @@ public interface ChartService {
     List<Statistics> getAnnualStatistics();
 
     List<ProductInfoDto> getProductSales();
+
+    Page<ProductInfoDto> getProductSalesPage(int page, int size);
+
+    List<StatusBill> findBillsWithStatusDescription();
 }

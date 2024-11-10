@@ -11,6 +11,8 @@ import com.example.shopgiayonepoly.service.ChartService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,8 +27,7 @@ public class ChartController {
     ChartService chartService;
 
     @GetMapping("/form")
-    public String form(
-                       Model model) {
+    public String form(Model model, @RequestParam(defaultValue ="0") int page) {
         long monthlyBill = chartService.monthlyBill();
         long totalMonthlyBill = chartService.totalMonthlyBill();
         long totalMonthlyInvoiceProducts = chartService.totalMonthlyInvoiceProducts();
@@ -56,10 +57,14 @@ public class ChartController {
         model.addAttribute("totalPriceToday",formattedTotalPriceToday);
 
         model.addAttribute("findLastDates", findLastDates);
-
+//danh sách sp chưa phân trang
         List<ProductInfoDto> productSales = chartService.getProductSales();
-        model.addAttribute("productSales", productSales); // Dữ liệu của trang hiện tại
-        System.out.println(monthlyBill);
+        model.addAttribute("productSales", productSales);
+//danh sách sp phân trang
+
+        Page<ProductInfoDto> productPage = chartService.getProductSalesPage(page, 3);
+        model.addAttribute("productPage", productPage);
+
         return "Charts/index";
     }
 
