@@ -2,6 +2,7 @@ package com.example.shopgiayonepoly.implement;
 
 import com.example.shopgiayonepoly.dto.request.ProductInfoDto;
 import com.example.shopgiayonepoly.dto.request.Statistics;
+import com.example.shopgiayonepoly.dto.request.StatusBill;
 import com.example.shopgiayonepoly.repositores.ChartRepository;
 import com.example.shopgiayonepoly.service.ChartService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ChartImplement implements ChartService {
@@ -203,6 +205,27 @@ public class ChartImplement implements ChartService {
 
         // Trả về page chứa danh sách DTO
         return new PageImpl<>(productDtos, pageable, productPage.getTotalElements());
+    }
+
+    @Override
+    public List<StatusBill> findBillsWithStatusDescription() {
+        // Lấy kết quả từ repository
+        List<Object[]> results = chartRepository.findBillsWithStatusDescription();
+
+        // Khởi tạo danh sách kết quả
+        List<StatusBill> statusBills = new ArrayList<>();
+
+        // Duyệt qua từng kết quả trả về
+        for (Object[] result : results) {
+            // Lấy giá trị từ mảng Object[]
+            String statusDescription = (String) result[0];  // Trạng thái (String)
+            int countStatus = ((Number) result[1]).intValue();  // Số lượng trạng thái (int)
+
+            // Thêm vào danh sách statusBills
+            statusBills.add(new StatusBill(statusDescription, countStatus));
+        }
+
+        return statusBills;
     }
 
 }

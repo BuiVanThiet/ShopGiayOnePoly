@@ -23,7 +23,7 @@ public interface ChartRepository extends JpaRepository<Bill, Integer> {
             "AND YEAR(b.updateDate) = YEAR(CURRENT_DATE)")
     long monthlyBill();
 
-    @Query("SELECT COALESCE(SUM(b.totalAmount), 0) " +  // Thay đổi SUM(b.totalAmount) thành COALESCE(SUM(b.totalAmount), 0)
+    @Query("SELECT COALESCE(SUM(b.totalAmount - b.priceDiscount), 0) " +  // Thay đổi SUM(b.totalAmount) thành COALESCE(SUM(b.totalAmount), 0)
             "FROM Bill b " +
             "WHERE b.status = 5 " +
             "AND MONTH(b.updateDate) = MONTH(CURRENT_DATE) " +
@@ -44,11 +44,11 @@ public interface ChartRepository extends JpaRepository<Bill, Integer> {
             "AND CAST(b.updateDate AS DATE) = CAST(CURRENT_DATE AS DATE)")
     long billOfTheDay();
 
-    @Query("SELECT COALESCE(SUM(bd.totalAmount), 0) " +  // Thay đổi SUM(bd.totalAmount) thành COALESCE(SUM(bd.totalAmount), 0)
+    @Query("SELECT COALESCE(SUM(bd.totalAmount - b.priceDiscount), 0) " +
             "FROM BillDetail bd " +
             "JOIN bd.bill b " +
             "WHERE b.status = 5 " +
-            "AND CAST(b.updateDate AS date) = CAST(CURRENT_DATE AS date)")
+            "AND CAST(b.updateDate AS date) = CAST(GETDATE() AS date)")
     long totalPriceToday();
 
     @Query("SELECT CAST(MAX(b.updateDate) AS date) " +
@@ -285,4 +285,23 @@ public interface ChartRepository extends JpaRepository<Bill, Integer> {
 
     Page<Object[]> getProductSalesPage(Pageable pageable);
 
+    @Query(value = "SELECT " +
+            "CASE " +
+            "WHEN b.status IN (1, 7) THEN N'Chờ xác nhận' " +
+            "WHEN b.status = 2 THEN N'Xác nhận' " +
+            "WHEN b.status = 3 THEN N'Đang giao' " +
+            "WHEN b.status = 4 THEN N'Đã nhận được hàng' " +
+            "WHEN b.status = 5 THEN N'Hoàn thành' " +
+            "WHEN b.status IN (6, 9) THEN N'Đã hủy' " +
+            "WHEN b.status = 8 THEN N'Đổi-trả hàng' " +
+            "ELSE N'Không xác định' " +
+            "END AS statusDescription, " +
+            "COUNT(b.status) AS countOfStatus " +
+            "FROM Bill b " +
+            "WHERE b.status <> 0 " +
+            "AND MONTH(b.update_date) = MONTH(GETDATE()) " +
+            "AND YEAR(b.update_date) = YEAR(GETDATE()) " +
+            "GROUP BY b.status " +
+            "ORDER BY countOfStatus DESC", nativeQuery = true)
+    List<Object[]> findBillsWithStatusDescription();
 }
