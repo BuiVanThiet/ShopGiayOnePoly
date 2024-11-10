@@ -27,4 +27,6 @@ public interface ReturnBillService {
     Page<ReturnBillExchangeBill> findAll(Pageable pageable);
 
     ReturnBillExchangeBill getReturnBillByIdBill(Integer idBill);
+
+    String getStatusPaymentorNotPay(Integer id);
 }

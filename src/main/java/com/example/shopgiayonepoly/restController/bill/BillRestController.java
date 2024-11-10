@@ -1,9 +1,11 @@
 package com.example.shopgiayonepoly.restController.bill;
 
 import com.example.shopgiayonepoly.baseMethod.BaseBill;
+import com.example.shopgiayonepoly.baseMethod.BaseProduct;
 import com.example.shopgiayonepoly.dto.request.bill.*;
 import com.example.shopgiayonepoly.dto.response.bill.*;
 import com.example.shopgiayonepoly.entites.*;
+import com.example.shopgiayonepoly.entites.baseEntity.Base;
 import com.example.shopgiayonepoly.service.EmailSenderService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -33,7 +35,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/bill-api")
-public class    BillRestController extends BaseBill {
+public class BillRestController extends BaseBill {
     @GetMapping("/get-idbill")
     @ResponseBody
     public Integer getIdBillFromSession(HttpSession session) {
@@ -1010,6 +1012,20 @@ public class    BillRestController extends BaseBill {
                 return ResponseEntity.ok(thongBao);
             }
 
+            ReturnBillExchangeBill returnBillExchangeBill = this.returnBillService.getReturnBillByIdBill(bill.getId());
+            if(returnBillExchangeBill != null) {
+                if(returnBillExchangeBill.getId() != null) {
+                    String checkPay = this.returnBillService.getStatusPaymentorNotPay(returnBillExchangeBill.getId());
+                    List<PaymentExchange> paymentExchanges = this.paymentExchangeService.getPaymentExchangeByIdBillExchange(returnBillExchangeBill.getId());
+
+                    if(checkPay.equals("PhaiTraTien") && paymentExchanges.isEmpty()) {
+                        thongBao.put("message","Phải thanh toán trước!");
+                        thongBao.put("check","3");
+                        return ResponseEntity.ok(thongBao);
+                    }
+                }
+            }
+
             bill.setUpdateDate(new Date());
             bill.setStatus(8);
             mess = "Hóa đơn đã được xác nhận!";
@@ -1067,6 +1083,7 @@ public class    BillRestController extends BaseBill {
         String surplusMoneyPay = paymentData.get("surplusMoneyPay");
         String payMethod = paymentData.get("payMethod");
         System.out.println("Du lieu khi thnah toan ");
+        String billPay = paymentData.get("billPay");
 
         System.out.println("cashPay: " + cashPay);
         System.out.println("cashAcountPay: " + cashAcountPay);
@@ -1128,76 +1145,239 @@ public class    BillRestController extends BaseBill {
                 thongBao.put("check","3");
                 return ResponseEntity.ok(thongBao);
             }
-            if(billPayment.getStatus() >= 5) {
-                thongBao.put("message","Hóa đơn này không thanh toán được!");
-                thongBao.put("check","3");
-                return ResponseEntity.ok(thongBao);
-            }
-            if(billPayment.getPaymentStatus() == 1) {
-                thongBao.put("message","Hóa đơn này không thanh toán được!");
-                thongBao.put("check","3");
-                return ResponseEntity.ok(thongBao);
-            }
-            BigDecimal cash;
-            try {
+            if(billPay.equals("billShip")) {
+
+                if(billPayment.getStatus() >= 5 || billPayment.getPaymentStatus() == 1) {
+                    thongBao.put("message","Hóa đơn này không thanh toán được!");
+                    thongBao.put("check","3");
+                    return ResponseEntity.ok(thongBao);
+                }
+                BigDecimal cash;
+                try {
+                    cash = new BigDecimal(cashPay).subtract(new BigDecimal(surplusMoneyPay));
+                } catch (NumberFormatException e) {
+                    thongBao.put("message","Số tiền thanh toán không hợp lệ!");
+                    thongBao.put("check","3");
+                    return ResponseEntity.ok(thongBao);
+                }
                 cash = new BigDecimal(cashPay).subtract(new BigDecimal(surplusMoneyPay));
-            } catch (NumberFormatException e) {
-                thongBao.put("message","Số tiền thanh toán không hợp lệ!");
-                thongBao.put("check","3");
+                billPayment.setCash(cash);
+                if(billPayment.getNote().trim().equals("")) {
+                    billPayment.setNote("Thanh toán bằng tiền mặt!");
+                }
+                if(notePay.trim().equals("")) {
+                    session.setAttribute("notePayment","Thanh toán bằng tiền mặt!");
+                }else {
+                    session.setAttribute("notePayment",notePay);
+                }
+                billPayment.setPaymentMethod(checkPayMethod);
+                billPayment.setPaymentStatus(Integer.parseInt(payStatus));
+                billPayment.setUpdateDate(new Date());
+                billPayment.setSurplusMoney(new BigDecimal(surplusMoneyPay));
+
+                int result = billPayment.getCash().compareTo(billPayment.getTotalAmount().add(billPayment.getShippingPrice()).subtract(billPayment.getPriceDiscount()));
+
+                if (result < 0) {
+                    thongBao.put("message","Số tiền thanh toán không hợp lệ!");
+                    thongBao.put("check","3");
+                    return ResponseEntity.ok(thongBao);
+                }
+
+                this.billService.save(billPayment);
+                thongBao.put("message",mess);
+                thongBao.put("check",colorMess);
+                this.setBillStatus(billPayment.getId(),101,session);
                 return ResponseEntity.ok(thongBao);
-            }
-            cash = new BigDecimal(cashPay).subtract(new BigDecimal(surplusMoneyPay));
-            billPayment.setCash(cash);
-            if(billPayment.getNote().trim().equals("")) {
-                billPayment.setNote("Thanh toán bằng tiền mặt!");
-            }
-            if(notePay.trim().equals("")) {
-                session.setAttribute("notePayment","Thanh toán bằng tiền mặt!");
+            }else if (billPay.equals("exchangeBill")) {
+                ReturnBillExchangeBill returnBillExchangeBill = this.returnBillService.getReturnBillByIdBill(billPayment.getId());
+
+                if(returnBillExchangeBill == null) {
+                    thongBao.put("message","Hóa đơn thanh toán đổi không tồn tại!");
+                    thongBao.put("check","3");
+                    return ResponseEntity.ok(thongBao);
+                }
+
+                if (returnBillExchangeBill.getId() == null) {
+                    thongBao.put("message","Hóa đơn thanh toán đổi không tồn tại!");
+                    thongBao.put("check","3");
+                    return ResponseEntity.ok(thongBao);
+                }
+
+                String checkPayExchange = this.returnBillService.getStatusPaymentorNotPay(returnBillExchangeBill.getId());
+
+                List<PaymentExchange> paymentExchanges = this.paymentExchangeService.getPaymentExchangeByIdBillExchange(returnBillExchangeBill.getId());
+
+                if(checkPayExchange.equals("KhongPhaiTraTien")) {
+                    thongBao.put("message","Hóa đơn này không thanh toán được!(exchange)");
+                    thongBao.put("check","3");
+                    return ResponseEntity.ok(thongBao);
+                }
+
+                if(!paymentExchanges.isEmpty()) {
+                    thongBao.put("message","Hóa đơn này không thanh toán được!(exchange)");
+                    thongBao.put("check","3");
+                    return ResponseEntity.ok(thongBao);
+                }
+
+                BigDecimal cash;
+                try {
+                    cash = new BigDecimal(cashPay).subtract(new BigDecimal(surplusMoneyPay));
+                } catch (NumberFormatException e) {
+                    thongBao.put("message","Số tiền thanh toán không hợp lệ!");
+                    thongBao.put("check","3");
+                    return ResponseEntity.ok(thongBao);
+                }
+                cash = new BigDecimal(cashPay).subtract(new BigDecimal(surplusMoneyPay));
+
+                if(notePay.trim().equals("")) {
+                    session.setAttribute("notePayment","Thanh toán bằng tiền mặt!");
+                }else {
+                    session.setAttribute("notePayment",notePay);
+                }
+
+                PaymentExchange paymentExchange = new PaymentExchange();
+                paymentExchange.setExchangeBilll(returnBillExchangeBill);
+                paymentExchange.setCash(cash);
+                paymentExchange.setCashAcount(new BigDecimal(0));
+                paymentExchange.setPayMethod(1);
+                paymentExchange.setStatus(1);
+                paymentExchange.setStaff(staffLogin);
+                paymentExchange.setSurplusMoney(new BigDecimal(surplusMoneyPay));
+
+                System.out.println("cai nay cua exhcange thanh toan: " + paymentExchange.toString());
+                thongBao.put("message","Thanh toán thành công(của đổi-trả sản phẩm)!");
+                thongBao.put("check","1");
+                thongBao.put("donePay","done");
+                this.paymentExchangeService.save(paymentExchange);
+                this.setBillStatus(billPayment.getId(),102,session);
+
+                return ResponseEntity.ok(thongBao);
             }else {
-                session.setAttribute("notePayment",notePay);
-            }
-            billPayment.setPaymentMethod(checkPayMethod);
-            billPayment.setPaymentStatus(Integer.parseInt(payStatus));
-            billPayment.setUpdateDate(new Date());
-            billPayment.setSurplusMoney(new BigDecimal(surplusMoneyPay));
-
-            int result = billPayment.getCash().compareTo(billPayment.getTotalAmount().add(billPayment.getShippingPrice()).subtract(billPayment.getPriceDiscount()));
-
-            if (result < 0) {
-                thongBao.put("message","Số tiền thanh toán không hợp lệ!");
+                thongBao.put("message","Sai phương thức thanh toán!");
                 thongBao.put("check","3");
                 return ResponseEntity.ok(thongBao);
             }
-
-            this.billService.save(billPayment);
-            thongBao.put("message",mess);
-            thongBao.put("check",colorMess);
-            this.setBillStatus(billPayment.getId(),101,session);
-            return ResponseEntity.ok(thongBao);
         }else {
             Bill billPayment = this.billService.findById(idBill).orElse(null);
-            if (billPayment == null) {
-                thongBao.put("message","Hóa đơn không tồn tại!");
+
+            if (billPay.equals("billShip")) {
+                if (billPayment == null) {
+                    thongBao.put("message","Hóa đơn không tồn tại!");
+                    thongBao.put("check","3");
+                    return ResponseEntity.ok(thongBao);
+                }
+                billPayment.setPaymentMethod(checkPayMethod);
+
+                if(notePay.trim().equals("")) {
+                    if(checkPayMethod == 2) {
+                        notePay = "Thanh toán bằng tiền tài khoản!";
+                        session.setAttribute("notePayment",notePay);
+                    }else if (checkPayMethod == 3){
+                        notePay = "Thanh toán bằng tiền tài khoan và tiền mặt!";
+                        billPayment.setCash(BigDecimal.valueOf(Double.parseDouble(cashPay)));
+                        session.setAttribute("notePayment",notePay);
+                    }
+                }else {
+                    if(checkPayMethod == 2) {
+                        session.setAttribute("notePayment",notePay);
+                    }else if (checkPayMethod == 3){
+                        billPayment.setCash(BigDecimal.valueOf(Double.parseDouble(cashPay)));
+                        session.setAttribute("notePayment",notePay);
+                    }
+                }
+
+                if(billPayment.getNote().trim().equals("")) {
+                    billPayment.setNote(notePay);
+                }
+                session.setAttribute("billPaymentRest",billPayment);
+                session.setAttribute("checkBill","billShip");
+                String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
+                String vnpayUrl = vnPayService.createOrder((Integer.parseInt(cashAcountPay)), "chuyenKhoan", baseUrl);
+                thongBao.put("vnpayUrl",vnpayUrl);
+                return ResponseEntity.ok(thongBao);
+            }else if (billPay.equals("exchangeBill")) {
+                ReturnBillExchangeBill returnBillExchangeBill = this.returnBillService.getReturnBillByIdBill(billPayment.getId());
+
+                if(returnBillExchangeBill == null) {
+                    thongBao.put("message","Hóa đơn thanh toán đổi không tồn tại!");
+                    thongBao.put("check","3");
+                    return ResponseEntity.ok(thongBao);
+                }
+
+                if (returnBillExchangeBill.getId() == null) {
+                    thongBao.put("message","Hóa đơn thanh toán đổi không tồn tại!");
+                    thongBao.put("check","3");
+                    return ResponseEntity.ok(thongBao);
+                }
+
+                String checkPayExchange = this.returnBillService.getStatusPaymentorNotPay(returnBillExchangeBill.getId());
+
+                List<PaymentExchange> paymentExchanges = this.paymentExchangeService.getPaymentExchangeByIdBillExchange(returnBillExchangeBill.getId());
+
+                PaymentExchange paymentExchange = new PaymentExchange();
+
+                if(checkPayExchange.equals("KhongPhaiTraTien")) {
+                    thongBao.put("message","Hóa đơn này không thanh toán được!(exchange)");
+                    thongBao.put("check","3");
+                    return ResponseEntity.ok(thongBao);
+                }
+
+                if(!paymentExchanges.isEmpty()) {
+                    thongBao.put("message","Hóa đơn này không thanh toán được!(exchange)");
+                    thongBao.put("check","3");
+                    return ResponseEntity.ok(thongBao);
+                }
+
+                session.setAttribute("notePayment",notePay);
+
+                if(!notePay.trim().equals("")) {
+                    session.setAttribute("notePayment",notePay);
+                }
+
+                if(notePay.trim().equals("")) {
+                    if(checkPayMethod == 2) {
+                        notePay = "Thanh toán bằng tiền tài khoản(của đổi-trả sản phẩm)!";
+                        session.setAttribute("notePayment",notePay);
+                        paymentExchange.setPayMethod(2);
+                    }else if (checkPayMethod == 3){
+                        notePay = "Thanh toán bằng tiền tài khoan và tiền mặt(của đổi-trả sản phẩm)!";
+                        billPayment.setCash(BigDecimal.valueOf(Double.parseDouble(cashPay)));
+                        session.setAttribute("notePayment",notePay);
+                        paymentExchange.setPayMethod(3);
+                    }
+                }else {
+                    if(checkPayMethod == 2) {
+                        session.setAttribute("notePayment",notePay);
+                        paymentExchange.setPayMethod(2);
+                    }else if (checkPayMethod == 3){
+                        billPayment.setCash(BigDecimal.valueOf(Double.parseDouble(cashPay)));
+                        session.setAttribute("notePayment",notePay);
+                        paymentExchange.setPayMethod(3);
+                    }
+                }
+
+
+                paymentExchange.setCash(new BigDecimal(cashPay));
+                paymentExchange.setStatus(1);
+                paymentExchange.setStaff(staffLogin);
+                paymentExchange.setCashAcount(new BigDecimal(cashAcountPay));
+                paymentExchange.setExchangeBilll(returnBillExchangeBill);
+                paymentExchange.setSurplusMoney(new BigDecimal(0));
+
+                System.out.println("exxchange tk: "+ paymentExchange.toString() );
+//                thongBao.put("message","Hóa đơn này không thanh toán được!(exchange chuyen khoan)");
+//                thongBao.put("check","3");
+                session.setAttribute("exchangeBillPaymentRest",paymentExchange);
+                session.setAttribute("checkBill","exchangeBill");
+                String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
+                String vnpayUrl = vnPayService.createOrder((Integer.parseInt(cashAcountPay)), "chuyenKhoan", baseUrl);
+                thongBao.put("vnpayUrl",vnpayUrl);
+                return ResponseEntity.ok(thongBao);
+            }else {
+                thongBao.put("message","Sai phương thức thanh toán!");
                 thongBao.put("check","3");
                 return ResponseEntity.ok(thongBao);
             }
-            billPayment.setPaymentMethod(checkPayMethod);
-            if(notePay.trim().equals("") && checkPayMethod == 2) {
-                notePay = "Thanh toán bằng tiền tài khoản!";
-                session.setAttribute("notePayment",notePay);
-            }else {
-                notePay = "Thanh toán bằng tiền tài khoan và tiền mặt!";
-                billPayment.setCash(BigDecimal.valueOf(Long.parseLong(cashPay)));
-                session.setAttribute("notePayment",notePay);
-            }
-            if(billPayment.getNote().trim().equals("")) {
-                billPayment.setNote(notePay);
-            }
-            session.setAttribute("billPaymentRest",billPayment);
-            String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
-            String vnpayUrl = vnPayService.createOrder((Integer.parseInt(cashAcountPay)), "chuyenKhoan", baseUrl);
-            thongBao.put("vnpayUrl",vnpayUrl);
-            return ResponseEntity.ok(thongBao);
         }
     }
     @GetMapping("/infomation-payment-bill")
@@ -1440,6 +1620,45 @@ public class    BillRestController extends BaseBill {
 ////            n++;
 ////        }
         return null;
+    }
+
+    @GetMapping("/check-payment-exchange")
+    public String getCheckPaymentExchange(HttpSession session) {
+        Integer idBill = (Integer) session.getAttribute("IdBill");
+        String validateIdBill = validateInteger(idBill != null ? idBill.toString() : "");
+        if (!validateIdBill.trim().equals("")) {
+            return null;
+        }
+
+        Bill billPayment = this.billService.findById(idBill).orElse(null);
+        if (billPayment == null) {
+            return null;
+        }
+
+        ReturnBillExchangeBill returnBillExchangeBill = this.returnBillService.getReturnBillByIdBill(billPayment.getId());
+
+        if(returnBillExchangeBill == null) {
+            return null;
+        }
+
+        if (returnBillExchangeBill.getId() == null) {
+            return null;
+        }
+
+        String checkPayExchange = this.returnBillService.getStatusPaymentorNotPay(returnBillExchangeBill.getId());
+
+        if(checkPayExchange == null) {
+            return "notBtnPayExchange";
+        }
+
+        System.out.println("check exchange " + checkPayExchange);
+        List<PaymentExchange> paymentExchanges = this.paymentExchangeService.getPaymentExchangeByIdBillExchange(returnBillExchangeBill.getId());
+
+        if(checkPayExchange.equals("PhaiTraTien") && paymentExchanges.isEmpty()) {
+            return "btnPayExchange";
+        }
+
+        return "notBtnPayExchange";
     }
 
 

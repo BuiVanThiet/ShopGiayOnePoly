@@ -65,6 +65,8 @@ public abstract class BaseBill {
     protected CustomerService customerService;
     @Autowired
     protected EmailSenderService emailSenderService;
+    @Autowired
+    protected PaymentExchangeService paymentExchangeService;
 
     //bien cuc bo cua bill
     protected Bill billPay;
@@ -155,7 +157,16 @@ public abstract class BaseBill {
         }else if (invoiceStatus.getStatus() == 6){
             session.setAttribute("notePayment","Đơn Hàng Đã Bị Hủy!");
         }else if (invoiceStatus.getStatus() == 101) {
-            session.setAttribute("notePayment","Đơn Hàng Đã được thanh toán!");
+            String checkNote = (String) session.getAttribute("notePayment");
+            if (checkNote == null || checkNote.trim().isEmpty()) {
+                session.setAttribute("notePayment", "Đơn Hàng Đã được thanh toán!");
+            }
+
+        }else if (invoiceStatus.getStatus() == 102) {
+            String checkNote = (String) session.getAttribute("notePayment");
+            if (checkNote == null || checkNote.trim().isEmpty()) {
+                session.setAttribute("notePayment", "Đơn Hàng Đã được thanh toán!");
+            }
         }else if (invoiceStatus.getStatus() == 201) {
             session.setAttribute("notePayment","Chờ xác nhận đổi-trả hàng!");
         }else if (invoiceStatus.getStatus() == 202) {
