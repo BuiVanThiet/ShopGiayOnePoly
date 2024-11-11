@@ -97,15 +97,20 @@ function toggleVoucherList() {
 }
 
 function removeProductDetailFromCart(button) {
-    // Lấy idProductDetail từ input ẩn trong phần tử chứa nút xóa
-    const idProductDetail = $(button).siblings('#idProductDetailFromCart').val();
+    // Lấy idProductDetail từ input ẩn gần nhất chứa nút xóa
+    const idProductDetail = $(button).closest('.cart-item').find('#idProductDetailFromCart').val();
+
+    // Kiểm tra xem idProductDetail có hợp lệ không
+    if (!idProductDetail) {
+        console.error('idProductDetail is undefined');
+        return;
+    }
 
     // Tiến hành gọi API xóa sản phẩm khỏi giỏ hàng
     $.ajax({
         url: `/onepoly/remove-from-cart/${idProductDetail}`,
         method: 'GET',
         success: function (data) {
-            // Xóa sản phẩm khỏi DOM khi xóa thành công
             $(button).closest('.cart-item').remove();
         },
         error: function (xhr, status, error) {
@@ -113,3 +118,4 @@ function removeProductDetailFromCart(button) {
         }
     });
 }
+
