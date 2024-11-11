@@ -54,4 +54,5 @@ public interface ProductService {
 
     List<ProductDetail> searchProductDetailsByKeyword(@Param("searchTerm") String searchTerm,@Param("idProduct") Integer idProduct);
 
+    List<String> findAllCodeProduct();
 }

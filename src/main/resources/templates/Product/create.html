@@ -42,9 +42,9 @@
                          onkeyup="filterFunction(event)" autocomplete="off">
                   <ul id="dataList-category" class="dropdown-content-createProduct">
                     <th:block th:each="category : ${categoryList}">
-                      <li style="display: flex; justify-content: space-between">
+                      <li style="display: flex; justify-content: space-between" onclick="toggleCheckbox(this, 'category')">
                         <span th:text="${category.nameCategory}"></span>
-                        <input class="category-checkbox" style="width: 20px" type="checkbox" name="categories" th:value="${category.id}">
+                        <input class="category-checkbox" style="width: 20px" type="checkbox" name="categories" th:value="${category.id}" data-type="category">
                       </li>
                     </th:block>
                   </ul>
@@ -143,9 +143,9 @@
                          onkeyup="filterFunction(event)" autocomplete="off">
                   <ul id="dataList-color" class="dropdown-content-createProduct">
                     <th:block th:each="color : ${colorList}">
-                      <li style="display: flex; justify-content: space-between">
+                      <li style="display: flex; justify-content: space-between" onclick="toggleCheckbox(this, 'color')">
                         <span th:text="${color.nameColor}"></span>
-                        <input th:value="${color.id}"  style="width: 20px" type="checkbox">
+                        <input th:value="${color.id}"  style="width: 20px" type="checkbox" data-type="color">
                       </li>
                     </th:block>
                   </ul>
@@ -163,9 +163,9 @@
                          onkeyup="filterFunction(event)" autocomplete="off">
                   <ul id="dataList-size" class="dropdown-content-createProduct">
                     <th:block th:each="size : ${sizeList}">
-                      <li style="display: flex; justify-content: space-between">
+                      <li style="display: flex; justify-content: space-between" onclick="toggleCheckbox(this, 'size')">
                         <span th:text="${size.nameSize}"></span>
-                        <input th:value="${size.id}" style="width: 20px" type="checkbox">
+                        <input th:value="${size.id}" style="width: 20px" type="checkbox" data-type="size">
                       </li>
                     </th:block>
                   </ul>
