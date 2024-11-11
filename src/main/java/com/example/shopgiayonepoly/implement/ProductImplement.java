@@ -1,7 +1,6 @@
 package com.example.shopgiayonepoly.implement;
 
 
-import com.example.shopgiayonepoly.dto.response.ProductDetailResponse;
 import com.example.shopgiayonepoly.dto.response.ProductResponse;
 import com.example.shopgiayonepoly.entites.CategoryProduct;
 import com.example.shopgiayonepoly.entites.Image;
@@ -143,6 +142,11 @@ public class ProductImplement implements ProductService {
     @Override
     public List<ProductDetail> searchProductDetailsByKeyword(@Param("searchTerm") String searchTerm, @Param("idProduct") Integer idProduct) {
         return productRepository.searchProductDetailsByKeyword(searchTerm, idProduct);
+    }
+
+    @Override
+    public List<String> findAllCodeProduct() {
+        return productRepository.findAllCodeProduct();
     }
 
 
