@@ -532,8 +532,8 @@ function getExchangeProduct() {
         success: function (response) {
             loadProduct(1);
             getMaxPageProduct();
-
-            showToast(response.message,response.check)
+            createToast(response.check, response.message);
+            // showToast(response.message,response.check)
             $('#quantity').val('');
             $('#quantityProduct').val('0');
             $('#idProductDetail').val('0');
@@ -703,7 +703,8 @@ function getExchangeProduct() {
             pageExchange = 1;
             loadExchangeBill(pageExchange);
             maxPageExchangeBill();
-            showToast(response.message,response.check)
+            createToast(response.check, response.message);
+            // showToast(response.message,response.check)
             loadInfomationReturnBill();
 
             $('#quantity').val('');
@@ -730,8 +731,9 @@ function removeProductExchange(id,quantity) {
             loadExchangeBill(pageExchange);
             maxPageExchangeBill();
             loadInfomationReturnBill();
+            createToast(response.check, response.message);
 
-            showToast(response.message,response.check)
+            // showToast(response.message,response.check)
         },
         error: function (xhr) {
             console.error('loi '+xhr.responseText)
@@ -756,7 +758,9 @@ function updateQuantityExchange(id, quantity,method) {
             getMaxPageProduct();
             loadExchangeBill(pageExchange);
             loadInfomationReturnBill();
-            showToast(response.message,response.check)
+            createToast(response.check, response.message);
+
+            // showToast(response.message,response.check)
         },
         error: function (xhr) {
             console.error('Lỗi khi cập nhật: ' + xhr.responseText);

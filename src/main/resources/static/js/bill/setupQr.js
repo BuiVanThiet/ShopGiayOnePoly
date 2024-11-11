@@ -46,7 +46,8 @@ document.getElementById('startCamera').addEventListener('click', () => {
                         })
                         .then(data => {
                             // Hiển thị thông báo thành công với message và check
-                            showToast(data.message, data.check);
+                            createToast(data.check, data.message);
+                            // showToast(data.message, data.check);
                                 loadBillNew();
                                 loadBillDetail(pageBillDetail);
                                 paymentInformation();

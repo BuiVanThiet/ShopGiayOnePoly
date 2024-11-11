@@ -1,6 +1,7 @@
 package com.example.shopgiayonepoly.restController.bill;
 
 import com.example.shopgiayonepoly.baseMethod.BaseBill;
+import com.example.shopgiayonepoly.baseMethod.BaseEmail;
 import com.example.shopgiayonepoly.baseMethod.BaseProduct;
 import com.example.shopgiayonepoly.dto.request.bill.*;
 import com.example.shopgiayonepoly.dto.response.bill.*;
@@ -10,6 +11,7 @@ import com.example.shopgiayonepoly.service.EmailSenderService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -987,6 +989,19 @@ public class BillRestController extends BaseBill {
                             }
                         }
                     }
+                }
+                String getAddRessDetail = bill.getAddRess();
+                String[] part = getAddRessDetail.split(",\\s*");
+                String fullName = part[0];
+                String numberPhone = part[1];
+                String email = part[2];
+                String province = part[3];
+                String district = part[4];
+                String ward = part[5];
+                String addRessDetail = String.join(", ", java.util.Arrays.copyOfRange(part, 6, part.length));
+                System.out.println("email de gui xac nhan " + email);
+                if(bill.getStatus() == 1) {
+                    this.templateEmailConfigmBill(email,"http://localhost:8080/onepoly/home",bill.getCodeBill());
                 }
                 bill.setUpdateDate(new Date());
                 bill.setStatus(bill.getStatus()+1);
