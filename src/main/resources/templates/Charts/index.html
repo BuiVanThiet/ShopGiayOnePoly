@@ -123,6 +123,15 @@
 
             </div>
             <div class="col-md-5 pieChart" style="height: 566px">
+                <div class="filter-section-pieChart">
+                    <div class="button-group-pieChart" role="group" aria-label="Thời gian lọc">
+                        <button type="button" class="custom-btn btn btn-primary" onclick="filterDataPie('today-pieChart')">Hôm nay</button>
+                        <button type="button" class="custom-btn btn btn-primary" onclick="filterDataPie('last7days-pieChart')">7 Ngày
+                        </button>
+                        <button type="button" class="custom-btn btn btn-primary" onclick="filterDataPie('month-pieChart')">Tháng</button>
+                        <button type="button" class="custom-btn btn btn-primary" onclick="filterDataPie('year-pieChart')">Năm</button>
+                    </div>
+                </div>
                 <div id="piechart" style="width: 100%; height: 500px;"></div>
             </div>
         </div>

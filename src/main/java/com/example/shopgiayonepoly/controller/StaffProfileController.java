@@ -225,6 +225,14 @@ public class StaffProfileController {
                 model.addAttribute("birthDayMonth", "");
                 model.addAttribute("birthDayYear", "");
             }
+
+            staffProfile.setImageStaffString(staff.getImage());
+
+            String[] partStaff = staff.getAddress().split(",\\s*");
+            staffProfile.setProvince(partStaff[2]);
+            staffProfile.setDistrict(partStaff[1]);
+            staffProfile.setWard(partStaff[0]);
+            staffProfile.setAddRessDetail(String.join(", ", java.util.Arrays.copyOfRange(partStaff, 3, partStaff.length)));
             // Gán các trường khác cần thiết từ staff vào staffProfile
         }
         return staffProfile;
