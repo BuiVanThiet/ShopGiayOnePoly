@@ -165,7 +165,7 @@ public interface ChartRepository extends JpaRepository<Bill, Integer> {
         """, nativeQuery = true)
     List<Object[]> getProductSales();
 
-    @Query(value = """
+    @Query(value = """ 
         WITH RankedProducts AS (
             SELECT
                 pd.name_product AS ProductName,
@@ -304,4 +304,62 @@ public interface ChartRepository extends JpaRepository<Bill, Integer> {
             "GROUP BY b.status " +
             "ORDER BY countOfStatus DESC", nativeQuery = true)
     List<Object[]> findBillsWithStatusDescription();
+
+    @Query(value = "SELECT " +
+            "CASE " +
+            "    WHEN b.status IN (1, 7) THEN N'Chờ xác nhận' " +
+            "    WHEN b.status = 2 THEN N'Xác nhận' " +
+            "    WHEN b.status = 3 THEN N'Đang giao' " +
+            "    WHEN b.status = 4 THEN N'Đã nhận được hàng' " +
+            "    WHEN b.status = 5 THEN N'Hoàn thành' " +
+            "    WHEN b.status IN (6, 9) THEN N'Đã hủy' " +
+            "    WHEN b.status = 8 THEN N'Đổi-trả hàng' " +
+            "    ELSE N'Không xác định' " +
+            "END AS statusDescription, " +
+            "COUNT(b.status) AS countOfStatus " +
+            "FROM Bill b " +
+            "WHERE b.status <> 0 " +
+            "AND CONVERT(date, b.update_date) = CONVERT(date, GETDATE()) " + // Lọc theo ngày hôm nay
+            "GROUP BY b.status " +
+            "ORDER BY countOfStatus DESC", nativeQuery = true)
+    List<Object[]> getStatusCountForToday();
+
+    @Query(value = "SELECT " +
+            "CASE " +
+            "    WHEN b.status IN (1, 7) THEN N'Chờ xác nhận' " +
+            "    WHEN b.status = 2 THEN N'Xác nhận' " +
+            "    WHEN b.status = 3 THEN N'Đang giao' " +
+            "    WHEN b.status = 4 THEN N'Đã nhận được hàng' " +
+            "    WHEN b.status = 5 THEN N'Hoàn thành' " +
+            "    WHEN b.status IN (6, 9) THEN N'Đã hủy' " +
+            "    WHEN b.status = 8 THEN N'Đổi-trả hàng' " +
+            "    ELSE N'Không xác định' " +
+            "END AS statusDescription, " +
+            "COUNT(b.status) AS countOfStatus " +
+            "FROM Bill b " +
+            "WHERE b.status <> 0 " +
+            "AND b.update_date >= DATEADD(DAY, -7, GETDATE()) " +  // Lọc theo 7 ngày gần nhất
+            "GROUP BY b.status " +
+            "ORDER BY countOfStatus DESC", nativeQuery = true)
+    List<Object[]> findStatusCountsForLast7Days();
+
+    @Query(value = "SELECT " +
+            "    CASE " +
+            "        WHEN b.status IN (1, 7) THEN N'Chờ xác nhận' " +
+            "        WHEN b.status = 2 THEN N'Xác nhận' " +
+            "        WHEN b.status = 3 THEN N'Đang giao' " +
+            "        WHEN b.status = 4 THEN N'Đã nhận được hàng' " +
+            "        WHEN b.status = 5 THEN N'Hoàn thành' " +
+            "        WHEN b.status IN (6, 9) THEN N'Đã hủy' " +
+            "        WHEN b.status = 8 THEN N'Đổi-trả hàng' " +
+            "        ELSE N'Không xác định' " +
+            "    END AS statusDescription, " +
+            "    COUNT(b.status) AS countOfStatus " +
+            "FROM Bill b " +
+            "WHERE b.status <> 0 " +
+            "    AND YEAR(b.update_date) = YEAR(GETDATE()) " +  // Lọc theo năm nay
+            "GROUP BY b.status " +
+            "ORDER BY countOfStatus DESC", nativeQuery = true)
+    List<Object[]> countStatusByYear();
+
 }

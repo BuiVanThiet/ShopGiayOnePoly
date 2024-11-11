@@ -198,20 +198,34 @@ public class UserProfileController {
     }
 
     @ModelAttribute("userProfile")
-    public UserProfileUpdateRequest populateUserProfile(HttpSession session) {
+    public UserProfileUpdateRequest populateUserProfile(HttpSession session, Model model
+    ) {
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
         if (clientLoginResponse != null) {
             String account = clientLoginResponse.getAcount();
             Customer customer = customerRegisterRepository.findByAcount(account);
             if (customer != null) {
                 UserProfileUpdateRequest userProfile = new UserProfileUpdateRequest();
+                userProfile.setAccount(customer.getAcount());
                 userProfile.setFullName(customer.getFullName());
                 userProfile.setEmail(customer.getEmail());
                 userProfile.setCurrentPassword(customer.getPassword());
                 userProfile.setNumberPhone(customer.getNumberPhone());
                 userProfile.setGender(customer.getGender());
                 userProfile.setImageString(customer.getImage());
-                userProfile.setStatus(customer.getStatus()); // Thiết lập status từ customer
+                userProfile.setStatus(customer.getStatus());
+                userProfile.setImageString(customer.getImage());
+
+                String[] part = customer.getAddRess().split(",\\s*");
+                userProfile.setProvince(part[2]);
+                userProfile.setDistrict(part[1]);
+                userProfile.setWard(part[0]);
+                userProfile.setAddRessDetail(String.join(", ", java.util.Arrays.copyOfRange(part, 3, part.length)));
+
+                LocalDate birthDay = customer.getBirthDay();
+                model.addAttribute("birthDayDay", birthDay != null ? birthDay.getDayOfMonth() : null);
+                model.addAttribute("birthDayMonth", birthDay != null ? birthDay.getMonthValue() : null);
+                model.addAttribute("birthDayYear", birthDay != null ? birthDay.getYear() : null);// Thiết lập status từ customer
 
                 return userProfile; // Trả về userProfile
             }
