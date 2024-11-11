@@ -118,8 +118,7 @@ function selectAttribute(item, inputId, dataType) {
         input.setAttribute(`data-${dataType}-id`, item.getAttribute('value')); // Cập nhật data-* dựa trên dataType
     }
     closeAllDropdowns(); // Đóng tất cả dropdowns sau khi chọn
-    validate();
-
+    validate(dataType);
 }
 
 
@@ -426,8 +425,26 @@ function insertTableProductDetail() {
 }
 
 document.querySelectorAll('#dataList-color input[type="checkbox"], #dataList-size input[type="checkbox"]').forEach(checkbox => {
-    checkbox.addEventListener('change', insertTableProductDetail);
+    checkbox.addEventListener('change', handleCheckboxChange);
 });
+
+function toggleCheckbox(liElement, type) {
+    const checkbox = liElement.querySelector(`input[data-type="${type}"]`);
+    if (checkbox) {
+        checkbox.checked = !checkbox.checked;
+        handleCheckboxChange(); // Gọi hàm kiểm tra sau khi thay đổi trạng thái
+    }
+}
+
+function handleCheckboxChange() {
+    const selectedColors = document.querySelectorAll('#dataList-color input[type="checkbox"]:checked').length;
+    const selectedSizes = document.querySelectorAll('#dataList-size input[type="checkbox"]:checked').length;
+
+    // Kiểm tra nếu có ít nhất 1 màu và 1 kích cỡ được chọn
+    if (selectedColors > 0 && selectedSizes > 0) {
+        insertTableProductDetail();
+    }
+}
 
 function deleteRow(deleteButton) {
     const row = deleteButton.closest('tr');

@@ -93,6 +93,6 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
             "AND pd.product.id = :idProduct")
     List<ProductDetail> searchProductDetailsByKeyword(@Param("searchTerm") String searchTerm,@Param("idProduct") Integer idProduct);
 
-    @Query("SELECT MAX(p.id) FROM Product p")
-    Integer findMaxIdProduct();
+    @Query("SELECT p.codeProduct FROM Product p")
+    List<String> findAllCodeProduct();
 }

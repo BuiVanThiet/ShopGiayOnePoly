@@ -35,4 +35,10 @@ public interface ChartService {
     Page<ProductInfoDto> getProductSalesPage(int page, int size);
 
     List<StatusBill> findBillsWithStatusDescription();
+
+    List<StatusBill> getStatusCountForToday();
+
+    List<StatusBill> findStatusCountsForLast7Days();
+
+    List<StatusBill> countStatusByYear();
 }

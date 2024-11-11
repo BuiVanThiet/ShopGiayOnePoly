@@ -228,4 +228,63 @@ public class ChartImplement implements ChartService {
         return statusBills;
     }
 
+    @Override
+    public List<StatusBill> getStatusCountForToday() {
+        List<Object[]> results = chartRepository.getStatusCountForToday();
+
+        // Khởi tạo danh sách kết quả
+        List<StatusBill> statusBills = new ArrayList<>();
+
+        // Duyệt qua từng kết quả trả về
+        for (Object[] result : results) {
+            // Lấy giá trị từ mảng Object[]
+            String statusDescription = (String) result[0];  // Trạng thái (String)
+            int countStatus = ((Number) result[1]).intValue();  // Số lượng trạng thái (int)
+
+            // Thêm vào danh sách statusBills
+            statusBills.add(new StatusBill(statusDescription, countStatus));
+        }
+
+        return statusBills;
+    }
+
+    @Override
+    public List<StatusBill> findStatusCountsForLast7Days() {
+        List<Object[]> results = chartRepository.findStatusCountsForLast7Days();
+
+        // Khởi tạo danh sách kết quả
+        List<StatusBill> statusBills = new ArrayList<>();
+
+        // Duyệt qua từng kết quả trả về
+        for (Object[] result : results) {
+            // Lấy giá trị từ mảng Object[]
+            String statusDescription = (String) result[0];  // Trạng thái (String)
+            int countStatus = ((Number) result[1]).intValue();  // Số lượng trạng thái (int)
+
+            // Thêm vào danh sách statusBills
+            statusBills.add(new StatusBill(statusDescription, countStatus));
+        }
+
+        return statusBills;
+    }
+
+    @Override
+    public List<StatusBill> countStatusByYear() {
+        List<Object[]> results = chartRepository.countStatusByYear();
+
+        // Khởi tạo danh sách kết quả
+        List<StatusBill> statusBills = new ArrayList<>();
+
+        // Duyệt qua từng kết quả trả về
+        for (Object[] result : results) {
+            // Lấy giá trị từ mảng Object[]
+            String statusDescription = (String) result[0];  // Trạng thái (String)
+            int countStatus = ((Number) result[1]).intValue();  // Số lượng trạng thái (int)
+
+            // Thêm vào danh sách statusBills
+            statusBills.add(new StatusBill(statusDescription, countStatus));
+        }
+
+        return statusBills;
+    }
 }

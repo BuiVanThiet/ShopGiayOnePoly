@@ -200,4 +200,9 @@ public class ProductRestController extends BaseProduct {
     }
 
 
+    @GetMapping("/findAllCodeProduct")
+    public List<String> findAllCodeProduct(){
+        return productService.findAllCodeProduct();
+    }
+
 }

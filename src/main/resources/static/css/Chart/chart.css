@@ -53,10 +53,19 @@
     margin-right: 25px;
 }
 
+.filter-section-pieChart {
+    border-radius: 5px;
+    display: flex;
+    justify-content: flex-end; /* Căn phần tử sang bên phải */
+    align-items: center;
+}
+
+
 .button-group {
     display: flex;
     gap: 10px;
 }
+
 
 .custom-btn {
     padding: 4px 10px;
@@ -93,6 +102,10 @@
 
 .button-group {
     margin-top: 20px;
+    text-align: center;
+}
+
+.button-group-pieChart {
     text-align: center;
 }
 

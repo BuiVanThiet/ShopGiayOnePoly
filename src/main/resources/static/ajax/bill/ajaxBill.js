@@ -1095,7 +1095,8 @@ function updateQuantity(id, quantity,method) {
         }),
         success: function (response) {
             console.log('Cập nhật thành công: ' + response);
-            showToast(response.message,response.check)
+            createToast(response.check, response.message);
+            // showToast(response.message,response.check)
             loadBillNew(); // Tải lại danh sách bill mới
             loadBillDetail(pageBillDetail); // Tải lại chi tiết bill
             paymentInformation();
@@ -1202,7 +1203,8 @@ function getAddVoucherInBill(idVoucher) {
                 $('#btn-Remove-voucher').show();
             }
 
-            showToast(response.message,response.check)
+            createToast(response.check, response.message);
+            // showToast(response.message,response.check)
         },
         error: function (xhr) {
             console.error('loi' + xhr.responseText);
@@ -1227,7 +1229,9 @@ function getRemoveVoucherInBill() {
                 loadCustomerShipInBill();
                 $('#btn-Remove-voucher').hide();
             }
-            showToast(response.message,response.check)
+
+            createToast(response.check, response.message);
+            // showToast(response.message,response.check)
         },
         error: function (xhr) {
             console.error('loi' + xhr.responseText);
@@ -1318,7 +1322,8 @@ function getBuyProduct() {
 
             // updateMoneyShipWait(shipMoneyBillWait);
 
-            showToast(response.message,response.check)
+            createToast(response.check, response.message);
+            // showToast(response.message,response.check)
 
             $('#quantity').val('');
             $('#quantityProduct').val('0');
@@ -1360,8 +1365,8 @@ function deleteBillDetail(id) {
 
             totalShip(provinceTransport,districtTransport,wardTransport);
 
-
-            showToast(response.message,response.check)
+            createToast(response.check, response.message);
+            // showToast(response.message,response.check)
 
         },
         error: function (xhr) {
