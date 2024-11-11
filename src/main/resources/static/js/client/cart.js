@@ -16,7 +16,13 @@ const observer = new MutationObserver(calculateTotal);
 
 const priceCartItemElements = document.querySelectorAll('.price-item');
 priceCartItemElements.forEach(element => {
-    observer.observe(element, { childList: true, subtree: true });
+    observer.observe(element, {childList: true, subtree: true});
 });
 
 calculateTotal();
+
+
+
+
+
+

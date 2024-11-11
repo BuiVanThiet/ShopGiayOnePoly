@@ -71,12 +71,16 @@
                             <p class="fs-2 fw-light mb-0" th:text="${productDetail[0].productName}">Tên sản phẩm</p>
                         </div>
                         <!--                        Price-->
-                        <div class="mt-2 fs-2" style="color: red">
-                            <span class="price-item-detail text-red-money20" id="price-apply-discount"><sup>₫</sup></span>
+                        <div class="d-flex align-items-center price-container">
+                            <div class="price-current fs-2">
+                                <span class="price-item-detail" id="price-apply-discount"><sup>₫</sup></span>
+                            </div>
+                            <div class="price-original ms-3">
+                                <span style="margin-top: 20px" class="price-item-detail line-through fw-lighter"
+                                      id="price-display"><sup>₫</sup></span>
+                            </div>
                         </div>
-                        <div class="mt-2 fs-2" style="color: red">
-                            <span class="price-item-detail text-red-money20" id="price-display"><sup>₫</sup></span>
-                        </div>
+
                         <!--                        Quantity-->
                         <div class="d-flex mt-2">
                             <p class="fs-10 fw-light" style="margin-right: 5px">Màu sắc /</p>
@@ -85,15 +89,17 @@
 
                         <!-- Danh sách màu sắc -->
                         <div class="d-flex mt-2 flex-wrap">
-                            <div th:each="color : ${colors}" class="col-auto mb-2" style="margin-right: 10px">
-                                <button class="btn-color-circle color-btn"
-                                        onclick="changeColor(this)"
-                                        th:data-color-id="${color.idColor}">
-                                    <span th:text="${color.nameColor}">Màu</span>
-                                </button>
-                                <!-- Biến tạm để lưu màu sắc -->
-                                <a href="#" type="hidden" class="temporary-color" style="display: none;"
-                                   th:text="${color}"></a>
+                            <div class="row">
+                                <div th:each="color : ${colors}" class="col-3 mb-2" style="margin-right: 20px">
+                                    <button class="btn-color-circle color-btn"
+                                            onclick="changeColor(this)"
+                                            th:data-color-id="${color.idColor}">
+                                        <span th:text="${color.nameColor}">Màu</span>
+                                    </button>
+                                    <!-- Biến tạm để lưu màu sắc -->
+                                    <a href="#" type="hidden" class="temporary-color" style="display: none;"
+                                       th:text="${color}"></a>
+                                </div>
                             </div>
                         </div>
 
@@ -108,7 +114,7 @@
 
                         <!-- Danh sách kích thước -->
                         <div class="d-flex mt-2 row" style="margin-top: 20px">
-                            <div th:each="size: ${sizes}" class="col-3 mb-2" style="margin-right: 10px">
+                            <div th:each="size: ${sizes}" class="col-3 mb-2">
                                 <button class="btn-size-square size-btn"
                                         onclick="changeSize(this)"
                                         th:data-size-id="${size.idSize}">
@@ -121,7 +127,7 @@
                         </div>
                         <div class="d-flex mt-2">
                             <label style="color: #f30909">Số lượng hiện tại: </label>
-                            <p id="quantity-display" style="color: #f10c0c">Số lượng</p>
+                            <p id="quantity-display" style="color: #f10c0c" th:text=" 0"></p>
                         </div>
                         <div class="add-cart">
                             <button class="btn-add-cart" id="btn-add-cart" onclick="showCartModal()">Thêm vào giỏ
@@ -132,7 +138,7 @@
                         <div class="modal fade" id="addCartModal" tabindex="-1" aria-labelledby="addCartModalLabel"
                              aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered">
-                                <div class="modal-content">
+                                <div class="modal-content add-product-modal">
                                     <div class="modal-header" style="background: #004698">
                                         <h5 class="modal-title text-center" id="addCartModalLabel">Thêm sản phẩm vào giỏ
                                             hàng</h5>
@@ -154,7 +160,7 @@
                                                     </a>
                                                 </div>
                                             </div>
-                                            <div class="right">
+                                            <div class="right" style="margin-left: 20px;">
                                                 <div class="item-info">
                                                     <h3 id="product-name">Tên sản phẩm</h3>
                                                     <div style="font-size: 25px;">
@@ -178,6 +184,10 @@
                                                         <button id="qtyplus" class="btn btn-outline-secondary">+
                                                         </button>
                                                     </div>
+                                                </div>
+                                                <div id="container-message"
+                                                     style="height: 20px;margin-left: 35px;margin-top: 10px">
+                                                    <span class="message-error text-danger"></span>
                                                 </div>
                                                 <div class="popup_action">
                                                     <a href="/onepoly/cart" id="go_cart" class="btn">Đi đến giỏ hàng</a>

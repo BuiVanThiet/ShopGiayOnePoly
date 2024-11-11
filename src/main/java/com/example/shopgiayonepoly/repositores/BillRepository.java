@@ -404,81 +404,73 @@ select case
 //    WHERE b.id = :idBill
 //""", nativeQuery = true)
 @Query(value = """
-    SELECT
-    b.code_bill,
-    b.create_date,
-    -- đã sửa: Kiểm tra nếu tìm thấy dấu phẩy thì mới sử dụng SUBSTRING, nếu không trả về 'Không có'
-    CASE
-            WHEN b.address != N'Không có' THEN
-                LEFT(b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) + 1) - 1)
-            ELSE
-                CASE
-                    WHEN b.id_customer IS NOT NULL THEN CAST(c.full_name AS NVARCHAR)
-                    ELSE N'khách lẻ'
-                END
-        END AS name_customer,
-    -- đã sửa: Tương tự kiểm tra vị trí dấu phẩy tiếp theo, nếu không có trả về 'Không có'
-   CASE
+   SELECT
+       b.code_bill,
+       b.create_date,
+       -- đã sửa: Kiểm tra nếu tìm thấy dấu phẩy thì mới sử dụng SUBSTRING, nếu không trả về 'Không có'
+       CASE
        WHEN b.address != N'Không có' THEN
-           SUBSTRING(b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) + 1,
-                     CHARINDEX(',', b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) + 1) - CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) - 1)
+           TRIM(SUBSTRING(b.address, 1, CHARINDEX(',', b.address) - 1))
+       ELSE
+           CASE
+               WHEN b.id_customer IS NOT NULL THEN CAST(c.full_name AS NVARCHAR)
+               ELSE N'khách lẻ'
+           END
+   	END AS name_customer,
+       -- đã sửa: Tương tự kiểm tra vị trí dấu phẩy tiếp theo, nếu không có trả về 'Không có'
+      CASE
+       WHEN b.address != N'Không có' THEN
+               TRIM(SUBSTRING(b.address, CHARINDEX(',', b.address) + 1, CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) - CHARINDEX(',', b.address) - 1))
        ELSE
            CASE
                WHEN b.id_customer IS NOT NULL THEN CAST(c.number_phone AS NVARCHAR)
                ELSE N'Không có'
            END
-    END AS number_phone_customer,
-   
-    CASE
-      WHEN b.address != N'Không có' THEN
-          SUBSTRING(b.address, CHARINDEX(',', b.address) + 1,
-                    CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) - CHARINDEX(',', b.address) - 1)
-      ELSE
-          CASE
-              WHEN b.id_customer IS NOT NULL THEN CAST(c.email AS NVARCHAR)
-              ELSE N'Không có'
-          END
-    END AS email_customer,
-
-    -- đã sửa: Kiểm tra và sử dụng SUBSTRING khi có đủ dấu phẩy, nếu không trả về 'Không có'
-    CASE
-            WHEN b.address != N'Không có' THEN
-                SUBSTRING(b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) + 1) + 1, LEN(b.address))
-            ELSE
-                CASE
-                    WHEN b.id_customer IS NOT NULL THEN SUBSTRING(c.address, CHARINDEX(',', c.address, CHARINDEX(',', c.address, CHARINDEX(',', c.address) + 1) + 1) + 1, LEN(c.address))
-                    ELSE N'Không có'
-                END
-        END AS addRes_customer,
-   
-    FORMAT(b.total_amount, 'N2') + ' VNĐ' AS total_amount,
-    FORMAT(b.shipping_price, 'N2') + ' VNĐ' AS shipping_price,
-   
-    FORMAT(
-        CASE
-            WHEN v.discount_type = 1 THEN
-                CASE
-                    WHEN b.total_amount * (v.price_reduced / 100) > v.prices_max THEN v.prices_max
-                    ELSE b.total_amount * (v.price_reduced / 100)
-                END
-            WHEN v.discount_type = 2 THEN v.price_reduced
-            ELSE 0
-        END, 'N2') + ' VNĐ' AS discount_value,
-   
-    FORMAT(
-        CASE
-            WHEN v.discount_type = 1 THEN
-                CASE
-                    WHEN b.total_amount * (v.price_reduced / 100) > v.prices_max THEN b.total_amount - v.prices_max + b.shipping_price
-                    ELSE b.total_amount - (b.total_amount * (v.price_reduced / 100)) + b.shipping_price
-                END
-            WHEN v.discount_type = 2 THEN b.total_amount - v.price_reduced + b.shipping_price
-            ELSE b.total_amount + b.shipping_price
-        END, 'N2') + ' VNĐ' AS total_after_discount       
-    FROM bill b
-    LEFT JOIN customer c ON c.id = b.id_customer
-    LEFT JOIN voucher v ON v.id = b.id_voucher
-    WHERE b.id = :idBill
+   	END AS number_phone_customer,
+       CASE
+       WHEN b.address != N'Không có' THEN
+           TRIM(SUBSTRING(b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) + 1, CHARINDEX(',', b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) + 1) - CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) - 1))
+       ELSE
+           CASE
+               WHEN b.id_customer IS NOT NULL THEN CAST(c.email AS NVARCHAR)
+               ELSE N'Không có'
+           END
+   	END AS email_customer,
+   	CASE
+   		WHEN b.address != N'Không có' THEN
+   		   TRIM(SUBSTRING(b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) + 1) + 1) + 1) + 1) + 1, LEN(b.address)))
+   		ELSE
+   			CASE
+   				WHEN b.id_customer IS NOT NULL THEN CAST(TRIM(SUBSTRING(c.address, CHARINDEX(',', c.address, CHARINDEX(',', c.address, CHARINDEX(',', c.address) + 1) + 1) + 1, LEN(c.address))) AS NVARCHAR)
+   				ELSE N'Không có'
+   			END
+   	END AS add_ress,
+       FORMAT(b.total_amount, 'N2') + ' VNĐ' AS total_amount,
+       FORMAT(b.shipping_price, 'N2') + ' VNĐ' AS shipping_price,
+       FORMAT(
+           CASE
+               WHEN v.discount_type = 1 THEN
+                   CASE
+                       WHEN b.total_amount * (v.price_reduced / 100) > v.prices_max THEN v.prices_max
+                       ELSE b.total_amount * (v.price_reduced / 100)
+                   END
+               WHEN v.discount_type = 2 THEN v.price_reduced
+               ELSE 0
+           END, 'N2') + ' VNĐ' AS discount_value,
+       FORMAT(
+           CASE
+               WHEN v.discount_type = 1 THEN
+                   CASE
+                       WHEN b.total_amount * (v.price_reduced / 100) > v.prices_max THEN b.total_amount - v.prices_max + b.shipping_price
+                       ELSE b.total_amount - (b.total_amount * (v.price_reduced / 100)) + b.shipping_price
+                   END
+               WHEN v.discount_type = 2 THEN b.total_amount - v.price_reduced + b.shipping_price
+               ELSE b.total_amount + b.shipping_price
+           END, 'N2') + ' VNĐ' AS total_after_discount      \s
+       FROM bill b
+       LEFT JOIN customer c ON c.id = b.id_customer
+       LEFT JOIN voucher v ON v.id = b.id_voucher
+       WHERE b.id = :idBill
 """, nativeQuery = true)
     List<Object[]> getBillByIdCreatePDF(@Param("idBill") Integer idBill);
 
@@ -542,47 +534,43 @@ select case
     	b.id,
     	e.code_return_bill_exchange_bill,
     	b.code_bill,
-    	CASE
-            WHEN b.address != N'Không có' THEN
-                LEFT(b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) + 1) - 1)
-            ELSE
-                CASE
-                    WHEN b.id_customer IS NOT NULL THEN CAST(c.full_name AS NVARCHAR)
-                    ELSE N'khách lẻ'
-                END
+    	 CASE
+           WHEN b.address != N'Không có' THEN
+               TRIM(SUBSTRING(b.address, 1, CHARINDEX(',', b.address) - 1))
+           ELSE
+               CASE
+                   WHEN b.id_customer IS NOT NULL THEN CAST(c.full_name AS NVARCHAR)
+                   ELSE N'khách lẻ'
+               END
         END AS name_customer,
-
-        CASE
-            WHEN b.address != N'Không có' THEN
-                SUBSTRING(b.address, CHARINDEX(',', b.address) + 1,
-                          CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) - CHARINDEX(',', b.address) - 1)
-            ELSE
-                CASE
-                    WHEN b.id_customer IS NOT NULL THEN CAST(c.email AS NVARCHAR)
-                    ELSE N'Không có'
-                END
-        END AS email_customer,
-    
-        CASE
-            WHEN b.address != 'Không có' THEN
-                SUBSTRING(b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) + 1,
-                          CHARINDEX(',', b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) + 1) - CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) - 1)
-            ELSE
-                CASE
-                    WHEN b.id_customer IS NOT NULL THEN CAST(c.number_phone AS NVARCHAR)
-                    ELSE N'Không có'
-                END
+           -- đã sửa: Tương tự kiểm tra vị trí dấu phẩy tiếp theo, nếu không có trả về 'Không có'
+          CASE
+           WHEN b.address != N'Không có' THEN
+                   TRIM(SUBSTRING(b.address, CHARINDEX(',', b.address) + 1, CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) - CHARINDEX(',', b.address) - 1))
+           ELSE
+               CASE
+                   WHEN b.id_customer IS NOT NULL THEN CAST(c.number_phone AS NVARCHAR)
+                   ELSE N'Không có'
+               END
         END AS number_phone_customer,
-    
-    	  CASE
+           CASE
+           WHEN b.address != N'Không có' THEN
+               TRIM(SUBSTRING(b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) + 1, CHARINDEX(',', b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) + 1) - CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) - 1))
+           ELSE
+               CASE
+                   WHEN b.id_customer IS NOT NULL THEN CAST(c.email AS NVARCHAR)
+                   ELSE N'Không có'
+               END
+        END AS email_customer,
+        CASE
             WHEN b.address != N'Không có' THEN
-                SUBSTRING(b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) + 1) + 1, LEN(b.address))
+               TRIM(SUBSTRING(b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) + 1) + 1) + 1) + 1) + 1, LEN(b.address)))
             ELSE
                 CASE
-                    WHEN b.id_customer IS NOT NULL THEN SUBSTRING(c.address, CHARINDEX(',', c.address, CHARINDEX(',', c.address, CHARINDEX(',', c.address) + 1) + 1) + 1, LEN(c.address))
+                    WHEN b.id_customer IS NOT NULL THEN CAST(TRIM(SUBSTRING(c.address, CHARINDEX(',', c.address, CHARINDEX(',', c.address, CHARINDEX(',', c.address) + 1) + 1) + 1, LEN(c.address))) AS NVARCHAR)
                     ELSE N'Không có'
                 END
-        END AS addRes_customer,
+        END AS add_ress,
     	e.customer_refund,
     	e.reason,
     	e.update_date,

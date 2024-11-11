@@ -57,7 +57,13 @@ function loadBillStatusByBillId() {
                         stepTitle = 'Đã Thanh Toán';
                         $('#btnDeleteBill').hide();
                         $('#btnConfirmBill').hide();
-
+                        break;
+                    case 102:
+                        iconClass = 'bi-cash';
+                        stepTitle = 'Đã Thanh Toán(phiếu đổi-trả)';
+                        $('#btnDeleteBill').hide();
+                        $('#btnConfirmBill').hide();
+                        $('#btn-pay-exchange').html('');
                         break;
                     case 201:
                         iconClass = 'bi-arrow-counterclockwise';
@@ -432,6 +438,9 @@ function getBillStatus(response) {
         case 101:
             statusBill = 'Đã thanh toán';
             break;
+        case 102:
+            statusBill = 'Đã thanh toán(phiếu đổi-trả)';
+            break;
         case 201:
             statusBill = 'Chờ xác nhận đổi-trả hàng';
             break;
@@ -580,7 +589,8 @@ function paymentBill() {
             notePay: notePay,
             payStatus: payStatus,
             surplusMoneyPay: surplusMoneyPay,
-            payMethod: payMethod
+            payMethod: payMethod,
+            billPay: 'billShip'
         }),
         success: function(response) {
             if (response.vnpayUrl) {
@@ -595,6 +605,53 @@ function paymentBill() {
                 loadBillStatusByBillId();
                 loadBillDetail(1);
                 maxPageBillDetailByIdBill()
+                showToast(response.message,response.check);
+            }
+        },
+        error: function(error) {
+            // Xử lý lỗi
+            console.log(error);
+        }
+    })
+}
+
+function paymentBillExchange() {
+    var cashPay = $('#cashPayExchange').val();
+    var cashAcountPay = $('#cashAcountPayExchange').val();
+    var cashBillPay = $('#cashBillPayExchange').val();
+    var notePay = $('#notePayExchange').val();
+    var payStatus = $('#payStatusExchange').val();
+    var surplusMoneyPay = $('#surplusMoneyPayExchange').val();
+    var payMethod = $('#payMethodExchange').val();
+
+    $.ajax({
+        type: "POST",
+        url: "/bill-api/payment-for-ship",
+        contentType: 'application/json',
+        data: JSON.stringify({
+            cashPay: cashPay,
+            cashAcountPay: cashAcountPay,
+            cashBillPay: cashBillPay,
+            notePay: notePay,
+            payStatus: payStatus,
+            surplusMoneyPay: surplusMoneyPay,
+            payMethod: payMethod,
+            billPay: 'exchangeBill'
+        }),
+        success: function(response) {
+            if (response.vnpayUrl) {
+                window.location.href = response.vnpayUrl;
+            } else {
+                loadInformationBillByIdBill();
+                loadCustomerShipInBill();
+                setUpPayment();
+                $('#payMethod').val('1');
+                loadInfomationPaymentByBillId();
+                loadInfomationHistoryByBillId();
+                loadBillStatusByBillId();
+                loadBillDetail(1);
+                maxPageBillDetailByIdBill()
+                var buttonsPay = '';
                 showToast(response.message,response.check);
             }
         },
@@ -720,7 +777,7 @@ function loadInfomationReturnBillFromBillManage() {
             }else {
                 $('#out-put-bill-return-exchange').html('')
             }
-
+            var buttonsPay = '';
             var totalReturnCustomer = 0;
             if(((response.totalReturn-response.exchangeAndReturnFee+response.discountedAmount)-response.totalExchange) <= 0) {
                 totalReturnCustomer = 0;
@@ -729,20 +786,49 @@ function loadInfomationReturnBillFromBillManage() {
             }
             $('#total-return-customer').text(Math.trunc(totalReturnCustomer).toLocaleString('en-US') + ' VNĐ')
             var totalExchangeCustomer = 0;
+            var checkbtnPaymentExchange ;
+
+            checkPaymentExchange().then(result => {
+                checkbtnPaymentExchange = result;
+
+            console.log('Kết quả:', checkbtnPaymentExchange);
+
             if((response.totalExchange-(response.totalReturn-response.exchangeAndReturnFee+response.discountedAmount)) <= 0) {
                 totalExchangeCustomer = 0;
+                buttonsPay = ``;
+                $('#payExchange').hide();
+                $('#payMoney').show();
+                $('#cashClient-billInfo-exchange').hide();
+                $('#cashClient-billInfo').show();
             }else {
                 totalExchangeCustomer = response.totalExchange-(response.totalReturn-response.exchangeAndReturnFee+response.discountedAmount);
+                if(response.status == 0) {
+                    if(checkbtnPaymentExchange == true) {
+                        buttonsPay = `
+                         <button class="btn btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#infoPayment">Thanh toán</button>
+                    `;
+                    }else {
+                        buttonsPay = '';
+                    }
+                    $('#cashBillPayExchange').val(totalExchangeCustomer)
+                    $('#payExchange').show();
+                    $('#payMoney').hide();
+                    $('#cashClient-billInfo-exchange').show();
+                    $('#cashClient-billInfo').hide();
+                }
             }
-            $('#total-exchange-customer').text(Math.trunc(totalExchangeCustomer).toLocaleString('en-US') + ' VNĐ')
+                $('#total-exchange-customer').text(Math.trunc(totalExchangeCustomer).toLocaleString('en-US') + ' VNĐ')
+                $('#span-exchangeAndReturnFee').text(Math.trunc(response.exchangeAndReturnFee).toLocaleString('en-US') + ' VNĐ');
+                $('#span-discountedAmount').text(Math.trunc(response.discountedAmount).toLocaleString('en-US') + ' VNĐ');
+                $('#btn-pay-exchange').html(buttonsPay);
 
-            $('#span-exchangeAndReturnFee').text(Math.trunc(response.exchangeAndReturnFee).toLocaleString('en-US') + ' VNĐ');
-            $('#span-discountedAmount').text(Math.trunc(response.discountedAmount).toLocaleString('en-US') + ' VNĐ');
-
-            loadReturnBillFromBillManage(1);
-            maxPageReturnBillFromBillManage();
-            loadExchangeBillFromBillManage(1);
-            maxPageExchangeBillFromBillManage();
+                loadReturnBillFromBillManage(1);
+                maxPageReturnBillFromBillManage();
+                loadExchangeBillFromBillManage(1);
+                maxPageExchangeBillFromBillManage();
+            }).catch(() => {
+                console.log('Đã xảy ra lỗi trong quá trình kiểm tra.');
+            });
         },
         error: function (xhr) {
             console.error('loi ' + xhr.responseText);
@@ -965,8 +1051,28 @@ function checkVoucherPriceApply(response) {
         return true;
     }
 }
-
+function checkPaymentExchange() {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            type: "GET",
+            url: "/bill-api/check-payment-exchange",
+            success: function (response) {
+                console.log('check exchange pay: ' + response);
+                if (response === 'btnPayExchange') {
+                    resolve(true);
+                } else {
+                    resolve(false);
+                }
+            },
+            error: function (xhr) {
+                console.error('Lỗi: ' + xhr.responseText);
+                reject(false);
+            }
+        });
+    });
+}
 $(document).ready(function () {
+    $('#payExchange').hide();
     checkUpdateCustomer = true;
     $('#updateAddressShip').submit(function (event){
         event.preventDefault();
@@ -976,6 +1082,10 @@ $(document).ready(function () {
     $('#payMoney').submit(function (event){
         event.preventDefault();
         paymentBill();
+    })
+    $('#payExchange').submit(function (event){
+        event.preventDefault();
+        paymentBillExchange();
     })
     loadInformationBillByIdBill();
     loadCustomerShipInBill();

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -584,37 +585,75 @@ public class BillController extends BaseBill {
                 return "Bill/errorBill";
             }
         }else {
-            this.billPay = (Bill) session.getAttribute("billPaymentRest");
-            if (billPay == null) {
-                System.out.println("day la khong co bill");
+            String checkBil = (String) session.getAttribute("checkBill");
+            if(checkBil == null || checkBil.isEmpty()) {
                 return "redirect:/404";
             }
-            if(billPay.getStatus() >= 5) {
-                System.out.println("day la trang thai da hoan thanh");
-                return "redirect:/404";
-            }
-            if (billPay.getPaymentStatus() == 1) {
-                System.out.println("day la bill da thanh toan");
-                return "redirect:/404";
-            }
-            if(paymentStatus == 1) {
-                this.billPay.setAcountMoney(accountMoney.divide(BigDecimal.valueOf(100)));
-                this.billPay.setPaymentStatus(1);
-                this.billPay.setSurplusMoney(BigDecimal.valueOf(0.00));
-                this.billPay.setUpdateDate(new Date());
-                this.billPay.setPaymentMethod(2);
-                this.billService.save(this.billPay);
 
-                this.setBillStatus(this.billPay.getId(),101,session);
-                session.removeAttribute("billPaymentRest");
-                session.removeAttribute("pageReturn");
+            PaymentExchange paymentExchange = null;
 
-//                this.getUpdateQuantityProduct(session);
-
-                mess = "Thanh toán thành công!";
-                colorMess = "1";
-                return "redirect:/staff/bill/bill-status-index/"+session.getAttribute("IdBill");
+            if(checkBil.trim().equals("billShip")) {
+                this.billPay = (Bill) session.getAttribute("billPaymentRest");
+                if (billPay == null) {
+                    System.out.println("day la khong co bill");
+                    return "redirect:/404";
+                }
+                if(billPay.getStatus() >= 5) {
+                    System.out.println("day la trang thai da hoan thanh");
+                    return "redirect:/404";
+                }
+                if (billPay.getPaymentStatus() == 1) {
+                    System.out.println("day la bill da thanh toan");
+                    return "redirect:/404";
+                }
+            }else if (checkBil.trim().equals("exchangeBill")) {
+                paymentExchange = (PaymentExchange) session.getAttribute("exchangeBillPaymentRest");
+                if (paymentExchange == null) {
+                    System.out.println("day la khong co bill");
+                    return "redirect:/404";
+                }
             }else {
+                return "redirect:/404";
+            }
+
+            if(paymentStatus == 1) {
+                if(checkBil.trim().equals("billShip")) {
+                    this.billPay.setAcountMoney(accountMoney.divide(BigDecimal.valueOf(100)));
+                    this.billPay.setPaymentStatus(1);
+                    this.billPay.setSurplusMoney(BigDecimal.valueOf(0.00));
+                    this.billPay.setUpdateDate(new Date());
+                    this.billPay.setPaymentMethod(2);
+                    this.billService.save(this.billPay);
+                    this.billPay = null;
+                    this.setBillStatus(this.billPay.getId(),101,session);
+                    session.removeAttribute("billPaymentRest");
+                    session.removeAttribute("pageReturn");
+                    session.removeAttribute("checkBill");
+//                this.getUpdateQuantityProduct(session);
+                    mess = "Thanh toán thành công!";
+                    colorMess = "1";
+                    return "redirect:/staff/bill/bill-status-index/"+session.getAttribute("IdBill");
+                }else if (checkBil.trim().equals("exchangeBill")) {
+                    this.paymentExchangeService.save(paymentExchange);
+                    mess = "Thanh toán thành công!";
+                    colorMess = "1";
+                    this.setBillStatus(paymentExchange.getExchangeBilll().getBill().getId(),102,session);
+                    session.removeAttribute("exchangeBillPaymentRest");
+                    session.removeAttribute("pageReturn");
+                    session.removeAttribute("checkBill");
+                    return "redirect:/staff/bill/bill-status-index/"+session.getAttribute("IdBill");
+                }else {
+                    session.removeAttribute("billPaymentRest");
+                    session.removeAttribute("exchangeBillPaymentRest");
+                    session.removeAttribute("pageReturn");
+                    session.removeAttribute("checkBill");
+                    return "redirect:/404";
+                }
+            }else {
+                session.removeAttribute("billPaymentRest");
+                session.removeAttribute("exchangeBillPaymentRest");
+                session.removeAttribute("pageReturn");
+                session.removeAttribute("checkBill");
                 return "redirect:/staff/bill/bill-status-index/"+session.getAttribute("IdBill");
             }
         }
@@ -965,9 +1004,6 @@ public class BillController extends BaseBill {
             return ResponseEntity.ok(thongBao);
         }
 
-        if(bill.getVoucher() != null) {
-            this.getSubtractVoucher(bill.getVoucher(),-1);
-        }
 
         Voucher voucher = this.voucherService.getOne(Integer.parseInt(idVoucher));
         if (voucher == null) {
@@ -983,6 +1019,32 @@ public class BillController extends BaseBill {
             return ResponseEntity.ok(thongBao);
         }
 
+        LocalDate today = LocalDate.now();
+
+        // Kiểm tra xem voucher có hiệu lực trong ngày hôm nay không
+        if (today.isBefore(voucher.getStartDate()) || today.isAfter(voucher.getEndDate())) {
+            thongBao.put("message","Phiếu giảm giá không khả dụng!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+
+        // Kiểm tra tổng giá trị hóa đơn có đủ điều kiện áp dụng voucher không
+        if (bill.getTotalAmount().compareTo(voucher.getPricesApply()) < 0) {
+            thongBao.put("message","Phiếu giảm giá không khả dụng!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+
+        if (voucher.getStatus() != 1) {
+            thongBao.put("message","Phiếu giảm giá không khả dụng!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+
+        if(bill.getVoucher() != null) {
+            this.getSubtractVoucher(bill.getVoucher(),-1);
+        }
+
         bill.setVoucher(voucher);
         bill.setUpdateDate(new Date());
         bill.setStaff(staffLogin);
@@ -992,6 +1054,7 @@ public class BillController extends BaseBill {
             billSave.setPriceDiscount(new BigDecimal(this.billService.getDiscountBill(billSave.getId())));
             this.billService.save(billSave);
         }
+
         thongBao.put("message","Thêm mã giảm giá thành công!");
         thongBao.put("check","1");
         this.getSubtractVoucher(voucher,1);
@@ -1022,8 +1085,10 @@ public class BillController extends BaseBill {
         }
 
         ReturnBillExchangeBill returnBillExchangeBill = this.returnBillService.getReturnBillByIdBill(bill.getId());
-        if(returnBillExchangeBill != null || returnBillExchangeBill.getId() != null) {
-            modelMap.addAttribute("returnBillExchangeBill",returnBillExchangeBill);
+        if(returnBillExchangeBill != null) {
+            if(returnBillExchangeBill.getId() != null) {
+                modelMap.addAttribute("returnBillExchangeBill",returnBillExchangeBill);
+            }
         }
 
         session.setAttribute("IdBill",Integer.parseInt(idBill));

@@ -1,9 +1,6 @@
 package com.example.shopgiayonepoly.implement;
 
-import com.example.shopgiayonepoly.dto.response.client.ColorClientResponse;
-import com.example.shopgiayonepoly.dto.response.client.ProductDetailClientRespone;
-import com.example.shopgiayonepoly.dto.response.client.ProductIClientResponse;
-import com.example.shopgiayonepoly.dto.response.client.SizeClientResponse;
+import com.example.shopgiayonepoly.dto.response.client.*;
 import com.example.shopgiayonepoly.repositores.ClientRepository;
 import com.example.shopgiayonepoly.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +55,11 @@ public class ClientServiceImplement implements ClientService {
     @Override
     public BigDecimal findDiscountedPriceByProductDetailId(Integer productDetailId) {
         return clientRepository.findDiscountedPriceByProductDetailId(productDetailId);
+    }
+
+    @Override
+    public VoucherClientResponse findVoucherApplyByID(Integer id) {
+        return clientRepository.findVoucherApplyByID(id);
     }
 
 

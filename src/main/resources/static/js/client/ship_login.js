@@ -45,9 +45,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 "to_district_id": parseInt(toDistrictId),
                 "to_ward_code": toWardCode,
                 "weight": weight,
-                "length": 30,
-                "width": 20,
-                "height": 10,
+                "length": 60,
+                "width": 15,
+                "height": 20,
                 "from_district_id": fromDistrictId
             })
         })
@@ -130,6 +130,5 @@ document.addEventListener("DOMContentLoaded", function () {
     function updateShippingFeeDisplay(message) {
         document.getElementById("spanShippingFee").textContent = message;
     }
-
     autoCalculateShippingFee();
 });

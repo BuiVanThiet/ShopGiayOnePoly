@@ -77,9 +77,9 @@
         </div>
 
         <div class="row">
-            <div class="col-md-7 product-table">
+            <div class="col-md-7 product-table" style="height: 566px;">
                 <h4 class="text-center">Top 10 sản phẩm bán chạy</h4>
-                <div class="table-responsive">
+                <div class="table-responsive" id="productTableContainer">
                     <table class="table table-hover">
                         <thead class="thead-dark">
                         <tr>
@@ -90,64 +90,39 @@
                             <th>Tổng số lượng</th>
                         </tr>
                         </thead>
-                        <tbody>
-
-                        <tr th:each="item, stat : ${productSales}">
-                            <td th:text="${stat.index + 1}">1</td>
-                            <td>
-                                <!-- Mỗi sản phẩm sẽ có một id riêng cho ảnh -->
-                                <img th:id="'productImage_' + ${stat.index}" th:src="${item.imageUrls[0]}"
-                                     alt="Product Image" width="100" height="100">
-                            </td>
-                            <td>
-                                <span th:text="${item.productName}">Tên Sản Phẩm</span><br>
-                                <small>
-                                    Màu sắc: <span th:text="${item.colorName}">Màu</span><br>
-                                    Kích thước: <span th:text="${item.sizeName}">Size</span>
-                                </small>
-                            </td>
-                            <td th:if="${item.originalPrice == item.promotionalPrice}" th:text="${item.originalPrice}">
-                                Giá Gốc
-                            </td>
-                            <td th:if="${item.originalPrice != item.promotionalPrice}">
-                                <span th:text="${item.originalPrice}"
-                                      style="text-decoration: line-through; color: black;">Giá Gốc</span> <br>
-                                <!-- Giá gốc gạch ngang -->
-                                <span th:text="${item.promotionalPrice}" style="color: red;">Giá Khuyến Mãi</span>
-                                <!-- Giá khuyến mãi màu đỏ -->
-                            </td>
-
-                            <td th:text="${item.totalQuantity}">17</td>
-                        </tr>
-
-                        <script th:inline="javascript">
-                            // Truyền mảng productSales từ backend vào JavaScript
-                            var productItems = [[${productSales}]];
-
-                            document.addEventListener('DOMContentLoaded', function () {
-                                // Lặp qua từng sản phẩm để thay đổi ảnh
-                                productItems.forEach(function (item, index) {
-                                    var imageElement = document.getElementById("productImage_" + index); // Lấy ảnh của từng sản phẩm
-                                    var currentIndex = 0; // Biến theo dõi ảnh hiện tại
-
-                                    // Hàm để thay đổi ảnh mỗi 2 giây
-                                    function changeImage() {
-                                        var imageUrls = item.imageUrls; // Lấy mảng ảnh của sản phẩm hiện tại
-                                        currentIndex = (currentIndex + 1) % imageUrls.length; // Tăng index và quay lại đầu nếu hết mảng
-                                        imageElement.src = imageUrls[currentIndex]; // Cập nhật ảnh hiển thị
-                                    }
-
-                                    // Gọi hàm changeImage mỗi 10 giây cho mỗi sản phẩm
-                                    setInterval(changeImage, 10000);
-                                });
-                            });
-                        </script>
-
+                        <tbody id="productTableBody">
                         </tbody>
                     </table>
                 </div>
+
+                <!-- Pagination buttons -->
+                <div>
+                    <ul class="pagination justify-content-center" id="paginationContainer">
+                    </ul>
+                </div>
+
+<!--                <div>-->
+<!--                    <ul class="pagination justify-content-center">-->
+<!--                        &lt;!&ndash; Nút Previous &ndash;&gt;-->
+<!--                        <li th:class="${productPage.hasPrevious() ? 'page-item' : 'page-item'}">-->
+<!--                            <a th:href="@{/chart/form(page=${productPage.hasPrevious() ? productPage.number - 1 : productPage.totalPages - 1})}" class="page-link">Trước</a>-->
+<!--                        </li>-->
+
+<!--                        &lt;!&ndash; Hiển thị các số trang &ndash;&gt;-->
+<!--                        <li th:each="i : ${#numbers.sequence(0, productPage.totalPages - 1)}"-->
+<!--                            th:class="${productPage.number == i ? 'page-item active' : 'page-item'}">-->
+<!--                            <a th:href="@{/chart/form(page=${i})}" class="page-link" th:text="${i + 1}"></a>-->
+<!--                        </li>-->
+
+<!--                        &lt;!&ndash; Nút Next &ndash;&gt;-->
+<!--                        <li th:class="${productPage.hasNext() ? 'page-item' : 'page-item'}">-->
+<!--                            <a th:href="@{/chart/form(page=${productPage.hasNext() ? productPage.number + 1 : 0})}" class="page-link">Sau</a>-->
+<!--                        </li>-->
+<!--                    </ul>-->
+<!--                </div>-->
+
             </div>
-            <div class="col-md-5 pieChart">
+            <div class="col-md-5 pieChart" style="height: 566px">
                 <div id="piechart" style="width: 100%; height: 500px;"></div>
             </div>
         </div>
