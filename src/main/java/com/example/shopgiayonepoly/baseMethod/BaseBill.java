@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public abstract class BaseBill {
+public abstract class BaseBill extends BaseEmail {
     @Autowired
     protected BillService billService;
     @Autowired
@@ -161,7 +161,6 @@ public abstract class BaseBill {
             if (checkNote == null || checkNote.trim().isEmpty()) {
                 session.setAttribute("notePayment", "Đơn Hàng Đã được thanh toán!");
             }
-
         }else if (invoiceStatus.getStatus() == 102) {
             String checkNote = (String) session.getAttribute("notePayment");
             if (checkNote == null || checkNote.trim().isEmpty()) {
@@ -182,8 +181,11 @@ public abstract class BaseBill {
             returnBill.setStatus(2);
             this.returnBillService.save(returnBill);
         }
-        invoiceStatus.setNote(staff.getId()+","+session.getAttribute("notePayment"));
-        session.removeAttribute("notePayment");
+        if(staff == null) {
+            invoiceStatus.setNote("Không có"+","+session.getAttribute("notePayment"));
+        }else {
+            invoiceStatus.setNote(staff.getId()+","+session.getAttribute("notePayment"));
+        }        session.removeAttribute("notePayment");
         this.invoiceStatusService.save(invoiceStatus);
     }
     //trừ đi voucher cua hóa đơn

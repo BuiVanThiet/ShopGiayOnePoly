@@ -5,6 +5,11 @@ function loadBillStatusByBillId() {
         success: function (response) {
             var formStatus = $('#formStatusBill');
             formStatus.empty();  // Xóa sạch nội dung cũ
+
+            let htmlContent = '';  // Biến lưu trữ nội dung HTML
+            var stepWidth = 310;  // Chiều rộng của mỗi bước (bước + khoảng cách)
+            var totalSteps = response.length;  // Số lượng bước
+
             response.forEach(function (invoiceBill, index) {
                 // Tùy thuộc vào trạng thái, ta sẽ thêm icon và nội dung tương ứng
                 var iconClass = '';
@@ -101,6 +106,8 @@ function loadBillStatusByBillId() {
                         </div>
                     </div>
                 `);
+                var newContainerWidth = totalSteps * stepWidth;
+                $('.progress-container').width(newContainerWidth);  // Cập nhật chiều rộng
             });
         },
         error: function (xhr) {
@@ -476,7 +483,8 @@ function updateAddressShip() {
             checkUpdateCustomer = true;
             loadInformationBillByIdBill();
             loadCustomerShipInBill()
-            showToast(response.message,response.check);
+            createToast(response.check, response.message);
+            // showToast(response.message,response.check);
         },
         error: function (xhr) {
             console.error('loi' + xhr.responseText);
@@ -510,7 +518,8 @@ function confirmBill(content) {
         type: "GET",
         url: "/bill-api/confirm-bill/"+content,
         success: function (response) {
-            showToast(response.message,response.check);
+            // showToast(response.message,response.check);
+            createToast(response.check, response.message);
             loadInformationBillByIdBill();
             loadInfomationHistoryByBillId();
             loadBillDetail(1);
@@ -605,7 +614,8 @@ function paymentBill() {
                 loadBillStatusByBillId();
                 loadBillDetail(1);
                 maxPageBillDetailByIdBill()
-                showToast(response.message,response.check);
+                // showToast(response.message,response.check);
+                createToast(response.check, response.message);
             }
         },
         error: function(error) {
@@ -652,7 +662,8 @@ function paymentBillExchange() {
                 loadBillDetail(1);
                 maxPageBillDetailByIdBill()
                 var buttonsPay = '';
-                showToast(response.message,response.check);
+                // showToast(response.message,response.check);
+                createToast(response.check, response.message);
             }
         },
         error: function(error) {

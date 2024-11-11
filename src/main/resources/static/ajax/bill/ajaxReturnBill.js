@@ -267,7 +267,9 @@ function addProductReturn() {
             loadReturnBill(pageReturn);
             maxPageReturnBill();
             loadInfomationReturnBill()
-            showToast(response.message,response.check);
+            createToast(response.check, response.message);
+
+            // showToast(response.message,response.check);
         },
         error: function (xhr) {
             console.error('loi phan trang cho bill deatil' + xhr.responseText)
@@ -342,7 +344,9 @@ function remoBillReturn(idProductDetail,quantity) {
             getMaxPageProduct();
             loadExchangeBill(pageExchange);
             maxPageExchangeBill();
-            showToast(response.message,response.check);
+            createToast(response.check, response.message);
+
+            // showToast(response.message,response.check);
         },
         error: function (xhr) {
             console.error('loi ' + xhr.responseText)
@@ -363,7 +367,9 @@ function increaseOrDecreaseProductReturn(idProductReturn,quantity,method) {
             loadReturnBill(pageReturn);
             // maxPageReturnBill();
             loadInfomationReturnBill()
-            showToast(response.message,response.check);
+            createToast(response.check, response.message);
+
+            // showToast(response.message,response.check);
         },
         error: function (xhr) {
             console.error('Lỗi khi cập nhật: ' + xhr.responseText);

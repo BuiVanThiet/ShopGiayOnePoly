@@ -96,18 +96,18 @@ function showToast(mess, check) {
     toast.show();
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-    // Lấy giá trị message và check
-    var message = document.getElementById('toastMessage').value;
-    var checkBG = document.getElementById('toastCheck').value;
-
-    // Hiển thị toast nếu có message
-    if (message) {
-        console.log(message + checkBG);
-        showToast(message, checkBG);
-
-    }
-});
+// document.addEventListener('DOMContentLoaded', function () {
+//     // Lấy giá trị message và check
+//     var message = document.getElementById('toastMessage').value;
+//     var checkBG = document.getElementById('toastCheck').value;
+//
+//     // Hiển thị toast nếu có message
+//     if (message) {
+//         console.log(message + checkBG);
+//         showToast(message, checkBG);
+//
+//     }
+// });
 
 
 
