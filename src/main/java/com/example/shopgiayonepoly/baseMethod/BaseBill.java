@@ -147,12 +147,20 @@ public abstract class BaseBill extends BaseEmail {
         }else if (invoiceStatus.getStatus() == 1) {
             session.setAttribute("notePayment","Chờ Xác nhận!");
         }else if(invoiceStatus.getStatus() == 2) {
+            mess = "Hóa đơn đã được xác nhận!";
+            colorMess = "1";
             session.setAttribute("notePayment","Đã xác nhận!");
         }else if (invoiceStatus.getStatus() == 3) {
+            mess = "Hóa đơn đã được giao hàng!";
+            colorMess = "1";
             session.setAttribute("notePayment","Giao Hàng!");
         }else if (invoiceStatus.getStatus() == 4) {
+            mess = "Hóa đơn đã được khách nhận!";
+            colorMess = "1";
             session.setAttribute("notePayment","Khách đã nhận được hàng!");
         }else if (invoiceStatus.getStatus() == 5) {
+            mess = "Hóa đơn đã hoàn thành!";
+            colorMess = "1";
             session.setAttribute("notePayment","Đơn Hàng Đã Hoàn Thành!");
         }else if (invoiceStatus.getStatus() == 6){
             session.setAttribute("notePayment","Đơn Hàng Đã Bị Hủy!");

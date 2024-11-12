@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{client/base}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Products</title>
+    <link rel="stylesheet" th:href="@{/pagination/stylePagination.css}" type="text/css">
+    <style>
+        /* Tạo container cố định chiều rộng và cho phép trượt ngang */
+        .progress-wrapper {
+            overflow-x: auto;
+            /* Kích hoạt thanh trượt ngang */
+            white-space: nowrap;
+            /* Tránh xuống dòng */
+            width: 100%;
+            /* Hoặc kích thước cố định */
+            padding: 20px;
+        }
+
+        .progress-container {
+            /*width: 2500px;*/
+            width: auto; /* Để chiều rộng có thể thay đổi tự động */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .step {
+            display: inline-block;
+            /* Cho phép các bước nằm ngang */
+            width: 150px;
+            text-align: center;
+            margin-right: 20px;
+        }
+
+        .circle {
+            width: 60px;
+            height: 60px;
+            background-color: white;
+            border: 4px solid #28a745;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto;
+        }
+
+        .circle i {
+            font-size: 30px;
+            color: #28a745;
+        }
+
+        .progress-bar-line {
+            height: 4px;
+            background-color: #28a745;
+            width: 100%;
+            position: relative;
+            top: -25px;
+            z-index: -1;
+        }
+
+        .step-info {
+            white-space: nowrap;
+            /* Tránh xuống dòng */
+            margin-top: 10px;
+        }
+
+        .step-info .step-title {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .step-info .step-time {
+            font-size: 14px;
+            color: gray;
+        }
+    </style>
+</head>
+<body>
+<div layout:fragment="content" style="margin-top: 100px; display: flex; justify-content: center; align-items: center; ">
+    <div style="width: 1850px; ">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <!-- Nút Trở lại trang chủ -->
+            <div>
+                <a href="/onepoly/home" class="btn">
+                    <i class="bi bi-arrow-return-left"></i>
+                    Trở lại trang chủ!
+                </a>
+            </div>
+
+            <!-- Mã hóa đơn bên phải -->
+            <div>
+                <span>Mã hóa đơn: <strong id="codeBillStatusClient"></strong></span>
+            </div>
+        </div>
+
+        <!-- trang thai don hang  -->
+        <div class="progress-wrapper" style="display: flex; justify-content: center; align-items: center;">
+            <div class="progress-container" id="formStatusBill">
+                <!-- Nội dung sẽ được thêm vào đây từ JavaScript -->
+            </div>
+        </div>
+        <br>
+        <button type="button" class="btn btn-outline-success">Gửi lại hóa đơn điện tử</button>
+        <br>
+        <br>
+        <div class="card">
+            <div class="card-body">
+                Địa chỉ nhận hàng
+                <br>
+               <div class="row">
+                   <div class="col-6 border-end">
+                       <div class="ms-2 mt-2">
+                           <span id="nameShipBillStatus">Họ và tên: Bùi Văn Thiết</span>
+                           <br>
+                           <span id="numberPhoneBillStatus">SĐT: 09*******84</span>
+                           <br>
+                           <span id="emailBillStatus">email: th*******@****.*****</span>
+                           <br>
+                           <span id="addResShipDetailBillStatus">Địa chỉ: Thông phù thượng</span>
+                       </div>
+                   </div>
+                   <div class="col-6">
+                       Ghi chú: <span id="noteBillClient"></span>
+                   </div>
+               </div>
+            </div>
+        </div>
+        <br>
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th scope="col" colspan="2">
+                    <div id="product-buy-client-bill-status">
+
+                    </div>
+                    <div class="pagination-section">
+                        <!-- Phân trang 2 -->
+                        <div class="pagination-custom d-flex justify-content-center">
+                            <ul id="billClientPageMax-billStatus" class="pagination">12</ul>
+                        </div>
+                    </div>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <th scope="row" style="text-align: right; width: 70%;">Tổng tiền hàng</th>
+                <td id="totalAmountBillClient" style="width: 30%;"></td>
+            </tr>
+            <tr>
+                <th scope="row" style="text-align: right; width: 70%;">Phí vận chuyển</th>
+                <td id="priceShipBillClient" style="width: 30%;"></td>
+            </tr>
+            <tr>
+                <th scope="row" style="text-align: right; width: 70%;">Giảm giá(áp dụng phiếu giảm giá)</th>
+                <td id="discountBillClient" style="width: 30%;"></td>
+            </tr>
+            <tr>
+                <th scope="row" style="text-align: right; width: 70%;">Thành tiền</th>
+                <td id="sumMoneyBillClient" style="width: 30%;"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script th:src="@{/ajax/client/statusBill.js}" type="text/javascript"></script>
+    <script th:src="@{/pagination/actionPagination.js}" type="text/javascript"></script>
+
+</div>
+</body>
+</html>

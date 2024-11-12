@@ -339,7 +339,7 @@ function loadInformationBillByIdBill() {
             $('#voucher-chosen').text(voucher)
             $('#informationPriceReduction').text(Math.trunc(response.maximumReduction).toLocaleString('en-US') + ' VNĐ');
             $('#noteByBill').text(response.note);
-            totalBill = response.totalPriceProduct-response.maximumReduction;
+            totalBill = response.totalPriceProduct;
 
             //phan nay de truyen du lieu con validate
 
