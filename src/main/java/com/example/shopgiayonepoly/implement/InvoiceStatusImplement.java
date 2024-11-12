@@ -59,4 +59,19 @@ public class InvoiceStatusImplement implements InvoiceStatusService {
     public List<Object[]> getHistoryByBill(Integer id) {
         return this.invoiceStatusRepository.getHistoryByBill(id);
     }
+
+    /////danh rien cho ben client
+    @Override
+    public List<Object[]> getAllProductBuyClient(Integer id) {
+        return this.invoiceStatusRepository.getAllProductBuyClient(id);
+    }
+
+    @Override
+    public List<Object[]> getBillClient(Integer id) {
+        return this.invoiceStatusRepository.getBillClient(id);
+    }
+    @Override
+    public List<Object[]> getInformationBillStatusClient(Integer id) {
+        return this.invoiceStatusRepository.getInformationBillStatusClient(id);
+    }
 }

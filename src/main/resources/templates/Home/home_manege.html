@@ -272,22 +272,27 @@
     </div>
     <ul class="sidebar-custom-manage-links" style="margin: 0 !important;padding: 0 !important;">
         <h4>
+            <span></span>
             <div class="menu-separator"></div>
         </h4>
         <li>
-            <a href="/chart/form"><span class="material-symbols-outlined"> monitoring </span>Thống kê</a>
+            <a href="/staff/bill/home">
+                  <span class="material-symbols-outlined">
+                    store
+                  </span>
+                Bán Hàng
+            </a>
         </li>
         <h4>
             <div class="menu-separator"></div>
         </h4>
         <li>
-            <a href="/staff/list"><span class="material-symbols-outlined"> person </span>Nhan vien</a>
-        </li>
-        <h4>
-            <div class="menu-separator"></div>
-        </h4>
-        <li>
-            <a href="/customer/list"><span class="material-symbols-outlined"> person </span>Khach hang</a>
+            <a href="/staff/bill/manage-bill">
+                  <span class="material-symbols-outlined">
+                    receipt_long
+                  </span>
+                Quản lý hóa đơn
+            </a>
         </li>
         <h4>
             <div class="menu-separator"></div>
@@ -317,6 +322,26 @@
             <div class="menu-separator"></div>
         </h4>
         <li>
+            <a href="/chart/form"><span class="material-symbols-outlined"> monitoring </span>Thống kê</a>
+        </li>
+        <h4>
+            <div class="menu-separator"></div>
+        </h4>
+        <li>
+            <a href="/staff/list"><span class="material-symbols-outlined"> person </span>Nhan vien</a>
+        </li>
+        <h4>
+            <div class="menu-separator"></div>
+        </h4>
+        <li>
+            <a href="/customer/list"><span class="material-symbols-outlined"> person </span>Khach hang</a>
+        </li>
+
+
+        <h4>
+            <div class="menu-separator"></div>
+        </h4>
+        <li>
             <a href="/voucher/list"><span class="material-symbols-outlined"> local_offer </span>Phiếu giảm giá</a>
         </li>
         <h4>
@@ -332,29 +357,8 @@
             <a href="#"><span class="material-symbols-outlined">
                 notifications_active </span>Notifications</a>
         </li>
-        <h4>
-            <span></span>
-            <div class="menu-separator"></div>
-        </h4>
-        <li>
-            <a href="/staff/bill/home">
-                  <span class="material-symbols-outlined">
-                    store
-                  </span>
-                Bán Hàng
-            </a>
-        </li>
-        <h4>
-            <div class="menu-separator"></div>
-        </h4>
-        <li>
-            <a href="/staff/bill/manage-bill">
-                  <span class="material-symbols-outlined">
-                    receipt_long
-                  </span>
-                Quản lý hóa đơn
-            </a>
-        </li>
+
+
         <h4>
             <span>Tài khoản</span>
             <div class="menu-separator"></div>
@@ -420,6 +424,7 @@
 <!--scriploading-->
 <script src="/loading/actionLoading.js"></script>
 <script th:src="@{/js/homeManage/action.js}" type="text/javascript"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 
 <!-- đây là scrip bên màn tạo mới hóa đơn  -->
 <!-- scrip thu vien cua cau hình QR -->

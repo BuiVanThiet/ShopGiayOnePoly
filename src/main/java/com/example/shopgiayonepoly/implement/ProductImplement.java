@@ -149,5 +149,21 @@ public class ProductImplement implements ProductService {
         return productRepository.findAllCodeProduct();
     }
 
+    @Override
+    public List<Product> findProductDelete(Integer idCategory, String searchTerm) {
+        return productRepository.findProductDelete(idCategory, searchTerm);
+    }
+
+    @Override
+    public void updateStatus(Integer id, Integer status) {
+        productRepository.updateStatus(id, status);
+    }
+
+    @Override
+    public Integer   findQuantityByIDProduct( Integer id){
+        return productRepository.findQuantityByIDProduct(id);
+    }
+
+
 
 }

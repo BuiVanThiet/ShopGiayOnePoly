@@ -482,6 +482,22 @@ public class ClientController extends BaseBill {
 
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // thong tin hoa don
+    @GetMapping("/status-bill/{id}")
+    public String getFormStatusBill(@PathVariable("id") String idBill, Model model, HttpSession session) {
+        System.out.println("id bill ben controller: " + idBill);
+        try {
+            Integer idInteger = Integer.parseInt(idBill);
+            session.setAttribute("idCheckStatusBill", idInteger);
+            System.out.println("id bill ben controller: " + idInteger);
+            return "client/statusBillClient";
+        } catch (NumberFormatException e) {
+            // Chuyển hướng đến trang 404 nếu không phải là số nguyên
+            return "redirect:/404";
+        }
+    }
+
+
     @GetMapping("/cerateProduct")
     public String homeManage(Model model, HttpSession session) {
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");

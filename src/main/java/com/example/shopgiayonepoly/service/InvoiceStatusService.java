@@ -26,4 +26,11 @@ public interface InvoiceStatusService {
     List<InvoiceStatus> getALLInvoiceStatusByBill(Integer idBill);
 
     List<Object[]> getHistoryByBill(Integer id);
+
+    /////danh rien cho ben client
+    List<Object[]> getAllProductBuyClient(Integer id);
+
+    List<Object[]> getBillClient(Integer id);
+
+    List<Object[]> getInformationBillStatusClient(Integer id);
 }

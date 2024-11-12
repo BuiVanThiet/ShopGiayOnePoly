@@ -11,7 +11,10 @@
 <body>
 <div layout:fragment="content">
   <article class=" bd-gutter mt-5 my-md-4 bd-layout">
-    <div class="container-productDetail">
+    <div th:if="${message != null}" class="alert alert-warning">
+      <p th:text="${message}"></p>
+    </div>
+    <div th:if="${productDetailList != null and !#lists.isEmpty(productDetailList)}" class="container-productDetail">
       <div th:text="${'Danh sách chi tiết  ' + productDetailList.get(1).product.nameProduct}" class="header-productDetail">
       </div>
       <p th:attr="data-value=${productDetailList.get(1).product.id}"></p>

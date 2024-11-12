@@ -65,6 +65,8 @@ function handlePageClick(pageNumber, elementId, totalPages) {
     }else if (elementId == 'billExchangePageMax-exchangeBill') {
         pageExchange = pageNumber;
         loadExchangeBill(pageExchange);
+    }else if (elementId == 'billClientPageMax-billStatus') {
+        loadProductBuy(pageNumber);
     }
 
     createPagination(elementId, totalPages, pageNumber); // Cập nhật phân trang

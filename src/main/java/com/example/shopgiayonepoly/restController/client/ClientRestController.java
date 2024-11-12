@@ -4,16 +4,19 @@ import com.example.shopgiayonepoly.dto.response.ClientLoginResponse;
 import com.example.shopgiayonepoly.dto.response.client.ProductDetailClientRespone;
 import com.example.shopgiayonepoly.dto.response.client.ProductIClientResponse;
 import com.example.shopgiayonepoly.dto.response.client.VoucherClientResponse;
-import com.example.shopgiayonepoly.entites.Cart;
-import com.example.shopgiayonepoly.entites.Customer;
-import com.example.shopgiayonepoly.entites.ProductDetail;
+import com.example.shopgiayonepoly.entites.*;
 import com.example.shopgiayonepoly.implement.CustomerRegisterImplement;
 import com.example.shopgiayonepoly.repositores.*;
 import com.example.shopgiayonepoly.service.CartService;
 import com.example.shopgiayonepoly.service.ClientService;
 import com.example.shopgiayonepoly.service.CustomerService;
+import com.example.shopgiayonepoly.service.InvoiceStatusService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.ui.Model;
@@ -46,6 +49,8 @@ public class ClientRestController {
 
     @Autowired
     CartRepository cartRepository;
+    @Autowired
+    InvoiceStatusService invoiceStatusService;
 
     @GetMapping("/products/top12-highest")
     public List<ProductIClientResponse> getTop12ProductHighest() {
@@ -178,5 +183,59 @@ public class ClientRestController {
         return ResponseEntity.ok(response);
     }
 
+//////////////////////////////////////////////////////////////////////////////
+    @GetMapping("/show-status-bill")
+    public List<InvoiceStatus> getShowInvoiceStatus(HttpSession session) {
+        Integer idBill = (Integer) session.getAttribute("idCheckStatusBill");
+        System.out.println("id bill tim thay la: " + idBill);
+        List<InvoiceStatus> invoiceStatuses = this.invoiceStatusService.getALLInvoiceStatusByBill(idBill);
+        for (InvoiceStatus invoiceStatus :invoiceStatuses) {
+            System.out.println(invoiceStatus.toString());
+        }
+        return invoiceStatuses;
+    }
+
+    @GetMapping("/show-product-buy-status-bill/{pageNumber}")
+    public List<Object[]> getShowProductBuyStatusBill(@PathVariable("pageNumber") String page,HttpSession session) {
+        Integer idBill = (Integer) session.getAttribute("idCheckStatusBill");
+        try {
+            Integer pageNumber = Integer.parseInt(page);
+        }catch (NumberFormatException e) {
+            return null;
+        }
+        System.out.println("id bill tim thay la: " + idBill);
+        Pageable pageable = PageRequest.of((Integer.parseInt(page)-1),2);
+        List<Object[]> listProductBuy = this.invoiceStatusService.getAllProductBuyClient(idBill);
+        return convertListToPage(listProductBuy,pageable).getContent();
+    }
+
+    @GetMapping("/max-page-bill-status")
+    public Integer getMaxPageBillStatus(HttpSession session) {
+        Integer idBill = (Integer) session.getAttribute("idCheckStatusBill");
+        List<Object[]> listProductBuy = this.invoiceStatusService.getAllProductBuyClient(idBill);
+        Integer pageNumber = (int) Math.ceil((double) listProductBuy.size() / 2);
+        return pageNumber;
+    }
+
+    @GetMapping("/show-total-status-bill")
+    public Object[] getTotalStatusBill(HttpSession session) {
+        Integer idBill = (Integer) session.getAttribute("idCheckStatusBill");
+        List<Object[]> bill = this.invoiceStatusService.getBillClient(idBill);
+        return bill.get(0);
+    }
+
+    @GetMapping("/show-information-status-bill")
+    public Object[] getInformationStatusBill(HttpSession session) {
+        Integer idBill = (Integer) session.getAttribute("idCheckStatusBill");
+        List<Object[]> bill = this.invoiceStatusService.getInformationBillStatusClient(idBill);
+        return bill.get(0);
+    }
+
+    protected Page<Object[]> convertListToPage(List<Object[]> list, Pageable pageable) {
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), list.size());
+        List<Object[]> sublist = list.subList(start, end);
+        return new PageImpl<>(sublist, pageable, list.size());
+    }
 
 }

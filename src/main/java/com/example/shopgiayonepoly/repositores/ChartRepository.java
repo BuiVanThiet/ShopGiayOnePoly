@@ -59,14 +59,15 @@ public interface ChartRepository extends JpaRepository<Bill, Integer> {
     List<Date> findLastBillDates();
     // Lấy ngày cuối tháng có hóa đơn
     @Query(value = "SELECT " +
-            "FORMAT(MAX(b.update_date), 'dd-MM-yyyy') AS Thang, " +  // Lấy ngày cuối cùng có hóa đơn
-            "COUNT(DISTINCT b.id) AS HoaDonThang, " +  // Đếm tổng số hóa đơn duy nhất cho mỗi tháng
-            "SUM(bd.quantity) AS soLuong " +  // Tính tổng số lượng sản phẩm từ bill_detail cho mỗi tháng
+            "FORMAT(MAX(b.update_date), 'dd-MM-yyyy') AS Thang, " +
+            "COUNT(DISTINCT b.id) AS HoaDonThang, " +
+            "SUM(bd.quantity) AS soLuong " +
             "FROM bill b " +
-            "LEFT JOIN bill_detail bd ON b.id = bd.id_bill " +  // Sử dụng LEFT JOIN để đảm bảo tất cả hóa đơn được bao gồm
-            "WHERE b.status = 5 " +  // Chỉ lấy những hóa đơn có trạng thái thanh toán thành công
-            "GROUP BY FORMAT(b.update_date, 'MM-yyyy') " +  // Nhóm theo tháng và năm
-            "ORDER BY MAX(b.update_date)", nativeQuery = true)
+            "LEFT JOIN bill_detail bd ON b.id = bd.id_bill " +
+            "WHERE b.status = 5 AND YEAR(b.update_date) = YEAR(GETDATE()) " +
+            "GROUP BY FORMAT(b.update_date, 'yyyyMM') " +
+            "ORDER BY MAX(b.update_date) ASC",
+            nativeQuery = true)
     List<Object[]> findMonthlyStatistics();
 
     @Query(value = "SELECT " +
@@ -86,7 +87,7 @@ public interface ChartRepository extends JpaRepository<Bill, Integer> {
             "WITH DateRange AS ( " +
                     "    SELECT CAST(GETDATE() AS DATE) AS Ngay " +
                     "    UNION ALL " +
-                    "    SELECT DATEADD(DAY, -1, Ngay) FROM DateRange WHERE Ngay > DATEADD(DAY, -6, GETDATE()) " +
+                    "    SELECT DATEADD(DAY, -1, Ngay) FROM DateRange WHERE Ngay > DATEADD(DAY, -30, GETDATE()) " +
                     ") " +
                     "SELECT " +
                     "    FORMAT(dr.Ngay, 'dd-MM-yyyy') AS Ngay,  " +
