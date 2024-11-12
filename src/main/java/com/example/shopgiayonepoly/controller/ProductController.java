@@ -118,9 +118,16 @@ public class ProductController extends BaseProduct {
     @GetMapping("/detail/{idProduct}")
     public String viewProductDetail(@PathVariable("idProduct") Integer idProduct, Model model) {
         List<ProductDetail> productDetails = productService.findAllProductDetailByIDProduct(idProduct);
-        model.addAttribute("productDetailList", productDetails);
+
+        if (productDetails == null || productDetails.isEmpty()) {
+            model.addAttribute("message", "Chưa thêm sản phẩm chi tiết nào.");
+        } else {
+            model.addAttribute("productDetailList", productDetails);
+        }
+
         return "/Product/productDetail";
     }
+
 
 
     @ModelAttribute("staffInfo")
