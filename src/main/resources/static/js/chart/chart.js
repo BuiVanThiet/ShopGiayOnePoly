@@ -1,3 +1,15 @@
+window.onload = function() {
+    const scrollPosition = sessionStorage.getItem('scrollPosition');
+    if (scrollPosition) {
+        window.scrollTo(0, scrollPosition);
+    }
+};
+
+// Trước khi trang bị làm mới, lưu lại vị trí cuộn hiện tại
+window.onbeforeunload = function() {
+    sessionStorage.setItem('scrollPosition', window.scrollY);
+};
+
 const buttons = document.querySelectorAll('.custom-btn');
 buttons.forEach(button => {
     button.addEventListener('click', function() {
@@ -40,7 +52,7 @@ function MonthlyStatistics() {
             });
 
             var options = {
-                title: 'Biểu đồ thống kê sản phẩm và hóa đơn theo tháng',
+                title: 'Biểu đồ thống kê sản phẩm và hóa đơn theo tháng trong năm nay',
                 titleTextStyle: {
                     alignment: 'center'
                 },
@@ -161,7 +173,7 @@ function AnnualStatistics() {
             });
 
             var options = {
-                title: 'Biểu đồ thống kê sản phẩm và hóa đơn theo năm',
+                title: 'Biểu đồ thống kê sản phẩm và hóa đơn theo các năm',
                 titleTextStyle: {
                     alignment: 'center'
                 },
@@ -189,6 +201,9 @@ function AnnualStatistics() {
 // Hàm để tải dữ liệu sản phẩm và phân trang
 async function fetchProductSales(page = 0) {
     try {
+        // Lưu lại vị trí cuộn trước khi tải dữ liệu mới
+        const currentScrollPosition = window.scrollY;
+
         const response = await fetch(`/api/productSales?page=${page}&size=3`);
         if (!response.ok) {
             console.error('Failed to fetch data');
@@ -228,8 +243,8 @@ async function fetchProductSales(page = 0) {
                     </td>
                     <td>
                         ${item.originalPrice === item.promotionalPrice
-                                    ? `${item.originalPrice}`
-                                    : `<span style="text-decoration: line-through;">${item.originalPrice}</span>
+                ? `${item.originalPrice}`
+                : `<span style="text-decoration: line-through;">${item.originalPrice}</span>
                                 <br>
                                 <span style="color: red; font-size: 1.2em;">${item.promotionalPrice}</span>`}
                     </td>
@@ -238,6 +253,7 @@ async function fetchProductSales(page = 0) {
                 </tr>
             `;
             productTableBody.insertAdjacentHTML('beforeend', row);
+
             // Hiển thị ảnh thay đổi mỗi 3 giây cho mỗi sản phẩm
             let currentImageIndex = 0;
             const imageElement = document.getElementById(`product-image-${index}`);
@@ -249,7 +265,7 @@ async function fetchProductSales(page = 0) {
                 currentImageIndex = (currentImageIndex + 1) % imageUrls.length;  // Chuyển đến ảnh tiếp theo
             };
 
-            // Thay đổi ảnh mỗi 3 giây (3000ms)
+            // Thay đổi ảnh mỗi 10 giây (10000ms)
             setInterval(changeImage, 10000);
 
             // Hiển thị ảnh đầu tiên ngay lập tức
@@ -281,6 +297,9 @@ async function fetchProductSales(page = 0) {
             `);
         }
 
+        // Phục hồi lại vị trí cuộn đã lưu trước khi tải lại trang
+        window.scrollTo(0, currentScrollPosition);
+
     } catch (error) {
         console.error('Error:', error);
     }
@@ -288,9 +307,10 @@ async function fetchProductSales(page = 0) {
 
 document.addEventListener('DOMContentLoaded', () => fetchProductSales());
 
+
 // BIểu đồ tròn
-google.charts.load('current', {'packages':['corechart']});
-google.charts.setOnLoadCallback(drawChart);
+google.charts.load('current', {'packages': ['corechart']});
+google.charts.setOnLoadCallback(() => filterDataPie('month-pieChart')); // Mặc định là hiển thị tháng
 
 // Hàm lấy dữ liệu cho hôm nay
 function fetchDataToday() {
@@ -349,18 +369,50 @@ function fetchDataYear() {
 }
 
 // Hàm vẽ biểu đồ
-function drawChart(chartData, title) {
+function drawChart(chartData, title, period) {
+    const pieChartDiv = document.getElementById('piechart');
+
+    // Kiểm tra nếu không có dữ liệu ngoài tiêu đề
+    if (chartData.length <= 1) {
+        let message;
+        switch (period) {
+            case 'today-pieChart':
+                message = "Hôm nay chưa có hóa đơn.";
+                break;
+            case 'last7days-pieChart':
+                message = "7 ngày qua chưa có hóa đơn.";
+                break;
+            case 'month-pieChart':
+                message = "Tháng này chưa có hóa đơn.";
+                break;
+            case 'year-pieChart':
+                message = "Năm nay chưa có hóa đơn.";
+                break;
+            default:
+                message = "Chưa có dữ liệu.";
+                break;
+        }
+
+        // Hiển thị thông báo nếu không có dữ liệu
+        pieChartDiv.innerHTML = `
+            <div class="text-center mt-4">
+                <h5>${title}</h5>
+                <p>${message}</p>
+            </div>`;
+        return;
+    }
+
     // Tạo bảng dữ liệu cho biểu đồ
-    var data = google.visualization.arrayToDataTable(chartData);
+    const data = google.visualization.arrayToDataTable(chartData);
 
     // Thiết lập các tùy chọn cho biểu đồ với title truyền vào
-    var options = {
-        title: title, // Tiêu đề sẽ được thay đổi tùy thuộc vào tham số
+    const options = {
+        title: title,
         is3D: true,
     };
 
     // Vẽ biểu đồ
-    var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+    const chart = new google.visualization.PieChart(pieChartDiv);
     chart.draw(data, options);
 }
 
@@ -368,22 +420,24 @@ function drawChart(chartData, title) {
 function filterDataPie(period) {
     switch (period) {
         case 'today-pieChart':
-            fetchDataToday().then(chartData => drawChart(chartData, 'Trạng thái đơn hàng hôm nay'));
+            fetchDataToday().then(chartData => drawChart(chartData, 'Trạng thái đơn hàng hôm nay', 'today-pieChart'));
             break;
         case 'last7days-pieChart':
-            fetchDataLast7Days().then(chartData => drawChart(chartData, 'Trạng thái đơn hàng 7 ngày qua'));
+            fetchDataLast7Days().then(chartData => drawChart(chartData, 'Trạng thái đơn hàng 7 ngày qua', 'last7days-pieChart'));
             break;
         case 'month-pieChart':
-            fetchDataMonth().then(chartData => drawChart(chartData, 'Trạng thái đơn hàng trong tháng này'));
+            fetchDataMonth().then(chartData => drawChart(chartData, 'Trạng thái đơn hàng trong tháng này', 'month-pieChart'));
             break;
         case 'year-pieChart':
-            fetchDataYear().then(chartData => drawChart(chartData, 'Trạng thái đơn hàng trong năm nay'));
+            fetchDataYear().then(chartData => drawChart(chartData, 'Trạng thái đơn hàng trong năm nay', 'year-pieChart'));
             break;
         default:
-            fetchDataMonth().then(chartData => drawChart(chartData, 'Trạng thái đơn hàng trong tháng này'));  // Mặc định là tháng
+            fetchDataMonth().then(chartData => drawChart(chartData, 'Trạng thái đơn hàng trong tháng này', 'month-pieChart')); // Mặc định là tháng
             break;
     }
 }
+
 window.onload = function() {
-    filterDataPie('month-pieChart');  // Biểu đồ mặc định là tháng
+    filterDataPie('month-pieChart'); // Hiển thị biểu đồ mặc định là tháng
 };
+
