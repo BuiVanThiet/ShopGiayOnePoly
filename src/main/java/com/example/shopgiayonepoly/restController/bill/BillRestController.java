@@ -1001,12 +1001,14 @@ public class BillRestController extends BaseBill {
                 String addRessDetail = String.join(", ", java.util.Arrays.copyOfRange(part, 6, part.length));
                 System.out.println("email de gui xac nhan " + email);
                 if(bill.getStatus() == 1) {
-                    this.templateEmailConfigmBill(email,"http://localhost:8080/onepoly/home",bill.getCodeBill());
+                    String ht = "http://localhost:8080/onepoly/status-bill/"+bill.getId();
+                    System.out.println(ht);
+                    this.templateEmailConfigmBill(email,ht,bill.getCodeBill());
+//                    this.templateEmailConfigmBill(email,"http://localhost:8080/onepoly/status-bill/",bill.getCodeBill());
                 }
                 bill.setUpdateDate(new Date());
                 bill.setStatus(bill.getStatus()+1);
-                mess = "Hóa đơn đã được xác nhận!";
-                colorMess = "1";
+
                 if(bill.getStatus() == 2) {
                     getInsertPriceDiscount(bill.getId());
                 }
@@ -1018,6 +1020,9 @@ public class BillRestController extends BaseBill {
                         }
                     }
                 }
+//                    mess = "Hóa đơn đã được xác nhận!";
+//                    colorMess = "1";
+
                 this.setBillStatus(bill.getId(),bill.getStatus(),session);
             }
         }else if (content.equals("agreeReturnBill")) {
