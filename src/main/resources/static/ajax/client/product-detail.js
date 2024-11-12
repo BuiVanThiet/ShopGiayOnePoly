@@ -211,48 +211,28 @@ function addToCart() {
 }
 
 
-// Hàm cập nhật số lượng sản phẩm trong giỏ hàng
-window.updateQuantity = function (productDetailId, change) {
-    $.ajax({
-        url: '/onepoly/update-cart',
-        type: 'POST',
-        contentType: "application/json",
-        data: JSON.stringify({productDetailId: productDetailId, change: change}),
-        success: function (data) {
-            if (data.success) {
-                fetchCartItems(); // Cập nhật lại danh sách giỏ hàng
-            } else {
-                console.log(data.message || 'Có lỗi xảy ra khi cập nhật số lượng.');
-            }
-        },
-        error: function (error) {
-            console.error('Error updating quantity:', error);
-            alert('Có lỗi xảy ra khi cập nhật số lượng.');
-        }
-    });
-};
-
-// Hàm xóa sản phẩm khỏi giỏ hàng
-window.removeItem = function (productDetailId) {
-    $.ajax({
-        url: '/onepoly/remove-from-cart',
-        type: 'POST',
-        contentType: "application/json",
-        data: JSON.stringify({productDetailId: productDetailId}),
-        success: function (data) {
-            if (data.success) {
-                alert("Sản phẩm đã được xóa khỏi giỏ hàng!");
-                fetchCartItems(); // Cập nhật lại danh sách giỏ hàng
-            } else {
-                console.log(data.message || 'Có lỗi xảy ra khi xóa sản phẩm.');
-            }
-        },
-        error: function (error) {
-            console.error('Error removing item:', error);
-            alert('Có lỗi xảy ra khi xóa sản phẩm.');
-        }
-    });
-};
+//
+// // Hàm xóa sản phẩm khỏi giỏ hàng
+// window.removeItem = function (productDetailId) {
+//     $.ajax({
+//         url: '/onepoly/remove-from-cart',
+//         type: 'POST',
+//         contentType: "application/json",
+//         data: JSON.stringify({productDetailId: productDetailId}),
+//         success: function (data) {
+//             if (data.success) {
+//                 alert("Sản phẩm đã được xóa khỏi giỏ hàng!");
+//                 fetchCartItems(); // Cập nhật lại danh sách giỏ hàng
+//             } else {
+//                 console.log(data.message || 'Có lỗi xảy ra khi xóa sản phẩm.');
+//             }
+//         },
+//         error: function (error) {
+//             console.error('Error removing item:', error);
+//             alert('Có lỗi xảy ra khi xóa sản phẩm.');
+//         }
+//     });
+// };
 $(document).ready(function () {
     checkQuantity();
 });

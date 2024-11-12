@@ -1,10 +1,7 @@
-// Khi áp dụng voucher và lưu vào sessionStorage
 function applyVoucher() {
-    // Lấy voucher được chọn
     const selectedRadio = document.querySelector('input[name="radioVoucher"]:checked');
 
     if (selectedRadio) {
-        // Lấy ID voucher từ phần tử span ẩn
         const voucherId = selectedRadio.closest('.cart-voucher-item').querySelector('.voucher-id').textContent.trim();
         console.log("ID Voucher: " + voucherId);
 
@@ -18,7 +15,6 @@ function applyVoucher() {
                 if (data) {
                     alert('Voucher đã được chọn thành công!');
 
-                    // Lấy thông tin voucher
                     const discountType = data.voucherType;
                     const discountValue = parseFloat(data.priceReduced);
 
@@ -32,10 +28,13 @@ function applyVoucher() {
 
                     const finalPrice = totalPrice - priceReduced;
 
-                    // Lưu giá trị giảm và tổng tiền vào sessionStorage cùng với thời gian hiện tại
-                    sessionStorage.setItem('priceVoucherReduced', priceReduced.toFixed(2));
-                    sessionStorage.setItem('finalPrice', finalPrice.toFixed(2));
-                    sessionStorage.setItem('voucherTimestamp', new Date().getTime().toString());
+                    // Định dạng giá trị và thêm chữ "đ"
+                    const formattedPriceReduced = priceReduced.toLocaleString('vi-VN') + " đ";
+                    const formattedFinalPrice = finalPrice.toLocaleString('vi-VN') + " đ";
+
+                    // Lưu giá trị giảm và tổng tiền vào sessionStorage
+                    sessionStorage.setItem('priceVoucherReduced', formattedPriceReduced);
+                    sessionStorage.setItem('finalPrice', formattedFinalPrice);
 
                     // Tải lại trang sau 500ms để cập nhật giao diện
                     setTimeout(function () {
@@ -53,30 +52,19 @@ function applyVoucher() {
     }
 }
 
-// Khi trang tải lại, lấy giá trị từ sessionStorage và hiển thị
-window.addEventListener('load', function () {
+
+document.addEventListener("DOMContentLoaded", function () {
     const priceVoucherReduced = sessionStorage.getItem('priceVoucherReduced');
     const finalPrice = sessionStorage.getItem('finalPrice');
-    const voucherTimestamp = sessionStorage.getItem('voucherTimestamp');
 
-    // Kiểm tra xem dữ liệu có tồn tại và không quá 30 phút
-    if (priceVoucherReduced && finalPrice && voucherTimestamp) {
-        const currentTime = new Date().getTime();
-        const timeDiff = (currentTime - parseInt(voucherTimestamp)) / 1000 / 60; // thời gian tính bằng phút
-
-        if (timeDiff <= 30) { // Nếu trong vòng 30 phút
-            // Cập nhật giao diện
-            document.getElementById('priceVoucherReduced').textContent = priceVoucherReduced + ' đ';
-            document.getElementById('cart-spanTotalPriceCart').textContent = finalPrice + ' ₫';
-            document.getElementById('price-Calculator').textContent = finalPrice + ' ₫';
-        } else {
-            // Nếu quá 30 phút, xóa dữ liệu khỏi sessionStorage
-            sessionStorage.removeItem('priceVoucherReduced');
-            sessionStorage.removeItem('finalPrice');
-            sessionStorage.removeItem('voucherTimestamp');
-        }
+    if (priceVoucherReduced && finalPrice) {
+        // Hiển thị giá trị giảm và tổng tiền sau giảm
+        document.getElementById('priceVoucherReduced').textContent = priceVoucherReduced;
+        document.getElementById('price-Calculator').textContent = finalPrice;
+        document.getElementById('cart-spanTotalPriceCart').textContent = finalPrice;
     }
 });
+
 
 function toggleVoucherList() {
     const voucherList = document.getElementById('voucher-list');
@@ -109,7 +97,7 @@ function removeProductDetailFromCart(button) {
     // Tiến hành gọi API xóa sản phẩm khỏi giỏ hàng
     $.ajax({
         url: `/onepoly/remove-from-cart/${idProductDetail}`,
-        method: 'GET',
+        method: 'POST',
         success: function (data) {
             $(button).closest('.cart-item').remove();
         },
@@ -119,3 +107,24 @@ function removeProductDetailFromCart(button) {
     });
 }
 
+
+// Hàm cập nhật số lượng sản phẩm trong giỏ hàng
+window.updateQuantity = function (productDetailId, change) {
+    $.ajax({
+        url: '/onepoly/update-cart',
+        type: 'POST',
+        contentType: "application/json",
+        data: JSON.stringify({productDetailId: productDetailId, change: change}),
+        success: function (data) {
+            if (data.success) {
+                fetchCartItems(); // Cập nhật lại danh sách giỏ hàng
+            } else {
+                console.log(data.message || 'Có lỗi xảy ra khi cập nhật số lượng.');
+            }
+        },
+        error: function (error) {
+            console.error('Error updating quantity:', error);
+            alert('Có lỗi xảy ra khi cập nhật số lượng.');
+        }
+    });
+};
