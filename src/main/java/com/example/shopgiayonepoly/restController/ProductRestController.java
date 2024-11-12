@@ -3,7 +3,6 @@ package com.example.shopgiayonepoly.restController;
 import com.example.shopgiayonepoly.baseMethod.BaseProduct;
 import com.example.shopgiayonepoly.dto.request.AttributeRequet;
 import com.example.shopgiayonepoly.entites.*;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,10 +22,16 @@ public class ProductRestController extends BaseProduct {
         return productService.findProducts(idCategory, searchTerm);
     }
 
+    @GetMapping("/findProductDelete")
+    @ResponseBody
+    public List<Product> findProductDelete(Integer idCategory, String searchTerm) {
+        return productService.findProductDelete(idCategory, searchTerm);
+    }
+
     @GetMapping("/detail/search")
     @ResponseBody
     public List<ProductDetail> searchProductDetail(String searchTerm, Integer idProduct) {
-        return productService.searchProductDetailsByKeyword(searchTerm,idProduct);
+        return productService.searchProductDetailsByKeyword(searchTerm, idProduct);
     }
 
     @GetMapping("/productList")
@@ -201,8 +206,18 @@ public class ProductRestController extends BaseProduct {
 
 
     @GetMapping("/findAllCodeProduct")
-    public List<String> findAllCodeProduct(){
+    public List<String> findAllCodeProduct() {
         return productService.findAllCodeProduct();
+    }
+
+    @PostMapping("/restore")
+    public void restoreProduct(Integer id, Integer status) {
+        productService.updateStatus(id, status);
+    }
+
+    @GetMapping("/find-quantity")
+    public Integer findAllQuantity(Integer id) {
+        return productService.findQuantityByIDProduct(id);
     }
 
 }

@@ -10,9 +10,6 @@
     justify-content: center;
 }
 
-.container-createProduct {
-    display: flex;
-}
 
 .content-createProduct {
     flex-grow: 1;

@@ -42,7 +42,9 @@ function toggleSelectAllProduct(selectAllCheckbox) {
     });
 
     toggleSaveButton(); // Cập nhật nút lưu nếu cần thiết
+
 }
+
 
 
 // Thêm sự kiện 'change' cho tất cả các checkbox có class 'select-row-product'
@@ -193,10 +195,18 @@ document.querySelector('.search-input-product').addEventListener('input', functi
     const idCategory = document.querySelector('.search-select-product').value;
     fetchProductsByCategoryAndSearch(idCategory, searchTerm);
 });
-
+var quantity;
 // Hàm tìm kiếm sản phẩm theo danh mục và ô input
-function fetchProductsByCategoryAndSearch(idCategory, searchTerm) {
-    fetch(`/product-api/search?idCategory=${idCategory}&searchTerm=${searchTerm}`)
+async function fetchProductsByCategoryAndSearch(idCategory, searchTerm, url = `/product-api/search`) {
+    if (url === `/product-api/search`) {
+        url += `?idCategory=${idCategory}&searchTerm=${searchTerm}`;
+        document.getElementById('btn-findProduct-delete').style.display = 'block';
+        document.getElementById('btn-findProduct-active').style.display = 'none';
+    } else {
+        document.getElementById('btn-findProduct-delete').style.display = 'none';
+        document.getElementById('btn-findProduct-active').style.display = 'block';
+    }
+    await fetch(url)
         .then(response => response.json())
         .then(data => {
             products = data;
@@ -206,13 +216,13 @@ function fetchProductsByCategoryAndSearch(idCategory, searchTerm) {
         .catch(error => console.error('Error:', error));
 }
 
+
 // Hàm hiển thị trang
 function displayPage(page) {
     const itemsPerPage = isGridView ? itemsPerPageGrid : itemsPerPageList;
     const totalPages = Math.ceil(products.length / itemsPerPage);
     const start = (page - 1) * itemsPerPage;
     const end = start + itemsPerPage;
-
     const tableBody = document.getElementById('product-table-body');
     tableBody.innerHTML = '';
 
@@ -244,6 +254,7 @@ function displayPage(page) {
             const row = document.createElement('tr');
             row.id = `row-product-${product.id}`;
             row.dataset.id = product.id;
+            row.ondblclick = () => viewProductDetail(product.id);
 
             // Xây dựng HTML cho slider ảnh
             const imageSliderHtml = product.images.map(image => `
@@ -272,17 +283,27 @@ function displayPage(page) {
                 <td data-column="origin">${product.origin.nameOrigin}</td>
                 <td data-column="sole">${product.sole.nameSole}</td>
                 <td data-column="describe">${product.describe}</td>
-                <td data-column="status">${product.status === 1 ? 'Đang bán' : (product.status === 2 ? 'Ngừng bán' : '')}</td>
-                <td>
-                    <div class="dropdown-product">
-                        <i class="fa fa-ellipsis-v fa-ellipsis-v-product" aria-hidden="true" onclick="toggleDropdownProduct(event, this)"></i>
-                        <div class="dropdown-menu-product">
-                            <a href="/staff/product/detail/${product.id}">Xem chi tiết</a>
-                            <a href="#" onclick="toggleEditableRow(checked)">Chỉnh sửa</a>
-                            <a href="#">Xóa</a>
-                        </div>
-                    </div>
+                <td data-column="status">
+                    ${product.status === 1 ? 'Đang bán' : (product.status === 2 ? 'Ngừng bán' : (product.status === 0 ? 'Đã xóa' : ''))}
                 </td>
+                <td>
+                    ${product.status === 0 ? `
+                        <!-- Icon Khôi phục khi status = 0 -->
+                        <i id="restore-product" class="fa fa-undo fa-restore-icon" aria-hidden="true" onclick="updateStatus(${product.id}, 1)" title="Khôi phục"></i>
+                    ` : `
+                        <!-- Dropdown menu khi status khác 0 -->
+                        <div class="dropdown-product">
+                            <i class="fa fa-ellipsis-v fa-ellipsis-v-product" aria-hidden="true" onclick="toggleDropdownProduct(event, this)"></i>
+                            <div class="dropdown-menu-product">
+                                <a href="/staff/product/detail/${product.id}">Xem chi tiết</a>
+                                <a href="#" onclick="toggleEditableRow(${product.id})">Chỉnh sửa</a>
+                                <a onclick="updateStatus(${product.id}, 0)">Xóa</a>
+                            </div>
+                        </div>
+                    `}
+                </td>
+
+
             `;
 
             tableBody.appendChild(row);
@@ -466,4 +487,23 @@ function updateProduct(idProduct) {
     })
         .then(response => response.json())
     window.location.href = 'http://localhost:8080/staff/product/detail/' + idProduct;
+}
+
+const myModal = document.getElementById('myModal')
+const myInput = document.getElementById('myInput')
+
+myModal.addEventListener('shown.bs.modal', () => {
+    myInput.focus()
+})
+
+async function updateStatus(id, status) {
+    await fetch(`/product-api/restore?id=${id}&status=${status}`, {
+        method: 'POST'
+    })
+    if (status === 0) {
+        fetchProductsByCategoryAndSearch(0, '')
+    } else {
+        fetchProductsByCategoryAndSearch(0, '', `/product-api/findProductDelete?idCategory=${0}&searchTerm=${''}`)
+
+    }
 }

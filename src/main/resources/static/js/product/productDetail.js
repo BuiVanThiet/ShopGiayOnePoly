@@ -157,6 +157,9 @@ function displayPage(page) {
                         <i class="fa fa-ellipsis-v fa-ellipsis-v-productDetail" aria-hidden="true" onclick="toggleDropdownproductDetail(event, this)"></i>
                         <div class="dropdown-menu-productDetail">
                             <a href="#">Xóa</a>
+                            <a href="#" onclick="generateQRCode(${productDetail.id})">Tạo QR</a>
+                            <a href="#" onclick="downloadQRCode(${productDetail.id})">Lưu QR</a>
+
                         </div>
                     </div>
                 </td>
@@ -277,3 +280,85 @@ function changePage(newPage) {
 
 // Initialize display on page load
 fetchProductDetails('', idProduct);
+function generateQRCode(productDetailId) {
+    // Kiểm tra nếu ID không hợp lệ
+    if (!productDetailId || (typeof productDetailId !== 'number' && typeof productDetailId !== 'string')) {
+        console.error('Invalid product detail ID:', productDetailId);
+        return;
+    }
+
+    // Xóa QR container cũ nếu tồn tại
+    const existingQrContainer = document.getElementById('qr-container');
+    if (existingQrContainer) {
+        existingQrContainer.remove();
+    }
+
+    const qrContainer = document.createElement('div'); // tạo một container cho mã QR
+    qrContainer.id = "qr-container";
+
+    // Thêm lớp CSS để căn giữa
+    qrContainer.style.position = "fixed";
+    qrContainer.style.top = "50%";
+    qrContainer.style.left = "50%";
+    qrContainer.style.transform = "translate(-50%, -50%)"; // Căn giữa theo cả chiều ngang và dọc
+    qrContainer.style.zIndex = "9999"; // Đảm bảo QR luôn hiển thị trên các phần tử khác
+    qrContainer.style.backgroundColor = "rgba(0, 0, 0, 0.7)"; // Nền mờ cho QR
+    qrContainer.style.padding = "20px";
+    qrContainer.style.borderRadius = "10px"; // Thêm viền bo tròn nếu muốn
+
+    // Đảm bảo ID là chuỗi
+    const dataToEncode = String(productDetailId);
+
+    // Tạo mã QR
+    QRCode.toDataURL(`{"id":"${dataToEncode}"}`, { width: 400, height: 400 }, function (err, url) {
+        if (err) {
+            console.error('Error generating QR code:', err);
+            return;
+        }
+
+        qrContainer.innerHTML = `
+            <img src="${url}" alt="QR Code" style="max-width: 100%; max-height: 100%;"/>
+            <br>
+            <button id="closeQRCodeButton">Đóng</button>
+        `;
+
+        // Thêm mã QR vào DOM
+        document.body.appendChild(qrContainer);
+
+        // Thêm sự kiện click vào nút "Đóng" để xóa QR
+        const closeButton = document.getElementById('closeQRCodeButton');
+        closeButton.addEventListener('click', function() {
+            qrContainer.remove();  // Xóa hoàn toàn mã QR khỏi DOM
+        });
+    });
+}
+
+
+
+
+function downloadQRCode(productDetailId) {
+    // Kiểm tra nếu ID không hợp lệ
+    if (!productDetailId || typeof productDetailId !== 'number' && typeof productDetailId !== 'string') {
+        console.error('Invalid product detail ID:', productDetailId);
+        return;
+    }
+
+    // Đảm bảo ID là chuỗi
+    const dataToEncode = String(productDetailId);
+
+    // Tạo mã QR
+    QRCode.toDataURL(dataToEncode, { width: 400, height: 400 }, function (err, url) {
+        if (err) {
+            console.error('Error generating QR code:', err);
+            return;
+        }
+
+        // Tạo liên kết để tải mã QR
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `QRCode_${productDetailId}.png`;  // Đặt tên cho file tải về
+        document.body.appendChild(a);
+        a.click();  // Tự động nhấn vào liên kết để tải ảnh xuống
+        document.body.removeChild(a);  // Xóa liên kết sau khi tải về
+    });
+}

@@ -7,9 +7,11 @@ import com.example.shopgiayonepoly.entites.Image;
 import com.example.shopgiayonepoly.entites.Product;
 import com.example.shopgiayonepoly.entites.ProductDetail;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -44,7 +46,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     @Query("SELECT p FROM Product p " +
             "LEFT JOIN CategoryProduct cp ON p.id = cp.idProduct " +
-            "WHERE ( :idCategory = 0 AND :searchTerm IS NOT NULL AND ( " +
+            "WHERE ( :idCategory = 0 AND :searchTerm IS NOT NULL AND p.status <> 0 AND ( " +
             "LOWER(p.codeProduct) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
             "LOWER(p.nameProduct) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
             "LOWER(p.material.nameMaterial) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
@@ -52,9 +54,9 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
             "LOWER(p.origin.nameOrigin) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
             "LOWER(p.sole.nameSole) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
             "LOWER(p.describe) LIKE LOWER(CONCAT('%', :searchTerm, '%')))) OR " +
-            "( :idCategory = 0 AND :searchTerm IS NULL) OR " +
-            "( :idCategory <> 0 AND :searchTerm IS NULL AND cp.idCategory = :idCategory) OR " +
-            "( :idCategory <> 0 AND :searchTerm IS NOT NULL AND cp.idCategory = :idCategory AND ( " +
+            "( :idCategory = 0 AND :searchTerm IS NULL AND p.status <> 0) OR " +
+            "( :idCategory <> 0 AND :searchTerm IS NULL AND cp.idCategory = :idCategory AND p.status <> 0) OR " +
+            "( :idCategory <> 0 AND :searchTerm IS NOT NULL AND cp.idCategory = :idCategory AND p.status <> 0 AND ( " +
             "LOWER(p.codeProduct) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
             "LOWER(p.nameProduct) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
             "LOWER(p.material.nameMaterial) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
@@ -62,9 +64,34 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
             "LOWER(p.origin.nameOrigin) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
             "LOWER(p.sole.nameSole) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
             "LOWER(p.describe) LIKE LOWER(CONCAT('%', :searchTerm, '%')))) " +
-            "AND p.status <> 0 " +
             "order by p.id desc ")
     List<Product> findProducts(@Param("idCategory") Integer idCategory, @Param("searchTerm") String searchTerm);
+
+
+
+    @Query("SELECT p FROM Product p " +
+            "LEFT JOIN CategoryProduct cp ON p.id = cp.idProduct " +
+            "WHERE ( :idCategory = 0 AND :searchTerm IS NOT NULL AND p.status = 0 AND ( " +
+            "LOWER(p.codeProduct) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(p.nameProduct) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(p.material.nameMaterial) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(p.manufacturer.nameManufacturer) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(p.origin.nameOrigin) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(p.sole.nameSole) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(p.describe) LIKE LOWER(CONCAT('%', :searchTerm, '%')))) OR " +
+            "( :idCategory = 0 AND :searchTerm IS NULL AND p.status = 0) OR " +
+            "( :idCategory <> 0 AND :searchTerm IS NULL AND cp.idCategory = :idCategory AND p.status = 0) OR " +
+            "( :idCategory <> 0 AND :searchTerm IS NOT NULL AND cp.idCategory = :idCategory AND p.status = 0 AND ( " +
+            "LOWER(p.codeProduct) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(p.nameProduct) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(p.material.nameMaterial) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(p.manufacturer.nameManufacturer) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(p.origin.nameOrigin) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(p.sole.nameSole) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(p.describe) LIKE LOWER(CONCAT('%', :searchTerm, '%')))) " +
+            "order by p.id desc ")
+    List<Product> findProductDelete(@Param("idCategory") Integer idCategory, @Param("searchTerm") String searchTerm);
+
 
     @Query("SELECT DISTINCT p.nameProduct FROM Product p")
     List<String> findAllNameProduct();
@@ -93,6 +120,17 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
             "AND pd.product.id = :idProduct")
     List<ProductDetail> searchProductDetailsByKeyword(@Param("searchTerm") String searchTerm,@Param("idProduct") Integer idProduct);
 
+
     @Query("SELECT p.codeProduct FROM Product p")
     List<String> findAllCodeProduct();
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Product p SET p.status = :status WHERE p.id = :id")
+    void updateStatus(@Param("id") Integer id, @Param("status") Integer status);
+
+    @Query("SELECT SUM(pd.quantity) FROM ProductDetail pd WHERE pd.product.id = :id")
+    Integer findQuantityByIDProduct(@Param("id") Integer id);
+
+
 }

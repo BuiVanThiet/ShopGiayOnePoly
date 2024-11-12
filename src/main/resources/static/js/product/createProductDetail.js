@@ -14,6 +14,13 @@ function showDropdown(event) {
         ul.style.top = input.offsetHeight + 24 + "px"; // Đặt vị trí dropdown ngay dưới input
         ul.classList.add("show-createProductDetail"); // Hiển thị dropdown
     }
+
+    document.addEventListener('click', function closeDropdown(e) {
+        if (!ul.contains(e.target) && !input.contains(e.target)) { // Kiểm tra nếu click xảy ra ngoài dropdown và input
+            ul.classList.remove("show-createProductDetail"); // Đóng dropdown
+            document.removeEventListener('click', closeDropdown); // Gỡ sự kiện để tránh lặp lại
+        }
+    });
 }
 
 function filterFunction(event) {
@@ -27,14 +34,6 @@ function filterFunction(event) {
     for (var i = 0; i < li.length; i++) {
         var txtValue = li[i].textContent || li[i].innerText;
         li[i].style.display = txtValue.toUpperCase().indexOf(filter) > -1 ? "" : "none";
-    }
-}
-
-
-function closeAllDropdowns() {
-    var dropdowns = document.getElementsByClassName("dropdown-content-createProduct");
-    for (var i = 0; i < dropdowns.length; i++) {
-        dropdowns[i].classList.remove('show-createProduct'); // Đóng tất cả dropdown
     }
 }
 
@@ -172,15 +171,7 @@ function reloadOptions() {
         });
 }
 
-// Close the dropdown when clicking outside
-window.onclick = function (event) {
-    if (!event.target.matches('.custom-dropdown-createProductDetail')) {
-        const dropdowns = document.getElementsByClassName('custom-dropdown-createProductDetail');
-        for (let i = 0; i < dropdowns.length; i++) {
-            dropdowns[i].classList.remove('active');
-        }
-    }
-}
+
 
 function updateTableRows() {
     const selectedColors = Array.from(document.querySelectorAll('#dataList-color input[type="checkbox"]:checked'))
@@ -222,6 +213,12 @@ function updateTableRows() {
     // Lắng nghe sự kiện thay đổi trên các ô có thể chỉnh sửa
     document.querySelectorAll('.editable-cell').forEach(cell => {
         cell.addEventListener('input', function (event) {
+            // Chỉ xử lý nếu hàng đang được chỉnh sửa có checkbox được chọn
+            const row = cell.closest('tr');
+            const checkbox = row.querySelector('.row-selector');
+
+            if (!checkbox.checked) return; // Nếu checkbox không được chọn, không làm gì
+
             const colIndex = cell.cellIndex;
             const newValue = cell.innerText;
             const selection = window.getSelection();
@@ -243,11 +240,24 @@ function updateTableRows() {
         });
     });
 }
-
+function toggleCheckbox(liElement, type) {
+    const checkbox = liElement.querySelector(`input[data-type="${type}"]`);
+    if (checkbox) {
+        checkbox.checked = !checkbox.checked;
+        handleCheckboxChange(); // Gọi hàm kiểm tra sau khi thay đổi trạng thái
+    }
+}
 // Gọi hàm updateTableRows khi chọn checkbox
-document.querySelectorAll('#dataList-color input[type="checkbox"], #dataList-size input[type="checkbox"]').forEach(checkbox => {
-    checkbox.addEventListener('change', updateTableRows);
-});
+function handleCheckboxChange() {
+    const selectedColors = document.querySelectorAll('#dataList-color input[type="checkbox"]:checked').length;
+    const selectedSizes = document.querySelectorAll('#dataList-size input[type="checkbox"]:checked').length;
+
+    // Kiểm tra nếu có ít nhất 1 màu và 1 kích cỡ được chọn
+    if (selectedColors > 0 && selectedSizes > 0) {
+        updateTableRows();
+    }
+}
+
 
 function deleteRow(deleteButton) {
     const row = deleteButton.closest('tr');
@@ -321,3 +331,18 @@ function addProductDetail(idProduct) {
 }
 
 
+function toggleSelectAllproductDetail(selectAllCheckbox) {
+    // Chọn tất cả các checkbox trong phần tbody của bảng sản phẩm
+    const checkboxes = document.querySelectorAll('#productDetail-table-body .row-selector');
+
+    checkboxes.forEach((checkbox) => {
+        checkbox.checked = selectAllCheckbox.checked; // Đánh dấu hoặc bỏ đánh dấu checkbox
+    });
+}
+
+document.querySelectorAll('.row-selector').forEach((checkbox) => {
+    checkbox.addEventListener('change', function () {
+        const allChecked = document.querySelectorAll('.row-selector:checked').length === document.querySelectorAll('.row-selector').length;
+        document.getElementById('select-all-productDetail').checked = allChecked;
+    });
+});
