@@ -207,7 +207,7 @@ public class ClientController extends BaseBill {
                 }
                 totalPriceCartItem = totalPriceCartItem.subtract(priceReduced).max(BigDecimal.ZERO);
                 session.setAttribute("priceReduced", priceReduced);
-            }   else {
+            } else {
                 // Xóa các thuộc tính giảm giá khỏi session nếu không có voucher
                 session.removeAttribute("priceReduced");
             }
