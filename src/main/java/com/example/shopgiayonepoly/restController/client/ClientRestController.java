@@ -2,6 +2,7 @@ package com.example.shopgiayonepoly.restController.client;
 
 import com.example.shopgiayonepoly.baseMethod.BaseEmail;
 import com.example.shopgiayonepoly.dto.response.ClientLoginResponse;
+import com.example.shopgiayonepoly.dto.response.client.CartItemResponse;
 import com.example.shopgiayonepoly.dto.response.client.ProductDetailClientRespone;
 import com.example.shopgiayonepoly.dto.response.client.ProductIClientResponse;
 import com.example.shopgiayonepoly.dto.response.client.VoucherClientResponse;
@@ -15,8 +16,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+
+import org.springframework.http.HttpStatus;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.ui.Model;
@@ -191,7 +196,38 @@ public class ClientRestController extends BaseEmail {
         return ResponseEntity.ok(response);
     }
 
-//////////////////////////////////////////////////////////////////////////////
+        @PostMapping("/update-from-cart/{idProductDetailFromCart}")
+        public ResponseEntity<?> updateProductDetailFromCart(HttpSession session,
+                                                             @PathVariable("idProductDetailFromCart") Integer idProductDetailFromCart,
+                                                             @RequestParam("quantityItem") Integer quantityFormCart) {
+            if (quantityFormCart == null || quantityFormCart <= 0) {
+                return ResponseEntity.badRequest().body("Số lượng không hợp lệ");
+            }
+
+            List<Cart> cartItems = (List<Cart>) session.getAttribute("cartItems");
+            boolean updated = false;
+
+            if (cartItems != null) {
+                for (Cart item : cartItems) {
+                    if (item.getProductDetail().getId().equals(idProductDetailFromCart)) {
+                        item.setQuantity(quantityFormCart);
+                        updated = true;
+                        break;
+                    }
+                }
+            }
+
+            session.setAttribute("cartItems", cartItems);
+
+            if (updated) {
+                return ResponseEntity.ok("Quantity updated successfully");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Item not found in cart");
+            }
+        }
+
+
+    //////////////////////////////////////////////////////////////////////////////
     @GetMapping("/show-status-bill")
     public List<InvoiceStatus> getShowInvoiceStatus(HttpSession session) {
         Integer idBill = (Integer) session.getAttribute("idCheckStatusBill");

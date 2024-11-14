@@ -18,7 +18,14 @@
             </div>
 
             <div class="search-bar-product">
-                <select class="search-select-product" onchange="fetchProductsByCategoryAndSearch(this.value, document.querySelector('.search-input-product').value)">
+                <select class="search-select-product" id="items-per-page" onchange="updateItemsPerPage(event)">
+                    <option value="5">5/1</option>
+                    <option value="10" selected>10/1</option>
+                    <option value="15">15/1</option>
+                    <option value="20">20/1</option>
+                    <option value="25">ALL</option>
+                </select>
+                <select id="search-select-product" class="search-select-product" onchange="fetchProductsByCategoryAndSearch(this.value, document.querySelector('.search-input-product').value)">
                     <option value="0">Tất cả</option>
                     <th:block th:each="category : ${categoryList}">
                         <option th:value="${category.id}" th:text="${category.nameCategory}"></option>
@@ -33,8 +40,8 @@
                 </div>
             </div>
             <div style="display: flex; margin-bottom: 20px">
-                <button id="btn-save-product" class="btn-save-product" style="display: none" onclick="saveChanges()">Lưu lại</button>
-                <button id="btn-cancel-product" class="btn-cancel-product " style="display: none" onclick="cancelChanges()">Hủy bỏ</button>
+                <button id="btn-export-product" class="btn-export-product" style="display: none" >XUẤT EXCEL</button>
+                <button id="btn-delete-product" class="btn-delete-product" style="display: none" >XÓA BỎ</button>
                 <button id="btn-findProduct-delete" class="btn-findProduct-delete" onclick="fetchProductsByCategoryAndSearch(0,'',`/product-api/findProductDelete?idCategory=${0}&searchTerm=${''}`)">Danh sách đã xóa</button>
                 <button style="display: none" id="btn-findProduct-active" class="btn-findProduct-active" onclick="fetchProductsByCategoryAndSearch(0,'',`/product-api/search`)">Danh sách hoạt động</button>
             </div>
@@ -116,20 +123,22 @@
             <a class="add-button-product" href="/staff/product/create"><i
                     class="fas fa-plus"></i> Thêm sản phẩm</a>
         </div>
-<!--        confirm-->
-        <div class="modal" tabindex="-1">
+
+        <div class="modal fade" id="confirm-create-bill-modal" tabindex="-1"
+             aria-labelledby="confirmCreateBillModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Modal title</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <h1 class="modal-title fs-5" id="confirmCreateBillModalLabel">
+                            Xác nhận thêm sản phẩm
+                        </h1>
                     </div>
                     <div class="modal-body">
-                        <p>Modal body text goes here.</p>
+                        Bạn muốn thêm sản phẩm ?
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Save changes</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button onclick="updateStatus(null, 0)" type="submit" class="btn btn-success" data-bs-dismiss="modal" aria-label="Close">Xóa</button>
                     </div>
                 </div>
             </div>

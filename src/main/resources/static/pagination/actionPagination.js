@@ -69,5 +69,14 @@ function handlePageClick(pageNumber, elementId, totalPages) {
         loadProductBuy(pageNumber);
     }
 
+
+    if(elementId == 'customerPageMax-customer-index') {
+        loadTableCustomer(pageNumber);
+    }
+
+    if(elementId == 'staffPageMax-staff-index') {
+        loadTableStaff(pageNumber);
+    }
+
     createPagination(elementId, totalPages, pageNumber); // Cập nhật phân trang
 }

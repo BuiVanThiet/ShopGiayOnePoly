@@ -54,7 +54,7 @@ public interface StaffRepository extends JpaRepository<Staff, Integer> {
                     s.email,
                     s.role
             )  
-            from Staff s where concat(s.fullName, s.codeStaff, s.numberPhone, s.email) like %:key%
+            from Staff s where concat(s.fullName, s.codeStaff, s.numberPhone, s.email) like %:key% and s.status <> 0
             """)
     public List<StaffResponse> searchStaffByKeyword(@Param("key") String key);
 
@@ -74,7 +74,7 @@ public interface StaffRepository extends JpaRepository<Staff, Integer> {
                                     s.email,
                                     s.role
                                     )
-                                from Staff s where (s.fullName like %:key% or s.codeStaff like %:key% or s.numberPhone like %:key% or s.email like %:key%)
+                                from Staff s where concat(s.fullName, s.codeStaff, s.numberPhone, s.email) like %:key% and s.status <> 0
                         """)
     public Page<StaffResponse> searchStaffByKeywordPage(@Param("key") String key, Pageable pageable);
 

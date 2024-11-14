@@ -31,11 +31,11 @@ public class StaffController extends BaseEmail {
     @Autowired
     StaffService staffService;
 
-    @Autowired
-    StaffRepository staffRepository;
+//    @Autowired
+//    StaffRepository staffRepository;
 
-    @Autowired
-    CustomerRepository customerRepository;
+//    @Autowired
+//    CustomerRepository customerRepository;
 
     private final int pageSize = 5;
 
@@ -112,11 +112,11 @@ public class StaffController extends BaseEmail {
             result.rejectValue("birthDay", "error.customer", "Ngày sinh không được lớn hơn ngày hiện tại!");
         }
         // Kiểm tra email
-        if (staffRequest.getEmail() == null || staffRequest.getEmail().isEmpty()) {
-            result.rejectValue("email", "error.staff", "Email không được để trống!");
-        } else if (customerRepository.existsByEmail(staffRequest.getEmail()) || staffRepository.existsByEmail(staffRequest.getEmail())) {
-            result.rejectValue("email", "error.staff", "Email đã được sử dụng!");
-        }
+//        if (staffRequest.getEmail() == null || staffRequest.getEmail().isEmpty()) {
+//            result.rejectValue("email", "error.staff", "Email không được để trống!");
+//        } else if (customerRepository.existsByEmail(staffRequest.getEmail()) || staffRepository.existsByEmail(staffRequest.getEmail())) {
+//            result.rejectValue("email", "error.staff", "Email đã được sử dụng!");
+//        }
         if (result.hasErrors()) {
             model.addAttribute("mes", "Thêm thất bại");
             // Nếu có lỗi, trả về trang form để người dùng sửa lại
@@ -200,11 +200,11 @@ public class StaffController extends BaseEmail {
             result.rejectValue("numberPhone", "error.staff", "Số điện thoại không hợp lệ!");
         }
         // Kiểm tra email
-        if (staffRequest.getEmail() == null || staffRequest.getEmail().isEmpty()) {
-            result.rejectValue("email", "error.staff", "Email không được để trống!");
-        } else if (customerRepository.existsByEmail(staffRequest.getEmail()) || staffRepository.existsByEmail(staffRequest.getEmail())) {
-            result.rejectValue("email", "error.staff", "Email đã được sử dụng!");
-        }
+//        if (staffRequest.getEmail() == null || staffRequest.getEmail().isEmpty()) {
+//            result.rejectValue("email", "error.staff", "Email không được để trống!");
+//        } else if (customerRepository.existsByEmail(staffRequest.getEmail()) || staffRepository.existsByEmail(staffRequest.getEmail())) {
+//            result.rejectValue("email", "error.staff", "Email đã được sử dụng!");
+//        }
         // Kiểm tra ngày sinh
         if (staffRequest.getBirthDay() == null) {
             result.rejectValue("birthDay", "error.customer", "Ngày sinh không được để trống!");

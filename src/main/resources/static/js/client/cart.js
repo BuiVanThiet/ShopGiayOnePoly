@@ -20,9 +20,3 @@ priceCartItemElements.forEach(element => {
 });
 
 calculateTotal();
-
-
-
-
-
-

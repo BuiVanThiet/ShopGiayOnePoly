@@ -39,7 +39,7 @@ public class SecurityConfig {
                         .requestMatchers("/staff/return-bill/**").hasAnyRole("Quản trị viên", "Nhân viên bán hàng")
                         .requestMatchers("/staff/transactionVNPay/**").hasAnyRole("Quản trị viên", "Nhân viên bán hàng")
                         .requestMatchers("/login-api/**", "/ajax/**", "/css/**", "/fornText/**","/img/**", "/js/**", "/loading/**","/pagination/**", "/toast/**","/toastV2/**").permitAll()
-                        .requestMatchers("/transactionVNPay-api/**","/send-email-bill","/bill-api/**","/register-api/**", "/register", "/login", "/logout","/return-exchange-bill-api/**","/sale/**","/api-client/**").permitAll()
+                        .requestMatchers("/transactionVNPay-api/**","/staff-api/**","/customer-api/**","/send-email-bill","/bill-api/**","/register-api/**", "/register", "/login", "/logout","/return-exchange-bill-api/**","/sale/**","/api-client/**").permitAll()
                         .requestMatchers("/onepoly/**").permitAll()
                         .requestMatchers("/profile/**","/forgotPassword/**").permitAll()
                         .requestMatchers("/staff/product/**").permitAll()

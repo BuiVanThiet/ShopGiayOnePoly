@@ -22,8 +22,8 @@ public class ColorController {
     @Autowired
     ColorService colorService;
 
-    String mess = "";
-    String colorMess = "";
+    String check = "";
+    String message = "";
 
     @GetMapping("/color")
     public String list(Model model) {
@@ -48,8 +48,8 @@ public class ColorController {
     public String add(@ModelAttribute("colorAdd") Color color) {
         color.setStatus(1);
         colorService.save(color);
-        this.mess = "Thêm hóa đơn mới thành công!";
-        this.colorMess = "1";
+        this.message = "Thêm màu sắc thành công!";
+        this.check = "1";
         return "redirect:/attribute/color";
     }
 
@@ -84,7 +84,8 @@ public class ColorController {
 
     @PostMapping("/update-color")
     @ResponseBody
-    public ResponseEntity<String> updateColor(@RequestBody Map<String, Object> payload) {
+    public ResponseEntity<Map<String, String>> updateColor(@RequestBody Map<String, Object> payload) {
+        Map<String, String> thongBao = new HashMap<>();
         try {
             int id;
             String codeColor;
@@ -99,20 +100,26 @@ public class ColorController {
 
             codeColor = (String) payload.get("codeColor");
             nameColor = (String) payload.get("nameColor");
-
+            message = "Sửa màu sắc thành công";
+            check = "1";
             // Gọi service để cập nhật dữ liệu màu sắc trong cơ sở dữ liệu
             colorService.updateColor(id, codeColor, nameColor);
-
-            return ResponseEntity.ok("Cập nhật dữ liệu thành công");
+            thongBao.put("message", message);
+            thongBao.put("check", check);
+            return ResponseEntity.ok(thongBao);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Cập nhật dữ liệu thất bại");
+            message = "Sửa màu sắc thất bại";
+            check = "2";
+            thongBao.put("message", message);
+            thongBao.put("check", check);
+            return ResponseEntity.ok(thongBao);
         }
     }
 
     @PostMapping("/delete-color")
     @ResponseBody
-    public ResponseEntity<Map<String, Object>> deleteColor(@RequestBody Map<String, Object> payload) {
-        Map<String, Object> response = new HashMap<>();
+    public ResponseEntity<Map<String, String>> deleteColor(@RequestBody Map<String, Object> payload) {
+        Map<String, String> thongBao = new HashMap<>();
         try {
             int id;
             int status;
@@ -129,25 +136,31 @@ public class ColorController {
             } else {
                 status = Integer.parseInt(payload.get("status").toString());
             }
+            if (status == 0) {
+                check = "1";
+                message = "Xóa màu sắc thành công!";
+            } else {
+                check = "1";
+                message = "Khôi phục màu sắc thành công!";
+            }
 
             // Gọi service để cập nhật trạng thái trong cơ sở dữ liệu
             colorService.updateStatus(id, status);
-
             // Phản hồi thành công
-            response.put("success", true);
-            response.put("message", "Xóa thành công");
-            return ResponseEntity.ok(response);
+            thongBao.put("message", message);
+            thongBao.put("check", check);
+            return ResponseEntity.ok(thongBao);
 
         } catch (NumberFormatException e) {
             // Xử lý lỗi parse dữ liệu
-            response.put("success", false);
-            response.put("message", "Dữ liệu không hợp lệ: " + e.getMessage());
-            return ResponseEntity.badRequest().body(response);
+            thongBao.put("mess", "Lỗi khi xóa màu sắc!");
+            thongBao.put("check", "3");
+            return ResponseEntity.ok(thongBao);
         } catch (Exception e) {
             // Xử lý lỗi khác
-            response.put("success", false);
-            response.put("message", "Có lỗi xảy ra: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            thongBao.put("mess", "Lỗi khi xóa màu sắc!");
+            thongBao.put("check", "3");
+            return ResponseEntity.ok(thongBao);
         }
     }
     @ModelAttribute("staffInfo")

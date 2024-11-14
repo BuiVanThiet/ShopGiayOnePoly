@@ -9,11 +9,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +60,28 @@ public class chartRestController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @GetMapping("/getProductsByDateRange")
+    public ResponseEntity<Map<String, Object>> getProductSalesByDateRange(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "3") int size,
+            @RequestParam String startDate,
+            @RequestParam String endDate) {
+
+        // Không cần chuyển đổi từ String thành Date ở đây nữa
+        // Trực tiếp sử dụng startDate và endDate dưới dạng String
+
+        // Lấy dữ liệu từ service
+        Page<ProductInfoDto> productSales = chartService.getProductSalesPageByDateRange(page, size, startDate, endDate);
+
+        // Chuẩn bị dữ liệu trả về
+        Map<String, Object> response = new HashMap<>();
+        response.put("content", productSales.getContent());
+        response.put("pageable", productSales.getPageable());
+        response.put("totalPages", productSales.getTotalPages());
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @GetMapping("/statusBillsMonth")
     public ResponseEntity<List<StatusBill>> getBillsWithStatusDescription() {
         List<StatusBill> statusBills = chartService.findBillsWithStatusDescription();
@@ -88,5 +112,30 @@ public class chartRestController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_TYPE, "application/json;charset=UTF-8")
                 .body(statusBills);
+    }
+
+    @PostMapping("/getStatisticsByDateRange")
+    public ResponseEntity<?> getStatisticsByDateRange(@RequestBody Map<String, String> dateRange) {
+        String startDate = dateRange.get("startDate");
+        String endDate = dateRange.get("endDate");
+        LocalDate start = LocalDate.parse(startDate);
+        LocalDate end = LocalDate.parse(endDate);
+
+        // Kiểm tra xem ngày kết thúc cách ngày bắt đầu không quá 10 ngày
+        long daysBetween = ChronoUnit.DAYS.between(start, end);
+        if (daysBetween > 9) {
+            return ResponseEntity.badRequest().body("Khoảng cách giữa ngày bắt đầu và ngày kết thúc không được vượt quá 10 ngày.");
+        }
+
+        // Nếu hợp lệ, gọi service để lấy dữ liệu
+        return ResponseEntity.ok(chartService.findStatisticsByDateRange(startDate, endDate));
+    }
+    @GetMapping("/statisticsByRange")
+    public ResponseEntity<List<StatusBill>> getBillStatistics(
+            @RequestParam("startDate") String startDate,
+            @RequestParam("endDate") String endDate) {
+
+        List<StatusBill> statusBills = chartService.getBillStatisticsByDateRange(startDate, endDate);
+        return ResponseEntity.ok(statusBills);
     }
 }

@@ -1,7 +1,7 @@
 /* Cấu trúc của .row để đảm bảo chiếm toàn bộ chiều rộng mà không có vấn đề cuộn ngang */
 .row {
     max-width: 100%;
-    margin: 0 auto;
+    margin-right: auto;
     padding: 0; /* Đảm bảo không có padding dư thừa ảnh hưởng đến cuộn trang */
 }
 
