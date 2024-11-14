@@ -29,8 +29,7 @@ function saveRow(index) { // hàm edit dữ liệu trên table
         contentType: 'application/json',
         data: JSON.stringify(updatedData),  // Gửi dữ liệu JSON
         success: function (response) {
-            console.log('Cập nhật thành công:', response);
-            // Hiển thị thông báo thành công hoặc xử lý kết quả trả về từ server
+            createToast(response.check, response.message);
         },
         error: function (xhr, status, error) {
             console.error('Có lỗi xảy ra khi cập nhật dữ liệu:', error);
@@ -76,38 +75,42 @@ function toggleStatus(element) { // hàm thay đổi trạng thái bằng button
         }
     });
 }
+document.addEventListener('show.bs.modal', function (event) {
+    var button = event.relatedTarget;  // Lấy nút kích hoạt modal
+    var index = button.getAttribute('data-index');  // Lấy index từ nút kích hoạt
+    var id = button.getAttribute('data-id');  // Lấy id từ nút kích hoạt
+
+    // Gán index và id vào nút "Xóa" trong modal
+    var deleteButton = document.querySelector('#confirm-create-bill-modal .btn-success');
+    deleteButton.setAttribute('data-index', index);
+    deleteButton.setAttribute('data-id', id);
+});
 
 function deleteByID(element) {
-    if (confirm('Bạn có chắc chắn muốn xóa mục này không?')) {
-        var index = element.getAttribute('data-index');  // Lấy index từ th:data-index
-        var id = $('#row-' + index).data('id');  // Lấy id của phần tử từ th:data-id của hàng
+    var index = element.getAttribute('data-index');  // Lấy index từ nút "Xóa" trong modal
+    var id = element.getAttribute('data-id');  // Lấy id từ nút "Xóa" trong modal
 
-        $.ajax({
-            url: '/attribute/delete-color',  // Đường dẫn API để xóa
-            method: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({
-                id: id,
-                status: 0  // Giả sử status 0 là trạng thái bị xóa
-            }),
-            success: function (response) {
-                if (response.success) {
-                    // Xóa hàng trong bảng mà không cần reload trang
-                    $('#row-' + index).remove();  // Xóa hàng với id là row-index
-                    console.log('Xóa thành công');
-                } else {
-                    alert('Xóa thất bại!');
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error('Có lỗi xảy ra khi xóa:', error);
-            }
-        });
-    }
+    $.ajax({
+        url: '/attribute/delete-color',  // Đường dẫn API để xóa
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            id: id,
+            status: 0  // Giả sử status 0 là trạng thái bị xóa
+        }),
+        success: function (response) {
+            $('#row-' + index).remove();  // Xóa hàng với id là row-index
+            createToast(response.check, response.message);
+        },
+        error: function (xhr, status, error) {
+            console.error('Có lỗi xảy ra khi xóa:', error);
+        }
+    });
 }
 
+
 document.querySelector('.attribute-btn-listDelete').addEventListener('click', function () {
-    fetch('http://localhost:8080/attribute/color/delete')
+    fetch('/attribute/color/delete')
         .then(response => response.json())
         .then(data => {
             if (data.length > 0) {
@@ -115,7 +118,7 @@ document.querySelector('.attribute-btn-listDelete').addEventListener('click', fu
                 this.style.display = 'none';
                 document.querySelector('.attribute-btn-listActive').style.display = 'inline-block';
             } else {
-                alert("Không có màu nào bị xóa.");
+                createToast('1','Không có màu nào bị xóa')
             }
         });
 });
@@ -128,7 +131,7 @@ document.querySelector('.attribute-btn-listActive').addEventListener('click', fu
 
 function fetchDeletedColors() {
     // Thay URL dưới đây bằng endpoint của bạn để lấy danh sách màu đã xóa
-    fetch('http://localhost:8080/attribute/color/delete')
+    fetch('/attribute/color/delete')
         .then(response => response.json())
         .then(data => {
             if (data.length > 0) {
@@ -159,7 +162,7 @@ function fetchDeletedColors() {
                                title="Toggle Status"></i>
                         </td>
                         <td>
-                                <a data-index="${index}"  onclick="restoreColor(this)">
+                                <a data-index="${index}" data-id="${color.id}"  onclick="restoreColor(this)">
                                     <i class="attribute-icon-restore fas fa-undo" title="Khôi phục"></i>
                                 </a>
                         </td>
@@ -167,7 +170,7 @@ function fetchDeletedColors() {
                     tbody.appendChild(row);
                 });
             } else {
-                alert("Không có màu nào bị xóa.");
+                createToast('1','Không có màu nào bị xóa')
             }
         })
         .catch(error => {
@@ -177,13 +180,12 @@ function fetchDeletedColors() {
 
 
 function fetchActiveColors() {
-    fetch('http://localhost:8080/attribute/color/active')
+    fetch('/attribute/color/active')
         .then(response => response.json())
         .then(data => {
-            if (data.length > 0) {
 
                 const tbody = document.querySelector('#colorTable tbody');
-                tbody.innerHTML = '';
+                tbody.innerHTML = ''; // Xóa nội dung hiện tại của tbody
 
                 data.forEach((color, index) => {
                     const row = document.createElement('tr');
@@ -214,45 +216,40 @@ function fetchActiveColors() {
                             <a href="#" onclick="saveRow(${index})" id="save-btn-${index}" style="display:none;">
                                 <i class="attribute-icon-save icon-save fas fa-save" title="Save"></i>
                             </a>
-                            <a href="#" data-index="${index}" onclick="deleteByID(this)">
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#confirm-create-bill-modal"
+                               data-index="${index}" data-id="${color.id}">
                                 <i class="attribute-icon-delete icon-delete fas fa-trash" title="Delete"></i>
                             </a>
                         </td>
                     `;
                     tbody.appendChild(row);
                 });
-            } else {
-                alert("Không có màu nào đang hoạt động.");
-            }
         })
+        .catch(error => {
+            console.error("Có lỗi xảy ra khi lấy danh sách màu:", error);
+        });
 }
 
 
 function restoreColor(element) {
-    if (confirm('Bạn có chắc chắn muốn khôi phục mục này không?')) {
-        var index = element.getAttribute('data-index');
-        var id = $('#row-' + index).data('id');
+    var index = element.getAttribute('data-index');
+    var id = element.getAttribute('data-id');
+    $.ajax({
+        url: '/attribute/delete-color',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            id: id,
+            status: 1
+        }),
+        success: function (response) {
+            $('#row-' + index).remove();
+            createToast('1', 'Khôi phục màu sắc thành công')
+        },
+        error: function (xhr, status, error) {
+            createToast('2', 'Khôi phục màu sắc thất bại')
+        }
+    });
 
-        $.ajax({
-            url: '/attribute/delete-color',
-            method: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({
-                id: id,
-                status: 1
-            }),
-            success: function (response) {
-                if (response.success) {
-                    $('#row-' + index).remove();
-                    console.log('Khôi phục thành công');
-                } else {
-                    alert('Khôi phục thất bại!');
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error('Có lỗi xảy ra khi khôi phục:', error);
-            }
-        });
-    }
 }
 

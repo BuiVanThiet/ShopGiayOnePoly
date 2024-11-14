@@ -1,22 +1,22 @@
-.body-createProduct {
+.body-updateProduct {
     font-family: 'Arial', sans-serif;
     background-color: #f5f5f5;
     margin: 0;
     padding: 0;
 }
 
-.h1-createProduct {
+.h1-updateProduct {
     display: flex;
     justify-content: center;
 }
 
 
-.content-createProduct {
+.content-updateProduct {
     flex-grow: 1;
     padding: 20px;
 }
 
-.main-content-createProduct {
+.main-content-updateProduct {
     background-color: #fff;
     padding: 20px;
     border-radius: 10px;
@@ -24,28 +24,28 @@
     margin-bottom: 20px;
 }
 
-.main-content-createProduct h1 {
+.main-content-updateProduct h1 {
     font-size: 24px;
     margin-bottom: 20px;
 }
 
-.form-group-createProduct {
+.form-group-updateProduct {
     display: flex;
     justify-content: space-between;
     margin-bottom: 20px;
 }
 
-.form-group-createProduct .form-control-createProduct {
+.form-group-updateProduct .form-control-updateProduct {
     position: relative;
     width: 31.5%;
 }
 
-.form-group-createProduct .description-createProduct {
+.form-group-updateProduct .description-updateProduct {
     width: 100%;
 }
 
-.form-group-createProduct .form-control-createProduct input,
-.form-group-createProduct .form-control-createProduct select {
+.form-group-updateProduct .form-control-updateProduct input,
+.form-group-updateProduct .form-control-updateProduct select {
     width: 100%;
     padding: 10px;
     border: 2px solid #e0e0e0;
@@ -54,7 +54,7 @@
 }
 
 
-.form-group-createProduct .form-control-createProduct textarea {
+.form-group-updateProduct .form-control-updateProduct textarea {
     width: 100%;
     padding: 10px;
     border: 2px solid #e0e0e0;
@@ -63,7 +63,7 @@
     resize: none;
 }
 
-.upload-section-createProduct {
+.upload-section-updateProduct {
     text-align: center;
     padding: 10px;
     border: 2px dashed #e0e0e0;
@@ -71,18 +71,18 @@
     margin-bottom: 20px;
 }
 
-.upload-section-createProduct i {
+.upload-section-updateProduct i {
     font-size: 40px;
     color: #6c63ff;
 }
 
-.upload-container-createProduct {
+.upload-container-updateProduct {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
 }
 
-.upload-item-createProduct {
+.upload-item-updateProduct {
     flex: 1 0 30%;
     max-width: 150px;
     text-align: center;
@@ -90,7 +90,7 @@
     cursor: pointer;
 }
 
-.image-preview-createProduct img {
+.image-preview-updateProduct img {
     width: 190px;
     height: 190px;
     margin: 10px;
@@ -98,12 +98,12 @@
     object-fit: contain;
 }
 
-.buttons-createProduct {
+.buttons-updateProduct {
     display: flex;
     justify-content: flex-end;
 }
 
-.buttons-createProduct button {
+.buttons-updateProduct button {
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
@@ -111,17 +111,17 @@
     cursor: pointer;
 }
 
-.buttons-createProduct .create-btn-createProduct {
+.buttons-updateProduct .update-btn-updateProduct {
     background-color: #6c63ff;
     color: #fff;
 }
 
-.buttons-createProduct .cancel-btn-createProduct {
+.buttons-updateProduct .cancel-btn-updateProduct {
     background-color: #e0e0e0;
     color: #000;
 }
 
-.cancel-btn-createProduct:hover {
+.cancel-btn-updateProduct:hover {
     background-color: red;
 }
 
@@ -129,14 +129,14 @@
 /*    color: red;*/
 /*}*/
 
-.combobox-container-createProduct {
+.combobox-container-updateProduct {
     position: relative;
     display: flex;
     justify-content: space-between;
     margin-bottom: 20px;
 }
 
-.combobox-toggle-createProduct {
+.combobox-toggle-updateProduct {
     width: 100%;
     padding: 10px;
     border: 2px solid #e0e0e0;
@@ -144,7 +144,7 @@
     outline: none;
 }
 
-.combobox-options-createProduct {
+.combobox-options-updateProduct {
     display: none;
     position: absolute;
     top: 100%;
@@ -159,7 +159,7 @@
     overflow-x: hidden;
 }
 
-.combobox-options-createProduct label {
+.combobox-options-updateProduct label {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -167,7 +167,7 @@
     padding: 8px;
     cursor: pointer;
 }
-.dropdown-content-createProduct {
+.dropdown-content-updateProduct {
     display: none; /* Mặc định ẩn */
     position: absolute;
     max-height: 165px;
@@ -184,7 +184,7 @@
 }
 
 
-.dropdown-content-createProduct li {
+.dropdown-content-updateProduct li {
     padding: 8px 12px;
     cursor: pointer;
     display: flex;
@@ -192,16 +192,16 @@
 }
 
 
-.dropdown-content-createProduct li:hover {
+.dropdown-content-updateProduct li:hover {
     background-color: #f1f1f1;
 }
 
-.dropdown-content-createProduct input {
+.dropdown-content-updateProduct input {
     width: 20px;
 }
 
 /* Hiển thị dropdown */
-.show-createProduct {
+.show-updateProduct {
     display: block;
 }
 
@@ -265,7 +265,7 @@
     background-color: #dc3545;
     margin-left: 8px;
 }
-.custom-dropdown-createProduct {
+.custom-dropdown-updateProduct {
     border: 1px solid #ccc;
     padding: 10px;
     width: 200px;
@@ -273,11 +273,11 @@
     position: relative;
 }
 
-.dropdown-selected-createProduct {
+.dropdown-selected-updateProduct {
     padding: 5px;
 }
 
-.dropdown-options-createProduct {
+.dropdown-options-updateProduct {
     display: none;
     border: 1px solid #ccc;
     position: absolute;
@@ -286,24 +286,24 @@
     width: 100%;
 }
 
-.dropdown-options-createProduct label {
+.dropdown-options-updateProduct label {
     display: block;
     padding: 5px;
 }
 
-.dropdown-options-createProduct input {
+.dropdown-options-updateProduct input {
     margin-right: 10px;
 }
 
-.custom-dropdown-createProduct.active .dropdown-options-createProduct {
+.custom-dropdown-updateProduct.active .dropdown-options-updateProduct {
     display: block;
 }
-.table-createProduct {
+.table-updateProduct {
     width: 100%;
     border-collapse: collapse;
 }
 
-.table-createProduct th, .table-createProduct td {
+.table-updateProduct th, .table-updateProduct td {
     padding: 10px;
     text-align: center;
     vertical-align: middle;
@@ -312,13 +312,13 @@
     white-space: normal;
 
 }
-.table-createProduct th {
+.table-updateProduct th {
     background-color: #c0c0c0;
 }
-.table-createProduct tr {
+.table-updateProduct tr {
     border-bottom: 1px solid #ddd;
 }
-.table-createProduct td {
+.table-updateProduct td {
     background-color: white;
 }
 

@@ -131,13 +131,13 @@ function submitQuickAdd() {
             if (!response.ok) {
                 throw new Error('Lỗi khi thêm thuộc tính');
             }
-            alert("Thêm thuộc tính thành công");
+            createToast('1', 'Thêm thuộc tính thành công')
             closeQuickAddForm(); // Đóng form thêm thuộc tính
             reloadOptions(); // Tải lại danh sách thuộc tính mới cho select
         })
         .catch(error => {
             console.error('Lỗi:', error);
-            alert('Có lỗi xảy ra khi thêm thuộc tính');
+            createToast('3', 'Thêm thuộc tính thất bại')
         });
 }
 
@@ -446,22 +446,15 @@ async function addProductWithDetails() {
     if (productDetails.length > 0) {
         formData.append("productDetails", JSON.stringify(productDetails));
     }
-    formData.forEach((value, key) => {
-        console.log(key, value);
-    });
     try {
-        const response = await fetch('/staff/product/add-product-with-details', {
+        await fetch('/staff/product/add-product-with-details', {
             method: 'POST',
             body: formData
         });
-
-        if (!response.ok) throw new Error('Thêm sản phẩm thất bại');
-
-        alert("Sản phẩm và chi tiết sản phẩm đã được thêm thành công");
+        createToast('1', 'Thêm sản phẩm thành công')
         window.location.href = 'http://localhost:8080/staff/product';
     } catch (error) {
-        console.error('Lỗi:', error);
-        alert("Có lỗi xảy ra khi thêm sản phẩm hoặc chi tiết sản phẩm.");
+        createToast('3', 'Thêm sản phẩm thất bại')
     }
 
 }
