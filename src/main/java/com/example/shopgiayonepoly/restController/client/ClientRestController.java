@@ -1,5 +1,6 @@
 package com.example.shopgiayonepoly.restController.client;
 
+import com.example.shopgiayonepoly.baseMethod.BaseEmail;
 import com.example.shopgiayonepoly.dto.response.ClientLoginResponse;
 import com.example.shopgiayonepoly.dto.response.client.CartItemResponse;
 import com.example.shopgiayonepoly.dto.response.client.ProductDetailClientRespone;
@@ -8,28 +9,34 @@ import com.example.shopgiayonepoly.dto.response.client.VoucherClientResponse;
 import com.example.shopgiayonepoly.entites.*;
 import com.example.shopgiayonepoly.implement.CustomerRegisterImplement;
 import com.example.shopgiayonepoly.repositores.*;
-import com.example.shopgiayonepoly.service.CartService;
-import com.example.shopgiayonepoly.service.ClientService;
-import com.example.shopgiayonepoly.service.CustomerService;
-import com.example.shopgiayonepoly.service.InvoiceStatusService;
+import com.example.shopgiayonepoly.service.*;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+
 import org.springframework.http.HttpStatus;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
 
 @RestController
 @RequestMapping("/api-client")
-public class ClientRestController {
+public class ClientRestController extends BaseEmail {
     @Autowired
     ClientSecurityResponsetory clientLoginResponse;
     @Autowired
@@ -53,6 +60,10 @@ public class ClientRestController {
     CartRepository cartRepository;
     @Autowired
     InvoiceStatusService invoiceStatusService;
+    @Autowired
+    BillService billService;
+    @Autowired
+    protected PdfTemplateService pdfTemplateService;
 
     @GetMapping("/products/top12-highest")
     public List<ProductIClientResponse> getTop12ProductHighest() {
@@ -262,6 +273,46 @@ public class ClientRestController {
         Integer idBill = (Integer) session.getAttribute("idCheckStatusBill");
         List<Object[]> bill = this.invoiceStatusService.getInformationBillStatusClient(idBill);
         return bill.get(0);
+    }
+
+    @PostMapping("/send-mail-request-bill")
+    public String getSendMailRequestBill(HttpSession session,@RequestBody Map<String,String> data) {
+        Integer idBill = (Integer) session.getAttribute("idCheckStatusBill");
+        String emailSend = data.get("emailSend"); // Lấy giá trị từ JSON
+        System.out.println(emailSend);
+        Bill bill = this.billService.findById(idBill).orElse(null);
+        String ht = "http://localhost:8080/api-client/bill-pdf/"+bill.getId();
+        this.templateRequestBill(emailSend,ht,bill.getCodeBill());
+        return "Đã gửi yêu cầu!";
+    }
+
+    @GetMapping("/bill-pdf/{idBill}")
+    public ResponseEntity<byte[]> getBillPDF(@PathVariable("idBill") String idBill, HttpSession session) throws Exception {
+
+        // Lấy chi tiết hóa đơn và thông tin hóa đơn từ service
+        List<Object[]> billDetails = this.billService.getBillDetailByIdBillPDF(Integer.parseInt(idBill));
+        List<Object[]> billInfoList = this.billService.getBillByIdCreatePDF(Integer.parseInt(idBill));
+
+        // Kiểm tra dữ liệu
+        if (billInfoList == null || billDetails.isEmpty()) {
+            return ResponseEntity.status(404).body(null);
+        }
+
+        Object[] billInfo = billInfoList.get(0);
+
+        // Tạo PDF từ template
+        ByteArrayOutputStream pdfStream = pdfTemplateService.fillPdfTemplate(billInfo, billDetails);
+        byte[] pdfBytes = pdfStream.toByteArray();
+
+        // Trả về phản hồi thành công
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        // Chỉ định rằng file sẽ được tải về và lưu vào thư mục Downloads
+        headers.setContentDispositionFormData("attachment", billInfo[0] + ".pdf");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(pdfBytes);
     }
 
     protected Page<Object[]> convertListToPage(List<Object[]> list, Pageable pageable) {

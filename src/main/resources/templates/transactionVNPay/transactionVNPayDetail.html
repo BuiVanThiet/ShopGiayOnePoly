@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{Home/home_manege}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Male_Fashion Template">
+    <meta name="keywords" content="Male_Fashion, unica, creative, html">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Shop Giày Onepoly</title>
+</head>
+<body>
+<main>
+    <div layout:fragment="content">
+        <article class=" bd-gutter mt-5 my-md-4 bd-layout">
+            <a href="/staff/transactionVNPay/home" class="btn ">
+                <i class="bi bi-arrow-return-left"></i>
+                Trở lại trang quản lý hóa đơn!
+            </a>
+            <div class="card">
+                <div class="card-body ">
+                    Giao dịch thanh toán
+                    <hr>
+                    <div class="row" style="width: 70%;margin-left: 40%; ">
+                        <div class="col-2">
+                            Mã hóa đơn:
+                        </div>
+                        <div class="col-10 mt-3" id="textTransaction7" th:text="${transaction[6]}">
+                            123
+                        </div>
+                        <div class="col-2">
+                            Loại thẻ:
+                        </div>
+                        <div class="col-10 mt-3" id="textTransaction8" th:text="${transaction[7]}">
+                            123
+                        </div>
+                        <div class="col-2">
+                            Số hóa đơn:
+                        </div>
+                        <div class="col-10 mt-3" id="textTransaction0" th:text="${transaction[0]}">
+                            123
+                        </div>
+                        <div class="col-2" >
+                            Mã giao dịch:
+                        </div>
+                        <div class="col-10 mt-3" id="textTransaction1" th:text="${transaction[1]}">
+                            123
+                        </div>
+                        <div class="col-2">
+                            Ngân hàng:
+                        </div>
+                        <div class="col-10 mt-3" id="textTransaction3" th:text="${transaction[2]}">
+                            123
+                        </div>
+                        <div class="col-2">
+                            Số tiền giao dịch:
+                        </div>
+                        <div class="col-10 mt-3" id="textTransaction4" th:text="${transaction[3]}">
+                            123
+                        </div>
+                        <div class="col-2">
+                            Trạng thái:
+                        </div>
+                        <div class="col-10 mt-3" id="textTransaction5" th:text="${transaction[4] == '00' ? 'Thành công' : 'Không thành công'}">
+                            123
+                        </div>
+                        <div class="col-2">
+                            Nội dung giao dịch:
+                        </div>
+                        <div class="col-10 mt-3" id="textTransaction6" th:text="${transaction[5]}">
+                            123
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </article>
+        <input type="hidden" id="notFormBillOffLine">
+
+    </div>
+</main>
+</body>
+</html>

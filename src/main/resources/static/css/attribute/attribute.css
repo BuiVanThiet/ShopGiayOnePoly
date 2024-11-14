@@ -160,7 +160,9 @@
 .attribute-icon-delete {
     color: #dc3545;
 }
-
+.attribute-icon-restore:hover{
+    color: yellow;
+}
 .attribute-icon-delete:hover {
     color: #c82333;
     transform: scale(1.2);

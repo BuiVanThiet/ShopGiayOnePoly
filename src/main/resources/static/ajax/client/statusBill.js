@@ -209,7 +209,55 @@ function formatDateTime(dateString) {
     // Kết hợp cả thời gian và ngày tháng
     return `${formattedTime} ${formattedDate}`;
 }
+function formSendEmailRequestBill() {
+    $('#button-clone').html(``)
+    var emailSend = $('#requestEmailBill').val().trim();
+    console.log(emailSend)
+    $.ajax({
+        type: "POST",
+        url: "/api-client/send-mail-request-bill",
+        contentType: 'application/json',
+        data: JSON.stringify({
+            emailSend: emailSend
+        }),
+        success: function (response) {
+            $('#button-clone').html(`
+        <i class="bi bi-x-lg fs-5"  data-bs-dismiss="modal" aria-label="Close"></i>
+`)
+           $('#confirmSendEmail').text(response);
+        },
+        error: function (xhr) {
+            console.error('loi ' + xhr.responseText)
+        }
+    })
+}
+
+function openBill(id) {
+    $.ajax({
+        type: "GET",
+        url: "/api-client/bill-pdf/"+id,
+        xhrFields: {
+            responseType: 'blob'  // Nhận PDF dưới dạng blob
+        },
+        success: function (response) {
+            const pdfUrl = URL.createObjectURL(response);
+            const newTab = window.open();
+            newTab.document.write(`<iframe src="${pdfUrl}" width="100%" height="100%" style="border:none;"></iframe>`);
+        },
+        error: function (xhr) {
+            console.error('loi ' + xhr.responseType);
+        }
+    })
+}
+
 $(document).ready(function () {
+    $('#button-clone').html(`
+        <i class="bi bi-x-lg fs-5"  data-bs-dismiss="modal" aria-label="Close"></i>
+`)
+    $('#formSendEmailRequestBill').submit(function (event) {
+        event.preventDefault();
+        formSendEmailRequestBill();
+    })
     loadBillStatusByBillId_webClient();
     loadProductBuy(1);
     loadMaxPageProductBuy()

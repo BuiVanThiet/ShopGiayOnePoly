@@ -38,7 +38,6 @@ function toggleSelectAllProduct(selectAllCheckbox) {
 
     checkboxes.forEach((checkbox) => {
         checkbox.checked = selectAllCheckbox.checked; // Đánh dấu hoặc bỏ đánh dấu checkbox
-        toggleEditableRow(checkbox); // Cập nhật hàng theo trạng thái checkbox
     });
 
     toggleSaveButton(); // Cập nhật nút lưu nếu cần thiết
@@ -52,7 +51,6 @@ document.querySelectorAll('.select-row-product').forEach((checkbox) => {
     checkbox.addEventListener('change', function() {
         const allChecked = document.querySelectorAll('.select-row-product:checked').length === document.querySelectorAll('.select-row-product').length;
         document.getElementById('select-all-product').checked = allChecked;
-        toggleEditableRow(checkbox);
         toggleSaveButton();
     });
 });
@@ -60,32 +58,9 @@ document.querySelectorAll('.select-row-product').forEach((checkbox) => {
 // Hàm cập nhật hiển thị các nút dựa vào checkbox được chọn
 function toggleSaveButton() {
     const anyChecked = document.querySelectorAll('.select-row-product:checked').length > 0;
-    document.getElementById('btn-save-product').style.display = anyChecked ? "block" : "none";
-    document.getElementById('btn-cancel-product').style.display = anyChecked ? "block" : "none";
+    document.getElementById('btn-export-product').style.display = anyChecked ? "block" : "none";
+    document.getElementById('btn-delete-product').style.display = anyChecked ? "block" : "none";
 }
-
-function toggleEditableRow(checkbox) {
-    const row = checkbox.closest('tr');
-    const cells = row.querySelectorAll('td:not(:first-child):not(:last-child)');
-
-    cells.forEach((cell) => {
-        if (checkbox.checked) {
-            if (!cell.hasAttribute('data-original-value')) {
-                cell.setAttribute('data-original-value', cell.innerHTML); // Lưu lại HTML ban đầu
-            }
-            cell.contentEditable = "true";
-            cell.style.backgroundColor = "#eef2ff";
-        } else {
-            if (cell.hasAttribute('data-original-value')) {
-                cell.innerHTML = cell.getAttribute('data-original-value'); // Khôi phục HTML ban đầu
-                cell.removeAttribute('data-original-value');
-            }
-            cell.contentEditable = "false";
-            cell.style.backgroundColor = "";
-        }
-    });
-}
-
 
 
 // Lưu thay đổi (tuỳ chỉnh hàm này theo nhu cầu)
@@ -126,7 +101,6 @@ function saveChanges() {
                 // Đặt lại trạng thái tất cả các checkbox và ô không chỉnh sửa
                 document.querySelectorAll('.select-row-product:checked').forEach((checkbox) => {
                     checkbox.checked = false;
-                    toggleEditableRow(checkbox);
                 });
                 document.getElementById('select-all-product').checked = false;
                 toggleSaveButton();
@@ -176,14 +150,8 @@ function initImageSlidersTable() {
 
 initImageSlidersTable();
 
-const itemsPerPageList = 10; // Chế độ danh sách: 5 sản phẩm mỗi trang
-const itemsPerPageGrid = 12; // Chế độ lưới: 12 sản phẩm mỗi trang
-let currentPage = 1;
-let products = []; // Mảng chứa các sản phẩm từ API
-let isGridView = false; // Xác định chế độ hiện tại (false = danh sách, true = lưới)
-
 // Sự kiện khi người dùng thay đổi danh mục
-document.querySelector('.search-select-product').addEventListener('change', function () {
+document.querySelector('#search-select-product').addEventListener('change', function () {
     const idCategory = this.value;
     const searchTerm = document.querySelector('.search-input-product').value;
     fetchProductsByCategoryAndSearch(idCategory, searchTerm);
@@ -192,10 +160,10 @@ document.querySelector('.search-select-product').addEventListener('change', func
 // Sự kiện khi người dùng nhập vào ô tìm kiếm
 document.querySelector('.search-input-product').addEventListener('input', function () {
     const searchTerm = this.value;
-    const idCategory = document.querySelector('.search-select-product').value;
+    const idCategory = document.querySelector('#search-select-product').value;
     fetchProductsByCategoryAndSearch(idCategory, searchTerm);
 });
-var quantity;
+
 // Hàm tìm kiếm sản phẩm theo danh mục và ô input
 async function fetchProductsByCategoryAndSearch(idCategory, searchTerm, url = `/product-api/search`) {
     if (url === `/product-api/search`) {
@@ -218,116 +186,7 @@ async function fetchProductsByCategoryAndSearch(idCategory, searchTerm, url = `/
 
 
 // Hàm hiển thị trang
-function displayPage(page) {
-    const itemsPerPage = isGridView ? itemsPerPageGrid : itemsPerPageList;
-    const totalPages = Math.ceil(products.length / itemsPerPage);
-    const start = (page - 1) * itemsPerPage;
-    const end = start + itemsPerPage;
-    const tableBody = document.getElementById('product-table-body');
-    tableBody.innerHTML = '';
 
-    // Kiểm tra chế độ hiện tại để hiển thị đúng kiểu
-    if (isGridView) {
-        const gridContainer = document.querySelector('.form-group-product');
-        gridContainer.style.display = 'flex'; // Hiển thị lại container grid khi vào chế độ grid
-        gridContainer.innerHTML = ''; // Xóa nội dung trước đó để không bị trùng sản phẩm
-
-        products.slice(start, end).forEach(product => {
-            const productHtml = `
-            <div class="form-control-product">
-                <p>${product.nameProduct}</p>
-                <div class="image-slider">
-                    <div class="slides">
-                        ${product.images.map(image => `
-                            <div class="slide">
-                                <img ondblclick="viewProductDetail(${product.id})" src="https://res.cloudinary.com/dfy4umpja/image/upload/v1728725582/${image.nameImage}" alt="Ảnh sản phẩm">
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            </div>
-        `;
-            gridContainer.innerHTML += productHtml;
-        });
-    } else {
-        products.slice(start, end).forEach(product => {
-            const row = document.createElement('tr');
-            row.id = `row-product-${product.id}`;
-            row.dataset.id = product.id;
-            row.ondblclick = () => viewProductDetail(product.id);
-
-            // Xây dựng HTML cho slider ảnh
-            const imageSliderHtml = product.images.map(image => `
-                <div class="slide">
-                    <img src="https://res.cloudinary.com/dfy4umpja/image/upload/v1728725582/${image.nameImage}" alt="Ảnh sản phẩm">
-                </div>
-            `).join('');
-
-            row.innerHTML = `
-                <td>
-                        <input type="checkbox" class="select-row-product"/>
-                </td>
-                <td>
-                    <div class="product-image-container">
-                        <div class="image-slider">
-                            <div class="slides">
-                                ${imageSliderHtml}
-                            </div>
-                        </div>
-                    </div>
-                </td>
-                <td data-column="codeProduct">${product.codeProduct}</td>
-                <td data-column="nameProduct">${product.nameProduct}</td>
-                <td data-column="material" data-material-id="${product.material.id}">${product.material.nameMaterial}</td>
-                <td data-column="manufacturer">${product.manufacturer.nameManufacturer}</td>
-                <td data-column="origin">${product.origin.nameOrigin}</td>
-                <td data-column="sole">${product.sole.nameSole}</td>
-                <td data-column="describe">${product.describe}</td>
-                <td data-column="status">
-                    ${product.status === 1 ? 'Đang bán' : (product.status === 2 ? 'Ngừng bán' : (product.status === 0 ? 'Đã xóa' : ''))}
-                </td>
-                <td>
-                    ${product.status === 0 ? `
-                        <!-- Icon Khôi phục khi status = 0 -->
-                        <i id="restore-product" class="fa fa-undo fa-restore-icon" aria-hidden="true" onclick="updateStatus(${product.id}, 1)" title="Khôi phục"></i>
-                    ` : `
-                        <!-- Dropdown menu khi status khác 0 -->
-                        <div class="dropdown-product">
-                            <i class="fa fa-ellipsis-v fa-ellipsis-v-product" aria-hidden="true" onclick="toggleDropdownProduct(event, this)"></i>
-                            <div class="dropdown-menu-product">
-                                <a href="/staff/product/detail/${product.id}">Xem chi tiết</a>
-                                <a href="#" onclick="toggleEditableRow(${product.id})">Chỉnh sửa</a>
-                                <a onclick="updateStatus(${product.id}, 0)">Xóa</a>
-                            </div>
-                        </div>
-                    `}
-                </td>
-
-
-            `;
-
-            tableBody.appendChild(row);
-            // Thiết lập sự kiện cho checkbox
-            const checkbox = row.querySelector('.select-row-product');
-            checkbox.addEventListener('change', function() {
-                toggleEditableRow(checkbox);
-                const allChecked = document.querySelectorAll('.select-row-product:checked').length === document.querySelectorAll('.select-row-product').length;
-                document.getElementById('select-all-product').checked = allChecked;
-            });
-        });
-    }
-    document.querySelectorAll('.select-row-product').forEach((checkbox) => {
-        checkbox.addEventListener('change', function() {
-            toggleEditableRow(checkbox);
-            const allChecked = document.querySelectorAll('.select-row-product:checked').length === document.querySelectorAll('.select-row-product').length;
-            document.getElementById('select-all-product').checked = allChecked;
-            toggleSaveButton();
-        });
-    });
-    initImageSlidersTable();
-    initImageSlidersGridView();
-    updatePaginationControls(totalPages, page);
-}
 
 
 // Chuyển đổi giữa chế độ xem lưới và danh sách
@@ -418,7 +277,27 @@ function updatePaginationControls(totalPages, page) {
     pagination.appendChild(nextButton);
 }
 
-// Hàm chuyển trang
+var itemsPerPageList = 10; // Chế độ danh sách: 5 sản phẩm mỗi trang
+var itemsPerPageGrid = 12; // Chế độ lưới: 12 sản phẩm mỗi trang
+let currentPage = 1;
+let products = []; // Mảng chứa các sản phẩm từ API
+let isGridView = false; // Xác định chế độ hiện tại (false = danh sách, true = lưới)
+function updateItemsPerPage(event) {
+    if (parseInt(event.target.value) === 25){
+        itemsPerPageList = products.length;
+    } else {
+        itemsPerPageList = parseInt(event.target.value);
+    }
+    displayPage(currentPage); // Hiển thị lại trang hiện tại với số lượng mới
+    // Bỏ chọn tất cả các checkbox khi chuyển trang
+    const selectAllCheckbox = document.getElementById('select-all-product');
+    selectAllCheckbox.checked = false; // Bỏ chọn checkbox "tất cả"
+
+    const checkboxes = document.querySelectorAll('.select-row-product');
+    checkboxes.forEach((checkbox) => {
+        checkbox.checked = false; // Bỏ chọn tất cả các checkbox của sản phẩm
+    });
+}
 // Hàm chuyển trang
 function changePage(newPage) {
     const itemsPerPage = isGridView ? itemsPerPageGrid : itemsPerPageList;
@@ -438,7 +317,114 @@ function changePage(newPage) {
         });
     }
 }
+function displayPage(page) {
+    const itemsPerPage = isGridView ? itemsPerPageGrid : itemsPerPageList;
+    const totalPages = Math.ceil(products.length / itemsPerPage);
+    const start = (page - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    const tableBody = document.getElementById('product-table-body');
+    tableBody.innerHTML = '';
 
+    // Kiểm tra chế độ hiện tại để hiển thị đúng kiểu
+    if (isGridView) {
+        const gridContainer = document.querySelector('.form-group-product');
+        gridContainer.style.display = 'flex'; // Hiển thị lại container grid khi vào chế độ grid
+        gridContainer.innerHTML = ''; // Xóa nội dung trước đó để không bị trùng sản phẩm
+
+        products.slice(start, end).forEach(product => {
+            const productHtml = `
+            <div class="form-control-product">
+                <p>${product.nameProduct}</p>
+                <div class="image-slider">
+                    <div class="slides">
+                        ${product.images.map(image => `
+                            <div class="slide">
+                                <img ondblclick="viewProductDetail(${product.id})" src="https://res.cloudinary.com/dfy4umpja/image/upload/v1728725582/${image.nameImage}" alt="Ảnh sản phẩm">
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
+        `;
+            gridContainer.innerHTML += productHtml;
+        });
+    } else {
+        products.slice(start, end).forEach(product => {
+            const row = document.createElement('tr');
+            row.id = `row-product-${product.id}`;
+            row.dataset.id = product.id;
+            row.ondblclick = () => viewProductDetail(product.id);
+
+            // Xây dựng HTML cho slider ảnh
+            const imageSliderHtml = product.images.map(image => `
+                <div class="slide">
+                    <img src="https://res.cloudinary.com/dfy4umpja/image/upload/v1728725582/${image.nameImage}" alt="Ảnh sản phẩm">
+                </div>
+            `).join('');
+
+            row.innerHTML = `
+                <td>
+                        <input type="checkbox" class="select-row-product"/>
+                </td>
+                <td>
+                    <div class="product-image-container">
+                        <div class="image-slider">
+                            <div class="slides">
+                                ${imageSliderHtml}
+                            </div>
+                        </div>
+                    </div>
+                </td>
+                <td data-column="codeProduct">${product.codeProduct}</td>
+                <td data-column="nameProduct">${product.nameProduct}</td>
+                <td data-column="material" data-material-id="${product.material.id}">${product.material.nameMaterial}</td>
+                <td data-column="manufacturer">${product.manufacturer.nameManufacturer}</td>
+                <td data-column="origin">${product.origin.nameOrigin}</td>
+                <td data-column="sole">${product.sole.nameSole}</td>
+                <td data-column="describe">${product.describe}</td>
+                <td data-column="status">
+                    ${product.status === 1 ? 'Đang bán' : (product.status === 2 ? 'Ngừng bán' : (product.status === 0 ? 'Đã xóa' : ''))}
+                </td>
+                <td>
+                    ${product.status === 0 ? `
+                        <!-- Icon Khôi phục khi status = 0 -->
+                        <i id="restore-product" class="fa fa-undo fa-restore-icon" aria-hidden="true" onclick="updateStatus(${product.id}, 1)" title="Khôi phục"></i>
+                    ` : `
+                        <!-- Dropdown menu khi status khác 0 -->
+                        <div class="dropdown-product">
+                            <i class="fa fa-ellipsis-v fa-ellipsis-v-product" aria-hidden="true" onclick="toggleDropdownProduct(event, this)"></i>
+                            <div class="dropdown-menu-product">
+                                <a href="/staff/product/detail/${product.id}">Xem chi tiết</a>
+                                <a href="/staff/product/update/${product.id}" >Chỉnh sửa</a>
+                                <a id="delete-product" data-bs-toggle="modal" data-bs-target="#confirm-create-bill-modal" data-product-id="${product.id}">Xóa</a>
+                            </div>
+                        </div>
+                    `}
+                </td>
+
+
+            `;
+
+            tableBody.appendChild(row);
+            // Thiết lập sự kiện cho checkbox
+            const checkbox = row.querySelector('.select-row-product');
+            checkbox.addEventListener('change', function() {
+                const allChecked = document.querySelectorAll('.select-row-product:checked').length === document.querySelectorAll('.select-row-product').length;
+                document.getElementById('select-all-product').checked = allChecked;
+            });
+        });
+    }
+    document.querySelectorAll('.select-row-product').forEach((checkbox) => {
+        checkbox.addEventListener('change', function() {
+            const allChecked = document.querySelectorAll('.select-row-product:checked').length === document.querySelectorAll('.select-row-product').length;
+            document.getElementById('select-all-product').checked = allChecked;
+            toggleSaveButton();
+        });
+    });
+    initImageSlidersTable();
+    initImageSlidersGridView();
+    updatePaginationControls(totalPages, page);
+}
 
 // Khởi động hiển thị trang đầu tiên
 fetchProductsByCategoryAndSearch(0, '');
@@ -489,21 +475,20 @@ function updateProduct(idProduct) {
     window.location.href = 'http://localhost:8080/staff/product/detail/' + idProduct;
 }
 
-const myModal = document.getElementById('myModal')
-const myInput = document.getElementById('myInput')
-
-myModal.addEventListener('shown.bs.modal', () => {
-    myInput.focus()
-})
 
 async function updateStatus(id, status) {
+    if (id === null){
+        id = document.getElementById('delete-product').getAttribute('data-product-id');
+    }
     await fetch(`/product-api/restore?id=${id}&status=${status}`, {
         method: 'POST'
     })
     if (status === 0) {
+        createToast('1', 'Xóa sản phẩm thành công')
         fetchProductsByCategoryAndSearch(0, '')
     } else {
+        createToast('1', 'Khôi phục sản phẩm thành công')
         fetchProductsByCategoryAndSearch(0, '', `/product-api/findProductDelete?idCategory=${0}&searchTerm=${''}`)
-
     }
+
 }
