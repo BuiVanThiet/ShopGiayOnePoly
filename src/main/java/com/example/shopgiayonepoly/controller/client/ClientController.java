@@ -6,12 +6,13 @@ import com.example.shopgiayonepoly.dto.request.client.PaymentBillRequest;
 import com.example.shopgiayonepoly.dto.response.ClientLoginResponse;
 import com.example.shopgiayonepoly.dto.response.client.*;
 import com.example.shopgiayonepoly.entites.*;
-import com.example.shopgiayonepoly.entites.baseEntity.Base;
 import com.example.shopgiayonepoly.repositores.*;
 import com.example.shopgiayonepoly.service.*;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -126,7 +127,6 @@ public class ClientController extends BaseBill {
                         // Tính giá sau khi giảm (nếu có)
                         BigDecimal finalPrice = clientService.findDiscountedPriceByProductDetailId(productDetailId);
                         if (finalPrice != null) {
-                            // Set lại giá đã giảm vào productDetail
                             productDetail.setPrice(finalPrice);
                         }
                         cartItems.add(new Cart(null, productDetail, quantity));
@@ -142,8 +142,6 @@ public class ClientController extends BaseBill {
             BigDecimal itemTotalPrice = finalPrice.multiply(BigDecimal.valueOf(item.getQuantity()));
             totalPriceCartItem = totalPriceCartItem.add(itemTotalPrice);
         }
-
-        // Cập nhật session với tổng giá trị giỏ hàng và các sản phẩm trong giỏ hàng
         session.setAttribute("totalPrice", totalPriceCartItem);
         session.setAttribute("cartItems", cartItems);
         model.addAttribute("clientLogin", clientLoginResponse);
@@ -180,43 +178,85 @@ public class ClientController extends BaseBill {
         } else {
             System.out.println("Không có voucher selected.");
         }
+
+        // Trả lại giá trị giảm và tổng giá cuối cùng trong model để JavaScript có thể lấy được
+        model.addAttribute("priceReduced", priceReduced);
+        model.addAttribute("finalPrice", totalPriceCartItem.subtract(priceReduced));
+
         return "client/cart";
     }
 
-    @GetMapping("/remove-from-cart/{idProductDetailFromCart}")
-    public String deleteProductDetailFromCart(HttpSession session,
-                                              Model model,
-                                              @PathVariable("idProductDetailFromCart") Integer idProductDetailFromCart) {
-        List<CartItemResponse> cartItems = (List<CartItemResponse>) session.getAttribute("cartItems");
-        for (CartItemResponse item : cartItems) {
-            if (item.getProductDetailId() == idProductDetailFromCart) {
-                cartItems.remove(item);
-            }
-        }
-        session.setAttribute("cartItems", cartItems);
-        return "redirect:/onepoly/cart";
-    }
 
-    @PostMapping("/update-from-cart/{idProductDetailFromCart}")
-    public String updateProductDetailFromCart(HttpSession session,
-                                              Model model,
-                                              @PathVariable("idProductDetailFromCart") Integer idProductDetailFromCart,
-                                              @RequestParam("quantity-item") Integer quantityFormCart) {
-        List<CartItemResponse> cartItems = (List<CartItemResponse>) session.getAttribute("cartItems");
+    @PostMapping("/remove-from-cart/{idProductDetailFromCart}")
+    @ResponseBody
+    public Map<String, Object> deleteProductDetailFromCart(HttpSession session,
+                                                           @PathVariable("idProductDetailFromCart") Integer idProductDetailFromCart) {
+        // Lấy danh sách sản phẩm trong giỏ hàng từ session
+        List<Cart> cartItems = (List<Cart>) session.getAttribute("cartItems");
+        Map<String, Object> response = new HashMap<>();
 
         if (cartItems != null) {
-            for (CartItemResponse item : cartItems) {
-                if (item.getProductDetailId().equals(idProductDetailFromCart)) {
-                    item.setQuantity(quantityFormCart);
-                    item.setTotalPrice(item.getPrice().multiply(BigDecimal.valueOf(quantityFormCart)));
-                    break;
+            // Xóa sản phẩm khỏi giỏ hàng
+            cartItems.removeIf(item -> item.getProductDetail().getId().equals(idProductDetailFromCart));
+
+            session.setAttribute("cartItems", cartItems);
+
+            // Tính toán tổng giá trị giỏ hàng
+            BigDecimal totalPriceCartItem = calculateTotalPrice(cartItems);
+            VoucherClientResponse selectedVoucher = (VoucherClientResponse) session.getAttribute("selectedVoucher");
+            BigDecimal priceReduced = BigDecimal.ZERO;
+
+            if (selectedVoucher != null) {
+                Integer voucherType = selectedVoucher.getVoucherType();
+                BigDecimal discountValue = selectedVoucher.getPriceReduced();
+
+                if (voucherType == 1) {  // Giảm theo %
+                    priceReduced = totalPriceCartItem.multiply(discountValue.divide(BigDecimal.valueOf(100)));
+                } else if (voucherType == 2) {  // Giảm theo số tiền cố định
+                    priceReduced = discountValue;
                 }
+
+                totalPriceCartItem = totalPriceCartItem.subtract(priceReduced).max(BigDecimal.ZERO);
+                session.setAttribute("priceReduced", priceReduced);
+            } else {
+                // Xóa các thuộc tính giảm giá khỏi session nếu không có voucher
+                session.removeAttribute("priceReduced");
             }
+
+            // Cập nhật tổng giá trị giỏ hàng mới vào session
+            session.setAttribute("totalPrice", totalPriceCartItem);
+
+            // Trả về thông tin giỏ hàng mới (có thể là tổng giá và các sản phẩm trong giỏ)
+            response.put("totalPrice", totalPriceCartItem.toString());
+            response.put("cartItems", cartItems);
+            response.put("priceReduced", priceReduced.toString());
+        } else {
+            // Nếu giỏ hàng trống, xóa tất cả các thuộc tính liên quan khỏi session
+            session.removeAttribute("cartItems");
+            session.removeAttribute("totalPrice");
+            session.removeAttribute("priceReduced");
+            session.removeAttribute("selectedVoucher");
+
+            response.put("totalPrice", "0");
+            response.put("cartItems", new ArrayList<>());
+            response.put("priceReduced", "0");
         }
-        session.setAttribute("cartItems", cartItems);
-        return "redirect:/onepoly/cart";
+
+        return response;
     }
 
+
+
+    // Phương thức tính tổng giá trị giỏ hàng
+    private BigDecimal calculateTotalPrice(List<Cart> cartItems) {
+        BigDecimal totalPrice = BigDecimal.ZERO;
+        for (Cart item : cartItems) {
+            BigDecimal finalPrice = item.getProductDetail().getPrice();
+            BigDecimal itemTotalPrice = finalPrice.multiply(BigDecimal.valueOf(item.getQuantity()));
+            totalPrice = totalPrice.add(itemTotalPrice);
+        }
+        return totalPrice;
+    }
 
     @GetMapping("/payment")
     public String getFormPayment(HttpSession session, Model model) {
@@ -423,13 +463,15 @@ public class ClientController extends BaseBill {
         // Lưu hóa đơn
         billRepository.save(bill);
         bill.setCodeBill("HD" + bill.getId()); // Tạo mã hóa đơn
-        this.setBillStatus(bill.getId(),0,session);
+        this.setBillStatus(bill.getId(), 0, session);
         billRepository.save(bill); // Cập nhật lại hóa đơn với mã
-        this.setBillStatus(bill.getId(),bill.getStatus(),session);
+        this.setBillStatus(bill.getId(), bill.getStatus(), session);
         for (BillDetail billDetail : billDetails) {
             billDetail.setBill(bill);
         }
         billDetailRepository.saveAll(billDetails); // Lưu tất cả chi tiết hóa đơn
+        String host = "http://localhost:8080/onepoly/status-bill/"+bill.getId();
+        this.templateCreateBillClient("thietzero909@gmail.com",host,bill.getCodeBill());
 
         // Xóa giỏ hàng trong session
         session.removeAttribute("cartItems");

@@ -46,16 +46,13 @@
                                 </div>
                                 <div class="cart-button-group">
                                     <div class="cart-item-quan">
-                                        <span class="cart-txt_qty d-none">1</span>
                                         <div class="cart-qty cart-quantity-parent cart-qty-click d-flex align-items-center btn-group">
-                                            <button type="button"
-                                                    class="cart-qtyminus cart-qty-btn btn btn-outline-secondary">
+                                            <button type="button" class="cart-qtyminus cart-qty-btn btn btn-outline-secondary" onclick="updateQuantity(this, -1)">
                                                 &minus;
                                             </button>
-                                            <p class="cart-tc cart-line-item-qty cart-item-quantity text-center form-control m-0 bg-light"
+                                            <p id="quantityProductFormCart" name="quantity" class="cart-tc cart-line-item-qty cart-item-quantity text-center form-control m-0 bg-light"
                                                style="width: 60px; border: none;" th:text="${item.quantity}"></p>
-                                            <button type="button"
-                                                    class="cart-qtyplus cart-qty-btn btn btn-outline-primary">
+                                            <button type="button" class="cart-qtyplus cart-qty-btn btn btn-outline-primary" onclick="updateQuantity(this, 1)">
                                                 &plus;
                                             </button>
                                         </div>
@@ -68,8 +65,6 @@
                                 aria-label="Close" onclick="removeProductDetailFromCart(this)">
                             &times;
                         </button>
-
-
                     </div>
                     <hr>
                 </div>
@@ -116,18 +111,17 @@
         <div class="voucher-summary">
             <div class="voucher-summary-item mb-3">
                 <label>Tổng tiền: </label>
-                <span id="totalPriceCartItem" th:text="${totalPrice} + ' ₫'">Tổng tiền</span>
+                <span id="totalPriceCartItem" th:text="${totalPrice}">Tổng tiền</span>
             </div>
             <div class="voucher-summary-item mb-3">
                 <label>Giảm được: </label>
-                <span id="priceVoucherReduced"> 0 đ</span>
+                <span id="priceVoucherReduced" th:text="${priceReduced}">0 đ</span>
             </div>
             <div class="voucher-summary-item mb-3">
                 <label>Giá cuối cùng: </label>
-                <span id="price-Calculator"> 0 đ</span>
+                <span id="price-Calculator" th:text="${finalPrice}">0 ₫</span>
             </div>
         </div>
-
 
         <!-- Tổng giá và các nút hành động -->
         <div class="cart-actions__checkout cart-mt-4 cart-d-flex cart-justify-content-between cart-align-items-center">
@@ -135,7 +129,7 @@
                         <span class="cart-title"><strong>TỔNG TIỀN</strong>
                             <span class="cart-total-quantity">(tạm tính)</span><br>
                             <span style="font-size: 30px" id="cart-spanTotalPriceCart"
-                                  class="cart-js-total-price cart-total-price" th:text="${totalPrice}+ ' ₫'">₫</span>
+                                  class="cart-js-total-price cart-total-price" th:text="${finalPrice}">₫</span>
                         </span>
             </div>
             <div class="cart-actions__btn">
