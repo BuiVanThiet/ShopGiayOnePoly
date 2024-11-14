@@ -30,6 +30,7 @@ public class ProductController extends BaseProduct {
     public String product(Model model) {
         model.addAttribute("productList", productService.getProductNotStatus0());
         model.addAttribute("categoryList", categoryService.findAll());
+        model.addAttribute("mess", "thêm khách hàng thành công");
         return "/Product/product";
     }
 
@@ -127,6 +128,19 @@ public class ProductController extends BaseProduct {
 
         return "/Product/productDetail";
     }
+
+    @GetMapping("/update/{idProduct}")
+    public String updateProduct(@PathVariable("idProduct") Integer idProduct, Model model) {
+        Optional<Product> productOptional = productRepository.findById(idProduct);
+        if (productOptional.isPresent()) {
+            model.addAttribute("product", productOptional.get());
+        } else {
+            // Xử lý khi không tìm thấy sản phẩm
+            return "redirect:/error";
+        }
+        return "/Product/updateProduct.html";
+    }
+
 
 
 
