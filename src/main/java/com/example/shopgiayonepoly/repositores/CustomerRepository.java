@@ -50,7 +50,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
                     SUBSTRING(c.addRess, CHARINDEX(',', c.addRess, CHARINDEX(',', c.addRess, CHARINDEX(',', c.addRess) + 1) + 1) + 1, LEN(c.addRess))        
                     ) 
                 from Customer c 
-                where concat(c.fullName, c.numberPhone, c.email) like %:key%
+                where concat(c.fullName, c.numberPhone, c.email) like %:key% and c.status <> 0
             """)
     public List<CustomerResponse> searchCustomerByKeyword(@Param("key") String key);
 
@@ -69,7 +69,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
                                 SUBSTRING(c.addRess, CHARINDEX(',', c.addRess, CHARINDEX(',', c.addRess, CHARINDEX(',', c.addRess) + 1) + 1) + 1, LEN(c.addRess))        
                                 ) 
                             from Customer c 
-                            where concat(c.fullName, c.numberPhone, c.email) like %:key%
+                            where concat(c.fullName, c.numberPhone, c.email) like %:key% and c.status <> 0
             """)
     public Page<CustomerResponse> searchCustomerByKeywordPage(@Param("key") String key, Pageable pageable);
 
@@ -96,6 +96,5 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
             """)
     public Page<CustomerResponse> getAllCustomrByPage(Pageable pageable);
 
-    //"select v from Customer v where v.status = 1 or v.status = 2"
     boolean existsByEmail(String email);
 }
