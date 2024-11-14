@@ -61,6 +61,19 @@
         </div>
 
         <div class="filter-section">
+            <form id="timeFilterForm" class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label for="startDate" class="form-label">Từ ngày:</label>
+                    <input type="date" id="startDate" name="startDate" max=""  class="form-control" required>
+                </div>
+                <div class="col-md-4">
+                    <label for="endDate" class="form-label">Đến ngày:</label>
+                    <input type="date" id="endDate" name="endDate" max=""  class="form-control" required>
+                </div>
+                <div class="col-md-4 d-flex justify-content-center">
+                    <button type="submit" class="btn btn-primary w-100">Xem Thống Kê</button>
+                </div>
+            </form>
             <div class="button-group" role="group" aria-label="Thời gian lọc">
                 <button type="button" class="custom-btn btn btn-primary" onclick="filterData('today')">Hôm nay</button>
                 <button type="button" class="custom-btn btn btn-primary" onclick="filterData('last7days')">7 Ngày
@@ -78,7 +91,7 @@
 
         <div class="row">
             <div class="col-md-7 product-table" style="height: 566px;">
-                <h4 class="text-center">Top 10 sản phẩm bán chạy</h4>
+                <h4 id="topProductTitle" class="text-center">Top 10 sản phẩm bán chạy</h4>
                 <div class="table-responsive" id="productTableContainer">
                     <table class="table table-hover">
                         <thead class="thead-dark">
@@ -123,15 +136,15 @@
 
             </div>
             <div class="col-md-5 pieChart" style="height: 566px">
-                <div class="filter-section-pieChart">
-                    <div class="button-group-pieChart" role="group" aria-label="Thời gian lọc">
-                        <button type="button" class="custom-btn btn btn-primary" onclick="filterDataPie('today-pieChart')">Hôm nay</button>
-                        <button type="button" class="custom-btn btn btn-primary" onclick="filterDataPie('last7days-pieChart')">7 Ngày
-                        </button>
-                        <button type="button" class="custom-btn btn btn-primary" onclick="filterDataPie('month-pieChart')">Tháng</button>
-                        <button type="button" class="custom-btn btn btn-primary" onclick="filterDataPie('year-pieChart')">Năm</button>
-                    </div>
-                </div>
+<!--                <div class="filter-section-pieChart">-->
+<!--                    <div class="button-group-pieChart" role="group" aria-label="Thời gian lọc">-->
+<!--                        <button type="button" class="custom-btn btn btn-primary" onclick="filterDataPie('today-pieChart')">Hôm nay</button>-->
+<!--                        <button type="button" class="custom-btn btn btn-primary" onclick="filterDataPie('last7days-pieChart')">7 Ngày-->
+<!--                        </button>-->
+<!--                        <button type="button" class="custom-btn btn btn-primary" onclick="filterDataPie('month-pieChart')">Tháng</button>-->
+<!--                        <button type="button" class="custom-btn btn btn-primary" onclick="filterDataPie('year-pieChart')">Năm</button>-->
+<!--                    </div>-->
+<!--                </div>-->
                 <div id="piechart" style="width: 100%; height: 500px;"></div>
             </div>
         </div>

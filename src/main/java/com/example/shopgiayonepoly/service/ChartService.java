@@ -5,7 +5,9 @@ import com.example.shopgiayonepoly.dto.request.Statistics;
 import com.example.shopgiayonepoly.dto.request.StatusBill;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -30,9 +32,13 @@ public interface ChartService {
 
     List<Statistics> getAnnualStatistics();
 
+    List<Statistics> findStatisticsByDateRange(@Param("startDate") String startDate, @Param("endDate") String endDate);
+
     List<ProductInfoDto> getProductSales();
 
     Page<ProductInfoDto> getProductSalesPage(int page, int size);
+
+    Page<ProductInfoDto> getProductSalesPageByDateRange(int page, int size, @Param("startDate") String startDate, @Param("endDate") String endDate);
 
     List<StatusBill> findBillsWithStatusDescription();
 
@@ -41,4 +47,7 @@ public interface ChartService {
     List<StatusBill> findStatusCountsForLast7Days();
 
     List<StatusBill> countStatusByYear();
+
+    List<StatusBill> getBillStatisticsByDateRange(@Param("startDate") String startDate, @Param("endDate") String endDate);
+
 }
