@@ -36,7 +36,7 @@ function payBill() {
             addressShip: addressShip,
             priceVoucher: priceVoucher,
             shippingPrice: shippingPrice,
-            totalAmountBill: totalAmountBill, // Truyền vào totalAmountBill
+            totalAmountBill: totalAmountBill,
             noteBill: noteBill
         }),
         success: function (response) {
