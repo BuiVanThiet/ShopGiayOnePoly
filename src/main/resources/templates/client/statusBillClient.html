@@ -80,7 +80,7 @@
 </head>
 <body>
 <div layout:fragment="content" style="margin-top: 100px; display: flex; justify-content: center; align-items: center; ">
-    <div style="width: 1850px; ">
+    <div style="width: 98%; ">
         <div style="display: flex; justify-content: space-between; align-items: center;">
             <!-- Nút Trở lại trang chủ -->
             <div>
@@ -103,7 +103,29 @@
             </div>
         </div>
         <br>
-        <button type="button" class="btn btn-outline-success">Gửi lại hóa đơn điện tử</button>
+        <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#requestBillModal">Gửi lại hóa đơn điện tử</button>
+        <div class="modal fade" id="requestBillModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="requestBillModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5 text-black" id="requestBillModalLabel">Yêu cầu hóa đơn điện tử</h1>
+                        <div id="button-clone">
+
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        <form id="formSendEmailRequestBill">
+                            <div class="mb-3">
+                                <label class="form-label">Email nhận hóa đơn:</label>
+                                <input type="email" class="form-control" id="requestEmailBill" aria-describedby="emailHelp">
+                                <span id="confirmSendEmail" class="text-danger"></span>
+                            </div>
+                            <button type="submit" class="btn btn-outline-primary">Yêu cầu</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
         <br>
         <br>
         <div class="card">

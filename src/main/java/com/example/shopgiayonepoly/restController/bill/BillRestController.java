@@ -108,6 +108,7 @@ public class BillRestController extends BaseBill {
         Map<String,String> thongBao = new HashMap<>();
 
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+
         if(staffLogin == null) {
             thongBao.put("message","Nhân viên chưa đăng nhập!");
             thongBao.put("check","3");
@@ -1001,7 +1002,7 @@ public class BillRestController extends BaseBill {
                 String addRessDetail = String.join(", ", java.util.Arrays.copyOfRange(part, 6, part.length));
                 System.out.println("email de gui xac nhan " + email);
                 if(bill.getStatus() == 1) {
-                    String ht = "http://localhost:8080/onepoly/status-bill/"+bill.getId();
+                    String ht = ""+bill.getId();
                     System.out.println(ht);
                     this.templateEmailConfigmBill(email,ht,bill.getCodeBill());
 //                    this.templateEmailConfigmBill(email,"http://localhost:8080/onepoly/status-bill/",bill.getCodeBill());
@@ -1068,7 +1069,6 @@ public class BillRestController extends BaseBill {
                     this.getUpdateQuantityProduct(exchangeBillDetail.getProductDetail().getId(),-(exchangeBillDetail.getQuantityExchange()));
                 }
             }
-
             this.setBillStatus(bill.getId(),203,session);
         }
         thongBao.put("message",mess);
