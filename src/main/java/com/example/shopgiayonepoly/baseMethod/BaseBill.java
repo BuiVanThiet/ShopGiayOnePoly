@@ -67,6 +67,8 @@ public abstract class BaseBill extends BaseEmail {
     protected EmailSenderService emailSenderService;
     @Autowired
     protected PaymentExchangeService paymentExchangeService;
+    @Autowired
+    protected TransactionVNPayService transactionVNPayService;
 
     //bien cuc bo cua bill
     protected Bill billPay;

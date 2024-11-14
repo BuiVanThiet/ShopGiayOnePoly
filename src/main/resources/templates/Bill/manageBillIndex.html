@@ -26,11 +26,11 @@
                             <div class="row" style="width: 45%">
                                 <div class="col-6">
                                     Từ ngày:
-                                    <input type="date" class="form-control" id="startDate-bill-manage">
+                                    <input type="date" class="form-control" id="startDate-bill-manage" onclick="clearToToday('startDate-bill-manage')">
                                 </div>
                                 <div class="col-6">
                                     Đến ngày:
-                                    <input type="date" class="form-control" id="endDate-bill-manage">
+                                    <input type="date" class="form-control" id="endDate-bill-manage" onclick="clearToToday('endDate-bill-manage')">
                                 </div>
                             </div>
                         </div>
@@ -152,6 +152,24 @@
                 if (day.length < 2) day = '0' + day;
 
                 return [year, month, day].join('-');
+            }
+
+            function clearToToday(inputId) {
+                const inputField = document.getElementById(inputId);
+
+                // Lấy ngày hôm nay theo múi giờ Hà Nội (UTC+7)
+                const today = new Date();
+                today.setHours(0, 0, 0, 0); // Đặt lại giờ thành 00:00:00
+
+                // Lấy ngày theo định dạng yyyy-mm-dd mà không có giờ
+                const todayString = today.getFullYear() + '-'
+                    + String(today.getMonth() + 1).padStart(2, '0') + '-'
+                    + String(today.getDate()).padStart(2, '0');
+
+                // Nếu người dùng xóa ngày, đặt lại giá trị về ngày hôm nay
+                if (!inputField.value) {
+                    inputField.value = todayString;
+                }
             }
 
             // Lấy ngày hiện tại

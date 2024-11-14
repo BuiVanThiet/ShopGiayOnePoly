@@ -1084,6 +1084,7 @@ function getMaxPageProduct() {
 
 
 function updateQuantity(id, quantity,method) {
+
     $.ajax({
         type: "POST",
         url: "/bill-api/updateBillDetail", // URL API của bạn

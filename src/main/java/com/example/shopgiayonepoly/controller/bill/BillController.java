@@ -537,21 +537,79 @@ public class BillController extends BaseBill {
     @GetMapping("/vnpay-payment")
     public String getVNpay(HttpServletRequest request, Model model, HttpSession session,ModelMap modelMap){
         int paymentStatus =vnPayService.orderReturn(request);
+        String vnpTmnCode = request.getParameter("vnp_TmnCode");
+        String vnpBankCode = request.getParameter("vnp_BankCode");
+        String vnpCardType = request.getParameter("vnp_CardType");
+        String vnpResponseCode = request.getParameter("vnp_ResponseCode");
+        String vnpTransactionStatus = request.getParameter("vnp_TransactionStatus");
+        String vnpTxnRef = request.getParameter("vnp_TxnRef");
+        String vnpSecureHashType = request.getParameter("vnp_SecureHashType");
 
         String orderInfo = request.getParameter("vnp_OrderInfo");
         String paymentTime = request.getParameter("vnp_PayDate");
-        String transactionId = request.getParameter("vnp_TransactionNo");
         String totalPrice = request.getParameter("vnp_Amount");
+        String transactionNo = request.getParameter("vnp_TransactionNo");
+        String bankTranNo = request.getParameter("vnp_BankTranNo");
+        String vnpRequestId = request.getParameter("vnp_RequestId");
+        String vnpSecureHash = request.getParameter("vnp_SecureHash");
 
         model.addAttribute("orderId", orderInfo);
         model.addAttribute("totalPrice", totalPrice);
         model.addAttribute("paymentTime", paymentTime);
-        model.addAttribute("transactionId", transactionId);
+
+        // In ra toàn bộ tham số
+        // Mã website của merchant trên hệ thống của VNPAY. Ví dụ: 2QXUI4J4
+        System.out.println("vnp_TmnCode: " + vnpTmnCode);
+        // mã ngân haàng
+        System.out.println("vnp_BankCode: " + vnpBankCode);
+        // loại thẻ
+        System.out.println("vnp_CardType: " + vnpCardType);
+        //Mã phản hồi kết quả thanh toán. Quy định mã trả lời 00 ứng với kết quả Thành công cho tất cả các API. Tham khảo thêm tại bảng mã lỗi
+        System.out.println("vnp_ResponseCode: " + vnpResponseCode);
+        //Mã phản hồi kết quả thanh toán. Tình trạng của giao dịch tại Cổng thanh toán VNPAY.
+        //-00: Giao dịch thanh toán được thực hiện thành công tại VNPAY
+        //-Khác 00: Giao dịch không thành công tại VNPAY Tham khảo thêm tại bảng mã lỗi
+        System.out.println("vnp_TransactionStatus: " + vnpTransactionStatus);
+        //Giống mã gửi sang VNPAY khi gửi yêu cầu thanh toán.
+        System.out.println("vnp_TxnRef: " + vnpTxnRef);
+        //mã băm
+        System.out.println("vnp_SecureHashType: " + vnpSecureHashType);
+        //Thông tin mô tả nội dung thanh toán
+        System.out.println("vnp_OrderInfo: " + orderInfo);
+        //Thời gian thanh toán. Định dạng: yyyyMMddHHmmss
+        System.out.println("vnp_PayDate: " + paymentTime);
+//Số tiền thanh toán. VNPAY phản hồi số tiền nhân thêm 100 lần.
+        System.out.println("vnp_Amount: " + totalPrice);
+//Mã giao dịch ghi nhận tại hệ thống VNPAY. Ví dụ: 20170829153052
+        System.out.println("vnp_TransactionNo: " + transactionNo);
+        //Mã giao dịch tại Ngân hàng
+        System.out.println("vnp_BankTranNo: " + bankTranNo);
+
+        System.out.println("vnp_RequestId: " + vnpRequestId);
 
         System.out.println("tien tai khoan " + totalPrice);
         BigDecimal accountMoney = new BigDecimal(totalPrice);
 
         Integer returnFrom = (Integer) session.getAttribute("pageReturn");
+
+        if(paymentStatus == 1) {
+            TransactionVNPay transactionVNPay = new TransactionVNPay();
+            transactionVNPay.setVnpTmnCode(vnpTmnCode);
+            transactionVNPay.setVnpBankCode(vnpBankCode);
+            transactionVNPay.setVnpCardType(vnpCardType);
+            transactionVNPay.setVnpResponseCode(vnpResponseCode);
+            transactionVNPay.setVnpTransactionStatus(vnpTransactionStatus);
+            transactionVNPay.setVnpTxnRef(vnpTxnRef);
+            transactionVNPay.setVnpSecureHashType(vnpSecureHashType);
+            transactionVNPay.setVnpOrderInfo(orderInfo);
+            transactionVNPay.setVnpPayDate(paymentTime);
+            transactionVNPay.setVnpAmount(String.valueOf(accountMoney.divide(BigDecimal.valueOf(100))));
+            transactionVNPay.setVnpTransactionNo(transactionNo);
+            transactionVNPay.setVnpBankTranNo(bankTranNo);
+            transactionVNPay.setVnpSecureHash(vnpSecureHash);
+            transactionVNPay.setStatus(1);
+            this.transactionVNPayService.save(transactionVNPay);
+        }
 
         if(returnFrom == 1) {
             if (billPay == null) {
@@ -572,7 +630,11 @@ public class BillController extends BaseBill {
                 this.billPay.setSurplusMoney(BigDecimal.valueOf(0.00));
                 this.billPay.setUpdateDate(new Date());
                 this.billPay.setStatus(5);
+                this.billPay.setTransactionNo(transactionNo);
+                this.billPay.setBankTranNo(bankTranNo);
                 this.billService.save(this.billPay);
+                System.out.println("vnpSecureHash: " + vnpSecureHash);
+
                 this.setBillStatus(this.billPay.getId(),101,session);
                 this.setBillStatus(this.billPay.getId(),this.billPay.getStatus(),session);
 
@@ -623,6 +685,8 @@ public class BillController extends BaseBill {
                     this.billPay.setSurplusMoney(BigDecimal.valueOf(0.00));
                     this.billPay.setUpdateDate(new Date());
                     this.billPay.setPaymentMethod(2);
+                    this.billPay.setTransactionNo(transactionNo);
+                    this.billPay.setBankTranNo(bankTranNo);
                     this.billService.save(this.billPay);
                     this.billPay = null;
                     this.setBillStatus(this.billPay.getId(),101,session);
@@ -634,6 +698,8 @@ public class BillController extends BaseBill {
                     colorMess = "1";
                     return "redirect:/staff/bill/bill-status-index/"+session.getAttribute("IdBill");
                 }else if (checkBil.trim().equals("exchangeBill")) {
+                    paymentExchange.setTransactionNo(transactionNo);
+                    paymentExchange.setBankTranNo(bankTranNo);
                     this.paymentExchangeService.save(paymentExchange);
                     mess = "Thanh toán thành công!";
                     colorMess = "1";

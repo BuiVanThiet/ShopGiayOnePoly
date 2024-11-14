@@ -28,4 +28,8 @@ public class PaymentExchange extends Base {
     private Integer payMethod;
     @Column(name = "surplus_money")
     private BigDecimal surplusMoney;
+    @Column(name = "transaction_no")
+    private String transactionNo;
+    @Column(name = "bank_tran_no")
+    private String bankTranNo;
 }

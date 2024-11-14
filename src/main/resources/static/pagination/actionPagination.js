@@ -7,7 +7,7 @@ function createPagination(elementId, totalPages, currentPage) {
 
     // Nút "Prev"
     if (currentPage > 1) {
-        liTag += `<li class="btn prev" onclick="handlePageClick(${currentPage - 1}, '${elementId}', ${totalPages})"><span><i class="fas fa-angle-left"></i> Prev</span></li>`;
+        liTag += `<li class="btn prev" onclick="handlePageClick(${currentPage - 1}, '${elementId}', ${totalPages})"><span><i class="fas fa-angle-left"></i> </span></li>`;
     }
 
     // Nút trang đầu
@@ -36,7 +36,7 @@ function createPagination(elementId, totalPages, currentPage) {
 
     // Nút "Next"
     if (currentPage < totalPages) {
-        liTag += `<li class="btn next" onclick="handlePageClick(${currentPage + 1}, '${elementId}', ${totalPages})"><span>Next <i class="fas fa-angle-right"></i></span></li>`;
+        liTag += `<li class="btn next" onclick="handlePageClick(${currentPage + 1}, '${elementId}', ${totalPages})"><span> <i class="fas fa-angle-right"></i></span></li>`;
     }
 
     element.innerHTML = liTag;

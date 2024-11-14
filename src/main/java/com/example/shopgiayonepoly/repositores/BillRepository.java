@@ -331,7 +331,7 @@ select case
         	b.id,
         	b.update_date,
         	b.acount_money AS so_tien,
-        	N'Tiền tài khoản'  payment_method,
+            ISNULL(N'Tiền tài khoản' + N' - Mã giao dịch: ' + bank_tran_no, N'Tiền tài khoản - Không có') AS payment_method,
             CASE
             WHEN LEFT(invo.note, CHARINDEX(',', invo.note) - 1) = N'Không có' THEN N'Không có'
             ELSE ISNULL(

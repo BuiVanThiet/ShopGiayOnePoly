@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{Home/home_manege}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Male_Fashion Template">
+    <meta name="keywords" content="Male_Fashion, unica, creative, html">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Shop Giày Onepoly</title>
+</head>
+<body>
+<main>
+    <div layout:fragment="content">
+        <article class=" bd-gutter mt-5 my-md-4 bd-layout">
+            <div class="card">
+                <div class="card-body">
+                    Tìm kiếm thanh toán
+                    <hr>
+                    <form id="formFilterTransaction">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="mb-3">
+                                    <label class="form-label">Ngân hàng</label>
+                                    <select name="banksVNPAY" id="banksVNPAY" class="multi-select-dropdown">
+
+                                    </select>
+                                    <input type="hidden" id="banksVNPAYSearch" value="">
+
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="mb-3">
+                                    <label class="form-label">Mã giao dịch VNPay</label>
+                                    <input id="codeVNPayFilter" type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Từ ngày</label>
+                                    <input id="starDateFilter" type="date" class="form-control" onchange="clearToToday('starDateFilter')">
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Đến ngày</label>
+                                    <input id="endDateFilter" type="date" class="form-control" onchange="clearToToday('endDateFilter')">
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Số hóa đơn</label>
+                                    <input id="numberBillFilter" type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Trạng thái</label>
+                                    <select id="transactionStatusFilter" class="form-select" aria-label="Default select example">
+                                        <option selected>--Tất cả--</option>
+                                        <option value="00">Thành công</option>
+                                        <option value="03">Không thành công</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="mb-3">
+                                    <label class="form-label">Nội dung thanh toán</label>
+                                    <textarea id="notePayFilter" class="form-control" rows="3"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-12 text-center">
+                                <div class="mb-3">
+                                    <button type="submit" class="btn btn-outline-primary">Tìm kiếm</button>
+                                    <button type="button" class="btn btn-outline-success">Xuất excel</button>
+                                    <button type="button" class="btn btn-outline-danger" onclick="resetFilter()">Làm mới</button>
+                                </div>
+                            </div>
+                        </div>
+    </form>
+                </div>
+            </div>
+            <br>
+            <div class="d-flex justify-content-between" style="width: 70%;margin-left: 10%; ">
+                <div>
+                    tổng số giao dịch:
+                    <span id="allTransaction">0</span>
+                </div>
+                <div>
+                    tổng số tiền:
+                                <span id="moneyTransaction">0 VNĐ</span>
+                </div>
+            </div>
+            <br>
+            <div id="nodataTransactionVNPay" style="display:none; text-align:center;">
+
+            </div>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">STT</th>
+                    <th scope="col">Mã giao dịch</th>
+                    <th scope="col">Số hóa đơn</th>
+                    <th scope="col">Số tiền</th>
+                    <th scope="col">Ngân hàng</th>
+                    <th scope="col">Nội dung thanh toán</th>
+                    <th scope="col">Trạng thái</th>
+                    <th scope="col">Ngày tạo</th>
+                    <th scope="col">chức năng</th>
+                </tr>
+                </thead>
+                <tbody id="tableTransactionVNPay">
+                <tr>
+                    <th scope="row">1</th>
+                    <td>Mark</td>
+                    <td>1</td>
+                    <td>Mark</td>
+                    <td>Otto</td>
+                    <td>@mdo</td>
+                    <td>Mark</td>
+                    <td>Otto</td>
+                    <td>
+                        <button type="button" class="btn btn-outline-primary">Xem</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="pagination-section">
+                <!-- Phân trang 2 -->
+                <div class="pagination-custom d-flex justify-content-center">
+                    <ul id="transactionVNPayPageMax" class="pagination">12</ul>
+                </div>
+            </div>
+        </article>
+        <input type="hidden" id="notFormBillOffLine">
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script th:src="@{/js/bill/actionSelect2tag.js}" type="text/javascript"></script>
+        <script src="/ajax/transaction/transactionAjax.js"></script>
+
+
+    </div>
+</main>
+</body>
+</html>
