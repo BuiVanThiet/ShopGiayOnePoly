@@ -230,6 +230,20 @@ function fetchActiveColors() {
         });
 }
 
+async function add() {
+    const formElement = document.getElementById('createAttribute');
+    const formData = new FormData(formElement);
+    const response = await fetch('/attribute/color/add', {
+        method: 'POST',
+        body: formData
+    });
+    if (response.ok) {
+        const result = await response.json(); 
+        createToast(result.check, result.message);
+        fetchActiveColors();
+    }
+}
+
 
 function restoreColor(element) {
     var index = element.getAttribute('data-index');
