@@ -144,48 +144,68 @@ public abstract class BaseBill extends BaseEmail {
         InvoiceStatus invoiceStatus = new InvoiceStatus();
         invoiceStatus.setBill(bill);
         invoiceStatus.setStatus(status);
+        String checkNote = (String) session.getAttribute("notePayment");
+
         if (invoiceStatus.getStatus() == 0) {
-            session.setAttribute("notePayment","Tạo Đơn Hàng!");
+            if (checkNote == null || checkNote.trim().isEmpty()) {
+                session.setAttribute("notePayment","Tạo Đơn Hàng!");
+            }
         }else if (invoiceStatus.getStatus() == 1) {
-            session.setAttribute("notePayment","Chờ Xác nhận!");
+            if (checkNote == null || checkNote.trim().isEmpty()) {
+                session.setAttribute("notePayment","Chờ Xác nhận!");
+            }
         }else if(invoiceStatus.getStatus() == 2) {
             mess = "Hóa đơn đã được xác nhận!";
             colorMess = "1";
-            session.setAttribute("notePayment","Đã xác nhận!");
+            if (checkNote == null || checkNote.trim().isEmpty()) {
+                session.setAttribute("notePayment","Đã xác nhận!");
+            }
         }else if (invoiceStatus.getStatus() == 3) {
             mess = "Hóa đơn đã được giao hàng!";
             colorMess = "1";
-            session.setAttribute("notePayment","Giao Hàng!");
+            if (checkNote == null || checkNote.trim().isEmpty()) {
+                session.setAttribute("notePayment","Giao Hàng!");
+            }
         }else if (invoiceStatus.getStatus() == 4) {
             mess = "Hóa đơn đã được khách nhận!";
             colorMess = "1";
-            session.setAttribute("notePayment","Khách đã nhận được hàng!");
+            if (checkNote == null || checkNote.trim().isEmpty()) {
+                session.setAttribute("notePayment","Khách đã nhận được hàng!");
+            }
         }else if (invoiceStatus.getStatus() == 5) {
             mess = "Hóa đơn đã hoàn thành!";
             colorMess = "1";
-            session.setAttribute("notePayment","Đơn Hàng Đã Hoàn Thành!");
+            if (checkNote == null || checkNote.trim().isEmpty()) {
+                session.setAttribute("notePayment","Đơn Hàng Đã Hoàn Thành!");
+            }
         }else if (invoiceStatus.getStatus() == 6){
-            session.setAttribute("notePayment","Đơn Hàng Đã Bị Hủy!");
+            if (checkNote == null || checkNote.trim().isEmpty()) {
+                session.setAttribute("notePayment","Đơn Hàng Đã Bị Hủy!");
+            }
         }else if (invoiceStatus.getStatus() == 101) {
-            String checkNote = (String) session.getAttribute("notePayment");
             if (checkNote == null || checkNote.trim().isEmpty()) {
                 session.setAttribute("notePayment", "Đơn Hàng Đã được thanh toán!");
             }
         }else if (invoiceStatus.getStatus() == 102) {
-            String checkNote = (String) session.getAttribute("notePayment");
             if (checkNote == null || checkNote.trim().isEmpty()) {
                 session.setAttribute("notePayment", "Đơn Hàng Đã được thanh toán!");
             }
         }else if (invoiceStatus.getStatus() == 201) {
-            session.setAttribute("notePayment","Chờ xác nhận đổi-trả hàng!");
+            if (checkNote == null || checkNote.trim().isEmpty()) {
+                session.setAttribute("notePayment","Chờ xác nhận đổi-trả hàng!");
+            }
         }else if (invoiceStatus.getStatus() == 202) {
-            session.setAttribute("notePayment","Đồng ý đổi-trả hàng!");
+            if (checkNote == null || checkNote.trim().isEmpty()) {
+                session.setAttribute("notePayment","Đồng ý đổi-trả hàng!");
+            }
             ReturnBillExchangeBill returnBill = this.returnBillService.getReturnBillByIdBill(bill.getId());
             returnBill.setUpdateDate(new Date());
             returnBill.setStatus(1);
             this.returnBillService.save(returnBill);
         }else if (invoiceStatus.getStatus() == 203) {
-            session.setAttribute("notePayment","Không đồng ý đổi-trả hàng!");
+            if (checkNote == null || checkNote.trim().isEmpty()) {
+                session.setAttribute("notePayment","Không đồng ý đổi-trả hàng!");
+            }
             ReturnBillExchangeBill returnBill = this.returnBillService.getReturnBillByIdBill(bill.getId());
             returnBill.setUpdateDate(new Date());
             returnBill.setStatus(2);
@@ -195,7 +215,8 @@ public abstract class BaseBill extends BaseEmail {
             invoiceStatus.setNote("Không có"+","+session.getAttribute("notePayment"));
         }else {
             invoiceStatus.setNote(staff.getId()+","+session.getAttribute("notePayment"));
-        }        session.removeAttribute("notePayment");
+        }
+        session.removeAttribute("notePayment");
         this.invoiceStatusService.save(invoiceStatus);
     }
     //trừ đi voucher cua hóa đơn

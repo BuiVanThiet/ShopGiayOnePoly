@@ -21,9 +21,17 @@ public abstract class BaseEmail {
         return null;
     }
 
-    public String templateEmailConfigmBill(String emailSend, String hosst, String codeHD) {
+    public String templateEmailConfigmBill(String emailSend, String hosst, String codeHD,String title) {
         String receiverEmail = emailSend;
         String subject = "Đơn hàng đã được xác nhận!";
+        String noiDung = "";
+        if(title.equals("Đơn hàng đã bị hủy")) {
+            noiDung = "Cảm ơn bạn đã đặt mua sản phẩm của One Poly, nhưng do một số lý do nên đơn hàng của bạn đã bị hủy.";
+        }else {
+            noiDung = """
+                    Cảm ơn bạn đã đặt mua sản phẩm của One Poly, đơn hàng cả bạn đã được xác nhận.
+                    """;
+        }
         String content = """
                 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
                 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml"
@@ -459,7 +467,8 @@ public abstract class BaseEmail {
                                                                                                         <div>
                                                                                                             <h1 class="default-heading1"
                                                                                                                 style="margin: 0; color: #1f2d3d; font-family: arial,helvetica,sans-serif; font-size: 36px; word-break: break-word;">
-                                                                                                                Đã xác nhận</h1>
+                                                                                                                """+title+"""
+                                                                                                                </h1>
                                                                                                         </div>
                                                                                                     </td>
                                                                                                 </tr>
@@ -475,9 +484,9 @@ public abstract class BaseEmail {
                                                                                                     style="margin: 0; color: #1f2d3d; font-family: arial,helvetica,sans-serif; font-size: 18px; word-break: break-word;">
                                                                                                     Chào {{contact.EMAIL}},</h4>
                                                                                                 <p style="margin: 0;"> </p>
-                                                                                                <p style="margin: 0;">Cảm ơn bạn đã đặt
-                                                                                                    mua sản phẩm của One Poly, đơn hàng
-                                                                                                    cả bạn đã được xác nhận.</p>
+                                                                                                <p style="margin: 0;">
+                                                                                                """+noiDung+"""
+                                                                                                </p>
                                                                                                 <p style="margin: 0;"><br>Mã đơn hàng :
                                                                                                 """+codeHD+"""
                                                                                                             </p>

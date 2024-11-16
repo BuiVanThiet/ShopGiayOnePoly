@@ -23,7 +23,6 @@ function parseNumber(value) {
     return parseFloat(value.replace(/,/g, '')) || 0;
 }
 //
-var payMethodChecked = parseInt(payMethod.value);
 //
 //
 if(payMethodChecked === 1 || payMethodChecked === 3) {

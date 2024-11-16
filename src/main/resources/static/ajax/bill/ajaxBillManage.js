@@ -381,6 +381,8 @@ function loadCustomerShipInBill() {
                             $('#numberPhoneNotModal').text(response.numberPhone);
                             $('#addResDetailNotModal').text(response.addRessDetail);
                             $('#emailNotModal').text(response.email);
+                            initializeLocationDropdowns('provinceSelect-transport-Ship','districtSelect-transport-Ship','wardSelect-transport-Ship','districtSelectContainer-transport-Ship','wardSelectContainer-transport-Ship',parseInt(response.city),parseInt(response.district),parseInt(response.commune));
+
                         }
                     },
                     error: function (xhr) {
@@ -514,9 +516,13 @@ function updateMoneyShipWait(moneyShipWait) {
 }
 
 function confirmBill(content) {
+    var reasonConfirm = $('#reasonConfirm').val().trim();
+    if (reasonConfirm === '') {
+        reasonConfirm = 'trong';
+    }
     $.ajax({
         type: "GET",
-        url: "/bill-api/confirm-bill/"+content,
+        url: "/bill-api/confirm-bill/"+content+"/"+reasonConfirm,
         success: function (response) {
             // showToast(response.message,response.check);
             createToast(response.check, response.message);
