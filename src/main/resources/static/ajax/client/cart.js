@@ -162,23 +162,25 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function updateQuantityInServer(productId, quantity) {
-        fetch(`/update-from-cart/${productId}`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-            },
-            body: new URLSearchParams({quantityItem: quantity}),
+        $.ajax({
+            
         })
-            .then(response => response.json())
-            .then(data => {
-                alert("HHHHHHH");
-                if (data.messages) {
-                    alert(data.messages);
-                }
-
-                updateCartTotal();
-            })
-            .catch(error => console.error("Lỗi khi cập nhật giỏ hàng:", error));
+    //         method: "POST",
+    //         headers: {
+    //             "Content-Type": "application/x-www-form-urlencoded",
+    //         },
+    //         body: new URLSearchParams({quantityItem: quantity}),
+    //     })
+    //         .then(response => response.json())
+    //         .then(data => {
+    //             alert("HHHHHHH");
+    //             if (data.messages) {
+    //                 alert(data.messages);
+    //             }
+    //
+    //             updateCartTotal();
+    //         })
+    //         .catch(error => console.error("Lỗi khi cập nhật giỏ hàng:", error));
     }
 
     function updateCartTotal() {
