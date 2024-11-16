@@ -1,13 +1,11 @@
 package com.example.shopgiayonepoly.implement;
 
-import com.example.shopgiayonepoly.dto.request.ProductDetailDiscountRequest;
 import com.example.shopgiayonepoly.dto.request.SaleProductRequest;
-import com.example.shopgiayonepoly.dto.response.ProductWithDiscountResponse;
+import com.example.shopgiayonepoly.dto.request.bill.ProductDetailCheckMark2Request;
 import com.example.shopgiayonepoly.entites.ProductDetail;
 import com.example.shopgiayonepoly.entites.SaleProduct;
 import com.example.shopgiayonepoly.repositores.ProductDetailRepository;
 import com.example.shopgiayonepoly.repositores.SaleProductRepository;
-import com.example.shopgiayonepoly.repositores.attribute.ColorRepository;
 import com.example.shopgiayonepoly.service.SaleProductService;
 import com.example.shopgiayonepoly.service.TemporaryPriceStorage;
 import org.springframework.beans.BeanUtils;
@@ -16,9 +14,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-
-import java.math.RoundingMode;
 import java.util.List;
 
 
@@ -146,6 +141,26 @@ public class SaleProductServiceImplement implements SaleProductService {
 
     private String generateSaleCode() {
         return "SALE" + System.currentTimeMillis();
+    }
+
+    @Override
+    public List<Object[]> getAllSaleProductByFilter(Integer typeCheck, String searchTerm, Integer status) {
+        return this.saleProductRepository.getAllSaleProductByFilter(typeCheck,searchTerm,status);
+    }
+
+    @Override
+    public List<Object[]> getAllProduct(ProductDetailCheckMark2Request productDetailCheckRequest) {
+        return this.saleProductRepository.getAllProduct(
+                productDetailCheckRequest.getNameProduct(),            // Tên sản phẩm
+                productDetailCheckRequest.getIdCategories(),           // Danh sách danh mục
+                productDetailCheckRequest.getIdColors(),               // Danh sách màu sắc
+                productDetailCheckRequest.getIdSizes(),                // Danh sách kích thước
+                productDetailCheckRequest.getIdManufacturers(),        // Danh sách nhà sản xuất
+                productDetailCheckRequest.getIdMaterials(),            // Danh sách chất liệu
+                productDetailCheckRequest.getIdOrigins(),              // Danh sách nơi xuất xứ
+                productDetailCheckRequest.getIdSoles(),                // Danh sách đế giày
+                productDetailCheckRequest.getStatusCheckIdSale()
+        );
     }
 
 

@@ -2,6 +2,7 @@ package com.example.shopgiayonepoly.restController;
 
 import com.example.shopgiayonepoly.dto.request.TransactionCheckRequest;
 import com.example.shopgiayonepoly.entites.Staff;
+import com.example.shopgiayonepoly.service.ExcelExportService;
 import com.example.shopgiayonepoly.service.TransactionVNPayService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +13,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequestMapping("/transactionVNPay-api")
@@ -99,7 +99,46 @@ public class TransactionVNPayRestController {
         Integer pageNumber = (int) Math.ceil((double) transactions.size() / 5);
         return pageNumber;
     }
+    @GetMapping("/excel-export-transaction")
+    public ResponseEntity<Map<String,String>> getExportTransaction(HttpSession session) {
+        Map<String,String> thongBao = new HashMap<>();
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            thongBao.put("message","Nhân viên chưa đăng nhập!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+        List<Object[]> transactions = transactionVNPayService.getAllTransactionVNPay(transactionCheckRequest);
+        List<Object[]> tranSactionExportList = new ArrayList<>();
+        Object[] objectTransactionAdd;
+        for (Object[] objects: transactions) {
+            objectTransactionAdd = new Object[9];
+            objectTransactionAdd[0] = objects[0]; //Mã GD
+            objectTransactionAdd[1] = objects[1]; //Số hóa đơn
+            objectTransactionAdd[2] = objects[10]; //Mã GD Bank
+            objectTransactionAdd[3] = objects[4]; //Nội dung
+            objectTransactionAdd[4] = objects[3]; //Ngân hàng
+            objectTransactionAdd[5] = objects[2]; //Số tiền(không phải để cộng)
+            objectTransactionAdd[6] = objects[5]; // Trạng thái
+            objectTransactionAdd[7] = objects[6]; // "Ngày tạo
+            tranSactionExportList.add(objectTransactionAdd);
+        }
+        ExcelExportService excelExportService = new ExcelExportService();
 
+
+        // Create service object and call the export method
+        ExcelExportService service = new ExcelExportService();
+        try {
+            service.exportListToExcel(tranSactionExportList);
+            thongBao.put("message","Xuất file pdf thành công!");
+            thongBao.put("check","1");
+        } catch (IOException e) {
+            e.printStackTrace();
+            thongBao.put("message","Xuất file pdf không thành công!");
+            thongBao.put("check","3");
+        }
+        return ResponseEntity.ok(thongBao);
+    }
 
     protected Page<Object[]> convertListToPage(List<Object[]> list, Pageable pageable) {
         int start = (int) pageable.getOffset();

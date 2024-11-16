@@ -3,6 +3,7 @@ package com.example.shopgiayonepoly.service;
 import com.example.shopgiayonepoly.dto.request.ProductDetailDiscountRequest;
 import com.example.shopgiayonepoly.dto.request.SaleProductRequest;
 import com.example.shopgiayonepoly.dto.request.VoucherRequest;
+import com.example.shopgiayonepoly.dto.request.bill.ProductDetailCheckMark2Request;
 import com.example.shopgiayonepoly.dto.response.ProductWithDiscountResponse;
 import com.example.shopgiayonepoly.entites.ProductDetail;
 import com.example.shopgiayonepoly.entites.SaleProduct;
@@ -46,5 +47,8 @@ public interface SaleProductService {
 
     public List<ProductDetail> findProducDetailByIDDiscout(Integer id);
 
+    List<Object[]> getAllSaleProductByFilter(Integer typeCheck, String searchTerm, Integer status);
+
+    List<Object[]> getAllProduct(ProductDetailCheckMark2Request productDetailCheckRequest);
 }
 

@@ -28,6 +28,8 @@ public class VoucherController {
     @Autowired
     private VoucherService voucherService;
     private final int pageSize = 5;
+    String mess = "";
+    String check = "";
 
     @GetMapping("/list")
     public String getListVoucherByPage(@RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber,
@@ -47,6 +49,11 @@ public class VoucherController {
         model.addAttribute("pageVoucherDelete", pageVoucherDelete);
         model.addAttribute("pageVoucherExpired", pageVoucherExpired);
         model.addAttribute("voucher", new VoucherRequest());
+
+        model.addAttribute("message",mess);
+        model.addAttribute("check",check);
+        mess = "";
+        check = "";
         return "voucher/index";
     }
 
@@ -58,7 +65,7 @@ public class VoucherController {
                                    @RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber,
                                    @RequestParam(name = "pageNumberDelete", defaultValue = "0") Integer pageNumberDelete,
                                    @RequestParam(name = "pageNumberExpired", defaultValue = "0") Integer pageNumberExpired) {
-
+        System.out.println(voucherRequest.toString());
         BigDecimal zero = BigDecimal.ZERO;
         BigDecimal niceTeen = new BigDecimal("91");
         BigDecimal tenHundred = new BigDecimal("10000");
@@ -125,6 +132,8 @@ public class VoucherController {
     @GetMapping("/delete/{id}")
     public String deleteVoucher(RedirectAttributes ra, @PathVariable("id") Integer id) {
         voucherService.deleteVoucher(id);
+        mess = "Xóa phiếu giảm giá có id: "+id+" thành công!";
+        check = "1";
         ra.addFlashAttribute("mes", "Xóa thành công phiếu giảm giá với ID là: " + id);
         return "redirect:/voucher/list";
     }
@@ -132,6 +141,8 @@ public class VoucherController {
     @GetMapping("/restore/{id}")
     public String restoreVoucher(RedirectAttributes ra, @PathVariable("id") Integer id) {
         voucherService.restoreStatusVoucher(id);
+        mess = "Khôi phục phiếu giảm giá có id: "+id+" thành công!";
+        check = "1";
         ra.addFlashAttribute("mes", "Khôi phục thành công phiếu giảm giá với ID là: " + id);
         return "redirect:/voucher/list";
     }
@@ -201,6 +212,8 @@ public class VoucherController {
         voucherRequest.setCreateDate(existingVoucher.getCreateDate());
 
         voucherService.updateVoucher(voucherRequest);
+        mess = "Sửa phiếu giảm giá có id: "+voucherRequest.getId()+" thành công!";
+        check = "1";
         redirectAttributes.addFlashAttribute("mes", "Update voucher successfully with ID: " + voucherRequest.getId());
         return "redirect:/voucher/list";
     }
@@ -264,6 +277,8 @@ public class VoucherController {
     public String extendVoucherExpired(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
         voucherService.updateVoucherExpired(id);
         redirectAttributes.addFlashAttribute("mes", "Gia hạn phiếu giảm giá thành công");
+        mess = "Gia hạn phiếu giảm giá có id: "+id+" thành công!";
+        check = "1";
         return "redirect:/voucher/list";
     }
 
@@ -285,6 +300,15 @@ public class VoucherController {
         model.addAttribute("voucher", voucher);
         model.addAttribute("title", "Voucher Detail ID " + id);
         return "voucher/detail";
+    }
+
+    @GetMapping("/restore-delete/{id}")
+    public String restoreVoucherExpired(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
+        voucherService.updateVoucherExpired(id);
+        redirectAttributes.addFlashAttribute("mes", "Gia hạn phiếu giảm giá thành công");
+        mess = "Khôi phục phiếu giảm giá có id: "+id+" thành công!";
+        check = "1";
+        return "redirect:/voucher/list";
     }
 
 
