@@ -1,6 +1,7 @@
 package com.example.shopgiayonepoly.service;
 
 import com.example.shopgiayonepoly.dto.response.client.*;
+import com.example.shopgiayonepoly.entites.Cart;
 import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
@@ -27,4 +28,5 @@ public interface ClientService {
     BigDecimal findDiscountedPriceByProductDetailId(@Param("productDetailId") Integer productDetailId);
 
     VoucherClientResponse findVoucherApplyByID(Integer id);
+    List<Cart> findListCartByIdCustomer(@Param("idCustomer")Integer idCustomer);
 }

@@ -14,7 +14,7 @@ function attachClickEvent(selector, handler) {
     const buttons = document.querySelectorAll(selector);
     buttons.forEach(function (button) {
         button.addEventListener("click", function () {
-            const value = button.innerText.trim(); // Lấy giá trị và loại bỏ khoảng trắng
+            const value = button.innerText.trim();
             const id = button.getAttribute('data-color-id') || button.getAttribute('data-size-id'); // Lấy ID từ data-color-id hoặc data-size-id
             handler(value, id);
         });

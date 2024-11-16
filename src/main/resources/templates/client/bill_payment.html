@@ -87,20 +87,20 @@
                                 </div>
                                 <div class="right" style="margin-left: 50px;">
                                     <div class="item-info">
-                                        <h3 th:text="${item.productDetail.product.nameProduct}"></h3>
+                                        <h3 th:text="${item.productName}"></h3>
                                         <div class="item-price">
-                                            <span id="spanPriceCartItem" th:text="${item.productDetail.price}"
+                                            <span id="spanPriceCartItem" th:text="${item.discountedPrice}"
                                                   class="price-item"></span>
                                         </div>
                                         <div class="item-desc">
                                             <div class="variant-option">
                                                 <span class="title">Màu sắc:</span>
                                                 <span class="text"
-                                                      th:text="${item.productDetail.color.nameColor}"></span>
+                                                      th:text="${item.colorName}"></span>
                                             </div>
                                             <div class="variant-option">
                                                 <span class="title">Kích thước:</span>
-                                                <span class="text" th:text="${item.productDetail.size.nameSize}"></span>
+                                                <span class="text" th:text="${item.sizeName}"></span>
                                             </div>
                                         </div>
                                         <div class="button-group">
@@ -142,7 +142,7 @@
                                         <span id="spanTotalPriceCartItem" th:text="${totalPrice}">Tổng giá tiền</span>
                                     </div>
                                     <div class="d-flex flex-row justify-content-between m-2">
-                                        <span>Giảm giá coupon</span>
+                                        <span>Giảm giá voucher</span>
                                         <span id="spanPriceVoucher" th:text="${priceReducedShow}+'đ'">đ</span>
                                     </div>
                                     <div class="d-flex flex-row justify-content-between m-2">

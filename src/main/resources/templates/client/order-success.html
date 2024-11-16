@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{client/base}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Order Status</title>
+    <style>
+        /* CSS cho thông báo thành công */
+        .success-message {
+            max-width: 600px;
+            margin: 100px auto;
+            padding: 20px;
+            background-color: #e6f7e6;
+            border: 2px solid #4CAF50;
+            border-radius: 10px;
+            text-align: center;
+            font-family: Arial, sans-serif;
+            color: #2d862d;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .success-message h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .success-message p {
+            font-size: 18px;
+            margin: 0;
+        }
+
+        .success-message .icon {
+            font-size: 40px;
+            color: #4CAF50;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+<div layout:fragment="content">
+    <section>
+        <div class="success-message">
+            <div class="icon">✔</div>
+            <h1>Đặt hàng thành công!</h1>
+            <p>Bạn đã đặt hàng thành công. Cảm ơn bạn đã mua sắm tại cửa hàng của chúng tôi!</p>
+        </div>
+    </section>
+</div>
+</body>
+</html>

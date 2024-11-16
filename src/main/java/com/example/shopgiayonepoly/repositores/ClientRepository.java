@@ -2,6 +2,7 @@ package com.example.shopgiayonepoly.repositores;
 
 import com.example.shopgiayonepoly.dto.response.client.*;
 import com.example.shopgiayonepoly.entites.Bill;
+import com.example.shopgiayonepoly.entites.Cart;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -171,5 +172,8 @@ public interface ClientRepository extends JpaRepository<Bill, Integer> {
             """)
     VoucherClientResponse findVoucherApplyByID(@Param("id") Integer id);
 
+    @Query("select c from Cart c where c.id =:idCustomer")
+    List<Cart> findListCartByIdCustomer(@Param("idCustomer")Integer idCustomer);
 
+    
 }

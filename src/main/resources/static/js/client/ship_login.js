@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
     const apiKey = '0fc88a8e-6633-11ef-8e53-0a00184fe694';
     const shopId = '195165';
-    const fromDistrictId = 3440; // Mã huyện cố định của kho hàng
+    const fromDistrictId = 3440;
     let shippingFeeCalculated = false; // Cờ để kiểm soát việc tính lại phí vận chuyển
     const weightText = $('#weightShip').text().trim();
     if (weightText === "") {
@@ -28,6 +28,9 @@ document.addEventListener("DOMContentLoaded", function () {
     console.log("Total amount ship: "+totalPriceCartItem)
 
     function calculateShippingFee(serviceId, toDistrictId, toWardCode) {
+        console.log("Service ID :"+serviceId)
+        console.log("toDistrictId ID :"+toDistrictId)
+        console.log("toWardCode ID :"+toWardCode)
         if (!serviceId || !toDistrictId || !toWardCode) {
             updateShippingFeeDisplay("Không thể tính phí ship");
             return;
@@ -58,7 +61,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     const shippingFee = data.data.total;
                     updateShippingFeeDisplay(`${shippingFee} VND`);
                     calculateTotalPrice();
-                    shippingFeeCalculated = true; // Đánh dấu rằng phí vận chuyển đã được tính
+                    shippingFeeCalculated = true;
                 } else {
                     console.error('Lỗi tính phí ship:', data.message);
                     updateShippingFeeDisplay("Không thể tính phí ship");
@@ -131,4 +134,14 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("spanShippingFee").textContent = message;
     }
     autoCalculateShippingFee();
+});
+document.addEventListener("DOMContentLoaded", function() {
+    const spanPriceVoucher = document.getElementById("spanPriceVoucher");
+    const voucherPriceText = spanPriceVoucher.textContent.trim();
+    const priceVoucher = parseFloat(voucherPriceText.replace(/[^0-9.-]+/g, ''));
+
+    // Nếu giá trị không hợp lệ, đặt giá trị mặc định là 0
+    if (isNaN(priceVoucher)) {
+        spanPriceVoucher.textContent = "0đ";
+    }
 });
