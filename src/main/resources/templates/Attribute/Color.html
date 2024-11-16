@@ -19,12 +19,12 @@
                 <span class="arrow" id="arrow">&#9660;</span> <!-- Mũi tên -->
             </div>
             <div id="collapsibleDiv" class="combobox-content">
-                <form th:object="${colorAdd}" method="post" action="/attribute/color/add">
+                <form id="createAttribute" th:object="${colorAdd}" method="POST" >
                     <div class="attribute-search-section search-section ">
                         <div class="attribute-search-bar search-bar ">
                             <input id="codeColorInput" th:field="*{codeColor}" type="text" placeholder="Mã màu sắc" required/>
                             <input id="nameColorInput" th:field="*{nameColor}" type="text" placeholder="Tên màu sắc" required/>
-                            <button type="submit" class="attribute-btn-add btn-add">Thêm màu sắc</button>
+                            <button type="button" onclick="add()" class="attribute-btn-add btn-add">Thêm màu sắc</button>
                         </div>
                     </div>
                 </form>
@@ -108,6 +108,8 @@
                 </div>
             </div>
         </div>
+        <input type="hidden" id="toastMessage" th:value="${message}">
+        <input type="hidden" id="toastCheck" th:value="${check}">
     </article>
     <script th:src="@{/js/attribute/attribute.js}" type="text/javascript"></script>
     <script th:src="@{/ajax/attribute/colorAjax.js}" type="text/javascript"></script>

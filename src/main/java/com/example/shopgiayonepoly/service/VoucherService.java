@@ -45,4 +45,5 @@ public interface VoucherService {
 
     List<Voucher> findApplicableVouchers(BigDecimal totalPrice);
 
+    List<Object[]> getVoucherFilter(Integer typeCheck, String searchTerm, Integer status);
 }

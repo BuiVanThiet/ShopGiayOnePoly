@@ -492,6 +492,9 @@ public class BillController extends BaseBill {
 
             this.billService.save(bill);
             modelMap.addAttribute("title","Tạo hóa đơn thành công!");
+            modelMap.addAttribute("url",bill.getId());
+            this.mess = "";
+            this.colorMess = "";
 //            this.getUpdateQuantityProduct(session);
             return "Bill/successBill";
         }else if (bill.getPaymentMethod() == 2) {
@@ -517,6 +520,9 @@ public class BillController extends BaseBill {
                 this.setBillStatus(bill.getId(),bill.getStatus(),session);
                 this.setBillStatus(bill.getId(),101,session);
                 modelMap.addAttribute("title","Tạo hóa đơn thành công!");
+                this.mess = "";
+                this.colorMess = "";
+                modelMap.addAttribute("url",bill.getId());
                 return "Bill/successBill";
             }else {
                 if(bill.getNote().length() < 0 || bill.getNote() == null || bill.getNote().trim().equals("")) {
@@ -608,6 +614,8 @@ public class BillController extends BaseBill {
             transactionVNPay.setVnpBankTranNo(bankTranNo);
             transactionVNPay.setVnpSecureHash(vnpSecureHash);
             transactionVNPay.setStatus(1);
+            this.mess = "";
+            this.colorMess = "";
             this.transactionVNPayService.save(transactionVNPay);
         }
 
@@ -632,13 +640,15 @@ public class BillController extends BaseBill {
                 this.billPay.setStatus(5);
                 this.billPay.setTransactionNo(transactionNo);
                 this.billPay.setBankTranNo(bankTranNo);
+                modelMap.addAttribute("url",billPay.getId());
                 this.billService.save(this.billPay);
                 System.out.println("vnpSecureHash: " + vnpSecureHash);
 
                 this.setBillStatus(this.billPay.getId(),101,session);
                 this.setBillStatus(this.billPay.getId(),this.billPay.getStatus(),session);
-
 //                this.getUpdateQuantityProduct(session);
+                this.mess = "";
+                this.colorMess = "";
                 modelMap.addAttribute("title","Tạo hóa đơn thành công!");
                 return "Bill/successBill" ;
             }else {
@@ -688,8 +698,8 @@ public class BillController extends BaseBill {
                     this.billPay.setTransactionNo(transactionNo);
                     this.billPay.setBankTranNo(bankTranNo);
                     this.billService.save(this.billPay);
-                    this.billPay = null;
                     this.setBillStatus(this.billPay.getId(),101,session);
+                    this.billPay = null;
                     session.removeAttribute("billPaymentRest");
                     session.removeAttribute("pageReturn");
                     session.removeAttribute("checkBill");
@@ -1163,6 +1173,7 @@ public class BillController extends BaseBill {
         modelMap.addAttribute("message",mess);
         modelMap.addAttribute("check",colorMess);
         session.setAttribute("pageReturn",2);
+
         mess = "";
         colorMess = "";
         return "Bill/billInformationIndex";

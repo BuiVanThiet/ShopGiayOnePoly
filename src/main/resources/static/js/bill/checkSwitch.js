@@ -124,17 +124,31 @@ document.getElementById('flexSwitchCheckDefault').addEventListener('change', fun
 
 
 function setClientShip(name,numberPhone,email,province,district,ward,addressDetail) {
-    console.log(name)
-    console.log(numberPhone)
-    console.log(email)
-    console.log(province)
-    console.log(district)
-    console.log(ward)
-    console.log(addressDetail)
+    if(name) {
+        console.log(name)
+    }
+    if(numberPhone) {
+        console.log(numberPhone)
+    }
+    if(email) {
+        console.log(email)
+    }
+    if(province) {
+        console.log(province)
+    }
+    if(district) {
+        console.log(district)
+    }
+    if(ward) {
+        console.log(ward)
+    }
+    if(addressDetail) {
+        console.log(addressDetail)
+        $('#customerShip').val(name+','+numberPhone+','+email+','+province+','+district+','+ward+','+addressDetail);
+    }
     // $('#idCity-staff').val(province)
     // $('#idDistrict-staff').val(district)
     // $('#idCommune-staff').val(ward)
-    $('#customerShip').val(name+','+numberPhone+','+email+','+province+','+district+','+ward+','+addressDetail);
 }
 
 function validateInformationShip() {

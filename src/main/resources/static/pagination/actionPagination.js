@@ -78,5 +78,17 @@ function handlePageClick(pageNumber, elementId, totalPages) {
         loadTableStaff(pageNumber);
     }
 
+    if(elementId == 'maxPageVoucher-manageVoucher') {
+        loadVoucher(pageNumber);
+    }
+
+    if(elementId == 'maxPageSaleProduct-manageSaleProduct') {
+        loadSaleProduct(pageNumber);
+    }
+
+    if(elementId == 'maxPageProduct-manageSaleProduct') {
+        loadProduct(pageNumber);
+    }
+
     createPagination(elementId, totalPages, pageNumber); // Cập nhật phân trang
 }

@@ -7,10 +7,8 @@ import com.example.shopgiayonepoly.repositores.VoucherRepository;
 import com.example.shopgiayonepoly.service.VoucherService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -108,4 +106,8 @@ public class VoucherServiceImplement implements VoucherService {
         return voucherRepository.findApplicableVouchers(totalPrice, today);
     }
 
+    @Override
+    public List<Object[]> getVoucherFilter(Integer typeCheck, String searchTerm, Integer status) {
+        return this.voucherRepository.getVoucherFilter(typeCheck,searchTerm,status);
+    }
 }

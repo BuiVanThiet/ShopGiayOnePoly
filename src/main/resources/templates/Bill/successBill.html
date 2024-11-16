@@ -19,7 +19,7 @@
     <div layout:fragment="content">
         <article class="position-relative bd-gutter mt-5 my-md-4 bd-layout d-flex justify-content-center align-items-center" style="height: 100vh;">
             <div class="position-absolute top-0 start-0">
-                <a href="/staff/bill/manage-bill" class="btn ">
+                <a href="/staff/bill/home" class="btn ">
                     <i class="bi bi-arrow-return-left"></i>
                     Trở lại trang quản lý hóa đơn!
                 </a>
@@ -29,11 +29,39 @@
                 <br>
                 <i class="bi bi-cart-check" style="font-size: 100px;"></i>
                 <br>
-                <a class="btn btn-outline-secondary" href="">
+                <button class="btn btn-outline-secondary" onclick="createBillPDF()">
                     <i class="bi bi-file-earmark-arrow-up"></i>
                     In hóa đơn
-                </a>
+                </button>
+                <input type="hidden" id="idBillCreatePDF" th:value="${url}">
             </div>
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script>
+                function createBillPDF() {
+                    var idPDF = parseInt($('#idBillCreatePDF').val());
+                        console.log('id de tao oa don la ' + idPDF)
+
+                    $.ajax({
+                        type: "GET",
+                        url: "/bill-api/bill-pdf/"+idPDF,
+                        xhrFields: {
+                            responseType: 'blob'  // Nhận PDF dưới dạng blob
+                        },
+                        success: function (response) {
+                            // Tạo URL cho blob PDF
+                            const pdfUrl = URL.createObjectURL(response);
+
+                            // Mở tab mới và hiển thị PDF
+                            const newTab = window.open();
+                            newTab.document.write(`<iframe src="${pdfUrl}" width="100%" height="100%" style="border:none;"></iframe>`);
+
+                        },
+                        error: function (xhr) {
+                            console.error('loi ' + xhr.responseType);
+                        }
+                    })
+                }
+            </script>
         </article>
     </div>
 </main>

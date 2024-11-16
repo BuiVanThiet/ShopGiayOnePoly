@@ -175,7 +175,9 @@ function loadBillDetail(page)  {
                     }
 
                     if(payMethodChecked === 1 || payMethodChecked === 3) {
-                        btnCreateBill.disabled = true;
+                        if(btnCreateBill) {
+                            btnCreateBill.disabled = true;
+                        }
                     }
                 }
 

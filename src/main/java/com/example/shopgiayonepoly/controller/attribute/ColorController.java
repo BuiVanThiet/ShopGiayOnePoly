@@ -22,10 +22,7 @@ public class ColorController {
     @Autowired
     ColorService colorService;
 
-    String check = "";
-    String message = "";
-
-    @GetMapping("/color")
+    @RequestMapping("/color")
     public String list(Model model) {
         model.addAttribute("colorList", colorService.getColorNotStatus0());
         model.addAttribute("colorAdd", new Color());
@@ -44,13 +41,15 @@ public class ColorController {
         return new ResponseEntity<>(listColorActive, HttpStatus.OK);
     }
 
-    @RequestMapping("/color/add")
-    public String add(@ModelAttribute("colorAdd") Color color) {
+    @ResponseBody
+    @PostMapping("/color/add")
+    public ResponseEntity<Map<String, String>> add(@ModelAttribute Color color) {
+        Map<String, String> thongBao = new HashMap<>();
         color.setStatus(1);
         colorService.save(color);
-        this.message = "Thêm màu sắc thành công!";
-        this.check = "1";
-        return "redirect:/attribute/color";
+        thongBao.put("message", "Thêm màu sắc thành công");
+        thongBao.put("check", "1");
+        return ResponseEntity.ok(thongBao);
     }
 
     @PostMapping("/color/update-status")
@@ -59,7 +58,6 @@ public class ColorController {
         try {
             int id;
             int status;
-
             // Lấy id và status từ payload, kiểm tra kiểu dữ liệu
             if (payload.get("id") instanceof Integer) {
                 id = (Integer) payload.get("id");
@@ -100,18 +98,14 @@ public class ColorController {
 
             codeColor = (String) payload.get("codeColor");
             nameColor = (String) payload.get("nameColor");
-            message = "Sửa màu sắc thành công";
-            check = "1";
             // Gọi service để cập nhật dữ liệu màu sắc trong cơ sở dữ liệu
             colorService.updateColor(id, codeColor, nameColor);
-            thongBao.put("message", message);
-            thongBao.put("check", check);
+            thongBao.put("message", "Sửa màu sắc thành công");
+            thongBao.put("check", "1");
             return ResponseEntity.ok(thongBao);
         } catch (Exception e) {
-            message = "Sửa màu sắc thất bại";
-            check = "2";
-            thongBao.put("message", message);
-            thongBao.put("check", check);
+            thongBao.put("message", "Sửa màu sắc thất bại");
+            thongBao.put("check", "2");
             return ResponseEntity.ok(thongBao);
         }
     }
@@ -137,28 +131,24 @@ public class ColorController {
                 status = Integer.parseInt(payload.get("status").toString());
             }
             if (status == 0) {
-                check = "1";
-                message = "Xóa màu sắc thành công!";
+                thongBao.put("message", "Xóa màu sắc thành công");
+                thongBao.put("check", "1");
             } else {
-                check = "1";
-                message = "Khôi phục màu sắc thành công!";
+                thongBao.put("message", "Khôi phục màu sắc thành công");
+                thongBao.put("check", "1");
             }
-
             // Gọi service để cập nhật trạng thái trong cơ sở dữ liệu
             colorService.updateStatus(id, status);
-            // Phản hồi thành công
-            thongBao.put("message", message);
-            thongBao.put("check", check);
             return ResponseEntity.ok(thongBao);
 
         } catch (NumberFormatException e) {
             // Xử lý lỗi parse dữ liệu
-            thongBao.put("mess", "Lỗi khi xóa màu sắc!");
+            thongBao.put("message", "Lỗi khi xử lý dữ liệu");
             thongBao.put("check", "3");
             return ResponseEntity.ok(thongBao);
         } catch (Exception e) {
             // Xử lý lỗi khác
-            thongBao.put("mess", "Lỗi khi xóa màu sắc!");
+            thongBao.put("message", "Lỗi khi xử lý dữ liệu");
             thongBao.put("check", "3");
             return ResponseEntity.ok(thongBao);
         }

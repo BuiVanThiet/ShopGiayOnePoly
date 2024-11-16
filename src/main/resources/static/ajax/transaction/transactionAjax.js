@@ -86,7 +86,7 @@ function loadAllTransactionVNPay() {
                 transactionVNPayPageMax.show();
                 allTransaction.text(response.length); // Gán số phần tử tối đa vào allTransaction
                 moneyTransaction.text('0 VNĐ')
-                let totalMoney = response.reduce((sum, transaction) => sum + Math.trunc(transaction[2]), 0);
+                let totalMoney = response.reduce((sum, transaction) => sum + Math.trunc(transaction[8]), 0);
                 moneyTransaction.text(totalMoney.toLocaleString('en-US') + ' VNĐ')
                 response.forEach(function (transaction,index) {
                     var dateCreate = formatDate(transaction[6]);
@@ -163,6 +163,19 @@ function resetFilterTransactionVNPay() {
             loadBankVietNam();
             loadAllTransactionVNPay();
             maxPageTransaction();
+        },
+        error: function (xhr) {
+            console.log('Lỗi filter: ' + xhr.responseText);
+        }
+    });
+}
+
+function exportExcelTransaction() {
+    $.ajax({
+        type: 'GET',
+        url: '/transactionVNPay-api/excel-export-transaction',  // Endpoint xử lý
+        success: function (response) {
+            createToast(response.check, response.message)
         },
         error: function (xhr) {
             console.log('Lỗi filter: ' + xhr.responseText);

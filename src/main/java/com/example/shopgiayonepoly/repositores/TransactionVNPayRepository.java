@@ -12,18 +12,24 @@ import java.util.List;
 @Repository
 public interface TransactionVNPayRepository extends JpaRepository<TransactionVNPay,Integer> {
     @Query(value = """
-    SELECT 
-        vnp_TransactionNo, 
-        vnp_TxnRef, 
-        vnp_Amount, 
-        vnp_BankCode, 
-        vnp_OrderInfo, 
-        vnp_TransactionStatus, 
-        CONVERT(DATETIME, 
-            STUFF(STUFF(STUFF(vnp_PayDate, 9, 0, ' '), 12, 0, ':'), 15, 0, ':')
-        ),
-        id
-    FROM transaction_VNPay
+        SELECT 
+            vnp_TransactionNo, --0
+            vnp_TxnRef, --1
+            FORMAT(CAST(vnp_Amount AS DECIMAL(18, 2)), 'N0') + ' VNĐ' AS vnp_Amount, --2
+            vnp_BankCode, --3
+            vnp_OrderInfo, --4
+            CASE
+                 WHEN vnp_TransactionStatus = '00' THEN 'Thành công'
+                 ELSE 'Không thành công'
+            END AS vnp_TransactionStatus, --5
+            CONVERT(DATETIME, 
+                STUFF(STUFF(STUFF(vnp_PayDate, 9, 0, ' '), 12, 0, ':'), 15, 0, ':')
+            ),--6
+            id,--7
+            vnp_Amount,--8
+            vnp_TmnCode, --9
+            vnp_BankTranNo --10
+        FROM transaction_VNPay
     WHERE 
         vnp_TransactionNo LIKE %:codeVNPay%
         AND ((:bankCodeList) IS NULL OR vnp_BankCode IN (:bankCodeList))

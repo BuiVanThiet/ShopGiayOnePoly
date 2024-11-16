@@ -38,6 +38,8 @@ public class SaleProductController {
     private ProductDetailService productDetailService;
 
     private static final int pageSize = 5;
+    String mess = "";
+    String check = "";
 
     @GetMapping("/list")
     public String getFormListSaleProduct(@RequestParam(name = "pageNumber", defaultValue = "0") int pageNumber,
@@ -53,6 +55,10 @@ public class SaleProductController {
         model.addAttribute("pageSaleDelete", pageSaleDelete);
         model.addAttribute("listProductDetail", listProductDetail);
         model.addAttribute("listProductDetailWithDiscount", listProductDetailWithDiscount);
+        model.addAttribute("message",mess);
+        model.addAttribute("check",check);
+        mess = "";
+        check = "";
         return "sale_product/index";
     }
 
@@ -123,6 +129,8 @@ public class SaleProductController {
         }
         saleProductService.deleteSaleProductBySetStatus(id);
         redirectAttributes.addFlashAttribute("mes", "Xóa thành công đợt giảm giá với ID: " + id);
+        mess = "Xóa thành công đợt giảm giá với ID: "+id;
+        check = "1";
         return "redirect:/sale-product/list";
     }
 
@@ -130,6 +138,8 @@ public class SaleProductController {
     public String RestoreSaleProduct(RedirectAttributes redirectAttributes, @PathVariable("id") Integer id) {
         saleProductService.restoreSaleProductStatus(id);
         redirectAttributes.addFlashAttribute("mes", "Khôi phục đợt giảm giá thành công");
+        mess = "Khôi phục thành công đợt giảm giá với ID: "+id;
+        check = "1";
         return "redirect:/sale-product/list";
     }
 
@@ -190,6 +200,8 @@ public class SaleProductController {
         saleProductRequest.setCreateDate(saleProduct.getCreateDate());
         saleProductService.createNewSale(saleProductRequest);
         redirectAttributes.addFlashAttribute("mes", "Cập nhật đợt giảm giá với ID " + saleProductRequest.getId() + " thành công");
+        mess = "Sửa thành công đợt giảm giá với ID: "+saleProductRequest.getId();
+        check = "1";
         return "redirect:/sale-product/list";
     }
 

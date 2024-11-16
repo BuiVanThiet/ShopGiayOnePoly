@@ -876,9 +876,10 @@ public class BillRestController extends BaseBill {
             return ResponseEntity.ok(thongBao);
         }
 
-        if (bill.getStatus() == 0 ) {
+        if (bill.getStatus() != 1) {
             thongBao.put("message","Loi");
             thongBao.put("check","3");
+            System.out.println("khong duoc cap nhat tien ship");
             return ResponseEntity.ok(thongBao);
         }
 
@@ -899,10 +900,11 @@ public class BillRestController extends BaseBill {
         return ResponseEntity.ok(thongBao);
     }
 
-    @GetMapping("/confirm-bill/{content}")
-    public ResponseEntity<Map<String,String>> getCancelBill(@PathVariable("content") String content,HttpSession session) {
+    @GetMapping("/confirm-bill/{content}/{reasonConfirm}")
+    public ResponseEntity<Map<String,String>> getCancelBill(@PathVariable("content") String content,@PathVariable("reasonConfirm") String reasonConfirm,HttpSession session) {
         Map<String,String> thongBao = new HashMap<>();
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        session.setAttribute("notePayment",reasonConfirm.equals("trong") ? "" : reasonConfirm);
         if(staffLogin == null) {
             thongBao.put("message","Nhân viên chưa đăng nhập!");
             thongBao.put("check","3");
@@ -952,6 +954,17 @@ public class BillRestController extends BaseBill {
             colorMess = "3";
             this.billService.save(bill);
 
+            String getAddRessDetail = bill.getAddRess();
+            String[] part = getAddRessDetail.split(",\\s*");
+            String fullName = part[0];
+            String numberPhone = part[1];
+            String email = part[2];
+            String province = part[3];
+            String district = part[4];
+            String ward = part[5];
+            String ht = "http://localhost:8080/onepoly/status-bill/"+bill.getId();
+            String title = "Đơn hàng đã bị hủy";
+            this.templateEmailConfigmBill(email,ht,bill.getCodeBill(),title);
             if (billSave.getVoucher() != null) {
                 this.getSubtractVoucher(billSave.getVoucher(),-1);
             }
@@ -1002,9 +1015,10 @@ public class BillRestController extends BaseBill {
                 String addRessDetail = String.join(", ", java.util.Arrays.copyOfRange(part, 6, part.length));
                 System.out.println("email de gui xac nhan " + email);
                 if(bill.getStatus() == 1) {
-                    String ht = ""+bill.getId();
+                    String ht = "http://localhost:8080/onepoly/status-bill/"+bill.getId();
                     System.out.println(ht);
-                    this.templateEmailConfigmBill(email,ht,bill.getCodeBill());
+                    String title = "Đơn hàng đã được xác nhận";
+                    this.templateEmailConfigmBill(email,ht,bill.getCodeBill(),title);
 //                    this.templateEmailConfigmBill(email,"http://localhost:8080/onepoly/status-bill/",bill.getCodeBill());
                 }
                 bill.setUpdateDate(new Date());
