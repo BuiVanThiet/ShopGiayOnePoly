@@ -20,7 +20,7 @@ import java.util.Map;
 public interface ChartRepository extends JpaRepository<Bill, Integer> {
     @Query("SELECT COALESCE(COUNT(b), 0) " +  // Thay đổi COUNT(b) thành COALESCE(COUNT(b), 0)
             "FROM Bill b " +
-            "WHERE b.status = 5 " +
+            "WHERE b.status IN (5, 8) " +
             "AND MONTH(b.updateDate) = MONTH(CURRENT_DATE) " +
             "AND YEAR(b.updateDate) = YEAR(CURRENT_DATE)")
     long monthlyBill();

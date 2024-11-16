@@ -26,6 +26,9 @@ public class StaffProfileController {
     StaffRepository staffRepository;
     @Autowired
     StaffService staffService;
+
+    String mess ="";
+    String check ="";
     @GetMapping("/staffProfile")
     public String formStaffProfile(Model model) {
         Staff staff = (Staff) model.getAttribute("staffInfo");
@@ -62,8 +65,11 @@ public class StaffProfileController {
                 model.addAttribute("birthDayMonth", "");
                 model.addAttribute("birthDayYear", "");
             }
-
+            model.addAttribute("check",check);
+            model.addAttribute("mess",mess);
             model.addAttribute("staffProfile", staffProfile);
+            mess ="";
+            check ="";
         } else {
             model.addAttribute("errorMessage", "Không tìm thấy thông tin tài khoản nhân viên.");
             return "login/login"; // Chuyển hướng về trang đăng nhập nếu chưa có thông tin
@@ -140,6 +146,8 @@ public class StaffProfileController {
 
             model.addAttribute("staffProfile", staffProfile);
             model.addAttribute("successMessage", "Cập nhật thông tin thành công.");
+            mess ="Cập nhật thông tin thành công";
+            check ="1";
         } else {
             model.addAttribute("errorMessage", "Không tìm thấy thông tin tài khoản nhân viên.");
         }
@@ -198,6 +206,8 @@ public class StaffProfileController {
         staffService.save(staff); // Lưu thông tin nhân viên sau khi cập nhật
 
         model.addAttribute("successMessage", "Đã cập nhật mật khẩu thành công.");
+        mess ="Cập nhật mật khẩu thành công";
+        check ="1";
         return "redirect:/profile/staffProfile"; // Chuyển hướng về trang hồ sơ sau khi cập nhật
     }
 
