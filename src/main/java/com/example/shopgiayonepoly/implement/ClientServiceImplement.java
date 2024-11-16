@@ -1,6 +1,7 @@
 package com.example.shopgiayonepoly.implement;
 
 import com.example.shopgiayonepoly.dto.response.client.*;
+import com.example.shopgiayonepoly.entites.Cart;
 import com.example.shopgiayonepoly.repositores.ClientRepository;
 import com.example.shopgiayonepoly.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +61,11 @@ public class ClientServiceImplement implements ClientService {
     @Override
     public VoucherClientResponse findVoucherApplyByID(Integer id) {
         return clientRepository.findVoucherApplyByID(id);
+    }
+
+    @Override
+    public List<Cart> findListCartByIdCustomer(Integer idCustomer) {
+        return clientRepository.findListCartByIdCustomer(idCustomer);
     }
 
 

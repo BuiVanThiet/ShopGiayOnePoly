@@ -27,32 +27,37 @@
                             </div>
                         </div>
                         <div class="cart-right" style="margin-left: 50px;">
-                            <input type="hidden" id="idProductDetailFromCart" th:value="${item.productDetail.id}">
+                            <input type="hidden" id="idProductDetailFromCart" th:value="${item.productDetailId}">
                             <div class="cart-item-info">
-                                <h3 th:text="${item.productDetail.product.nameProduct}"></h3>
+                                <h3 th:text="${item.productName}"></h3>
                                 <div class="cart-item-price">
-                            <span id="cart-spanPriceCartItem" th:text="${item.productDetail.price}"
+                            <span id="cart-spanPriceCartItem" th:text="${item.discountedPrice}"
                                   class="cart-price-item"></span>
                                 </div>
                                 <div class="cart-item-desc">
                                     <div class="cart-variant-option">
                                         <span class="cart-title">Màu sắc:</span>
-                                        <span class="cart-text" th:text="${item.productDetail.color.nameColor}"></span>
+                                        <span class="cart-text" th:text="${item.colorName}"></span>
                                     </div>
                                     <div class="cart-variant-option">
                                         <span class="cart-title">Kích thước:</span>
-                                        <span class="cart-text" th:text="${item.productDetail.size.nameSize}"></span>
+                                        <span class="cart-text" th:text="${item.sizeName}"></span>
                                     </div>
                                 </div>
                                 <div class="cart-button-group">
                                     <div class="cart-item-quan">
                                         <div class="cart-qty cart-quantity-parent cart-qty-click d-flex align-items-center btn-group">
-                                            <button type="button" class="cart-qtyminus cart-qty-btn btn btn-outline-secondary" onclick="updateQuantity(this, -1)">
+                                            <button type="button"
+                                                    class="cart-qtyminus cart-qty-btn btn btn-outline-secondary"
+                                                    onclick="updateQuantity(this, -1)">
                                                 &minus;
                                             </button>
-                                            <p id="quantityProductFormCart" name="quantity" class="cart-tc cart-line-item-qty cart-item-quantity text-center form-control m-0 bg-light"
+                                            <p id="quantityProductFormCart" name="quantity"
+                                               class="cart-tc cart-line-item-qty cart-item-quantity text-center form-control m-0 bg-light"
                                                style="width: 60px; border: none;" th:text="${item.quantity}"></p>
-                                            <button type="button" class="cart-qtyplus cart-qty-btn btn btn-outline-primary" onclick="updateQuantity(this, 1)">
+                                            <button type="button"
+                                                    class="cart-qtyplus cart-qty-btn btn btn-outline-primary"
+                                                    onclick="updateQuantity(this, 1)">
                                                 &plus;
                                             </button>
                                         </div>
@@ -91,11 +96,12 @@
                                      style="width: 60px; height: 50px; object-fit: cover; border-radius: 5px;">
                                 <div>
                                     <span class="voucher-id" th:text="${voucher.id}" style="display: none;"></span>
-                                    <span class="voucher-type" th:text="${voucher.discountType}"
+                                    <span id="voucher-type" class="voucher-type" th:text="${voucher.discountType}"
                                           style="display: none;"></span>
                                     <span class="voucher-name-voucher"
                                           th:text="${voucher.nameVoucher}">Voucher Name</span>
-                                    <span class="voucher-discount-voucher" th:text="${voucher.priceReduced}">Discount Value</span>
+                                    <span id="price-reduced-voucher" class="voucher-discount-voucher"
+                                          th:text="${voucher.priceReduced}">Discount Value</span>
                                     <span class="voucher-desc-voucher" th:text="${voucher.describe}">Description</span>
                                 </div>
                                 <input type="radio" class="cart-voucher-radio" name="radioVoucher">
@@ -115,7 +121,7 @@
             </div>
             <div class="voucher-summary-item mb-3">
                 <label>Giảm được: </label>
-                <span id="priceVoucherReduced" th:text="${priceReduced}">0 đ</span>
+                <span id="priceVoucherReduced" th:text="${priceReducedShow}">0 đ</span>
             </div>
             <div class="voucher-summary-item mb-3">
                 <label>Giá cuối cùng: </label>

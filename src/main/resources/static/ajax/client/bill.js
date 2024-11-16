@@ -5,28 +5,20 @@ function payBill() {
     const totalAmountBillText = $('#spanTotalPriceCartItem').text().trim(); // Lấy giá trị từ thẻ spanTotalPriceBill
     const noteBill = $('#noteBill').val();
 
-    const shippingPrice = parseFloat(shippingPriceText.replace(/[^0-9.-]+/g, ''));
-    const priceVoucher = parseFloat(voucherPriceText.replace(/[^0-9.-]+/g, ''));
-    const totalAmountBill = parseFloat(totalAmountBillText.replace(/[^0-9.-]+/g, '')); // Chuyển đổi thành số
+    let shippingPrice = parseFloat(shippingPriceText.replace(/[^0-9.-]+/g, ''));
+    let priceVoucher = parseFloat(voucherPriceText.replace(/[^0-9.-]+/g, ''));
+    let totalAmountBill = parseFloat(totalAmountBillText.replace(/[^0-9.-]+/g, '')); // Chuyển đổi thành số
+
+    // Kiểm tra và thiết lập giá trị mặc định là 0 nếu không hợp lệ
+    shippingPrice = isNaN(shippingPrice) ? 0 : shippingPrice;
+    priceVoucher = isNaN(priceVoucher) ? 0 : priceVoucher;
+    totalAmountBill = isNaN(totalAmountBill) ? 0 : totalAmountBill;
 
     // In ra console để kiểm tra giá trị
     console.log("Địa chỉ giao hàng: " + addressShip);
     console.log("Giá vận chuyển: " + shippingPrice);
     console.log("Giá giảm: " + priceVoucher);
     console.log("Tổng số tiền hóa đơn: " + totalAmountBill);
-
-    if (isNaN(shippingPrice)) {
-        alert("Giá vận chuyển không hợp lệ.");
-        return;
-    }
-    if (isNaN(priceVoucher)) {
-        alert("Giá giảm không hợp lệ.");
-        return;
-    }
-    if (isNaN(totalAmountBill)) {
-        alert("Tổng số tiền hóa đơn không hợp lệ.");
-        return;
-    }
 
     $.ajax({
         url: '/onepoly/payment',
@@ -40,7 +32,7 @@ function payBill() {
             noteBill: noteBill
         }),
         success: function (response) {
-            window.location.href = '/client/bill_customer';
+            window.location.href = '/onepoly/order-success';
         },
         error: function (error) {
             alert("Thanh toán thất bại. Vui lòng thử lại.");

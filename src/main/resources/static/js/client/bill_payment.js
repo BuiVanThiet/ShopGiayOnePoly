@@ -252,4 +252,16 @@ document.addEventListener("DOMContentLoaded", function () {
         calculateTotalPrice();
     });
     fetchProvinces();
+
+
+});
+document.addEventListener("DOMContentLoaded", function() {
+    const spanPriceVoucher = document.getElementById("spanPriceVoucher");
+    const voucherPriceText = spanPriceVoucher.textContent.trim();
+    const priceVoucher = parseFloat(voucherPriceText.replace(/[^0-9.-]+/g, ''));
+
+    // Nếu giá trị không hợp lệ, đặt giá trị mặc định là 0
+    if (isNaN(priceVoucher)) {
+        spanPriceVoucher.textContent = "0đ";
+    }
 });
