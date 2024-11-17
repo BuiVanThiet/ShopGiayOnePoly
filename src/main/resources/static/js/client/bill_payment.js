@@ -150,7 +150,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function getAvailableServices(toDistrictId, toWardCode) {
         if (!toDistrictId || !toWardCode) {
             console.error('Thiếu thông tin cần thiết để lấy dịch vụ');
-            document.getElementById("spanShippingFee").textContent = "Không thể lấy dịch vụ vận chuyển";
+            document.getElementById("spanShippingFee").textContent = "-";
             return;
         }
 
@@ -255,13 +255,34 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 });
-document.addEventListener("DOMContentLoaded", function() {
+window.addEventListener('load', function (){
+// Lấy giá trị từ spanPriceVoucher (nếu cần)
     const spanPriceVoucher = document.getElementById("spanPriceVoucher");
-    const voucherPriceText = spanPriceVoucher.textContent.trim();
-    const priceVoucher = parseFloat(voucherPriceText.replace(/[^0-9.-]+/g, ''));
+    if (spanPriceVoucher) {
+        const voucherPriceText = spanPriceVoucher.textContent.trim();
+        const priceVoucher = parseFloat(voucherPriceText.replace(/[^0-9.-]+/g, ''));
 
-    // Nếu giá trị không hợp lệ, đặt giá trị mặc định là 0
-    if (isNaN(priceVoucher)) {
-        spanPriceVoucher.textContent = "0đ";
+        if (isNaN(priceVoucher)) {
+            spanPriceVoucher.textContent = "-";
+        }
+    }
+
+    // Render địa chỉ
+    const originalAddressInput = document.getElementById("original-address");
+
+    if (originalAddressInput) {
+        // Lấy giá trị từ thuộc tính value của input
+        const originalAddress = originalAddressInput.value;
+
+        // Tạo chuỗi địa chỉ đầy đủ
+        const fullAddress = originalAddress.trim();
+
+        // Render địa chỉ vào phần tử HTML
+        const renderAddressDiv = document.getElementById("renderAddress");
+        if (renderAddressDiv) {
+            renderAddressDiv.innerHTML = `<p>${fullAddress}</p>`;
+        }
     }
 });
+
+

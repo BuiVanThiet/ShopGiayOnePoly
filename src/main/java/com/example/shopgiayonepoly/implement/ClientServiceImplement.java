@@ -68,5 +68,10 @@ public class ClientServiceImplement implements ClientService {
         return clientRepository.findListCartByIdCustomer(idCustomer);
     }
 
+    @Override
+    public void deleteCartByCustomerIdAndProductDetailId(Integer customerId, Integer productDetailId) {
+        clientRepository.deleteCartByCustomerIdAndProductDetailId(customerId, productDetailId);
+    }
+
 
 }

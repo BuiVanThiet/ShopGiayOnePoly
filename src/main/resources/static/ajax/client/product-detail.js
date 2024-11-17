@@ -196,7 +196,6 @@ function addToCart() {
             productDetailId: productDetailId, quantity: quantityBuy
         }), success: function (data) {
             if (data && data.success) {
-                alert("Sản phẩm đã được thêm vào giỏ hàng!");
                 window.location.href = '/onepoly/cart';
             } else {
                 $('#container-message .message-error').text(data.message || 'Có lỗi xảy ra khi thêm vào giỏ hàng.');

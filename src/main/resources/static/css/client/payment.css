@@ -1,0 +1,278 @@
+.section-header {
+    border-bottom: 2px solid #ddd; /* Border dưới tiêu đề */
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.radio-wrapper.content-box-row {
+    border: 1px solid #ccc; /* Border xung quanh mỗi lựa chọn */
+    margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 5px; /* Thêm bo góc cho border */
+}
+
+.radio-content-input {
+    border-left: 2px solid #ddd; /* Border giữa hình ảnh và văn bản */
+    padding-left: 10px;
+}
+
+/* Định dạng chung cho toàn bộ thông tin */
+.info-transport {
+    background-color: #ffffff; /* Nền màu sáng */
+    padding: 20px;
+}
+
+/* Định dạng cho các trường nhập liệu */
+.infor-enter-customer {
+    border: 1px solid #ccc; /* Đường viền cho phần thông tin người dùng */
+    padding: 20px;
+    border-radius: 8px; /* Bo góc cho phần này */
+    background-color: #ffffff; /* Màu nền trắng */
+    margin-bottom: 20px; /* Khoảng cách dưới mỗi phần */
+}
+
+/* Định dạng cho các cột trong phần nhập liệu */
+.col-md-12, .col-md-8, .col-md-4, .col-4 {
+    margin-bottom: 15px; /* Khoảng cách giữa các trường nhập liệu */
+}
+
+/* Định dạng cho các trường nhập liệu */
+.form-control, .form-select, textarea {
+    background-color: #ffffff; /* Màu nền trắng */
+    border: 1px solid #ccc; /* Đường viền nhẹ cho các trường nhập liệu */
+    border-radius: 4px; /* Bo góc cho các trường nhập liệu */
+    padding: 10px; /* Khoảng cách giữa nội dung và viền */
+    font-size: 16px;
+    width: 100%;
+    transition: border-color 0.3s ease; /* Hiệu ứng khi focus vào trường nhập liệu */
+}
+
+/* Hiệu ứng khi focus vào các trường nhập liệu */
+.form-control:focus, .form-select:focus, textarea:focus {
+    border-color: #007bff; /* Màu đường viền khi focus */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Ánh sáng khi focus */
+}
+
+/* Định dạng cho các nhãn */
+label {
+    color: #333;
+    display: block; /* Đảm bảo nhãn luôn đứng trên các trường nhập liệu */
+}
+
+/* Định dạng cho các textarea */
+textarea {
+    height: 100px;
+    resize: vertical; /* Cho phép người dùng kéo dài chiều cao của textarea */
+}
+
+/* Định dạng cho các cột chọn tỉnh, huyện, xã */
+.select-wrapper {
+    position: relative;
+    margin-bottom: 15px;
+}
+
+/*Shpping*/
+.info-shipping {
+    display: flex;
+    flex-wrap: wrap;  /* Đảm bảo các phần tử sẽ chuyển sang hàng mới nếu không đủ chỗ */
+    gap: 20px;        /* Khoảng cách giữa các phần tử */
+    border: 1px solid #ccc; /* Border xung quanh mỗi lựa chọn */
+    padding: 10px;
+    border-radius: 5px; /* Thêm bo góc cho border */
+}
+
+.info-shipping .col-md-12,
+.info-shipping .col-4 {
+    flex: 1 1 100%;  /* Đảm bảo các phần tử chiếm toàn bộ chiều rộng */
+}
+
+@media (min-width: 768px) {
+    .info-shipping .col-md-12 {
+        flex: 1 1 100%;  /* Các phần tử chiếm toàn bộ chiều rộng trên màn hình nhỏ */
+    }
+    .info-shipping .col-4 {
+        flex: 1 1 32%;   /* Các phần tử sẽ chia đều 1/3 trên màn hình rộng */
+    }
+}
+
+
+
+
+/*CSS phần payment cart*/
+/* Cấu trúc chung của danh sách giỏ hàng */
+/* Tạo kiểu cho container giỏ hàng */
+.cart-list {
+    flex: 0 0 50%;
+    border-radius: 10px;
+    padding: 15px;
+    margin-left: 30px;
+    border: 1px solid #bebdbd; /* Đường viền bên trái */
+}
+
+/* Tạo kiểu cho mỗi sản phẩm trong giỏ hàng */
+.cart-list .item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ddd; /* Đường viền giữa các sản phẩm */
+    padding: 10px 0;
+}
+
+.cart-list .item:last-child {
+    border-bottom: none; /* Không viền dưới cho sản phẩm cuối cùng */
+}
+
+/* Cải tiến giao diện hình ảnh sản phẩm */
+.cart-list .item .left .item-img img {
+    width: 120px; /* Kích thước hình ảnh sản phẩm */
+    height: auto;
+    object-fit: cover; /* Giữ tỉ lệ hình ảnh */
+    border-radius: 5px;
+}
+
+/* Kiểu cho thông tin sản phẩm */
+.cart-list .item .right {
+    flex: 1;
+    margin-left: 20px;
+}
+
+.cart-list .item .right .item-info h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333; /* Màu chữ tên sản phẩm */
+    margin-bottom: 8px;
+}
+
+.cart-list .item .right .item-price .price-item {
+    font-size: 18px;
+    font-weight: 600;
+    color: #ee4d2d; /* Màu giá tiền nổi bật */
+}
+
+.cart-list .item .right .item-desc .variant-option {
+    font-size: 14px;
+    color: #777;
+    margin: 4px 0;
+}
+
+/* Nút điều chỉnh số lượng sản phẩm */
+.cart-list .item .right .button-group .item-quan {
+    display: flex;
+    align-items: center;
+}
+
+.cart-list .item .right .button-group .qty {
+    display: flex;
+    align-items: center;
+}
+
+.cart-list .item .right .button-group .qtyminus,
+.cart-list .item .right .button-group .qtyplus {
+    background-color: #f1f1f1;
+    border: 1px solid #ddd;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.cart-list .item .right .button-group .qtyminus:hover,
+.cart-list .item .right .button-group .qtyplus:hover {
+    background-color: #ee4d2d;
+    color: white;
+}
+
+.cart-list .item .right .button-group .item-quantity {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 10px;
+    text-align: center;
+}
+
+/* Nút xóa sản phẩm khỏi giỏ hàng */
+.cart-list .item .btn-close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: transparent;
+    border: none;
+    font-size: 20px;
+    color: #aaa;
+    cursor: pointer;
+}
+
+.cart-list .item .btn-close:hover {
+    color: #ee4d2d;
+}
+/*Thông tin địa chỉ*/
+.info-address{
+    margin-top: 30px;
+    border: 1px solid #ccc; /* Border xung quanh mỗi lựa chọn */
+    padding: 10px;
+    border-radius: 5px; /* Thêm bo góc cho border */
+}
+.btn-change-address {
+    background-color: transparent; /* Nền trong suốt */
+    color: #065ebb; /* Màu chữ xanh giống màu viền */
+    border: 2px solid #065ebb; /* Viền xanh */
+    border-radius: 5px; /* Bo góc nút */
+    width: 120px; /* Chiều rộng cố định */
+    height: 40px; /* Chiều cao cố định */
+    padding: 0; /* Loại bỏ padding */
+    font-size: 16px; /* Kích thước chữ */
+    cursor: pointer; /* Con trỏ chỉ tay khi hover */
+    display: inline-flex; /* Sử dụng flex cho biểu tượng và text */
+    justify-content: center; /* Căn giữa theo chiều ngang */
+    align-items: center; /* Căn giữa theo chiều dọc */
+    position: relative; /* Đặt vị trí tương đối */
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; /* Hiệu ứng hover */
+}
+
+/* Hover effect */
+.btn-change-address:hover {
+    background-color: #065ebb; /* Nền xanh khi hover */
+    color: white; /* Chữ trắng khi hover */
+    border-color: #065ebb; /* Giữ màu viền xanh khi hover */
+}
+
+/* Đặt text mặc định */
+.btn-change-address .text {
+    transition: opacity 0.2s ease; /* Hiệu ứng mượt khi ẩn text */
+    font-weight: inherit;
+}
+
+/* Ẩn biểu tượng mặc định */
+.btn-change-address .icon {
+    display: none; /* Ẩn biểu tượng */
+    position: absolute; /* Vị trí chồng lên text */
+    font-size: 20px; /* Kích thước icon */
+    transition: opacity 0.2s ease, transform 0.2s ease; /* Hiệu ứng mượt */
+}
+
+/* Hiệu ứng khi hover: Ẩn text và hiển thị icon */
+.btn-change-address:hover .text {
+    opacity: 0; /* Ẩn text */
+}
+
+.btn-change-address:hover .icon {
+    display: inline-block; /* Hiển thị biểu tượng */
+    opacity: 1; /* Đảm bảo biểu tượng hiện đầy đủ */
+    transform: rotate(20deg); /* Xoay biểu tượng nhẹ */
+}
+
+/* Thay đổi màu nền khi hover */
+.btn-change-address:hover {
+    background-color: #1f18ea; /* Màu xanh đậm hơn */
+    color: #fff; /* Giữ chữ trắng */
+}
+/* Container căn chỉnh nút ở cuối */
+.button-container {
+    display: flex;
+    justify-content: flex-end; /* Đẩy nút sang cuối dòng */
+    align-items: center; /* Căn giữa theo chiều dọc nếu cần */
+    padding: 10px; /* Khoảng cách bên trong container */
+}
+/* Nếu muốn căn giữa thủ công */
+.modal-address {
+    max-width: 700px;
+    max-height: 900px;
+    margin: auto;
+}

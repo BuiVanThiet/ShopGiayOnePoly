@@ -111,8 +111,9 @@ public class ClientController extends BaseBill {
     public String getFromCart(HttpSession session, Model model) {
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
         List<CartResponse> cartResponses = new ArrayList<>();
+        List<Cart> cartItems = new ArrayList<>();
 
-        List<Cart> cartItems;
+        // Kiểm tra nếu người dùng đã đăng nhập
         if (clientLoginResponse != null) {
             Integer customerId = clientLoginResponse.getId();
             cartItems = cartService.getCartItemsForCustomer(customerId);
@@ -132,13 +133,14 @@ public class ClientController extends BaseBill {
                         productDetail.getProduct().getNameProduct(),
                         productDetail.getColor().getNameColor(),
                         productDetail.getSize().getNameSize(),
-                        cartItem.getQuantity(),
+                        cartItem.getQuantity(), // Số lượng sẽ được lấy từ CartItem
                         productDetail.getPrice(),
                         discountedPrice
                 );
                 cartResponses.add(cartResponse);
             }
         } else {
+            // Nếu người dùng chưa đăng nhập, lấy cartItems từ session
             Map<Integer, Integer> sessionCart = (Map<Integer, Integer>) session.getAttribute("sessionCart");
             if (sessionCart != null) {
                 for (Map.Entry<Integer, Integer> entry : sessionCart.entrySet()) {
@@ -160,7 +162,7 @@ public class ClientController extends BaseBill {
                                 productDetail.getProduct().getNameProduct(),
                                 productDetail.getColor().getNameColor(),
                                 productDetail.getSize().getNameSize(),
-                                quantity,
+                                quantity, // Số lượng lấy từ sessionCart
                                 productDetail.getPrice(),
                                 discountedPrice
                         );
@@ -216,107 +218,9 @@ public class ClientController extends BaseBill {
         } else {
             System.out.println("Không có voucher selected.");
         }
+
         return "client/cart";
     }
-
-
-//    public List<CartResponse> getCartResponsesForCustomer(Integer customerId) {
-//        List<Cart> cartItems = clientService.findListCartByIdCustomer(customerId);
-//
-//        return cartItems.stream().map(cartItem -> {
-//            ProductDetail productDetail = cartItem.getProductDetail();
-//            BigDecimal discountedPrice = clientService.findDiscountedPriceByProductDetailId(productDetail.getId());
-//            return new CartResponse(
-//                    cartItem.getId(), // ID của mục giỏ hàng
-//                    cartItem.getCustomer().getId(), // ID khách hàng
-//                    productDetail.getId(), // ID sản phẩm chi tiết
-//                    productDetail.getProduct().getNameProduct(), // Tên sản phẩm
-//                    cartItem.getQuantity(), // Số lượng
-//                    productDetail.getPrice(), // Giá gốc
-//                    discountedPrice // Giá sau giảm
-//            );
-//        }).collect(Collectors.toList());
-//    }
-
-
-    @PostMapping("/remove-from-cart/{idProductDetailFromCart}")
-    @ResponseBody
-    public Map<String, Object> deleteProductDetailFromCart(HttpSession session,
-                                                           @PathVariable("idProductDetailFromCart") Integer idProductDetailFromCart) {
-        // Lấy danh sách sản phẩm trong giỏ hàng từ session
-        List<CartResponse> cartItems = (List<CartResponse>) session.getAttribute("cartItems");
-        Map<String, Object> response = new HashMap<>();
-
-        if (cartItems != null) {
-            // Xóa sản phẩm khỏi giỏ hàng
-            cartItems.removeIf(item -> item.getProductDetailId() == (idProductDetailFromCart));
-
-            session.setAttribute("cartItems", cartItems);
-
-            // Tính toán tổng giá trị giỏ hàng
-            BigDecimal totalPriceCartItem = calculateTotalPrice(cartItems);
-            VoucherClientResponse selectedVoucher = (VoucherClientResponse) session.getAttribute("selectedVoucher");
-            BigDecimal priceReduced = BigDecimal.ZERO;
-
-            if (selectedVoucher != null) {
-                Integer voucherType = selectedVoucher.getVoucherType();
-                BigDecimal discountValue = selectedVoucher.getPriceReduced();
-
-                if (voucherType == 1) {  // Giảm theo %
-                    priceReduced = totalPriceCartItem.multiply(discountValue.divide(BigDecimal.valueOf(100)));
-                } else if (voucherType == 2) {  // Giảm theo số tiền cố định
-                    priceReduced = discountValue;
-                }
-
-                totalPriceCartItem = totalPriceCartItem.subtract(priceReduced).max(BigDecimal.ZERO);
-                session.setAttribute("priceReduced", priceReduced);
-            } else {
-                session.removeAttribute("priceReduced");
-            }
-
-            // Cập nhật tổng giá trị giỏ hàng mới vào session
-            session.setAttribute("totalPrice", totalPriceCartItem);
-
-            // Trả về thông tin giỏ hàng mới (có thể là tổng giá và các sản phẩm trong giỏ)
-            response.put("totalPrice", totalPriceCartItem.toString());
-            response.put("cartItems", cartItems);
-            response.put("priceReduced", priceReduced.toString());
-        } else {
-            // Nếu giỏ hàng trống, xóa tất cả các thuộc tính liên quan khỏi session
-            session.removeAttribute("cartItems");
-            session.removeAttribute("totalPrice");
-            session.removeAttribute("priceReduced");
-            session.removeAttribute("selectedVoucher");
-
-            response.put("totalPrice", "0");
-            response.put("cartItems", new ArrayList<>());
-            response.put("priceReduced", "0");
-        }
-
-        return response;
-    }
-
-
-    // Phương thức tính tổng giá trị giỏ hàng
-    private BigDecimal calculateTotalPrice(List<CartResponse> cartItems) {
-        BigDecimal totalPrice = BigDecimal.ZERO;
-
-        for (CartResponse item : cartItems) {
-            BigDecimal discountedPrice = clientService.findDiscountedPriceByProductDetailId(item.getProductDetailId());
-
-            if (discountedPrice == null) {
-                discountedPrice = item.getOriginalPrice();
-            }
-
-            // Tính toán giá cuối cùng cho sản phẩm dựa trên giá giảm (nếu có)
-            BigDecimal itemTotalPrice = discountedPrice.multiply(BigDecimal.valueOf(item.getQuantity()));
-
-            totalPrice = totalPrice.add(itemTotalPrice);
-        }
-
-        return totalPrice;
-    }
-
 
     @GetMapping("/payment")
     public String getFormPayment(HttpSession session, Model model) {
@@ -333,7 +237,6 @@ public class ClientController extends BaseBill {
             totalPrice = BigDecimal.ZERO;
         }
 
-        // Kiểm tra giá của từng sản phẩm trong giỏ hàng
         BigDecimal calculatedTotalPrice = BigDecimal.ZERO;
         for (CartResponse c : cartItems) {
             // Lấy giá sản phẩm và số lượng từ CartResponse
@@ -359,28 +262,43 @@ public class ClientController extends BaseBill {
 
         // Thêm thông tin đăng nhập của khách hàng vào model nếu có
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
+
         if (clientLoginResponse != null) {
             model.addAttribute("clientLogin", clientLoginResponse);
+
             String addressCustomerLogin = clientLoginResponse.getAddRess();
+
+            // Tách địa chỉ thành các phần
             String[] addressParts = addressCustomerLogin.split(",", 4);
 
+            // Lấy từng phần địa chỉ theo yêu cầu
             if (addressParts.length > 0) {
-                model.addAttribute("IdWard", addressParts[0].trim());
-                System.out.println("ID Ward: " + addressParts[0].trim());
+                String idWard = addressParts[0].trim();
+                model.addAttribute("IdWard", idWard);
+                System.out.println("ID Ward: " + idWard);
             }
+
             if (addressParts.length > 1) {
-                model.addAttribute("IdDistrict", addressParts[1].trim());
-                System.out.println("ID District: " + addressParts[1].trim());
+                String idDistrict = addressParts[1].trim();
+                model.addAttribute("IdDistrict", idDistrict);
+                System.out.println("ID District: " + idDistrict);
             }
+
             if (addressParts.length > 2) {
-                String[] provinceParts = addressParts[2].split(",");
-                if (provinceParts.length > 0) {
-                    String idProvince = provinceParts[0].trim();
-                    model.addAttribute("IdProvince", idProvince);
-                    System.out.println("ID Province: " + idProvince);
-                }
+                String idProvince = addressParts[2].trim();
+                model.addAttribute("IdProvince", idProvince);
+                System.out.println("ID Province: " + idProvince);
             }
+
+            // Phần địa chỉ còn lại (nếu có)
+            String originalAddress = "";
+            if (addressParts.length > 3) {
+                originalAddress = addressParts[3].trim();
+            }
+            model.addAttribute("OriginalAddress", originalAddress);
+            System.out.println("Original Address: " + originalAddress);
         }
+
 
         System.out.println("Session priceReduced llllllllllll :" + priceReduced);
         System.out.println("Session idVoucherApply llllllllllllll :" + idVoucherApply);
@@ -408,21 +326,24 @@ public class ClientController extends BaseBill {
         // Lấy thông tin từ yêu cầu
         String address = paymentRequest.getAddressShip();
         BigDecimal shippingPrice = paymentRequest.getShippingPrice();
+        BigDecimal totalAmountBill = paymentRequest.getTotalAmountBill();
         BigDecimal priceVoucher = paymentRequest.getPriceVoucher();
         String noteBill = paymentRequest.getNoteBill();
         Integer idVoucherApply = (Integer) session.getAttribute("idVoucherApply");
         BigDecimal priceReduced = (BigDecimal) session.getAttribute("priceReduced");
         VoucherClientResponse voucherApply = (VoucherClientResponse) session.getAttribute("selectedVoucher");
-        Voucher voucher = voucherRepository.findById(idVoucherApply).orElse(new Voucher());
-        if (voucherApply != null && idVoucherApply != null && priceReduced != null) {
-            voucher.setId(voucherApply.getId());
-            voucher.setNameVoucher(voucherApply.getNameVoucher());
-            voucher.setCodeVoucher(voucherApply.getCodeVoucher());
-            voucher.setDiscountType(voucherApply.getVoucherType());
-            voucher.setPriceReduced(voucherApply.getPriceReduced());
+        Voucher voucher = null;
+        if(idVoucherApply != null) {
+            voucher = voucherRepository.findById(idVoucherApply).orElse(null);
+//            if (voucherApply != null && idVoucherApply != null && priceReduced != null) {
+//                voucher.setId(voucherApply.getId());
+//                voucher.setNameVoucher(voucherApply.getNameVoucher());
+//                voucher.setCodeVoucher(voucherApply.getCodeVoucher());
+//                voucher.setDiscountType(voucherApply.getVoucherType());
+//                voucher.setPriceReduced(voucherApply.getPriceReduced());
+//            }
         }
-        // Lấy totalAmountBill từ yêu cầu
-        BigDecimal totalAmountBill = paymentRequest.getTotalAmountBill() != null ? paymentRequest.getTotalAmountBill() : BigDecimal.ZERO;
+
 
         List<CartResponse> cartItems = (List<CartResponse>) session.getAttribute("cartItems");
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
@@ -431,18 +352,17 @@ public class ClientController extends BaseBill {
 
         if (clientLoginResponse != null) {
             // Thiết lập thông tin khách hàng
-            Customer customer = new Customer();
-            customer.setId(clientLoginResponse.getId());
-            customer.setFullName(clientLoginResponse.getFullName());
-            customer.setNumberPhone(clientLoginResponse.getNumberPhone());
-            customer.setBirthDay(clientLoginResponse.getBirthDay());
-            customer.setImage(clientLoginResponse.getImage());
-            customer.setEmail(clientLoginResponse.getEmail());
-            customer.setAcount(clientLoginResponse.getAcount());
-            customer.setPassword(clientLoginResponse.getPassword());
-            customer.setGender(clientLoginResponse.getGender());
-            customer.setAddRess(clientLoginResponse.getAddRess());
-
+            Customer customer = this.customerService.getCustomerByID(clientLoginResponse.getId());
+//            customer.setId(clientLoginResponse.getId());
+//            customer.setFullName(clientLoginResponse.getFullName());
+//            customer.setNumberPhone(clientLoginResponse.getNumberPhone());
+//            customer.setBirthDay(clientLoginResponse.getBirthDay());
+//            customer.setImage(clientLoginResponse.getImage());
+//            customer.setEmail(clientLoginResponse.getEmail());
+//            customer.setAcount(clientLoginResponse.getAcount());
+//            customer.setPassword(clientLoginResponse.getPassword());
+//            customer.setGender(clientLoginResponse.getGender());
+//            customer.setAddRess(clientLoginResponse.getAddRess());
             // Tính toán tổng số tiền từ giỏ hàng
             for (CartResponse cart : cartItems) {
                 BillDetail billDetail = new BillDetail();
@@ -450,7 +370,6 @@ public class ClientController extends BaseBill {
                 billDetail.setBill(bill);
                 billDetail.setProductDetail(productDetail);
                 billDetail.setQuantity(cart.getQuantity());
-                // Cập nhật giá gốc và giá đã áp dụng giảm giá
                 BigDecimal price = cart.getDiscountedPrice();
                 billDetail.setPriceRoot(cart.getOriginalPrice());
                 billDetail.setPrice(cart.getDiscountedPrice());
@@ -460,21 +379,10 @@ public class ClientController extends BaseBill {
                 billDetail.setCreateDate(new Date());
                 billDetail.setUpdateDate(new Date());
                 billDetails.add(billDetail);
+
             }
-
-            // Áp dụng mã giảm giá
-            if (priceVoucher != null && priceVoucher.compareTo(BigDecimal.ZERO) > 0) {
-                totalAmountBill = totalAmountBill.subtract(priceVoucher);
-                if (totalAmountBill.compareTo(BigDecimal.ZERO) < 0) {
-                    totalAmountBill = BigDecimal.ZERO;
-                }
-            }
-
-            // Thêm phí vận chuyển vào tổng tiền
-            totalAmountBill = totalAmountBill.add(shippingPrice);
-
             // Cập nhật thông tin hóa đơn
-            bill.setAddRess(customer.getAddRess());
+            bill.setAddRess(customer.getFullName()+","+customer.getNumberPhone()+","+customer.getEmail()+","+customer.getAddRess());
             bill.setCustomer(customer);
             bill.setShippingPrice(shippingPrice);
             bill.setTotalAmount(totalAmountBill);
