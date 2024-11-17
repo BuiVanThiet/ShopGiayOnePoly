@@ -153,9 +153,7 @@ public class ReturnExchangeBillRestController extends BaseBill {
                 ReturnBillDetailResponse newReturnBillDetailResponse = new ReturnBillDetailResponse();
                 newReturnBillDetailResponse.setProductDetail(productDetail);
                 newReturnBillDetailResponse.setQuantityReturn(request.getQuantityReturn());
-//                BigDecimal discountRatio = (BigDecimal) session.getAttribute("discountRatioPercentage");
-//                BigDecimal priReturn = (BigDecimal)  request.getPriceBuy().multiply((BigDecimal.valueOf(1).subtract(discountRatio)));
-//                newReturnBillDetailResponse.setPriceBuy(priReturn.setScale(2, RoundingMode.CEILING));
+
                 BigDecimal discountRatio = (BigDecimal) session.getAttribute("discountRatioPercentage");
                 System.out.println("gia truoc khi giam " + request.getPriceBuy());
                 // Tính giá sau khi giảm giá
@@ -168,8 +166,6 @@ public class ReturnExchangeBillRestController extends BaseBill {
                 newReturnBillDetailResponse.setPriceBuy(roundedPrice);
                 System.out.println("gia giam cho moi san pham la " + request.getPriceBuy() + "-" + roundedPrice + "=" + request.getPriceBuy().subtract(roundedPrice));
                 newReturnBillDetailResponse.setPriceDiscount(request.getPriceBuy().subtract(roundedPrice));
-//                newReturnBillDetailResponse.setPriceBuy(request.getPriceBuy());
-//                newReturnBillDetailResponse.setTotalReturn(request.getPriceBuy().multiply(BigDecimal.valueOf(request.getQuantityReturn())));
                 newReturnBillDetailResponse.setTotalReturn(roundedPrice.multiply(BigDecimal.valueOf(request.getQuantityReturn())));
                 newReturnBillDetailResponse.setCreateDate(LocalDateTime.now());
                 System.out.println(newReturnBillDetailResponse.toString());
@@ -312,7 +308,6 @@ public class ReturnExchangeBillRestController extends BaseBill {
         }
         response.setTotalReturn(totalReturn);
         response.setTotalExchange(totalExchange);
-//        session.setAttribute("discountRatioPercentage", response.getDiscountRatioPercentage().divide(BigDecimal.valueOf(100))); // Reset lại dữ liệu trong session mỗi lần tải trang
         System.out.println(response.toString());
         return response;
     }
@@ -734,7 +729,6 @@ public class ReturnExchangeBillRestController extends BaseBill {
         }
 
         this.productDetailCheckMark2Request = productDetailCheckRequest2;
-//        System.out.println("Thong tin loc " + productDetailCheckRequest2.toString());
         return ResponseEntity.ok("Done");
     }
     @PostMapping("/exchange")

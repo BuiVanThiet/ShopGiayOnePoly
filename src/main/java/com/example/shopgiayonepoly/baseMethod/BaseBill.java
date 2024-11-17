@@ -351,9 +351,14 @@ public abstract class BaseBill extends BaseEmail {
                                     ", Price(trong san pham): " + currentPrice +
                                     ", ko ỔN");
                             BillDetail billDetailSave = billDetail;
+                            billDetailSave.setPriceRoot(productDetail.getPrice());
                             billDetailSave.setUpdateDate(new Date());
                             billDetailSave.setPrice(currentPrice);
                             billDetailSave.setTotalAmount(billDetailSave.getPrice().multiply(BigDecimal.valueOf(billDetailSave.getQuantity())));
+                            if(billDetailSave.getPrice().compareTo(new BigDecimal(0)) < 0) {
+                                billDetailSave.setPrice(new BigDecimal(0));
+                                billDetailSave.setTotalAmount(billDetailSave.getPrice().multiply(BigDecimal.valueOf(billDetailSave.getQuantity())));
+                            }
                             this.billDetailService.save(billDetailSave);
                             setTotalAmount(billDetail.getBill());
                         }

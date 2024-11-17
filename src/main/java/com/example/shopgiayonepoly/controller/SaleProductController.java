@@ -280,4 +280,13 @@ public class SaleProductController {
         Staff staff = (Staff) session.getAttribute("staffLogin");
         return staff;
     }
+
+    @GetMapping("/extend/{id}")
+    public String extendSaleproductExpired(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
+        saleProductService.updateSaleProductExpired(id);
+        redirectAttributes.addFlashAttribute("mes", "Gia hạn phiếu giảm giá thành công");
+        mess = "Gia hạn đợt giảm giá có id: "+id+" thành công!";
+        check = "1";
+        return "redirect:/sale-product/list";
+    }
 }

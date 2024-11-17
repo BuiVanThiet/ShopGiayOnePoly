@@ -4,7 +4,10 @@ var btnCreateBill = document.getElementById('createBill');
 var erorrCash = document.getElementById('erorrCash');
 var formErorrCash = document.getElementById('formErorrCash');
 var payMethod = document.getElementById('payMethod');
-var payMethodChecked = parseInt(payMethod.value);
+var payMethodChecked ;
+if(payMethod) {
+    payMethodChecked = parseInt(payMethod.value);
+}
 var formPayMethod = document.getElementById('formPay');
 
 var surplusMoney = document.getElementById('surplusMoney');

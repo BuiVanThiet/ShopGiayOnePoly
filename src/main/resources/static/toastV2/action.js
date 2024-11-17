@@ -1,5 +1,6 @@
-const notifications = document.querySelector(".notifications-toast-custom"),
-    buttons = document.querySelectorAll(".buttons-toast-custom .btn");
+const notifications = document.querySelector(".notifications-toast-custom");
+const buttons = document.querySelectorAll(".buttons-toast-custom .btn");
+
 
 const toastDetails = {
     timer: 5000,
@@ -63,8 +64,11 @@ buttons.forEach(btn => {
 
 document.addEventListener('DOMContentLoaded', function () {
     // Lấy giá trị message và check
-    var message = document.getElementById('toastMessage').value;
-    var checkBG = document.getElementById('toastCheck').value;
+    var messageElement = document.getElementById('toastMessage');
+    var checkBGElement = document.getElementById('toastCheck');
+
+    var message = messageElement ? messageElement.value : '';
+    var checkBG = checkBGElement ? checkBGElement.value : '';
     console.log('du lieu cua mess: '+message + checkBG);
 
     // Hiển thị toast nếu có message

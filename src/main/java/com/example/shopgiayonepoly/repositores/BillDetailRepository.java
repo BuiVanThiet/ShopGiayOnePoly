@@ -136,14 +136,22 @@ public interface BillDetailRepository extends JpaRepository<BillDetail,Integer> 
         pd.quantity, --10
         pd.quantity AS updated_quantity,  -- 11 Trừ số lượng ảo
         CASE
-            WHEN sp.start_date <= CAST(GETDATE() AS DATE) AND sp.end_date >= CAST(GETDATE() AS DATE) THEN
-                CASE
-                    WHEN sp.discount_type = 1 THEN pd.price * (1 - sp.discount_value / 100)
-                    WHEN sp.discount_type = 2 THEN pd.price - sp.discount_value
-                    ELSE pd.price
-                END
-            ELSE pd.price
-        END AS final_price, --12
+          WHEN sp.start_date <= CAST(GETDATE() AS DATE) AND sp.end_date >= CAST(GETDATE() AS DATE) THEN
+              CASE
+                  WHEN sp.discount_type = 1 THEN
+                      CASE
+                          WHEN pd.price * (1 - sp.discount_value / 100) < 0 THEN 0
+                          ELSE pd.price * (1 - sp.discount_value / 100)
+                      END
+                  WHEN sp.discount_type = 2 THEN
+                      CASE
+                          WHEN pd.price - sp.discount_value < 0 THEN 0
+                          ELSE pd.price - sp.discount_value
+                      END
+                  ELSE pd.price
+              END
+          ELSE pd.price
+      END AS final_price, --12
         p.status AS product_status, --13
         pd.status AS product_detail_status, --14
         CASE

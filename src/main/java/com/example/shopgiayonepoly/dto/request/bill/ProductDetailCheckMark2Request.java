@@ -19,7 +19,8 @@ public class ProductDetailCheckMark2Request {
     private Integer[]  idSoles;          // Lọc theo danh sách đế giày (sole)
     private Integer[]  idCategories;     // Lọc theo danh sách danh mục
     private Integer statusCheckIdSale;
-
+    private Integer idSaleProductCheck;
+    //cho ben ban hang
     public ProductDetailCheckMark2Request(String nameProduct, Integer[] idColors, Integer[] idSizes, Integer[] idMaterials, Integer[] idManufacturers, Integer[] idOrigins, Integer[] idSoles, Integer[] idCategories) {
         this.nameProduct = nameProduct;
         this.idColors = idColors;
@@ -29,6 +30,18 @@ public class ProductDetailCheckMark2Request {
         this.idOrigins = idOrigins;
         this.idSoles = idSoles;
         this.idCategories = idCategories;
+    }
+    //dang xemxet ben dot giam gia
+    public ProductDetailCheckMark2Request(String nameProduct, Integer[] idColors, Integer[] idSizes, Integer[] idMaterials, Integer[] idManufacturers, Integer[] idOrigins, Integer[] idSoles, Integer[] idCategories, Integer statusCheckIdSale) {
+        this.nameProduct = nameProduct;
+        this.idColors = idColors;
+        this.idSizes = idSizes;
+        this.idMaterials = idMaterials;
+        this.idManufacturers = idManufacturers;
+        this.idOrigins = idOrigins;
+        this.idSoles = idSoles;
+        this.idCategories = idCategories;
+        this.statusCheckIdSale = statusCheckIdSale;
     }
 }
 

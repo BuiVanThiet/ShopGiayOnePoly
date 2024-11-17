@@ -31,12 +31,12 @@ public interface SaleProductRepository extends JpaRepository<SaleProduct, Intege
 
     @Modifying
     @Transactional
-    @Query(value = "update SaleProduct set status =0 where id=:id")
+    @Query(value = "update SaleProduct set status =0, updateDate = CURRENT_TIMESTAMP  where id=:id")
     public void deleteBySetStatus(@Param("id") Integer id);
 
     @Modifying
     @Transactional
-    @Query("update SaleProduct set status=1 where  id =:id")
+    @Query("update SaleProduct set status=1, updateDate = CURRENT_TIMESTAMP  where  id =:id")
     public void restoreStatusSaleProduct(@Param("id") Integer id);
 
     @Query("select s from SaleProduct s where (s.nameSale like %:key% or s.codeSale like %:key%) and s.status = 1")
@@ -137,15 +137,23 @@ public interface SaleProductRepository extends JpaRepository<SaleProduct, Intege
         pd.price, --9
         pd.quantity, --10
         pd.quantity AS updated_quantity,  -- 11 Trừ số lượng ảo
-        CASE
-            WHEN sp.start_date <= CAST(GETDATE() AS DATE) AND sp.end_date >= CAST(GETDATE() AS DATE) THEN
-                CASE
-                    WHEN sp.discount_type = 1 THEN pd.price * (1 - sp.discount_value / 100)
-                    WHEN sp.discount_type = 2 THEN pd.price - sp.discount_value
-                    ELSE pd.price
-                END
-            ELSE pd.price
-        END AS final_price, --12
+       CASE
+          WHEN sp.start_date <= CAST(GETDATE() AS DATE) AND sp.end_date >= CAST(GETDATE() AS DATE) THEN
+              CASE
+                  WHEN sp.discount_type = 1 THEN
+                      CASE
+                          WHEN pd.price * (1 - sp.discount_value / 100) < 0 THEN 0
+                          ELSE pd.price * (1 - sp.discount_value / 100)
+                      END
+                  WHEN sp.discount_type = 2 THEN
+                      CASE
+                          WHEN pd.price - sp.discount_value < 0 THEN 0
+                          ELSE pd.price - sp.discount_value
+                      END
+                  ELSE pd.price
+              END
+          ELSE pd.price
+      END AS final_price, --12
         p.status AS product_status, --13
         pd.status AS product_detail_status, --14
         CASE
@@ -160,7 +168,22 @@ public interface SaleProductRepository extends JpaRepository<SaleProduct, Intege
         (SELECT STRING_AGG(name_category, ', ') FROM CategoryCTE WHERE CategoryCTE.id_product = p.id) AS categories,  --16 Không dùng DISTINCT ở đây
         (SELECT STRING_AGG(name_image, ', ') FROM ImageCTE WHERE ImageCTE.id_product = p.id) AS images --17
         ,p.code_product -- 18
+        ,CASE
+           WHEN sp_virtual.discount_type = 1 THEN
+               CASE
+                   WHEN pd.price * (1 - sp_virtual.discount_value / 100) < 0 THEN 0
+                   ELSE pd.price * (1 - sp_virtual.discount_value / 100)
+               END
+           WHEN sp_virtual.discount_type = 2 THEN
+               CASE
+                   WHEN pd.price - sp_virtual.discount_value < 0 THEN 0
+                   ELSE pd.price - sp_virtual.discount_value
+               END
+           ELSE pd.price
+       END AS price_Discount_virtual--19
     FROM product_detail pd
+    CROSS JOIN
+        (SELECT discount_type, discount_value FROM sale_product WHERE id = :idSaleProductCheck) sp_virtual
     LEFT JOIN product p ON pd.id_product = p.id
     LEFT JOIN color c ON pd.id_color = c.id
     LEFT JOIN size s ON pd.id_size = s.id
@@ -213,7 +236,8 @@ public interface SaleProductRepository extends JpaRepository<SaleProduct, Intege
              sp.discount_type,
              sp.discount_value
              ,p.code_product
-    
+            ,sp_virtual.discount_type  -- Thêm vào GROUP BY
+             ,sp_virtual.discount_value  -- Thêm vào GROUP BY
     """,nativeQuery = true)
     public List<Object[]> getAllProduct(
             @Param("nameProduct") String nameProduct,
@@ -224,6 +248,12 @@ public interface SaleProductRepository extends JpaRepository<SaleProduct, Intege
             @Param("materialList") Integer[]  materialList,
             @Param("originList") Integer[]  originList,
             @Param("soleList") Integer[]  soleList,
-            @Param("statusCheckIdSale") Integer statusCheckIdSale
+            @Param("statusCheckIdSale") Integer statusCheckIdSale,
+            @Param("idSaleProductCheck") Integer idSaleProductCheck
     );
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE sale_product SET end_date = DATEADD(day, 1, CONVERT(date, GETDATE())), status = 1, update_date = GETDATE() WHERE id = :id", nativeQuery = true)
+    public void updateSaleProductExpired(@Param("id") Integer id);
 }

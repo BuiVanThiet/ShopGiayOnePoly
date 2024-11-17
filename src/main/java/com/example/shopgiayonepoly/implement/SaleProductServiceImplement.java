@@ -159,8 +159,13 @@ public class SaleProductServiceImplement implements SaleProductService {
                 productDetailCheckRequest.getIdMaterials(),            // Danh sách chất liệu
                 productDetailCheckRequest.getIdOrigins(),              // Danh sách nơi xuất xứ
                 productDetailCheckRequest.getIdSoles(),                // Danh sách đế giày
-                productDetailCheckRequest.getStatusCheckIdSale()
+                productDetailCheckRequest.getStatusCheckIdSale(),
+                productDetailCheckRequest.getIdSaleProductCheck()
         );
+    }
+    @Override
+    public void updateSaleProductExpired(Integer id) {
+        this.saleProductRepository.updateSaleProductExpired(id);
     }
 
 

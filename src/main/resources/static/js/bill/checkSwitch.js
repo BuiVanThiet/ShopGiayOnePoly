@@ -7,38 +7,40 @@
 // var nameCustomer='';
 // var numberPhoneCustomer = '';
 // var addRessDetailCustomer = '';
-document.getElementById('flexSwitchCheckDefault').addEventListener('change', function() {
-    const dynamicContent = document.getElementById('dynamic-content');
-    const shipSpan = document.getElementById('shipSpan'); // Xác định thẻ div cần ẩn/hiện
+var flexSwitchCheckDefaultCheck = document.getElementById('flexSwitchCheckDefault');
+if(flexSwitchCheckDefaultCheck) {
+    flexSwitchCheckDefaultCheck.addEventListener('change', function() {
+        const dynamicContent = document.getElementById('dynamic-content');
+        const shipSpan = document.getElementById('shipSpan'); // Xác định thẻ div cần ẩn/hiện
 
-    if (this.checked) {
-        checkSwitch = true;
-        getUpdateTypeBill('2');
-        // document.getElementById('moneyTransport').value = totalBill;
-        formErorrCash.style.display = 'none';
-        erorrCash.innerText = '';
-        btnCreateBill.disabled = false;
-        document.getElementById('formMoney').style.display = 'none';
-        shipSpan.style.display = 'block'; // Ẩn thẻ div khi checkbox được chọn
-        document.getElementById('form-payMethod-bill').style.display = 'none';
-        // Gọi AJAX để lấy dữ liệu khách hàng
-        $.ajax({
-            url: '/bill-api/client-bill-information', // URL của endpoint
-            method: 'GET',
-            success: function(client) {
-                provinceID  = parseInt(client.city);
-                districtID = parseInt(client.district);
-                wardID = parseInt(client.commune);
-                nameCustomer = client.name;
-                emailCustomer = client.email;
-                numberPhoneCustomer = client.numberPhone;
-                addRessDetailCustomer = client.addressDetail;
-                console.log(provinceID + '-' + districtID + '-' + wardID)
-                selectCheckProvince = client.city;
-                selectCheckDistrict = client.district;
-                selectCheckWard = client.commune;
-                setClientShip(nameCustomer,numberPhoneCustomer,emailCustomer,provinceID,districtID,wardID,addRessDetailCustomer)
-                dynamicContent.innerHTML = `
+        if (this.checked) {
+            checkSwitch = true;
+            getUpdateTypeBill('2');
+            // document.getElementById('moneyTransport').value = totalBill;
+            formErorrCash.style.display = 'none';
+            erorrCash.innerText = '';
+            btnCreateBill.disabled = false;
+            document.getElementById('formMoney').style.display = 'none';
+            shipSpan.style.display = 'block'; // Ẩn thẻ div khi checkbox được chọn
+            document.getElementById('form-payMethod-bill').style.display = 'none';
+            // Gọi AJAX để lấy dữ liệu khách hàng
+            $.ajax({
+                url: '/bill-api/client-bill-information', // URL của endpoint
+                method: 'GET',
+                success: function(client) {
+                    provinceID  = parseInt(client.city);
+                    districtID = parseInt(client.district);
+                    wardID = parseInt(client.commune);
+                    nameCustomer = client.name;
+                    emailCustomer = client.email;
+                    numberPhoneCustomer = client.numberPhone;
+                    addRessDetailCustomer = client.addressDetail;
+                    console.log(provinceID + '-' + districtID + '-' + wardID)
+                    selectCheckProvince = client.city;
+                    selectCheckDistrict = client.district;
+                    selectCheckWard = client.commune;
+                    setClientShip(nameCustomer,numberPhoneCustomer,emailCustomer,provinceID,districtID,wardID,addRessDetailCustomer)
+                    dynamicContent.innerHTML = `
             <div class="">
                 <div class="row">
                     <div class="col-12">
@@ -83,35 +85,35 @@ document.getElementById('flexSwitchCheckDefault').addEventListener('change', fun
                 </div>
             </div>
         `;
-                console.log('Thong tin sau khi chon api ' + provinceTransport + '-' + districtTransport + '-' + wardTransport)
-                attachInputListeners();
-                initializeLocationDropdowns('provinceSelect-transport','districtSelect-transport','wardSelect-transport','districtSelectContainer-transport','wardSelectContainer-transport',provinceID,districtID,wardID)
-                validateInformationShip();
+                    console.log('Thong tin sau khi chon api ' + provinceTransport + '-' + districtTransport + '-' + wardTransport)
+                    attachInputListeners();
+                    initializeLocationDropdowns('provinceSelect-transport','districtSelect-transport','wardSelect-transport','districtSelectContainer-transport','wardSelectContainer-transport',provinceID,districtID,wardID)
+                    validateInformationShip();
 
-            },
-            error: function() {
-                alert('Lỗi khi lấy thông tin khách hàng.');
+                },
+                error: function() {
+                    alert('Lỗi khi lấy thông tin khách hàng.');
+                }
+            });
+            checkTypeBill = false;
+        } else {
+            checkSwitch = false;
+            checkTypeBill = true;
+            document.getElementById('form-payMethod-bill').style.display = 'flex';
+            getUpdateTypeBill('1');
+            formErorrCash.style.display = 'block';
+            erorrCash.innerText = 'Mời nhập đủ giá!';
+            $('#customerShip').val('Không có');
+            if(payMethodChecked === 1 || payMethodChecked === 3){
+                btnCreateBill.disabled = true;
             }
-        });
-        checkTypeBill = false;
-    } else {
-        checkSwitch = false;
-        checkTypeBill = true;
-        document.getElementById('form-payMethod-bill').style.display = 'flex';
-        getUpdateTypeBill('1');
-        formErorrCash.style.display = 'block';
-        erorrCash.innerText = 'Mời nhập đủ giá!';
-        $('#customerShip').val('Không có');
-        if(payMethodChecked === 1 || payMethodChecked === 3){
-            btnCreateBill.disabled = true;
-        }
-        document.getElementById('formMoney').style.display = 'block';
-        document.getElementById('moneyTransport').value = 0;
-        shipSpan.style.display = 'none'; // Hiển thị lại thẻ div khi checkbox không được chọn
-        $('#moneyTransport').val(0)
-        shipPrice = 0;
-        paymentInformation();
-        dynamicContent.innerHTML = `
+            document.getElementById('formMoney').style.display = 'block';
+            document.getElementById('moneyTransport').value = 0;
+            shipSpan.style.display = 'none'; // Hiển thị lại thẻ div khi checkbox không được chọn
+            $('#moneyTransport').val(0)
+            shipPrice = 0;
+            paymentInformation();
+            dynamicContent.innerHTML = `
             <div class="d-flex justify-content-center align-items-center position-relative">
                 <div class="d-flex position-relative" style="width: 90%; padding-top: 90%;">
                     <img src="https://res.cloudinary.com/dfy4umpja/image/upload/v1724526670/Screenshot%202024-07-24%20160719.png"
@@ -119,9 +121,9 @@ document.getElementById('flexSwitchCheckDefault').addEventListener('change', fun
                 </div>
             </div>
         `;
-    }
-});
-
+        }
+    });
+}
 
 function setClientShip(name,numberPhone,email,province,district,ward,addressDetail) {
     if(name) {

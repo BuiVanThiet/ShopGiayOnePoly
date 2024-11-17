@@ -505,7 +505,10 @@ function totalShip(province, district, ward) {
                                 updateMoneyShipWait(shipMoneyBillWait);
                             }
                             console.log('đay là số tiền ship: ' + response.data.total);
-                            setClientShip(nameCustomer,numberPhoneCustomer,emailCustomer,provinceTransport,districtTransport,wardTransport,addRessDetailCustomer)
+                            var flexSwitchCheckDefaultCheck = document.getElementById('flexSwitchCheckDefault');
+                            if(flexSwitchCheckDefaultCheck) {
+                                setClientShip(nameCustomer,numberPhoneCustomer,emailCustomer,provinceTransport,districtTransport,wardTransport,addRessDetailCustomer)
+                            }
                             paymentInformation();
                         },
                         error: function (xhr) {

@@ -41,12 +41,6 @@ public class TransactionVNPayRestController {
         // Gọi phương thức dịch vụ và truyền các tham số đúng
         List<Object[]> transactions = transactionVNPayService.getAllTransactionVNPay(transactionCheckRequest);
 
-        // In ra kết quả (nếu cần)
-        for (Object[] objects : transactions) {
-            System.out.println("------");
-            System.out.println(objects[0]);
-        }
-
         // Phân trang
         Pageable pageable = PageRequest.of(0, 5);
         return convertListToPage(transactions, pageable).getContent();
@@ -60,7 +54,6 @@ public class TransactionVNPayRestController {
         if(transactionCheckRequest2.getTransactionStatus().equals("--Tất cả--")) {
             transactionCheckRequest2.setTransactionStatus(null);
         }
-        System.out.println(transactionCheckRequest2.toString());
         transactionCheckRequest = transactionCheckRequest2;
         return "done";
     }
@@ -125,8 +118,6 @@ public class TransactionVNPayRestController {
         }
         ExcelExportService excelExportService = new ExcelExportService();
 
-
-        // Create service object and call the export method
         ExcelExportService service = new ExcelExportService();
         try {
             service.exportListToExcel(tranSactionExportList);
