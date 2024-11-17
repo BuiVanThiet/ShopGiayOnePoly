@@ -6,6 +6,7 @@ import com.example.shopgiayonepoly.dto.response.StaffResponse;
 import com.example.shopgiayonepoly.entites.Staff;
 import com.example.shopgiayonepoly.repositores.CustomerRepository;
 import com.example.shopgiayonepoly.repositores.StaffRepository;
+import com.example.shopgiayonepoly.service.CustomerService;
 import com.example.shopgiayonepoly.service.StaffService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -31,11 +32,14 @@ public class StaffController extends BaseEmail {
     @Autowired
     StaffService staffService;
 
-//    @Autowired
-//    StaffRepository staffRepository;
+    @Autowired
+    StaffRepository staffRepository;
 
-//    @Autowired
-//    CustomerRepository customerRepository;
+    @Autowired
+    CustomerService customerService;
+
+    String mess = "";
+    String check = "";
 
     private final int pageSize = 5;
 
@@ -57,19 +61,23 @@ public class StaffController extends BaseEmail {
         Page<StaffResponse> pageStaff = staffService.getAllStaffByPage(pageable, staff.getId());
         model.addAttribute("pageStaff", pageStaff);
         model.addAttribute("staff", new StaffRequest());
+        model.addAttribute("message",mess);
+        model.addAttribute("check",check);
+        mess = "";
+        check = "";
         return "Staff/list";
     }
 
-    @GetMapping("/search")
-    public String searchStaffByKey(@RequestParam(name = "key") String key, @RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber, Model model) {
-        String trimmedKey = key != null ? key.trim() : null;
-        Pageable pageableSearch = PageRequest.of(pageNumber, pageSize);
-        Page<StaffResponse> pageStaff = staffService.searchStaffByKeywordPage(trimmedKey, pageableSearch);
-//        model.addAttribute("staffList", searchStaff);
-        model.addAttribute("pageStaff", pageStaff);
-        model.addAttribute("staff", new StaffRequest());
-        return "Staff/list";
-    }
+//    @GetMapping("/search")
+//    public String searchStaffByKey(@RequestParam(name = "key") String key, @RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber, Model model) {
+//        String trimmedKey = key != null ? key.trim() : null;
+//        Pageable pageableSearch = PageRequest.of(pageNumber, pageSize);
+//        Page<StaffResponse> pageStaff = staffService.searchStaffByKeywordPage(trimmedKey, pageableSearch);
+////        model.addAttribute("staffList", searchStaff);
+//        model.addAttribute("pageStaff", pageStaff);
+//        model.addAttribute("staff", new StaffRequest());
+//        return "Staff/list";
+//    }
 
     @GetMapping("/create")
     public String createStaff(ModelMap modelMap) {
@@ -112,11 +120,11 @@ public class StaffController extends BaseEmail {
             result.rejectValue("birthDay", "error.customer", "Ngày sinh không được lớn hơn ngày hiện tại!");
         }
         // Kiểm tra email
-//        if (staffRequest.getEmail() == null || staffRequest.getEmail().isEmpty()) {
-//            result.rejectValue("email", "error.staff", "Email không được để trống!");
-//        } else if (customerRepository.existsByEmail(staffRequest.getEmail()) || staffRepository.existsByEmail(staffRequest.getEmail())) {
-//            result.rejectValue("email", "error.staff", "Email đã được sử dụng!");
-//        }
+        if (staffRequest.getEmail() == null || staffRequest.getEmail().isEmpty()) {
+            result.rejectValue("email", "error.staff", "Email không được để trống!");
+        } else if (customerService.existsByEmail(staffRequest.getEmail()) != null || staffService.existsByEmail(staffRequest.getEmail()) != null) {
+            result.rejectValue("email", "error.staff", "Email đã được sử dụng!");
+        }
         if (result.hasErrors()) {
             model.addAttribute("mes", "Thêm thất bại");
             // Nếu có lỗi, trả về trang form để người dùng sửa lại
@@ -149,6 +157,8 @@ public class StaffController extends BaseEmail {
 //        staff.setImage("fileName");
         System.out.println(staff.toString());
         System.out.println("Hello");
+        mess = "Them nhan vien thanh cong";
+        check = "1";
 //        staffService.uploadFile(staffRequest.getNameImage(),staffSave.getId());
         return "redirect:/staff/list";
     }
@@ -200,11 +210,13 @@ public class StaffController extends BaseEmail {
             result.rejectValue("numberPhone", "error.staff", "Số điện thoại không hợp lệ!");
         }
         // Kiểm tra email
-//        if (staffRequest.getEmail() == null || staffRequest.getEmail().isEmpty()) {
-//            result.rejectValue("email", "error.staff", "Email không được để trống!");
-//        } else if (customerRepository.existsByEmail(staffRequest.getEmail()) || staffRepository.existsByEmail(staffRequest.getEmail())) {
-//            result.rejectValue("email", "error.staff", "Email đã được sử dụng!");
-//        }
+        if (staffRequest.getEmail() == null || staffRequest.getEmail().isEmpty()) {
+            result.rejectValue("email", "error.staff", "Email không được để trống!");
+        } else if (customerService.existsByEmail(staffRequest.getEmail()) != null || staffService.existsByEmail(staffRequest.getEmail()) != null) {
+            if(staffService.existsByEmail(staffRequest.getEmail()).getId() != staffRequest.getId()) {
+                result.rejectValue("email", "error.staff", "Email đã được sử dụng!");
+            }
+        }
         // Kiểm tra ngày sinh
         if (staffRequest.getBirthDay() == null) {
             result.rejectValue("birthDay", "error.customer", "Ngày sinh không được để trống!");
@@ -236,6 +248,8 @@ public class StaffController extends BaseEmail {
             // Đặt ảnh mặc định nếu không có ảnh được tải lên
             staff.setImage("Ảnh nhân viên");
         }
+        mess = "Sua nhan vien thanh cong";
+        check = "1";
         return "redirect:/staff/list";
     }
 
@@ -266,7 +280,9 @@ public class StaffController extends BaseEmail {
     @GetMapping("/delete/{id}")
     public String deleteStaff(RedirectAttributes ra, @PathVariable("id") Integer id) {
         staffService.deleteStaff(id);
-        ra.addFlashAttribute("mes", "Xóa thành công nhan vien với ID là: " + id);
+//        ra.addFlashAttribute("mes", "Xóa thành công nhan vien với ID là: " + id);
+        mess = "Xoa nhan vien thanh cong";
+        check = "1";
         return "redirect:/staff/list";
     }
 

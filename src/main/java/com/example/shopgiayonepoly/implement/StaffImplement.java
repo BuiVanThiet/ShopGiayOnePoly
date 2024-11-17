@@ -39,13 +39,13 @@ public class StaffImplement implements StaffService {
     }
 
     @Override
-    public List<StaffResponse> searchStaffByKeyword(String key) {
-        return staffRepository.searchStaffByKeyword(key);
+    public List<StaffResponse> searchStaffByKeyword(String key, Integer id) {
+        return staffRepository.searchStaffByKeyword(key, id);
     }
 
     @Override
-    public Page<StaffResponse> searchStaffByKeywordPage(String key, Pageable pageable) {
-        return staffRepository.searchStaffByKeywordPage(key, pageable);
+    public Page<StaffResponse> searchStaffByKeywordPage(String key, Pageable pageable,Integer id) {
+        return staffRepository.searchStaffByKeywordPage(key, pageable,id);
     }
 
     @Override
@@ -110,5 +110,10 @@ public class StaffImplement implements StaffService {
     @Override
     public Staff getStaffByID(Integer id) {
         return staffRepository.findById(id).orElse(new Staff());
+    }
+
+    @Override
+    public Staff existsByEmail(String email) {
+        return staffRepository.existsByEmail(email);
     }
 }

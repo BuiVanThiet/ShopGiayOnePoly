@@ -7,6 +7,7 @@ import com.example.shopgiayonepoly.entites.Staff;
 import com.example.shopgiayonepoly.repositores.CustomerRepository;
 import com.example.shopgiayonepoly.repositores.StaffRepository;
 import com.example.shopgiayonepoly.service.CustomerService;
+import com.example.shopgiayonepoly.service.StaffService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,11 +31,14 @@ public class CustomerController {
     @Autowired
     CustomerService customerService;
 
-//    @Autowired
-//    StaffRepository staffRepository;
+    @Autowired
+    StaffService staffService;
 
-//    @Autowired
-//    CustomerRepository customerRepository;
+    @Autowired
+    CustomerRepository customerRepository;
+
+    String mess = "";
+    String check = "";
 
     private final int pageSize = 5;
 
@@ -51,6 +55,10 @@ public class CustomerController {
         Page<CustomerResponse> pageCustomer = customerService.getAllCustomerByPage(pageable);
         model.addAttribute("pageCustomer", pageCustomer);
         model.addAttribute("customer", new CustomerRequest());
+        model.addAttribute("message", mess);
+        model.addAttribute("check", check);
+        mess = "";
+        check = "";
         return "Customer/list";
     }
 
@@ -88,11 +96,13 @@ public class CustomerController {
             result.rejectValue("numberPhone", "error.customer", "Số điện thoại không hợp lệ!");
         }
         // Kiểm tra email
-//        if (customerRequest.getEmail() == null || customerRequest.getEmail().isEmpty()) {
-//            result.rejectValue("email", "error.customer", "Email không được để trống!");
-//        } else if (customerRepository.existsByEmail(customerRequest.getEmail()) || staffRepository.existsByEmail(customerRequest.getEmail())) {
-//            result.rejectValue("email", "error.customer", "Email đã được sử dụng!");
-//        }
+        if (customerRequest.getEmail() == null || customerRequest.getEmail().isEmpty()) {
+            result.rejectValue("email", "error.customer", "Email không được để trống!");
+        } else if (customerService.existsByEmail(customerRequest.getEmail()) != null || staffService.existsByEmail(customerRequest.getEmail()) != null) {
+//            if (customerService.existsByEmail(customerRequest.getEmail()).getId() != customerRequest.getId()) {
+                result.rejectValue("email", "error.customer", "Email đã được sử dụng!");
+//            }
+        }
         // Kiểm tra ngày sinh
         if (customerRequest.getBirthDay() == null) {
             result.rejectValue("birthDay", "error.customer", "Ngày sinh không được để trống!");
@@ -128,6 +138,8 @@ public class CustomerController {
         //        this.customerService.save(customerSave);
 //        customer.setImage("fileName");
         System.out.println(customer.toString());
+        mess = "Them nhan vien thanh cong";
+        check = "1";
 //        customerService.uploadFile(customerRequest.getNameImage(),customerSave.getId());
         return "redirect:/customer/list";
     }
@@ -177,11 +189,13 @@ public class CustomerController {
             result.rejectValue("numberPhone", "error.customer", "Số điện thoại không hợp lệ!");
         }
         // Kiểm tra email
-//        if (customerRequest.getEmail() == null || customerRequest.getEmail().isEmpty()) {
-//            result.rejectValue("email", "error.customer", "Email không được để trống!");
-//        } else if (customerRepository.existsByEmail(customerRequest.getEmail()) || staffRepository.existsByEmail(customerRequest.getEmail())) {
-//            result.rejectValue("email", "error.customer", "Email đã được sử dụng!");
-//        }
+        if (customerRequest.getEmail() == null || customerRequest.getEmail().isEmpty()) {
+            result.rejectValue("email", "error.customer", "Email không được để trống!");
+        } else if (customerService.existsByEmail(customerRequest.getEmail()) != null || staffService.existsByEmail(customerRequest.getEmail()) != null) {
+            if (customerService.existsByEmail(customerRequest.getEmail()).getId() != customerRequest.getId()) {
+                result.rejectValue("email", "error.customer", "Email đã được sử dụng!");
+            }
+        }
         // Kiểm tra ngày sinh
         if (customerRequest.getBirthDay() == null) {
             result.rejectValue("birthDay", "error.customer", "Ngày sinh không được để trống!");
@@ -214,6 +228,8 @@ public class CustomerController {
             // Đặt ảnh mặc định nếu không có ảnh được tải lên
             customer.setImage("Ảnh khách hàng");
         }
+        mess = "Sua nhan vien thanh cong";
+        check = "1";
         return "redirect:/customer/list";
     }
 

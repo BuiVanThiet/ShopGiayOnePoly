@@ -106,4 +106,9 @@ public class CustomerImplement implements CustomerService {
     public Customer getCustomerByID(Integer id) {
         return customerRepository.findById(id).orElse(new Customer());
     }
+
+    @Override
+    public Customer existsByEmail(String email) {
+        return customerRepository.existsByEmail(email);
+    }
 }

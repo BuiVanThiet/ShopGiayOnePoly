@@ -96,5 +96,6 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
             """)
     public Page<CustomerResponse> getAllCustomrByPage(Pageable pageable);
 
-    boolean existsByEmail(String email);
+    @Query("select c from Customer c where c.email = :email")
+    Customer existsByEmail(@Param("email") String email);
 }

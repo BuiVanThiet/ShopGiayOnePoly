@@ -54,9 +54,9 @@ public interface StaffRepository extends JpaRepository<Staff, Integer> {
                     s.email,
                     s.role
             )  
-            from Staff s where concat(s.fullName, s.codeStaff, s.numberPhone, s.email) like %:key% and s.status <> 0
+            from Staff s where concat(s.fullName, s.codeStaff, s.numberPhone, s.email) like %:key% and s.status <> 0 and s.id <> :idLogin
             """)
-    public List<StaffResponse> searchStaffByKeyword(@Param("key") String key);
+    public List<StaffResponse> searchStaffByKeyword(@Param("key") String key, @Param("idLogin") Integer id);
 
     @Query("""
                         select new com.example.shopgiayonepoly.dto.response.StaffResponse(
@@ -74,9 +74,9 @@ public interface StaffRepository extends JpaRepository<Staff, Integer> {
                                     s.email,
                                     s.role
                                     )
-                                from Staff s where concat(s.fullName, s.codeStaff, s.numberPhone, s.email) like %:key% and s.status <> 0
+                                from Staff s where concat(s.fullName, s.codeStaff, s.numberPhone, s.email) like %:key% and s.status <> 0 and s.id <> :idLogin
                         """)
-    public Page<StaffResponse> searchStaffByKeywordPage(@Param("key") String key, Pageable pageable);
+    public Page<StaffResponse> searchStaffByKeywordPage(@Param("key") String key, Pageable pageable, @Param("idLogin") Integer id);
 
     //select s from Staff s where (s.fullName like %:key% or s.codeStaff like %:key% or s.numberPhone like %:key% or s.email like %:key%)
     @Modifying
@@ -106,5 +106,6 @@ public interface StaffRepository extends JpaRepository<Staff, Integer> {
 
     boolean existsByCodeStaff(String codeStaff);
 
-    boolean existsByEmail(String email);
+    @Query("select s from Staff s where s.email = :email")
+    Staff existsByEmail(@Param("email") String email);
 }
