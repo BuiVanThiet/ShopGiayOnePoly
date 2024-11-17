@@ -19,9 +19,9 @@ public interface StaffService {
 
     public Page<StaffResponse> getAllStaffByPage(Pageable pageable, Integer id);
 
-    public List<StaffResponse> searchStaffByKeyword(String key);
+    public List<StaffResponse> searchStaffByKeyword(String key, Integer id);
 
-    public Page<StaffResponse> searchStaffByKeywordPage(String key, Pageable pageable);
+    public Page<StaffResponse> searchStaffByKeywordPage(String key, Pageable pageable,Integer id);
 
     <S extends Staff> S save(S entity);
 
@@ -45,4 +45,5 @@ public interface StaffService {
 
     public boolean existsByCodeStaff(String codeStaff);
 
+    public Staff existsByEmail(String email);
 }
