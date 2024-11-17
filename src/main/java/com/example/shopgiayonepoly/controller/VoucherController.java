@@ -172,7 +172,7 @@ public class VoucherController {
         } else {
             if (voucherRequest.getDiscountType() == 1) { // Loại giảm giá là phần trăm
                 if (voucherRequest.getPriceReduced().compareTo(zero) <= 0 || voucherRequest.getPriceReduced().compareTo(oneHundred) >= 0) {
-                    result.rejectValue("priceReduced", "error.voucher", "Giá trị giảm phải lớn hơn 0% và nhỏ hơn 100%!");
+                    result.rejectValue("priceReduced", "error.voucher", "Giá trị giảm phải lớn hơn 0% và nhỏ hơn 90%!");
                 }
             } else { // Loại giảm giá là tiền mặt
                 if (voucherRequest.getPriceReduced().compareTo(tenHundred) < 0 || voucherRequest.getPriceReduced().compareTo(oneMillion) > 0) {

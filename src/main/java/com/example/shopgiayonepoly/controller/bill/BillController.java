@@ -83,7 +83,6 @@ public class BillController extends BaseBill {
         }
         System.out.println("id bill dau tien la " + session.getAttribute("IdBill"));
         this.productDetailCheckMark2Request = null;
-//        displayProductDetailsWithCurrentPrice();
         return "Bill/index";
 
     }
@@ -180,25 +179,11 @@ public class BillController extends BaseBill {
 
         this.setBillStatus(billGetStatus.getId(),billGetStatus.getStatus(),session);
 
-//        this.getAddHistory("bill",bill.getId(),"Mới tạo","Mới tao","Mới tạo",staff,"Mới tạo");
         this.productDetailCheckMark2Request = null;
         this.mess = "Thêm hóa đơn mới thành công!";
         this.colorMess = "1";
         return "redirect:/staff/bill/home";
     }
-
-    //phan trang
-//    @GetMapping("/page-bill-detail/{number}")
-//    public String getPageBillDetail(@PathVariable("number") Integer number, HttpSession session,ModelMap modelMap) {
-//        System.out.println("da con trang " + session.getAttribute("numberPage"));
-//        return "redirect:/bill/bill-detail/"+(Integer) session.getAttribute("IdBill");
-//    }
-//    @ModelAttribute("pageNumber")
-//    public Integer pageNumber(HttpSession session){
-//        Integer pageNumber = (int) Math.ceil((double) this.billDetailService.getBillDetailByIdBill(this.idBillUpdate).size() / 2);
-//        System.out.println("so trang la " + pageNumber);
-//        return pageNumber;
-//    }
 
     @GetMapping("/addClientInBill/{idClient}")
     @ResponseBody
@@ -387,11 +372,6 @@ public class BillController extends BaseBill {
             return "redirect:/404";
         }
 
-//        if(bill.getCustomer() != null) {
-//            List<ClientBillInformationResponse> clientBillInformationResponses = this.billService.getClientBillInformationResponse(bill.getCustomer().getId());
-//            ClientBillInformationResponse clientBillInformationResponse = clientBillInformationResponses.get(0);
-//            bill.setAddRess(clientBillInformationResponse.getAddressDetail());
-//        }
         if(customerShip.trim().equals("Không có")) {
             bill.setAddRess(customerShip.trim());
         }else {
@@ -437,11 +417,6 @@ public class BillController extends BaseBill {
         BillTotalInfornationResponse billTotalInfornationResponse = this.billService.findBillVoucherById(bill.getId());
         BigDecimal cashAll = bill.getCash().add(bill.getAcountMoney().add(bill.getShippingPrice()));
         BigDecimal cashEquals = billTotalInfornationResponse.getFinalAmount().setScale(2, RoundingMode.HALF_UP);
-//        if(cashAll.equals(cashEquals)) {
-//            bill.setPaymentStatus(1);
-//        }else {
-//            bill.setPaymentStatus(0);
-//        }
 
         bill.setUpdateDate(new Date());
 
@@ -735,27 +710,6 @@ public class BillController extends BaseBill {
         }
     }
 
-//    @GetMapping("/deleteBillDetail/{id}")
-//        public String getDeleteProductDetail(@PathVariable("id") Integer id, HttpSession session) {
-//        BillDetail billDetail = this.billDetailService.findById(id).orElse(new BillDetail());
-//        this.billDetailService.delete(billDetail);
-//        Bill bill = this.billService.findById((Integer) session.getAttribute("IdBill")).orElse(null);
-//        BigDecimal total = this.billDetailService.getTotalAmountByIdBill(bill.getId());
-//        bill.setUpdateDate(new Date());
-//        if(total != null) {
-//            bill.setTotalAmount(total);
-//        }else {
-//            bill.setTotalAmount(BigDecimal.valueOf(0));
-//        }
-//        this.mess="Xóa sản phẩm trong hóa đơn thành công!";
-//        this.colorMess="1";
-//
-//        getUpdateQuantityProduct(billDetail.getProductDetail().getId(),billDetail.getQuantity(),2);
-//
-//        this.billService.save(bill);
-//        return "redirect:/bill/bill-detail/"+session.getAttribute("IdBill");
-//    }
-
     @GetMapping("/deleteBillDetail/{id}")
     @ResponseBody
     public  ResponseEntity<Map<String,String>> getDeleteProductDetail(@PathVariable("id") String id, HttpSession session) {
@@ -775,10 +729,7 @@ public class BillController extends BaseBill {
             return ResponseEntity.ok(thongBao);
         }
 
-        thongBao.put("message","Xóa sản phẩm trong hóa đơn thành công!");
-        thongBao.put("check","1");
         BillDetail billDetail = this.billDetailService.findById(Integer.parseInt(id)).orElse(null);
-
 
         Integer idBill = (Integer) session.getAttribute("IdBill");
 
@@ -827,60 +778,11 @@ public class BillController extends BaseBill {
         if(bill.getStatus() == 0) {
             getDeleteVoucherByBill((Integer) session.getAttribute("IdBill"));
         }
-
+        thongBao.put("message","Xóa sản phẩm trong hóa đơn thành công!");
+        thongBao.put("check","1");
         return ResponseEntity.ok(thongBao);
     }
 
-//    @PostMapping("/buy-product-detail")
-//    public String getBuyProduct(
-//            @RequestParam(name = "quantityDetail") String quantity,
-//            @RequestParam(name = "idProductDetail") String idPDT,
-//            HttpSession session) {
-//        System.out.println("Số lượng mua: " + quantity + ", ID sản phẩm chi tiết: " + idPDT);
-//
-//        ProductDetail productDetail = this.billDetailService.getProductDetailById(Integer.parseInt(idPDT));
-//
-//        Bill billById = this.billService.findById((Integer) session.getAttribute("IdBill")).orElse(new Bill());
-//
-//        BillDetail billDetailSave = getBuyProduct(billById,productDetail,Integer.parseInt(quantity));
-//
-////        Integer idBillDetail = this.billDetailService.getBillDetailExist(billById.getId(),productDetail.getId());
-////        if(idBillDetail != null) {
-////            billDetailSave = this.billDetailService.findById(idBillDetail).orElse(new BillDetail());
-////            billDetailSave.setQuantity(billDetailSave.getQuantity()+1);
-////            billDetailSave.setTotalAmount(billDetailSave.getPrice().multiply(BigDecimal.valueOf(billDetailSave.getQuantity())));
-////        }else {
-////            billDetailSave = new BillDetail();
-////            billDetailSave.setBill(billById);
-////            billDetailSave.setProductDetail(productDetail);
-////            billDetailSave.setQuantity(Integer.parseInt(quantity));
-////            billDetailSave.setPrice(productDetail.getPrice());
-////            billDetailSave.setTotalAmount(billDetailSave.getPrice().multiply(BigDecimal.valueOf(billDetailSave.getQuantity())));
-////            billDetailSave.setStatus(1);
-////        }
-//        this.mess = "Thêm sản phẩm thành công!";
-//        this.colorMess = "1";
-//
-//        getUpdateQuantityProduct(billDetailSave.getProductDetail().getId(),Integer.parseInt(quantity),1);
-//
-//        this.billDetailService.save(billDetailSave);
-//        this.setTotalAmount(billDetailSave.getBill());
-//        return "redirect:/bill/bill-detail/" + (Integer) session.getAttribute("IdBill");
-//    }
-
-    //    @GetMapping("/delete-voucher-bill")
-//
-//    public String getDeleteVoucherBill(HttpSession session) {
-//        Bill bill = this.billService.findById((Integer) session.getAttribute("IdBill")).orElse(null);
-//
-//        bill.setVoucher(null);
-//        bill.setUpdateDate(new Date());
-//        this.billService.save(bill);
-//        this.mess = "Xóa voucher thành công!";
-//        this.colorMess = "1";
-//
-//        return "redirect:/bill/bill-detail/" + (Integer) session.getAttribute("IdBill");
-//    }
     @PostMapping("/buy-product-detail")
     @ResponseBody
     public ResponseEntity<Map<String,String>> getBuyProduct(
@@ -970,20 +872,7 @@ public class BillController extends BaseBill {
 
         return ResponseEntity.ok(thongBao);
     }
-    //    @GetMapping("/click-voucher-bill/{idVoucher}")
-//    public String getClickVoucherBill(@PathVariable("idVoucher") String idVoucher,HttpSession session) {
-//        Bill bill = this.billService.findById((Integer) session.getAttribute("IdBill")).orElse(null);
-//
-//        Voucher voucher = new Voucher();
-//        voucher.setId(Integer.parseInt(idVoucher));
-//        bill.setVoucher(voucher);
-//        bill.setUpdateDate(new Date());
-//        this.billService.save(bill);
-//        this.mess = "Thêm voucher thành công!";
-//        this.colorMess = "1";
-//
-//        return "redirect:/bill/bill-detail/" + (Integer) session.getAttribute("IdBill");
-//    }
+
     @PostMapping("/delete-voucher-bill")
     @ResponseBody
     public ResponseEntity<Map<String,String>> getDeleteVoucherBill(HttpSession session) {
@@ -1038,7 +927,6 @@ public class BillController extends BaseBill {
         }
         return ResponseEntity.ok(thongBao);
     }
-
 
     @PostMapping("/click-voucher-bill/{idVoucher}")
     @ResponseBody
@@ -1260,8 +1148,6 @@ public class BillController extends BaseBill {
 
     @GetMapping("/manage-bill")
     public String getIndexManageBill() {
-//        keyBillmanage= "";
-//        searchBillByStatusRequest = null;
         return "Bill/manageBillIndex";
     }
 

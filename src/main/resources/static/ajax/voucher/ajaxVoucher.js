@@ -195,6 +195,7 @@ function addVoucherNew() {
             console.log(response)
             loadVoucher(1);
             maxPageVoucher();
+            resetFormAddVoucher();
         },
         error: function (xhr) {
             console.error('loi ' + xhr.responseText)

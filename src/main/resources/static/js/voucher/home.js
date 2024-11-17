@@ -90,6 +90,22 @@ document.getElementById('endDate').addEventListener('input',function () {
 document.getElementById('quantity').addEventListener('input',function () {
     validateAllVoucher();
 })
+
+function resetFormAddVoucher() {
+    document.getElementById('codeVoucher').value = '';
+    document.getElementById('nameVoucher').value = '';
+    document.getElementById('discountType').value = '2';
+    document.getElementById('value').value = '';
+    document.getElementById('applyValue').value = '';
+    document.getElementById('maxDiscount').value = '';
+    document.getElementById('note').value = '';
+    document.getElementById('quantity').value = '';
+    today = new Date();
+    document.getElementById('startDate').value = formatDateVoucher(today);
+    nexttoday = today.setDate(today.getDate() + 1);
+    document.getElementById('endDate').value = formatDateVoucher(nexttoday);
+    validateAllVoucher()
+}
 function validateAllVoucher() {
     var codeVoucher = document.getElementById('codeVoucher');
     var nameVoucher = document.getElementById('nameVoucher');
@@ -122,7 +138,7 @@ function validateAllVoucher() {
     var checkApplyValue = checkNumberApplyLimitInputVoucherCash(applyValue.value,applyValueError);
     var checkMaxDiscount = discountType.value === '2' ? true : checkNumberMaxLimitInputVoucherCash(maxDiscount.value,maxDiscountError);
     var checkNote = checkNullInputVoucher(note.value,noteError,'Mời nhập ghi chú');
-    var checkStartDate = checkStartDateVoucher(startDate,startDateError);
+    var checkStartDate = checkStartDateVoucher(startDate.value,startDateError);
     var checkEndDate = checkEndDateVoucher(endDate.value,startDate.value,endDateError);
     var checkQuantity = checkNumberMaxQuantityInputVoucher(quantity.value,quantityError);
 // In kết quả ra console

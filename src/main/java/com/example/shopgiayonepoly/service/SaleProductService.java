@@ -50,5 +50,7 @@ public interface SaleProductService {
     List<Object[]> getAllSaleProductByFilter(Integer typeCheck, String searchTerm, Integer status);
 
     List<Object[]> getAllProduct(ProductDetailCheckMark2Request productDetailCheckRequest);
+
+    void updateSaleProductExpired(Integer id);
 }
 

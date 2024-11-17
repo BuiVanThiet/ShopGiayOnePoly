@@ -1361,7 +1361,8 @@ function deleteBillDetail(id) {
             loadVoucherByBill(1);
             maxPageBillDetailByIdBill();
             maxPageVoucher();
-            if(loadInformationBillByIdBill()) {
+            var checkFormStatus = document.getElementById('checkFormStatus'); //kiem tra day co phai form theo doi don hnag ko
+            if(checkFormStatus) {
                 loadInformationBillByIdBill();
             }
             checkUpdateCustomer = true;
@@ -1369,8 +1370,6 @@ function deleteBillDetail(id) {
             totalShip(provinceTransport,districtTransport,wardTransport);
 
             createToast(response.check, response.message);
-            // showToast(response.message,response.check)
-
         },
         error: function (xhr) {
             console.error('loi ' + xhr.responseText);

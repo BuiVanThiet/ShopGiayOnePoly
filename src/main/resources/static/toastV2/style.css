@@ -16,6 +16,7 @@
     position: fixed;
     top: 30px;
     right: 20px;
+    z-index: 9999999999999;
 }
 .notifications-toast-custom :where(.toast-toast-custom, .column-toast-custom) {
     display: flex;

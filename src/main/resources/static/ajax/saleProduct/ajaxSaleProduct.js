@@ -38,14 +38,17 @@ function loadSaleProduct(page) {
                             <td>
                                 <a href="/sale-product/delete/${saleProduct[0]}"
                                    class="btn btn-danger btn-sm"
-                                   onclick="return confirm('Bạn có muốn xóa phiếu giảm giá này không?')">Xóa</a>
+                                   onclick="return confirm('Bạn có muốn xóa đợt giảm giá này không?')">Xóa</a>
                             </td>
                             <td>
                                 <a href="/sale-product/edit/${saleProduct[0]}"
                                    class="btn btn-warning btn-sm">Sửa</a>
                             </td>
                             <td>
-                                <button type="button" class="btn btn-sm btn-outline-success " data-bs-toggle="modal" data-bs-target="#listProductModal" onclick="resetFilterProductSale()">Xem</button>
+                                <button type="button" 
+                                class="btn btn-sm btn-outline-success " 
+                                data-bs-toggle="modal" data-bs-target="#listProductModal" 
+                                onclick="resetFilterProductSale(${saleProduct[0]})">Xem</button>
                             </td>
                     `;
                     }else if (saleProduct[7] === 2 || saleProduct[7] === 0) {
@@ -53,31 +56,41 @@ function loadSaleProduct(page) {
                             <td>
                                 <a href="/sale-product/restore/${saleProduct[0]}"
                                    class="btn btn-success btn-sm"
-                                   onclick="return confirm('Bạn có muốn khôi phục phiếu giảm giá này không?')">Khôi
+                                   onclick="return confirm('Bạn có muốn khôi phục đợt giảm giá này không?')">Khôi
                                     phục</a>
                             </td>
                     `;
                     }else if (saleProduct[7] === 3){
-                    //     action = `
-                    //          <td>
-                    //             <a href="/voucher/delete/${saleProduct[0]}"
-                    //                class="btn btn-danger btn-sm"
-                    //                onclick="return confirm('Bạn có muốn xóa phiếu giảm giá này không?')">Xóa</a>
-                    //         </td>
-                    //         <td>
-                    //             <a href="/voucher/extend/${saleProduct[0]}"
-                    //                class="btn btn-success btn-sm"
-                    //                onclick="return confirm('Bạn có muốn gia hạn phiếu giảm giá này không?')">Gia
-                    //                 hạn</a>
-                    //         </td>
-                    // `;
+                        action = `
+                             <td>
+                                <a href="/sale-product/delete/${saleProduct[0]}"
+                                   class="btn btn-danger btn-sm"
+                                   onclick="return confirm('Bạn có muốn xóa đợt giảm giá này không?')">Xóa</a>
+                            </td>
+                            <td>
+                                <a href="/sale-product/extend/${saleProduct[0]}"
+                                   class="btn btn-success btn-sm"
+                                   onclick="return confirm('Bạn có muốn gia hạn đợt giảm giá này không?')">Gia
+                                    hạn</a>
+                            </td>
+                    `;
                     }
+                    var value = '';
+                    var typeValue = '';
+                    if (saleProduct[4] == 2) {
+                        value = Math.trunc(saleProduct[3]).toLocaleString('en-US') + 'VNĐ';
+                        typeValue = 'Giảm theo số tiền';
+                    }else if (saleProduct[4] == 1) {
+                        value = Math.trunc(saleProduct[3]) + '%';
+                        typeValue = 'Giảm theo phần trăm sản phẩm';
+                    }
+
                     tableSaleProduct.append(`
                     <tr>
                         <td>${saleProduct[1]}</td>
                         <td>${saleProduct[2]}</td>
-                        <td>${saleProduct[3]}</td>
-                        <td>${saleProduct[4]}</td>
+                        <td>${value}</td>
+                        <td>${typeValue}</td>
                         <td>${start}</td>
                         <td>${end}</td>
                         ${action}
@@ -191,6 +204,7 @@ function addSaleProductNew() {
             status: selectedStatus
         }),
         success: function (response) {
+            resetFormAddSaleProduct();
             createToast(response.check, response.message);
             loadSaleProduct(1);
             maxPageSaleProduct();
@@ -266,7 +280,7 @@ function updateProductTable(response) {
             if (productDetail[15] != 'Không giảm') {
                 // Gán giá đã giảm và giá gốc vào biến priceSaleAndRoot
                 priceSale = `
-                    <span class="text-danger fs-5">${Math.trunc(productDetail[12]).toLocaleString('en-US')} VNĐ</span>
+                    <span class="text-danger fs-6">${Math.trunc(productDetail[12]).toLocaleString('en-US')} VNĐ</span>
                 `;
             } else {
                 // Nếu không có chương trình giảm giá, chỉ hiển thị giá gốc
@@ -274,10 +288,10 @@ function updateProductTable(response) {
                     Không có!
                 `;
             }
-
+            var category = productDetail[16] === null ? 'Không có' : productDetail[16];
             tbody.append(`
-                <tr>
-                    <td>
+                <tr onclick="toggleCheckboxProduct(${productDetail[0]})">
+                    <td class="text-center align-middle">
                         ${productDetail[18]}
                     </td>
                     <td>
@@ -287,31 +301,37 @@ function updateProductTable(response) {
                             </div>
                         </div>
                     </td>
-                    <td style="font-size: 13px">
-                      <h5 class="card-title fs-6">${productDetail[2]}</h5>
-                      <p class="card-text">
-                        Màu: <span class="text-primary-emphasis">${productDetail[3]}</span>
+                    <td style="font-size: 13px"  class=" text-center align-middle">
+                       <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" 
+                          data-bs-html="true"
+                          data-bs-content="
+                            Hãng: <span class='text-danger'>${productDetail[5]}</span><br>
+                            Chất liệu: <span class='text-danger'>${productDetail[6]}</span><br>
+                            Nơi sản xuất: <span class='text-danger'>${productDetail[7]}</span><br>
+                            Loại đế: <span class='text-danger'>${productDetail[8]}</span><br>
+                            Danh mục: <span class='text-danger'>${category}</span>
+                          ">
+                        <div>
+                        <h5 class="card-title fs-6">${productDetail[2]}</h5>
+                        <p class="card-text">
+                        Màu: <span class="text-danger">${productDetail[3]}</span>
                         <br>
-                        Kích cỡ: <span class="text-primary-emphasis">${productDetail[4]}</span>
+                        Kích cỡ: <span class="text-danger">${productDetail[4]}</span>
                         <br>
-                        Hãng: <span class="text-primary-emphasis">${productDetail[5]}</span>
-                        <br>
-                        Chất liệu: <span class="text-primary-emphasis">${productDetail[6]}</span>
-                        <br>
-                        Nơi sản xuất: <span class="text-primary-emphasis">${productDetail[7]}</span>
-                        <br>
-                        Loại đế: <span class="text-primary-emphasis">${productDetail[8]}</span>
-                        <br>
-                        Danh mục: <span class="text-primary-emphasis">${productDetail[16]}</span>
-                      </p>
+                        </p>
+                        </div>
+                        </span>
                     </td>
-                    <td class="">
+                    <td class="fs-6 text-center align-middle">
                         ${Math.trunc(productDetail[9]).toLocaleString('en-US')} VNĐ
                     </td>
-                    <td>
+                    <td class="text-center align-middle">
                         ${priceSale}
                     </td>
-                    <td>
+                    <td class="text-center align-middle">
+                       <span class="text-danger fs-5">${Math.trunc(productDetail[19]).toLocaleString('en-US')} VNĐ</span>
+                    </td>
+                    <td class="text-center align-middle">
                         <input type="checkbox" value="${productDetail[0]}" name="selectedProducts" id="product_apply${productDetail[0]}" />
                     </td>
                 </tr>
@@ -325,8 +345,40 @@ function updateProductTable(response) {
         $('.carousel').each(function() {
             $(this).carousel(); // Khởi tạo carousel cho từng phần tử
         });
+
+        // Khởi tạo lại tất cả các popover sau khi cập nhật DOM
+        $(function () {
+            $('[data-bs-toggle="popover"]').popover();
+        });
     }
 }
+
+function toggleCheckboxProduct(productId2) {
+    const checkbox = document.getElementById(`product_apply${productId2}`);
+
+    // Thay đổi trạng thái của checkbox (checked/unchecked)
+    checkbox.checked = !checkbox.checked;
+
+    // Lấy giá trị ID từ checkbox (sử dụng .value thay vì .val() vì đó là DOM thuần)
+    let productId = checkbox.value;
+
+    // Kiểm tra nếu checkbox được chọn
+    if (checkbox.checked) {
+        // Nếu checkbox được chọn, thêm ID vào mảng nếu chưa có
+        if (!selectedProductIds.includes(productId)) {
+            selectedProductIds.push(productId);
+        }
+    } else {
+        // Nếu checkbox bị bỏ chọn, xóa ID khỏi mảng
+        selectedProductIds = selectedProductIds.filter(id => id !== productId);
+    }
+
+    // Lưu mảng selectedProductIds vào localStorage
+    localStorage.setItem('selectedProductIds', JSON.stringify(selectedProductIds));
+
+    console.log('Selected Product IDs:', selectedProductIds);
+}
+
 
 function filterProduct(statusCheckIdSale) {
     $.ajax({
@@ -342,7 +394,8 @@ function filterProduct(statusCheckIdSale) {
             idOrigins: $('#originSearch').val() ? $('#originSearch').val().trim().replace(/\s+/g, '').split(',').filter(Boolean).map(Number) : null,  // Xóa tất cả khoảng trắng và xử lý
             idSoles: $('#soleSearch').val() ? $('#soleSearch').val().trim().replace(/\s+/g, '').split(',').filter(Boolean).map(Number) : null,  // Xóa tất cả khoảng trắng và xử lý
             idCategories: $('#categorySearch').val() ? $('#categorySearch').val().trim().replace(/\s+/g, '').split(',').filter(Boolean).map(Number) : null,  // Xóa tất cả khoảng trắng và xử lý
-            statusCheckIdSale: statusCheckIdSale
+            statusCheckIdSale: statusCheckIdSale,
+            idSaleProductCheck: idSaleProduct
         }),
         success: function (response) {
             loadProduct(1); // Gọi hàm để tải sản phẩm với trang đầu tiên
@@ -661,7 +714,8 @@ function loadSoleIntoSelect() {
     });
 }
 
-function resetFilterProductSale() {
+function resetFilterProductSale(idSaleProduct2) {
+    idSaleProduct = idSaleProduct2;
     document.getElementById('nameSearch').value='';
     document.getElementById('soleSearch').value='';
     selectSole.clearAll();
@@ -679,28 +733,13 @@ function resetFilterProductSale() {
     selectCategory.clearAll();
     filterProduct(checkProduct);
 }
-
+function resetDataSale() {
+    selectedProductIds = [];
+    idSaleProduct = null;
+}
 // let selectedProductIds = JSON.parse(localStorage.getItem('selectedProductIds')) || [];
 let selectedProductIds = [];
-// Lắng nghe sự kiện thay đổi trạng thái của checkbox
-$(document).on('change', 'input[name="selectedProducts"]', function() {
-    let productId = $(this).val(); // Lấy giá trị ID từ checkbox
-
-    if ($(this).is(':checked')) {
-        // Nếu checkbox được chọn, thêm ID vào mảng nếu chưa có
-        if (!selectedProductIds.includes(productId)) {
-            selectedProductIds.push(productId);
-        }
-    } else {
-        // Nếu checkbox bị bỏ chọn, xóa ID khỏi mảng
-        selectedProductIds = selectedProductIds.filter(id => id !== productId);
-    }
-
-    // Lưu mảng selectedProductIds vào localStorage
-    localStorage.setItem('selectedProductIds', JSON.stringify(selectedProductIds));
-
-    console.log('Selected Product IDs:', selectedProductIds);
-});
+let idSaleProduct = null;
 
 // Khôi phục trạng thái checkbox khi bảng được cập nhật hoặc trang được tải lại
 function restoreCheckboxState() {
@@ -724,6 +763,57 @@ function getMaxPageProduct() {
         },
         error: function (xhr) {
             console.error('loi o tao page ' + xhr.responseText);
+        }
+    });
+}
+
+function addOrUpdateSaleProductInProduct() {
+    $.ajax({
+        url: '/api-sale-product/save-or-update-sale-product-in-product',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            productIds: selectedProductIds, // Danh sách ID sản phẩm
+            saleProductId: idSaleProduct
+        }),
+        success: function(response) {
+            createToast(response.check, response.message);
+            filterProduct(2);
+            if(response.check == '1') {
+                document.getElementById('productNotIdSale').classList.remove('active');
+                document.getElementById('productYesSale').classList.add('active');
+            }
+            selectedProductIds = [];
+            // resetDataSale();
+        },
+        error: function(xhr, status, error) {
+            console.error('Lỗi:', error);
+        }
+    });
+}
+
+function removeSaleProductInProduct() {
+    $.ajax({
+        url: '/api-sale-product/remove-sale-product-in-product',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            productIds: selectedProductIds, // Danh sách ID sản phẩm
+            saleProductId: idSaleProduct
+        }),
+        success: function(response) {
+            createToast(response.check, response.message);
+            filterProduct(1);
+            if(response.check == '1') {
+                document.getElementById('productNotIdSale').classList.add('active');
+                document.getElementById('productYesSale').classList.remove('active');
+                $('#methodAddAndRemoverSaleProduct').html(`<button type="button" class="btn btn-outline-success" onclick="addOrUpdateSaleProductInProduct()">Thêm-sửa đợt giảm giá</button>`)
+            }
+            selectedProductIds = [];
+            // resetDataSale();
+        },
+        error: function(xhr, status, error) {
+            console.error('Lỗi:', error);
         }
     });
 }

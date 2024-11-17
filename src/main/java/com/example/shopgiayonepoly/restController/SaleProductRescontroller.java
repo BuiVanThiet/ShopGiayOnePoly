@@ -1,10 +1,14 @@
 package com.example.shopgiayonepoly.restController;
 
+import com.example.shopgiayonepoly.dto.request.DiscountApplyRequest;
 import com.example.shopgiayonepoly.dto.request.SaleProductRequest;
 import com.example.shopgiayonepoly.dto.request.VoucherRequest;
 import com.example.shopgiayonepoly.dto.request.Voucher_SaleProductSearchRequest;
 import com.example.shopgiayonepoly.dto.request.bill.ProductDetailCheckMark2Request;
+import com.example.shopgiayonepoly.entites.ProductDetail;
+import com.example.shopgiayonepoly.entites.SaleProduct;
 import com.example.shopgiayonepoly.entites.Staff;
+import com.example.shopgiayonepoly.service.ProductDetailService;
 import com.example.shopgiayonepoly.service.SaleProductService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,10 +29,13 @@ import java.util.Map;
 public class SaleProductRescontroller {
     @Autowired
     SaleProductService saleProductService;
+    @Autowired
+    ProductDetailService productDetailService;
     Voucher_SaleProductSearchRequest saleProductSearchRequest = null;
 
     ProductDetailCheckMark2Request productDetailCheckMark2Request = null;
     Integer checkIdSaleProduct = null;
+
     //tai danh sach
     @GetMapping("/list/{page}")
     public List<Object[]> getListSaleProduct(@PathVariable("page") String page) {
@@ -110,6 +118,47 @@ public class SaleProductRescontroller {
         this.productDetailCheckMark2Request = productDetailCheckRequest2;
         System.out.println("Thong tin loc " + productDetailCheckRequest2.toString());
         return ResponseEntity.ok("Done");
+    }
+    @PostMapping("/save-or-update-sale-product-in-product")
+    public  ResponseEntity<Map<String,String>> getAddOrUpdateSalePoduct(@RequestBody DiscountApplyRequest data) {
+        Map<String,String> thongBao = new HashMap<>();
+        System.out.println(data.toString());
+//
+        SaleProduct saleProduct = this.saleProductService.getSaleProductByID(data.getSaleProductId());
+        if(saleProduct == null) {
+            thongBao.put("message","Đợt giảm giá không tồn tại!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+        for (Integer idSale: data.getProductIds()) {
+            ProductDetail productDetail = this.productDetailService.findById(idSale).orElse(null);
+            if(productDetail != null) {
+                productDetail.setSaleProduct(saleProduct);
+                productDetail.setUpdateDate(new Date());
+                this.productDetailService.save(productDetail);
+            }
+        }
+        thongBao.put("message","Thêm đợt giảm giá vào sản phẩm thành công!");
+        thongBao.put("check","1");
+        return ResponseEntity.ok(thongBao);
+    }
+
+    @PostMapping("/remove-sale-product-in-product")
+    public ResponseEntity<Map<String,String>> getRemoveSalePoduct(@RequestBody DiscountApplyRequest data) {
+        Map<String,String> thongBao = new HashMap<>();
+        System.out.println(data.toString());
+
+        for (Integer idSale: data.getProductIds()) {
+            ProductDetail productDetail = this.productDetailService.findById(idSale).orElse(null);
+            if(productDetail != null) {
+                productDetail.setSaleProduct(null);
+                productDetail.setUpdateDate(new Date());
+                this.productDetailService.save(productDetail);
+            }
+        }
+        thongBao.put("message","Xóa đợt giảm giá cho sản phẩm thành công!");
+        thongBao.put("check","1");
+        return ResponseEntity.ok(thongBao);
     }
 
     ///////////////////////////////////////////////////

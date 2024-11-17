@@ -278,12 +278,7 @@ public class BillRestController extends BaseBill {
         System.out.println("Số trang là: " + pageNumber);
         return pageNumber;
     }
-//    @GetMapping("/bill-detail-page/{number}")
-//    public void getPageBillDetail(@PathVariable("number") Integer number,HttpSession session) {
-//        session.setAttribute("numberPage",number-1);
-//        System.out.println("trang dc chon la " + session.getAttribute("numberPage"));
-//        System.out.println("id bill " + session.getAttribute("IdBill"));
-//    }
+
     @GetMapping("/productDetail-sell/{pageNumber}")
     public List<Object[]> getProductDetailSell(@PathVariable("pageNumber") String pageNumber, HttpSession session) {
         String validatePageNumber= validateInteger(pageNumber);
@@ -339,16 +334,7 @@ public class BillRestController extends BaseBill {
         System.out.println("so trang cua san pham " + maxPageProduct);
         return maxPageProduct;
     }
-//    @PostMapping("/filter-product-deatail")
-//    public ResponseEntity<?> getFilterProduct(@RequestBody ProductDetailCheckRequest productDetailCheckRequest2, HttpSession session) {
-//        if(productDetailCheckRequest2.getIdCategories().get(0) == 0) {
-//            productDetailCheckRequest2.setIdCategories(null);
-//        }
-//        this.productDetailCheckRequest = productDetailCheckRequest2;
-//
-//        System.out.println("Thong tin loc " + this.productDetailCheckRequest.toString());
-//        return ResponseEntity.ok("Done");
-//    }
+
     @PostMapping("/filter-product-deatail")
     public ResponseEntity<?> getFilterProduct(@RequestBody ProductDetailCheckMark2Request productDetailCheckRequest2, HttpSession session) {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
@@ -622,10 +608,6 @@ public class BillRestController extends BaseBill {
         if(staffLogin == null) {
             return null;
         }
-//        if(status == 999){
-//            status = null;
-//        }
-//        this.statusBillCheck = status;
         System.out.println(status.toString());
         this.searchBillByStatusRequest = status;
         return ResponseEntity.ok("done");
@@ -801,13 +783,6 @@ public class BillRestController extends BaseBill {
             return ResponseEntity.ok(thongBao);
         }
 
-//        String regexEmail = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
-//
-//        if (!clientBillInformationResponse.getEmail().trim().matches(regexEmail)) {
-//            thongBao.put("message","Email sai định dạng!");
-//            thongBao.put("check","3");
-//            return ResponseEntity.ok(thongBao);
-//        }
 
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if(staffLogin == null) {
@@ -1019,7 +994,6 @@ public class BillRestController extends BaseBill {
                     System.out.println(ht);
                     String title = "Đơn hàng đã được xác nhận";
                     this.templateEmailConfigmBill(email,ht,bill.getCodeBill(),title);
-//                    this.templateEmailConfigmBill(email,"http://localhost:8080/onepoly/status-bill/",bill.getCodeBill());
                 }
                 bill.setUpdateDate(new Date());
                 bill.setStatus(bill.getStatus()+1);
@@ -1035,8 +1009,6 @@ public class BillRestController extends BaseBill {
                         }
                     }
                 }
-//                    mess = "Hóa đơn đã được xác nhận!";
-//                    colorMess = "1";
 
                 this.setBillStatus(bill.getId(),bill.getStatus(),session);
             }
@@ -1453,39 +1425,6 @@ public class BillRestController extends BaseBill {
         return results;
     }
 
-//    @GetMapping("/download-filled-pdf")
-//    public ResponseEntity<byte[]> downloadFilledPdf() throws Exception {
-//        List<Object[]> productList = new ArrayList<>();
-//        productList.add(new Object[]{"Giày Jordan 1", 1, 2500000.0, 2500000.0});
-//        productList.add(new Object[]{"Giày Yeezy Boost 350", 2, 6000000.0, 12000000.0});
-//        productList.add(new Object[]{"Giày Asics Gel-Lyte III", 3, 850000.0, 2550000.0});
-//        productList.add(new Object[]{"Giày Jordan 1", 1, 2500000.0, 2500000.0});
-//        productList.add(new Object[]{"Giày Yeezy Boost 350", 2, 6000000.0, 12000000.0});
-//        productList.add(new Object[]{"Giày Asics Gel-Lyte III", 3, 850000.0, 2550000.0});
-//        // Tạo file PDF từ danh sách sản phẩm
-//        ByteArrayOutputStream pdfStream = pdfTemplateService.fillPdfTemplate(productList);
-//        byte[] pdfBytes = pdfStream.toByteArray();
-//        // Đường dẫn nơi file PDF sẽ được lưu trên ổ đĩa
-//        String filePath = "D:/hd2.pdf";  // Cập nhật đường dẫn theo ổ đĩa của bạn
-//
-////        // Ghi file PDF vào ổ đĩa
-////        try (FileOutputStream fos = new FileOutputStream(filePath)) {
-////            fos.write(pdfBytes);
-////            fos.flush();
-////        } catch (IOException e) {
-////            e.printStackTrace();  // Xử lý lỗi nếu có
-////        }
-//
-//        // Trả về file PDF dưới dạng download cho người dùng
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setContentType(MediaType.APPLICATION_PDF);
-//        headers.setContentDispositionFormData("attachment", "hd1.pdf");
-//
-//        return ResponseEntity.ok()
-//                .headers(headers)
-//                .body(pdfBytes);
-//    }
-
     @GetMapping("/bill-pdf/{idBill}")
     public ResponseEntity<byte[]> getbillPDF(@PathVariable("idBill") String idBill,HttpSession session) throws Exception {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
@@ -1601,59 +1540,6 @@ public class BillRestController extends BaseBill {
         return ResponseEntity.ok()
                 .headers(headers)
                 .body(pdfBytes);
-    }
-
-    @GetMapping("/list-product-sell-test")
-    public List<ProductDetailSellResponse> productDetailSellResponses(HttpSession session) {
-        this.productDetailCheckRequest = new ProductDetailCheckRequest("",null,null,null,null,null,null);
-        if(this.productDetailCheckMark2Request == null) {
-            this.productDetailCheckMark2Request = new ProductDetailCheckMark2Request("",null,null,null,null,null,null,null);
-        }
-        Integer i = 1;
-        System.out.println("cai nay cua ban test: ");
-//        ProductDetailCheckMark2Request request = new ProductDetailCheckMark2Request();
-//        // Đặt danh sách id màu sắc
-//        request.setIdColors(new Integer[]{1, 2});
-//
-//        // Đặt danh sách id kích thước
-//        request.setIdSizes(null);
-//
-//        // Đặt danh sách id chất liệu
-//        request.setIdMaterials(null);
-//
-//        // Đặt danh sách id nhà sản xuất
-//        request.setIdManufacturers(null);
-//
-//        // Đặt danh sách id nơi xuất xứ
-//        request.setIdOrigins(null);
-//
-//        // Đặt danh sách id đế giày
-//        request.setIdSoles(null);
-//
-//        // Đặt danh sách id danh mục
-//        request.setIdCategories(null);
-
-        // In ra thông tin của request để kiểm tra
-        for (Object[] objects: this.billDetailService.findProductDetailSaleTest(this.productDetailCheckMark2Request,(Integer) session.getAttribute("IdBill"))) {
-            System.out.println("Sản phẩm thứ " + i);
-            System.out.println("Sản phẩm có id là: " + objects[0]);  // pd.id
-            System.out.println("Tên sản phẩm: " + objects[1]);  // p.name_product
-            System.out.println("Tên màu: " + objects[2]);  // c.name_color
-            System.out.println("Tên size: " + objects[3]);  // s.name_size
-            System.out.println("Nhà sản xuất: " + objects[4]);  // m.name_manufacturer
-            System.out.println("Chất liệu: " + objects[5]);  // mat.name_material
-            System.out.println("Xuất xứ: " + objects[6]);  // o.name_origin
-            System.out.println("Loại đế: " + objects[7]);  // so.name_sole
-            System.out.println("-----------------------------------------");
-            i++;
-        }
-//        System.out.println("cai nay cua ban chinh thuc: ");
-////        Integer n = 1;
-////        for (ProductDetail productDetail: this.billDetailService.getProductDetailSale(productDetailCheckRequest)) {
-////            System.out.println("san pham "+n+" co id la: "+productDetail.getId());
-////            n++;
-////        }
-        return null;
     }
 
     @GetMapping("/check-payment-exchange")

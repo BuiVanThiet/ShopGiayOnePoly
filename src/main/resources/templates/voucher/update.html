@@ -117,10 +117,31 @@
                 </div>
 
                 <div class="btn-group d-flex">
-                    <button class="btn btn-warning mt-3 w-50" id="btnOpenModalConfirmAddVoucher"
-                            onclick="return confirm('Bạn có muốn sửa phiếu giảm giá này không?')">
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-warning mt-3 w-50" id="btnOpenModalConfirmAddVoucher" data-bs-toggle="modal" data-bs-target="#updateModal">
                         <i class="bi bi-plus-lg"></i> Sửa
                     </button>
+
+                    <!-- Modal -->
+                    <div class="modal fade"
+                         id="updateModal"
+                         tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="updateModalLabel">Xác nhận</h1>
+                                </div>
+                                <div class="modal-body">
+                                    Bạn muốn sửa dữ liệu như này sao?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Quay lại</button>
+                                    <button type="submit" class="btn btn-primary">Vâng</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <a class="btn btn-primary mt-3 w-50" th:href="@{/voucher/list}">
                         <i class="bi bi-house"></i> Quay về trang quản lý
                     </a>

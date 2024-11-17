@@ -39,7 +39,7 @@
                     return "redirect:/login";
 
             }
-            return "Home/home_manege";
+            return "forward:/chart/form";
         }
         @GetMapping("/logout")
         public String logout(HttpSession session) {
