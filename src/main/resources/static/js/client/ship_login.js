@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function getAvailableServices(toDistrictId, toWardCode) {
         if (!toDistrictId || !toWardCode) {
-            updateShippingFeeDisplay("Không thể lấy dịch vụ vận chuyển");
+            updateShippingFeeDisplay("-");
             return;
         }
 
@@ -142,6 +142,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Nếu giá trị không hợp lệ, đặt giá trị mặc định là 0
     if (isNaN(priceVoucher)) {
-        spanPriceVoucher.textContent = "0đ";
+        spanPriceVoucher.textContent = "-";
     }
 });

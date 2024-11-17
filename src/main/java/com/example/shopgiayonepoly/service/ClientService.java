@@ -28,5 +28,8 @@ public interface ClientService {
     BigDecimal findDiscountedPriceByProductDetailId(@Param("productDetailId") Integer productDetailId);
 
     VoucherClientResponse findVoucherApplyByID(Integer id);
-    List<Cart> findListCartByIdCustomer(@Param("idCustomer")Integer idCustomer);
+
+    List<Cart> findListCartByIdCustomer(@Param("idCustomer") Integer idCustomer);
+
+    void deleteCartByCustomerIdAndProductDetailId(Integer customerId, Integer productDetailId);
 }

@@ -85,102 +85,90 @@ function toggleVoucherList() {
     }
 }
 
-function removeFromCart(idProductDetailFromCart) {
-    fetch(`/onepoly/remove-from-cart/${idProductDetailFromCart}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
+function removeProductDetailFromCart(btn) {
+    const cartItem = btn.closest(".cart-item");
+    const productId = btn.getAttribute('field');
+    // Sử dụng productId trong xử lý của bạn
+    console.log("Sản phẩm có id:", productId);
+    // const productDetailId = document.getElementById("idProductDetailFromCart").innerText;
+    // console.log("ID productDetail delete text: " + productDetailId)
+    //
+    // let productDetailIdINT = parseInt(productDetailId.value);
+    //
+    $.ajax({
+        url: '/api-client/remove-from-cart/' + productId,  // Gửi ID sản phẩm lên server
+        type: 'POST',
+        success: function (response) {
+            console.log(response);
+            cartItem.remove(); // Xóa sản phẩm khỏi giỏ hàng
+        },
+        error: function (xhr, status, error) {
+            alert('Có lỗi khi gửi yêu cầu');
         }
-    })
-        .then(response => response.json())
-        .then(data => {
-            const totalPrice = data.totalPrice;
-            const priceReduced = data.priceReduced;
-            const cartItems = data.cartItems;
-
-            // Cập nhật tổng giá trị vào giao diện
-            document.getElementById('totalPriceCartItem').textContent = totalPrice + ' ₫';
-
-            // Cập nhật lại giá trị giảm giá (nếu có)
-            if (priceReduced !== '0') {
-                document.getElementById('priceVoucherReduced').textContent = priceReduced + ' ₫';
-            } else {
-                document.getElementById('priceVoucherReduced').textContent = '0 ₫';
-            }
-
-            // Cập nhật lại danh sách sản phẩm trong giỏ hàng
-            const cartItemsContainer = document.getElementById('voucher-list');
-            cartItemsContainer.innerHTML = ''; // Xóa danh sách cũ
-
-            cartItems.forEach(item => {
-                const productDiv = document.createElement('div');
-                productDiv.textContent = `${item.productDetail.name} - ${item.quantity} x ${item.productDetail.price} ₫`;
-                cartItemsContainer.appendChild(productDiv);
-            });
-
-            if (cartItems.length === 0) {
-                cartItemsContainer.innerHTML = '<p>Giỏ hàng của bạn đang trống.</p>';
-            }
-        })
-        .catch(error => console.error('Error removing product from cart:', error));
-}
-
-function removeProductDetailFromCart(button) {
-    // Tìm đến phần tử <input> có id là 'idProductDetailFromCart' trong cùng một div với nút xóa
-    const cartItemDiv = button.closest('.cart-item');  // Tìm div chứa sản phẩm
-    const productDetailId = cartItemDiv.querySelector('#idProductDetailFromCart').value; // Lấy giá trị của hidden input
-
-    // In ra giá trị của ID sản phẩm trong giỏ
-    console.log("ID sản phẩm trong giỏ hàng: " + productDetailId);
-
-    // Gọi AJAX để xóa sản phẩm khỏi giỏ
-    removeFromCart(productDetailId);
-    console.log("delete nxong")
+    });
 }
 
 document.addEventListener("DOMContentLoaded", function () {
     function updateQuantity(button, change) {
         const cartItem = button.closest(".cart-item");
         const quantityElem = cartItem.querySelector("#quantityProductFormCart");
-        let quantity = parseInt(quantityElem.innerText);
-        const productDetailId = cartItem.querySelector("#idProductDetailFromCart").value;
+        const productDetailIdElem = cartItem.querySelector("#idProductDetailFromCart");
+        let quantityItem = parseInt(quantityElem.innerText);
+        const productDetailId = productDetailIdElem.value;
 
-        quantity += change;
-        console.log("productDetail ID+" + productDetailId);
-        // Giới hạn số lượng sản phẩm
-        if (quantity < 1) quantity = 1;
-        else if (quantity > 10) {
-            alert("Chỉ được mua tối đa 10 sản phẩm cùng loại.");
-            quantity = 10;
+        if (isNaN(quantityItem)) {
+            alert("Số lượng không hợp lệ.");
+            return;
         }
 
-        // Cập nhật số lượng hiển thị
-        quantityElem.innerText = quantity;
+        quantityItem += change;
+        if (quantityItem < 1) quantityItem = 1;
+        else if (quantityItem > 10) {
+            alert("Chỉ được mua tối đa 10 sản phẩm cùng loại.");
+            quantityItem = 10;
+        }
 
-        // Gửi yêu cầu AJAX để cập nhật số lượng
-        updateQuantityInServer(productDetailId, quantity);
+        const productId = button.getAttribute('field');
+
+        quantityElem.innerText = quantityItem;
+        updateQuantityInServer(productId, quantityItem);
     }
 
-    function updateQuantityInServer(productId, quantity) {
+
+    function updateQuantityInServer(productDetailId, quantityItem) {
+        console.log('vao phuong thuc cong tru ' + productDetailId)
+        console.log('so luong mua ' + quantityItem)
+
         $.ajax({
-            
+            type: "POST",
+            url: "/api-client/update-from-cart/"+productDetailId,
+            contentType: "application/json",
+            data: JSON.stringify({quantityItem: quantityItem}),
+            success:function (response) {
+                console.log('done')
+                updateCartTotal();
+            },
+            error:function (xhr) {
+                console.log('loi' + xhr.responseText)
+            }
         })
-    //         method: "POST",
-    //         headers: {
-    //             "Content-Type": "application/x-www-form-urlencoded",
-    //         },
-    //         body: new URLSearchParams({quantityItem: quantity}),
-    //     })
-    //         .then(response => response.json())
-    //         .then(data => {
-    //             alert("HHHHHHH");
-    //             if (data.messages) {
-    //                 alert(data.messages);
-    //             }
-    //
-    //             updateCartTotal();
-    //         })
-    //         .catch(error => console.error("Lỗi khi cập nhật giỏ hàng:", error));
+        // $.ajax({
+        //     url: `/api-client/update-from-cart/${productDetailId}`,
+        //     type: "POST",
+        //     contentType: "application/json",
+        //     data: JSON.stringify({quantityItem: quantityItem}),
+        //     success: function (response) {
+        //         console.log("Cập nhật số lượng thành công:", response);
+        //         if (response.messages) {
+        //             console.log(response.messages);
+        //         }
+        //         updateCartTotal();
+        //     },
+        //     error: function (xhr) {
+        //         console.error("Lỗi khi cập nhật giỏ hàng:", xhr.responseText);
+        //         alert("Có lỗi xảy ra khi cập nhật giỏ hàng. Vui lòng thử lại.");
+        //     },
+        // });
     }
 
     function updateCartTotal() {
@@ -189,21 +177,23 @@ document.addEventListener("DOMContentLoaded", function () {
         document.querySelectorAll(".cart-item").forEach(item => {
             const priceElem = item.querySelector("#cart-spanPriceCartItem");
             const quantityElem = item.querySelector("#quantityProductFormCart");
-            const price = parseFloat(priceElem.innerText.replace(/₫|,/g, ""));
-            const quantity = parseInt(quantityElem.innerText);
+
+            const price = parseFloat(priceElem.innerText.replace(/₫|,/g, "")) || 0;
+            const quantity = parseInt(quantityElem.innerText) || 0;
+
             totalPrice += price * quantity;
         });
 
         document.getElementById("totalPriceCartItem").innerText = totalPrice.toLocaleString("vi-VN") + " ₫";
 
         const voucherTypeElem = document.getElementById("voucher-type");
-        const priceReducedElem = document.getElementById("price-reduced-voucher");
+        const priceReducedElem = document.getElementById("priceVoucherReduced");
         let discountType = 1;
         let discountValue = 0;
 
         if (voucherTypeElem && priceReducedElem) {
-            discountType = parseInt(voucherTypeElem.innerText.trim());
-            discountValue = parseFloat(priceReducedElem.innerText.trim().replace(/₫|,/g, ""));
+            discountType = parseInt(voucherTypeElem.innerText.trim()) || 1;
+            discountValue = parseFloat(priceReducedElem.innerText.trim().replace(/₫|,/g, "")) || 0;
         }
 
         let priceReduced = 0;
@@ -229,4 +219,5 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 });
+
 
