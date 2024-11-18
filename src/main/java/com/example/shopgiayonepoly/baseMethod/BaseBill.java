@@ -70,6 +70,9 @@ public abstract class BaseBill extends BaseEmail {
     @Autowired
     protected TransactionVNPayService transactionVNPayService;
 
+    @Autowired
+    protected ClientService clientService;
+
     //bien cuc bo cua bill
     protected Bill billPay;
     protected String mess = "";
@@ -97,25 +100,24 @@ public abstract class BaseBill extends BaseEmail {
 
     protected BigDecimal totalExchange = BigDecimal.valueOf(0);
 
-    protected BigDecimal exchangeAndReturnFee =  BigDecimal.valueOf(0);
-    protected BigDecimal discountedAmount =  BigDecimal.valueOf(0);
-
+    protected BigDecimal exchangeAndReturnFee = BigDecimal.valueOf(0);
+    protected BigDecimal discountedAmount = BigDecimal.valueOf(0);
 
 
     //method chung
     //sua lai gia khi them san pham
     protected void setTotalAmount(Bill bill) {
         BigDecimal total = this.billDetailService.getTotalAmountByIdBill(bill.getId());
-        if(total != null) {
+        if (total != null) {
             bill.setUpdateDate(new Date());
             bill.setTotalAmount(total);
-        }else {
+        } else {
             bill.setUpdateDate(new Date());
             bill.setTotalAmount(BigDecimal.valueOf(0));
         }
         System.out.println("Thong tin bill: " + bill.toString());
         Bill billSave = this.billService.save(bill);
-        if(billSave.getStatus() == 1) {
+        if (billSave.getStatus() == 1) {
             System.out.println("gia duoc giam been xoa " + this.billService.getDiscountBill(billSave.getId()));
             billSave.setPriceDiscount(new BigDecimal(this.billService.getDiscountBill(billSave.getId())));
             this.billService.save(billSave);
@@ -123,13 +125,13 @@ public abstract class BaseBill extends BaseEmail {
     }
 
     //    sua lai so luong san pham khi duoc dua vao hoa don
-    protected void getUpdateQuantityProduct(Integer idProductDetial,Integer quantity) {
+    protected void getUpdateQuantityProduct(Integer idProductDetial, Integer quantity) {
         ProductDetail detail = this.billService.getProductDteailById(idProductDetial);
         detail.setUpdateDate(new Date());
-        Integer quantityNew = detail.getQuantity()-quantity;
-        if(quantityNew <= 0) {
+        Integer quantityNew = detail.getQuantity() - quantity;
+        if (quantityNew <= 0) {
             detail.setQuantity(0);
-        }else {
+        } else {
             detail.setQuantity(quantityNew);
         }
         System.out.println("da update so luong san pham");
@@ -138,7 +140,7 @@ public abstract class BaseBill extends BaseEmail {
     //update
 
     //danh cho giao hang, cai nay dung de theo doi don hang
-    protected void setBillStatus(Integer idBillSet,Integer status,HttpSession session) {
+    protected void setBillStatus(Integer idBillSet, Integer status, HttpSession session) {
         Bill bill = this.billService.findById(idBillSet).orElse(null);
         Staff staff = (Staff) session.getAttribute("staffLogin");
         InvoiceStatus invoiceStatus = new InvoiceStatus();
@@ -148,83 +150,84 @@ public abstract class BaseBill extends BaseEmail {
 
         if (invoiceStatus.getStatus() == 0) {
             if (checkNote == null || checkNote.trim().isEmpty()) {
-                session.setAttribute("notePayment","Tạo Đơn Hàng!");
+                session.setAttribute("notePayment", "Tạo Đơn Hàng!");
             }
-        }else if (invoiceStatus.getStatus() == 1) {
+        } else if (invoiceStatus.getStatus() == 1) {
             if (checkNote == null || checkNote.trim().isEmpty()) {
-                session.setAttribute("notePayment","Chờ Xác nhận!");
+                session.setAttribute("notePayment", "Chờ Xác nhận!");
             }
-        }else if(invoiceStatus.getStatus() == 2) {
+        } else if (invoiceStatus.getStatus() == 2) {
             mess = "Hóa đơn đã được xác nhận!";
             colorMess = "1";
             if (checkNote == null || checkNote.trim().isEmpty()) {
-                session.setAttribute("notePayment","Đã xác nhận!");
+                session.setAttribute("notePayment", "Đã xác nhận!");
             }
-        }else if (invoiceStatus.getStatus() == 3) {
+        } else if (invoiceStatus.getStatus() == 3) {
             mess = "Hóa đơn đã được giao hàng!";
             colorMess = "1";
             if (checkNote == null || checkNote.trim().isEmpty()) {
-                session.setAttribute("notePayment","Giao Hàng!");
+                session.setAttribute("notePayment", "Giao Hàng!");
             }
-        }else if (invoiceStatus.getStatus() == 4) {
+        } else if (invoiceStatus.getStatus() == 4) {
             mess = "Hóa đơn đã được khách nhận!";
             colorMess = "1";
             if (checkNote == null || checkNote.trim().isEmpty()) {
-                session.setAttribute("notePayment","Khách đã nhận được hàng!");
+                session.setAttribute("notePayment", "Khách đã nhận được hàng!");
             }
-        }else if (invoiceStatus.getStatus() == 5) {
+        } else if (invoiceStatus.getStatus() == 5) {
             mess = "Hóa đơn đã hoàn thành!";
             colorMess = "1";
             if (checkNote == null || checkNote.trim().isEmpty()) {
-                session.setAttribute("notePayment","Đơn Hàng Đã Hoàn Thành!");
+                session.setAttribute("notePayment", "Đơn Hàng Đã Hoàn Thành!");
             }
-        }else if (invoiceStatus.getStatus() == 6){
+        } else if (invoiceStatus.getStatus() == 6) {
             if (checkNote == null || checkNote.trim().isEmpty()) {
-                session.setAttribute("notePayment","Đơn Hàng Đã Bị Hủy!");
+                session.setAttribute("notePayment", "Đơn Hàng Đã Bị Hủy!");
             }
-        }else if (invoiceStatus.getStatus() == 101) {
-            if (checkNote == null || checkNote.trim().isEmpty()) {
-                session.setAttribute("notePayment", "Đơn Hàng Đã được thanh toán!");
-            }
-        }else if (invoiceStatus.getStatus() == 102) {
+        } else if (invoiceStatus.getStatus() == 101) {
             if (checkNote == null || checkNote.trim().isEmpty()) {
                 session.setAttribute("notePayment", "Đơn Hàng Đã được thanh toán!");
             }
-        }else if (invoiceStatus.getStatus() == 201) {
+        } else if (invoiceStatus.getStatus() == 102) {
             if (checkNote == null || checkNote.trim().isEmpty()) {
-                session.setAttribute("notePayment","Chờ xác nhận đổi-trả hàng!");
+                session.setAttribute("notePayment", "Đơn Hàng Đã được thanh toán!");
             }
-        }else if (invoiceStatus.getStatus() == 202) {
+        } else if (invoiceStatus.getStatus() == 201) {
             if (checkNote == null || checkNote.trim().isEmpty()) {
-                session.setAttribute("notePayment","Đồng ý đổi-trả hàng!");
+                session.setAttribute("notePayment", "Chờ xác nhận đổi-trả hàng!");
+            }
+        } else if (invoiceStatus.getStatus() == 202) {
+            if (checkNote == null || checkNote.trim().isEmpty()) {
+                session.setAttribute("notePayment", "Đồng ý đổi-trả hàng!");
             }
             ReturnBillExchangeBill returnBill = this.returnBillService.getReturnBillByIdBill(bill.getId());
             returnBill.setUpdateDate(new Date());
             returnBill.setStatus(1);
             this.returnBillService.save(returnBill);
-        }else if (invoiceStatus.getStatus() == 203) {
+        } else if (invoiceStatus.getStatus() == 203) {
             if (checkNote == null || checkNote.trim().isEmpty()) {
-                session.setAttribute("notePayment","Không đồng ý đổi-trả hàng!");
+                session.setAttribute("notePayment", "Không đồng ý đổi-trả hàng!");
             }
             ReturnBillExchangeBill returnBill = this.returnBillService.getReturnBillByIdBill(bill.getId());
             returnBill.setUpdateDate(new Date());
             returnBill.setStatus(2);
             this.returnBillService.save(returnBill);
         }
-        if(staff == null) {
-            invoiceStatus.setNote("Không có"+","+session.getAttribute("notePayment"));
-        }else {
-            invoiceStatus.setNote(staff.getId()+","+session.getAttribute("notePayment"));
+        if (staff == null) {
+            invoiceStatus.setNote("Không có" + "," + session.getAttribute("notePayment"));
+        } else {
+            invoiceStatus.setNote(staff.getId() + "," + session.getAttribute("notePayment"));
         }
         session.removeAttribute("notePayment");
         this.invoiceStatusService.save(invoiceStatus);
     }
+
     //trừ đi voucher cua hóa đơn
-    protected void getSubtractVoucher(Voucher voucher,Integer quantity) {
+    protected void getSubtractVoucher(Voucher voucher, Integer quantity) {
         voucher.setQuantity(voucher.getQuantity() - quantity);
         voucher.setUpdateDate(new Date());
         VoucherRequest voucherRequest = new VoucherRequest();
-        BeanUtils.copyProperties(voucher,voucherRequest);
+        BeanUtils.copyProperties(voucher, voucherRequest);
         System.out.println(voucherRequest.toString());
         System.out.println(voucherRequest.getId() + "" + voucherRequest.getCreateDate() + "" + voucherRequest.getUpdateDate());
         System.out.println(voucher.getId() + "" + voucher.getCreateDate() + "" + voucher.getUpdateDate());
@@ -311,7 +314,7 @@ public abstract class BaseBill extends BaseEmail {
 
                 // Kiểm tra ngày bắt đầu và kết thúc giảm giá
                 if ((startDate == null || !now.isBefore(startDate)) &&
-                        (endDate == null || !now.isAfter(endDate))) {
+                    (endDate == null || !now.isAfter(endDate))) {
 
                     // Kiểm tra loại giảm giá (1 = giảm theo %, 2 = giảm theo giá trị cụ thể)
                     if (saleProduct.getDiscountType() == 1) {
@@ -338,24 +341,24 @@ public abstract class BaseBill extends BaseEmail {
                         // Sử dụng compareTo() để so sánh giá
                         if (billDetail.getPrice().compareTo(currentPrice) == 0) {
                             System.out.println("Bill ID: " + bill.getId() + ", BillDetail ID: " + billDetail.getId() +
-                                    ", Product ID: " + billDetail.getProductDetail().getId() +
-                                    ", Quantity: " + billDetail.getQuantity() +
-                                    ", Price(trong bill): " + billDetail.getPrice() +
-                                    ", Price(trong san pham): " + currentPrice +
-                                    ", ỔN");
+                                               ", Product ID: " + billDetail.getProductDetail().getId() +
+                                               ", Quantity: " + billDetail.getQuantity() +
+                                               ", Price(trong bill): " + billDetail.getPrice() +
+                                               ", Price(trong san pham): " + currentPrice +
+                                               ", ỔN");
                         } else {
                             System.out.println("Bill ID: " + bill.getId() + ", BillDetail ID: " + billDetail.getId() +
-                                    ", Product ID: " + billDetail.getProductDetail().getId() +
-                                    ", Quantity: " + billDetail.getQuantity() +
-                                    ", Price(trong bill): " + billDetail.getPrice() +
-                                    ", Price(trong san pham): " + currentPrice +
-                                    ", ko ỔN");
+                                               ", Product ID: " + billDetail.getProductDetail().getId() +
+                                               ", Quantity: " + billDetail.getQuantity() +
+                                               ", Price(trong bill): " + billDetail.getPrice() +
+                                               ", Price(trong san pham): " + currentPrice +
+                                               ", ko ỔN");
                             BillDetail billDetailSave = billDetail;
                             billDetailSave.setPriceRoot(productDetail.getPrice());
                             billDetailSave.setUpdateDate(new Date());
                             billDetailSave.setPrice(currentPrice);
                             billDetailSave.setTotalAmount(billDetailSave.getPrice().multiply(BigDecimal.valueOf(billDetailSave.getQuantity())));
-                            if(billDetailSave.getPrice().compareTo(new BigDecimal(0)) < 0) {
+                            if (billDetailSave.getPrice().compareTo(new BigDecimal(0)) < 0) {
                                 billDetailSave.setPrice(new BigDecimal(0));
                                 billDetailSave.setTotalAmount(billDetailSave.getPrice().multiply(BigDecimal.valueOf(billDetailSave.getQuantity())));
                             }
@@ -367,7 +370,6 @@ public abstract class BaseBill extends BaseEmail {
             }
         }
     }
-
 
 
     //them vao lich su neu co su thay doi
@@ -395,21 +397,21 @@ public abstract class BaseBill extends BaseEmail {
     //xoa voucher khi giap ap dung khong hop ly
     protected void getDeleteVoucherByBill(Integer idBill) {
         System.out.println("da vao day de quet voucher");
-        if(idBill != null) {
+        if (idBill != null) {
             Bill bill = this.billService.findById(idBill).orElse(null);
-            System.out.println("day ne "+bill.toString());
+            System.out.println("day ne " + bill.toString());
             if (bill.getVoucher() != null) {
                 Voucher voucher = this.voucherService.getOne(bill.getVoucher().getId());
                 if (bill.getTotalAmount().compareTo(voucher.getPricesApply()) < 0) {
                     System.out.println("phai xoa thoii");
-                    this.getSubtractVoucher(bill.getVoucher(),-1);
+                    this.getSubtractVoucher(bill.getVoucher(), -1);
                     bill.setVoucher(null);
                     bill.setPriceDiscount(new BigDecimal(0));
                     bill.setUpdateDate(new Date());
                     this.billService.save(bill);
                 }
             }
-        }else {
+        } else {
             System.out.println("hoa don nay co");
         }
     }
@@ -448,7 +450,7 @@ public abstract class BaseBill extends BaseEmail {
     //validate Bigdecimal
     protected String validateBigDecimal(String val) {
         try {
-            if(val.trim().equals("") || val == null) {
+            if (val.trim().equals("") || val == null) {
                 return "/404";
             }
             new BigDecimal(val);
@@ -457,10 +459,11 @@ public abstract class BaseBill extends BaseEmail {
             return "/404";
         }
     }
+
     //validate Integer
     protected String validateInteger(String val) {
         try {
-            if(val.trim().equals("") || val == null) {
+            if (val.trim().equals("") || val == null) {
                 return "/404";
             }
             Integer.parseInt(val);

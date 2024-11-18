@@ -35,6 +35,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/staff/bill/vnpay-payment").permitAll()
                         .requestMatchers("/staff/bill/**").hasAnyRole("Quản trị viên", "Nhân viên bán hàng")
                         .requestMatchers("/staff/return-bill/**").hasAnyRole("Quản trị viên", "Nhân viên bán hàng")
                         .requestMatchers("/staff/transactionVNPay/**").hasAnyRole("Quản trị viên", "Nhân viên bán hàng")

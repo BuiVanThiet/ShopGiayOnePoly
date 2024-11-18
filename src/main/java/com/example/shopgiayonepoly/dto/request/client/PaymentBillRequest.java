@@ -17,7 +17,7 @@ public class PaymentBillRequest {
     private BigDecimal shippingPrice;
     private String noteBill;
     private BigDecimal totalAmountBill;
-
+    private Integer payMethod;
 
 
 }

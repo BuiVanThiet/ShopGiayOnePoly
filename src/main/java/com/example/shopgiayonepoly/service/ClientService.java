@@ -1,6 +1,8 @@
 package com.example.shopgiayonepoly.service;
 
 import com.example.shopgiayonepoly.dto.response.client.*;
+import com.example.shopgiayonepoly.entites.AddressShip;
+import com.example.shopgiayonepoly.entites.BillDetail;
 import com.example.shopgiayonepoly.entites.Cart;
 import org.springframework.data.repository.query.Param;
 
@@ -32,4 +34,8 @@ public interface ClientService {
     List<Cart> findListCartByIdCustomer(@Param("idCustomer") Integer idCustomer);
 
     void deleteCartByCustomerIdAndProductDetailId(Integer customerId, Integer productDetailId);
+
+    List<BillDetail> getListBillDetailByID(@Param("idBill") Integer idBill);
+
+    List<AddressShip> getListAddressShipByIDCustomer(@Param("idBill") Integer idBill);
 }

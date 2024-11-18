@@ -82,6 +82,7 @@
                                 </div>
                             </div>
                         </div>
+
                         <div id="section-payment-method" class="section-loaded"
                              style="padding: 10px;border: 1px solid #cecece;border-radius: 5px">
                             <div class="section-content">
@@ -92,12 +93,14 @@
                                     <div class="radio-wrapper content-box-row">
                                         <label class="radio-label" for="payment_method_code">
                                             <div class="radio-input payment-method-checkbox">
-                                                <input type="radio" id="payment_method_code"
-                                                       name="payment_method_id" value="0" checked>
+                                                <input type="radio" class="value-payment-method"
+                                                       id="payment_method_code"
+                                                       name="payment_method_id" value="1" checked>
                                             </div>
                                             <div class="radio-content-input">
                                                 <img class="main-img"
-                                                     src="https://hstatic.net/0/0/global/design/seller/image/payment/cod.svg?v=6">
+                                                     src="https://hstatic.net/0/0/global/design/seller/image/payment/cod.svg?v=6"
+                                                     alt="COD Payment Method">
                                                 <span class="radio-label-primary">Thanh toán khi giao hàng (COD)</span>
                                             </div>
                                         </label>
@@ -106,14 +109,14 @@
                                         <label class="radio-label" for="payment_method_vnpay">
                                             <div class="radio-input payment-method-checkbox">
                                                 <input type="radio" id="payment_method_vnpay"
-                                                       name="payment_method_id" value="1">
+                                                       class="value-payment-method"
+                                                       name="payment_method_id" value="2">
                                             </div>
                                             <div class="radio-content-input">
                                                 <img class="main-img"
-                                                     src="https://hstatic.net/0/0/global/design/seller/image/payment/payoo.svg?v=6">
-                                                <span class="radio-label-primary">Thanh toán bằng VN Pay</span>
-                                                <img class="child-img"
-                                                     src="https://hstatic.net/0/0/global/design/seller/image/payment/atm_visa_master_jcb.svg?v=6">
+                                                     src="data:image/png;base64,..."
+                                                     alt="VNPAY Payment Method">
+                                                <span class="radio-label-primary">VNPAY</span>
                                             </div>
                                         </label>
                                     </div>
@@ -126,42 +129,109 @@
                             </div>
                             <div class="row">
                                 <div class="col-8">
-                                    <input type="hidden" id="original-address" th:text="${OriginalAddress}+'.'">
+                                    <input type="hidden" id="original-address" th:text="${addressDefault}+'.'">
                                 </div>
                                 <div class="col-4">
                                     <div class="button-container">
-                                        <button class="btn-change-address" data-bs-toggle="modal" data-bs-target="#changeAddressModal">
+                                        <button class="btn-change-address" data-bs-toggle="modal"
+                                                data-bs-target="#changeAddressModal">
                                             <span class="text">Thay đổi</span>
-                                            <span class="icon"><i class="fas fa-sync-alt"></i></span> <!-- Icon -->
+                                            <span class="icon"><i class="fas fa-sync-alt"></i></span>
                                         </button>
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                     </div>
 
                     <div class="modal-address">
-                        <div class="modal fade" id="changeAddressModal" tabindex="-1" aria-labelledby="changeAddressModalLabel" aria-hidden="true">
+                        <div class="modal fade" id="changeAddressModal" tabindex="-1"
+                             aria-labelledby="changeAddressModalLabel" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="changeAddressModalLabel">Thay đổi địa chỉ</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    <!-- Modal Header -->
+                                    <div class="modal-header" style="background-color: #ffffff">
+                                        <h5 style="color: black" class="modal-title" id="changeAddressModalLabel">
+                                            <i class="bi bi-geo-alt-fill"
+                                               style="color: #2f2d2d; margin-right: 10px;"></i>
+                                            Thay đổi địa chỉ
+                                        </h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
                                     </div>
+
+                                    <!-- Modal Body -->
                                     <div class="modal-body">
-                                        <!-- Nội dung modal -->
-                                        <p>Chỉnh sửa địa chỉ của bạn tại đây.</p>
-                                        <!-- Bạn có thể thêm biểu mẫu hoặc các phần tử khác ở đây -->
+                                        <!-- Danh sách địa chỉ -->
+                                        <div class="list-address-customer" th:each="address : ${processedAddresses}">
+                                            <div class="info-address-shipping d-flex align-items-center">
+                                                <!-- Radio Button -->
+                                                <input class="form-check-input" type="radio" name="selectedAddress">
+                                                <!-- Địa chỉ -->
+                                                <p class="mb-0 ms-2" th:text="${address.specificAddress}">
+                                                    <i class="bi bi-house-door" style="margin-right: 8px;"></i>
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <!-- Nút Thêm Địa Chỉ Mới -->
+                                        <div class="add-new-address mt-4 text-center">
+                                            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"
+                                                    data-bs-target="#addNewAddressModal">
+                                                <i class="bi bi-plus-circle" style="margin-right: 5px;"></i>Thêm địa chỉ mới
+                                            </button>
+                                        </div>
                                     </div>
+
+
+                                    <!-- Modal Footer -->
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                                        <button type="button" class="btn btn-primary">Lưu thay đổi</button>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                            <i class="bi bi-x-circle" style="margin-right: 5px;"></i>Đóng
+                                        </button>
+                                        <button type="button" class="btn btn-primary">
+                                            <i class="bi bi-check-circle" style="margin-right: 5px;"></i>Lưu thay đổi
+                                        </button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+
+<!--          Thêm địa chỉ mới          -->
+                    <div class="modal fade" id="addNewAddressModal" tabindex="-1"
+                         aria-labelledby="addNewAddressModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <!-- Modal Header -->
+                                <div class="modal-header" style="background-color: #ffffff">
+                                    <h5 class="modal-title" id="addNewAddressModalLabel">
+                                        <i class="bi bi-plus-circle" style="margin-right: 10px;"></i>Thêm địa chỉ mới
+                                    </h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+
+                                <!-- Modal Body -->
+                                <div class="modal-body">
+                                    <form id="newAddressForm">
+                                        <div class="mb-3">
+                                            <label for="specificAddress" class="form-label">Địa chỉ cụ thể</label>
+                                            <input type="text" class="form-control" id="specificAddress" name="specificAddress"
+                                                   placeholder="Nhập địa chỉ cụ thể">
+                                        </div>
+                                    </form>
+                                </div>
+
+                                <!-- Modal Footer -->
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                    <button type="button" class="btn btn-primary" onclick="saveNewAddress()">Lưu</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
 
                     <!-- Phần danh sách giỏ hàng -->
                     <div class="cart-list" style="flex: 0 0 50%;">
