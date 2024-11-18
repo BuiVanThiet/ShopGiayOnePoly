@@ -466,7 +466,9 @@ public class BillController extends BaseBill {
             System.out.println("thong tin hoa don duoc tao " + bill.toString());
 
             this.billService.save(bill);
+            modelMap.addAttribute("redirectBill",null);
             modelMap.addAttribute("title","Tạo hóa đơn thành công!");
+            session.removeAttribute("IdBill");
             modelMap.addAttribute("url",bill.getId());
             this.mess = "";
             this.colorMess = "";
@@ -494,7 +496,9 @@ public class BillController extends BaseBill {
                 this.billService.save(bill);
                 this.setBillStatus(bill.getId(),bill.getStatus(),session);
                 this.setBillStatus(bill.getId(),101,session);
+                modelMap.addAttribute("redirectBill",null);
                 modelMap.addAttribute("title","Tạo hóa đơn thành công!");
+                session.removeAttribute("IdBill");
                 this.mess = "";
                 this.colorMess = "";
                 modelMap.addAttribute("url",bill.getId());
@@ -624,10 +628,14 @@ public class BillController extends BaseBill {
 //                this.getUpdateQuantityProduct(session);
                 this.mess = "";
                 this.colorMess = "";
+                modelMap.addAttribute("redirectBill",null);
                 modelMap.addAttribute("title","Tạo hóa đơn thành công!");
+                session.removeAttribute("IdBill");
                 return "Bill/successBill" ;
             }else {
+                modelMap.addAttribute("redirectBill",null);
                 modelMap.addAttribute("title","Tạo hóa đơn thất bại!");
+                session.removeAttribute("IdBill");
                 System.out.println("Bil bo thanh toan " + this.billPay.toString());
                 return "Bill/errorBill";
             }
@@ -1147,7 +1155,8 @@ public class BillController extends BaseBill {
     }
 
     @GetMapping("/manage-bill")
-    public String getIndexManageBill() {
+    public String getIndexManageBill(HttpSession session) {
+        session.removeAttribute("IdBill");
         return "Bill/manageBillIndex";
     }
 

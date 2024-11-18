@@ -39,12 +39,12 @@ function setActiveProductSaleAndNotSale(element, value) {
     var btn = '';
     if(value == 1) {
         btn = `
-             <button type="button" class="btn btn-outline-success" onclick="addOrUpdateSaleProductInProduct()" >Thêm đợt giảm giá</button>
+             <button type="button" class="btn btn-outline-success" onclick="addOrUpdateSaleProductInProduct()" >Thêm-sửa đợt giảm giá</button>
         `;
     }else {
         btn = `
              <button type="button" class="btn btn-outline-danger" onclick="removeSaleProductInProduct()">Xóa đợt giảm giá</button>
-             <button type="button" class="btn btn-outline-success" onclick="addOrUpdateSaleProductInProduct()" >Thêm đợt giảm giá</button>
+             <button type="button" class="btn btn-outline-success" onclick="addOrUpdateSaleProductInProduct()" >Thêm-sửa đợt giảm giá</button>
         `
     }
     $('#methodAddAndRemoverSaleProduct').html(btn)

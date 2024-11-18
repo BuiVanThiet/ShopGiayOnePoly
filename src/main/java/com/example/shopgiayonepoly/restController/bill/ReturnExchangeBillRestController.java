@@ -299,13 +299,16 @@ public class ReturnExchangeBillRestController extends BaseBill {
             response.setQuantityBuy((Integer) objectSave[5]);
             session.setAttribute("discountRatioPercentage", new BigDecimal(String.valueOf(objectSave[4])).divide(BigDecimal.valueOf(100))); // Reset lại dữ liệu trong session mỗi lần tải trang
         }
-        if (totalReturn.compareTo(BigDecimal.ZERO) == 0) {
-            response.setExchangeAndReturnFee(BigDecimal.valueOf(0));
-            response.setDiscountedAmount(BigDecimal.valueOf(0));
-        }else {
-            response.setExchangeAndReturnFee(exchangeAndReturnFee);
-            response.setDiscountedAmount(discountedAmount);
-        }
+//        if (totalReturn.compareTo(BigDecimal.ZERO) == 0) {
+//            response.setExchangeAndReturnFee(BigDecimal.valueOf(0));
+//            response.setDiscountedAmount(BigDecimal.valueOf(0));
+//        }else {
+//            response.setExchangeAndReturnFee(exchangeAndReturnFee);
+//            response.setDiscountedAmount(discountedAmount);
+//        }
+        response.setExchangeAndReturnFee(exchangeAndReturnFee);
+        response.setDiscountedAmount(discountedAmount);
+
         response.setTotalReturn(totalReturn);
         response.setTotalExchange(totalExchange);
         System.out.println(response.toString());
