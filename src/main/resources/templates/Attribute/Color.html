@@ -21,11 +21,12 @@
             <div id="collapsibleDiv" class="combobox-content">
                 <form id="createAttribute" th:object="${colorAdd}" method="POST" >
                     <div class="attribute-search-section search-section ">
-                        <div class="attribute-search-bar search-bar ">
+                        <div class="attribute-search-bar search-bar">
                             <input id="codeColorInput" th:field="*{codeColor}" type="text" placeholder="Mã màu sắc" required/>
                             <input id="nameColorInput" th:field="*{nameColor}" type="text" placeholder="Tên màu sắc" required/>
                             <button type="button" onclick="add()" class="attribute-btn-add btn-add">Thêm màu sắc</button>
                         </div>
+                        <p id="colorError" style="color: red">* Mã và tên không được để trống</p>
                     </div>
                 </form>
             </div>
@@ -67,7 +68,7 @@
                        th:classappend="${color.status == 1 ? 'fa-toggle-on' : (color.status == 2 ? 'fa-toggle-off' : '')}"
                        th:data-status="${color.status}"
                        th:data-index="${iterStat.index}"
-                       onclick="toggleStatus(this)"
+
                        title="Toggle Status"></i>
                 </td>
                 <td>
