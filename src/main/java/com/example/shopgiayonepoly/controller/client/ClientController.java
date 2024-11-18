@@ -228,7 +228,8 @@ public class ClientController extends BaseBill {
     public String getFormPayment(HttpSession session, Model model) {
         // Lấy giỏ hàng từ session và ép kiểu thành List<CartResponse>
         List<CartResponse> cartItems = Optional.ofNullable((List<CartResponse>) session.getAttribute("cartItems")).orElseGet(ArrayList::new);
-
+        // Thêm thông tin đăng nhập của khách hàng vào model nếu có
+        ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
         Integer idVoucherApply = (Integer) session.getAttribute("idVoucherApply");
         BigDecimal priceReduced = (BigDecimal) session.getAttribute("priceReduced");
         BigDecimal totalPrice = (BigDecimal) session.getAttribute("totalPrice");
@@ -262,9 +263,6 @@ public class ClientController extends BaseBill {
         System.out.println("Total calculated price: " + calculatedTotalPrice);
         System.out.println("Total price in session: " + totalPrice);
 
-        // Thêm thông tin đăng nhập của khách hàng vào model nếu có
-        ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
-
         if (clientLoginResponse != null) {
             model.addAttribute("clientLogin", clientLoginResponse);
 
@@ -289,16 +287,15 @@ public class ClientController extends BaseBill {
                 if (addressParts.length > 3) {
                     processedAddress.setOriginalAddress(addressParts[3].trim());
                 } else {
-                    processedAddress.setOriginalAddress(""); // Nếu không có phần địa chỉ còn lại
+                    processedAddress.setOriginalAddress("");
                 }
 
                 processedAddress.setFullAddress(address.getSpecificAddress());
                 processedAddresses.add(processedAddress);
             }
-
-            // Gắn danh sách địa chỉ đã xử lý vào model
+            
             model.addAttribute("processedAddresses", processedAddresses);
-            model.addAttribute("addressDefault", processedAddresses.get(0)); // Địa chỉ mặc định
+            model.addAttribute("addressDefault", processedAddresses.get(0).getOriginalAddress());
         }
 
 
