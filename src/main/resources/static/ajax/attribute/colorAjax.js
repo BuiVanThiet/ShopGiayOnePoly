@@ -295,8 +295,10 @@ function validateAttribute() {
         return false;
     } else if (nameColorInput.value.length > 50) {
         colorError.textContent = "* Tên <= 50 kí tự";
+        return false;
     } else {
         colorError.textContent = "";
+        return true;
     }
 }
 
