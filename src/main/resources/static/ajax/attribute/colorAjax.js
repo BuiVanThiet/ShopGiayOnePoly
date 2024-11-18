@@ -267,3 +267,46 @@ function restoreColor(element) {
 
 }
 
+var codeColorInput = document.getElementById("codeColorInput");
+var nameColorInput = document.getElementById("nameColorInput");
+var colorError = document.getElementById("colorError");
+codeColorInput.addEventListener('input', function () {
+    validateAttribute();
+});
+nameColorInput.addEventListener('input', function () {
+    validateAttribute();
+});
+
+function validateAttribute() {
+    if (codeColorInput.value.trim() === "" && nameColorInput.value.trim() === "") {
+        colorError.textContent = "* Mã và tên không được để trống";
+        return false;
+    } else if (codeColorInput.value.length > 10 && nameColorInput.value.length > 50) {
+        colorError.textContent = "* Mã <= 10 kí tự, Tên <= 50 kí tự";
+        return false;
+    } else if (codeColorInput.value.trim() === "") {
+        colorError.textContent = "* Mã không được để trống";
+        return false;
+    } else if (nameColorInput.value.trim() === "") {
+        colorError.textContent = "* Tên không được để trống";
+        return false;
+    } else if (codeColorInput.value.length > 10) {
+        colorError.textContent = "* Mã <= 10 kí tự";
+        return false;
+    } else if (nameColorInput.value.length > 50) {
+        colorError.textContent = "* Tên <= 50 kí tự";
+    } else {
+        colorError.textContent = "";
+    }
+}
+
+
+function checkValidate() {
+    const codeColorInput = document.getElementById("codeColorInput");
+    const nameColorInput = document.getElementById("nameColorInput");
+    if (codeColorInput.value.length > 10 || codeColorInput.value.trim() === '' || nameColorInput.value.length > 50 || nameColorInput.value.trim() === '') {
+        return false;
+    } else {
+        return true;
+    }
+}
