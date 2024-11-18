@@ -340,6 +340,9 @@ function loadInformationBillByIdBill() {
             $('#informationPriceReduction').text(Math.trunc(response.maximumReduction).toLocaleString('en-US') + ' VNĐ');
             $('#noteByBill').text(response.note);
             totalBill = response.totalPriceProduct;
+            if(response.status< 5) {
+                $('#amount_payable').text(Math.trunc(response.totalPriceProduct+response.shipPrice-response.maximumReduction).toLocaleString('en-US') + ' VNĐ')
+            }
 
             //phan nay de truyen du lieu con validate
 
@@ -834,6 +837,8 @@ function loadInfomationReturnBillFromBillManage() {
                     $('#cashClient-billInfo').hide();
                 }
             }
+                $('#amount_payable').text(Math.trunc(totalExchangeCustomer).toLocaleString('en-US') + ' VNĐ')
+
                 $('#total-exchange-customer').text(Math.trunc(totalExchangeCustomer).toLocaleString('en-US') + ' VNĐ')
                 $('#span-exchangeAndReturnFee').text(Math.trunc(response.exchangeAndReturnFee).toLocaleString('en-US') + ' VNĐ');
                 $('#span-discountedAmount').text(Math.trunc(response.discountedAmount).toLocaleString('en-US') + ' VNĐ');

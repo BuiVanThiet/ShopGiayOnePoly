@@ -43,8 +43,11 @@ public class ReturnBillController extends BaseBill {
         return "Bill/returnBill";
     }
     @GetMapping("/create-return-bill")
-    public String getCreateReturnBill(ModelMap modelMap) {
+    public String getCreateReturnBill(ModelMap modelMap,HttpSession session) {
+        Integer idBill = (Integer) session.getAttribute("IdBill");
+        modelMap.addAttribute("redirectBill","/staff/bill/bill-status-index/"+idBill);
         modelMap.addAttribute("title","Tạo phiếu trả hàng thành công!");
+        session.removeAttribute("IdBill");
         return "Bill/successBill";
     }
     @ModelAttribute("staffInfo")

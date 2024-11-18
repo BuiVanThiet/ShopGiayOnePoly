@@ -230,8 +230,9 @@ function loadProduct(pageNumber) {
         type: "GET",
         url: "/api-sale-product/all-product/" + pageNumber,
         success: function(response) {
+            pageCheckedFast = pageNumber;
             console.log(response)
-            updateProductTable(response);
+            updateProductTable(response,pageNumber);
         },
         error: function(xhr) {
             console.error("Lỗi khi hiển thị chi tiết hóa đơn: " + xhr.responseText);
@@ -239,7 +240,7 @@ function loadProduct(pageNumber) {
     });
 }
 
-function updateProductTable(response) {
+function updateProductTable(response,pageNumber) {
     var tbody = $('#tableProduct');
     var noDataContainer = $('#noDataProductContainer');
     tbody.empty(); // Xóa các dòng cũ
@@ -290,7 +291,7 @@ function updateProductTable(response) {
             }
             var category = productDetail[16] === null ? 'Không có' : productDetail[16];
             tbody.append(`
-                <tr onclick="toggleCheckboxProduct(${productDetail[0]})">
+                <tr onclick="toggleCheckboxProduct(${productDetail[0]},${pageNumber})">
                     <td class="text-center align-middle">
                         ${productDetail[18]}
                     </td>
@@ -335,10 +336,8 @@ function updateProductTable(response) {
                         <input type="checkbox" value="${productDetail[0]}" name="selectedProducts" id="product_apply${productDetail[0]}" />
                     </td>
                 </tr>
-              
-
             `);
-            restoreCheckboxState();
+            restoreCheckboxState(pageNumber);
         });
 
         // Khởi tạo lại tất cả các carousel sau khi cập nhật DOM
@@ -353,32 +352,147 @@ function updateProductTable(response) {
     }
 }
 
-function toggleCheckboxProduct(productId2) {
-    const checkbox = document.getElementById(`product_apply${productId2}`);
+// function toggleCheckboxProduct(productId2) {
+//     const checkbox = document.getElementById(`product_apply${productId2}`);
+//     checkbox.checked = !checkbox.checked;
+//
+//     let productId = checkbox.value;
+//
+//     // Kiểm tra nếu checkbox được chọn
+//     if (checkbox.checked) {
+//         // Nếu checkbox được chọn, thêm ID vào mảng nếu chưa có
+//         if (!selectedProductIds.includes(productId)) {
+//             selectedProductIds.push(productId);
+//         }
+//     } else {
+//         // Nếu checkbox bị bỏ chọn, xóa ID khỏi mảng
+//         selectedProductIds = selectedProductIds.filter(id => id !== productId);
+//     }
+//
+//     // Lưu mảng selectedProductIds vào localStorage
+//     localStorage.setItem('selectedProductIds', JSON.stringify(selectedProductIds));
+//
+//     console.log('Selected Product IDs:', selectedProductIds);
+// }
 
-    // Thay đổi trạng thái của checkbox (checked/unchecked)
-    checkbox.checked = !checkbox.checked;
+function resetDataSale() {
+    selectedProductIds = [];
+    idSaleProduct = null;
+}
+// let selectedProductIds = JSON.parse(localStorage.getItem('selectedProductIds')) || [];
+let selectedProductIds = [];
+let idSaleProduct = null;
+var pageCheckedFast = 0;
 
-    // Lấy giá trị ID từ checkbox (sử dụng .value thay vì .val() vì đó là DOM thuần)
-    let productId = checkbox.value;
+// localStorage.setItem('selectedProducts', JSON.stringify(selectedProductIds));
 
-    // Kiểm tra nếu checkbox được chọn
-    if (checkbox.checked) {
-        // Nếu checkbox được chọn, thêm ID vào mảng nếu chưa có
-        if (!selectedProductIds.includes(productId)) {
-            selectedProductIds.push(productId);
-        }
-    } else {
-        // Nếu checkbox bị bỏ chọn, xóa ID khỏi mảng
-        selectedProductIds = selectedProductIds.filter(id => id !== productId);
-    }
 
-    // Lưu mảng selectedProductIds vào localStorage
-    localStorage.setItem('selectedProductIds', JSON.stringify(selectedProductIds));
+// Khôi phục trạng thái checkbox khi bảng được cập nhật hoặc trang được tải lại
+// function restoreCheckboxState() {
+//     $('input[name="selectedProducts"]').each(function() {
+//         let productId = $(this).val(); // Lấy giá trị ID của checkbox
+//         if (selectedProductIds.includes(productId)) {
+//             $(this).prop('checked', true); // Đánh dấu checkbox là đã chọn
+//         } else {
+//             $(this).prop('checked', false); // Bỏ chọn nếu không có trong mảng
+//         }
+//     });
+// }
 
-    console.log('Selected Product IDs:', selectedProductIds);
+// Hàm chọn tất cả sản phẩm
+function selectAllProducts(pageNumber) {
+    const checkboxes = document.querySelectorAll(`#tableProduct input[type="checkbox"]`);
+    document.getElementById('clickFastProduct').checked = true;
+    checkboxes.forEach(function(checkbox) {
+        checkbox.checked = true;
+        const productId = parseInt(checkbox.value);
+        toggleCheckboxProduct(productId, pageNumber); // Cập nhật trạng thái vào localStorage
+    });
 }
 
+// Hàm xóa nhanh (bỏ chọn tất cả sản phẩm)
+function clearAllSelection(pageNumber) {
+    const checkboxes = document.querySelectorAll(`#tableProduct input[type="checkbox"]`);
+    document.getElementById('clickFastProduct').checked = false;
+    checkboxes.forEach(function(checkbox) {
+        checkbox.checked = false;
+        const productId = parseInt(checkbox.value);
+        toggleCheckboxProduct(productId, pageNumber); // Cập nhật trạng thái vào localStorage
+    });
+}
+
+// Sự kiện lắng nghe thay đổi của checkbox "Chọn tất cả"
+document.getElementById('clickFastProduct').addEventListener('change', function() {
+    const pageNumber = pageCheckedFast; // Xác định trang hiện tại (có thể thay đổi theo yêu cầu)
+
+    if (!this.checked) {
+        selectAllProducts(pageNumber); // Nếu checked, gọi hàm chọn tất cả
+    } else {
+        clearAllSelection(pageNumber); // Nếu không checked, gọi hàm xóa nhanh
+    }
+});
+
+function toggleCheckboxProduct(productId, pageNumber) {
+    const checkbox = document.getElementById(`product_apply${productId}`);
+    checkbox.checked = !checkbox.checked;
+
+    let selectedProducts = JSON.parse(localStorage.getItem('selectedProducts')) || {};
+    console.log('Before toggle:', selectedProducts);
+
+    let productsOnCurrentPage = selectedProducts[pageNumber] || [];
+
+    if (checkbox.checked) {
+        // Nếu checkbox được chọn và sản phẩm chưa có trong danh sách
+        if (!productsOnCurrentPage.includes(productId)) {
+            document.getElementById('clickFastProduct').checked = true;
+            productsOnCurrentPage.push(productId);
+            selectedProductIds.push(productId); // Thêm vào danh sách đã chọn
+        }
+    } else {
+        // Nếu checkbox bị bỏ chọn và sản phẩm đã có trong danh sách
+        productsOnCurrentPage = productsOnCurrentPage.filter(id => id !== productId);
+        selectedProductIds = selectedProductIds.filter(id => id !== productId); // Cập nhật lại danh sách
+    }
+    selectedProducts[pageNumber] = productsOnCurrentPage;
+
+    localStorage.setItem('selectedProducts', JSON.stringify(selectedProducts));
+    console.log('du lieu de giam ' + selectedProductIds)
+    console.log('After toggle:', selectedProducts);
+
+    // Kiểm tra trạng thái của tất cả các checkbox trên trang
+    const checkboxesOnCurrentPage = document.querySelectorAll(`#tableProduct input[type="checkbox"]`);
+    const someChecked = Array.from(checkboxesOnCurrentPage).some(checkbox => checkbox.checked);
+
+// Nếu có ít nhất một sản phẩm được chọn thì checkbox "Chọn tất cả" sẽ được checked
+    if (someChecked) {
+        document.getElementById('clickFastProduct').checked = true;
+    } else {
+        document.getElementById('clickFastProduct').checked = false;
+    }
+
+}
+
+localStorage.setItem('selectedProducts', JSON.stringify([]));
+
+function restoreCheckboxState(pageNumber) {
+    let selectedProducts = JSON.parse(localStorage.getItem('selectedProducts')) || {};
+    console.log('Restore data:', selectedProducts);
+
+    let productsOnCurrentPage = selectedProducts[pageNumber] || [];
+
+    console.log(productsOnCurrentPage)
+
+    document.getElementById('clickFastProduct').checked = false;
+    $('input[name="selectedProducts"]').each(function() {
+        let productId = $(this).val();
+        if (productsOnCurrentPage.includes(Number(productId))) {
+            document.getElementById('clickFastProduct').checked = true;
+            $(this).prop('checked', true);
+        } else {
+            $(this).prop('checked', false);
+        }
+    });
+}
 
 function filterProduct(statusCheckIdSale) {
     $.ajax({
@@ -731,27 +845,29 @@ function resetFilterProductSale(idSaleProduct2) {
     selectOrigin.clearAll();
     document.getElementById('categorySearch').value='';
     selectCategory.clearAll();
+    localStorage.setItem('selectedProducts', JSON.stringify([]));
+    selectedProductIds = [];
     filterProduct(checkProduct);
 }
-function resetDataSale() {
-    selectedProductIds = [];
-    idSaleProduct = null;
-}
-// let selectedProductIds = JSON.parse(localStorage.getItem('selectedProductIds')) || [];
-let selectedProductIds = [];
-let idSaleProduct = null;
-
-// Khôi phục trạng thái checkbox khi bảng được cập nhật hoặc trang được tải lại
-function restoreCheckboxState() {
-    $('input[name="selectedProducts"]').each(function() {
-        let productId = $(this).val(); // Lấy giá trị ID của checkbox
-        if (selectedProductIds.includes(productId)) {
-            $(this).prop('checked', true); // Đánh dấu checkbox là đã chọn
-        } else {
-            $(this).prop('checked', false); // Bỏ chọn nếu không có trong mảng
-        }
-    });
-}
+// function resetDataSale() {
+//     selectedProductIds = [];
+//     idSaleProduct = null;
+// }
+// // let selectedProductIds = JSON.parse(localStorage.getItem('selectedProductIds')) || [];
+// let selectedProductIds = [];
+// let idSaleProduct = null;
+//
+// // Khôi phục trạng thái checkbox khi bảng được cập nhật hoặc trang được tải lại
+// function restoreCheckboxState() {
+//     $('input[name="selectedProducts"]').each(function() {
+//         let productId = $(this).val(); // Lấy giá trị ID của checkbox
+//         if (selectedProductIds.includes(productId)) {
+//             $(this).prop('checked', true); // Đánh dấu checkbox là đã chọn
+//         } else {
+//             $(this).prop('checked', false); // Bỏ chọn nếu không có trong mảng
+//         }
+//     });
+// }
 
 
 function getMaxPageProduct() {
@@ -779,10 +895,20 @@ function addOrUpdateSaleProductInProduct() {
         success: function(response) {
             createToast(response.check, response.message);
             filterProduct(2);
+            localStorage.setItem('selectedProducts', JSON.stringify([]));
+            selectedProductIds = [];
             if(response.check == '1') {
                 document.getElementById('productNotIdSale').classList.remove('active');
                 document.getElementById('productYesSale').classList.add('active');
             }
+
+
+            var btn = `
+                 <button type="button" class="btn btn-outline-danger" onclick="removeSaleProductInProduct()">Xóa đợt giảm giá</button>
+                 <button type="button" class="btn btn-outline-success" onclick="addOrUpdateSaleProductInProduct()" >Thêm-sửa đợt giảm giá</button>
+                `;
+
+            $('#methodAddAndRemoverSaleProduct').html(btn)
             selectedProductIds = [];
             // resetDataSale();
         },
@@ -804,6 +930,8 @@ function removeSaleProductInProduct() {
         success: function(response) {
             createToast(response.check, response.message);
             filterProduct(1);
+            localStorage.setItem('selectedProducts', JSON.stringify([]));
+            selectedProductIds = [];
             if(response.check == '1') {
                 document.getElementById('productNotIdSale').classList.add('active');
                 document.getElementById('productYesSale').classList.remove('active');
@@ -825,6 +953,8 @@ $(document).ready(function () {
     })
     $('#formFilterProduct').submit(function (event) {
         event.preventDefault();
+        localStorage.setItem('selectedProducts', JSON.stringify([]));
+        selectedProductIds = [];
         filterProduct(checkProduct);
     })
     startLoadAjaxSaleProduct();

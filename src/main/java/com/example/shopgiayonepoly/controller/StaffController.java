@@ -3,6 +3,7 @@ package com.example.shopgiayonepoly.controller;
 import com.example.shopgiayonepoly.baseMethod.BaseEmail;
 import com.example.shopgiayonepoly.dto.request.StaffRequest;
 import com.example.shopgiayonepoly.dto.response.StaffResponse;
+import com.example.shopgiayonepoly.entites.Customer;
 import com.example.shopgiayonepoly.entites.Staff;
 import com.example.shopgiayonepoly.repositores.CustomerRepository;
 import com.example.shopgiayonepoly.repositores.StaffRepository;
@@ -211,10 +212,16 @@ public class StaffController extends BaseEmail {
         }
         // Kiểm tra email
         if (staffRequest.getEmail() == null || staffRequest.getEmail().isEmpty()) {
-            result.rejectValue("email", "error.staff", "Email không được để trống!");
-        } else if (customerService.existsByEmail(staffRequest.getEmail()) != null || staffService.existsByEmail(staffRequest.getEmail()) != null) {
-            if(staffService.existsByEmail(staffRequest.getEmail()).getId() != staffRequest.getId()) {
-                result.rejectValue("email", "error.staff", "Email đã được sử dụng!");
+            result.rejectValue("email", "error.customer", "Email không được để trống!");
+        } else {
+            Customer existingCustomer = customerService.existsByEmail(staffRequest.getEmail());
+            Staff existingStaff = staffService.existsByEmail(staffRequest.getEmail());
+            System.out.println(existingCustomer == null ? "Dell co(khach)" : "co(khach)");
+            System.out.println(existingStaff == null ? "Dell co(nhanvien)" : "co(nhanvien)");
+            if (existingStaff != null && !existingStaff.getId().equals(staffRequest.getId())) {
+                result.rejectValue("email", "error.customer", "Email đã được sử dụng!");
+            } else if (customerService.existsByEmail(staffRequest.getEmail()) != null) {
+                result.rejectValue("email", "error.customer", "Email đã được sử dụng trong hệ thống khach hang!");
             }
         }
         // Kiểm tra ngày sinh

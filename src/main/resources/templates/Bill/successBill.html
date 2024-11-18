@@ -19,11 +19,17 @@
     <div layout:fragment="content">
         <article class="position-relative bd-gutter mt-5 my-md-4 bd-layout d-flex justify-content-center align-items-center" style="height: 100vh;">
             <div class="position-absolute top-0 start-0">
-                <a href="/staff/bill/home" class="btn ">
+                <a th:href="${redirectBill != null ? redirectBill : '/staff/bill/home'}" class="btn">
                     <i class="bi bi-arrow-return-left"></i>
-                    Trở lại trang quản lý hóa đơn!
+                    <span th:text="${redirectBill != null ? 'Trở về trang hóa đơn chi tiết' : 'Trở lại trang bán hàng!'}"></span>
                 </a>
             </div>
+<!--            <div class="position-absolute top-0 start-0">-->
+<!--                <a href="/staff/bill/home" class="btn ">-->
+<!--                    <i class="bi bi-arrow-return-left"></i>-->
+<!--                    Trở lại trang bán hàng!-->
+<!--                </a>-->
+<!--            </div>-->
             <div class="text-center">
                 <span th:text="${title}"></span>
                 <br>
