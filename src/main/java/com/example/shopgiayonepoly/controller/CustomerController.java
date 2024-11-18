@@ -191,9 +191,15 @@ public class CustomerController {
         // Kiểm tra email
         if (customerRequest.getEmail() == null || customerRequest.getEmail().isEmpty()) {
             result.rejectValue("email", "error.customer", "Email không được để trống!");
-        } else if (customerService.existsByEmail(customerRequest.getEmail()) != null || staffService.existsByEmail(customerRequest.getEmail()) != null) {
-            if (customerService.existsByEmail(customerRequest.getEmail()).getId() != customerRequest.getId()) {
+        } else {
+            Customer existingCustomer = customerService.existsByEmail(customerRequest.getEmail());
+            Staff existingStaff = staffService.existsByEmail(customerRequest.getEmail());
+            System.out.println(existingCustomer == null ? "Dell co(khach)" : "co(khach)");
+            System.out.println(existingStaff == null ? "Dell co(nhanvien)" : "co(nhanvien)");
+            if (existingCustomer != null && !existingCustomer.getId().equals(customerRequest.getId())) {
                 result.rejectValue("email", "error.customer", "Email đã được sử dụng!");
+            } else if (staffService.existsByEmail(customerRequest.getEmail()) != null) {
+                result.rejectValue("email", "error.customer", "Email đã được sử dụng trong hệ thống nhân viên!");
             }
         }
         // Kiểm tra ngày sinh
