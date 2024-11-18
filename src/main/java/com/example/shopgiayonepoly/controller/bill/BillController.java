@@ -572,7 +572,9 @@ public class BillController extends BaseBill {
         BigDecimal accountMoney = new BigDecimal(totalPrice);
 
         Integer returnFrom = (Integer) session.getAttribute("pageReturn");
-
+//        1 la cho trang ban hang
+//        2 la cho trang thanh toan khi nhan hang
+//        3 la thanh toan luon khi dat hang
         if(paymentStatus == 1) {
             TransactionVNPay transactionVNPay = new TransactionVNPay();
             transactionVNPay.setVnpTmnCode(vnpTmnCode);
@@ -631,7 +633,7 @@ public class BillController extends BaseBill {
                 System.out.println("Bil bo thanh toan " + this.billPay.toString());
                 return "Bill/errorBill";
             }
-        }else {
+        }else if (returnFrom == 2){
             String checkBil = (String) session.getAttribute("checkBill");
             if(checkBil == null || checkBil.isEmpty()) {
                 return "redirect:/404";
@@ -706,6 +708,31 @@ public class BillController extends BaseBill {
                 session.removeAttribute("pageReturn");
                 session.removeAttribute("checkBill");
                 return "redirect:/staff/bill/bill-status-index/"+session.getAttribute("IdBill");
+            }
+        }else {
+            Bill payBillOrder= (Bill) session.getAttribute("payBillOrder");
+            if(paymentStatus == 1) {
+                payBillOrder.setAcountMoney(accountMoney.divide(BigDecimal.valueOf(100)));
+                payBillOrder.setTransactionNo(transactionNo);
+                payBillOrder.setBankTranNo(bankTranNo);
+                payBillOrder.setPaymentStatus(1);
+                payBillOrder.setSurplusMoney(new BigDecimal(0));
+                payBillOrder.setCash(new BigDecimal(0));
+                session.setAttribute("notePayment",payBillOrder.getNote());
+                this.setBillStatus(payBillOrder.getId(), 0, session);
+                this.setBillStatus(payBillOrder.getId(), 1, session);
+                this.setBillStatus(payBillOrder.getId(),101,session);
+                this.billService.save(payBillOrder);
+
+                return "redirect:/onepoly/order-success";
+            }else {
+                List<BillDetail> billDetails = clientService.getListBillDetailByID(payBillOrder.getId());
+                for ( BillDetail billDetail:billDetails) {
+                    this.billDetailService.deleteById(billDetail.getId());
+                }
+                this.billService.deleteById(payBillOrder.getId());
+                System.out.println("Delete thanh cong khi chua thanh toan");
+                return "redirect:/onepoly/payment";
             }
         }
     }

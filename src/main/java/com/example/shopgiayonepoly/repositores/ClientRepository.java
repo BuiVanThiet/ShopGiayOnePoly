@@ -1,7 +1,9 @@
 package com.example.shopgiayonepoly.repositores;
 
 import com.example.shopgiayonepoly.dto.response.client.*;
+import com.example.shopgiayonepoly.entites.AddressShip;
 import com.example.shopgiayonepoly.entites.Bill;
+import com.example.shopgiayonepoly.entites.BillDetail;
 import com.example.shopgiayonepoly.entites.Cart;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -175,13 +177,19 @@ public interface ClientRepository extends JpaRepository<Bill, Integer> {
     VoucherClientResponse findVoucherApplyByID(@Param("id") Integer id);
 
     @Query("select c from Cart c where c.customer.id =:idCustomer")
-    List<Cart> findListCartByIdCustomer(@Param("idCustomer")Integer idCustomer);
+    List<Cart> findListCartByIdCustomer(@Param("idCustomer") Integer idCustomer);
 
     @Transactional
     @Modifying
     @Query("DELETE FROM Cart c WHERE c.customer.id = :customerId AND c.productDetail.id = :productDetailId")
     void deleteCartByCustomerIdAndProductDetailId(@Param("customerId") Integer customerId,
-                                              @Param("productDetailId") Integer productDetailId);
+                                                  @Param("productDetailId") Integer productDetailId);
 
-    
+    @Query("select bd from BillDetail bd where bd.bill.id=:idBill")
+    List<BillDetail> getListBillDetailByID(@Param("idBill") Integer idBill);
+
+    @Query("select addressShip from AddressShip addressShip where addressShip.customer.id=:idBill order by addressShip.createDate desc ")
+    List<AddressShip> getListAddressShipByIDCustomer(@Param("idBill") Integer idBill);
+
+
 }

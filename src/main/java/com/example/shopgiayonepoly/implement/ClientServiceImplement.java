@@ -1,6 +1,8 @@
 package com.example.shopgiayonepoly.implement;
 
 import com.example.shopgiayonepoly.dto.response.client.*;
+import com.example.shopgiayonepoly.entites.AddressShip;
+import com.example.shopgiayonepoly.entites.BillDetail;
 import com.example.shopgiayonepoly.entites.Cart;
 import com.example.shopgiayonepoly.repositores.ClientRepository;
 import com.example.shopgiayonepoly.service.ClientService;
@@ -71,6 +73,16 @@ public class ClientServiceImplement implements ClientService {
     @Override
     public void deleteCartByCustomerIdAndProductDetailId(Integer customerId, Integer productDetailId) {
         clientRepository.deleteCartByCustomerIdAndProductDetailId(customerId, productDetailId);
+    }
+
+    @Override
+    public List<BillDetail> getListBillDetailByID(Integer idBill) {
+        return clientRepository.getListBillDetailByID(idBill);
+    }
+
+    @Override
+    public List<AddressShip> getListAddressShipByIDCustomer(Integer idBill) {
+        return clientRepository.getListAddressShipByIDCustomer(idBill);
     }
 
 

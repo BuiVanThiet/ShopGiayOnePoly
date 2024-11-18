@@ -8,6 +8,7 @@ import com.example.shopgiayonepoly.dto.response.client.*;
 import com.example.shopgiayonepoly.entites.*;
 import com.example.shopgiayonepoly.repositores.*;
 import com.example.shopgiayonepoly.service.*;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -246,7 +248,7 @@ public class ClientController extends BaseBill {
             calculatedTotalPrice = calculatedTotalPrice.add(totalAmount);
             ProductDetail productDetail = productDetailRepository.findById(c.getProductDetailId()).get();
             if (productDetail != null) {
-                Double itemWeight = quantity*productDetail.getWeight();
+                Double itemWeight = quantity * productDetail.getWeight();
                 weight += itemWeight;
             }
             System.out.println("Product ID: " + c.getProductDetailId());
@@ -266,49 +268,46 @@ public class ClientController extends BaseBill {
         if (clientLoginResponse != null) {
             model.addAttribute("clientLogin", clientLoginResponse);
 
-            String addressCustomerLogin = clientLoginResponse.getAddRess();
+            // Lấy danh sách địa chỉ
+            List<AddressShip> listAddress = clientService.getListAddressShipByIDCustomer(clientLoginResponse.getId());
+            List<ProcessedAddressResponse> processedAddresses = new ArrayList<>();
 
-            // Tách địa chỉ thành các phần
-            String[] addressParts = addressCustomerLogin.split(",", 4);
+            for (AddressShip address : listAddress) {
+                String[] addressParts = address.getSpecificAddress().split(",", 4);
 
-            // Lấy từng phần địa chỉ theo yêu cầu
-            if (addressParts.length > 0) {
-                String idWard = addressParts[0].trim();
-                model.addAttribute("IdWard", idWard);
-                System.out.println("ID Ward: " + idWard);
+                ProcessedAddressResponse processedAddress = new ProcessedAddressResponse();
+
+                if (addressParts.length > 0) {
+                    processedAddress.setIdWard(addressParts[0].trim());
+                }
+                if (addressParts.length > 1) {
+                    processedAddress.setIdDistrict(addressParts[1].trim());
+                }
+                if (addressParts.length > 2) {
+                    processedAddress.setIdProvince(addressParts[2].trim());
+                }
+                if (addressParts.length > 3) {
+                    processedAddress.setOriginalAddress(addressParts[3].trim());
+                } else {
+                    processedAddress.setOriginalAddress(""); // Nếu không có phần địa chỉ còn lại
+                }
+
+                processedAddress.setFullAddress(address.getSpecificAddress());
+                processedAddresses.add(processedAddress);
             }
 
-            if (addressParts.length > 1) {
-                String idDistrict = addressParts[1].trim();
-                model.addAttribute("IdDistrict", idDistrict);
-                System.out.println("ID District: " + idDistrict);
-            }
-
-            if (addressParts.length > 2) {
-                String idProvince = addressParts[2].trim();
-                model.addAttribute("IdProvince", idProvince);
-                System.out.println("ID Province: " + idProvince);
-            }
-
-            // Phần địa chỉ còn lại (nếu có)
-            String originalAddress = "";
-            if (addressParts.length > 3) {
-                originalAddress = addressParts[3].trim();
-            }
-            model.addAttribute("OriginalAddress", originalAddress);
-            System.out.println("Original Address: " + originalAddress);
+            // Gắn danh sách địa chỉ đã xử lý vào model
+            model.addAttribute("processedAddresses", processedAddresses);
+            model.addAttribute("addressDefault", processedAddresses.get(0)); // Địa chỉ mặc định
         }
 
 
-        System.out.println("Session priceReduced llllllllllll :" + priceReduced);
-        System.out.println("Session idVoucherApply llllllllllllll :" + idVoucherApply);
 
         // Cập nhật lại giỏ hàng và các thuộc tính vào model và session
         model.addAttribute("cartItems", cartItems);
         model.addAttribute("weight", weight);
         model.addAttribute("totalPrice", totalPrice);
         model.addAttribute("priceReducedShow", priceReduced);
-
         session.setAttribute("idVoucherApply", idVoucherApply);
         session.setAttribute("priceReduced", priceReduced);
         session.setAttribute("selectedVoucher", selectedVoucher);
@@ -319,32 +318,32 @@ public class ClientController extends BaseBill {
 
 
     @PostMapping("/payment")
+    @ResponseBody
     public String payBill(
             HttpSession session,
-            Model model,
-            @RequestBody PaymentBillRequest paymentRequest) {
+            @RequestBody PaymentBillRequest paymentRequest,
+            HttpServletRequest request) {
         // Lấy thông tin từ yêu cầu
         String address = paymentRequest.getAddressShip();
         BigDecimal shippingPrice = paymentRequest.getShippingPrice();
         BigDecimal totalAmountBill = paymentRequest.getTotalAmountBill();
         BigDecimal priceVoucher = paymentRequest.getPriceVoucher();
         String noteBill = paymentRequest.getNoteBill();
+        Integer payMethod = paymentRequest.getPayMethod();
+
+
         Integer idVoucherApply = (Integer) session.getAttribute("idVoucherApply");
         BigDecimal priceReduced = (BigDecimal) session.getAttribute("priceReduced");
-        VoucherClientResponse voucherApply = (VoucherClientResponse) session.getAttribute("selectedVoucher");
-        Voucher voucher = null;
-        if(idVoucherApply != null) {
-            voucher = voucherRepository.findById(idVoucherApply).orElse(null);
-//            if (voucherApply != null && idVoucherApply != null && priceReduced != null) {
-//                voucher.setId(voucherApply.getId());
-//                voucher.setNameVoucher(voucherApply.getNameVoucher());
-//                voucher.setCodeVoucher(voucherApply.getCodeVoucher());
-//                voucher.setDiscountType(voucherApply.getVoucherType());
-//                voucher.setPriceReduced(voucherApply.getPriceReduced());
-//            }
+
+        if (priceReduced == null) {
+            priceReduced = BigDecimal.ZERO;  // Gán giá trị mặc định nếu priceReduced là null
         }
 
-
+        VoucherClientResponse voucherApply = (VoucherClientResponse) session.getAttribute("selectedVoucher");
+        Voucher voucher = null;
+        if (idVoucherApply != null) {
+            voucher = voucherRepository.findById(idVoucherApply).orElse(null);
+        }
         List<CartResponse> cartItems = (List<CartResponse>) session.getAttribute("cartItems");
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
         Bill bill = new Bill();
@@ -353,17 +352,7 @@ public class ClientController extends BaseBill {
         if (clientLoginResponse != null) {
             // Thiết lập thông tin khách hàng
             Customer customer = this.customerService.getCustomerByID(clientLoginResponse.getId());
-//            customer.setId(clientLoginResponse.getId());
-//            customer.setFullName(clientLoginResponse.getFullName());
-//            customer.setNumberPhone(clientLoginResponse.getNumberPhone());
-//            customer.setBirthDay(clientLoginResponse.getBirthDay());
-//            customer.setImage(clientLoginResponse.getImage());
-//            customer.setEmail(clientLoginResponse.getEmail());
-//            customer.setAcount(clientLoginResponse.getAcount());
-//            customer.setPassword(clientLoginResponse.getPassword());
-//            customer.setGender(clientLoginResponse.getGender());
-//            customer.setAddRess(clientLoginResponse.getAddRess());
-            // Tính toán tổng số tiền từ giỏ hàng
+
             for (CartResponse cart : cartItems) {
                 BillDetail billDetail = new BillDetail();
                 ProductDetail productDetail = productDetailRepository.findById(cart.getProductDetailId()).get();
@@ -382,11 +371,11 @@ public class ClientController extends BaseBill {
 
             }
             // Cập nhật thông tin hóa đơn
-            bill.setAddRess(customer.getFullName()+","+customer.getNumberPhone()+","+customer.getEmail()+","+customer.getAddRess());
+            bill.setAddRess(customer.getFullName() + "," + customer.getNumberPhone() + "," + customer.getEmail() + "," + customer.getAddRess());
             bill.setCustomer(customer);
             bill.setShippingPrice(shippingPrice);
             bill.setTotalAmount(totalAmountBill);
-            bill.setPaymentMethod(0); // Giả định phương thức thanh toán mặc định là 0
+            bill.setPaymentMethod(payMethod); // Giả định phương thức thanh toán mặc định là 0
             bill.setBillType(2); // Giả định loại hóa đơn mặc định là 1
             bill.setPaymentStatus(0); // Giả định trạng thái thanh toán mặc định là 0
             bill.setNote(noteBill);
@@ -423,7 +412,7 @@ public class ClientController extends BaseBill {
                 bill.setAddRess(address);
                 bill.setShippingPrice(shippingPrice);
                 bill.setTotalAmount(totalAmountBill);
-                bill.setPaymentMethod(0);
+                bill.setPaymentMethod(payMethod);
                 bill.setBillType(2);
                 bill.setPaymentStatus(0);
                 bill.setVoucher(voucher);
@@ -442,25 +431,35 @@ public class ClientController extends BaseBill {
         // Lưu hóa đơn
         billRepository.save(bill);
         bill.setCodeBill("HD" + bill.getId()); // Tạo mã hóa đơn
-        this.setBillStatus(bill.getId(), 0, session);
         billRepository.save(bill); // Cập nhật lại hóa đơn với mã
-        this.setBillStatus(bill.getId(), bill.getStatus(), session);
         for (BillDetail billDetail : billDetails) {
             billDetail.setBill(bill);
         }
-        billDetailRepository.saveAll(billDetails); // Lưu tất cả chi tiết hóa đơn
+        billDetailRepository.saveAll(billDetails);
+
+        System.out.println("dang dung phuong thuc thanh toan: " + bill.getPaymentMethod());
+        if(bill.getPaymentMethod() == 2) {
+            String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
+            BigDecimal totalPriceFinal = bill.getTotalAmount().subtract(bill.getPriceDiscount()).add(bill.getShippingPrice());
+            Integer priceAsInteger = totalPriceFinal.setScale(0, RoundingMode.DOWN).intValue();
+            String vnpayUrl = vnPayService.createOrder((priceAsInteger), "chuyenKhoan", baseUrl);
+            System.out.println("Thong tin Bill thanh toan bang tien va tk(2)" + bill.toString());
+            session.setAttribute("pageReturn",3);
+            session.setAttribute("payBillOrder",bill);
+            return  vnpayUrl;
+        }
         String host = "http://localhost:8080/onepoly/status-bill/" + bill.getId();
-        this.templateCreateBillClient("ntanh280504@gmail.com", host, bill.getCodeBill());
-
         // Xóa giỏ hàng trong session
-        session.removeAttribute("cartItems");
-        session.removeAttribute("sessionCart");
+        this.setBillStatus(bill.getId(), 0, session);
+        this.setBillStatus(bill.getId(), bill.getStatus(), session);
 
-        return "client/order-success";
+        return "/onepoly/order-success";
     }
 
     @GetMapping("/order-success")
-    public String getFormOderSuccess() {
+    public String getFormOderSuccess(HttpSession session) {
+        session.removeAttribute("cartItems");
+        session.removeAttribute("sessionCart");
         return "client/order-success";
     }
 
