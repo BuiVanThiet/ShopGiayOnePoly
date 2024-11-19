@@ -268,39 +268,41 @@ public class ClientController extends BaseBill {
         if (clientLoginResponse != null) {
             model.addAttribute("clientLogin", clientLoginResponse);
 
-            // Lấy danh sách địa chỉ
-            List<AddressShip> listAddress = clientService.getListAddressShipByIDCustomer(clientLoginResponse.getId());
-            List<ProcessedAddressResponse> processedAddresses = new ArrayList<>();
+            String addressCustomerLogin = clientLoginResponse.getAddRess();
 
-            for (AddressShip address : listAddress) {
-                String[] addressParts = address.getSpecificAddress().split(",", 4);
+            // Tách địa chỉ thành các phần
+            String[] addressParts = addressCustomerLogin.split(",", 4);
 
-                ProcessedAddressResponse processedAddress = new ProcessedAddressResponse();
-
-                if (addressParts.length > 0) {
-                    processedAddress.setIdWard(addressParts[0].trim());
-                }
-                if (addressParts.length > 1) {
-                    processedAddress.setIdDistrict(addressParts[1].trim());
-                }
-                if (addressParts.length > 2) {
-                    processedAddress.setIdProvince(addressParts[2].trim());
-                }
-                if (addressParts.length > 3) {
-                    processedAddress.setOriginalAddress(addressParts[3].trim());
-                } else {
-                    processedAddress.setOriginalAddress(""); // Nếu không có phần địa chỉ còn lại
-                }
-
-                processedAddress.setFullAddress(address.getSpecificAddress());
-                processedAddresses.add(processedAddress);
+            // Lấy từng phần địa chỉ theo yêu cầu
+            if (addressParts.length > 0) {
+                String idWard = addressParts[0].trim();
+                model.addAttribute("IdWard", idWard);
+                System.out.println("ID Ward: " + idWard);
             }
 
-            // Gắn danh sách địa chỉ đã xử lý vào model
-            model.addAttribute("processedAddresses", processedAddresses);
-            model.addAttribute("addressDefault", processedAddresses.get(0)); // Địa chỉ mặc định
-        }
+            if (addressParts.length > 1) {
+                String idDistrict = addressParts[1].trim();
+                model.addAttribute("IdDistrict", idDistrict);
+                System.out.println("ID District: " + idDistrict);
+            }
 
+            if (addressParts.length > 2) {
+                String idProvince = addressParts[2].trim();
+                model.addAttribute("IdProvince", idProvince);
+                System.out.println("ID Province: " + idProvince);
+            }
+
+            // Phần địa chỉ còn lại (nếu có)
+            String originalAddress = "";
+            if (addressParts.length > 3) {
+                originalAddress = addressParts[3].trim();
+            }
+            model.addAttribute("OriginalAddress", originalAddress);
+            System.out.println("Original Address: " + originalAddress);
+            List<AddressShip> lissAddressShip = clientService.getListAddressShipByIDCustomer(clientLoginResponse.getId());
+            model.addAttribute("listAddress",lissAddressShip);
+
+        }
 
 
         // Cập nhật lại giỏ hàng và các thuộc tính vào model và session

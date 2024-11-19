@@ -440,14 +440,6 @@ public class ClientRestController extends BaseEmail {
 
         return totalPrice;
     }
-//    @GetMapping("/list-address")
-//    public List<AddressShip> listAddressCustomer(Model model) {
-//        List<AddressShip> listAddress = clientService.getListAddressShipByIDCustomer(clientId);
-//        model.addAttribute("listAddress", listAddress);
-//        return listAddress;
-//    }
-
-
 
     //////////////////////////////////////////////////////////////////////////////
     @GetMapping("/show-status-bill")
