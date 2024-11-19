@@ -2,7 +2,7 @@
 // Hàm preview hình ảnh khi người dùng tải lên
 function previewImages(event) {
     const files = event.target.files;
-    const previewContainer = document.getElementById('image-preview-createProduct');
+    const previewContainer = document.getElementById('image-preview-updateProduct');
 
     // Xóa các ảnh đã preview trước đó
     previewContainer.innerHTML = '';
@@ -28,21 +28,21 @@ function showDropdown(event) {
     var ul = document.getElementById(listId);
 
     // Đóng tất cả dropdown khác
-    var dropdowns = document.getElementsByClassName("dropdown-content-createProduct");
+    var dropdowns = document.getElementsByClassName("dropdown-content-updateProduct");
     for (var i = 0; i < dropdowns.length; i++) {
-        dropdowns[i].classList.remove('show-createProduct'); // Đóng tất cả dropdown
+        dropdowns[i].classList.remove('show-updateProduct'); // Đóng tất cả dropdown
     }
 
     // Mở dropdown tương ứng với ô input hiện tại và đặt vị trí ngay bên dưới input
     if (ul) {
         ul.style.top = input.offsetHeight + 24 + "px"; // Đặt vị trí dropdown ngay dưới input
-        ul.classList.add("show-createProduct"); // Hiển thị dropdown
+        ul.classList.add("show-updateProduct"); // Hiển thị dropdown
     }
 
     // Thêm sự kiện click để đóng dropdown khi bấm ra ngoài
     document.addEventListener('click', function closeDropdown(e) {
         if (!ul.contains(e.target) && !input.contains(e.target)) { // Kiểm tra nếu click xảy ra ngoài dropdown và input
-            ul.classList.remove("show-createProduct"); // Đóng dropdown
+            ul.classList.remove("show-updateProduct"); // Đóng dropdown
             document.removeEventListener('click', closeDropdown); // Gỡ sự kiện để tránh lặp lại
         }
     });
@@ -70,7 +70,7 @@ function selectAttribute(item, inputId, dataType) {
     const input = document.getElementById(inputId); // Lấy input dựa trên inputId
     if (input) {
         input.value = item.textContent; // Đặt giá trị của ô input thành giá trị được chọn
-        input.setAttribute(`data-${dataType}-id`, item.getAttribute('value')); // Cập nhật data-* dựa trên dataType
+        input.setAttribute(`data-${dataType}-id`, item.getAttribute('value'));
     }
     closeAllDropdowns(); // Đóng tất cả dropdowns sau khi chọn
     validate(dataType);
@@ -79,9 +79,9 @@ function selectAttribute(item, inputId, dataType) {
 
 
 function closeAllDropdowns() {
-    var dropdowns = document.getElementsByClassName("dropdown-content-createProduct");
+    var dropdowns = document.getElementsByClassName("dropdown-content-updateProduct");
     for (var i = 0; i < dropdowns.length; i++) {
-        dropdowns[i].classList.remove('show-createProduct'); // Đóng tất cả dropdown
+        dropdowns[i].classList.remove('show-updateProduct'); // Đóng tất cả dropdown
     }
 }
 
@@ -232,7 +232,6 @@ function updateOptions(elementId, data, elementType, textKey, type) {
 }
 
 
-
 function insertTableProductDetail() {
 
     const selectedColors = Array.from(document.querySelectorAll('#dataList-color input[type="checkbox"]:checked'))
@@ -248,13 +247,13 @@ function insertTableProductDetail() {
             const sizeId = checkbox.value; // Lấy ID kích cỡ
             return {name: sizeName, id: sizeId};
         });
-    document.getElementById('table-productDetail-createProduct').style.display = 'block';
+    document.getElementById('table-productDetail-updateProduct').style.display = 'block';
     const tableBody = document.querySelector('#productDetailTable tbody');
     tableBody.innerHTML = '';
 
     selectedColors.forEach(color => {
         selectedSizes.forEach(size => {
-            const row = document.createElement('tr');
+            const row = document.updateElement('tr');
 
             row.innerHTML = `
         <td><input type="checkbox" class="row-selector"></td>
@@ -352,8 +351,10 @@ function checkAndUncheckOption(listSelector, value) {
 }
 
 
-async function addProductWithDetails() {
-    const formElement = document.getElementById('createProductForm');
+async function updateProduct() {
+    const formElement = document.getElementById('updateProductForm');
+    const productId = formElement.getAttribute('data-product-id');
+
     const formData = new FormData(formElement);
     const originID = document.getElementById('myInput-origin').getAttribute('data-origin-id');
     const materialID = document.getElementById('myInput-material').getAttribute('data-material-id');
@@ -385,12 +386,12 @@ async function addProductWithDetails() {
         formData.append("productDetails", JSON.stringify(productDetails));
     }
     try {
-        await fetch('/staff/product/add-product-with-details', {
+        await fetch(`/staff/product/update-product/${productId}`, {
             method: 'POST',
             body: formData
         });
-        createToast('1', 'Thêm sản phẩm thành công')
-        window.location.href = 'http://localhost:8080/staff/product';
+        createToast('1', 'Sửa sản phẩm thành công')
+        // window.location.href = 'http://localhost:8080/staff/product';
     } catch (error) {
         createToast('3', 'Thêm sản phẩm thất bại')
     }
@@ -399,10 +400,10 @@ async function addProductWithDetails() {
 
 function resetFormAndTable() {
     // Đặt lại tất cả các trường input trong form
-    document.getElementById('createProductForm').reset();
+    document.getElementById('updateProductForm').reset();
 
     // Làm trống phần preview ảnh nếu có
-    document.getElementById('image-preview-createProduct').innerHTML = '';
+    document.getElementById('image-preview-updateProduct').innerHTML = '';
 
     // Làm trống các hàng trong bảng sản phẩm chi tiết
     const tableBody = document.getElementById('productDetailTable').querySelector('tbody');

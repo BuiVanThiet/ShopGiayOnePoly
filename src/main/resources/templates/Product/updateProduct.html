@@ -12,21 +12,21 @@
   <article class=" bd-gutter mt-5 my-md-4 bd-layout">
     <h1 class="h1-updateProduct">Sửa sản phẩm</h1>
     <div class="container-updateProduct">
-      <form id="updateProductForm" th:object="${product}" method="POST" enctype="multipart/form-data">
+      <form id="updateProductForm" th:attr="data-product-id=${product.get().id}" th:object="${product}" method="POST" enctype="multipart/form-data">
         <div class="content-updateProduct">
           <div class="main-content-updateProduct">
             <div class="form-group-updateProduct">
               <div class="form-control-updateProduct">
                 <label>Mã sản phẩm</label>
-                <input id="codeProduct" type="text" name="codeProduct" autocomplete="off"/>
-                <p style="display: block; color: red; margin-bottom: 0px" id="errorText-codeProduct">* Mã sản phẩm không được để trống</p>
+                <input th:value="${product.get().codeProduct}" id="codeProduct" type="text" name="codeProduct" autocomplete="off"/>
+                <p style="display: none; color: red; margin-bottom: 0px" id="errorText-codeProduct">* Mã sản phẩm không được để trống</p>
               </div>
               <div class="form-control-updateProduct">
                 <label for="myInput-nameProduct">Tên sản phẩm</label>
-                <input name="nameProduct" type="text" id="myInput-nameProduct"
+                <input th:value="${product.get().nameProduct}" name="nameProduct" type="text" id="myInput-nameProduct"
                        onfocus="showDropdown(event)"
                        onkeyup="filterFunction(event)" autocomplete="off">
-                <p style="display: block; color: red; margin-bottom: 0px" id="errorText-nameProduct">* Tên sản phẩm không được để trống</p>
+                <p style="display: none; color: red; margin-bottom: 0px" id="errorText-nameProduct">* Tên sản phẩm không được để trống</p>
                 <ul id="dataList-nameProduct" class="dropdown-content-updateProduct">
                   <th:block th:each="nameProduct: ${nameProductList}">
                     <li th:text="${nameProduct}" th:value="${nameProduct}"
@@ -53,14 +53,14 @@
                     <span class="material-symbols-outlined">add</span>
                   </div>
                 </div>
-                <p style="display: block; color: red; margin-bottom: 0px" id="errorText-category">* Vui lòng chọn danh mục</p>
+                <p style="display: none; color: red; margin-bottom: 0px" id="errorText-category">* Vui lòng chọn danh mục</p>
               </div>
             </div>
             <div class="form-group-updateProduct">
               <div class="form-control-updateProduct">
                 <label>Chất liệu</label>
                 <div style="display: flex">
-                  <input data-material-id="" type="text" id="myInput-material"
+                  <input th:value="${product.get().material.nameMaterial}" data-material-id="" type="text" id="myInput-material"
                          onfocus="showDropdown(event)"
                          onkeyup="filterFunction(event)" autocomplete="off">
                   <ul id="dataList-material" class="dropdown-content-updateProduct">
@@ -74,12 +74,12 @@
                     <span class="material-symbols-outlined">add</span>
                   </div>
                 </div>
-                <p style="display: block; color: red; margin-bottom: 0px" id="errorText-material">* Vui lòng chọn chất liệu</p>
+                <p style="display: none; color: red; margin-bottom: 0px" id="errorText-material">* Vui lòng chọn chất liệu</p>
               </div>
               <div class="form-control-updateProduct">
                 <label>Hãng</label>
                 <div style="display: flex">
-                  <input data-manufacturer-id="" type="text" id="myInput-manufacturer"
+                  <input th:value="${product.get().manufacturer.nameManufacturer}" data-manufacturer-id="" type="text" id="myInput-manufacturer"
                          onfocus="showDropdown(event)"
                          onkeyup="filterFunction(event)" autocomplete="off">
                   <ul id="dataList-manufacturer" class="dropdown-content-updateProduct">
@@ -93,12 +93,12 @@
                     <span class="material-symbols-outlined">add</span>
                   </div>
                 </div>
-                <p style="display: block; color: red; margin-bottom: 0px" id="errorText-manufacturer">* Vui lòng chọn hãng</p>
+                <p style="display: none; color: red; margin-bottom: 0px" id="errorText-manufacturer">* Vui lòng chọn hãng</p>
               </div>
               <div class="form-control-updateProduct">
                 <label>Xuất xứ</label>
                 <div style="display: flex">
-                  <input data-origin-id="" type="text" id="myInput-origin"
+                  <input th:value="${product.get().origin.nameOrigin}" data-origin-id="" type="text" id="myInput-origin"
                          onfocus="showDropdown(event)"
                          onkeyup="filterFunction(event)" autocomplete="off">
                   <ul id="dataList-origin" class="dropdown-content-updateProduct">
@@ -112,14 +112,14 @@
                     <span class="material-symbols-outlined">add</span>
                   </div>
                 </div>
-                <p style="display: block; color: red; margin-bottom: 0px" id="errorText-origin">* Vui lòng chọn xuất xứ</p>
+                <p style="display: none; color: red; margin-bottom: 0px" id="errorText-origin">* Vui lòng chọn xuất xứ</p>
               </div>
             </div>
             <div class="form-group-updateProduct">
               <div class="form-control-updateProduct">
                 <label for="myInput-nameProduct">Loại đế</label>
                 <div style="display: flex">
-                  <input type="text" id="myInput-sole"
+                  <input th:value="${product.get().sole.nameSole}" type="text" id="myInput-sole"
                          onfocus="showDropdown(event)"
                          onkeyup="filterFunction(event)" autocomplete="off">
                   <ul id="dataList-sole" class="dropdown-content-updateProduct">
@@ -133,53 +133,13 @@
                     <span class="material-symbols-outlined">add</span>
                   </div>
                 </div>
-                <p style="display: block; color: red; margin-bottom: 0px" id="errorText-sole">* Vui lòng chọn loại đế</p>
-              </div>
-              <div class="form-control-updateProduct">
-                <label for="myInput-color">Màu sắc</label>
-                <div style="display: flex">
-                  <input type="text" id="myInput-color"
-                         onfocus="showDropdown(event)"
-                         onkeyup="filterFunction(event)" autocomplete="off">
-                  <ul id="dataList-color" class="dropdown-content-updateProduct">
-                    <th:block th:each="color : ${colorList}">
-                      <li style="display: flex; justify-content: space-between" onclick="toggleCheckbox(this, 'color')">
-                        <span th:text="${color.nameColor}"></span>
-                        <input th:value="${color.id}"  style="width: 20px" type="checkbox" data-type="color">
-                      </li>
-                    </th:block>
-                  </ul>
-                  <div class="btn-add-quickly"
-                       onclick="openQuickAddForm('Thêm mới màu sắc', 'Mã màu sắc', 'Tên màu sắc', 'Nhập mã màu sắc', 'Nhập tên màu sắc', 'color')">
-                    <span class="material-symbols-outlined">add</span>
-                  </div>
-                </div>
-              </div>
-              <div class="form-control-updateProduct">
-                <label for="myInput-size">Kích cỡ</label>
-                <div style="display: flex">
-                  <input type="text" id="myInput-size"
-                         onfocus="showDropdown(event)"
-                         onkeyup="filterFunction(event)" autocomplete="off">
-                  <ul id="dataList-size" class="dropdown-content-updateProduct">
-                    <th:block th:each="size : ${sizeList}">
-                      <li style="display: flex; justify-content: space-between" onclick="toggleCheckbox(this, 'size')">
-                        <span th:text="${size.nameSize}"></span>
-                        <input th:value="${size.id}" style="width: 20px" type="checkbox" data-type="size">
-                      </li>
-                    </th:block>
-                  </ul>
-                  <div class="btn-add-quickly"
-                       onclick="openQuickAddForm('Thêm mới kích cỡ', 'Mã kích cỡ', 'Tên kích cỡ', 'Nhập mã kích cỡ', 'Nhập tên kích cỡ', 'size')">
-                    <span class="material-symbols-outlined">add</span>
-                  </div>
-                </div>
+                <p style="display: none; color: red; margin-bottom: 0px" id="errorText-sole">* Vui lòng chọn loại đế</p>
               </div>
             </div>
             <div class="form-group-updateProduct">
               <div class="form-control-updateProduct description-updateProduct">
                 <label>Mô tả</label>
-                <textarea rows="4" name="describe"></textarea>
+                <textarea th:text="${product.get().describe}" rows="4" name="describe"></textarea>
               </div>
             </div>
             <div class="upload-section-updateProduct"
@@ -196,32 +156,9 @@
               <div id="image-preview-updateProduct" class="image-preview-updateProduct"></div>
             </div>
           </div>
-          <div class="main-content-updateProduct" style="display: none" id="table-productDetail-updateProduct">
-            <table class="table-updateProduct" id="productDetailTable">
-              <thead>
-              <tr>
-                <th style="width: 30px;">
-                  <input type="checkbox" id="select-all-productDetail" onclick="toggleSelectAllproductDetail(this)">
-                </th>
-                <th style="width: 150px">Màu sắc</th>
-                <th style="width: 150px">Kích cỡ</th>
-                <th style="width: 150px">Giá bán</th>
-                <th style="width: 150px">Giá nhập</th>
-                <th style="width: 150px">Số lượng</th>
-                <th style="width: 150px">Trọng lượng</th>
-                <th style="width: 300px">Mô tả</th>
-                <th style="width: 30px"><span class="material-symbols-outlined">delete_forever</span></th>
-              </tr>
-              </thead>
-              <tbody id="productDetail-table-body">
-
-              </tbody>
-            </table>
-          </div>
           <div class="buttons-updateProduct">
             <button data-bs-toggle="modal" data-bs-target="#confirm-update-bill-modal" type="button"
-                    id="update-btn-updateProduct" class="update-btn-updateProduct" style="display: none">Tạo sản phẩm
-              mới
+                    id="update-btn-updateProduct" class="update-btn-updateProduct" >Sửa sản phẩm
             </button>
             <button type="button" class="cancel-btn-updateProduct" onclick="resetFormAndTable()" >Hủy bỏ</button>
           </div>
@@ -246,15 +183,15 @@
         <div class="modal-content">
           <div class="modal-header">
             <h1 class="modal-title fs-5" id="confirmUpdateBillModalLabel">
-              Xác nhận thêm sản phẩm
+              Xác nhận sửa sản phẩm
             </h1>
           </div>
           <div class="modal-body">
-            Bạn muốn thêm sản phẩm ?
+            Bạn muốn sửa sản phẩm ?
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-            <button onclick="addProductWithDetails()" type="submit" class="btn btn-success">Thêm</button>
+            <button onclick="updateProduct()" type="submit" class="btn btn-success">Sửa</button>
           </div>
         </div>
       </div>

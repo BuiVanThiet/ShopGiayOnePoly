@@ -231,17 +231,22 @@ function fetchActiveColors() {
 }
 
 async function add() {
-    const formElement = document.getElementById('createAttribute');
-    const formData = new FormData(formElement);
-    const response = await fetch('/attribute/color/add', {
-        method: 'POST',
-        body: formData
-    });
-    if (response.ok) {
-        const result = await response.json(); 
-        createToast(result.check, result.message);
-        fetchActiveColors();
+    if (validateColor()){
+        const formElement = document.getElementById('createAttribute');
+        const formData = new FormData(formElement);
+        const response = await fetch('/attribute/color/add', {
+            method: 'POST',
+            body: formData
+        });
+        if (response.ok) {
+            const result = await response.json();
+            createToast(result.check, result.message);
+            fetchActiveColors();
+        }
+    } else {
+        createToast('2', 'Dữ liệu không hợp lệ');
     }
+
 }
 
 
@@ -271,13 +276,13 @@ var codeColorInput = document.getElementById("codeColorInput");
 var nameColorInput = document.getElementById("nameColorInput");
 var colorError = document.getElementById("colorError");
 codeColorInput.addEventListener('input', function () {
-    validateAttribute();
+    validateColor();
 });
 nameColorInput.addEventListener('input', function () {
-    validateAttribute();
+    validateColor();
 });
 
-function validateAttribute() {
+function validateColor() {
     if (codeColorInput.value.trim() === "" && nameColorInput.value.trim() === "") {
         colorError.textContent = "* Mã và tên không được để trống";
         return false;
@@ -295,18 +300,10 @@ function validateAttribute() {
         return false;
     } else if (nameColorInput.value.length > 50) {
         colorError.textContent = "* Tên <= 50 kí tự";
-    } else {
-        colorError.textContent = "";
-    }
-}
-
-
-function checkValidate() {
-    const codeColorInput = document.getElementById("codeColorInput");
-    const nameColorInput = document.getElementById("nameColorInput");
-    if (codeColorInput.value.length > 10 || codeColorInput.value.trim() === '' || nameColorInput.value.length > 50 || nameColorInput.value.trim() === '') {
         return false;
     } else {
+        colorError.textContent = "";
         return true;
     }
 }
+

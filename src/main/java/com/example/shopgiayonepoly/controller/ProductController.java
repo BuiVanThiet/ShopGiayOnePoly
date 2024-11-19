@@ -129,19 +129,105 @@ public class ProductController extends BaseProduct {
         return "/Product/productDetail";
     }
 
-    @GetMapping("/update/{idProduct}")
-    public String updateProduct(@PathVariable("idProduct") Integer idProduct, Model model) {
-        Optional<Product> productOptional = productRepository.findById(idProduct);
-        if (productOptional.isPresent()) {
-            model.addAttribute("product", productOptional.get());
-        } else {
-            // Xử lý khi không tìm thấy sản phẩm
-            return "redirect:/error";
-        }
-        return "/Product/updateProduct.html";
+    @GetMapping("/view-update/{id}")
+    public String getProductById(@PathVariable("id") Integer id, Model model) {
+        // Lấy dữ liệu sản phẩm theo ID
+        Optional<Product> product = productService.findById(id);
+        // Đưa dữ liệu sản phẩm vào model
+        model.addAttribute("product", product);
+
+        model.addAttribute("materialList", materialService.findAll());
+        model.addAttribute("manufacturerList", manufacturerService.findAll());
+        model.addAttribute("originList", originService.findAll());
+        model.addAttribute("colorList", colorService.findAll());
+        model.addAttribute("sizeList", sizeService.findAll());
+        model.addAttribute("soleList", soleService.findAll());
+        model.addAttribute("categoryList", categoryService.findAll());
+        model.addAttribute("nameProductList", productService.findAllNameProduct());
+
+        // Trả về tên view tương ứng (template Thymeleaf)
+        return "/Product/updateProduct";
     }
 
+    @PostMapping("/update-product/{id}")
+    public ResponseEntity<String> updateProductWithDetails(
+            @PathVariable("id") Integer id,
+            @ModelAttribute Product product,
+            @RequestParam(value = "productDetails", required = false) String productDetailsJson,
+            @RequestParam("imageFiles") List<MultipartFile> imageFiles) throws IOException {
 
+        // Kiểm tra sản phẩm có tồn tại hay không
+        Optional<Product> existingProductOpt = productService.findById(id);
+        if (!existingProductOpt.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Sản phẩm không tồn tại");
+        }
+
+        Product existingProduct = existingProductOpt.get();
+
+        // Cập nhật thông tin sản phẩm
+        existingProduct.setCodeProduct(product.getCodeProduct());
+        existingProduct.setNameProduct(product.getNameProduct());
+        existingProduct.setDescribe(product.getDescribe());
+
+        // Cập nhật các trường khác của sản phẩm nếu cần (ví dụ: nhà sản xuất, xuất xứ...)
+
+        // Xử lý các chi tiết sản phẩm
+        List<ProductDetail> productDetails = new ArrayList<>();
+        if (productDetailsJson != null && !productDetailsJson.isEmpty()) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            productDetails = Arrays.asList(objectMapper.readValue(productDetailsJson, ProductDetail[].class));
+        }
+
+        // Cập nhật danh mục cho sản phẩm
+        Set<Category> selectedCategories = new HashSet<>(categoryService.findCategoriesByIds(
+                product.getCategories().stream().map(Category::getId).collect(Collectors.toList())));
+        existingProduct.setCategories(selectedCategories);
+
+        // Xóa các ảnh cũ khỏi cơ sở dữ liệu
+        List<Image> oldImages = existingProduct.getImages();
+        if (!oldImages.isEmpty()) {
+            imageRepository.deleteInBatch(oldImages); // Xóa tất cả ảnh cũ
+        }
+
+        // Xóa ảnh khỏi collection (tránh lỗi cascade all-delete-orphan)
+        existingProduct.getImages().clear();
+
+        // Thêm các ảnh mới vào sản phẩm
+        List<Image> newImages = new ArrayList<>();
+        for (MultipartFile multipartFile : imageFiles) {
+            if (!multipartFile.isEmpty()) {
+                String nameImage = UUID.randomUUID().toString();
+                cloudinary.uploader()
+                        .upload(multipartFile.getBytes(), Map.of("public_id", nameImage))
+                        .get("url")
+                        .toString();
+
+                Image image = new Image();
+                image.setNameImage(nameImage);
+                image.setProduct(existingProduct);  // Liên kết ảnh với sản phẩm
+                image.setStatus(1);  // Đảm bảo trạng thái ảnh là 1 (hoặc trạng thái khác mà bạn mong muốn)
+                newImages.add(image);
+            }
+        }
+
+        // Thêm ảnh mới vào collection ảnh của sản phẩm
+        existingProduct.getImages().addAll(newImages);
+
+        // Cập nhật sản phẩm vào cơ sở dữ liệu
+        Product updatedProduct = productService.save(existingProduct);
+        if (updatedProduct == null) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi khi cập nhật sản phẩm");
+        }
+
+        // Xử lý chi tiết sản phẩm nếu có (cập nhật hoặc xóa các chi tiết cũ)
+        if (!productDetails.isEmpty()) {
+            // Liên kết chi tiết sản phẩm với sản phẩm đã cập nhật
+            productDetails.forEach(detail -> detail.setProduct(updatedProduct));
+            productDetailRepository.saveAll(productDetails);
+        }
+
+        return ResponseEntity.ok("Sản phẩm đã được cập nhật thành công");
+    }
 
 
     @ModelAttribute("staffInfo")
