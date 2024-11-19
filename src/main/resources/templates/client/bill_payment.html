@@ -129,7 +129,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-8">
-                                    <input type="hidden" id="original-address" th:text="${addressDefault}+'.'">
+                                    <p id="original-address" th:text="${OriginalAddress}+'.'"></p>
                                 </div>
                                 <div class="col-4">
                                     <div class="button-container">
@@ -163,12 +163,12 @@
                                     <!-- Modal Body -->
                                     <div class="modal-body">
                                         <!-- Danh sách địa chỉ -->
-                                        <div class="list-address-customer" th:each="address : ${processedAddresses}">
+                                        <div class="list-address-customer" th:each="address : ${listAddress}">
                                             <div class="info-address-shipping d-flex align-items-center">
                                                 <!-- Radio Button -->
                                                 <input class="form-check-input" type="radio" name="selectedAddress">
                                                 <!-- Địa chỉ -->
-                                                <p class="mb-0 ms-2" th:text="${address.specificAddress}">
+                                                <p class="original-address" th:text="${address.specificAddress}">
                                                     <i class="bi bi-house-door" style="margin-right: 8px;"></i>
                                                 </p>
                                             </div>
@@ -189,44 +189,10 @@
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                                             <i class="bi bi-x-circle" style="margin-right: 5px;"></i>Đóng
                                         </button>
-                                        <button type="button" class="btn btn-primary">
+                                        <button type="button" class="change-address btn btn-primary">
                                             <i class="bi bi-check-circle" style="margin-right: 5px;"></i>Lưu thay đổi
                                         </button>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-<!--          Thêm địa chỉ mới          -->
-                    <div class="modal fade" id="addNewAddressModal" tabindex="-1"
-                         aria-labelledby="addNewAddressModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <!-- Modal Header -->
-                                <div class="modal-header" style="background-color: #ffffff">
-                                    <h5 class="modal-title" id="addNewAddressModalLabel">
-                                        <i class="bi bi-plus-circle" style="margin-right: 10px;"></i>Thêm địa chỉ mới
-                                    </h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-
-                                <!-- Modal Body -->
-                                <div class="modal-body">
-                                    <form id="newAddressForm">
-                                        <div class="mb-3">
-                                            <label for="specificAddress" class="form-label">Địa chỉ cụ thể</label>
-                                            <input type="text" class="form-control" id="specificAddress" name="specificAddress"
-                                                   placeholder="Nhập địa chỉ cụ thể">
-                                        </div>
-                                    </form>
-                                </div>
-
-                                <!-- Modal Footer -->
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                                    <button type="button" class="btn btn-primary" onclick="saveNewAddress()">Lưu</button>
                                 </div>
                             </div>
                         </div>

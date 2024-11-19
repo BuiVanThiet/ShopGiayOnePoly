@@ -188,7 +188,7 @@ public interface ClientRepository extends JpaRepository<Bill, Integer> {
     @Query("select bd from BillDetail bd where bd.bill.id=:idBill")
     List<BillDetail> getListBillDetailByID(@Param("idBill") Integer idBill);
 
-    @Query("select addressShip from AddressShip addressShip where addressShip.customer.id=:idBill order by addressShip.createDate desc ")
+    @Query("select addressShip from AddressShip addressShip where addressShip.customer.id=:idBill order by addressShip.createDate asc")
     List<AddressShip> getListAddressShipByIDCustomer(@Param("idBill") Integer idBill);
 
 
