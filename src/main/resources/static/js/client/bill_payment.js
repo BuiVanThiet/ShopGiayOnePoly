@@ -265,40 +265,4 @@ window.addEventListener('load', function (){
 
 });
 
-//
-// function changeAddress(){
-//     const saveButton = document.querySelector('.modal-footer .btn-primary'); // Nút Lưu thay đổi
-//     const addressElements = document.querySelectorAll('.info-address-shipping'); // Danh sách địa chỉ
-//     const idWardElement = document.getElementById('IdWard'); // Phần tử hiển thị IdWard
-//     const idDistrictElement = document.getElementById('IdDistrict'); // Phần tử hiển thị IdDistrict
-//     const idProvinceElement = document.getElementById('IdProvince'); // Phần tử hiển thị IdProvince
-//     const originalAddressElement = document.querySelector('.original-address'); // Phần tử hiển thị địa chỉ đầy đủ
-//
-//     saveButton.addEventListener('click', function () {
-//         const selectedAddress = Array.from(addressElements).find(address =>
-//             address.querySelector('input[type="radio"]').checked
-//         );
-//
-//         if (selectedAddress) {
-//             // Lấy chuỗi địa chỉ đầy đủ
-//             const fullAddress = selectedAddress.querySelector('p.mb-0.ms-2').textContent.trim();
-//
-//             // Cắt địa chỉ thành các phần
-//             const addressParts = fullAddress.split(',');
-//
-//             // Cập nhật các thẻ <p> với các giá trị đã cắt
-//             idWardElement.textContent = addressParts[0] ? addressParts[0].trim() : ''; // Xã
-//             idDistrictElement.textContent = addressParts[1] ? addressParts[1].trim() : ''; // Huyện
-//             idProvinceElement.textContent = addressParts[2] ? addressParts[2].trim() : ''; // Tỉnh
-//             originalAddressElement.textContent = fullAddress; // Địa chỉ đầy đủ
-//
-//             console.log('Xã:', idWardElement.textContent);
-//             console.log('Huyện:', idDistrictElement.textContent);
-//             console.log('Tỉnh:', idProvinceElement.textContent);
-//             console.log('Địa chỉ đầy đủ:', fullAddress);
-//         } else {
-//             alert('Vui lòng chọn một địa chỉ.');
-//         }
-//     });
-// }
 

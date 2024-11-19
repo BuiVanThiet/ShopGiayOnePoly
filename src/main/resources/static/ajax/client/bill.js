@@ -23,7 +23,6 @@ function payBill() {
     priceVoucher = isNaN(priceVoucher) ? 0 : priceVoucher;
     totalAmountBill = isNaN(totalAmountBill) ? 0 : totalAmountBill;
     let payMethod = selectedRadioPaymentMethod.value;
-    // In ra console để kiểm tra giá trị
     console.log("Địa chỉ giao hàng: " + addressShip);
     console.log("Giá vận chuyển: " + shippingPrice);
     console.log("Giá giảm: " + priceVoucher);
