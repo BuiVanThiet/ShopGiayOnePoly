@@ -132,5 +132,10 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     @Query("SELECT SUM(pd.quantity) FROM ProductDetail pd WHERE pd.product.id = :id")
     Integer findQuantityByIDProduct(@Param("id") Integer id);
 
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM Image i WHERE i.product.id = :idProduct")
+    void deleteImageByIdProduct(@Param("idProduct") Integer idProduct);
+
 
 }

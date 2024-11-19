@@ -62,6 +62,7 @@ public interface ProductService {
 
     Integer findQuantityByIDProduct( Integer id);
 
+    void deleteImageByIdProduct(Integer idProduct);
 
 
 }

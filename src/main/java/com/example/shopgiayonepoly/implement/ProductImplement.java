@@ -160,10 +160,14 @@ public class ProductImplement implements ProductService {
     }
 
     @Override
-    public Integer   findQuantityByIDProduct( Integer id){
+    public Integer findQuantityByIDProduct(Integer id) {
         return productRepository.findQuantityByIDProduct(id);
     }
 
+    @Override
+    public void deleteImageByIdProduct(Integer idProduct) {
+         productRepository.deleteImageByIdProduct(idProduct);
+    }
 
 
 }

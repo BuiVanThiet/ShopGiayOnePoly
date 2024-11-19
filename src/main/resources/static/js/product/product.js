@@ -395,7 +395,7 @@ function displayPage(page) {
                             <i class="fa fa-ellipsis-v fa-ellipsis-v-product" aria-hidden="true" onclick="toggleDropdownProduct(event, this)"></i>
                             <div class="dropdown-menu-product">
                                 <a href="/staff/product/detail/${product.id}">Xem chi tiết</a>
-                                <a href="/staff/product/update/${product.id}" >Chỉnh sửa</a>
+                                <a href="/staff/product/view-update/${product.id}" >Chỉnh sửa</a>
                                 <a id="delete-product" data-bs-toggle="modal" data-bs-target="#confirm-create-bill-modal" data-product-id="${product.id}">Xóa</a>
                             </div>
                         </div>

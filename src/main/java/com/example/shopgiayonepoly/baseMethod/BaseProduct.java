@@ -1,5 +1,6 @@
 package com.example.shopgiayonepoly.baseMethod;
 
+import com.example.shopgiayonepoly.repositores.ImageRepository;
 import com.example.shopgiayonepoly.repositores.ProductDetailRepository;
 import com.example.shopgiayonepoly.repositores.ProductRepository;
 import com.example.shopgiayonepoly.service.ProductService;
@@ -32,5 +33,8 @@ public abstract class BaseProduct {
     protected ColorService colorService;
     @Autowired
     protected SizeService sizeService;
+
+    @Autowired
+    protected ImageRepository imageRepository;
 
 }
