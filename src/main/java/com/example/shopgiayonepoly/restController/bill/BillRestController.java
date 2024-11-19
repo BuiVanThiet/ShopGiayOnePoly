@@ -27,6 +27,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -1581,5 +1583,31 @@ public class BillRestController extends BaseBill {
         return "notBtnPayExchange";
     }
 
+//    @GetMapping("/get-browser-info")
+//    public String getBrowserInfo(HttpServletRequest request) {
+//        try {
+//            InetAddress inetAddress = InetAddress.getLocalHost();
+//            String localIp = inetAddress.getHostAddress();
+//            // Lấy thông tin User-Agent từ header
+//            String userAgent = request.getHeader("User-Agent").toLowerCase();
+//            String abountAccess = "";
+//            // Kiểm tra nếu là điện thoại
+//            if (userAgent.contains("mobile") || userAgent.contains("android") || userAgent.contains("iphone")) {
+//                abountAccess = "Điện thoại";
+//            }
+//            // Kiểm tra nếu là máy tính
+//            else if (userAgent.contains("windows") || userAgent.contains("mac") || userAgent.contains("linux")) {
+//                abountAccess = "Máy tính";
+//            }else {
+//                abountAccess = "Không xác định";
+//            }
+//
+//            // Trả về thông tin User-Agent (có thể xử lý chi tiết hơn nếu cần phân tích)
+//            return "Local IP: " + localIp + "---User-Agent: " + abountAccess;
+//        } catch (UnknownHostException e) {
+//            e.printStackTrace();
+//            return "Unable to get local IP";
+//        }
+//    }
 
 }
