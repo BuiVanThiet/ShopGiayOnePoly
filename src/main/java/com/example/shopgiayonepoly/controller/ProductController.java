@@ -168,6 +168,11 @@ public class ProductController extends BaseProduct {
         existingProduct.setCodeProduct(product.getCodeProduct());
         existingProduct.setNameProduct(product.getNameProduct());
         existingProduct.setDescribe(product.getDescribe());
+        existingProduct.setMaterial(product.getMaterial());
+        existingProduct.setCategories(product.getCategories());
+        existingProduct.setManufacturer(product.getManufacturer());
+        existingProduct.setSole(product.getSole());
+        existingProduct.setOrigin(product.getOrigin());
 
         // Cập nhật các trường khác của sản phẩm nếu cần (ví dụ: nhà sản xuất, xuất xứ...)
 
