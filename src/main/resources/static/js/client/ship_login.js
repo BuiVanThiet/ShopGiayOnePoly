@@ -445,4 +445,37 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Gọi hàm khởi tạo để tải danh sách tỉnh ban đầu
     fetchProvinces();
-});
+})
+function createNewAddress() {
+    // Lấy dữ liệu từ các trường nhập
+    let fullName = $("#FullNameCreate").val();
+    let phone = $("#PhoneCreate").val();
+    let email = $("#MailCreate").val();
+    let province = $("#province-create").val();
+    let district = $("#district-create").val();
+    let ward = $("#ward-create").val();
+    let specificAddress = $("#specificAddress").val();
+
+    // Tạo request payload
+    let addressRequest = {
+        nameCustomer: fullName,
+        phoneNumber: phone,
+        emailCustomer: email,
+        addressCustomer: `${ward},${district},${province},${specificAddress}`
+    };
+
+    // Gửi yêu cầu AJAX
+    $.ajax({
+        url: "/api-client/new-address-customer",
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify(addressRequest),
+        success: function (response) {
+            alert(response); // Hiển thị thông báo thành công
+            $("#addNewAddressModal").modal("hide"); // Ẩn modal
+        },
+        error: function (xhr) {
+            alert("Có lỗi xảy ra khi thêm địa chỉ: " + xhr.responseText);
+        }
+    });
+}

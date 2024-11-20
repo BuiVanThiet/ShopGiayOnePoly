@@ -213,6 +213,18 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                             aria-label="Close"></button>
                                 </div>
+                                <div class="col-md-12">
+                                    <input type="text" class="form-control" id="FullNameCreate" placeholder="Họ tên"
+                                           required>
+                                </div>
+                                <div class="col-md-12">
+                                    <input type="text" class="form-control" id="PhoneCreate" placeholder="SĐT"
+                                           required>
+                                </div>
+                                <div class="col-md-12">
+                                    <input type="email" class="form-control" id="MailCreate" placeholder="Mail"
+                                           required>
+                                </div>
 
                                 <!-- Modal Body -->
                                 <div class="modal-body">
@@ -254,9 +266,10 @@
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                                         <i class="bi bi-x-circle" style="margin-right: 5px;"></i>Hủy
                                     </button>
-                                    <button type="button" class="btn btn-primary" id="saveNewAddress">
+                                    <button type="button" class="btn btn-primary" id="saveNewAddress" onclick="createNewAddress()">
                                         <i class="bi bi-check-circle" style="margin-right: 5px;"></i>Lưu địa chỉ
                                     </button>
+
                                 </div>
                             </div>
                         </div>

@@ -191,5 +191,8 @@ public interface ClientRepository extends JpaRepository<Bill, Integer> {
     @Query("select addressShip from AddressShip addressShip where addressShip.customer.id=:idBill order by addressShip.createDate asc")
     List<AddressShip> getListAddressShipByIDCustomer(@Param("idBill") Integer idBill);
 
+//    @Query("")
+//    public void createNewAddressForCustomer(@Param("idCustomer") Integer idCustomer);
+
 
 }

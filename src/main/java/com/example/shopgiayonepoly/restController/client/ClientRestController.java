@@ -1,6 +1,7 @@
 package com.example.shopgiayonepoly.restController.client;
 
 import com.example.shopgiayonepoly.baseMethod.BaseEmail;
+import com.example.shopgiayonepoly.dto.request.client.AddressForCustomerRequest;
 import com.example.shopgiayonepoly.dto.response.ClientLoginResponse;
 import com.example.shopgiayonepoly.dto.response.client.*;
 import com.example.shopgiayonepoly.entites.*;
@@ -61,8 +62,12 @@ public class ClientRestController extends BaseEmail {
     InvoiceStatusService invoiceStatusService;
     @Autowired
     BillService billService;
+
+    @Autowired
+    AddressShipRepository addressShipRepository;
     @Autowired
     protected PdfTemplateService pdfTemplateService;
+
     String messages = "";
 
     @GetMapping("/products/top12-highest")
@@ -427,7 +432,6 @@ public class ClientRestController extends BaseEmail {
         BigDecimal totalPrice = BigDecimal.ZERO;
 
         for (CartResponse item : cartItems) {
-            // Giả sử CartResponse có trường price (giá đơn vị của sản phẩm) và quantity (số lượng)
             BigDecimal itemPrice = item.getDiscountedPrice(); // Giá của sản phẩm
             BigDecimal itemQuantity = BigDecimal.valueOf(item.getQuantity()); // Số lượng sản phẩm
 
@@ -441,7 +445,32 @@ public class ClientRestController extends BaseEmail {
         return totalPrice;
     }
 
-    //////////////////////////////////////////////////////////////////////////////
+        @PostMapping("/new-address-customer")
+        public ResponseEntity<String> createNewAddressForCustomer(HttpSession session,
+                                                                  @RequestBody AddressForCustomerRequest addressForCustomerRequest) {
+            String nameCustomer = String.valueOf(addressForCustomerRequest.getNameCustomer());
+            String phoneNumber = String.valueOf(addressForCustomerRequest.getPhoneNumber());
+            String emailCustomer = String.valueOf(addressForCustomerRequest.getEmailCustomer());
+            String addressForCustomer = String.valueOf(addressForCustomerRequest.getAddressCustomer());
+
+            ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
+            Integer idCustomerLogin = clientLoginResponse.getId();
+            if (idCustomerLogin != null) {
+                AddressShip addressShip = new AddressShip();
+                Customer customer = customerService.getCustomerByID(idCustomerLogin);
+                addressShip.setCustomer(customer);
+                addressShip.setSpecificAddress(nameCustomer + "," + phoneNumber + "," + emailCustomer + "," + addressForCustomer);
+                addressShip.setCreateDate(new Date());
+                addressShip.setUpdateDate(new Date());
+                addressShip.setStatus(1);
+                addressShipRepository.save(addressShip);
+                return ResponseEntity.ok("Thêm địa chỉ mới thành công");
+            }
+            return ResponseEntity.ok("Thêm địa chỉ mới thất bại");
+        }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     @GetMapping("/show-status-bill")
     public List<InvoiceStatus> getShowInvoiceStatus(HttpSession session) {
         Integer idBill = (Integer) session.getAttribute("idCheckStatusBill");
