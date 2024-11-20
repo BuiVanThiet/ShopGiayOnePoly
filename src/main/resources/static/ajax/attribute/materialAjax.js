@@ -1,26 +1,10 @@
-function saveRow(index) { // hàm edit dữ liệu trên table
-    console.log('Saving row:', index);
+function saveRow(index, event) { // hàm edit dữ liệu trên table
+    event.preventDefault();
     var updatedData = {
         codeMaterial: document.getElementById('code-input-' + index).value,
         nameMaterial: document.getElementById('name-input-' + index).value,
         id: document.getElementById('row-' + index).getAttribute('data-id')  // Lấy ID của đối tượng từ hàng
     };
-
-    // Hiển thị lại các giá trị đã chỉnh sửa trên trang
-    document.getElementById('code-text-' + index).innerText = updatedData.codeMaterial;
-    document.getElementById('name-text-' + index).innerText = updatedData.nameMaterial;
-
-    // Ẩn input và hiển thị lại text
-    document.getElementById('code-input-' + index).style.display = 'none';
-    document.getElementById('name-input-' + index).style.display = 'none';
-    document.getElementById('code-text-' + index).style.display = 'inline-block';
-    document.getElementById('name-text-' + index).style.display = 'inline-block';
-
-    // Hiển thị lại nút "Edit" và ẩn nút "Save"
-    document.getElementById('edit-btn-' + index).style.display = 'inline-block';
-    document.getElementById('save-btn-' + index).style.display = 'none';
-
-    console.log('Sending updated data to server:', updatedData);
 
     // Thực hiện AJAX để cập nhật dữ liệu trong cơ sở dữ liệu
     $.ajax({
@@ -29,8 +13,8 @@ function saveRow(index) { // hàm edit dữ liệu trên table
         contentType: 'application/json',
         data: JSON.stringify(updatedData),  // Gửi dữ liệu JSON
         success: function (response) {
-            console.log('Cập nhật thành công:', response);
-            // Hiển thị thông báo thành công hoặc xử lý kết quả trả về từ server
+            fetchActiveMaterials();
+            createToast(response.check, response.message);
         },
         error: function (xhr, status, error) {
             console.error('Có lỗi xảy ra khi cập nhật dữ liệu:', error);
@@ -38,7 +22,6 @@ function saveRow(index) { // hàm edit dữ liệu trên table
         }
     });
 }
-
 
 function toggleStatus(element) { // hàm thay đổi trạng thái bằng button
     var index = element.getAttribute('data-index');  // Lấy index
@@ -61,7 +44,7 @@ function toggleStatus(element) { // hàm thay đổi trạng thái bằng button
 
     // Thực hiện Ajax request để cập nhật trạng thái trong database
     $.ajax({
-        url: '/attribute//material/update-status',  // Đường dẫn API
+        url: '/attribute/material/update-status',  // Đường dẫn API
         method: 'POST',
         contentType: 'application/json',
         data: JSON.stringify({
@@ -77,38 +60,42 @@ function toggleStatus(element) { // hàm thay đổi trạng thái bằng button
         }
     });
 }
+document.addEventListener('show.bs.modal', function (event) {
+    var button = event.relatedTarget;  // Lấy nút kích hoạt modal
+    var index = button.getAttribute('data-index');  // Lấy index từ nút kích hoạt
+    var id = button.getAttribute('data-id');  // Lấy id từ nút kích hoạt
+
+    // Gán index và id vào nút "Xóa" trong modal
+    var deleteButton = document.querySelector('#confirm-create-bill-modal .btn-success');
+    deleteButton.setAttribute('data-index', index);
+    deleteButton.setAttribute('data-id', id);
+});
 
 function deleteByID(element) {
-    if (confirm('Bạn có chắc chắn muốn xóa mục này không?')) {
-        var index = element.getAttribute('data-index');  // Lấy index từ th:data-index
-        var id = $('#row-' + index).data('id');  // Lấy id của phần tử từ th:data-id của hàng
+    var index = element.getAttribute('data-index');  // Lấy index từ nút "Xóa" trong modal
+    var id = element.getAttribute('data-id');  // Lấy id từ nút "Xóa" trong modal
 
-        $.ajax({
-            url: '/attribute/delete-material',  // Đường dẫn API để xóa
-            method: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({
-                id: id,
-                status: 0  // Giả sử status 0 là trạng thái bị xóa
-            }),
-            success: function (response) {
-                if (response.success) {
-                    // Xóa hàng trong bảng mà không cần reload trang
-                    $('#row-' + index).remove();  // Xóa hàng với id là row-index
-                    console.log('Xóa thành công');
-                } else {
-                    alert('Xóa thất bại!');
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error('Có lỗi xảy ra khi xóa:', error);
-            }
-        });
-    }
+    $.ajax({
+        url: '/attribute/delete-material',  // Đường dẫn API để xóa
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            id: id,
+            status: 0  // Giả sử status 0 là trạng thái bị xóa
+        }),
+        success: function (response) {
+            $('#row-' + index).remove();  // Xóa hàng với id là row-index
+            createToast(response.check, response.message);
+        },
+        error: function (xhr, status, error) {
+            console.error('Có lỗi xảy ra khi xóa:', error);
+        }
+    });
 }
 
+
 document.querySelector('.attribute-btn-listDelete').addEventListener('click', function () {
-    fetch('http://localhost:8080/attribute/material/delete')
+    fetch('/attribute/material/delete')
         .then(response => response.json())
         .then(data => {
             if (data.length > 0) {
@@ -116,7 +103,7 @@ document.querySelector('.attribute-btn-listDelete').addEventListener('click', fu
                 this.style.display = 'none';
                 document.querySelector('.attribute-btn-listActive').style.display = 'inline-block';
             } else {
-                alert("Không có màu nào bị xóa.");
+                createToast('1','Không có màu nào bị xóa')
             }
         });
 });
@@ -129,7 +116,7 @@ document.querySelector('.attribute-btn-listActive').addEventListener('click', fu
 
 function fetchDeletedMaterials() {
     // Thay URL dưới đây bằng endpoint của bạn để lấy danh sách màu đã xóa
-    fetch('http://localhost:8080/attribute/material/delete')
+    fetch('/attribute/material/delete')
         .then(response => response.json())
         .then(data => {
             if (data.length > 0) {
@@ -139,6 +126,22 @@ function fetchDeletedMaterials() {
 
                 // Lặp qua các màu đang hoạt động và thêm các hàng vào bảng
                 data.forEach((material, index) => {
+                    const createDate = new Date(material.createDate).toLocaleString('vi-VN', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        second: '2-digit',
+                        minute: '2-digit',
+                        hour: '2-digit',
+                    });
+                    const updateDate = new Date(material.updateDate).toLocaleString('vi-VN', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        second: '2-digit',
+                        minute: '2-digit',
+                        hour: '2-digit',
+                    });
                     const row = document.createElement('tr');
                     row.id = `row-${index}`;
                     row.setAttribute('data-id', material.id);
@@ -151,8 +154,8 @@ function fetchDeletedMaterials() {
                             <span id="name-text-${index}">${material.nameMaterial}</span>
                             <input type="text" value="${material.nameMaterial}" id="name-input-${index}" style="display:none;">
                         </td>
-                        <td>${material.createDate}</td>
-                        <td>${material.updateDate}</td>
+                        <td>${createDate}</td>
+                        <td>${updateDate}</td>
                         <td>
                             <i class="attribute-status-icon status-icon fas ${material.status == 1 ? 'fa-toggle-on' : 'fa-toggle-off'}"
                                data-status="${material.status}"
@@ -160,7 +163,7 @@ function fetchDeletedMaterials() {
                                title="Toggle Status"></i>
                         </td>
                         <td>
-                                <a data-index="${index}"  onclick="restoreMaterial(this)">
+                                <a data-index="${index}" data-id="${material.id}"  onclick="restoreMaterial(this)">
                                     <i class="attribute-icon-restore fas fa-undo" title="Khôi phục"></i>
                                 </a>
                         </td>
@@ -168,7 +171,7 @@ function fetchDeletedMaterials() {
                     tbody.appendChild(row);
                 });
             } else {
-                alert("Không có chất liệu nào bị xóa.");
+                createToast('1','Không có màu nào bị xóa')
             }
         })
         .catch(error => {
@@ -178,19 +181,34 @@ function fetchDeletedMaterials() {
 
 
 function fetchActiveMaterials() {
-    fetch('http://localhost:8080/attribute/material/active')
+    fetch('/attribute/material/active')
         .then(response => response.json())
         .then(data => {
-            if (data.length > 0) {
 
-                const tbody = document.querySelector('#materialTable tbody');
-                tbody.innerHTML = '';
+            const tbody = document.querySelector('#materialTable tbody');
+            tbody.innerHTML = ''; // Xóa nội dung hiện tại của tbody
 
-                data.forEach((material, index) => {
-                    const row = document.createElement('tr');
-                    row.id = `row-${index}`;
-                    row.setAttribute('data-id', material.id);
-                    row.innerHTML = `
+            data.forEach((material, index) => {
+                const createDate = new Date(material.createDate).toLocaleString('vi-VN', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    second: '2-digit',
+                    minute: '2-digit',
+                    hour: '2-digit',
+                });
+                const updateDate = new Date(material.updateDate).toLocaleString('vi-VN', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    second: '2-digit',
+                    minute: '2-digit',
+                    hour: '2-digit',
+                });
+                const row = document.createElement('tr');
+                row.id = `row-${index}`;
+                row.setAttribute('data-id', material.id);
+                row.innerHTML = `
                         <td>
                             <span id="code-text-${index}">${material.codeMaterial}</span>
                             <input class="inputUpdate-attribute" type="text" value="${material.codeMaterial}" id="code-input-${index}" style="display:none;">
@@ -199,61 +217,132 @@ function fetchActiveMaterials() {
                             <span id="name-text-${index}">${material.nameMaterial}</span>
                             <input class="inputUpdate-attribute" type="text" value="${material.nameMaterial}" id="name-input-${index}" style="display:none;">
                         </td>
-                        <td>${material.createDate}</td>
-                        <td>${material.updateDate}</td>
+                        <td>${createDate}</td>
+                        <td>${updateDate}</td>
                         <td>
                             <i class="attribute-status-icon status-icon fas ${material.status == 1 ? 'fa-toggle-on' : 'fa-toggle-off'}"
                                data-status="${material.status}"
                                data-index="${index}"
-                               onclick="toggleStatus(this)"
                                title="Toggle Status"></i>
                         </td>
                         <td>
-                            <a href="#" onclick="editRow(${index})" id="edit-btn-${index}">
+                            <a href="#" onclick="editRow(${index}, event)" id="edit-btn-${index}">
                                 <i class="attribute-icon-edit icon-edit fas fa-edit" title="Edit"></i>
                             </a>
-                            <a href="#" onclick="saveRow(${index})" id="save-btn-${index}" style="display:none;">
+                            <a href="#" onclick="saveRow(${index}, event)" id="save-btn-${index}" style="display:none;">
                                 <i class="attribute-icon-save icon-save fas fa-save" title="Save"></i>
                             </a>
-                            <a href="#" data-index="${index}" onclick="deleteByID(this)">
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#confirm-create-bill-modal"
+                               data-index="${index}" data-id="${material.id}">
                                 <i class="attribute-icon-delete icon-delete fas fa-trash" title="Delete"></i>
                             </a>
                         </td>
                     `;
-                    tbody.appendChild(row);
-                });
-            } else {
-                alert("Không có chất liệu nào đang hoạt động.");
-            }
+                tbody.appendChild(row);
+            });
         })
+        .catch(error => {
+            console.error("Có lỗi xảy ra khi lấy danh sách màu:", error);
+        });
 }
 
+async function add() {
+    if (await validateMaterial()) {
+        const formElement = document.getElementById('createAttribute');
+        const formData = new FormData(formElement);
+        const response = await fetch('/attribute/material/add', {
+            method: 'POST',
+            body: formData
+        });
+        if (response.ok) {
+            const result = await response.json();
+            codeMaterialInput.value = '';
+            nameMaterialInput.value = '';
+            document.querySelector('.attribute-btn-listActive').style.display = 'none';
+            document.querySelector('.attribute-btn-listDelete').style.display = 'inline-block';
+            createToast(result.check, result.message);
+            fetchActiveMaterials();
+        }
+    } else {
+        createToast('2', 'Dữ liệu không hợp lệ');
+    }
+
+}
+
+fetchActiveMaterials();
 
 function restoreMaterial(element) {
-    if (confirm('Bạn có chắc chắn muốn khôi phục mục này không?')) {
-        var index = element.getAttribute('data-index');
-        var id = $('#row-' + index).data('id');
+    var index = element.getAttribute('data-index');
+    var id = element.getAttribute('data-id');
+    $.ajax({
+        url: '/attribute/delete-material',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            id: id,
+            status: 1
+        }),
+        success: function (response) {
+            $('#row-' + index).remove();
+            createToast(response.check, response.message)
+        },
+        error: function (xhr, status, error) {
+            createToast('2', 'Khôi phục chất liệu thất bại')
+        }
+    });
 
-        $.ajax({
-            url: '/attribute/delete-material',
-            method: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({
-                id: id,
-                status: 1
-            }),
-            success: function (response) {
-                if (response.success) {
-                    $('#row-' + index).remove();
-                    console.log('Khôi phục thành công');
-                } else {
-                    alert('Khôi phục thất bại!');
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error('Có lỗi xảy ra khi khôi phục:', error);
-            }
-        });
+}
+
+var codeMaterialInput = document.getElementById("codeMaterialInput");
+var nameMaterialInput = document.getElementById("nameMaterialInput");
+var materialError = document.getElementById("materialError");
+codeMaterialInput.addEventListener('input', function () {
+    validateMaterial();
+});
+nameMaterialInput.addEventListener('input', function () {
+    validateMaterial();
+});
+
+var arrayCodeMaterial = [];
+var arrayNameMaterial = [];
+
+
+async function validateMaterial() {
+    var codeMaterial = await fetch('/attribute/material/get-code');
+    if (codeMaterial.ok) {
+        arrayCodeMaterial = await codeMaterial.json(); // Đảm bảo đây là một mảng
+    }
+    var nameMaterial = await fetch('/attribute/material/get-name');
+    if (nameMaterial.ok) {
+        arrayNameMaterial = await nameMaterial.json(); // Đảm bảo đây là một mảng
+    }
+    if (codeMaterialInput.value.trim() === "" && nameMaterialInput.value.trim() === "") {
+        materialError.textContent = "* Mã và tên không được để trống";
+        return false;
+    } else if (codeMaterialInput.value.length > 10 && nameMaterialInput.value.length > 50) {
+        materialError.textContent = "* Mã <= 10 kí tự, Tên <= 50 kí tự";
+        return false;
+    } else if (arrayCodeMaterial.some(code => code.toLowerCase() === codeMaterialInput.value.trim().toLowerCase())) {
+        materialError.textContent = "* Mã chất liệu đã tồn tại";
+        return false;
+    } else if (arrayNameMaterial.some(name => name.toLowerCase() === codeMaterialInput.value.trim().toLowerCase())) {
+        materialError.textContent = "* Tên chất liệu đã tồn tại";
+        return false;
+    } else if (codeMaterialInput.value.trim() === "") {
+        materialError.textContent = "* Mã không được để trống";
+        return false;
+    } else if (nameMaterialInput.value.trim() === "") {
+        materialError.textContent = "* Tên không được để trống";
+        return false;
+    } else if (codeMaterialInput.value.length > 10) {
+        materialError.textContent = "* Mã <= 10 kí tự";
+        return false;
+    } else if (nameMaterialInput.value.length > 50) {
+        materialError.textContent = "* Tên <= 50 kí tự";
+        return false;
+    } else {
+        materialError.textContent = "";
+        return true;
     }
 }
 

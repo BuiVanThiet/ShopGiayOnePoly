@@ -10,7 +10,7 @@ import java.util.List;
 
 @Repository
 public interface OriginRepository extends JpaRepository<Origin, Integer> {
-    @Query("select origin from Origin origin where origin.status <> 0")
+    @Query("select origin from Origin origin where origin.status <> 0 order by origin.id desc ")
     List<Origin> getOriginNotStatus0();
 
     @Query("select origin from Origin origin where origin.status = 0")

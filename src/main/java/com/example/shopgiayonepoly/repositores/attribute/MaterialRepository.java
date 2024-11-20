@@ -10,7 +10,7 @@ import java.util.List;
 
 @Repository
 public interface MaterialRepository extends JpaRepository<Material, Integer> {
-    @Query("select material from Material material where material.status <> 0")
+    @Query("select material from Material material where material.status <> 0 order by material.id desc ")
     List<Material> getMaterialNotStatus0();
 
     @Query("select material from Material material where material.status = 0")

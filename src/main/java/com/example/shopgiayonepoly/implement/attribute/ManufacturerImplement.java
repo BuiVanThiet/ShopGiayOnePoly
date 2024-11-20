@@ -87,7 +87,7 @@ public class ManufacturerImplement implements ManufacturerService {
             manufacturer.setNameManufacturer(nameManufacturer);
             manufacturerRepository.save(manufacturer);
         } else {
-            throw new RuntimeException("Màu sắc có " + id + " Không tồn tại.");
+            throw new RuntimeException("Nhà sản xuất có " + id + " Không tồn tại.");
         }
     }
 

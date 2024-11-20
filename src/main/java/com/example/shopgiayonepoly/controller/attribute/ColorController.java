@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,32 +24,93 @@ public class ColorController {
     ColorService colorService;
 
     @RequestMapping("/color")
-    public String list(Model model) {
+    public String list(Model model, HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            return "redirect:/login";
+        }
         model.addAttribute("colorList", colorService.getColorNotStatus0());
         model.addAttribute("colorAdd", new Color());
         return "Attribute/color";
     }
 
     @GetMapping("/color/delete")
-    public ResponseEntity<List<Color>> listColorDelete() {
+    public ResponseEntity<List<Color>> listColorDelete(HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            return null;
+        }
         List<Color> deletedColors = colorService.getColorDelete();
         return new ResponseEntity<>(deletedColors, HttpStatus.OK);
     }
 
     @GetMapping("/color/active")
-    public ResponseEntity<List<Color>> listActive() {
+    public ResponseEntity<List<Color>> listActive(HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            return null;
+        }
         List<Color> listColorActive = colorService.getColorNotStatus0();
         return new ResponseEntity<>(listColorActive, HttpStatus.OK);
     }
 
+    @GetMapping("/color/get-code")
+    public ResponseEntity<List<String>> findAllCodeColor(HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            return null;
+        }
+        List<String> codeColor = new ArrayList<>();
+        for (Color listColor : colorService.findAll()) {
+            codeColor.add(listColor.getCodeColor());
+        }
+        return new ResponseEntity<>(codeColor, HttpStatus.OK);
+    }
+
+    @GetMapping("/color/get-name")
+    public ResponseEntity<List<String>> findAllNameColor(HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            return null;
+        }
+        List<String> nameColor = new ArrayList<>();
+        for (Color listColor : colorService.findAll()) {
+            nameColor.add(listColor.getNameColor());
+        }
+        return new ResponseEntity<>(nameColor, HttpStatus.OK);
+    }
+
     @ResponseBody
     @PostMapping("/color/add")
-    public ResponseEntity<Map<String, String>> add(@ModelAttribute Color color) {
+    public ResponseEntity<Map<String, String>> add(@ModelAttribute Color color, HttpSession session) {
         Map<String, String> thongBao = new HashMap<>();
-        color.setStatus(1);
-        colorService.save(color);
-        thongBao.put("message", "Thêm màu sắc thành công");
-        thongBao.put("check", "1");
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            thongBao.put("message", "Nhân viên chưa đăng nhập");
+            thongBao.put("check", "3");
+            return null;
+        }
+        boolean checkCode = true;
+        boolean checkName = true;
+        for (Color listColor : colorService.findAll()) {
+            if (color.getCodeColor().trim().toLowerCase().equals(listColor.getCodeColor().trim().toLowerCase())) {
+                checkCode = false;
+            }
+        }
+        for (Color listColor : colorService.findAll()) {
+            if (color.getNameColor().trim().toLowerCase().equals(listColor.getNameColor().trim().toLowerCase())) {
+                checkName = false;
+            }
+        }
+        if (!checkCode || !checkName || color.getCodeColor().isEmpty() || color.getNameColor().isEmpty() || color.getCodeColor().length() > 10 || color.getNameColor().length() > 50) {
+            thongBao.put("message", "Dữ liệu không hợp lệ");
+            thongBao.put("check", "2");
+        } else {
+            color.setStatus(1);
+            colorService.save(color);
+            thongBao.put("message", "Thêm màu sắc thành công");
+            thongBao.put("check", "1");
+        }
         return ResponseEntity.ok(thongBao);
     }
 
@@ -82,8 +144,14 @@ public class ColorController {
 
     @PostMapping("/update-color")
     @ResponseBody
-    public ResponseEntity<Map<String, String>> updateColor(@RequestBody Map<String, Object> payload) {
+    public ResponseEntity<Map<String, String>> updateColor(@RequestBody Map<String, Object> payload, HttpSession session) {
         Map<String, String> thongBao = new HashMap<>();
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            thongBao.put("message", "Nhân viên chưa đăng nhập");
+            thongBao.put("check", "3");
+            return null;
+        }
         try {
             int id;
             String codeColor;
@@ -98,10 +166,38 @@ public class ColorController {
 
             codeColor = (String) payload.get("codeColor");
             nameColor = (String) payload.get("nameColor");
+            boolean checkCode = true;
+            for (Color listColor : colorService.findAll()) {
+                if (codeColor.trim().toLowerCase().equals(listColor.getCodeColor().trim().toLowerCase()) && id != listColor.getId()) {
+                    checkCode = false;
+                    break;
+                }
+            }
+            boolean checkName = true;
+            for (Color listColor : colorService.findAll()) {
+                if (nameColor.trim().toLowerCase().equals(listColor.getNameColor().trim().toLowerCase()) && id != listColor.getId()) {
+                    checkName = false;
+                    break; 
+                }
+            }
             // Gọi service để cập nhật dữ liệu màu sắc trong cơ sở dữ liệu
-            colorService.updateColor(id, codeColor, nameColor);
-            thongBao.put("message", "Sửa màu sắc thành công");
-            thongBao.put("check", "1");
+            if (codeColor.isEmpty() || codeColor.length() > 10) {
+                thongBao.put("message", "Mã màu sắc không được trống và lớn hơn 10 kí tự");
+                thongBao.put("check", "2");
+            } else if (!checkCode) {
+                thongBao.put("message", "Mã màu sắc đã tồn tại");
+                thongBao.put("check", "2");
+            } else if (!checkName) {
+                thongBao.put("message", "Tên màu sắc đã tồn tại");
+                thongBao.put("check", "2");
+            } else if (nameColor.isEmpty() || nameColor.length() > 50) {
+                thongBao.put("message", "Tên màu sắc không được trống và lớn hơn 50 kí tự");
+                thongBao.put("check", "2");
+            } else {
+                colorService.updateColor(id, codeColor, nameColor);
+                thongBao.put("message", "Sửa màu sắc thành công");
+                thongBao.put("check", "1");
+            }
             return ResponseEntity.ok(thongBao);
         } catch (Exception e) {
             thongBao.put("message", "Sửa màu sắc thất bại");
@@ -112,8 +208,14 @@ public class ColorController {
 
     @PostMapping("/delete-color")
     @ResponseBody
-    public ResponseEntity<Map<String, String>> deleteColor(@RequestBody Map<String, Object> payload) {
+    public ResponseEntity<Map<String, String>> deleteColor(@RequestBody Map<String, Object> payload, HttpSession session) {
         Map<String, String> thongBao = new HashMap<>();
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            thongBao.put("message", "Nhân viên chưa đăng nhập");
+            thongBao.put("check", "3");
+            return null;
+        }
         try {
             int id;
             int status;

@@ -9,7 +9,7 @@ import java.util.List;
 
 @Repository
 public interface ColorRepository extends JpaRepository<Color, Integer> {
-    @Query("select color from Color color where color.status <> 0")
+    @Query("select color from Color color where color.status <> 0 order by color.id desc ")
     List<Color> getColorNotStatus0();
 
     @Query("select color from Color color where color.status = 0")

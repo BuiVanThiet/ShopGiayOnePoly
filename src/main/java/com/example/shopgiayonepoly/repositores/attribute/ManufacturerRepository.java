@@ -10,7 +10,7 @@ import java.util.List;
 
 @Repository
 public interface ManufacturerRepository extends JpaRepository<Manufacturer, Integer> {
-    @Query("select manufacturer from Manufacturer manufacturer where manufacturer.status <> 0")
+    @Query("select manufacturer from Manufacturer manufacturer where manufacturer.status <> 0 order by manufacturer.id desc ")
     List<Manufacturer> getManufacturerNotStatus0();
 
     @Query("select manufacturer from Manufacturer manufacturer where manufacturer.status = 0")

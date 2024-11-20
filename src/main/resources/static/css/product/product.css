@@ -268,7 +268,6 @@ body-product {
     padding: 10px 20px;
     border: none;
     border-radius: 8px;
-    margin-left: 10px;
     cursor: pointer;
 }
 .btn-delete-product {
@@ -315,7 +314,7 @@ body-product {
 }
 
 .pagination-product button:hover {
-    background-color: #d0d0d0; /* Hiệu ứng hover */
+    background-color: #FAFAD2; /* Hiệu ứng hover */
 }
 
 .pagination-product button:focus {
@@ -323,9 +322,12 @@ body-product {
 }
 
 .pagination-product .number {
-    font-size: 24px;
-    min-width: 30px;
-    text-align: center;
+    list-style: none;
+    height: 45px;
+    width: 45px;
+    margin: 0 3px;
+    line-height: 45px;
+    border-radius: 50%;
 }
 
 .btn-findProduct-delete{

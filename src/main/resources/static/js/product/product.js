@@ -185,17 +185,15 @@ async function fetchProductsByCategoryAndSearch(idCategory, searchTerm, url = `/
 }
 
 
-// Hàm hiển thị trang
-
-
-
 // Chuyển đổi giữa chế độ xem lưới và danh sách
 function showGridViewProduct() {
     document.querySelector('.form-group-product').style.display = 'flex';
     document.querySelector('.table-product').style.display = 'none';
     document.querySelector('.fa-th-product').style.color = 'blue';
     document.querySelector('.fa-list-product').style.color = 'black';
+    document.getElementById('items-per-page').style.display = 'none';
     isGridView = true;
+    currentPage = 1;
     displayPage(currentPage); // Hiển thị lại trang hiện tại với chế độ grid
 }
 
@@ -204,7 +202,9 @@ function showListViewProduct() {
     document.querySelector('.table-product').style.display = 'table';
     document.querySelector('.fa-th-product').style.color = 'black';
     document.querySelector('.fa-list-product').style.color = 'blue';
+    document.getElementById('items-per-page').style.display = 'inline-block';
     isGridView = false;
+    currentPage = 1;
     displayPage(currentPage); // Hiển thị lại trang hiện tại với chế độ list
 }
 
@@ -217,11 +217,10 @@ function updatePaginationControls(totalPages, page) {
     // Các nút phân trang tiếp tục như trong code gốc
     // Tạo nút "Trang trước"
     const prevButton = document.createElement('button');
-    prevButton.innerText = '<';
+    prevButton.innerHTML = '<i class="fas fa-angle-left"></i>';
     prevButton.onclick = () => changePage(page - 1);
-    prevButton.disabled = page === 1;
+    prevButton.style.display = page === 1 ? 'none' : 'inline-block';
     pagination.appendChild(prevButton);
-
     let startPage, endPage;
     if (totalPages <= 3) {
         startPage = 1;
@@ -253,7 +252,7 @@ function updatePaginationControls(totalPages, page) {
         pageButton.innerText = i;
         pageButton.classList.add('number');
         if (i === page) {
-            pageButton.style.backgroundColor = '#fceb97';
+            pageButton.style.backgroundColor = '#FAFAD2';
         }
         pageButton.onclick = () => changePage(i);
         pagination.appendChild(pageButton);
@@ -271,9 +270,10 @@ function updatePaginationControls(totalPages, page) {
     }
 
     const nextButton = document.createElement('button');
-    nextButton.innerText = '>';
+    nextButton.innerHTML = '<i class="fas fa-angle-right"></i>';
+
     nextButton.onclick = () => changePage(page + 1);
-    nextButton.disabled = page === totalPages;
+    nextButton.style.display = page === totalPages ? 'none' : 'inline-block';
     pagination.appendChild(nextButton);
 }
 
@@ -318,6 +318,10 @@ function changePage(newPage) {
     }
 }
 function displayPage(page) {
+    if (document.getElementById('btn-export-product').style.display !== 'none'){
+        document.getElementById('btn-export-product').style.display = 'none';
+        document.getElementById('btn-delete-product').style.display = 'none';
+    }
     const itemsPerPage = isGridView ? itemsPerPageGrid : itemsPerPageList;
     const totalPages = Math.ceil(products.length / itemsPerPage);
     const start = (page - 1) * itemsPerPage;
@@ -396,7 +400,7 @@ function displayPage(page) {
                             <div class="dropdown-menu-product">
                                 <a href="/staff/product/detail/${product.id}">Xem chi tiết</a>
                                 <a href="/staff/product/view-update/${product.id}" >Chỉnh sửa</a>
-                                <a id="delete-product" data-bs-toggle="modal" data-bs-target="#confirm-create-bill-modal" data-product-id="${product.id}">Xóa</a>
+                                <a onclick="getIdProduct(this)" class="delete-product" data-bs-toggle="modal" data-bs-target="#confirm-create-bill-modal" data-product-id="${product.id}">Xóa</a>
                             </div>
                         </div>
                     `}
@@ -475,20 +479,35 @@ function updateProduct(idProduct) {
     window.location.href = 'http://localhost:8080/staff/product/detail/' + idProduct;
 }
 
+// Đảm bảo thêm sự kiện cho tất cả các nút Xóa
+
+function getIdProduct(element) {
+    const productId = element.getAttribute('data-product-id');
+    console.log(productId); // Kiểm tra ID có được lấy chính xác không
+
+    const modal = document.getElementById('confirm-create-bill-modal');
+    modal.setAttribute('data-product-id', productId);
+}
+
+
 
 async function updateStatus(id, status) {
     if (id === null){
-        id = document.getElementById('delete-product').getAttribute('data-product-id');
-    }
-    await fetch(`/product-api/restore?id=${id}&status=${status}`, {
-        method: 'POST'
-    })
-    if (status === 0) {
-        createToast('1', 'Xóa sản phẩm thành công')
-        fetchProductsByCategoryAndSearch(0, '')
-    } else {
-        createToast('1', 'Khôi phục sản phẩm thành công')
-        fetchProductsByCategoryAndSearch(0, '', `/product-api/findProductDelete?idCategory=${0}&searchTerm=${''}`)
+        var modal = document.getElementById('confirm-create-bill-modal');
+        id = modal.getAttribute('data-product-id');
     }
 
+    // Gửi yêu cầu API để cập nhật trạng thái sản phẩm
+    await fetch(`/product-api/restore?id=${id}&status=${status}`, {
+        method: 'POST'
+    });
+
+    // Thực hiện các hành động tùy theo trạng thái
+    if (status === 0) {
+        createToast('1', 'Xóa sản phẩm thành công');
+        fetchProductsByCategoryAndSearch(0, '');
+    } else {
+        createToast('1', 'Khôi phục sản phẩm thành công');
+        fetchProductsByCategoryAndSearch(0, '', `/product-api/findProductDelete?idCategory=${0}&searchTerm=${''}`);
+    }
 }
