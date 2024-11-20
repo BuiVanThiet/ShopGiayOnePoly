@@ -87,7 +87,7 @@ public class MaterialImplement implements MaterialService {
             material.setNameMaterial(nameMaterial);
             materialRepository.save(material);
         } else {
-            throw new RuntimeException("Màu sắc có " + id + " Không tồn tại.");
+            throw new RuntimeException("Chất liệu có " + id + " Không tồn tại.");
         }
     }
 

@@ -89,7 +89,7 @@ public class CategoryImplement implements CategoryService {
             category.setNameCategory(nameCategory);
             categoryRepository.save(category);
         } else {
-            throw new RuntimeException("Màu sắc có " + id + " Không tồn tại.");
+            throw new RuntimeException("Danh mục có " + id + " Không tồn tại.");
         }
     }
 

@@ -87,7 +87,7 @@ public class OriginImplement implements OriginService {
             origin.setNameOrigin(nameOrigin);
             originRepository.save(origin);
         } else {
-            throw new RuntimeException("Màu sắc có " + id + " Không tồn tại.");
+            throw new RuntimeException("Xuất xứ có " + id + " Không tồn tại.");
         }
     }
 

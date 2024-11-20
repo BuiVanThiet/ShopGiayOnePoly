@@ -19,13 +19,14 @@
                 <span class="arrow" id="arrow">&#9660;</span> <!-- Mũi tên -->
             </div>
             <div id="collapsibleDiv" class="combobox-content">
-                <form th:object="${categoryAdd}" method="post" action="/attribute/category/add">
+                <form id="createAttribute" th:object="${categoryAdd}" method="POST" >
                     <div class="attribute-search-section search-section ">
-                        <div class="attribute-search-bar search-bar ">
+                        <div class="attribute-search-bar search-bar">
                             <input id="codeCategoryInput" th:field="*{codeCategory}" type="text" placeholder="Mã danh mục" required/>
                             <input id="nameCategoryInput" th:field="*{nameCategory}" type="text" placeholder="Tên danh mục" required/>
-                            <button type="submit" class="attribute-btn-add btn-add">Thêm danh mục</button>
+                            <button type="button" onclick="add()" class="attribute-btn-add btn-add">Thêm danh mục</button>
                         </div>
+                        <p id="categoryError" style="color: red">* Mã và tên không được để trống</p>
                     </div>
                 </form>
             </div>
@@ -37,7 +38,7 @@
             <button type="submit" class="attribute-btn-listActive" style="display: none;">Danh sách hoạt động</button>
         </div>
         <br>
-        <table id="categoryTable" class="attribute-table table table-bordered table-striped table-hover ">
+        <table id="categoryTable" class="attribute-table table table-bordered table-hover ">
             <thead>
             <tr>
                 <th>Mã danh mục</th>
@@ -49,43 +50,27 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="category, iterStat : ${categoryList}" th:id="'row-' + ${iterStat.index}" th:data-id="${category.id}">
-                <td>
-                    <span th:text="${category.codeCategory}" th:id="'code-text-' + ${iterStat.index}"></span>
-                    <input class="inputUpdate-attribute" type="text" th:value="${category.codeCategory}" th:id="'code-input-' + ${iterStat.index}"
-                           style="display:none;">
-                </td>
-                <td>
-                    <span th:text="${category.nameCategory}" th:id="'name-text-' + ${iterStat.index}"></span>
-                    <input class="inputUpdate-attribute" type="text" th:value="${category.nameCategory}" th:id="'name-input-' + ${iterStat.index}"
-                           style="display:none;">
-                </td>
-                <td>[[${category.createDate}]]</td>
-                <td>[[${category.updateDate}]]</td>
-                <td>
-                    <i class="attribute-status-icon status-icon fas"
-                       th:classappend="${category.status == 1 ? 'fa-toggle-on' : (category.status == 2 ? 'fa-toggle-off' : '')}"
-                       th:data-status="${category.status}"
-                       th:data-index="${iterStat.index}"
-                       onclick="toggleStatus(this)"
-                       title="Toggle Status"></i>
-                </td>
-                <td>
-                    <a href="#" th:onclick="'editRow(' + ${iterStat.index} + ')'"
-                       th:id="'edit-btn-' + ${iterStat.index}">
-                        <i class="attribute-icon-edit icon-edit fas fa-edit" title="Edit"></i>
-                    </a>
-                    <a href="#" th:onclick="'saveRow(' + ${iterStat.index} + ')'" style="display:none; category: white; text-decoration: none"
-                       th:id="'save-btn-' + ${iterStat.index}">
-                        <i class="attribute-icon-save icon-save fas fa-save" title="Save"></i>
-                    </a>
-                    <a href="#" th:data-index="${iterStat.index}" onclick="deleteByID(this)">
-                        <i class="attribute-icon-delete icon-delete fas fa-trash" title="Delete"></i>
-                    </a>
-                </td>
-            </tr>
             </tbody>
         </table>
+        <div class="modal fade" id="confirm-create-bill-modal" tabindex="-1"
+             aria-labelledby="confirmCreateBillModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="confirmCreateBillModalLabel">
+                            Xác nhận xóa danh mục
+                        </h1>
+                    </div>
+                    <div class="modal-body">
+                        Bạn muốn xóa danh mục ?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button onclick="deleteByID(this)" type="submit" class="btn btn-success" data-bs-dismiss="modal" aria-label="Close">Xóa</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </article>
     <script th:src="@{/js/attribute/attribute.js}" type="text/javascript"></script>
     <script th:src="@{/ajax/attribute/categoryAjax.js}" type="text/javascript"></script>

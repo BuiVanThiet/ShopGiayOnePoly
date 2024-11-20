@@ -77,42 +77,6 @@
                 </tr>
                 </thead>
                 <tbody id="product-table-body">
-                <tr th:each="product, iterStat : ${productList}" th:id="'row-product-' + ${iterStat.index}"
-                    th:data-id="${product.id}">
-                    <td>
-                        <input type="checkbox" class="select-row-product"/>
-                    </td>
-                    <td>
-                        <div class="product-image-container">
-                            <div class="image-slider">
-                                <div class="slides">
-                                    <div class="slide" th:each="image : ${product.images}">
-                                        <img  th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728725582/' + ${image.nameImage}"
-                                             alt="Ảnh sản phẩm">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </td>
-                    <td data-column="codeProduct" th:text="${product.codeProduct}"></td>
-                    <td data-column="nameProduct" th:text="${product.nameProduct}"></td>
-                    <td data-column="material" th:text="${product.material.nameMaterial}"></td>
-                    <td data-column="manufacturer" th:text="${product.manufacturer.nameManufacturer}"></td>
-                    <td data-column="origin" th:text="${product.origin.nameOrigin}"></td>
-                    <td data-column="sole" th:text="${product.sole.nameSole}"></td>
-                    <td data-column="describe" th:text="${product.describe}"></td>
-                    <td data-column="status" th:text="${product.status == 1 ? 'Đang bán' : (product.status == 2 ? 'Ngừng bán' : '')}"></td>
-                    <td>
-                        <div class="dropdown-product">
-                            <i class="fa fa-ellipsis-v fa-ellipsis-v-product" aria-hidden="true" onclick="toggleDropdownProduct(event, this)"></i>
-                            <div class="dropdown-menu-product">
-                                <a th:href="@{/staff/product/detail/{idProduct}(idProduct=${product.id})}">Xem chi tiết</a>
-                                <a href="#" >Chỉnh sửa</a>
-                                <a href="#">Xóa</a>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
                 </tbody>
             </table>
 
@@ -130,15 +94,17 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h1 class="modal-title fs-5" id="confirmCreateBillModalLabel">
-                            Xác nhận thêm sản phẩm
+                            Xác nhận xóa sản phẩm
                         </h1>
                     </div>
                     <div class="modal-body">
-                        Bạn muốn thêm sản phẩm ?
+                        Bạn muốn xóa sản phẩm ?
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                        <button onclick="updateStatus(null, 0)" type="submit" class="btn btn-success" data-bs-dismiss="modal" aria-label="Close">Xóa</button>
+                        <button onclick="updateStatus(null, 0)" type="submit" class="btn btn-success" data-bs-dismiss="modal"
+                                aria-label="Close">Xóa
+                        </button>
                     </div>
                 </div>
             </div>

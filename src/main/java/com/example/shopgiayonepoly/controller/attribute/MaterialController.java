@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,35 +23,95 @@ public class MaterialController {
     @Autowired
     MaterialService materialService;
 
-    String mess = "";
-    String materialMess = "";
-
-    @GetMapping("/material")
-    public String list(Model model) {
+    @RequestMapping("/material")
+    public String list(Model model, HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            return "redirect:/login";
+        }
         model.addAttribute("materialList", materialService.getMaterialNotStatus0());
         model.addAttribute("materialAdd", new Material());
         return "Attribute/material";
     }
 
     @GetMapping("/material/delete")
-    public ResponseEntity<List<Material>> listMaterialDelete() {
+    public ResponseEntity<List<Material>> listMaterialDelete(HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            return null;
+        }
         List<Material> deletedMaterials = materialService.getMaterialDelete();
         return new ResponseEntity<>(deletedMaterials, HttpStatus.OK);
     }
 
     @GetMapping("/material/active")
-    public ResponseEntity<List<Material>> listActive() {
+    public ResponseEntity<List<Material>> listActive(HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            return null;
+        }
         List<Material> listMaterialActive = materialService.getMaterialNotStatus0();
         return new ResponseEntity<>(listMaterialActive, HttpStatus.OK);
     }
 
-    @RequestMapping("/material/add")
-    public String add(@ModelAttribute("materialAdd") Material material) {
-        material.setStatus(1);
-        materialService.save(material);
-        this.mess = "Thêm hóa đơn mới thành công!";
-        this.materialMess = "1";
-        return "redirect:/attribute/material";
+    @GetMapping("/material/get-code")
+    public ResponseEntity<List<String>> findAllCodeMaterial(HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            return null;
+        }
+        List<String> codeMaterial = new ArrayList<>();
+        for (Material listMaterial : materialService.findAll()) {
+            codeMaterial.add(listMaterial.getCodeMaterial());
+        }
+        return new ResponseEntity<>(codeMaterial, HttpStatus.OK);
+    }
+
+    @GetMapping("/material/get-name")
+    public ResponseEntity<List<String>> findAllNameMaterial(HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            return null;
+        }
+        List<String> nameMaterial = new ArrayList<>();
+        for (Material listMaterial : materialService.findAll()) {
+            nameMaterial.add(listMaterial.getNameMaterial());
+        }
+        return new ResponseEntity<>(nameMaterial, HttpStatus.OK);
+    }
+
+    @ResponseBody
+    @PostMapping("/material/add")
+    public ResponseEntity<Map<String, String>> add(@ModelAttribute Material material, HttpSession session) {
+        Map<String, String> thongBao = new HashMap<>();
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            thongBao.put("message", "Nhân viên chưa đăng nhập");
+            thongBao.put("check", "3");
+            return null;
+        }
+        boolean checkCode = true;
+        boolean checkName = true;
+        for (Material listMaterial : materialService.findAll()) {
+            if (material.getCodeMaterial().trim().toLowerCase().equals(listMaterial.getCodeMaterial().trim().toLowerCase())) {
+                checkCode = false;
+            }
+        }
+        for (Material listMaterial : materialService.findAll()) {
+            if (material.getNameMaterial().trim().toLowerCase().equals(listMaterial.getNameMaterial().trim().toLowerCase())) {
+                checkName = false;
+            }
+        }
+        if (!checkCode || !checkName || material.getCodeMaterial().isEmpty() || material.getNameMaterial().isEmpty() || material.getCodeMaterial().length() > 10 || material.getNameMaterial().length() > 50) {
+            thongBao.put("message", "Dữ liệu không hợp lệ");
+            thongBao.put("check", "2");
+        } else {
+            material.setStatus(1);
+            materialService.save(material);
+            thongBao.put("message", "Thêm chất liệu thành công");
+            thongBao.put("check", "1");
+        }
+        return ResponseEntity.ok(thongBao);
     }
 
     @PostMapping("/material/update-status")
@@ -59,7 +120,6 @@ public class MaterialController {
         try {
             int id;
             int status;
-
             // Lấy id và status từ payload, kiểm tra kiểu dữ liệu
             if (payload.get("id") instanceof Integer) {
                 id = (Integer) payload.get("id");
@@ -84,7 +144,14 @@ public class MaterialController {
 
     @PostMapping("/update-material")
     @ResponseBody
-    public ResponseEntity<String> updateMaterial(@RequestBody Map<String, Object> payload) {
+    public ResponseEntity<Map<String, String>> updateMaterial(@RequestBody Map<String, Object> payload, HttpSession session) {
+        Map<String, String> thongBao = new HashMap<>();
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            thongBao.put("message", "Nhân viên chưa đăng nhập");
+            thongBao.put("check", "3");
+            return null;
+        }
         try {
             int id;
             String codeMaterial;
@@ -99,20 +166,56 @@ public class MaterialController {
 
             codeMaterial = (String) payload.get("codeMaterial");
             nameMaterial = (String) payload.get("nameMaterial");
-
-            // Gọi service để cập nhật dữ liệu màu sắc trong cơ sở dữ liệu
-            materialService.updateMaterial(id, codeMaterial, nameMaterial);
-
-            return ResponseEntity.ok("Cập nhật dữ liệu thành công");
+            boolean checkCode = true;
+            for (Material listMaterial : materialService.findAll()) {
+                if (codeMaterial.trim().toLowerCase().equals(listMaterial.getCodeMaterial().trim().toLowerCase()) && id != listMaterial.getId()) {
+                    checkCode = false;
+                    break;
+                }
+            }
+            boolean checkName = true;
+            for (Material listMaterial : materialService.findAll()) {
+                if (nameMaterial.trim().toLowerCase().equals(listMaterial.getNameMaterial().trim().toLowerCase()) && id != listMaterial.getId()) {
+                    checkName = false;
+                    break;
+                }
+            }
+            // Gọi service để cập nhật dữ liệu chất liệu trong cơ sở dữ liệu
+            if (codeMaterial.isEmpty() || codeMaterial.length() > 10) {
+                thongBao.put("message", "Mã chất liệu không được trống và lớn hơn 10 kí tự");
+                thongBao.put("check", "2");
+            } else if (!checkCode) {
+                thongBao.put("message", "Mã chất liệu đã tồn tại");
+                thongBao.put("check", "2");
+            } else if (!checkName) {
+                thongBao.put("message", "Tên chất liệu đã tồn tại");
+                thongBao.put("check", "2");
+            } else if (nameMaterial.isEmpty() || nameMaterial.length() > 50) {
+                thongBao.put("message", "Tên chất liệu không được trống và lớn hơn 50 kí tự");
+                thongBao.put("check", "2");
+            } else {
+                materialService.updateMaterial(id, codeMaterial, nameMaterial);
+                thongBao.put("message", "Sửa chất liệu thành công");
+                thongBao.put("check", "1");
+            }
+            return ResponseEntity.ok(thongBao);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Cập nhật dữ liệu thất bại");
+            thongBao.put("message", "Sửa chất liệu thất bại");
+            thongBao.put("check", "2");
+            return ResponseEntity.ok(thongBao);
         }
     }
 
     @PostMapping("/delete-material")
     @ResponseBody
-    public ResponseEntity<Map<String, Object>> deleteMaterial(@RequestBody Map<String, Object> payload) {
-        Map<String, Object> response = new HashMap<>();
+    public ResponseEntity<Map<String, String>> deleteMaterial(@RequestBody Map<String, Object> payload, HttpSession session) {
+        Map<String, String> thongBao = new HashMap<>();
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            thongBao.put("message", "Nhân viên chưa đăng nhập");
+            thongBao.put("check", "3");
+            return null;
+        }
         try {
             int id;
             int status;
@@ -129,25 +232,27 @@ public class MaterialController {
             } else {
                 status = Integer.parseInt(payload.get("status").toString());
             }
-
+            if (status == 0) {
+                thongBao.put("message", "Xóa chất liệu thành công");
+                thongBao.put("check", "1");
+            } else {
+                thongBao.put("message", "Khôi phục chất liệu thành công");
+                thongBao.put("check", "1");
+            }
             // Gọi service để cập nhật trạng thái trong cơ sở dữ liệu
             materialService.updateStatus(id, status);
-
-            // Phản hồi thành công
-            response.put("success", true);
-            response.put("message", "Xóa thành công");
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok(thongBao);
 
         } catch (NumberFormatException e) {
             // Xử lý lỗi parse dữ liệu
-            response.put("success", false);
-            response.put("message", "Dữ liệu không hợp lệ: " + e.getMessage());
-            return ResponseEntity.badRequest().body(response);
+            thongBao.put("message", "Lỗi khi xử lý dữ liệu");
+            thongBao.put("check", "3");
+            return ResponseEntity.ok(thongBao);
         } catch (Exception e) {
             // Xử lý lỗi khác
-            response.put("success", false);
-            response.put("message", "Có lỗi xảy ra: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            thongBao.put("message", "Lỗi khi xử lý dữ liệu");
+            thongBao.put("check", "3");
+            return ResponseEntity.ok(thongBao);
         }
     }
     @ModelAttribute("staffInfo")

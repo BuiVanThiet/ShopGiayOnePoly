@@ -7,31 +7,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Product Management Page">
     <meta name="keywords" content="ecommerce, product management, online store">
-    <title>Quản lý màu sắc</title>
+    <title>Quản lý nhà sản xuất</title>
 </head>
 <body class="body-attribute">
 <div layout:fragment="content">
     <article class=" bd-gutter mt-5 my-md-4 bd-layout">
-        <h1 class="h1-attribute">Quản lý màu sắc</h1>
-        <form th:object="${manufacturerAdd}" method="post" action="/attribute/manufacturer/add">
-            <div class="attribute-search-section search-section ">
-                <div class="attribute-search-bar search-bar ">
-                    <input id="codeManufacturerInput" th:field="*{codeManufacturer}" type="text" placeholder="Mã màu sắc" required/>
-                    <input id="nameManufacturerInput" th:field="*{nameManufacturer}" type="text" placeholder="Tên màu sắc" required/>
-                    <button type="submit" class="attribute-btn-add btn-add">Thêm màu sắc</button>
-                </div>
+        <h1 class="h1-attribute">Quản lý nhà sản xuất</h1>
+        <div class="combobox-container">
+            <div class="combobox-header" onclick="toggleDiv()">
+                <span></span>
+                <span class="arrow" id="arrow">&#9660;</span> <!-- Mũi tên -->
             </div>
-        </form>
+            <div id="collapsibleDiv" class="combobox-content">
+                <form id="createAttribute" th:object="${manufacturerAdd}" method="POST" >
+                    <div class="attribute-search-section search-section ">
+                        <div class="attribute-search-bar search-bar">
+                            <input id="codeManufacturerInput" th:field="*{codeManufacturer}" type="text" placeholder="Mã nhà sản xuất" required/>
+                            <input id="nameManufacturerInput" th:field="*{nameManufacturer}" type="text" placeholder="Tên nhà sản xuất" required/>
+                            <button type="button" onclick="add()" class="attribute-btn-add btn-add">Thêm nhà sản xuất</button>
+                        </div>
+                        <p id="manufacturerError" style="color: red">* Mã và tên không được để trống</p>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <br>
+
         <div style="text-align: right;">
             <button type="submit" class="attribute-btn-listDelete">Danh sách đã xóa</button>
             <button type="submit" class="attribute-btn-listActive" style="display: none;">Danh sách hoạt động</button>
         </div>
         <br>
-        <table id="manufacturerTable" class="attribute-table table table-bordered table-striped table-hover ">
+        <table id="manufacturerTable" class="attribute-table table table-bordered table-hover ">
             <thead>
             <tr>
-                <th>Mã màu sắc</th>
-                <th>Tên màu sắc</th>
+                <th>Mã nhà sản xuất</th>
+                <th>Tên nhà sản xuất</th>
                 <th>Ngày tạo</th>
                 <th>Ngày sửa</th>
                 <th>Trạng thái</th>
@@ -39,43 +50,27 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="manufacturer, iterStat : ${manufacturerList}" th:id="'row-' + ${iterStat.index}" th:data-id="${manufacturer.id}">
-                <td>
-                    <span th:text="${manufacturer.codeManufacturer}" th:id="'code-text-' + ${iterStat.index}"></span>
-                    <input class="inputUpdate-attribute" type="text" th:value="${manufacturer.codeManufacturer}" th:id="'code-input-' + ${iterStat.index}"
-                           style="display:none;">
-                </td>
-                <td>
-                    <span th:text="${manufacturer.nameManufacturer}" th:id="'name-text-' + ${iterStat.index}"></span>
-                    <input class="inputUpdate-attribute" type="text" th:value="${manufacturer.nameManufacturer}" th:id="'name-input-' + ${iterStat.index}"
-                           style="display:none;">
-                </td>
-                <td>[[${manufacturer.createDate}]]</td>
-                <td>[[${manufacturer.updateDate}]]</td>
-                <td>
-                    <i class="attribute-status-icon status-icon fas"
-                       th:classappend="${manufacturer.status == 1 ? 'fa-toggle-on' : (manufacturer.status == 2 ? 'fa-toggle-off' : '')}"
-                       th:data-status="${manufacturer.status}"
-                       th:data-index="${iterStat.index}"
-                       onclick="toggleStatus(this)"
-                       title="Toggle Status"></i>
-                </td>
-                <td>
-                    <a href="#" th:onclick="'editRow(' + ${iterStat.index} + ')'"
-                       th:id="'edit-btn-' + ${iterStat.index}">
-                        <i class="attribute-icon-edit icon-edit fas fa-edit" title="Edit"></i>
-                    </a>
-                    <a href="#" th:onclick="'saveRow(' + ${iterStat.index} + ')'" style="display:none;"
-                       th:id="'save-btn-' + ${iterStat.index}">
-                        <i class="attribute-icon-save icon-save fas fa-save" title="Save"></i>
-                    </a>
-                    <a href="#" th:data-index="${iterStat.index}" onclick="deleteByID(this)">
-                        <i class="attribute-icon-delete icon-delete fas fa-trash" title="Delete"></i>
-                    </a>
-                </td>
-            </tr>
             </tbody>
         </table>
+        <div class="modal fade" id="confirm-create-bill-modal" tabindex="-1"
+             aria-labelledby="confirmCreateBillModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="confirmCreateBillModalLabel">
+                            Xác nhận xóa nhà sản xuất
+                        </h1>
+                    </div>
+                    <div class="modal-body">
+                        Bạn muốn xóa nhà sản xuất ?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button onclick="deleteByID(this)" type="submit" class="btn btn-success" data-bs-dismiss="modal" aria-label="Close">Xóa</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </article>
     <script th:src="@{/js/attribute/attribute.js}" type="text/javascript"></script>
     <script th:src="@{/ajax/attribute/manufacturerAjax.js}" type="text/javascript"></script>
@@ -86,5 +81,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.18.1/umd/index.js"></script>
 
 </div>
+
 </body>
 </html>

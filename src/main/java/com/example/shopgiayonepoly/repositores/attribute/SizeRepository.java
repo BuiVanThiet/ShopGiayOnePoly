@@ -9,7 +9,7 @@ import java.util.List;
 
 @Repository
 public interface SizeRepository extends JpaRepository<Size, Integer> {
-    @Query("select kichCo from Size kichCo where kichCo.status <> 0")
+    @Query("select kichCo from Size kichCo where kichCo.status <> 0 order by kichCo.id desc ")
     List<Size> getSizeNotStatus0();
 
     @Query("select kichCo from Size kichCo where kichCo.status = 0")

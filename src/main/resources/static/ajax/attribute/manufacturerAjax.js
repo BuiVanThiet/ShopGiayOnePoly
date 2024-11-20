@@ -1,26 +1,10 @@
-function saveRow(index) { // hàm edit dữ liệu trên table
-    console.log('Saving row:', index);
+function saveRow(index, event) { // hàm edit dữ liệu trên table
+    event.preventDefault();
     var updatedData = {
         codeManufacturer: document.getElementById('code-input-' + index).value,
         nameManufacturer: document.getElementById('name-input-' + index).value,
         id: document.getElementById('row-' + index).getAttribute('data-id')  // Lấy ID của đối tượng từ hàng
     };
-
-    // Hiển thị lại các giá trị đã chỉnh sửa trên trang
-    document.getElementById('code-text-' + index).innerText = updatedData.codeManufacturer;
-    document.getElementById('name-text-' + index).innerText = updatedData.nameManufacturer;
-
-    // Ẩn input và hiển thị lại text
-    document.getElementById('code-input-' + index).style.display = 'none';
-    document.getElementById('name-input-' + index).style.display = 'none';
-    document.getElementById('code-text-' + index).style.display = 'inline-block';
-    document.getElementById('name-text-' + index).style.display = 'inline-block';
-
-    // Hiển thị lại nút "Edit" và ẩn nút "Save"
-    document.getElementById('edit-btn-' + index).style.display = 'inline-block';
-    document.getElementById('save-btn-' + index).style.display = 'none';
-
-    console.log('Sending updated data to server:', updatedData);
 
     // Thực hiện AJAX để cập nhật dữ liệu trong cơ sở dữ liệu
     $.ajax({
@@ -29,8 +13,8 @@ function saveRow(index) { // hàm edit dữ liệu trên table
         contentType: 'application/json',
         data: JSON.stringify(updatedData),  // Gửi dữ liệu JSON
         success: function (response) {
-            console.log('Cập nhật thành công:', response);
-            // Hiển thị thông báo thành công hoặc xử lý kết quả trả về từ server
+            fetchActiveManufacturers();
+            createToast(response.check, response.message);
         },
         error: function (xhr, status, error) {
             console.error('Có lỗi xảy ra khi cập nhật dữ liệu:', error);
@@ -38,7 +22,6 @@ function saveRow(index) { // hàm edit dữ liệu trên table
         }
     });
 }
-
 
 function toggleStatus(element) { // hàm thay đổi trạng thái bằng button
     var index = element.getAttribute('data-index');  // Lấy index
@@ -61,7 +44,7 @@ function toggleStatus(element) { // hàm thay đổi trạng thái bằng button
 
     // Thực hiện Ajax request để cập nhật trạng thái trong database
     $.ajax({
-        url: '/attribute//manufacturer/update-status',  // Đường dẫn API
+        url: '/attribute/manufacturer/update-status',  // Đường dẫn API
         method: 'POST',
         contentType: 'application/json',
         data: JSON.stringify({
@@ -77,38 +60,42 @@ function toggleStatus(element) { // hàm thay đổi trạng thái bằng button
         }
     });
 }
+document.addEventListener('show.bs.modal', function (event) {
+    var button = event.relatedTarget;  // Lấy nút kích hoạt modal
+    var index = button.getAttribute('data-index');  // Lấy index từ nút kích hoạt
+    var id = button.getAttribute('data-id');  // Lấy id từ nút kích hoạt
+
+    // Gán index và id vào nút "Xóa" trong modal
+    var deleteButton = document.querySelector('#confirm-create-bill-modal .btn-success');
+    deleteButton.setAttribute('data-index', index);
+    deleteButton.setAttribute('data-id', id);
+});
 
 function deleteByID(element) {
-    if (confirm('Bạn có chắc chắn muốn xóa mục này không?')) {
-        var index = element.getAttribute('data-index');  // Lấy index từ th:data-index
-        var id = $('#row-' + index).data('id');  // Lấy id của phần tử từ th:data-id của hàng
+    var index = element.getAttribute('data-index');  // Lấy index từ nút "Xóa" trong modal
+    var id = element.getAttribute('data-id');  // Lấy id từ nút "Xóa" trong modal
 
-        $.ajax({
-            url: '/attribute/delete-manufacturer',  // Đường dẫn API để xóa
-            method: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({
-                id: id,
-                status: 0  // Giả sử status 0 là trạng thái bị xóa
-            }),
-            success: function (response) {
-                if (response.success) {
-                    // Xóa hàng trong bảng mà không cần reload trang
-                    $('#row-' + index).remove();  // Xóa hàng với id là row-index
-                    console.log('Xóa thành công');
-                } else {
-                    alert('Xóa thất bại!');
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error('Có lỗi xảy ra khi xóa:', error);
-            }
-        });
-    }
+    $.ajax({
+        url: '/attribute/delete-manufacturer',  // Đường dẫn API để xóa
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            id: id,
+            status: 0  // Giả sử status 0 là trạng thái bị xóa
+        }),
+        success: function (response) {
+            $('#row-' + index).remove();  // Xóa hàng với id là row-index
+            createToast(response.check, response.message);
+        },
+        error: function (xhr, status, error) {
+            console.error('Có lỗi xảy ra khi xóa:', error);
+        }
+    });
 }
 
+
 document.querySelector('.attribute-btn-listDelete').addEventListener('click', function () {
-    fetch('http://localhost:8080/attribute/manufacturer/delete')
+    fetch('/attribute/manufacturer/delete')
         .then(response => response.json())
         .then(data => {
             if (data.length > 0) {
@@ -116,7 +103,7 @@ document.querySelector('.attribute-btn-listDelete').addEventListener('click', fu
                 this.style.display = 'none';
                 document.querySelector('.attribute-btn-listActive').style.display = 'inline-block';
             } else {
-                alert("Không có nhà sản xuất nào bị xóa.");
+                createToast('1','Không có màu nào bị xóa')
             }
         });
 });
@@ -129,7 +116,7 @@ document.querySelector('.attribute-btn-listActive').addEventListener('click', fu
 
 function fetchDeletedManufacturers() {
     // Thay URL dưới đây bằng endpoint của bạn để lấy danh sách màu đã xóa
-    fetch('http://localhost:8080/attribute/manufacturer/delete')
+    fetch('/attribute/manufacturer/delete')
         .then(response => response.json())
         .then(data => {
             if (data.length > 0) {
@@ -139,6 +126,22 @@ function fetchDeletedManufacturers() {
 
                 // Lặp qua các màu đang hoạt động và thêm các hàng vào bảng
                 data.forEach((manufacturer, index) => {
+                    const createDate = new Date(manufacturer.createDate).toLocaleString('vi-VN', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        second: '2-digit',
+                        minute: '2-digit',
+                        hour: '2-digit',
+                    });
+                    const updateDate = new Date(manufacturer.updateDate).toLocaleString('vi-VN', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        second: '2-digit',
+                        minute: '2-digit',
+                        hour: '2-digit',
+                    });
                     const row = document.createElement('tr');
                     row.id = `row-${index}`;
                     row.setAttribute('data-id', manufacturer.id);
@@ -151,8 +154,8 @@ function fetchDeletedManufacturers() {
                             <span id="name-text-${index}">${manufacturer.nameManufacturer}</span>
                             <input type="text" value="${manufacturer.nameManufacturer}" id="name-input-${index}" style="display:none;">
                         </td>
-                        <td>${manufacturer.createDate}</td>
-                        <td>${manufacturer.updateDate}</td>
+                        <td>${createDate}</td>
+                        <td>${updateDate}</td>
                         <td>
                             <i class="attribute-status-icon status-icon fas ${manufacturer.status == 1 ? 'fa-toggle-on' : 'fa-toggle-off'}"
                                data-status="${manufacturer.status}"
@@ -160,7 +163,7 @@ function fetchDeletedManufacturers() {
                                title="Toggle Status"></i>
                         </td>
                         <td>
-                                <a data-index="${index}"  onclick="restoreManufacturer(this)">
+                                <a data-index="${index}" data-id="${manufacturer.id}"  onclick="restoreManufacturer(this)">
                                     <i class="attribute-icon-restore fas fa-undo" title="Khôi phục"></i>
                                 </a>
                         </td>
@@ -168,7 +171,7 @@ function fetchDeletedManufacturers() {
                     tbody.appendChild(row);
                 });
             } else {
-                alert("Không có nhà sản xuất nào bị xóa.");
+                createToast('1','Không có màu nào bị xóa')
             }
         })
         .catch(error => {
@@ -178,19 +181,34 @@ function fetchDeletedManufacturers() {
 
 
 function fetchActiveManufacturers() {
-    fetch('http://localhost:8080/attribute/manufacturer/active')
+    fetch('/attribute/manufacturer/active')
         .then(response => response.json())
         .then(data => {
-            if (data.length > 0) {
 
-                const tbody = document.querySelector('#manufacturerTable tbody');
-                tbody.innerHTML = '';
+            const tbody = document.querySelector('#manufacturerTable tbody');
+            tbody.innerHTML = ''; // Xóa nội dung hiện tại của tbody
 
-                data.forEach((manufacturer, index) => {
-                    const row = document.createElement('tr');
-                    row.id = `row-${index}`;
-                    row.setAttribute('data-id', manufacturer.id);
-                    row.innerHTML = `
+            data.forEach((manufacturer, index) => {
+                const createDate = new Date(manufacturer.createDate).toLocaleString('vi-VN', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    second: '2-digit',
+                    minute: '2-digit',
+                    hour: '2-digit',
+                });
+                const updateDate = new Date(manufacturer.updateDate).toLocaleString('vi-VN', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    second: '2-digit',
+                    minute: '2-digit',
+                    hour: '2-digit',
+                });
+                const row = document.createElement('tr');
+                row.id = `row-${index}`;
+                row.setAttribute('data-id', manufacturer.id);
+                row.innerHTML = `
                         <td>
                             <span id="code-text-${index}">${manufacturer.codeManufacturer}</span>
                             <input class="inputUpdate-attribute" type="text" value="${manufacturer.codeManufacturer}" id="code-input-${index}" style="display:none;">
@@ -199,61 +217,132 @@ function fetchActiveManufacturers() {
                             <span id="name-text-${index}">${manufacturer.nameManufacturer}</span>
                             <input class="inputUpdate-attribute" type="text" value="${manufacturer.nameManufacturer}" id="name-input-${index}" style="display:none;">
                         </td>
-                        <td>${manufacturer.createDate}</td>
-                        <td>${manufacturer.updateDate}</td>
+                        <td>${createDate}</td>
+                        <td>${updateDate}</td>
                         <td>
                             <i class="attribute-status-icon status-icon fas ${manufacturer.status == 1 ? 'fa-toggle-on' : 'fa-toggle-off'}"
                                data-status="${manufacturer.status}"
                                data-index="${index}"
-                               onclick="toggleStatus(this)"
                                title="Toggle Status"></i>
                         </td>
                         <td>
-                            <a href="#" onclick="editRow(${index})" id="edit-btn-${index}">
+                            <a href="#" onclick="editRow(${index}, event)" id="edit-btn-${index}">
                                 <i class="attribute-icon-edit icon-edit fas fa-edit" title="Edit"></i>
                             </a>
-                            <a href="#" onclick="saveRow(${index})" id="save-btn-${index}" style="display:none;">
+                            <a href="#" onclick="saveRow(${index}, event)" id="save-btn-${index}" style="display:none;">
                                 <i class="attribute-icon-save icon-save fas fa-save" title="Save"></i>
                             </a>
-                            <a href="#" data-index="${index}" onclick="deleteByID(this)">
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#confirm-create-bill-modal"
+                               data-index="${index}" data-id="${manufacturer.id}">
                                 <i class="attribute-icon-delete icon-delete fas fa-trash" title="Delete"></i>
                             </a>
                         </td>
                     `;
-                    tbody.appendChild(row);
-                });
-            } else {
-                alert("Không có nhà sản xuất nào đang hoạt động.");
-            }
+                tbody.appendChild(row);
+            });
         })
+        .catch(error => {
+            console.error("Có lỗi xảy ra khi lấy danh sách màu:", error);
+        });
 }
 
+async function add() {
+    if (await validateManufacturer()) {
+        const formElement = document.getElementById('createAttribute');
+        const formData = new FormData(formElement);
+        const response = await fetch('/attribute/manufacturer/add', {
+            method: 'POST',
+            body: formData
+        });
+        if (response.ok) {
+            const result = await response.json();
+            codeManufacturerInput.value = '';
+            nameManufacturerInput.value = '';
+            document.querySelector('.attribute-btn-listActive').style.display = 'none';
+            document.querySelector('.attribute-btn-listDelete').style.display = 'inline-block';
+            createToast(result.check, result.message);
+            fetchActiveManufacturers();
+        }
+    } else {
+        createToast('2', 'Dữ liệu không hợp lệ');
+    }
+
+}
+
+fetchActiveManufacturers();
 
 function restoreManufacturer(element) {
-    if (confirm('Bạn có chắc chắn muốn khôi phục mục này không?')) {
-        var index = element.getAttribute('data-index');
-        var id = $('#row-' + index).data('id');
+    var index = element.getAttribute('data-index');
+    var id = element.getAttribute('data-id');
+    $.ajax({
+        url: '/attribute/delete-manufacturer',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            id: id,
+            status: 1
+        }),
+        success: function (response) {
+            $('#row-' + index).remove();
+            createToast(response.check, response.message)
+        },
+        error: function (xhr, status, error) {
+            createToast('2', 'Khôi phục nhà sản xuất thất bại')
+        }
+    });
 
-        $.ajax({
-            url: '/attribute/delete-manufacturer',
-            method: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({
-                id: id,
-                status: 1
-            }),
-            success: function (response) {
-                if (response.success) {
-                    $('#row-' + index).remove();
-                    console.log('Khôi phục thành công');
-                } else {
-                    alert('Khôi phục thất bại!');
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error('Có lỗi xảy ra khi khôi phục:', error);
-            }
-        });
+}
+
+var codeManufacturerInput = document.getElementById("codeManufacturerInput");
+var nameManufacturerInput = document.getElementById("nameManufacturerInput");
+var manufacturerError = document.getElementById("manufacturerError");
+codeManufacturerInput.addEventListener('input', function () {
+    validateManufacturer();
+});
+nameManufacturerInput.addEventListener('input', function () {
+    validateManufacturer();
+});
+
+var arrayCodeManufacturer = [];
+var arrayNameManufacturer = [];
+
+
+async function validateManufacturer() {
+    var codeManufacturer = await fetch('/attribute/manufacturer/get-code');
+    if (codeManufacturer.ok) {
+        arrayCodeManufacturer = await codeManufacturer.json(); // Đảm bảo đây là một mảng
+    }
+    var nameManufacturer = await fetch('/attribute/manufacturer/get-name');
+    if (nameManufacturer.ok) {
+        arrayNameManufacturer = await nameManufacturer.json(); // Đảm bảo đây là một mảng
+    }
+    if (codeManufacturerInput.value.trim() === "" && nameManufacturerInput.value.trim() === "") {
+        manufacturerError.textContent = "* Mã và tên không được để trống";
+        return false;
+    } else if (codeManufacturerInput.value.length > 10 && nameManufacturerInput.value.length > 50) {
+        manufacturerError.textContent = "* Mã <= 10 kí tự, Tên <= 50 kí tự";
+        return false;
+    } else if (arrayCodeManufacturer.some(code => code.toLowerCase() === codeManufacturerInput.value.trim().toLowerCase())) {
+        manufacturerError.textContent = "* Mã nhà sản xuất đã tồn tại";
+        return false;
+    } else if (arrayNameManufacturer.some(name => name.toLowerCase() === codeManufacturerInput.value.trim().toLowerCase())) {
+        manufacturerError.textContent = "* Tên nhà sản xuất đã tồn tại";
+        return false;
+    } else if (codeManufacturerInput.value.trim() === "") {
+        manufacturerError.textContent = "* Mã không được để trống";
+        return false;
+    } else if (nameManufacturerInput.value.trim() === "") {
+        manufacturerError.textContent = "* Tên không được để trống";
+        return false;
+    } else if (codeManufacturerInput.value.length > 10) {
+        manufacturerError.textContent = "* Mã <= 10 kí tự";
+        return false;
+    } else if (nameManufacturerInput.value.length > 50) {
+        manufacturerError.textContent = "* Tên <= 50 kí tự";
+        return false;
+    } else {
+        manufacturerError.textContent = "";
+        return true;
     }
 }
 

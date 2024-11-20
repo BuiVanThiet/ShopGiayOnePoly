@@ -87,7 +87,7 @@ public class SoleImplement implements SoleService {
             sole.setNameSole(nameSole);
             soleRepository.save(sole);
         } else {
-            throw new RuntimeException("Màu sắc có " + id + " Không tồn tại.");
+            throw new RuntimeException("Đế giày có " + id + " Không tồn tại.");
         }
     }
 

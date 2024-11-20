@@ -87,7 +87,7 @@ public class SizeImplement implements SizeService {
             size.setNameSize(nameSize);
             sizeRepository.save(size);
         } else {
-            throw new RuntimeException("Màu sắc có " + id + " Không tồn tại.");
+            throw new RuntimeException("Kích cỡ có " + id + " Không tồn tại.");
         }
     }
 

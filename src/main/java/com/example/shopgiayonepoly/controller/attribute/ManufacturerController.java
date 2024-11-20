@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,36 +23,95 @@ public class ManufacturerController {
     @Autowired
     ManufacturerService manufacturerService;
 
-    String mess = "";
-    String manufacturerMess = "";
-
-    @GetMapping("/manufacturer")
-    public String list(Model model) {
+    @RequestMapping("/manufacturer")
+    public String list(Model model, HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            return "redirect:/login";
+        }
         model.addAttribute("manufacturerList", manufacturerService.getManufacturerNotStatus0());
         model.addAttribute("manufacturerAdd", new Manufacturer());
         return "Attribute/manufacturer";
     }
 
     @GetMapping("/manufacturer/delete")
-    public ResponseEntity<List<Manufacturer>> listManufacturerDelete() {
+    public ResponseEntity<List<Manufacturer>> listManufacturerDelete(HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            return null;
+        }
         List<Manufacturer> deletedManufacturers = manufacturerService.getManufacturerDelete();
         return new ResponseEntity<>(deletedManufacturers, HttpStatus.OK);
     }
 
     @GetMapping("/manufacturer/active")
-    public ResponseEntity<List<Manufacturer>> listActive() {
+    public ResponseEntity<List<Manufacturer>> listActive(HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            return null;
+        }
         List<Manufacturer> listManufacturerActive = manufacturerService.getManufacturerNotStatus0();
         return new ResponseEntity<>(listManufacturerActive, HttpStatus.OK);
     }
 
+    @GetMapping("/manufacturer/get-code")
+    public ResponseEntity<List<String>> findAllCodeManufacturer(HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            return null;
+        }
+        List<String> codeManufacturer = new ArrayList<>();
+        for (Manufacturer listManufacturer : manufacturerService.findAll()) {
+            codeManufacturer.add(listManufacturer.getCodeManufacturer());
+        }
+        return new ResponseEntity<>(codeManufacturer, HttpStatus.OK);
+    }
 
-    @RequestMapping("/manufacturer/add")
-    public String add(@ModelAttribute("manufacturerAdd") Manufacturer manufacturer) {
-        manufacturer.setStatus(1);
-        manufacturerService.save(manufacturer);
-        this.mess = "Thêm hóa đơn mới thành công!";
-        this.manufacturerMess = "1";
-        return "redirect:/attribute/manufacturer";
+    @GetMapping("/manufacturer/get-name")
+    public ResponseEntity<List<String>> findAllNameManufacturer(HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            return null;
+        }
+        List<String> nameManufacturer = new ArrayList<>();
+        for (Manufacturer listManufacturer : manufacturerService.findAll()) {
+            nameManufacturer.add(listManufacturer.getNameManufacturer());
+        }
+        return new ResponseEntity<>(nameManufacturer, HttpStatus.OK);
+    }
+
+    @ResponseBody
+    @PostMapping("/manufacturer/add")
+    public ResponseEntity<Map<String, String>> add(@ModelAttribute Manufacturer manufacturer, HttpSession session) {
+        Map<String, String> thongBao = new HashMap<>();
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            thongBao.put("message", "Nhân viên chưa đăng nhập");
+            thongBao.put("check", "3");
+            return null;
+        }
+        boolean checkCode = true;
+        boolean checkName = true;
+        for (Manufacturer listManufacturer : manufacturerService.findAll()) {
+            if (manufacturer.getCodeManufacturer().trim().toLowerCase().equals(listManufacturer.getCodeManufacturer().trim().toLowerCase())) {
+                checkCode = false;
+            }
+        }
+        for (Manufacturer listManufacturer : manufacturerService.findAll()) {
+            if (manufacturer.getNameManufacturer().trim().toLowerCase().equals(listManufacturer.getNameManufacturer().trim().toLowerCase())) {
+                checkName = false;
+            }
+        }
+        if (!checkCode || !checkName || manufacturer.getCodeManufacturer().isEmpty() || manufacturer.getNameManufacturer().isEmpty() || manufacturer.getCodeManufacturer().length() > 10 || manufacturer.getNameManufacturer().length() > 50) {
+            thongBao.put("message", "Dữ liệu không hợp lệ");
+            thongBao.put("check", "2");
+        } else {
+            manufacturer.setStatus(1);
+            manufacturerService.save(manufacturer);
+            thongBao.put("message", "Thêm nhà sản xuất thành công");
+            thongBao.put("check", "1");
+        }
+        return ResponseEntity.ok(thongBao);
     }
 
     @PostMapping("/manufacturer/update-status")
@@ -60,7 +120,6 @@ public class ManufacturerController {
         try {
             int id;
             int status;
-
             // Lấy id và status từ payload, kiểm tra kiểu dữ liệu
             if (payload.get("id") instanceof Integer) {
                 id = (Integer) payload.get("id");
@@ -85,7 +144,14 @@ public class ManufacturerController {
 
     @PostMapping("/update-manufacturer")
     @ResponseBody
-    public ResponseEntity<String> updateManufacturer(@RequestBody Map<String, Object> payload) {
+    public ResponseEntity<Map<String, String>> updateManufacturer(@RequestBody Map<String, Object> payload, HttpSession session) {
+        Map<String, String> thongBao = new HashMap<>();
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            thongBao.put("message", "Nhân viên chưa đăng nhập");
+            thongBao.put("check", "3");
+            return null;
+        }
         try {
             int id;
             String codeManufacturer;
@@ -100,20 +166,56 @@ public class ManufacturerController {
 
             codeManufacturer = (String) payload.get("codeManufacturer");
             nameManufacturer = (String) payload.get("nameManufacturer");
-
-            // Gọi service để cập nhật dữ liệu màu sắc trong cơ sở dữ liệu
-            manufacturerService.updateManufacturer(id, codeManufacturer, nameManufacturer);
-
-            return ResponseEntity.ok("Cập nhật dữ liệu thành công");
+            boolean checkCode = true;
+            for (Manufacturer listManufacturer : manufacturerService.findAll()) {
+                if (codeManufacturer.trim().toLowerCase().equals(listManufacturer.getCodeManufacturer().trim().toLowerCase()) && id != listManufacturer.getId()) {
+                    checkCode = false;
+                    break;
+                }
+            }
+            boolean checkName = true;
+            for (Manufacturer listManufacturer : manufacturerService.findAll()) {
+                if (nameManufacturer.trim().toLowerCase().equals(listManufacturer.getNameManufacturer().trim().toLowerCase()) && id != listManufacturer.getId()) {
+                    checkName = false;
+                    break;
+                }
+            }
+            // Gọi service để cập nhật dữ liệu nhà sản xuất trong cơ sở dữ liệu
+            if (codeManufacturer.isEmpty() || codeManufacturer.length() > 10) {
+                thongBao.put("message", "Mã nhà sản xuất không được trống và lớn hơn 10 kí tự");
+                thongBao.put("check", "2");
+            } else if (!checkCode) {
+                thongBao.put("message", "Mã nhà sản xuất đã tồn tại");
+                thongBao.put("check", "2");
+            } else if (!checkName) {
+                thongBao.put("message", "Tên nhà sản xuất đã tồn tại");
+                thongBao.put("check", "2");
+            } else if (nameManufacturer.isEmpty() || nameManufacturer.length() > 50) {
+                thongBao.put("message", "Tên nhà sản xuất không được trống và lớn hơn 50 kí tự");
+                thongBao.put("check", "2");
+            } else {
+                manufacturerService.updateManufacturer(id, codeManufacturer, nameManufacturer);
+                thongBao.put("message", "Sửa nhà sản xuất thành công");
+                thongBao.put("check", "1");
+            }
+            return ResponseEntity.ok(thongBao);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Cập nhật dữ liệu thất bại");
+            thongBao.put("message", "Sửa nhà sản xuất thất bại");
+            thongBao.put("check", "2");
+            return ResponseEntity.ok(thongBao);
         }
     }
 
     @PostMapping("/delete-manufacturer")
     @ResponseBody
-    public ResponseEntity<Map<String, Object>> deleteManufacturer(@RequestBody Map<String, Object> payload) {
-        Map<String, Object> response = new HashMap<>();
+    public ResponseEntity<Map<String, String>> deleteManufacturer(@RequestBody Map<String, Object> payload, HttpSession session) {
+        Map<String, String> thongBao = new HashMap<>();
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            thongBao.put("message", "Nhân viên chưa đăng nhập");
+            thongBao.put("check", "3");
+            return null;
+        }
         try {
             int id;
             int status;
@@ -130,25 +232,27 @@ public class ManufacturerController {
             } else {
                 status = Integer.parseInt(payload.get("status").toString());
             }
-
+            if (status == 0) {
+                thongBao.put("message", "Xóa nhà sản xuất thành công");
+                thongBao.put("check", "1");
+            } else {
+                thongBao.put("message", "Khôi phục nhà sản xuất thành công");
+                thongBao.put("check", "1");
+            }
             // Gọi service để cập nhật trạng thái trong cơ sở dữ liệu
             manufacturerService.updateStatus(id, status);
-
-            // Phản hồi thành công
-            response.put("success", true);
-            response.put("message", "Xóa thành công");
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok(thongBao);
 
         } catch (NumberFormatException e) {
             // Xử lý lỗi parse dữ liệu
-            response.put("success", false);
-            response.put("message", "Dữ liệu không hợp lệ: " + e.getMessage());
-            return ResponseEntity.badRequest().body(response);
+            thongBao.put("message", "Lỗi khi xử lý dữ liệu");
+            thongBao.put("check", "3");
+            return ResponseEntity.ok(thongBao);
         } catch (Exception e) {
             // Xử lý lỗi khác
-            response.put("success", false);
-            response.put("message", "Có lỗi xảy ra: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            thongBao.put("message", "Lỗi khi xử lý dữ liệu");
+            thongBao.put("check", "3");
+            return ResponseEntity.ok(thongBao);
         }
     }
     @ModelAttribute("staffInfo")

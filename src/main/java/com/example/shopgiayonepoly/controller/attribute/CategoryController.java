@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,35 +23,95 @@ public class CategoryController {
     @Autowired
     CategoryService categoryService;
 
-    String mess = "";
-    String categoryMess = "";
-
-    @GetMapping("/category")
-    public String list(Model model) {
+    @RequestMapping("/category")
+    public String list(Model model, HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            return "redirect:/login";
+        }
         model.addAttribute("categoryList", categoryService.getCategoryNotStatus0());
         model.addAttribute("categoryAdd", new Category());
         return "Attribute/category";
     }
 
     @GetMapping("/category/delete")
-    public ResponseEntity<List<Category>> listCategoryDelete() {
+    public ResponseEntity<List<Category>> listCategoryDelete(HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            return null;
+        }
         List<Category> deletedCategorys = categoryService.getCategoryDelete();
         return new ResponseEntity<>(deletedCategorys, HttpStatus.OK);
     }
 
     @GetMapping("/category/active")
-    public ResponseEntity<List<Category>> listActive() {
+    public ResponseEntity<List<Category>> listActive(HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            return null;
+        }
         List<Category> listCategoryActive = categoryService.getCategoryNotStatus0();
         return new ResponseEntity<>(listCategoryActive, HttpStatus.OK);
     }
 
-    @RequestMapping("/category/add")
-    public String add(@ModelAttribute("categoryAdd") Category category) {
-        category.setStatus(1);
-        categoryService.save(category);
-        this.mess = "Thêm hóa đơn mới thành công!";
-        this.categoryMess = "1";
-        return "redirect:/attribute/category";
+    @GetMapping("/category/get-code")
+    public ResponseEntity<List<String>> findAllCodeCategory(HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            return null;
+        }
+        List<String> codeCategory = new ArrayList<>();
+        for (Category listCategory : categoryService.findAll()) {
+            codeCategory.add(listCategory.getCodeCategory());
+        }
+        return new ResponseEntity<>(codeCategory, HttpStatus.OK);
+    }
+
+    @GetMapping("/category/get-name")
+    public ResponseEntity<List<String>> findAllNameCategory(HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            return null;
+        }
+        List<String> nameCategory = new ArrayList<>();
+        for (Category listCategory : categoryService.findAll()) {
+            nameCategory.add(listCategory.getNameCategory());
+        }
+        return new ResponseEntity<>(nameCategory, HttpStatus.OK);
+    }
+
+    @ResponseBody
+    @PostMapping("/category/add")
+    public ResponseEntity<Map<String, String>> add(@ModelAttribute Category category, HttpSession session) {
+        Map<String, String> thongBao = new HashMap<>();
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            thongBao.put("message", "Nhân viên chưa đăng nhập");
+            thongBao.put("check", "3");
+            return null;
+        }
+        boolean checkCode = true;
+        boolean checkName = true;
+        for (Category listCategory : categoryService.findAll()) {
+            if (category.getCodeCategory().trim().toLowerCase().equals(listCategory.getCodeCategory().trim().toLowerCase())) {
+                checkCode = false;
+            }
+        }
+        for (Category listCategory : categoryService.findAll()) {
+            if (category.getNameCategory().trim().toLowerCase().equals(listCategory.getNameCategory().trim().toLowerCase())) {
+                checkName = false;
+            }
+        }
+        if (!checkCode || !checkName || category.getCodeCategory().isEmpty() || category.getNameCategory().isEmpty() || category.getCodeCategory().length() > 10 || category.getNameCategory().length() > 50) {
+            thongBao.put("message", "Dữ liệu không hợp lệ");
+            thongBao.put("check", "2");
+        } else {
+            category.setStatus(1);
+            categoryService.save(category);
+            thongBao.put("message", "Thêm danh mục thành công");
+            thongBao.put("check", "1");
+        }
+        return ResponseEntity.ok(thongBao);
     }
 
     @PostMapping("/category/update-status")
@@ -59,7 +120,6 @@ public class CategoryController {
         try {
             int id;
             int status;
-
             // Lấy id và status từ payload, kiểm tra kiểu dữ liệu
             if (payload.get("id") instanceof Integer) {
                 id = (Integer) payload.get("id");
@@ -84,7 +144,14 @@ public class CategoryController {
 
     @PostMapping("/update-category")
     @ResponseBody
-    public ResponseEntity<String> updateCategory(@RequestBody Map<String, Object> payload) {
+    public ResponseEntity<Map<String, String>> updateCategory(@RequestBody Map<String, Object> payload, HttpSession session) {
+        Map<String, String> thongBao = new HashMap<>();
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            thongBao.put("message", "Nhân viên chưa đăng nhập");
+            thongBao.put("check", "3");
+            return null;
+        }
         try {
             int id;
             String codeCategory;
@@ -99,20 +166,56 @@ public class CategoryController {
 
             codeCategory = (String) payload.get("codeCategory");
             nameCategory = (String) payload.get("nameCategory");
-
-            // Gọi service để cập nhật dữ liệu màu sắc trong cơ sở dữ liệu
-            categoryService.updateCategory(id, codeCategory, nameCategory);
-
-            return ResponseEntity.ok("Cập nhật dữ liệu thành công");
+            boolean checkCode = true;
+            for (Category listCategory : categoryService.findAll()) {
+                if (codeCategory.trim().toLowerCase().equals(listCategory.getCodeCategory().trim().toLowerCase()) && id != listCategory.getId()) {
+                    checkCode = false;
+                    break;
+                }
+            }
+            boolean checkName = true;
+            for (Category listCategory : categoryService.findAll()) {
+                if (nameCategory.trim().toLowerCase().equals(listCategory.getNameCategory().trim().toLowerCase()) && id != listCategory.getId()) {
+                    checkName = false;
+                    break;
+                }
+            }
+            // Gọi service để cập nhật dữ liệu danh mục trong cơ sở dữ liệu
+            if (codeCategory.isEmpty() || codeCategory.length() > 10) {
+                thongBao.put("message", "Mã danh mục không được trống và lớn hơn 10 kí tự");
+                thongBao.put("check", "2");
+            } else if (!checkCode) {
+                thongBao.put("message", "Mã danh mục đã tồn tại");
+                thongBao.put("check", "2");
+            } else if (!checkName) {
+                thongBao.put("message", "Tên danh mục đã tồn tại");
+                thongBao.put("check", "2");
+            } else if (nameCategory.isEmpty() || nameCategory.length() > 50) {
+                thongBao.put("message", "Tên danh mục không được trống và lớn hơn 50 kí tự");
+                thongBao.put("check", "2");
+            } else {
+                categoryService.updateCategory(id, codeCategory, nameCategory);
+                thongBao.put("message", "Sửa danh mục thành công");
+                thongBao.put("check", "1");
+            }
+            return ResponseEntity.ok(thongBao);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Cập nhật dữ liệu thất bại");
+            thongBao.put("message", "Sửa danh mục thất bại");
+            thongBao.put("check", "2");
+            return ResponseEntity.ok(thongBao);
         }
     }
 
     @PostMapping("/delete-category")
     @ResponseBody
-    public ResponseEntity<Map<String, Object>> deleteCategory(@RequestBody Map<String, Object> payload) {
-        Map<String, Object> response = new HashMap<>();
+    public ResponseEntity<Map<String, String>> deleteCategory(@RequestBody Map<String, Object> payload, HttpSession session) {
+        Map<String, String> thongBao = new HashMap<>();
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            thongBao.put("message", "Nhân viên chưa đăng nhập");
+            thongBao.put("check", "3");
+            return null;
+        }
         try {
             int id;
             int status;
@@ -129,25 +232,27 @@ public class CategoryController {
             } else {
                 status = Integer.parseInt(payload.get("status").toString());
             }
-
+            if (status == 0) {
+                thongBao.put("message", "Xóa danh mục thành công");
+                thongBao.put("check", "1");
+            } else {
+                thongBao.put("message", "Khôi phục danh mục thành công");
+                thongBao.put("check", "1");
+            }
             // Gọi service để cập nhật trạng thái trong cơ sở dữ liệu
             categoryService.updateStatus(id, status);
-
-            // Phản hồi thành công
-            response.put("success", true);
-            response.put("message", "Xóa thành công");
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok(thongBao);
 
         } catch (NumberFormatException e) {
             // Xử lý lỗi parse dữ liệu
-            response.put("success", false);
-            response.put("message", "Dữ liệu không hợp lệ: " + e.getMessage());
-            return ResponseEntity.badRequest().body(response);
+            thongBao.put("message", "Lỗi khi xử lý dữ liệu");
+            thongBao.put("check", "3");
+            return ResponseEntity.ok(thongBao);
         } catch (Exception e) {
             // Xử lý lỗi khác
-            response.put("success", false);
-            response.put("message", "Có lỗi xảy ra: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            thongBao.put("message", "Lỗi khi xử lý dữ liệu");
+            thongBao.put("check", "3");
+            return ResponseEntity.ok(thongBao);
         }
     }
     @ModelAttribute("staffInfo")

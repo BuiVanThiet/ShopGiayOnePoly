@@ -9,7 +9,7 @@ import java.util.List;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Integer> {
-    @Query("select category from Category category where category.status <> 0")
+    @Query("select category from Category category where category.status <> 0 order by category.id desc ")
     List<Category> getCategoryNotStatus0();
 
     @Query("select category from Category category where category.status = 0")

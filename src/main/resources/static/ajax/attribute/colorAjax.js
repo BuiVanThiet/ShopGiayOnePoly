@@ -1,26 +1,10 @@
-function saveRow(index) { // hàm edit dữ liệu trên table
-    console.log('Saving row:', index);
+function saveRow(index, event) { // hàm edit dữ liệu trên table
+    event.preventDefault();
     var updatedData = {
         codeColor: document.getElementById('code-input-' + index).value,
         nameColor: document.getElementById('name-input-' + index).value,
         id: document.getElementById('row-' + index).getAttribute('data-id')  // Lấy ID của đối tượng từ hàng
     };
-
-    // Hiển thị lại các giá trị đã chỉnh sửa trên trang
-    document.getElementById('code-text-' + index).innerText = updatedData.codeColor;
-    document.getElementById('name-text-' + index).innerText = updatedData.nameColor;
-
-    // Ẩn input và hiển thị lại text
-    document.getElementById('code-input-' + index).style.display = 'none';
-    document.getElementById('name-input-' + index).style.display = 'none';
-    document.getElementById('code-text-' + index).style.display = 'inline-block';
-    document.getElementById('name-text-' + index).style.display = 'inline-block';
-
-    // Hiển thị lại nút "Edit" và ẩn nút "Save"
-    document.getElementById('edit-btn-' + index).style.display = 'inline-block';
-    document.getElementById('save-btn-' + index).style.display = 'none';
-
-    console.log('Sending updated data to server:', updatedData);
 
     // Thực hiện AJAX để cập nhật dữ liệu trong cơ sở dữ liệu
     $.ajax({
@@ -29,6 +13,7 @@ function saveRow(index) { // hàm edit dữ liệu trên table
         contentType: 'application/json',
         data: JSON.stringify(updatedData),  // Gửi dữ liệu JSON
         success: function (response) {
+            fetchActiveColors();
             createToast(response.check, response.message);
         },
         error: function (xhr, status, error) {
@@ -141,6 +126,22 @@ function fetchDeletedColors() {
 
                 // Lặp qua các màu đang hoạt động và thêm các hàng vào bảng
                 data.forEach((color, index) => {
+                    const createDate = new Date(color.createDate).toLocaleString('vi-VN', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        second: '2-digit',
+                        minute: '2-digit',
+                        hour: '2-digit',
+                    });
+                    const updateDate = new Date(color.updateDate).toLocaleString('vi-VN', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        second: '2-digit',
+                        minute: '2-digit',
+                        hour: '2-digit',
+                    });
                     const row = document.createElement('tr');
                     row.id = `row-${index}`;
                     row.setAttribute('data-id', color.id);
@@ -153,8 +154,8 @@ function fetchDeletedColors() {
                             <span id="name-text-${index}">${color.nameColor}</span>
                             <input type="text" value="${color.nameColor}" id="name-input-${index}" style="display:none;">
                         </td>
-                        <td>${color.createDate}</td>
-                        <td>${color.updateDate}</td>
+                        <td>${createDate}</td>
+                        <td>${updateDate}</td>
                         <td>
                             <i class="attribute-status-icon status-icon fas ${color.status == 1 ? 'fa-toggle-on' : 'fa-toggle-off'}"
                                data-status="${color.status}"
@@ -188,6 +189,22 @@ function fetchActiveColors() {
                 tbody.innerHTML = ''; // Xóa nội dung hiện tại của tbody
 
                 data.forEach((color, index) => {
+                    const createDate = new Date(color.createDate).toLocaleString('vi-VN', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        second: '2-digit',
+                        minute: '2-digit',
+                        hour: '2-digit',
+                    });
+                    const updateDate = new Date(color.updateDate).toLocaleString('vi-VN', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        second: '2-digit',
+                        minute: '2-digit',
+                        hour: '2-digit',
+                    });
                     const row = document.createElement('tr');
                     row.id = `row-${index}`;
                     row.setAttribute('data-id', color.id);
@@ -200,20 +217,19 @@ function fetchActiveColors() {
                             <span id="name-text-${index}">${color.nameColor}</span>
                             <input class="inputUpdate-attribute" type="text" value="${color.nameColor}" id="name-input-${index}" style="display:none;">
                         </td>
-                        <td>${color.createDate}</td>
-                        <td>${color.updateDate}</td>
+                        <td>${createDate}</td>
+                        <td>${updateDate}</td>
                         <td>
                             <i class="attribute-status-icon status-icon fas ${color.status == 1 ? 'fa-toggle-on' : 'fa-toggle-off'}"
                                data-status="${color.status}"
                                data-index="${index}"
-                               onclick="toggleStatus(this)"
                                title="Toggle Status"></i>
                         </td>
                         <td>
-                            <a href="#" onclick="editRow(${index})" id="edit-btn-${index}">
+                            <a href="#" onclick="editRow(${index}, event)" id="edit-btn-${index}">
                                 <i class="attribute-icon-edit icon-edit fas fa-edit" title="Edit"></i>
                             </a>
-                            <a href="#" onclick="saveRow(${index})" id="save-btn-${index}" style="display:none;">
+                            <a href="#" onclick="saveRow(${index}, event)" id="save-btn-${index}" style="display:none;">
                                 <i class="attribute-icon-save icon-save fas fa-save" title="Save"></i>
                             </a>
                             <a href="#" data-bs-toggle="modal" data-bs-target="#confirm-create-bill-modal"
@@ -231,7 +247,7 @@ function fetchActiveColors() {
 }
 
 async function add() {
-    if (validateColor()){
+    if (await validateColor()) {
         const formElement = document.getElementById('createAttribute');
         const formData = new FormData(formElement);
         const response = await fetch('/attribute/color/add', {
@@ -240,6 +256,10 @@ async function add() {
         });
         if (response.ok) {
             const result = await response.json();
+            codeColorInput.value = '';
+            nameColorInput.value = '';
+            document.querySelector('.attribute-btn-listActive').style.display = 'none';
+            document.querySelector('.attribute-btn-listDelete').style.display = 'inline-block';
             createToast(result.check, result.message);
             fetchActiveColors();
         }
@@ -249,6 +269,7 @@ async function add() {
 
 }
 
+fetchActiveColors();
 
 function restoreColor(element) {
     var index = element.getAttribute('data-index');
@@ -263,7 +284,7 @@ function restoreColor(element) {
         }),
         success: function (response) {
             $('#row-' + index).remove();
-            createToast('1', 'Khôi phục màu sắc thành công')
+            createToast(response.check, response.message)
         },
         error: function (xhr, status, error) {
             createToast('2', 'Khôi phục màu sắc thất bại')
@@ -282,12 +303,30 @@ nameColorInput.addEventListener('input', function () {
     validateColor();
 });
 
-function validateColor() {
+var arrayCodeColor = [];
+var arrayNameColor = [];
+
+
+async function validateColor() {
+    var codeColor = await fetch('/attribute/color/get-code');
+    if (codeColor.ok) {
+        arrayCodeColor = await codeColor.json(); // Đảm bảo đây là một mảng
+    }
+    var nameColor = await fetch('/attribute/color/get-name');
+    if (nameColor.ok) {
+        arrayNameColor = await nameColor.json(); // Đảm bảo đây là một mảng
+    }
     if (codeColorInput.value.trim() === "" && nameColorInput.value.trim() === "") {
         colorError.textContent = "* Mã và tên không được để trống";
         return false;
     } else if (codeColorInput.value.length > 10 && nameColorInput.value.length > 50) {
         colorError.textContent = "* Mã <= 10 kí tự, Tên <= 50 kí tự";
+        return false;
+    } else if (arrayCodeColor.some(code => code.toLowerCase() === codeColorInput.value.trim().toLowerCase())) {
+        colorError.textContent = "* Mã màu sắc đã tồn tại";
+        return false;
+    } else if (arrayNameColor.some(name => name.toLowerCase() === codeColorInput.value.trim().toLowerCase())) {
+        colorError.textContent = "* Tên màu sắc đã tồn tại";
         return false;
     } else if (codeColorInput.value.trim() === "") {
         colorError.textContent = "* Mã không được để trống";

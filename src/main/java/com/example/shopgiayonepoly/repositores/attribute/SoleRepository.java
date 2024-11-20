@@ -9,7 +9,7 @@ import java.util.List;
 
 @Repository
 public interface SoleRepository extends JpaRepository<Sole, Integer> {
-    @Query("select sole from Sole sole where sole.status <> 0")
+    @Query("select sole from Sole sole where sole.status <> 0 order by sole.id desc ")
     List<Sole> getSoleNotStatus0();
 
     @Query("select sole from Sole sole where sole.status = 0")

@@ -195,7 +195,7 @@ public class ProductController extends BaseProduct {
         }
 
         // Xóa ảnh khỏi collection (tránh lỗi cascade all-delete-orphan)
-        existingProduct.getImages().clear();
+//        existingProduct.getImages().clear();
 
         // Thêm các ảnh mới vào sản phẩm
         List<Image> newImages = new ArrayList<>();
