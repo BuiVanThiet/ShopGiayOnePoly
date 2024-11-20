@@ -144,7 +144,7 @@
                         </div>
                     </div>
 
-                    <div class="modal-address">
+                    <div id="modal-change-address" class="modal-address">
                         <div class="modal fade" id="changeAddressModal" tabindex="-1"
                              aria-labelledby="changeAddressModalLabel" aria-hidden="true">
                             <div class="modal-dialog">
@@ -178,7 +178,8 @@
                                         <div class="add-new-address mt-4 text-center">
                                             <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"
                                                     data-bs-target="#addNewAddressModal">
-                                                <i class="bi bi-plus-circle" style="margin-right: 5px;"></i>Thêm địa chỉ mới
+                                                <i class="bi bi-plus-circle" style="margin-right: 5px;"></i>Thêm địa chỉ
+                                                mới
                                             </button>
                                         </div>
                                     </div>
@@ -189,10 +190,86 @@
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                                             <i class="bi bi-x-circle" style="margin-right: 5px;"></i>Đóng
                                         </button>
-                                        <button type="button" class="change-address btn btn-primary">
+                                        <button type="button" class="change-address btn btn-primary"
+                                                data-bs-dismiss="modal">
                                             <i class="bi bi-check-circle" style="margin-right: 5px;"></i>Lưu thay đổi
                                         </button>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--                    Thêm địa chỉ mới-->
+                    <div id="addNewAddressModal" class="modal fade" tabindex="-1" aria-labelledby="addNewAddressLabel"
+                         aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <!-- Modal Header -->
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="addNewAddressLabel">
+                                        <i class="bi bi-plus-circle" style="margin-right: 10px;"></i>Thêm địa chỉ mới
+                                    </h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                </div>
+                                <div class="col-md-12">
+                                    <input type="text" class="form-control" id="FullNameCreate" placeholder="Họ tên"
+                                           required>
+                                </div>
+                                <div class="col-md-12">
+                                    <input type="text" class="form-control" id="PhoneCreate" placeholder="SĐT"
+                                           required>
+                                </div>
+                                <div class="col-md-12">
+                                    <input type="email" class="form-control" id="MailCreate" placeholder="Mail"
+                                           required>
+                                </div>
+
+                                <!-- Modal Body -->
+                                <div class="modal-body">
+                                    <form id="addAddressForm">
+                                        <!-- Địa chỉ cụ thể -->
+                                        <div class="mb-3">
+                                            <label for="specificAddress" class="form-label">Địa chỉ cụ thể:</label>
+                                            <input type="text" class="form-control" id="specificAddress"
+                                                   name="specificAddress" required>
+                                        </div>
+
+                                        <!-- Tỉnh/Thành phố -->
+                                        <div class="mb-3">
+                                            <div class="col-12">
+                                                <select id="province-create" class="form-select" required>
+                                                    <option value="">Chọn Tỉnh</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="col-12">
+                                                <select id="district-create" class="form-select" required>
+                                                    <option value="">Chọn Huyện</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="col-12">
+                                                <select id="ward-create" class="form-select" required>
+                                                    <option value="">Chọn Xã, Phường</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+
+                                <!-- Modal Footer -->
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                        <i class="bi bi-x-circle" style="margin-right: 5px;"></i>Hủy
+                                    </button>
+                                    <button type="button" class="btn btn-primary" id="saveNewAddress" onclick="createNewAddress()">
+                                        <i class="bi bi-check-circle" style="margin-right: 5px;"></i>Lưu địa chỉ
+                                    </button>
+
                                 </div>
                             </div>
                         </div>

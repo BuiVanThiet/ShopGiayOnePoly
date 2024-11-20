@@ -451,7 +451,6 @@ public class ClientController extends BaseBill {
             return  vnpayUrl;
         }
         String host = "http://localhost:8080/onepoly/status-bill/" + bill.getId();
-        // Xóa giỏ hàng trong session
         this.setBillStatus(bill.getId(), 0, session);
         this.setBillStatus(bill.getId(), bill.getStatus(), session);
 

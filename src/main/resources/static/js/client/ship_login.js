@@ -145,6 +145,8 @@ document.addEventListener("DOMContentLoaded", function () {
         spanPriceVoucher.textContent = "-";
     }
 });
+
+// Channge address
 document.addEventListener("DOMContentLoaded", function () {
     const apiKey = '0fc88a8e-6633-11ef-8e53-0a00184fe694';
     const shopId = '195165';
@@ -284,6 +286,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const idDistrictElement = document.getElementById('IdDistrict');
         const idProvinceElement = document.getElementById('IdProvince');
         const originalAddressElement = document.getElementById('original-address');
+        const modalElement = document.getElementById('changeAddressModal');
 
         if (!saveButton || !addressElements || !idWardElement || !idDistrictElement || !idProvinceElement || !originalAddressElement) {
             console.error('Các phần tử cần thiết không tồn tại trong DOM.');
@@ -305,13 +308,25 @@ document.addEventListener("DOMContentLoaded", function () {
                 const fullAddress = addressTextElement.textContent.trim();
                 const addressParts = fullAddress.split(',');
 
+                // Lấy từng phần của địa chỉ
                 idWardElement.textContent = addressParts[0] ? addressParts[0].trim() : '';
                 idDistrictElement.textContent = addressParts[1] ? addressParts[1].trim() : '';
                 idProvinceElement.textContent = addressParts[2] ? addressParts[2].trim() : '';
-                originalAddressElement.textContent = fullAddress;
+
+                // Phần còn lại của địa chỉ sau khi cắt
+                const remainingAddress = addressParts.slice(3).join(',').trim();
+                originalAddressElement.textContent = remainingAddress;
 
                 shippingFeeCalculated = false; // Reset trạng thái đã tính phí
                 autoCalculateShippingFee(); // Tính lại phí vận chuyển
+
+                if (modalElement) {
+                    modalElement.classList.remove('show');
+                    modalElement.style.display = 'none';
+                    document.body.classList.remove('modal-open');
+                    const backdrop = document.querySelector('.modal-backdrop');
+                    if (backdrop) backdrop.remove(); // Loại bỏ lớp nền mờ
+                }
             } else {
                 alert('Vui lòng chọn một địa chỉ.');
             }
@@ -321,3 +336,146 @@ document.addEventListener("DOMContentLoaded", function () {
     changeAddress();
     autoCalculateShippingFee();
 });
+document.addEventListener("DOMContentLoaded", function () {
+    const apiKey = '0fc88a8e-6633-11ef-8e53-0a00184fe694';
+
+    // Các phần tử `select`
+    const provinceSelect = document.getElementById("province-create");
+    const districtSelect = document.getElementById("district-create");
+    const wardSelect = document.getElementById("ward-create");
+
+    // Lấy danh sách tỉnh
+    function fetchProvinces() {
+        fetch('https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/province', {
+            headers: {
+                'Content-Type': 'application/json',
+                'Token': apiKey
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.code === 200) {
+                    const provinces = data.data;
+                    provinceSelect.innerHTML = '<option value="">Chọn Tỉnh</option>';
+                    provinces.forEach(province => {
+                        const option = document.createElement("option");
+                        option.value = province.ProvinceID;
+                        option.textContent = province.ProvinceName;
+                        provinceSelect.appendChild(option);
+                    });
+                } else {
+                    console.error('Lỗi lấy danh sách tỉnh:', data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    // Lấy danh sách huyện theo tỉnh
+    function fetchDistricts(provinceId) {
+        fetch(`https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/district?province_id=${provinceId}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Token': apiKey
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.code === 200) {
+                    const districts = data.data;
+                    districtSelect.innerHTML = '<option value="">Chọn Huyện</option>';
+                    districts.forEach(district => {
+                        const option = document.createElement("option");
+                        option.value = district.DistrictID;
+                        option.textContent = district.DistrictName;
+                        districtSelect.appendChild(option);
+                    });
+                } else {
+                    console.error('Lỗi lấy danh sách huyện:', data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    // Lấy danh sách xã/phường theo huyện
+    function fetchWards(districtId) {
+        fetch(`https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/ward?district_id=${districtId}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Token': apiKey
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.code === 200) {
+                    const wards = data.data;
+                    wardSelect.innerHTML = '<option value="">Chọn Xã, Phường</option>';
+                    wards.forEach(ward => {
+                        const option = document.createElement("option");
+                        option.value = ward.WardCode;
+                        option.textContent = ward.WardName;
+                        wardSelect.appendChild(option);
+                    });
+                } else {
+                    console.error('Lỗi lấy danh sách xã/phường:', data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    // Sự kiện thay đổi tỉnh -> Lấy huyện
+    provinceSelect.addEventListener("change", function () {
+        const provinceId = provinceSelect.value;
+        if (provinceId) {
+            fetchDistricts(provinceId);
+        } else {
+            districtSelect.innerHTML = '<option value="">Chọn Huyện</option>';
+            wardSelect.innerHTML = '<option value="">Chọn Xã, Phường</option>';
+        }
+    });
+
+    // Sự kiện thay đổi huyện -> Lấy xã/phường
+    districtSelect.addEventListener("change", function () {
+        const districtId = districtSelect.value;
+        if (districtId) {
+            fetchWards(districtId);
+        } else {
+            wardSelect.innerHTML = '<option value="">Chọn Xã, Phường</option>';
+        }
+    });
+
+    // Gọi hàm khởi tạo để tải danh sách tỉnh ban đầu
+    fetchProvinces();
+})
+function createNewAddress() {
+    // Lấy dữ liệu từ các trường nhập
+    let fullName = $("#FullNameCreate").val();
+    let phone = $("#PhoneCreate").val();
+    let email = $("#MailCreate").val();
+    let province = $("#province-create").val();
+    let district = $("#district-create").val();
+    let ward = $("#ward-create").val();
+    let specificAddress = $("#specificAddress").val();
+
+    // Tạo request payload
+    let addressRequest = {
+        nameCustomer: fullName,
+        phoneNumber: phone,
+        emailCustomer: email,
+        addressCustomer: `${ward},${district},${province},${specificAddress}`
+    };
+
+    // Gửi yêu cầu AJAX
+    $.ajax({
+        url: "/api-client/new-address-customer",
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify(addressRequest),
+        success: function (response) {
+            alert(response); // Hiển thị thông báo thành công
+            $("#addNewAddressModal").modal("hide"); // Ẩn modal
+        },
+        error: function (xhr) {
+            alert("Có lỗi xảy ra khi thêm địa chỉ: " + xhr.responseText);
+        }
+    });
+}
