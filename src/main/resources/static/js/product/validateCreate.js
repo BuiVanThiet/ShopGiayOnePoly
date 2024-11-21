@@ -11,6 +11,8 @@ var errorTextOrigin = document.getElementById('errorText-origin');
 var sole = document.getElementById('myInput-sole');
 var errorTextSole = document.getElementById('errorText-sole');
 var errorTextCategory = document.getElementById('errorText-category');
+var errorTextImage = document.getElementById('errorText-image');
+var fileInputCreateProduct = document.getElementById('file-input-createProduct');
 var buttonAdd = document.getElementById('create-btn-createProduct');
 var arrayCodeProduct = [];
 // Bắt sự kiện khi người dùng nhập vào ô tên sản phẩm
@@ -72,6 +74,14 @@ async function validate(type) {
     } else {
         errorTextNameProduct.style.display = 'block';
         errorTextNameProduct.innerText = '* Tên sản phẩm không được để trống';
+        check = false;
+    }
+
+    // Kiểm tra ảnh
+    if (fileInputCreateProduct.files.length > 0) {
+        errorTextImage.style.display = 'none';
+    } else {
+        errorTextImage.style.display = 'block';
         check = false;
     }
 

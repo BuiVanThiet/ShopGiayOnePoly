@@ -45,7 +45,7 @@ public class ChartImplement implements ChartService {
 
     @Override
     public long totalPriceToday() {
-        return chartRepository.totalPriceToday();
+        return 1;
     }
 
     @Override

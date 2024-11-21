@@ -325,7 +325,7 @@ async function validateSole() {
     } else if (arrayCodeSole.some(code => code.toLowerCase() === codeSoleInput.value.trim().toLowerCase())) {
         soleError.textContent = "* Mã đế giày đã tồn tại";
         return false;
-    } else if (arrayNameSole.some(name => name.toLowerCase() === codeSoleInput.value.trim().toLowerCase())) {
+    } else if (arrayNameSole.some(name => name.toLowerCase() === nameSoleInput.value.trim().toLowerCase())) {
         soleError.textContent = "* Tên đế giày đã tồn tại";
         return false;
     } else if (codeSoleInput.value.trim() === "") {

@@ -325,7 +325,7 @@ async function validateColor() {
     } else if (arrayCodeColor.some(code => code.toLowerCase() === codeColorInput.value.trim().toLowerCase())) {
         colorError.textContent = "* Mã màu sắc đã tồn tại";
         return false;
-    } else if (arrayNameColor.some(name => name.toLowerCase() === codeColorInput.value.trim().toLowerCase())) {
+    } else if (arrayNameColor.some(name => name.toLowerCase() === nameColorInput.value.trim().toLowerCase())) {
         colorError.textContent = "* Tên màu sắc đã tồn tại";
         return false;
     } else if (codeColorInput.value.trim() === "") {

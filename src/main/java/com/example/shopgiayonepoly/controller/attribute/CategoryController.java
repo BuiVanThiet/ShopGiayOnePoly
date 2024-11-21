@@ -88,7 +88,7 @@ public class CategoryController {
         if (staffLogin == null) {
             thongBao.put("message", "Nhân viên chưa đăng nhập");
             thongBao.put("check", "3");
-            return null;
+            return ResponseEntity.ok(thongBao);
         }
         boolean checkCode = true;
         boolean checkName = true;
@@ -116,7 +116,11 @@ public class CategoryController {
 
     @PostMapping("/category/update-status")
     @ResponseBody
-    public ResponseEntity<String> updateStatus(@RequestBody Map<String, Object> payload) {
+    public ResponseEntity<String> updateStatus(@RequestBody Map<String, Object> payload, HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            return null;
+        }
         try {
             int id;
             int status;
@@ -150,7 +154,7 @@ public class CategoryController {
         if (staffLogin == null) {
             thongBao.put("message", "Nhân viên chưa đăng nhập");
             thongBao.put("check", "3");
-            return null;
+            return ResponseEntity.ok(thongBao);
         }
         try {
             int id;
@@ -168,14 +172,14 @@ public class CategoryController {
             nameCategory = (String) payload.get("nameCategory");
             boolean checkCode = true;
             for (Category listCategory : categoryService.findAll()) {
-                if (codeCategory.trim().toLowerCase().equals(listCategory.getCodeCategory().trim().toLowerCase()) && id != listCategory.getId()) {
+                if (codeCategory.trim().equalsIgnoreCase(listCategory.getCodeCategory().trim().toLowerCase()) && id != listCategory.getId()) {
                     checkCode = false;
                     break;
                 }
             }
             boolean checkName = true;
             for (Category listCategory : categoryService.findAll()) {
-                if (nameCategory.trim().toLowerCase().equals(listCategory.getNameCategory().trim().toLowerCase()) && id != listCategory.getId()) {
+                if (nameCategory.trim().equalsIgnoreCase(listCategory.getNameCategory().trim().toLowerCase()) && id != listCategory.getId()) {
                     checkName = false;
                     break;
                 }
@@ -214,7 +218,7 @@ public class CategoryController {
         if (staffLogin == null) {
             thongBao.put("message", "Nhân viên chưa đăng nhập");
             thongBao.put("check", "3");
-            return null;
+            return ResponseEntity.ok(thongBao);
         }
         try {
             int id;
