@@ -325,7 +325,7 @@ async function validateManufacturer() {
     } else if (arrayCodeManufacturer.some(code => code.toLowerCase() === codeManufacturerInput.value.trim().toLowerCase())) {
         manufacturerError.textContent = "* Mã nhà sản xuất đã tồn tại";
         return false;
-    } else if (arrayNameManufacturer.some(name => name.toLowerCase() === codeManufacturerInput.value.trim().toLowerCase())) {
+    } else if (arrayNameManufacturer.some(name => name.toLowerCase() === nameManufacturerInput.value.trim().toLowerCase())) {
         manufacturerError.textContent = "* Tên nhà sản xuất đã tồn tại";
         return false;
     } else if (codeManufacturerInput.value.trim() === "") {

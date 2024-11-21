@@ -2,7 +2,6 @@ package com.example.shopgiayonepoly.controller;
 
 import com.cloudinary.Cloudinary;
 import com.example.shopgiayonepoly.baseMethod.BaseProduct;
-import com.example.shopgiayonepoly.dto.response.ProductDetailResponse;
 import com.example.shopgiayonepoly.entites.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpSession;
@@ -25,17 +24,30 @@ import java.util.stream.Collectors;
 public class ProductController extends BaseProduct {
     private final Cloudinary cloudinary;
 
+    String message = "";
+    String check = "";
 
     @GetMapping("")
-    public String product(Model model) {
+    public String product(Model model, HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            return "redirect:/login";
+        }
         model.addAttribute("productList", productService.getProductNotStatus0());
         model.addAttribute("categoryList", categoryService.findAll());
-        model.addAttribute("mess", "thêm khách hàng thành công");
+        model.addAttribute("message", message);
+        model.addAttribute("check", check);
+        check = "";
+        message = "";
         return "/Product/product";
     }
 
     @GetMapping("/create")
-    public String createProduct(Model model) {
+    public String createProduct(Model model, HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            return "redirect:/login";
+        }
         model.addAttribute("productList", productService.findAllProductsWithOneImage());
         model.addAttribute("product", new Product());
         model.addAttribute("materialList", materialService.findAll());
@@ -46,11 +58,19 @@ public class ProductController extends BaseProduct {
         model.addAttribute("soleList", soleService.findAll());
         model.addAttribute("categoryList", categoryService.findAll());
         model.addAttribute("nameProductList", productService.findAllNameProduct());
+        model.addAttribute("message", message);
+        model.addAttribute("check", check);
+        check = "";
+        message = "";
         return "/Product/create";
     }
 
     @GetMapping("/create/product-detail/{idProduct}")
-    public String createProductDetail(Model model, @PathVariable("idProduct") Integer idProduct) {
+    public String createProductDetail(Model model, @PathVariable("idProduct") Integer idProduct, HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            return "redirect:/login";
+        }
         model.addAttribute("product", productRepository.findById(idProduct));
         model.addAttribute("colorList", colorService.findAll());
         model.addAttribute("sizeList", sizeService.findAll());
@@ -62,8 +82,13 @@ public class ProductController extends BaseProduct {
     public ResponseEntity<String> addProductWithDetails(
             @ModelAttribute Product product,
             @RequestParam(value = "productDetails", required = false) String productDetailsJson,
-            @RequestParam("imageFiles") List<MultipartFile> imageFiles) throws IOException {
-
+            @RequestParam("imageFiles") List<MultipartFile> imageFiles, HttpSession session) throws IOException {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            check = "3";
+            message = "Nhân viên chưa đăng nhập";
+            return ResponseEntity.ok("Nhân viên chưa đăng nhập");
+        }
         // Khởi tạo danh sách chi tiết sản phẩm
         List<ProductDetail> productDetails = new ArrayList<>();
 
@@ -86,9 +111,7 @@ public class ProductController extends BaseProduct {
                 String nameImage = UUID.randomUUID().toString();
                 cloudinary.uploader()
                         .upload(multipartFile.getBytes(), Map.of("public_id", nameImage))
-                        .get("url")
-                        .toString();
-
+                        .get("url");
                 Image image = new Image();
                 image.setNameImage(nameImage);
                 image.setProduct(product);
@@ -97,12 +120,34 @@ public class ProductController extends BaseProduct {
             }
         }
         product.setImages(newImages);
+        boolean checkCodeProduct = true;
+        for (Product listProduct : productService.findAll()) {
+            if (product.getCodeProduct().trim().equalsIgnoreCase(listProduct.getCodeProduct().trim().toLowerCase())) {
+                checkCodeProduct = false;
+                break;
+            }
+        }
+        boolean checkManufacturer = product.getManufacturer() != null && manufacturerService.findById(product.getManufacturer().getId()).isPresent();
+        boolean checkMaterial = product.getMaterial() != null && materialService.findById(product.getMaterial().getId()).isPresent();
+        boolean checkSole = product.getSole() != null && soleService.findById(product.getSole().getId()).isPresent();
+        boolean checkOrigin = product.getOrigin() != null && originService.findById(product.getOrigin().getId()).isPresent();
+
+        if (product.getCodeProduct() == null || product.getCodeProduct().trim().isEmpty() || !checkSole ||
+                product.getCategories().isEmpty() || product.getCodeProduct().length() > 10 ||
+                !checkCodeProduct || product.getNameProduct() == null ||
+                product.getNameProduct().trim().isEmpty() || product.getNameProduct().length() > 255 ||
+                !checkMaterial || !checkOrigin || !checkManufacturer ||
+                imageFiles.isEmpty() || imageFiles.stream().allMatch(MultipartFile::isEmpty)) {
+            check = "3";
+            message = "Lỗi khi thêm sản phẩm";
+            return ResponseEntity.ok("Lỗi khi thêm sản phẩm");
+        } else {
+            check = "1";
+            message = "Thêm sản phẩm thành công";
+        }
 
         // Lưu sản phẩm
         Product savedProduct = productService.save(product);
-        if (savedProduct == null) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi khi thêm sản phẩm");
-        }
 
         // Nếu có productDetails, cập nhật ID sản phẩm cho các chi tiết sản phẩm và lưu
         if (!productDetails.isEmpty()) {
@@ -110,52 +155,22 @@ public class ProductController extends BaseProduct {
             productDetailRepository.saveAll(productDetails);
         }
 
-        return ResponseEntity.ok("Sản phẩm và chi tiết sản phẩm đã được thêm thành công");
-    }
+        return ResponseEntity.ok("Thêm sản phẩm thành công");
 
-
-
-
-    @GetMapping("/detail/{idProduct}")
-    public String viewProductDetail(@PathVariable("idProduct") Integer idProduct, Model model) {
-        List<ProductDetail> productDetails = productService.findAllProductDetailByIDProduct(idProduct);
-
-        if (productDetails == null || productDetails.isEmpty()) {
-            model.addAttribute("message", "Chưa thêm sản phẩm chi tiết nào.");
-        } else {
-            model.addAttribute("productDetailList", productDetails);
-        }
-
-        return "/Product/productDetail";
-    }
-
-    @GetMapping("/view-update/{id}")
-    public String getProductById(@PathVariable("id") Integer id, Model model) {
-        // Lấy dữ liệu sản phẩm theo ID
-        Optional<Product> product = productService.findById(id);
-        // Đưa dữ liệu sản phẩm vào model
-        model.addAttribute("product", product);
-
-        model.addAttribute("materialList", materialService.findAll());
-        model.addAttribute("manufacturerList", manufacturerService.findAll());
-        model.addAttribute("originList", originService.findAll());
-        model.addAttribute("colorList", colorService.findAll());
-        model.addAttribute("sizeList", sizeService.findAll());
-        model.addAttribute("soleList", soleService.findAll());
-        model.addAttribute("categoryList", categoryService.findAll());
-        model.addAttribute("nameProductList", productService.findAllNameProduct());
-
-        // Trả về tên view tương ứng (template Thymeleaf)
-        return "/Product/updateProduct";
     }
 
     @PostMapping("/update-product/{id}")
     public ResponseEntity<String> updateProductWithDetails(
             @PathVariable("id") Integer id,
             @ModelAttribute Product product,
-            @RequestParam(value = "productDetails", required = false) String productDetailsJson,
-            @RequestParam("imageFiles") List<MultipartFile> imageFiles) throws IOException {
+            @RequestParam("imageFiles") List<MultipartFile> imageFiles, HttpSession session) throws IOException {
 
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            check = "3";
+            message = "Nhân viên chưa đăng nhập";
+            return ResponseEntity.ok("Nhân viên chưa đăng nhập");
+        }
         // Kiểm tra sản phẩm có tồn tại hay không
         Optional<Product> existingProductOpt = productService.findById(id);
         if (!existingProductOpt.isPresent()) {
@@ -174,28 +189,33 @@ public class ProductController extends BaseProduct {
         existingProduct.setSole(product.getSole());
         existingProduct.setOrigin(product.getOrigin());
 
-        // Cập nhật các trường khác của sản phẩm nếu cần (ví dụ: nhà sản xuất, xuất xứ...)
+        // Kiểm tra mã sản phẩm có trùng không (so với các sản phẩm khác)
+        boolean checkCodeProduct = true;
+        if (!product.getCodeProduct().equals(existingProduct.getCodeProduct())) {
+            for (Product listProduct : productService.findAll()) {
+                if (product.getCodeProduct().trim().equalsIgnoreCase(listProduct.getCodeProduct().trim().toLowerCase())) {
+                    checkCodeProduct = false;
+                    break;
+                }
+            }
+        }
+        boolean checkManufacturer = product.getManufacturer() != null && manufacturerService.findById(product.getManufacturer().getId()).isPresent();
+        boolean checkMaterial = product.getMaterial() != null && materialService.findById(product.getMaterial().getId()).isPresent();
+        boolean checkSole = product.getSole() != null && soleService.findById(product.getSole().getId()).isPresent();
+        boolean checkOrigin = product.getOrigin() != null && originService.findById(product.getOrigin().getId()).isPresent();
 
-        // Xử lý các chi tiết sản phẩm
-        List<ProductDetail> productDetails = new ArrayList<>();
-        if (productDetailsJson != null && !productDetailsJson.isEmpty()) {
-            ObjectMapper objectMapper = new ObjectMapper();
-            productDetails = Arrays.asList(objectMapper.readValue(productDetailsJson, ProductDetail[].class));
+
+        // Kiểm tra các trường cần thiết khác
+        if (product.getCodeProduct() == null || product.getCodeProduct().trim().isEmpty() || !checkSole ||
+                product.getCategories() == null || product.getCategories().isEmpty() || product.getCodeProduct().length() > 10 ||
+                !checkCodeProduct || product.getNameProduct() == null ||
+                product.getNameProduct().trim().isEmpty() || product.getNameProduct().length() > 255 ||
+                !checkMaterial || !checkOrigin || !checkManufacturer ||
+                imageFiles.isEmpty() || imageFiles.stream().allMatch(MultipartFile::isEmpty)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Lỗi khi cập nhật sản phẩm: Các trường thông tin không hợp lệ");
         }
 
-        // Cập nhật danh mục cho sản phẩm
-        Set<Category> selectedCategories = new HashSet<>(categoryService.findCategoriesByIds(
-                product.getCategories().stream().map(Category::getId).collect(Collectors.toList())));
-        existingProduct.setCategories(selectedCategories);
-
-        // Xóa các ảnh cũ khỏi cơ sở dữ liệu
-        List<Image> oldImages = existingProduct.getImages();
-        if (!oldImages.isEmpty()) {
-            imageRepository.deleteInBatch(oldImages); // Xóa tất cả ảnh cũ
-        }
-
-        // Xóa ảnh khỏi collection (tránh lỗi cascade all-delete-orphan)
-//        existingProduct.getImages().clear();
+        existingProduct.getImages().clear();
 
         // Thêm các ảnh mới vào sản phẩm
         List<Image> newImages = new ArrayList<>();
@@ -204,8 +224,7 @@ public class ProductController extends BaseProduct {
                 String nameImage = UUID.randomUUID().toString();
                 cloudinary.uploader()
                         .upload(multipartFile.getBytes(), Map.of("public_id", nameImage))
-                        .get("url")
-                        .toString();
+                        .get("url");
 
                 Image image = new Image();
                 image.setNameImage(nameImage);
@@ -224,15 +243,51 @@ public class ProductController extends BaseProduct {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi khi cập nhật sản phẩm");
         }
 
-        // Xử lý chi tiết sản phẩm nếu có (cập nhật hoặc xóa các chi tiết cũ)
-        if (!productDetails.isEmpty()) {
-            // Liên kết chi tiết sản phẩm với sản phẩm đã cập nhật
-            productDetails.forEach(detail -> detail.setProduct(updatedProduct));
-            productDetailRepository.saveAll(productDetails);
-        }
-
         return ResponseEntity.ok("Sản phẩm đã được cập nhật thành công");
     }
+
+
+    @GetMapping("/detail/{idProduct}")
+    public String viewProductDetail(@PathVariable("idProduct") Integer idProduct, Model model, HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            return "redirect:/login";
+        }
+        List<ProductDetail> productDetails = productService.findAllProductDetailByIDProduct(idProduct);
+
+        if (productDetails == null || productDetails.isEmpty()) {
+            model.addAttribute("message", "Chưa thêm sản phẩm chi tiết nào.");
+        } else {
+            model.addAttribute("productDetailList", productDetails);
+        }
+
+        return "/Product/productDetail";
+    }
+
+    @GetMapping("/view-update/{id}")
+    public String getProductById(@PathVariable("id") Integer id, Model model, HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            return "redirect:/login";
+        }
+        // Lấy dữ liệu sản phẩm theo ID
+        Optional<Product> product = productService.findById(id);
+        // Đưa dữ liệu sản phẩm vào model
+        model.addAttribute("product", product);
+
+        model.addAttribute("materialList", materialService.findAll());
+        model.addAttribute("manufacturerList", manufacturerService.findAll());
+        model.addAttribute("originList", originService.findAll());
+        model.addAttribute("colorList", colorService.findAll());
+        model.addAttribute("sizeList", sizeService.findAll());
+        model.addAttribute("soleList", soleService.findAll());
+        model.addAttribute("categoryList", categoryService.findAll());
+        model.addAttribute("nameProductList", productService.findAllNameProduct());
+
+        // Trả về tên view tương ứng (template Thymeleaf)
+        return "/Product/updateProduct";
+    }
+
 
 
     @ModelAttribute("staffInfo")

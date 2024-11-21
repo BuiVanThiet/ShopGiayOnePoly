@@ -195,6 +195,7 @@
               </div>
               <div id="image-preview-createProduct" class="image-preview-createProduct"></div>
             </div>
+            <p style="display: block; color: red; margin-bottom: 0px" id="errorText-image">* Vui lòng thêm ít nhất 1 ảnh</p>
           </div>
           <div class="main-content-createProduct" style="display: none" id="table-productDetail-createProduct">
             <table class="table-createProduct" id="productDetailTable">
@@ -259,6 +260,8 @@
         </div>
       </div>
     </div>
+    <input type="hidden" id="toastMessage" th:value="${message}">
+    <input type="hidden" id="toastCheck" th:value="${check}">
   </article>
   <script src="/js/product/validateCreate.js"></script>
   <script src="/js/product/create.js"></script>

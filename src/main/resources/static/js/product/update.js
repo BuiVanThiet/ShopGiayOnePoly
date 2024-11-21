@@ -232,76 +232,6 @@ function updateOptions(elementId, data, elementType, textKey, type) {
 }
 
 
-function insertTableProductDetail() {
-
-    const selectedColors = Array.from(document.querySelectorAll('#dataList-color input[type="checkbox"]:checked'))
-        .map(checkbox => {
-            const colorName = checkbox.closest('li').querySelector('span').innerText;
-            const colorId = checkbox.value; // Lấy ID màu
-            return {name: colorName, id: colorId};
-        });
-
-    const selectedSizes = Array.from(document.querySelectorAll('#dataList-size input[type="checkbox"]:checked'))
-        .map(checkbox => {
-            const sizeName = checkbox.closest('li').querySelector('span').innerText;
-            const sizeId = checkbox.value; // Lấy ID kích cỡ
-            return {name: sizeName, id: sizeId};
-        });
-    document.getElementById('table-productDetail-updateProduct').style.display = 'block';
-    const tableBody = document.querySelector('#productDetailTable tbody');
-    tableBody.innerHTML = '';
-
-    selectedColors.forEach(color => {
-        selectedSizes.forEach(size => {
-            const row = document.updateElement('tr');
-
-            row.innerHTML = `
-        <td><input type="checkbox" class="row-selector"></td>
-        <td class="editable-cell" data-color-id="${color.id}">${color.name}</td>
-        <td class="editable-cell" data-size-id="${size.id}">${size.name}</td>
-        <td contenteditable="true" class="editable-cell"></td> <!-- Giá bán -->
-        <td contenteditable="true" class="editable-cell"></td> <!-- Giá nhập -->
-        <td contenteditable="true" class="editable-cell"></td> <!-- Số lượng -->
-        <td contenteditable="true" class="editable-cell"></td> <!-- Trọng lượng -->
-        <td contenteditable="true" class="editable-cell"></td> <!-- Mô tả -->
-        <td><span class="material-symbols-outlined" onclick="deleteRow(this)">delete_forever</span></td>
-      `;
-
-            tableBody.appendChild(row);
-        });
-    });
-
-    // Lắng nghe sự kiện thay đổi trên các ô có thể chỉnh sửa
-    document.querySelectorAll('.editable-cell').forEach(cell => {
-        cell.addEventListener('input', function (event) {
-            // Chỉ xử lý nếu hàng đang được chỉnh sửa có checkbox được chọn
-            const row = cell.closest('tr');
-            const checkbox = row.querySelector('.row-selector');
-
-            if (!checkbox.checked) return; // Nếu checkbox không được chọn, không làm gì
-
-            const colIndex = cell.cellIndex;
-            const newValue = cell.innerText;
-            const selection = window.getSelection();
-            const range = selection.getRangeAt(0);
-            const cursorPosition = range.startOffset; // Lưu vị trí con trỏ
-
-            // Cập nhật các ô tương ứng trong các hàng đã chọn
-            document.querySelectorAll('.row-selector:checked').forEach(checkbox => {
-                const selectedRow = checkbox.closest('tr');
-                const targetCell = selectedRow.cells[colIndex];
-                targetCell.innerText = newValue;
-            });
-
-            // Khôi phục vị trí con trỏ
-            range.setStart(cell.childNodes[0], cursorPosition);
-            range.collapse(true);
-            selection.removeAllRanges();
-            selection.addRange(range);
-        });
-    });
-}
-
 
 function toggleCheckbox(liElement, type) {
     const checkbox = liElement.querySelector(`input[data-type="${type}"]`);
@@ -318,35 +248,6 @@ function handleCheckboxChange() {
     // Kiểm tra nếu có ít nhất 1 màu và 1 kích cỡ được chọn
     if (selectedColors > 0 && selectedSizes > 0) {
         insertTableProductDetail();
-    }
-}
-
-function deleteRow(deleteButton) {
-    const row = deleteButton.closest('tr');
-    const color = row.cells[1].innerText; // Cột màu sắc
-    const size = row.cells[2].innerText;  // Cột kích cỡ
-
-    row.remove(); // Xóa hàng hiện tại
-
-    // Kiểm tra nếu màu hoặc kích cỡ không còn trong bảng thì bỏ chọn checkbox tương ứng
-    checkAndUncheckOption('#dataList-color', color);
-    checkAndUncheckOption('#dataList-size', size);
-}
-
-function checkAndUncheckOption(listSelector, value) {
-    // Kiểm tra nếu không còn hàng nào chứa giá trị cần kiểm tra
-    const isValueInTable = Array.from(document.querySelectorAll('#productDetailTable tbody tr')).some(row => {
-        return row.cells[1].innerText === value || row.cells[2].innerText === value;
-    });
-
-    // Nếu không còn hàng nào chứa giá trị này thì bỏ chọn checkbox tương ứng
-    if (!isValueInTable) {
-        document.querySelectorAll(`${listSelector} input[type="checkbox"]`).forEach(checkbox => {
-            const itemText = checkbox.closest('li').querySelector('span').innerText;
-            if (itemText === value) {
-                checkbox.checked = false;
-            }
-        });
     }
 }
 
@@ -390,8 +291,9 @@ async function updateProduct() {
             method: 'POST',
             body: formData
         });
-        createToast('1', 'Sửa sản phẩm thành công')
-        // window.location.href = 'http://localhost:8080/staff/product';
+        window.location.href = `/staff/product/view-update/${productId}`;
+        createToast('1', 'Sửa sản phẩm thành công');
+
     } catch (error) {
         createToast('3', 'Thêm sản phẩm thất bại')
     }

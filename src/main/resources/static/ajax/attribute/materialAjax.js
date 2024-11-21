@@ -325,7 +325,7 @@ async function validateMaterial() {
     } else if (arrayCodeMaterial.some(code => code.toLowerCase() === codeMaterialInput.value.trim().toLowerCase())) {
         materialError.textContent = "* Mã chất liệu đã tồn tại";
         return false;
-    } else if (arrayNameMaterial.some(name => name.toLowerCase() === codeMaterialInput.value.trim().toLowerCase())) {
+    } else if (arrayNameMaterial.some(name => name.toLowerCase() === nameMaterialInput.value.trim().toLowerCase())) {
         materialError.textContent = "* Tên chất liệu đã tồn tại";
         return false;
     } else if (codeMaterialInput.value.trim() === "") {

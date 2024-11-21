@@ -102,13 +102,16 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                        <button onclick="updateStatus(null, 0)" type="submit" class="btn btn-success" data-bs-dismiss="modal"
+                        <button onclick="updateStatus(null, 0)" type="submit" class="btn btn-success"
+                                data-bs-dismiss="modal"
                                 aria-label="Close">Xóa
                         </button>
                     </div>
                 </div>
             </div>
         </div>
+        <input type="hidden" id="toastMessage" th:value="${message}">
+        <input type="hidden" id="toastCheck" th:value="${check}">
     </article>
     <script th:src="@{/js/product/product.js}" type="text/javascript"></script>
 </div>

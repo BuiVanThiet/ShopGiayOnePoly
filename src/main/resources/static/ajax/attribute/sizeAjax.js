@@ -325,7 +325,7 @@ async function validateSize() {
     } else if (arrayCodeSize.some(code => code.toLowerCase() === codeSizeInput.value.trim().toLowerCase())) {
         sizeError.textContent = "* Mã kích cỡ đã tồn tại";
         return false;
-    } else if (arrayNameSize.some(name => name.toLowerCase() === codeSizeInput.value.trim().toLowerCase())) {
+    } else if (arrayNameSize.some(name => name.toLowerCase() === nameSizeInput.value.trim().toLowerCase())) {
         sizeError.textContent = "* Tên kích cỡ đã tồn tại";
         return false;
     } else if (codeSizeInput.value.trim() === "") {

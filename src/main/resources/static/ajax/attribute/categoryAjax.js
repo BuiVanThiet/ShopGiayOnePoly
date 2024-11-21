@@ -325,7 +325,7 @@ async function validateCategory() {
     } else if (arrayCodeCategory.some(code => code.toLowerCase() === codeCategoryInput.value.trim().toLowerCase())) {
         categoryError.textContent = "* Mã danh mục đã tồn tại";
         return false;
-    } else if (arrayNameCategory.some(name => name.toLowerCase() === codeCategoryInput.value.trim().toLowerCase())) {
+    } else if (arrayNameCategory.some(name => name.toLowerCase() === nameCategoryInput.value.trim().toLowerCase())) {
         categoryError.textContent = "* Tên danh mục đã tồn tại";
         return false;
     } else if (codeCategoryInput.value.trim() === "") {

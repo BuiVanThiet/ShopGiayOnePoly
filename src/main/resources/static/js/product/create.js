@@ -19,6 +19,7 @@ function previewImages(event) {
         };
         reader.readAsDataURL(file);
     }
+    validate();
 }
 
 
@@ -385,12 +386,15 @@ async function addProductWithDetails() {
         formData.append("productDetails", JSON.stringify(productDetails));
     }
     try {
-        await fetch('/staff/product/add-product-with-details', {
+        const response = await fetch('/staff/product/add-product-with-details', {
             method: 'POST',
             body: formData
         });
-        createToast('1', 'Thêm sản phẩm thành công')
-        window.location.href = 'http://localhost:8080/staff/product';
+        if (await response.text() === 'Thêm sản phẩm thành công') {
+            window.location.href = 'http://localhost:8080/staff/product';
+        } else {
+            window.location.href = 'http://localhost:8080/staff/product/create';
+        }
     } catch (error) {
         createToast('3', 'Thêm sản phẩm thất bại')
     }

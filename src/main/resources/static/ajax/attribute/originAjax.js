@@ -325,7 +325,7 @@ async function validateOrigin() {
     } else if (arrayCodeOrigin.some(code => code.toLowerCase() === codeOriginInput.value.trim().toLowerCase())) {
         originError.textContent = "* Mã xuất xứ đã tồn tại";
         return false;
-    } else if (arrayNameOrigin.some(name => name.toLowerCase() === codeOriginInput.value.trim().toLowerCase())) {
+    } else if (arrayNameOrigin.some(name => name.toLowerCase() === nameOriginInput.value.trim().toLowerCase())) {
         originError.textContent = "* Tên xuất xứ đã tồn tại";
         return false;
     } else if (codeOriginInput.value.trim() === "") {
