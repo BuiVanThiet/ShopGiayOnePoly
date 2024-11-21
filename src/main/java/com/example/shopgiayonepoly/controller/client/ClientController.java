@@ -268,42 +268,65 @@ public class ClientController extends BaseBill {
         if (clientLoginResponse != null) {
             model.addAttribute("clientLogin", clientLoginResponse);
 
+            // Lấy và chuẩn hóa địa chỉ của khách hàng
             String addressCustomerLogin = clientLoginResponse.getAddRess();
-
-            // Tách địa chỉ thành các phần
             String[] addressParts = addressCustomerLogin.split(",", 4);
 
-            // Lấy từng phần địa chỉ theo yêu cầu
-            if (addressParts.length > 0) {
-                String idWard = addressParts[0].trim();
-                model.addAttribute("IdWard", idWard);
-                System.out.println("ID Ward: " + idWard);
+            String idWard = addressParts.length > 0 ? addressParts[0].trim() : "";
+            String idDistrict = addressParts.length > 1 ? addressParts[1].trim() : "";
+            String idProvince = addressParts.length > 2 ? addressParts[2].trim() : "";
+            String originalAddress = addressParts.length > 3 ? addressParts[3].trim() : "";
+
+            model.addAttribute("IdWard", idWard);
+            model.addAttribute("IdDistrict", idDistrict);
+            model.addAttribute("IdProvince", idProvince);
+            model.addAttribute("originalAddress", originalAddress);
+
+            // Lấy danh sách AddressShip và chuẩn hóa
+            List<AddressShip> addressList = clientService.getListAddressShipByIDCustomer(clientLoginResponse.getId());
+            List<AddressShipReponse> responseListAddress = new ArrayList<>();
+
+            for (AddressShip address : addressList) {
+                String specificAddress = address.getSpecificAddress();
+                if (specificAddress != null) {
+                    String[] parts = specificAddress.split(",");
+
+                    // Kiểm tra xem địa chỉ có đủ các phần như Phường, Quận, Tỉnh không
+                    String shipProvince = "", shipDistrict = "", shipWard = "", detailedAddress = "";
+
+                    // Kiểm tra địa chỉ có đúng định dạng (địa chỉ chuẩn như khách hàng hay không)
+                    if (parts.length >= 7) {
+                        // Địa chỉ có đủ các phần: Phường, Quận, Tỉnh
+                        shipProvince = parts.length > 3 ? parts[3].trim() : "";
+                        shipDistrict = parts.length > 4 ? parts[4].trim() : "";
+                        shipWard = parts.length > 5 ? parts[5].trim() : "";
+                        detailedAddress = parts.length > 6
+                                ? String.join(", ", Arrays.copyOfRange(parts, 6, parts.length)).trim()
+                                : "";
+                    } else {
+                        // Địa chỉ không có đủ các phần: Phường, Quận, Tỉnh, xử lý đặc biệt
+                        shipProvince = "UnknownProvince"; // Gán giá trị mặc định
+                        shipDistrict = "UnknownDistrict"; // Gán giá trị mặc định
+                        shipWard = "UnknownWard"; // Gán giá trị mặc định
+                        detailedAddress = specificAddress.trim(); // Toàn bộ địa chỉ là chi tiết
+                    }
+
+                    // So sánh địa chỉ của khách hàng với địa chỉ giao hàng
+                    boolean isSameAddress = idWard.equals(shipWard)
+                                            && idDistrict.equals(shipDistrict)
+                                            && idProvince.equals(shipProvince);
+
+                    // Nếu địa chỉ không trùng, thêm vào danh sách
+                    if (!isSameAddress) {
+                        String formattedShipAddress = String.join(", ", shipProvince, shipDistrict, shipWard, detailedAddress).replaceAll(", $", "");
+                        responseListAddress.add(new AddressShipReponse(formattedShipAddress, detailedAddress));
+                        System.out.println("Formatted Ship Address: " + formattedShipAddress);
+                    }
+                }
             }
 
-            if (addressParts.length > 1) {
-                String idDistrict = addressParts[1].trim();
-                model.addAttribute("IdDistrict", idDistrict);
-                System.out.println("ID District: " + idDistrict);
-            }
-
-            if (addressParts.length > 2) {
-                String idProvince = addressParts[2].trim();
-                model.addAttribute("IdProvince", idProvince);
-                System.out.println("ID Province: " + idProvince);
-            }
-
-            // Phần địa chỉ còn lại (nếu có)
-            String originalAddress = "";
-            if (addressParts.length > 3) {
-                originalAddress = addressParts[3].trim();
-            }
-            model.addAttribute("OriginalAddress", originalAddress);
-            System.out.println("Original Address: " + originalAddress);
-            List<AddressShip> lissAddressShip = clientService.getListAddressShipByIDCustomer(clientLoginResponse.getId());
-            model.addAttribute("listAddress",lissAddressShip);
-
+            model.addAttribute("listAddress", responseListAddress);
         }
-
 
         // Cập nhật lại giỏ hàng và các thuộc tính vào model và session
         model.addAttribute("cartItems", cartItems);
@@ -440,15 +463,15 @@ public class ClientController extends BaseBill {
         billDetailRepository.saveAll(billDetails);
 
         System.out.println("dang dung phuong thuc thanh toan: " + bill.getPaymentMethod());
-        if(bill.getPaymentMethod() == 2) {
+        if (bill.getPaymentMethod() == 2) {
             String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
             BigDecimal totalPriceFinal = bill.getTotalAmount().subtract(bill.getPriceDiscount()).add(bill.getShippingPrice());
             Integer priceAsInteger = totalPriceFinal.setScale(0, RoundingMode.DOWN).intValue();
             String vnpayUrl = vnPayService.createOrder((priceAsInteger), "chuyenKhoan", baseUrl);
             System.out.println("Thong tin Bill thanh toan bang tien va tk(2)" + bill.toString());
-            session.setAttribute("pageReturn",3);
-            session.setAttribute("payBillOrder",bill);
-            return  vnpayUrl;
+            session.setAttribute("pageReturn", 3);
+            session.setAttribute("payBillOrder", bill);
+            return vnpayUrl;
         }
         String host = "http://localhost:8080/onepoly/status-bill/" + bill.getId();
         this.setBillStatus(bill.getId(), 0, session);
