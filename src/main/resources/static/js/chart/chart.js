@@ -10,10 +10,10 @@ window.onbeforeunload = function() {
     sessionStorage.setItem('scrollPosition', window.scrollY);
 };
 
-const buttons = document.querySelectorAll('.custom-btn');
-buttons.forEach(button => {
+const customButtons = document.querySelectorAll('.custom-btn');
+customButtons.forEach(button => {
     button.addEventListener('click', function() {
-        buttons.forEach(btn => btn.classList.remove('active'));
+        customButtons.forEach(btn => btn.classList.remove('active'));
         this.classList.add('active');
     });
 });

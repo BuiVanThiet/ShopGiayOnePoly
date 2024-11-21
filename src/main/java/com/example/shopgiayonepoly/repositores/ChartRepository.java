@@ -23,7 +23,7 @@ public interface ChartRepository extends JpaRepository<Bill, Integer> {
             "WHERE b.status IN (5, 8) " +
             "AND MONTH(b.updateDate) = MONTH(CURRENT_DATE) " +
             "AND YEAR(b.updateDate) = YEAR(CURRENT_DATE)")
-    long monthlyBill();
+    Long monthlyBill();
 
     @Query(value = """
         SELECT 
@@ -43,44 +43,49 @@ public interface ChartRepository extends JpaRepository<Bill, Integer> {
     Long totalMonthlyBill();
 
     @Query(value = "SELECT " +
-            "COALESCE(SUM(CASE WHEN b.status = 5 THEN bd.quantity ELSE 0 END), 0) " +
-            " + COALESCE(SUM(CASE WHEN ebd2.id_exchang_bill IS NOT NULL THEN ebd2.quantity_exchange ELSE 0 END), 0) " +
-            " + COALESCE(SUM(CASE WHEN b2.status = 8 THEN bd2.quantity ELSE 0 END), 0) " +
-            " - COALESCE(SUM(CASE WHEN rbd2.id_return_bill IS NOT NULL THEN rbd2.quantity_return ELSE 0 END), 0) " +
-            "FROM Bill b " +
-            "LEFT JOIN bill_detail bd ON bd.id_bill = b.id " +
-            "LEFT JOIN Bill b2 ON b2.id = bd.id_bill " +
-            "LEFT JOIN bill_detail bd2 ON bd2.id_bill = b2.id " +
-            "LEFT JOIN return_bill_exchange_bill rbeb ON rbeb.id_bill = b.id " +
-            "LEFT JOIN exchange_bill_detail ebd2 ON ebd2.id_exchang_bill = rbeb.id " +
-            "LEFT JOIN return_bill_detail rbd2 ON rbd2.id_return_bill = rbeb.id " +
+            "(SELECT SUM(CASE WHEN b.status = 5 THEN bd.quantity ELSE 0 END) " +
+            "FROM dbo.Bill b " +
+            "LEFT JOIN dbo.bill_detail bd ON bd.id_bill = b.id " +
+            "WHERE b.status = 5 " +
+            "AND MONTH(b.update_date) = MONTH(GETDATE()) " +
+            "AND YEAR(b.update_date) = YEAR(GETDATE())) " +
+            "+ SUM(CASE WHEN ebd2.id_exchang_bill IS NOT NULL THEN ebd2.quantity_exchange ELSE 0 END) " +
+            "+ SUM(CASE WHEN b2.status = 8 THEN bd2.quantity ELSE 0 END) " +
+            "- SUM(CASE WHEN rbd2.id_return_bill IS NOT NULL THEN rbd2.quantity_return ELSE 0 END) " +
+            "AS Total_Quantity " +
+            "FROM dbo.Bill b " +
+            "LEFT JOIN dbo.bill_detail bd ON bd.id_bill = b.id " +
+            "LEFT JOIN dbo.Bill b2 ON b2.id = bd.id_bill " +
+            "LEFT JOIN dbo.bill_detail bd2 ON bd2.id_bill = b2.id " +
+            "LEFT JOIN dbo.return_bill_exchange_bill rbeb ON rbeb.id_bill = b.id " +
+            "LEFT JOIN dbo.exchange_bill_detail ebd2 ON ebd2.id_exchang_bill = rbeb.id " +
+            "LEFT JOIN dbo.return_bill_detail rbd2 ON rbd2.id_return_bill = rbeb.id " +
             "WHERE b.status IN (5, 8) " +
             "AND MONTH(b.update_date) = MONTH(GETDATE()) " +
-            "AND YEAR(b.update_date) = YEAR(GETDATE())",
-            nativeQuery = true)
-    long totalMonthlyInvoiceProducts();
+            "AND YEAR(b.update_date) = YEAR(GETDATE())", nativeQuery = true)
+    Long totalMonthlyInvoiceProducts();
 
     @Query("SELECT COALESCE(COUNT(b), 0) " +  // Thay đổi COUNT(b) thành COALESCE(COUNT(b), 0)
             "FROM Bill b " +
             "WHERE b.status IN(5,8) " +
             "AND CAST(b.updateDate AS DATE) = CAST(CURRENT_DATE AS DATE)")
-    long billOfTheDay();
+    Long billOfTheDay();
 
     @Query(value = """
         SELECT 
             CASE 
-                WHEN SUM(b.total_amount - b.price_discount) - 
-                     SUM(ex.customer_refund - ex.exchange_and_return_fee - ex.customer_payment + ex.discounted_amount) < 0 
+                WHEN COALESCE(SUM(b.total_amount - b.price_discount), 0) - 
+                     COALESCE(SUM(ex.customer_refund - ex.exchange_and_return_fee - ex.customer_payment + ex.discounted_amount), 0) < 0 
                 THEN 0
-                ELSE SUM(b.total_amount - b.price_discount) - 
-                     SUM(ex.customer_refund - ex.exchange_and_return_fee - ex.customer_payment + ex.discounted_amount)
+                ELSE COALESCE(SUM(b.total_amount - b.price_discount), 0) - 
+                     COALESCE(SUM(ex.customer_refund - ex.exchange_and_return_fee - ex.customer_payment + ex.discounted_amount), 0)
             END AS result
         FROM Bill b
         LEFT JOIN return_bill_exchange_bill ex ON b.id = ex.id_bill
         WHERE b.status IN (5, 8)
-        AND CONVERT(date, b.update_date) = CONVERT(date, GETDATE())
-    """, nativeQuery = true)
-    long totalPriceToday();
+          AND CAST(b.update_date AS DATE) = CAST(GETDATE() AS DATE)
+        """, nativeQuery = true)
+    Long totalPriceToday();
 
     @Query("SELECT CAST(MAX(b.updateDate) AS date) " +
             "FROM Bill b " +
@@ -92,31 +97,15 @@ public interface ChartRepository extends JpaRepository<Bill, Integer> {
     @Query(value = "SELECT " +
             "FORMAT(MAX(b.update_date), 'dd-MM-yyyy') AS Thang, " +
             "COUNT(DISTINCT b.id) AS HoaDonThang, " +
-            "COALESCE(SUM(CASE WHEN b.status = 5 THEN bd.quantity ELSE 0 END), 0) " +
-            " + COALESCE(SUM(CASE WHEN ebd2.id_exchang_bill IS NOT NULL THEN ebd2.quantity_exchange ELSE 0 END), 0) " +
-            " + COALESCE(SUM(CASE WHEN b2.status = 8 THEN bd2.quantity ELSE 0 END), 0) " +
-            " - COALESCE(SUM(CASE WHEN rbd2.id_return_bill IS NOT NULL THEN rbd2.quantity_return ELSE 0 END), 0) AS soLuong " +
-            "FROM Bill b " +
-            "LEFT JOIN bill_detail bd ON bd.id_bill = b.id " +
-            "LEFT JOIN Bill b2 ON b2.id = bd.id_bill " +
-            "LEFT JOIN bill_detail bd2 ON bd2.id_bill = b2.id " +
-            "LEFT JOIN return_bill_exchange_bill rbeb ON rbeb.id_bill = b.id " +
-            "LEFT JOIN exchange_bill_detail ebd2 ON ebd2.id_exchang_bill = rbeb.id " +
-            "LEFT JOIN return_bill_detail rbd2 ON rbd2.id_return_bill = rbeb.id " +
-            "WHERE b.status IN(5, 8) " +
-            "AND YEAR(b.update_date) = YEAR(GETDATE()) " +
-            "GROUP BY FORMAT(b.update_date, 'yyyyMM') " +
-            "ORDER BY MAX(b.update_date) ASC",
-            nativeQuery = true)
-    List<Object[]> findMonthlyStatistics();
-
-    @Query(value = "SELECT " +
-            "FORMAT(b.update_date, 'dd-MM-yyyy') AS ngay, " +
-            "COUNT(DISTINCT b.id) AS hoaDonHomNay, " +
-            "COALESCE(SUM(CASE WHEN b.status = 5 THEN bd.quantity ELSE 0 END), 0) " +
-            " + COALESCE(SUM(CASE WHEN ebd2.id_exchang_bill IS NOT NULL THEN ebd2.quantity_exchange ELSE 0 END), 0) " +
-            " + COALESCE(SUM(CASE WHEN b2.status = 8 THEN bd2.quantity ELSE 0 END), 0) " +
-            " - COALESCE(SUM(CASE WHEN rbd2.id_return_bill IS NOT NULL THEN rbd2.quantity_return ELSE 0 END), 0) AS soLuong " +
+            "(SELECT SUM(CASE WHEN b.status = 5 THEN bd.quantity ELSE 0 END) " +
+            "FROM dbo.Bill b " +
+            "LEFT JOIN dbo.bill_detail bd ON bd.id_bill = b.id " +
+            "WHERE b.status = 5 " +
+            "AND MONTH(b.update_date) = MONTH(GETDATE()) " +
+            "AND YEAR(b.update_date) = YEAR(GETDATE())) " +
+            "+ SUM(CASE WHEN ebd2.id_exchang_bill IS NOT NULL THEN ebd2.quantity_exchange ELSE 0 END) " +
+            "+ SUM(CASE WHEN b2.status = 8 THEN bd2.quantity ELSE 0 END) " +
+            "- SUM(CASE WHEN rbd2.id_return_bill IS NOT NULL THEN rbd2.quantity_return ELSE 0 END) AS soLuong " +
             "FROM Bill b " +
             "LEFT JOIN bill_detail bd ON bd.id_bill = b.id " +
             "LEFT JOIN Bill b2 ON b2.id = bd.id_bill " +
@@ -125,99 +114,100 @@ public interface ChartRepository extends JpaRepository<Bill, Integer> {
             "LEFT JOIN exchange_bill_detail ebd2 ON ebd2.id_exchang_bill = rbeb.id " +
             "LEFT JOIN return_bill_detail rbd2 ON rbd2.id_return_bill = rbeb.id " +
             "WHERE b.status IN (5, 8) " +
-            "AND CAST(b.update_date AS DATE) = CAST(GETDATE() AS DATE) " +
-            "GROUP BY FORMAT(b.update_date, 'dd-MM-yyyy') " +
-            "ORDER BY MAX(b.update_date)",
+            "AND b.update_date >= DATEADD(MONTH, -12, GETDATE()) " +
+            "GROUP BY FORMAT(b.update_date, 'MM-yyyy') " +
+            "ORDER BY FORMAT(b.update_date, 'MM-yyyy') DESC",
             nativeQuery = true)
+    List<Object[]> findMonthlyStatistics();
+
+    @Query(value = """
+            SELECT 
+                FORMAT(b.update_date, 'dd-MM-yyyy') AS ngay, 
+                COUNT(DISTINCT b.id) AS hoaDonHomNay, 
+                COALESCE((
+                    SELECT SUM(CASE WHEN b.status = 5 THEN bd.quantity ELSE 0 END)
+                    FROM dbo.Bill b
+                    LEFT JOIN dbo.bill_detail bd ON bd.id_bill = b.id
+                    WHERE b.status = 5
+                    AND CAST(b.update_date AS DATE) = CAST(GETDATE() AS DATE)
+                ), 0)
+                
+                + COALESCE(SUM(CASE WHEN ebd2.id_exchang_bill IS NOT NULL THEN ebd2.quantity_exchange ELSE 0 END), 0) 
+                + COALESCE(SUM(CASE WHEN b2.status = 8 THEN bd2.quantity ELSE 0 END), 0) 
+                - COALESCE(SUM(CASE WHEN rbd2.id_return_bill IS NOT NULL THEN rbd2.quantity_return ELSE 0 END), 0) AS soLuong 
+            FROM Bill b 
+            LEFT JOIN bill_detail bd ON bd.id_bill = b.id 
+            LEFT JOIN Bill b2 ON b2.id = bd.id_bill 
+            LEFT JOIN bill_detail bd2 ON bd2.id_bill = b2.id 
+            LEFT JOIN return_bill_exchange_bill rbeb ON rbeb.id_bill = b.id 
+            LEFT JOIN exchange_bill_detail ebd2 ON ebd2.id_exchang_bill = rbeb.id 
+            LEFT JOIN return_bill_detail rbd2 ON rbd2.id_return_bill = rbeb.id 
+            WHERE b.status IN (5, 8) 
+            AND CAST(b.update_date AS DATE) = CAST(GETDATE() AS DATE) 
+            GROUP BY FORMAT(b.update_date, 'dd-MM-yyyy') 
+            ORDER BY MAX(b.update_date) DESC
+            """, nativeQuery = true)
     List<Object[]> findTodayStatistics();
 
     @Query(value = """
-        WITH DateRange AS (
-            SELECT CAST(GETDATE() AS DATE) AS Ngay
-            UNION ALL
-            SELECT DATEADD(DAY, -1, Ngay) 
-            FROM DateRange 
-            WHERE Ngay > DATEADD(DAY, -6, GETDATE())
-        )
-        SELECT 
-            FORMAT(dr.Ngay, 'dd-MM-yyyy') AS Ngay, 
-            COALESCE(COUNT(DISTINCT b.id), 0) AS HoaDon, 
-            COALESCE(SUM(CASE 
-                WHEN b.status = 5 THEN bd.quantity 
-                ELSE 0 
-            END), 0)
-            + COALESCE(SUM(CASE 
-                WHEN ebd2.id_exchang_bill IS NOT NULL THEN ebd2.quantity_exchange 
-                ELSE 0 
-            END), 0)
-            + COALESCE(SUM(CASE 
-                WHEN b2.status = 8 THEN bd2.quantity 
-                ELSE 0 
-            END), 0)
-            - COALESCE(SUM(CASE 
-                WHEN rbd2.id_return_bill IS NOT NULL THEN rbd2.quantity_return 
-                ELSE 0 
-            END), 0) AS SoLuong
-        FROM DateRange dr
-        LEFT JOIN bill b 
-            ON CAST(b.update_date AS DATE) = dr.Ngay 
-            AND b.status IN (5, 8)
-        LEFT JOIN bill_detail bd 
-            ON b.id = bd.id_bill
-        LEFT JOIN return_bill_exchange_bill rbeb 
-            ON rbeb.id_bill = b.id
-        LEFT JOIN exchange_bill_detail ebd2 
-            ON ebd2.id_exchang_bill = rbeb.id
-        LEFT JOIN return_bill_detail rbd2 
-            ON rbd2.id_return_bill = rbeb.id
-        LEFT JOIN bill_detail bd2 
-            ON bd2.id_bill = b.id
-        LEFT JOIN Bill b2 
-            ON b2.id = bd2.id_bill
-        GROUP BY dr.Ngay
-        ORDER BY dr.Ngay ASC
-        OPTION (MAXRECURSION 0);
+            WITH DateRange AS (
+                SELECT CAST(GETDATE() AS DATE) AS Ngay
+                UNION ALL
+                SELECT DATEADD(DAY, -1, Ngay)
+                FROM DateRange 
+                WHERE Ngay > DATEADD(DAY, -7, GETDATE()) -- Lấy dữ liệu từ ngày hôm nay đến 7 ngày trước
+            )
+            SELECT 
+                FORMAT(dr.Ngay, 'dd-MM-yyyy') AS Ngay,  -- Định dạng ngày
+                COALESCE(COUNT(DISTINCT b.id), 0) AS HoaDon,  -- Số lượng hóa đơn
+                -- Sử dụng SELECT con để tính tổng số lượng cho mỗi ngày
+                COALESCE((
+                    SELECT SUM(CASE WHEN b.status = 5 THEN bd.quantity ELSE 0 END)
+                    FROM dbo.Bill b
+                    LEFT JOIN dbo.bill_detail bd ON bd.id_bill = b.id
+                    WHERE b.status = 5
+                    AND CAST(b.update_date AS DATE) = dr.Ngay
+                ), 0)
+                + COALESCE(SUM(CASE WHEN ebd2.id_exchang_bill IS NOT NULL THEN ebd2.quantity_exchange ELSE 0 END), 0)
+                + COALESCE(SUM(CASE WHEN b2.status = 8 THEN bd2.quantity ELSE 0 END), 0)
+                - COALESCE(SUM(CASE WHEN rbd2.id_return_bill IS NOT NULL THEN rbd2.quantity_return ELSE 0 END), 0) AS SoLuong
+            FROM DateRange dr
+            LEFT JOIN Bill b ON CAST(b.update_date AS DATE) = dr.Ngay AND b.status IN (5, 8)
+            LEFT JOIN bill_detail bd ON b.id = bd.id_bill
+            LEFT JOIN return_bill_exchange_bill rbeb ON rbeb.id_bill = b.id
+            LEFT JOIN exchange_bill_detail ebd2 ON ebd2.id_exchang_bill = rbeb.id
+            LEFT JOIN return_bill_detail rbd2 ON rbd2.id_return_bill = rbeb.id
+            LEFT JOIN bill_detail bd2 ON bd2.id_bill = b.id
+            LEFT JOIN Bill b2 ON b2.id = bd2.id_bill
+            GROUP BY dr.Ngay
+            ORDER BY dr.Ngay ASC
+            OPTION (MAXRECURSION 0);
         """, nativeQuery = true)
     List<Object[]> findLast7DaysStatistics();
 
-    @Query(value = """
-        SELECT 
-            FORMAT(MAX(b.update_date), 'dd-MM-yyyy') AS NgayCuoiNam,
-            COUNT(DISTINCT b.id) AS HoaDonTheoNam,
-            COALESCE(SUM(CASE 
-                WHEN b.status = 5 THEN bd.quantity 
-                ELSE 0 
-            END), 0)
-            + COALESCE(SUM(CASE 
-                WHEN ebd2.id_exchang_bill IS NOT NULL THEN ebd2.quantity_exchange 
-                ELSE 0 
-            END), 0)
-            + COALESCE(SUM(CASE 
-                WHEN b2.status = 8 THEN bd2.quantity 
-                ELSE 0 
-            END), 0)
-            - COALESCE(SUM(CASE 
-                WHEN rbd2.id_return_bill IS NOT NULL THEN rbd2.quantity_return 
-                ELSE 0 
-            END), 0) AS TongSoLuong
-        FROM bill b
-        LEFT JOIN bill_detail bd 
-            ON b.id = bd.id_bill
-        LEFT JOIN return_bill_exchange_bill rbeb 
-            ON rbeb.id_bill = b.id
-        LEFT JOIN exchange_bill_detail ebd2 
-            ON ebd2.id_exchang_bill = rbeb.id
-        LEFT JOIN return_bill_detail rbd2 
-            ON rbd2.id_return_bill = rbeb.id
-        LEFT JOIN bill_detail bd2 
-            ON bd2.id_bill = b.id
-        LEFT JOIN bill b2 
-            ON b2.id = bd2.id_bill
-        WHERE b.status IN (5, 8)
-        AND YEAR(b.update_date) BETWEEN YEAR(GETDATE()) - 6 AND YEAR(GETDATE())
-        GROUP BY YEAR(b.update_date)
-        ORDER BY YEAR(b.update_date) ASC;
-        """, nativeQuery = true)
+    @Query(value = "SELECT " +
+            "FORMAT(MAX(b.update_date), 'dd-MM-yyyy') AS Thang, " +
+            "COUNT(DISTINCT b.id) AS HoaDonThang, " +
+            "(SELECT SUM(CASE WHEN b.status = 5 THEN bd.quantity ELSE 0 END) " +
+            "FROM dbo.Bill b " +
+            "LEFT JOIN dbo.bill_detail bd ON bd.id_bill = b.id " +
+            "WHERE b.status = 5 " +
+            "AND MONTH(b.update_date) = MONTH(GETDATE()) " +
+            "AND YEAR(b.update_date) = YEAR(GETDATE())) " +
+            "+ SUM(CASE WHEN ebd2.id_exchang_bill IS NOT NULL THEN ebd2.quantity_exchange ELSE 0 END) " +
+            "+ SUM(CASE WHEN b2.status = 8 THEN bd2.quantity ELSE 0 END) " +
+            "- SUM(CASE WHEN rbd2.id_return_bill IS NOT NULL THEN rbd2.quantity_return ELSE 0 END) AS soLuong " +
+            "FROM Bill b " +
+            "LEFT JOIN bill_detail bd ON bd.id_bill = b.id " +
+            "LEFT JOIN Bill b2 ON b2.id = bd.id_bill " +
+            "LEFT JOIN bill_detail bd2 ON bd2.id_bill = b2.id " +
+            "LEFT JOIN return_bill_exchange_bill rbeb ON rbeb.id_bill = b.id " +
+            "LEFT JOIN exchange_bill_detail ebd2 ON ebd2.id_exchang_bill = rbeb.id " +
+            "LEFT JOIN return_bill_detail rbd2 ON rbd2.id_return_bill = rbeb.id " +
+            "WHERE b.status IN (5, 8) " +
+            "AND b.update_date >= DATEADD(YEAR, -7, GETDATE()) "+
+            "GROUP BY FORMAT(b.update_date, 'MM-yyyy') " +
+            "ORDER BY FORMAT(b.update_date, 'MM-yyyy') DESC", nativeQuery = true)
     List<Object[]> getAnnualStatistics();
 
     @Query(value = """
@@ -293,7 +283,8 @@ public interface ChartRepository extends JpaRepository<Bill, Integer> {
                      FROM dbo.image i
                      WHERE i.id_product = pd.id
                      FOR XML PATH('')), 1, 2, '') AS ImageNames,
-                ROW_NUMBER() OVER (ORDER BY SUM(bd.quantity) DESC) AS RowNum
+                ROW_NUMBER() OVER (ORDER BY SUM(bd.quantity) DESC) AS RowNum,
+                pdt.id AS ProductDetailID -- Thêm trường này để JOIN với return_bill_detail và exchange_bill_detail
             FROM
                 dbo.bill b
             JOIN
@@ -309,7 +300,7 @@ public interface ChartRepository extends JpaRepository<Bill, Integer> {
             LEFT JOIN
                 dbo.sale_product sp ON pdt.id_sale_product = sp.id
             WHERE
-                b.status = 5
+                b.status IN (5, 8)
             GROUP BY
                 pd.name_product,
                 c.name_color,
@@ -322,18 +313,40 @@ public interface ChartRepository extends JpaRepository<Bill, Integer> {
                         ELSE pdt.price
                     END
                 AS DECIMAL(10, 2)),
-                pd.id
+                pd.id,
+                pdt.id
         )
         SELECT
-            ProductName,
-            ColorName,
-            SizeName,
-            OriginalPrice,
-            DiscountedPrice,
-            TotalQuantity,
-            ImageNames
-        FROM RankedProducts
-        WHERE RowNum <= 10;
+            rp.ProductName,
+            rp.ColorName,
+            rp.SizeName,
+            rp.OriginalPrice,
+            rp.DiscountedPrice,
+            rp.TotalQuantity
+            + COALESCE(ebd.quantity_exchange, 0) -- Cộng số lượng trao đổi
+            - COALESCE(rbd.quantity_return, 0) AS TotalQuantity, -- Trừ số lượng trả lại
+            rp.ImageNames
+        FROM RankedProducts rp
+        LEFT JOIN (
+            SELECT
+                rbd.id_product_detail,
+                SUM(rbd.quantity_return) AS quantity_return
+            FROM
+                dbo.return_bill_detail rbd
+            GROUP BY
+                rbd.id_product_detail
+        ) rbd ON rp.ProductDetailID = rbd.id_product_detail
+        LEFT JOIN (
+            SELECT
+                ebd.id_product_detail,
+                SUM(ebd.quantity_exchange) AS quantity_exchange
+            FROM
+                dbo.exchange_bill_detail ebd
+            GROUP BY
+                ebd.id_product_detail
+        ) ebd ON rp.ProductDetailID = ebd.id_product_detail
+        WHERE
+            rp.RowNum <= 10;
         
     """, countQuery = """
         WITH RankedProducts AS (
@@ -371,7 +384,7 @@ public interface ChartRepository extends JpaRepository<Bill, Integer> {
             LEFT JOIN
                 dbo.sale_product sp ON pdt.id_sale_product = sp.id
             WHERE
-                b.status = 5
+                b.status in(5,8)
             GROUP BY
                 pd.name_product,
                 c.name_color,
@@ -619,15 +632,28 @@ public interface ChartRepository extends JpaRepository<Bill, Integer> {
                     "    UNION ALL " +
                     "    SELECT DATEADD(DAY, 1, Ngay) " +
                     "    FROM DateRange " +
-                    "    WHERE Ngay < CAST(:endDate AS DATE) " + // Sử dụng ngày kết thúc làm tham số
-                    ") " +
+                    "    WHERE Ngay < CAST(:endDate AS DATE) " +
+            ") " +
                     "SELECT " +
                     "    FORMAT(dr.Ngay, 'dd-MM-yyyy') AS Ngay, " +
                     "    COALESCE(COUNT(DISTINCT b.id), 0) AS HoaDon, " +
-                    "    COALESCE(SUM(bd.quantity), 0) AS SoLuong " +
+                    "    COALESCE( " +
+                    "        (SELECT SUM(CASE WHEN b.status = 5 THEN bd.quantity ELSE 0 END) " +
+                    "         FROM dbo.Bill b " +
+                    "         LEFT JOIN dbo.bill_detail bd ON bd.id_bill = b.id " +
+                    "         WHERE b.status = 5 " +
+                    "         AND CAST(b.update_date AS DATE) = dr.Ngay), 0 " +
+                    "    ) + COALESCE(SUM(CASE WHEN ebd2.id_exchang_bill IS NOT NULL THEN ebd2.quantity_exchange ELSE 0 END), 0) " +
+                    "    + COALESCE(SUM(CASE WHEN b2.status = 8 THEN bd2.quantity ELSE 0 END), 0) " +
+                    "    - COALESCE(SUM(CASE WHEN rbd2.id_return_bill IS NOT NULL THEN rbd2.quantity_return ELSE 0 END), 0) AS SoLuong " +
                     "FROM DateRange dr " +
                     "LEFT JOIN bill b ON CAST(b.update_date AS DATE) = dr.Ngay AND b.status IN(5,8) " +
                     "LEFT JOIN bill_detail bd ON b.id = bd.id_bill " +
+                    "LEFT JOIN return_bill_exchange_bill rbeb ON rbeb.id_bill = b.id " +
+                    "LEFT JOIN exchange_bill_detail ebd2 ON ebd2.id_exchang_bill = rbeb.id " +
+                    "LEFT JOIN return_bill_detail rbd2 ON rbd2.id_return_bill = rbeb.id " +
+                    "LEFT JOIN bill_detail bd2 ON bd2.id_bill = b.id " +
+                    "LEFT JOIN Bill b2 ON b2.id = bd2.id_bill " +
                     "GROUP BY dr.Ngay " +
                     "ORDER BY dr.Ngay ASC " +
                     "OPTION (MAXRECURSION 0)", nativeQuery = true)
