@@ -24,28 +24,28 @@ public class ChartImplement implements ChartService {
     ChartRepository chartRepository;
 
     @Override
-    public long monthlyBill() {
+    public Long monthlyBill() {
         return chartRepository.monthlyBill();
     }
 
     @Override
-    public long totalMonthlyBill() {
+    public Long totalMonthlyBill() {
         return chartRepository.totalMonthlyBill();
     }
 
     @Override
-    public long totalMonthlyInvoiceProducts() {
+    public Long totalMonthlyInvoiceProducts() {
         return chartRepository.totalMonthlyInvoiceProducts();
     }
 
     @Override
-    public long billOfTheDay() {
+    public Long billOfTheDay() {
         return chartRepository.billOfTheDay();
     }
 
     @Override
-    public long totalPriceToday() {
-        return 1;
+    public Long totalPriceToday() {
+        return chartRepository.totalPriceToday();
     }
 
     @Override
