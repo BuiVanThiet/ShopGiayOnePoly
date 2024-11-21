@@ -12,15 +12,15 @@ import java.util.Date;
 import java.util.List;
 
 public interface ChartService {
-    long monthlyBill();
+    Long monthlyBill();
 
-    long totalMonthlyBill();
+    Long totalMonthlyBill();
 
-    long totalMonthlyInvoiceProducts();
+    Long totalMonthlyInvoiceProducts();
 
-    long billOfTheDay();
+    Long billOfTheDay();
 
-    long totalPriceToday();
+    Long totalPriceToday();
 
     List<Date> findLastBillDates();
 
