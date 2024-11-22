@@ -471,9 +471,6 @@ public class ClientRestController extends BaseEmail {
                                                            @PathVariable("idAddress") Integer idAddress,
                                                            @RequestBody AddressForCustomerRequest addressForCustomerRequest) {
         String addressForCustomer = String.valueOf(addressForCustomerRequest.getAddressCustomer());
-//        String nameCustomer = String.valueOf(addressForCustomerRequest.getNameCustomer());
-//        String phoneNumber = String.valueOf(addressForCustomerRequest.getPhoneNumber());
-//        String emailCustmer = String.valueOf(addressForCustomerRequest.getEmailCustmer());
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
         Integer idCustomerLogin = clientLoginResponse.getId();
 
@@ -500,7 +497,7 @@ public class ClientRestController extends BaseEmail {
             System.out.println("Cập nhật địa chỉ thành công");
             return ResponseEntity.ok("Cập nhật địa chỉ thành công");
         }
-
+        System.out.println("Cập nhật địa chỉ thất bại");
         // Trả về phản hồi lỗi nếu khách hàng chưa đăng nhập
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Bạn cần đăng nhập để cập nhật địa chỉ");
     }
