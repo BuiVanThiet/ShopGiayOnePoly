@@ -32,12 +32,9 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         fetch('https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/fee', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Token': apiKey
-            },
-            body: JSON.stringify({
+            method: 'POST', headers: {
+                'Content-Type': 'application/json', 'Token': apiKey
+            }, body: JSON.stringify({
                 "service_id": serviceId,
                 "insurance_value": totalPriceCartItem,
                 "to_district_id": parseInt(toDistrictId),
@@ -76,12 +73,9 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         fetch('https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/available-services', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Token': apiKey
-            },
-            body: JSON.stringify({
+            method: 'POST', headers: {
+                'Content-Type': 'application/json', 'Token': apiKey
+            }, body: JSON.stringify({
                 "shop_id": parseInt(shopId, 10),
                 "from_district": parseInt(fromDistrictId, 10),
                 "to_district": parseInt(toDistrictId, 10)
@@ -182,21 +176,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Gửi yêu cầu tính phí vận chuyển
         fetch('https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/fee', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Token': apiKey // Đảm bảo rằng apiKey được khai báo đúng
-            },
-            body: JSON.stringify({
+            method: 'POST', headers: {
+                'Content-Type': 'application/json', 'Token': apiKey // Đảm bảo rằng apiKey được khai báo đúng
+            }, body: JSON.stringify({
                 "service_id": serviceIdInt, // Đảm bảo service_id là số nguyên
                 "insurance_value": totalPriceCartItem, // Đảm bảo totalPriceCartItem đã được khai báo
-                "to_district_id": parseInt(toDistrictId),
-                "to_ward_code": toWardCode,
-                "weight": weight, // Đảm bảo weight đã được khai báo
-                "length": 60,
-                "width": 15,
-                "height": 20,
-                "from_district_id": fromDistrictId // Đảm bảo từ District ID được khai báo
+                "to_district_id": parseInt(toDistrictId), "to_ward_code": toWardCode, "weight": weight, // Đảm bảo weight đã được khai báo
+                "length": 60, "width": 15, "height": 20, "from_district_id": fromDistrictId // Đảm bảo từ District ID được khai báo
             })
         })
             .then(response => response.json())
@@ -204,7 +190,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (data.code === 200) {
                     const shippingFee = data.data.total;
                     document.getElementById("spanShippingFee").textContent = `${shippingFee} VND`;
-                    calculateTotalPrice(); // Nếu có hàm này để tính tổng giá
+                    calculateTotalPrice();
+                    console.log("Phi ship sau khi doi: " + shippingFee)
                     shippingFeeCalculated = true;
                 } else {
                     console.error('Lỗi tính phí ship:', data.message);
@@ -226,12 +213,9 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         fetch('https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/available-services', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Token': apiKey
-            },
-            body: JSON.stringify({
+            method: 'POST', headers: {
+                'Content-Type': 'application/json', 'Token': apiKey
+            }, body: JSON.stringify({
                 shop_id: parseInt(shopId, 10),
                 from_district: parseInt(fromDistrictId, 10),
                 to_district: parseInt(toDistrictId, 10)
@@ -317,11 +301,9 @@ document.addEventListener("DOMContentLoaded", function () {
         if (event.target.closest('.change-address')) {
             const selectedAddressElement = document.querySelector('.info-address-shipping input[type="radio"]:checked');
             if (!selectedAddressElement) {
-                console.error("Không có radio nào được chọn.");
+                console.error("Không có chưa nào được chọn.");
                 return;
             }
-            console.log("Phần tử radio được chọn:", selectedAddressElement);
-
             // Lấy phần tử cha của radio
             const parentElement = selectedAddressElement.closest('.info-address-shipping');
             if (!parentElement) {
@@ -371,159 +353,296 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     document.addEventListener('DOMContentLoaded', function () {
-        changeAddress();
         autoCalculateShippingFee();
     });
 
 // Thêm địa chỉ mới
-    document.addEventListener("DOMContentLoaded", function () {
-        const apiKey = '0fc88a8e-6633-11ef-8e53-0a00184fe694';
-        // Các phần tử `select`
-        const provinceSelect = document.getElementById("province-create");
-        const districtSelect = document.getElementById("district-create");
-        const wardSelect = document.getElementById("ward-create");
-
-        // Lấy danh sách tỉnh
-        function fetchProvinces() {
-            fetch('https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/province', {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Token': apiKey
-                }
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.code === 200) {
-                        const provinces = data.data;
-                        provinceSelect.innerHTML = '<option value="">Chọn Tỉnh</option>';
-                        provinces.forEach(province => {
-                            const option = document.createElement("option");
-                            option.value = province.ProvinceID;
-                            option.textContent = province.ProvinceName;
-                            provinceSelect.appendChild(option);
-                        });
-                    } else {
-                        console.error('Lỗi lấy danh sách tỉnh:', data.message);
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-        }
-
-        // Lấy danh sách huyện theo tỉnh
-        function fetchDistricts(provinceId) {
-            fetch(`https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/district?province_id=${provinceId}`, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Token': apiKey
-                }
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.code === 200) {
-                        const districts = data.data;
-                        districtSelect.innerHTML = '<option value="">Chọn Huyện</option>';
-                        districts.forEach(district => {
-                            const option = document.createElement("option");
-                            option.value = district.DistrictID;
-                            option.textContent = district.DistrictName;
-                            districtSelect.appendChild(option);
-                        });
-                    } else {
-                        console.error('Lỗi lấy danh sách huyện:', data.message);
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-        }
-
-        // Lấy danh sách xã/phường theo huyện
-        function fetchWards(districtId) {
-            fetch(`https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/ward?district_id=${districtId}`, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Token': apiKey
-                }
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.code === 200) {
-                        const wards = data.data;
-                        wardSelect.innerHTML = '<option value="">Chọn Xã, Phường</option>';
-                        wards.forEach(ward => {
-                            const option = document.createElement("option");
-                            option.value = ward.WardCode;
-                            option.textContent = ward.WardName;
-                            wardSelect.appendChild(option);
-                        });
-                    } else {
-                        console.error('Lỗi lấy danh sách xã/phường:', data.message);
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-        }
-
-        // Sự kiện thay đổi tỉnh -> Lấy huyện
-        provinceSelect.addEventListener("change", function () {
-            const provinceId = provinceSelect.value;
-            if (provinceId) {
-                fetchDistricts(provinceId);
-            } else {
-                districtSelect.innerHTML = '<option value="">Chọn Huyện</option>';
-                wardSelect.innerHTML = '<option value="">Chọn Xã, Phường</option>';
-            }
-        });
-
-        // Sự kiện thay đổi huyện -> Lấy xã/phường
-        districtSelect.addEventListener("change", function () {
-            const districtId = districtSelect.value;
-            if (districtId) {
-                fetchWards(districtId);
-            } else {
-                wardSelect.innerHTML = '<option value="">Chọn Xã, Phường</option>';
-            }
-        });
-
-        // Gọi hàm khởi tạo để tải danh sách tỉnh ban đầu
-        fetchProvinces();
-    })
-
-    function createNewAddress() {
-        // Lấy giá trị từ các trường nhập
-        const fullName = document.getElementById("FullNameCreate").value;
-        const phone = document.getElementById("PhoneCreate").value;
-        const mail = document.getElementById("MailCreate").value;
-
-        // Lấy giá trị từ các select box
-        const provinceId = document.getElementById("province-create").value;
-        const districtId = document.getElementById("district-create").value;
-        const wardCode = document.getElementById("ward-create").value;
-
-        // Lấy tên hiển thị của tỉnh, huyện, xã
-        const province = document.getElementById("province-create").options[document.getElementById("province-create").selectedIndex].text;
-        const district = document.getElementById("district-create").options[document.getElementById("district-create").selectedIndex].text;
-        const ward = document.getElementById("ward-create").options[document.getElementById("ward-create").selectedIndex].text;
-
-        // Lấy địa chỉ cụ thể
-        const specificAddress = document.getElementById("specificAddress").value;
-
-        // Ghép địa chỉ đầy đủ
-        const fullAddressText = `${specificAddress},${ward}, ${district}, ${province}`;
-        const addressForCustomerText = `${fullName},${phone},${mail},${provinceId},${districtId},${wardCode},${fullAddressText}`
-
-
-        // Gửi yêu cầu AJAX
-        $.ajax({
-            url: "/api-client/new-address-customer",
-            type: "POST",
-            contentType: "application/json",
-            data: JSON.stringify(addressForCustomerText),
-            success: function (response) {
-                alert(response);
-                $("#addNewAddressModal").modal("hide"); // Ẩn modal
-            },
-            error: function (xhr) {
-                alert("Có lỗi xảy ra khi thêm địa chỉ: " + xhr.responseText);
-            }
-        });
-    }
 });
+document.addEventListener("DOMContentLoaded", function () {
+    const apiKey = '0fc88a8e-6633-11ef-8e53-0a00184fe694';
+    const provinceSelect = document.getElementById("province-create");
+    const districtSelect = document.getElementById("district-create");
+    const wardSelect = document.getElementById("ward-create");
+
+    function fetchProvinces() {
+        fetch('https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/province', {
+            headers: {
+                'Content-Type': 'application/json', 'Token': apiKey
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.code === 200) {
+                    const provinces = data.data;
+                    provinceSelect.innerHTML = '<option value="">Chọn Tỉnh</option>';
+                    provinces.forEach(province => {
+                        let option = document.createElement("option");
+                        option.value = province.ProvinceID;
+                        option.textContent = province.ProvinceName;
+                        provinceSelect.appendChild(option);
+                    });
+                } else {
+                    console.error('Lỗi lấy danh sách tỉnh:', data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function fetchDistricts(provinceId) {
+        fetch(`https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/district?province_id=${provinceId}`, {
+            headers: {
+                'Content-Type': 'application/json', 'Token': apiKey
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.code === 200) {
+                    const districts = data.data;
+                    districtSelect.innerHTML = '<option value="">Chọn Huyện</option>';
+                    districts.forEach(district => {
+                        let option = document.createElement("option");
+                        option.value = district.DistrictID;
+                        option.textContent = district.DistrictName;
+                        districtSelect.appendChild(option);
+                    });
+                    wardSelect.innerHTML = '<option value="">Chọn Xã, Phường</option>'; // Xóa danh sách xã khi chọn huyện mới
+                } else {
+                    console.error('Lỗi lấy danh sách huyện:', data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function fetchWards(districtId) {
+        fetch(`https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/ward?district_id=${districtId}`, {
+            headers: {
+                'Content-Type': 'application/json', 'Token': apiKey
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.code === 200) {
+                    const wards = data.data;
+                    wardSelect.innerHTML = '<option value="">Chọn Xã, Phường</option>';
+                    wards.forEach(ward => {
+                        let option = document.createElement("option");
+                        option.value = ward.WardCode;
+                        option.textContent = ward.WardName;
+                        wardSelect.appendChild(option);
+                    });
+                } else {
+                    console.error('Lỗi lấy danh sách xã/phường:', data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    provinceSelect.addEventListener("change", function () {
+        const provinceId = provinceSelect.value;
+        if (provinceId) {
+            districtSelect.innerHTML = '<option value="">Đang tải...</option>';
+            fetchDistricts(provinceId);
+        } else {
+            districtSelect.innerHTML = '<option value="">Chọn Huyện</option>';
+            wardSelect.innerHTML = '<option value="">Chọn Xã, Phường</option>';
+        }
+    });
+
+    districtSelect.addEventListener("change", function () {
+        const districtId = districtSelect.value;
+        if (districtId) {
+            wardSelect.innerHTML = '<option value="">Đang tải...</option>';
+            fetchWards(districtId);
+        } else {
+            wardSelect.innerHTML = '<option value="">Chọn Xã, Phường</option>';
+        }
+    });
+
+    // Gọi hàm lấy danh sách tỉnh khi tải trang
+    fetchProvinces();
+});
+
+function createNewAddress() {
+    // Lấy giá trị từ các trường nhập
+    const fullName = document.getElementById("FullNameCreate").value;
+    const phone = document.getElementById("PhoneCreate").value;
+    const mail = document.getElementById("MailCreate").value;
+
+    // Lấy giá trị từ các select box
+    const provinceId = document.getElementById("province-create").value;
+    const districtId = document.getElementById("district-create").value;
+    const wardCode = document.getElementById("ward-create").value;
+
+    // Lấy tên hiển thị của tỉnh, huyện, xã
+    const province = document.getElementById("province-create").options[document.getElementById("province-create").selectedIndex].text;
+    const district = document.getElementById("district-create").options[document.getElementById("district-create").selectedIndex].text;
+    const ward = document.getElementById("ward-create").options[document.getElementById("ward-create").selectedIndex].text;
+
+    // Lấy địa chỉ cụ thể
+    const specificAddress = document.getElementById("specificAddress").value;
+
+    // Ghép địa chỉ đầy đủ
+    const fullAddressText = `${specificAddress},${ward}, ${district}, ${province}`;
+    const addressForCustomerText = `${fullName},${phone},${mail},${provinceId},${districtId},${wardCode},${fullAddressText}`
+
+
+    // Gửi yêu cầu AJAX
+    $.ajax({
+        url: "/api-client/new-address-customer",
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify(addressForCustomerText),
+        success: function (response) {
+            alert(response);
+            $("#addNewAddressModal").modal("hide"); // Ẩn modal
+        },
+        error: function (xhr) {
+            alert("Có lỗi xảy ra khi thêm địa chỉ: " + xhr.responseText);
+        }
+    });
+}
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    const apiKey = '0fc88a8e-6633-11ef-8e53-0a00184fe694';
+    const provinceSelect = document.getElementById("province-update");
+    const districtSelect = document.getElementById("district-update");
+    const wardSelect = document.getElementById("ward-update");
+
+    function fetchProvinces() {
+        fetch('https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/province', {
+            headers: {
+                'Content-Type': 'application/json', 'Token': apiKey
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.code === 200) {
+                    const provinces = data.data;
+                    provinceSelect.innerHTML = '<option value="">Chọn Tỉnh</option>';
+                    provinces.forEach(province => {
+                        let option = document.createElement("option");
+                        option.value = province.ProvinceID;
+                        option.textContent = province.ProvinceName;
+                        provinceSelect.appendChild(option);
+                    });
+                } else {
+                    console.error('Lỗi lấy danh sách tỉnh:', data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function fetchDistricts(provinceId) {
+        fetch(`https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/district?province_id=${provinceId}`, {
+            headers: {
+                'Content-Type': 'application/json', 'Token': apiKey
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.code === 200) {
+                    const districts = data.data;
+                    districtSelect.innerHTML = '<option value="">Chọn Huyện</option>';
+                    districts.forEach(district => {
+                        let option = document.createElement("option");
+                        option.value = district.DistrictID;
+                        option.textContent = district.DistrictName;
+                        districtSelect.appendChild(option);
+                    });
+                    wardSelect.innerHTML = '<option value="">Chọn Xã, Phường</option>'; // Xóa danh sách xã khi chọn huyện mới
+                } else {
+                    console.error('Lỗi lấy danh sách huyện:', data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function fetchWards(districtId) {
+        fetch(`https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/ward?district_id=${districtId}`, {
+            headers: {
+                'Content-Type': 'application/json', 'Token': apiKey
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.code === 200) {
+                    const wards = data.data;
+                    wardSelect.innerHTML = '<option value="">Chọn Xã, Phường</option>';
+                    wards.forEach(ward => {
+                        let option = document.createElement("option");
+                        option.value = ward.WardCode;
+                        option.textContent = ward.WardName;
+                        wardSelect.appendChild(option);
+                    });
+                } else {
+                    console.error('Lỗi lấy danh sách xã/phường:', data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    provinceSelect.addEventListener("change", function () {
+        const provinceId = provinceSelect.value;
+        if (provinceId) {
+            districtSelect.innerHTML = '<option value="">Đang tải...</option>';
+            fetchDistricts(provinceId);
+        } else {
+            districtSelect.innerHTML = '<option value="">Chọn Huyện</option>';
+            wardSelect.innerHTML = '<option value="">Chọn Xã, Phường</option>';
+        }
+    });
+
+    districtSelect.addEventListener("change", function () {
+        const districtId = districtSelect.value;
+        if (districtId) {
+            wardSelect.innerHTML = '<option value="">Đang tải...</option>';
+            fetchWards(districtId);
+        } else {
+            wardSelect.innerHTML = '<option value="">Chọn Xã, Phường</option>';
+        }
+    });
+
+    // Gọi hàm lấy danh sách tỉnh khi tải trang
+    fetchProvinces();
+});
+
+function updateAddress() {
+    const fullName = document.getElementById("FullNameUpdate").value;
+    const phone = document.getElementById("PhoneUpdate").value;
+    const mail = document.getElementById("MailUpdate").value;
+    const provinceId = document.getElementById("province-update").value;
+    const districtId = document.getElementById("district-update").value;
+    const wardCode = document.getElementById("ward-update").value;
+    const province = document.getElementById("province-update").options[document.getElementById("province-update").selectedIndex].text;
+    const district = document.getElementById("district-update").options[document.getElementById("district-update").selectedIndex].text;
+    const ward = document.getElementById("ward-update").options[document.getElementById("ward-update").selectedIndex].text;
+    const specificAddress = document.getElementById("specificAddressUpdate").value;
+
+    const fullAddressText = `${specificAddress}, ${ward}, ${district}, ${province}`;
+    const addressForCustomerText = `${fullName},${phone},${mail},${provinceId},${districtId},${wardCode},${fullAddressText}`;
+
+    const addressForCustomerRequest = {
+        addressCustomer: addressForCustomerText
+    };
+    const idAddress = document.getElementById("id-address").value;
+
+    $.ajax({
+        url: `/api-client/update-address-customer/${idAddress}`,
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify(addressForCustomerRequest),
+        success: function (response) {
+            console.log("Response từ server:", response);
+            alert("Cập nhật thành công!");
+            $("#updateAddressModal").modal("hide"); // Ẩn modal
+        },
+        error: function (xhr) {
+            console.error("Error status:", xhr.status);
+            console.error("Error response:", xhr.responseJSON);
+            alert("Có lỗi xảy ra khi update địa chỉ: " + xhr.responseText);
+        }
+    });
+}
+
 

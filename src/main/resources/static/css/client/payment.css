@@ -276,3 +276,22 @@ textarea {
     max-height: 900px;
     margin: auto;
 }
+/*Địa chỉ danh sách*/
+.list-address-customer .info-address-shipping {
+    padding: 10px 0; /* Tạo khoảng cách giữa các phần tử */
+    display: flex;
+    align-items: center;
+}
+
+.list-address-customer .info-address-shipping:not(:last-child) {
+    border-bottom: 1px solid #ddd; /* Thêm đường gạch chân */
+}
+
+.short-address {
+    margin: 0 10px; /* Khoảng cách giữa radio và nội dung địa chỉ */
+}
+
+.form-check-input {
+    margin-right: 10px; /* Tạo khoảng cách cho radio */
+}
+

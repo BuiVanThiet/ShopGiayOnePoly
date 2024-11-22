@@ -129,7 +129,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-8">
-                                        <p id="infoCustomer" th:text="${infoCustomer}+'.'"></p>
+                                    <p id="infoCustomer" th:text="${infoCustomer}+'.'"></p>
                                     <p id="original-address" th:text="${originalAddress}+'.'"></p>
                                 </div>
                                 <div class="col-4">
@@ -166,11 +166,20 @@
                                         <!-- Danh sách địa chỉ -->
                                         <div class="list-address-customer" th:each="address : ${listAddress}">
                                             <div class="info-address-shipping d-flex align-items-center">
-                                                <input class="form-check-input" type="radio" name="selectedAddress">
+                                                <input class="form-check-input" type="radio" name="selectedAddress"/>
+                                                <input type="hidden" class="id-address" th:value="${address.id}"/>
                                                 <p class="short-address" th:text="${address.shortAddress}"></p>
-                                                <input type="hidden" class="original-address" th:value="${address.originalAddress}"/>
-                                            </div>
+                                                <input type="hidden" class="original-address"
+                                                       th:value="${address.originalAddress}"/>
 
+                                                <div class="button-container">
+                                                    <button class="btn-update-address" data-bs-toggle="modal"
+                                                            data-bs-target="#updateAddressModal">
+                                                        <span class="text">Thay đổi</span>
+                                                        <span class="icon"><i class="fas fa-sync-alt"></i></span>
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
 
                                         <!-- Nút Thêm Địa Chỉ Mới -->
@@ -198,6 +207,74 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Modal update -->
+                    <div class="modal fade" id="updateAddressModal" tabindex="-1"
+                         aria-labelledby="updateAddressModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <!-- Header -->
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="updateAddressModalLabel">Cập nhật địa chỉ</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                </div>
+                                <!-- Body -->
+                                <div class="modal-body">
+                                    <form id="updateAddressForm" class="row">
+                                        <div class="col-md-12">
+                                            <input type="text" class="form-control" id="FullNameUpdate"
+                                                   placeholder="Họ tên"
+                                                   required>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <input type="text" class="form-control" id="PhoneUpdate" placeholder="SĐT"
+                                                   required>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <input type="email" class="form-control" id="MailUpdate" placeholder="Mail"
+                                                   required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="specificAddressUpdate" class="form-label">Địa chỉ cụ
+                                                thể:</label>
+                                            <textarea class="form-control" id="specificAddressUpdate"
+                                                      name="specificAddress" rows="3" required></textarea>
+                                        </div>
+                                        <!-- Tỉnh/Thành phố -->
+                                        <div class="mb-3">
+                                            <label for="province-update" class="form-label">Tỉnh/Thành phố:</label>
+                                            <select id="province-update" class="form-select" required>
+                                                <option value="">Chọn Tỉnh</option>
+                                                <!-- Options sẽ được thêm động qua JavaScript -->
+                                            </select>
+                                        </div>
+                                        <!-- Huyện -->
+                                        <div class="mb-3">
+                                            <label for="district-update" class="form-label">Huyện:</label>
+                                            <select id="district-update" class="form-select" required>
+                                                <option value="">Chọn Huyện</option>
+                                            </select>
+                                        </div>
+                                        <!-- Xã/Phường -->
+                                        <div class="mb-3">
+                                            <label for="ward-update" class="form-label">Xã/Phường:</label>
+                                            <select id="ward-update" class="form-select" required>
+                                                <option value="">Chọn Xã, Phường</option>
+                                            </select>
+                                        </div>
+                                    </form>
+                                </div>
+                                <!-- Footer -->
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng
+                                    </button>
+                                    <button type="submit" form="updateAddressForm" class="btn btn-primary" onclick="updateAddress()">Cập nhật
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
 
                     <!--                    Thêm địa chỉ mới-->
                     <div id="addNewAddressModal" class="modal fade" tabindex="-1" aria-labelledby="addNewAddressLabel"
@@ -267,7 +344,8 @@
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                                         <i class="bi bi-x-circle" style="margin-right: 5px;"></i>Hủy
                                     </button>
-                                    <button type="button" class="btn btn-primary" id="saveNewAddress" onclick="createNewAddress()">
+                                    <button type="button" class="btn btn-primary" id="saveNewAddress"
+                                            onclick="createNewAddress()">
                                         <i class="bi bi-check-circle" style="margin-right: 5px;"></i>Lưu địa chỉ
                                     </button>
 
