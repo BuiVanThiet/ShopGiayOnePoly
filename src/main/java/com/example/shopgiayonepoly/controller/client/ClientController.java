@@ -276,11 +276,13 @@ public class ClientController extends BaseBill {
             String idDistrict = addressParts.length > 1 ? addressParts[1].trim() : "";
             String idProvince = addressParts.length > 2 ? addressParts[2].trim() : "";
             String originalAddress = addressParts.length > 3 ? addressParts[3].trim() : "";
+            String infoCustomer = clientLoginResponse.getFullName() + clientLoginResponse.getNumberPhone();
+            model.addAttribute("infoCustomer", infoCustomer);
+            model.addAttribute("originalAddress", originalAddress);
 
             model.addAttribute("IdWard", idWard);
             model.addAttribute("IdDistrict", idDistrict);
             model.addAttribute("IdProvince", idProvince);
-            model.addAttribute("originalAddress", originalAddress);
 
             // Lấy danh sách AddressShip và chuẩn hóa
             List<AddressShip> addressList = clientService.getListAddressShipByIDCustomer(clientLoginResponse.getId());
@@ -311,35 +313,37 @@ public class ClientController extends BaseBill {
                         detailedAddress = specificAddress.trim(); // Toàn bộ địa chỉ là chi tiết
                     }
 
-                    // So sánh địa chỉ của khách hàng với địa chỉ giao hàng
-                    boolean isSameAddress = idWard.equals(shipWard)
-                                            && idDistrict.equals(shipDistrict)
-                                            && idProvince.equals(shipProvince);
 
-                    // Nếu địa chỉ không trùng, thêm vào danh sách
-                    if (!isSameAddress) {
-                        String formattedShipAddress = String.join(", ", shipProvince, shipDistrict, shipWard, detailedAddress).replaceAll(", $", "");
+                    String formattedShipAddress = String.join(", ", shipProvince, shipDistrict, shipWard, detailedAddress).replaceAll(", $", "");
+
+// Kiểm tra số lượng dấu phẩy trong địa chỉ đã chuẩn hóa
+                    long commaCount = formattedShipAddress.chars().filter(ch -> ch == ',').count();
+
+// Nếu địa chỉ có 4 dấu phẩy (có 5 phần khi tách), thì thêm vào danh sách
+                    if (commaCount >3) {
                         responseListAddress.add(new AddressShipReponse(formattedShipAddress, detailedAddress));
                         System.out.println("Formatted Ship Address: " + formattedShipAddress);
                     }
-                }
-            }
 
-            model.addAttribute("listAddress", responseListAddress);
+                }
+
         }
 
-        // Cập nhật lại giỏ hàng và các thuộc tính vào model và session
-        model.addAttribute("cartItems", cartItems);
-        model.addAttribute("weight", weight);
-        model.addAttribute("totalPrice", totalPrice);
-        model.addAttribute("priceReducedShow", priceReduced);
-        session.setAttribute("idVoucherApply", idVoucherApply);
-        session.setAttribute("priceReduced", priceReduced);
-        session.setAttribute("selectedVoucher", selectedVoucher);
-
-        // Trả về view
-        return "client/bill_payment";
+        model.addAttribute("listAddress", responseListAddress);
     }
+
+    // Cập nhật lại giỏ hàng và các thuộc tính vào model và session
+        model.addAttribute("cartItems",cartItems);
+        model.addAttribute("weight",weight);
+        model.addAttribute("totalPrice",totalPrice);
+        model.addAttribute("priceReducedShow",priceReduced);
+        session.setAttribute("idVoucherApply",idVoucherApply);
+        session.setAttribute("priceReduced",priceReduced);
+        session.setAttribute("selectedVoucher",selectedVoucher);
+
+    // Trả về view
+        return"client/bill_payment";
+}
 
 
     @PostMapping("/payment")
