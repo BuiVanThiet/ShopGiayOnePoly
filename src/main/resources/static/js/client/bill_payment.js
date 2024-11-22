@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const apiKey = '0fc88a8e-6633-11ef-8e53-0a00184fe694';
     const shopId = '195165';
     const fromDistrictId = 3440; // Mã huyện cố định của kho hàng
-    const weightText = $('#weightShip').text().trim();
+    const weightText = document.getElementById("weightShip").value.trim();
     if (weightText === "") {
         alert("Không có thông tin về cân nặng.");
         return;

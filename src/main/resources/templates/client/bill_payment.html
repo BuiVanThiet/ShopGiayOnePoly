@@ -129,8 +129,8 @@
                             </div>
                             <div class="row">
                                 <div class="col-8">
-                                    <p id="infoCustomer" th:text="${infoCustomer}+'.'"></p>
-                                    <p id="original-address" th:text="${OriginalAddress}+'.'"></p>
+                                        <p id="infoCustomer" th:text="${infoCustomer}+'.'"></p>
+                                    <p id="original-address" th:text="${originalAddress}+'.'"></p>
                                 </div>
                                 <div class="col-4">
                                     <div class="button-container">
@@ -166,14 +166,11 @@
                                         <!-- Danh sách địa chỉ -->
                                         <div class="list-address-customer" th:each="address : ${listAddress}">
                                             <div class="info-address-shipping d-flex align-items-center">
-                                                <!-- Radio Button -->
                                                 <input class="form-check-input" type="radio" name="selectedAddress">
-                                                <!-- Địa chỉ -->
-                                                <p class="short-address" th:text="${address.shortAddress}">
-                                                <p class="original-address" th:text="${address.originalAddress}">
-                                                    <i class="bi bi-house-door" style="margin-right: 8px;"></i>
-                                                </p>
+                                                <p class="short-address" th:text="${address.shortAddress}"></p>
+                                                <input type="hidden" class="original-address" th:value="${address.originalAddress}"/>
                                             </div>
+
                                         </div>
 
                                         <!-- Nút Thêm Địa Chỉ Mới -->
@@ -270,8 +267,7 @@
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                                         <i class="bi bi-x-circle" style="margin-right: 5px;"></i>Hủy
                                     </button>
-                                    <button type="button" class="btn btn-primary" id="saveNewAddress"
-                                            onclick="createNewAddress()">
+                                    <button type="button" class="btn btn-primary" id="saveNewAddress" onclick="createNewAddress()">
                                         <i class="bi bi-check-circle" style="margin-right: 5px;"></i>Lưu địa chỉ
                                     </button>
 
@@ -333,11 +329,11 @@
                             <hr>
                         </div>
                         <div><label>Weight</label>
-                            <span id="weightShip" th:text="${weight}"></span>
-                            <p id="addressCustomerLogin" th:text="${addressCustomerLogin}"></p>
-                            <p id="IdWard" th:text="${IdWard}"></p>
-                            <p id="IdDistrict" th:text="${IdDistrict}"></p>
-                            <p id="IdProvince" th:text="${IdProvince}"></p>
+                            <input type="hidden" id="weightShip" th:value="${weight}"/>
+                            <input type="hidden" id="addressCustomerLogin" th:value="${addressCustomerLogin}"/>
+                            <input type="hidden" id="IdWard" th:value="${IdWard}"/>
+                            <input type="hidden" id="IdDistrict" th:value="${IdDistrict}"/>
+                            <input type="hidden" id="IdProvince" th:value="${IdProvince}"/>
                         </div>
                         <div class="summary">
                             <div class="row">
