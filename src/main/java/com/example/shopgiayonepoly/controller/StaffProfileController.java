@@ -85,6 +85,11 @@ public class StaffProfileController {
                                      HttpSession session,
                                      Model model) throws IOException {
         Staff staff = (Staff) session.getAttribute("staffLogin");
+
+        if (staff == null) {
+            return "redirect:/login"; // Chuyển hướng về trang đăng nhập nếu không tìm thấy nhân viên
+        }
+
         System.out.println("Staff từ model: " + staff);
         staffProfile.setImageStaffString(staff.getImage());
 
@@ -173,7 +178,6 @@ public class StaffProfileController {
         Staff staff = (Staff) session.getAttribute("staffLogin");
 
         if (staff == null) {
-            model.addAttribute("errorMessage", "Không tìm thấy thông tin tài khoản nhân viên.");
             return "redirect:/login"; // Chuyển hướng về trang đăng nhập nếu không tìm thấy nhân viên
         }
 

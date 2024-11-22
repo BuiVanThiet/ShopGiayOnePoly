@@ -17,8 +17,8 @@ function editRow(index, event) {
 
 
 function toggleDiv() {
-    var content = document.getElementById("collapsibleDiv");
-    var arrow = document.getElementById("arrow");
+    let content = document.getElementById("collapsibleDiv");
+    let arrow = document.getElementById("arrow");
 
     if (content.style.display === "none" || content.style.display === "") {
         content.style.display = "block"; // Mở rộng nội dung

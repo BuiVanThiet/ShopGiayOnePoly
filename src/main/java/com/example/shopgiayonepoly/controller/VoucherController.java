@@ -35,7 +35,15 @@ public class VoucherController {
     public String getListVoucherByPage(@RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber,
                                        @RequestParam(name = "pageNumberDelete", defaultValue = "0") Integer pageNumberDelete,
                                        @RequestParam(name = "pageNumberExpired", defaultValue = "0") Integer pageNumberExpired,
-                                       Model model) {
+                                       Model model,HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return "redirect:/login";
+        }
+        if(staffLogin.getStatus() != 1) {
+            return "redirect:/home_manage";
+        }
+
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<Voucher> pageVoucher = voucherService.getAllVoucherByPage(pageable);
 
@@ -72,7 +80,7 @@ public class VoucherController {
         BigDecimal oneMillion = new BigDecimal("1000000");
         LocalDate dateNow = LocalDate.now();
 
-// Kiểm tra priceReduced
+        // Kiểm tra priceReduced
         if (voucherRequest.getPriceReduced() == null) {
             result.rejectValue("priceReduced", "error.voucher", "Giá trị giảm không được để trống!");
         } else {
@@ -130,7 +138,15 @@ public class VoucherController {
 
 
     @GetMapping("/delete/{id}")
-    public String deleteVoucher(RedirectAttributes ra, @PathVariable("id") Integer id) {
+    public String deleteVoucher(RedirectAttributes ra, @PathVariable("id") Integer id,HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return "redirect:/login";
+        }
+        if(staffLogin.getStatus() != 1) {
+            return "redirect:/home_manage";
+        }
+
         voucherService.deleteVoucher(id);
         mess = "Xóa phiếu giảm giá có id: "+id+" thành công!";
         check = "1";
@@ -139,7 +155,15 @@ public class VoucherController {
     }
 
     @GetMapping("/restore/{id}")
-    public String restoreVoucher(RedirectAttributes ra, @PathVariable("id") Integer id) {
+    public String restoreVoucher(RedirectAttributes ra, @PathVariable("id") Integer id,HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return "redirect:/login";
+        }
+        if(staffLogin.getStatus() != 1) {
+            return "redirect:/home_manage";
+        }
+
         voucherService.restoreStatusVoucher(id);
         mess = "Khôi phục phiếu giảm giá có id: "+id+" thành công!";
         check = "1";
@@ -148,7 +172,15 @@ public class VoucherController {
     }
 
     @GetMapping("/edit/{id}")
-    public String getFormUpdate(Model model, @PathVariable("id") Integer id) {
+    public String getFormUpdate(Model model, @PathVariable("id") Integer id,HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return "redirect:/login";
+        }
+        if(staffLogin.getStatus() != 1) {
+            return "redirect:/home_manage";
+        }
+
         Voucher voucher = voucherService.getOne(id);
         VoucherRequest voucherRequest = new VoucherRequest();
         BeanUtils.copyProperties(voucher, voucherRequest);
@@ -159,7 +191,15 @@ public class VoucherController {
 
     @PostMapping("/update")
     public String updateVoucher(RedirectAttributes redirectAttributes, @Valid @ModelAttribute("voucher") VoucherRequest voucherRequest,
-                                BindingResult result, Model model) {
+                                BindingResult result, Model model,HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return "redirect:/login";
+        }
+        if(staffLogin.getStatus() != 1) {
+            return "redirect:/home_manage";
+        }
+
         BigDecimal zero = BigDecimal.ZERO;
         BigDecimal oneHundred = new BigDecimal("90");
         BigDecimal tenHundred = new BigDecimal("10000");
@@ -274,7 +314,15 @@ public class VoucherController {
     }
 
     @GetMapping("/extend/{id}")
-    public String extendVoucherExpired(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
+    public String extendVoucherExpired(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes,HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return "redirect:/login";
+        }
+        if(staffLogin.getStatus() != 1) {
+            return "redirect:/home_manage";
+        }
+
         voucherService.updateVoucherExpired(id);
         redirectAttributes.addFlashAttribute("mes", "Gia hạn phiếu giảm giá thành công");
         mess = "Gia hạn phiếu giảm giá có id: "+id+" thành công!";
@@ -295,7 +343,15 @@ public class VoucherController {
     }
 
     @GetMapping("/detail/{id}")
-    public String getDetailVoucherByID(@PathVariable("id") Integer id, Model model) {
+    public String getDetailVoucherByID(@PathVariable("id") Integer id, Model model,HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return "redirect:/login";
+        }
+        if(staffLogin.getStatus() != 1) {
+            return "redirect:/home_manage";
+        }
+
         Voucher voucher = voucherService.getOne(id);
         model.addAttribute("voucher", voucher);
         model.addAttribute("title", "Voucher Detail ID " + id);
@@ -303,7 +359,15 @@ public class VoucherController {
     }
 
     @GetMapping("/restore-delete/{id}")
-    public String restoreVoucherExpired(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
+    public String restoreVoucherExpired(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes,HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return "redirect:/login";
+        }
+        if(staffLogin.getStatus() != 1) {
+            return "redirect:/home_manage";
+        }
+        
         voucherService.updateVoucherExpired(id);
         redirectAttributes.addFlashAttribute("mes", "Gia hạn phiếu giảm giá thành công");
         mess = "Khôi phục phiếu giảm giá có id: "+id+" thành công!";

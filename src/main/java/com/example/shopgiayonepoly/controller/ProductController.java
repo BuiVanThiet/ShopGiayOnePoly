@@ -274,6 +274,18 @@ public class ProductController extends BaseProduct {
         Optional<Product> product = productService.findById(id);
         // Đưa dữ liệu sản phẩm vào model
         model.addAttribute("product", product);
+        List<Integer> listIDCategory = new ArrayList<>();
+        Set<String> listImage = new HashSet<>();
+        for (Category item : product.get().getCategories()) {
+            listIDCategory.add(item.getId());
+        }
+        for (Image item : product.get().getImages()) {
+            listImage.add(item.getNameImage());
+        }
+
+        model.addAttribute("selectedCategoryIds", listIDCategory);
+        model.addAttribute("listImage", listImage);
+
 
         model.addAttribute("materialList", materialService.findAll());
         model.addAttribute("manufacturerList", manufacturerService.findAll());

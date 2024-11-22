@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{Home/home_manege}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Male_Fashion Template">
+    <meta name="keywords" content="Male_Fashion, unica, creative, html">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Shop Giày Onepoly</title>
+</head>
+<body>
+<main>
+    <div layout:fragment="content">
+        <article class=" bd-gutter mt-5 my-md-4 bd-layout">
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#addShiftModal" onclick=" validateAddShift('#startTimeAdd', '#endTimeAdd', '#statusShiftAdd1', '#statusShiftAdd2', '#errorStartTimeAdd', '#errorEndTimeAdd', '#errorStatusShiftAdd', '#buttonAddShift')">
+                Thêm mới ca làm
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="addShiftModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="addShiftModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="addShiftModalLabel">Thêm mới ca làm</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                                <div class="mb-3">
+                                    <label class="form-label">Từ:</label>
+                                    <input type="time" class="form-control" value="00:00" id="startTimeAdd">
+                                    <span id="errorStartTimeAdd" class="text-danger">Mời nhập thời gian bắt đầu!</span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Đến:</label>
+                                    <input type="time" class="form-control" value="12:00" id="endTimeAdd">
+                                    <span id="errorEndTimeAdd" class="text-danger">Mời nhập thời gian kết thúc!</span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Trạng thái:</label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="statusShiftAdd" id="statusShiftAdd1" value="1">
+                                        <label class="form-check-label" for="statusShiftAdd1">
+                                            Hoạt động
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="statusShiftAdd" id="statusShiftAdd2" value="2" checked>
+                                        <label class="form-check-label" for="statusShiftAdd2">
+                                            Ngừng hoạt động
+                                        </label>
+                                    </div>
+                                    <span id="errorStatusShiftAdd" class="text-danger">Mời chọn trạng thái!</span>
+                                </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button id="buttonAddShift" class="btn btn-outline-success" data-bs-target="#addShiftModal2" data-bs-toggle="modal">Thêm</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="addShiftModal2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true" aria-labelledby="addShiftModalLabel2" >
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="addShiftModalLabel2">Xác nhận</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            Bạn muốn thêm ca làm này sao?
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-outline-primary" data-bs-target="#addShiftModal" data-bs-toggle="modal">Quay lại</button>
+                            <button type="button" class="btn btn-outline-success" data-bs-dismiss="modal" aria-label="Close" onclick="addShift('startTimeAdd','endTimeAdd')">Thêm</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+<!--            trang sua-->
+            <!-- Modal -->
+            <div class="modal fade" id="updateShiftModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="updateShiftModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="updateShiftModalLabel">Chi tiết ca làm</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label class="form-label">Từ:</label>
+                                <input type="time" class="form-control" value="00:00" id="startTimeUpdate">
+                                <span id="errorStartTimeUpdate" class="text-danger">Mời nhập thời gian bắt đầu!</span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Đến:</label>
+                                <input type="time" class="form-control" value="12:00" id="endTimeUpdate">
+                                <span id="errorEndTimeUpdate" class="text-danger">Mời nhập thời gian kết thúc!</span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Trạng thái:</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="statusShiftAdd" id="statusShiftUpdate1" value="1">
+                                    <label class="form-check-label" for="statusShiftUpdate1">
+                                        Hoạt động
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="statusShiftAdd" id="statusShiftUpdate2" value="2" checked>
+                                    <label class="form-check-label" for="statusShiftUpdate2">
+                                        Ngừng hoạt động
+                                    </label>
+                                </div>
+                                <span id="errorStatusShiftUpdate" class="text-danger">Mời chọn trạng thái!</span>
+
+                            </div>
+
+                        </div>
+                        <div class="modal-footer" id="btnUpdateShift">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="updateShiftModal2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true" aria-labelledby="updateShiftModalLabel2" >
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="updateShiftModalLabel2">Xác nhận</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            Bạn muốn sửa ca làm này sao?
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-outline-primary" data-bs-target="#updateShiftModal" data-bs-toggle="modal">Quay lại</button>
+                            <button type="button" class="btn btn-outline-success" data-bs-dismiss="modal" aria-label="Close" onclick="addShift('startTimeUpdate','endTimeUpdate')">Sửa</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+<!--            danh sach nhan vien-->
+
+            <div class="modal fade" id="listStaffModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="listStaffModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered  modal-xl  modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="listStaffModalLabel">Danh sách nhân viên</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="card mt-3">
+                                <div class="card-body">
+                                    Tìm kiếm nhân viên
+                                    <hr>
+                                    <div class="row">
+                                       <form id="formFilterStaff">
+                                           <div class="mb-3">
+                                               <input type="text" class="form-control" placeholder="mã, họ tên, số điện thoại, email" id="keySearchStaffShift">
+                                           </div>
+                                           <div class="col-12 text-center">
+                                               <div class="mb-3">
+                                                   <button type="submit" class="btn btn-outline-primary" onclick="">Tìm kiếm</button>
+                                                   <button type="button" class="btn btn-outline-danger" onclick="resetFilterStaffShift()">Làm mới</button>
+                                               </div>
+                                           </div>
+                                       </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <ul class="nav nav-underline">
+                                    <li class="nav-item">
+                                        <button id="staffNotIdShift" class="nav-link text-dark nav-link-custom active" onclick="setActiveStaffShiftAndNotShift(this,1)">Chưa áp dụng</button>
+                                    </li>
+                                    <li class="nav-item">
+                                        <button id="staffYesIdShift" class="nav-link text-dark nav-link-custom" onclick="setActiveStaffShiftAndNotShift(this,2)">Đã áp dụng</button>
+                                    </li>
+                                </ul>
+
+                                <div id="methodAddAndRemoverStaffShift">
+
+                                </div>
+
+                            </div>
+
+                            <div class="card mt-3">
+                                <div id="noDataStaffShiftContainer" style="display:none; text-align:center;">
+                                    <!-- Ảnh sẽ được hiển thị ở đây nếu không có dữ liệu -->
+                                </div>
+                                <table class="table table-striped table-hover"
+                                       style="margin-top: 30px; margin-bottom: 10px">
+                                    <thead class="bg-primary text-white">
+                                    <tr>
+                                        <!--                                thua 22-->
+                                        <th style="width: 10%" >Mã</th>
+                                        <th style="width: 14%" class="">Họ và tên</th>
+                                        <th style="width: 15%" class="">Ca làm hiện tại</th>
+                                        <th style="width: 15%" class="">Trạng thái</th>
+                                        <th style="width: 15%" class="">Ca làm dự tính chọn</th>
+                                        <th style="width: 10%" class="text-center align-middle">
+                                            Nút chọn nhanh
+                                            <br>
+                                            <input class="form-check-input" type="checkbox" value="" id="clickFastStaff">
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="tableStaff">
+                                    <tr>
+                                        <td>
+                                            qưe
+                                        </td>
+                                        <td>
+                                   <span class="d-inline-block"
+                                         tabindex="0"
+                                         data-bs-toggle="popover"
+                                         data-bs-trigger="hover focus"
+                                         data-bs-content="Hi ae">
+                                      Disabled button
+                                    </span>
+                                        </td>
+                                        <td>
+                                            qưe
+                                        </td>
+                                        <td>
+                                            qưe
+                                        </td>
+
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <div class="pagination-section">
+                                    <!-- Phân trang 2 -->
+                                    <div class="pagination-custom d-flex justify-content-center">
+                                        <ul id="maxStaff-manageShift" class="pagination"></ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+<!--            danh sách chấm công -->
+            <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#listTimekeepingModal">
+                Danh sách chấm công
+            </button>
+
+            <div class="modal fade" id="listTimekeepingModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="listTimekeepingModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered  modal-xl  modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="listTimekeepingModalLabel"> Danh sách chấm công</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="card mt-3">
+                                <div class="card-body">
+                                    Tìm kiếm nhân viên
+                                    <hr>
+<!--                                    <form id="formFilterStaffTimekeeping">-->
+                                        <div class="row">
+                                            <div class="mb-3 col-6">
+                                                <label class="form-label">Thông tin nhân viên:</label>
+                                                <input type="text" class="form-control" placeholder="mã, họ tên, số điện thoại, email" id="keySearchStaffShiftTimekeeping">
+                                            </div>
+                                            <div class="mb-3 col-6">
+                                                <label class="form-label">Loại chấm công: </label>
+                                                <select class="form-select" aria-label="Default select example" id="timekeepingType">
+                                                    <option value="" selected>--Tất cả--</option>
+                                                    <option value="1">Chấm công vào</option>
+                                                    <option value="2">Chấm công ra</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-label">Giờ chấm công:</label>
+                                                <div class="row">
+                                                    <div class="col-6">
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Từ:</label>
+                                                            <input type="time" class="form-control" value="00:00" id="timeStart">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-6">
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Đến:</label>
+                                                            <input type="time" class="form-control" value="12:00" id="timeEnd">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-label">Ngày chấm công:</label>
+                                                <div class="row">
+                                                    <div class="col-6">
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Từ:</label>
+                                                            <input type="date" class="form-control" id="dateStart">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-6">
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Đến:</label>
+                                                            <input type="date" class="form-control" id="dateEnd">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 text-center">
+                                                <div class="mb-3">
+                                                    <button type="button" class="btn btn-outline-primary" onclick="filterTimekeeping()">Tìm kiếm</button>
+                                                    <button type="button" class="btn btn-outline-danger" onclick="resetFilterTimekeeping()">Làm mới</button>
+                                                </div>
+                                            </div>
+                                        </div>
+<!--                                    </form>-->
+                                </div>
+                            </div>
+                            <br>
+                            <div class="d-flex justify-content-between align-items-center">
+
+                            </div>
+
+                            <div class="card mt-3">
+                                <div id="noDataTimekeeping-manage" style="display:none; text-align:center;">
+                                    <!-- Ảnh sẽ được hiển thị ở đây nếu không có dữ liệu -->
+                                </div>
+                                <table class="table table-striped table-hover"
+                                       style="margin-top: 30px; margin-bottom: 10px">
+                                    <thead class="bg-primary text-white">
+                                    <tr>
+                                        <!--                                thua 22-->
+                                        <th style="width: 14%" class="">Nhân viên</th>
+                                        <th style="width: 15%" class="">Thời gian làm</th>
+                                        <th style="width: 15%" class="">Thời gian chấm công</th>
+                                        <th style="width: 15%" class="">Loại chấm công</th>
+                                        <th style="width: 15%" class="">Trạng thái chấm công</th>
+                                        <th style="width: 15%" class="">Ghi chú</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="tableTimekeeping">
+                                    <tr>
+                                        <td>
+                                            qưe
+                                        </td>
+                                        <td>
+                                   <span class="d-inline-block"
+                                         tabindex="0"
+                                         data-bs-toggle="popover"
+                                         data-bs-trigger="hover focus"
+                                         data-bs-content="Hi ae">
+                                      Disabled button
+                                    </span>
+                                        </td>
+                                        <td>
+                                            qưe
+                                        </td>
+                                        <td>
+                                            qưe
+                                        </td>
+
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <div class="pagination-section">
+                                    <!-- Phân trang 2 -->
+                                    <div class="pagination-custom d-flex justify-content-center">
+                                        <ul id="maxPageTimekeeping-manage" class="pagination"></ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+<!--            danh sach chot don cua nhan vien-->
+
+            <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#listCashierInventoryModal">
+                Danh sách chốt đơn
+            </button>
+
+            <div class="modal fade" id="listCashierInventoryModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="listCashierInventoryModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered  modal-xl  modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="listCashierInventoryModalLabel">Danh sách chốt đơn</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="card mt-3">
+                                <div class="card-body">
+                                    Tìm kiếm nhân viên
+                                    <hr>
+                                    <!--                                    <form id="formFilterStaffTimekeeping">-->
+                                    <div class="row">
+                                        <div class="mb-3 col-12">
+                                            <label class="form-label">Thông tin nhân viên:</label>
+                                            <input type="text" class="form-control" placeholder="mã, họ tên, số điện thoại, email" id="keySearchCashierInventory">
+                                        </div>
+
+                                        <div class="col-12">
+                                            <label class="form-label">Ngày làm việc:</label>
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Từ:</label>
+                                                        <input type="date" class="form-control" id="startDateCashierInventory">
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-6">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Đến:</label>
+                                                        <input type="date" class="form-control" id="endDateCashierInventory">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12 text-center">
+                                            <div class="mb-3">
+                                                <button type="button" class="btn btn-outline-primary" onclick="filterCashierInventory()">Tìm kiếm</button>
+                                                <button type="button" class="btn btn-outline-danger" onclick="resetFilterCashierInventory()">Làm mới</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--                                    </form>-->
+                                </div>
+                            </div>
+                            <br>
+                            <div class="d-flex justify-content-between align-items-center">
+
+                            </div>
+
+                            <div class="card mt-3">
+                                <div id="noDataCashierInventory-manage" style="display:none; text-align:center;">
+                                    <!-- Ảnh sẽ được hiển thị ở đây nếu không có dữ liệu -->
+                                </div>
+                                <table class="table table-striped table-hover"
+                                       style="margin-top: 30px; margin-bottom: 10px">
+                                    <thead class="bg-primary text-white">
+                                    <tr>
+                                        <th style="width: 16%" class="">Nhân viên</th>
+                                        <th style="width: 16%" class="">Thời gian làm</th>
+                                        <th style="width: 17%" class="">Tổng tiền chốt đơn</th>
+                                        <th style="width: 17%" class="">Tổng tiền khách yêu cầu trả</th>
+                                        <th style="width: 17%" class="">Tổng tiền khách muốn trao đổi</th>
+                                        <th style="width: 17%" class="">Tổng cộng thu được</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="tableCashierInventory">
+                                    <tr>
+                                        <td>
+                                            qưe
+                                        </td>
+                                        <td>
+                                   <span class="d-inline-block"
+                                         tabindex="0"
+                                         data-bs-toggle="popover"
+                                         data-bs-trigger="hover focus"
+                                         data-bs-content="Hi ae">
+                                      Disabled button
+                                    </span>
+                                        </td>
+                                        <td>
+                                            qưe
+                                        </td>
+                                        <td>
+                                            qưe
+                                        </td>
+
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <div class="pagination-section">
+                                    <!-- Phân trang 2 -->
+                                    <div class="pagination-custom d-flex justify-content-center">
+                                        <ul id="maxPageCashierInventory-manage" class="pagination"></ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-body">
+                    Tìm kiếm ca làm
+                    <hr>
+                    <div class="row">
+                        <div class="col-6">
+                            <label class="form-label">Giờ bắt đầu làm việc:</label>
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Từ:</label>
+                                        <input type="time" class="form-control" value="00:00" id="startTimeBegin">
+                                    </div>
+                                </div>
+
+                                <div class="col-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Đến:</label>
+                                        <input type="time" class="form-control" value="12:00" id="startTimeEnd">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-6">
+                            <label class="form-label">Giờ làm việc kết thúc:</label>
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Từ:</label>
+                                        <input type="time" class="form-control" value="00:00" id="endTimeBegin">
+                                    </div>
+                                </div>
+
+                                <div class="col-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Đến:</label>
+                                        <input type="time" class="form-control" value="12:00" id="endTimeEnd">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-6">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Trạng thái:</label>
+                                        <select class="form-select" aria-label="Default select example" id="statusFilter">
+                                            <option value="" selected>--Tất cả--</option>
+                                            <option value="1">Hoạt động</option>
+                                            <option value="2">Ngừng hoạt động</option>
+                                            <option value="0">Đã xóa</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Trạng thái ca làm:</label>
+                                        <select class="form-select" aria-label="Default select example" id="statusShiftFilter">
+                                            <option value="" selected>--Tất cả--</option>
+                                            <option value="1">Chưa bắt đầu</option>
+                                            <option value="2">Đang bắt đâu</option>
+                                            <option value="3">Đã kết thúc</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-6">
+                            <div class="d-flex justify-content-center mt-3">
+                                <button type="submit" class="btn btn-outline-warning mb-3 me-2" onclick="filterShift()">
+                                    <i class="bi bi-search"></i> Gửi
+                                </button>
+                                <button class="btn btn-outline-primary mb-3" onclick="resetFilter()">
+                                    <i class="bi bi-arrow-counterclockwise"></i> Làm mới
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+
+            <div id="noDataShiftContainer" style="display:none; text-align:center;">
+                <!-- Ảnh sẽ được hiển thị ở đây nếu không có dữ liệu -->
+            </div>
+
+            <table class="table">
+                <thead>
+                <tr>
+                    <th style="width: 16%">id</th>
+                    <th style="width: 16%">Giờ bắt đầu</th>
+                    <th style="width: 16%">Giờ kết thúc</th>
+                    <th style="width: 16%">Trạng thái ca làm</th>
+                    <th style="width: 16%">Trạng thái</th>
+                    <th style="width: 20%">Hành động</th>
+                </tr>
+                </thead>
+                <tbody id="taleShift">
+                <tr>
+                    <th scope="row">1</th>
+                    <td>Mark</td>
+                    <td>Otto</td>
+                    <td>@mdo</td>
+                    <td>@mdo</td>
+                    <td>@mdo</td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="pagination-section">
+                <!-- Phân trang 2 -->
+                <div class="pagination-custom d-flex justify-content-center">
+                    <ul id="shiftPageMax-manage" class="pagination">1</ul>
+                </div>
+            </div>
+
+        </article>
+
+        <input type="hidden" id="formCheckShift" value="oke">
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="/ajax/shift/shiftAjax.js"></script>
+        <script src="/ajax/shift/timekeepingAjax.js"></script>
+        <script src="/ajax/shift/cashierInventoryAjax.js"></script>
+        <script src="/js/shift/home.js"></script>
+        <script src="/js/shift/validateShift.js"></script>
+    </div>
+</main>
+</body>
+</html>

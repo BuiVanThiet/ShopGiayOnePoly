@@ -23,7 +23,10 @@ public class ReturnBillController extends BaseBill {
 
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if(staffLogin == null) {
-            return null;
+            return "redirect:/login";
+        }
+        if(staffLogin.getStatus() != 1) {
+            return "redirect:/home_manage";
         }
 
         String validateIdBill = validateInteger(idBill);

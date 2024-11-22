@@ -4,8 +4,10 @@ import com.example.shopgiayonepoly.entites.InvoiceStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -117,4 +119,34 @@ public interface InvoiceStatusRepository extends JpaRepository<InvoiceStatus,Int
             WHERE b.id = :idCheck
 """,nativeQuery = true)
     List<Object[]> getInformationBillStatusClient(@Param("idCheck") Integer idCheck);
+
+    //xuat du lieu nhan vien da lam gi
+    @Query(value = """
+    select
+        b.id,
+        b.code_bill,
+        inst.status,
+        FORMAT(inst.create_date, 'HH:mm:ss dd-MM-yyyy') AS formatted_date
+    from
+        invoice_status inst
+    left join bill b
+        on b.id = inst.id_bill
+    where
+        CAST(SUBSTRING(inst.note, 1, CHARINDEX(',', inst.note) - 1) AS INT) = :idStaff
+        and inst.create_date BETWEEN :startDate AND :endDate
+        AND CONVERT(TIME, inst.create_date) BETWEEN :startTime AND :endTime
+    order by
+        inst.create_date desc,
+        b.code_bill desc,
+        inst.status asc
+""",nativeQuery = true)
+    List<Object[]> getAllInvoiceStatusByStaff(
+            @Param("idStaff") Integer idStaff,
+            @Param("startDate")Date startDate,
+            @Param("endDate") Date endDate,
+            @Param("startTime") String startTime,
+            @Param("endTime") String endTime
+            );
+
+
 }

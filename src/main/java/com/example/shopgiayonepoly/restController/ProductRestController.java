@@ -3,6 +3,7 @@ package com.example.shopgiayonepoly.restController;
 import com.example.shopgiayonepoly.baseMethod.BaseProduct;
 import com.example.shopgiayonepoly.dto.request.AttributeRequet;
 import com.example.shopgiayonepoly.entites.*;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -213,6 +214,40 @@ public class ProductRestController extends BaseProduct {
     @PostMapping("/restore")
     public void restoreProduct(Integer id, Integer status) {
         productService.updateStatus(id, status);
+    }
+
+    @PostMapping("/delete-multiple")
+    public ResponseEntity<?> deleteMultipleProducts(@RequestBody List<Integer> ids, HttpSession session) {
+        if (ids == null || ids.isEmpty()) {
+            return ResponseEntity.badRequest().body("Danh sách sản phẩm không hợp lệ.");
+        }
+
+        try {
+            for (Integer item : ids) {
+                productService.updateStatus(item, 0);  // Cập nhật trạng thái xóa
+            }
+            return ResponseEntity.ok("Xóa sản phẩm thành công");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi khi xóa sản phẩm: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/restore-multiple")
+    public ResponseEntity<?> restoreMultipleProducts(@RequestBody List<Integer> ids, HttpSession session) {
+        if (ids == null || ids.isEmpty()) {
+            return ResponseEntity.badRequest().body("Danh sách sản phẩm không hợp lệ.");
+        }
+
+        try {
+            for (Integer item : ids) {
+                productService.updateStatus(item, 1);  // Cập nhật trạng thái xóa
+            }
+            return ResponseEntity.ok("Khôi phục sản phẩm thành công");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi khi xóa sản phẩm: " + e.getMessage());
+        }
     }
 
     @GetMapping("/find-quantity")
