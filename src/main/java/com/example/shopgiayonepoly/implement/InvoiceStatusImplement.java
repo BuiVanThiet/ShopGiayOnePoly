@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -73,5 +74,16 @@ public class InvoiceStatusImplement implements InvoiceStatusService {
     @Override
     public List<Object[]> getInformationBillStatusClient(Integer id) {
         return this.invoiceStatusRepository.getInformationBillStatusClient(id);
+    }
+
+    @Override
+    public List<Object[]> getAllInvoiceStatusByStaff(
+            Integer idStaff,
+            Date startDate,
+            Date endDate,
+            String startTime,
+            String endTime
+    ) {
+        return this.invoiceStatusRepository.getAllInvoiceStatusByStaff(idStaff,startDate,endDate,startTime,endTime);
     }
 }

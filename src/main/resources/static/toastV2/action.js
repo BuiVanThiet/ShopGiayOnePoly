@@ -1,5 +1,5 @@
 const notifications = document.querySelector(".notifications-toast-custom");
-const buttons = document.querySelectorAll(".buttons-toast-custom .btn");
+const buttonsToast = document.querySelectorAll(".buttons-toast-custom .btn");
 
 
 const toastDetails = {
@@ -58,7 +58,7 @@ const createToast = (check, mess) => {
 };
 
 // Adding a click event listener to each button to create a toast when clicked
-buttons.forEach(btn => {
+buttonsToast.forEach(btn => {
     btn.addEventListener("click", () => createToast(btn.id));
 });
 

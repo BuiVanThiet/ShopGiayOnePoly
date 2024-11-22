@@ -35,11 +35,14 @@
             if (staff != null) {
                     model.addAttribute("staffInfo", staff);
             } else {
-                    session.invalidate();
-                    return "redirect:/login";
-
+                session.invalidate();
+                return "redirect:/login";
             }
-            return "forward:/chart/form";
+            if(staff.getStatus() == 1) {
+                return "forward:/chart/form";
+            }else {
+                return "Home/home_manege";
+            }
         }
         @GetMapping("/logout")
         public String logout(HttpSession session) {

@@ -90,5 +90,29 @@ function handlePageClick(pageNumber, elementId, totalPages) {
         loadProduct(pageNumber);
     }
 
+    if(elementId == 'shiftPageMax-manage') {
+        loadShift(pageNumber)
+    }
+
+    if (elementId == 'maxPageTimekeeping-manage') {
+        timekeepingList(pageNumber)
+    }
+
+    if(elementId  == 'maxPageCashierInventory-manage') {
+        cashierInventoryList(pageNumber);
+    }
+
+    if(elementId == 'maxStaff-manageShift') {
+        listStaff(pageNumber)
+    }
+
+    if(elementId == 'maxPageCashierInventoryByIdBill-manage' ) {
+        cashierInventoryListByIdStaff(pageNumber)
+    }
+
+    if(elementId == 'maxPageInvoiceStatusByStaff-manage') {
+        invoiceStatusByStaffByIdStaff(pageNumber)
+    }
+
     createPagination(elementId, totalPages, pageNumber); // Cập nhật phân trang
 }

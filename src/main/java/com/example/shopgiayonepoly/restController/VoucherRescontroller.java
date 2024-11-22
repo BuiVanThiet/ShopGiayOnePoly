@@ -2,7 +2,9 @@ package com.example.shopgiayonepoly.restController;
 
 import com.example.shopgiayonepoly.dto.request.VoucherRequest;
 import com.example.shopgiayonepoly.dto.request.Voucher_SaleProductSearchRequest;
+import com.example.shopgiayonepoly.entites.Staff;
 import com.example.shopgiayonepoly.service.VoucherService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -24,7 +26,13 @@ public class VoucherRescontroller {
 
     //tai danh sach
     @GetMapping("/list/{page}")
-    public List<Object[]> getListVoucher(@PathVariable("page") String page) {
+    public List<Object[]> getListVoucher(@PathVariable("page") String page, HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+
+        if(staffLogin == null) {
+            return null;
+        }
+
         if(voucherSearchRequest == null) {
             voucherSearchRequest = new Voucher_SaleProductSearchRequest(null,"",1);
         }
@@ -62,13 +70,21 @@ public class VoucherRescontroller {
 
     //chuc nang them
     @PostMapping("/add-new-voucher")
-    public ResponseEntity<Map<String,String>> getMethodAddNewVoucher(@RequestBody VoucherRequest voucherRequest) {
+    public ResponseEntity<Map<String,String>> getMethodAddNewVoucher(@RequestBody VoucherRequest voucherRequest,HttpSession session) {
         Map<String,String> thongBao = new HashMap<>();
+
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+
+        if(staffLogin == null) {
+            thongBao.put("message","Nhân viên chưa đăng nhập!");
+            thongBao.put("check","1");
+            return ResponseEntity.ok(thongBao);
+        }
 
         System.out.println(voucherRequest.toString());
 
         voucherService.createNewVoucher(voucherRequest);
-        thongBao.put("message","Thêm mới phiếu gia giá thành công!");
+        thongBao.put("message","Thêm mới phiếu giảm giá thành công!");
         thongBao.put("check","1");
         return ResponseEntity.ok(thongBao);
     }
