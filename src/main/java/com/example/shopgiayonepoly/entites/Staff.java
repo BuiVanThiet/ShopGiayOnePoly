@@ -37,5 +37,8 @@ public class Staff extends Base {
     @ManyToOne
     @JoinColumn(name = "id_role")
     private Role role;
+    @ManyToOne
+    @JoinColumn(name = "id_shift")
+    private Shift shift;
     
 }

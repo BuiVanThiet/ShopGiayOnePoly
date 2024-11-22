@@ -33,6 +33,9 @@ public class BillController extends BaseBill {
         if(staffLogin == null) {
             return "redirect:/login";
         }
+        if(staffLogin.getStatus() != 1) {
+            return "redirect:/home_manage";
+        }
 
         session.removeAttribute("pageReturn");
         session.removeAttribute("idBillCheckStatus");
@@ -98,6 +101,9 @@ public class BillController extends BaseBill {
         if(staff == null) {
             return "redirect:/login";
         }
+        if(staff.getStatus() != 1) {
+            return "redirect:/home_manage";
+        }
 
         session.setAttribute("IdBill", Integer.parseInt(idBill));
         Bill bill = this.billService.findById(Integer.parseInt(idBill)).orElse(null);
@@ -141,6 +147,17 @@ public class BillController extends BaseBill {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if(staffLogin == null) {
             return "redirect:/login";
+        }
+        if(staffLogin.getStatus() != 1) {
+            return "redirect:/home_manage";
+        }
+
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            this.mess = messMap;
+            this.colorMess = "3";
+            return "redirect:/staff/bill/home";
         }
 
         Pageable pageable = PageRequest.of(0,10);
@@ -205,6 +222,19 @@ public class BillController extends BaseBill {
             this.colorMess = "3";
             return ResponseEntity.ok(thongBao);
         }
+        if(staff.getStatus() != 1) {
+            this.mess = "Nhân viên đang bị ngừng hoạt động!";
+            this.colorMess = "3";
+            return ResponseEntity.ok(thongBao);
+        }
+
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staff.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            this.mess = messMap;
+            this.colorMess = "3";
+            return ResponseEntity.ok(thongBao);
+        }
 
         Integer idBill = (Integer) session.getAttribute("IdBill");
 
@@ -254,6 +284,19 @@ public class BillController extends BaseBill {
         Staff staff = (Staff) session.getAttribute("staffLogin");
         if(staff == null) {
             this.mess = "Nhân viên chưa đăng nhập!";
+            this.colorMess = "3";
+            return ResponseEntity.ok(thongBao);
+        }
+        if(staff.getStatus() != 1) {
+            this.mess = "Nhân viên đang bị ngừng hoạt động!";
+            this.colorMess = "3";
+            return ResponseEntity.ok(thongBao);
+        }
+
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staff.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            this.mess = messMap;
             this.colorMess = "3";
             return ResponseEntity.ok(thongBao);
         }
@@ -312,6 +355,17 @@ public class BillController extends BaseBill {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if(staffLogin == null) {
             return "redirect:/login";
+        }
+        if(staffLogin.getStatus() != 1) {
+            return "redirect:/home_manage";
+        }
+
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            this.mess = messMap;
+            this.colorMess = "3";
+            return "redirect:/staff/bill/home";
         }
 
         String validateIdBill = validateInteger(id);
@@ -472,6 +526,15 @@ public class BillController extends BaseBill {
             modelMap.addAttribute("url",bill.getId());
             this.mess = "";
             this.colorMess = "";
+
+            String checkCashierInventory = getCheckStaffCashierInventory(staffLogin.getId());
+            if(!checkCashierInventory.trim().equals("Có")) {
+                cashierInventoryService.getInsertRevenue(staffLogin.getId(),new BigDecimal(0),new BigDecimal(0),new BigDecimal(0));
+                cashierInventoryService.getUpdateRevenue(staffLogin.getId(),bill.getTotalAmount().subtract(bill.getPriceDiscount()),new BigDecimal(0),new BigDecimal(0));
+            }else {
+                cashierInventoryService.getUpdateRevenue(staffLogin.getId(),bill.getTotalAmount().subtract(bill.getPriceDiscount()),new BigDecimal(0),new BigDecimal(0));
+            }
+
 //            this.getUpdateQuantityProduct(session);
             return "Bill/successBill";
         }else if (bill.getPaymentMethod() == 2) {
@@ -622,6 +685,20 @@ public class BillController extends BaseBill {
                 this.billPay.setTransactionNo(transactionNo);
                 this.billPay.setBankTranNo(bankTranNo);
                 modelMap.addAttribute("url",billPay.getId());
+
+                Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+                if(staffLogin != null){
+                    if(staffLogin.getStatus() == 1) {
+                        String checkCashierInventory = getCheckStaffCashierInventory(staffLogin.getId());
+                        if(!checkCashierInventory.trim().equals("Có")) {
+                            cashierInventoryService.getInsertRevenue(staffLogin.getId(),new BigDecimal(0),new BigDecimal(0),new BigDecimal(0));
+                            cashierInventoryService.getUpdateRevenue(staffLogin.getId(),billPay.getCash().add(billPay.getAcountMoney()),new BigDecimal(0),new BigDecimal(0));
+                        }else {
+                            cashierInventoryService.getUpdateRevenue(staffLogin.getId(),billPay.getCash().add(billPay.getAcountMoney()),new BigDecimal(0),new BigDecimal(0));
+                        }
+                    }
+                }
+
                 this.billService.save(this.billPay);
                 System.out.println("vnpSecureHash: " + vnpSecureHash);
 
@@ -682,6 +759,9 @@ public class BillController extends BaseBill {
                     this.billPay.setPaymentMethod(2);
                     this.billPay.setTransactionNo(transactionNo);
                     this.billPay.setBankTranNo(bankTranNo);
+
+                    //cho nay hoi thay da
+
                     this.billService.save(this.billPay);
                     this.setBillStatus(this.billPay.getId(),101,session);
                     this.billPay = null;
@@ -753,6 +833,19 @@ public class BillController extends BaseBill {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if(staffLogin == null) {
             thongBao.put("message","Nhân viên chưa đăng nhập!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+        if(staffLogin.getStatus() != 1) {
+            thongBao.put("message","Nhân viên đang bị ngừng hoạt động!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            thongBao.put("message",messMap);
             thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }
@@ -890,6 +983,19 @@ public class BillController extends BaseBill {
             thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }
+        if(staffLogin.getStatus() != 1) {
+            thongBao.put("message","Nhân viên đang bị ngừng hoạt động!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            thongBao.put("message",messMap);
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
 
         billById.setStaff(staffLogin);
         this.billService.save(billById);
@@ -944,6 +1050,19 @@ public class BillController extends BaseBill {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if(staffLogin == null) {
             thongBao.put("message","Nhân viên chưa đăng nhập!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+        if(staffLogin.getStatus() != 1) {
+            thongBao.put("message","Nhân viên đang bị ngừng hoạt động!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            thongBao.put("message",messMap);
             thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }
@@ -1017,6 +1136,19 @@ public class BillController extends BaseBill {
             thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }
+        if(staffLogin.getStatus() != 1) {
+            thongBao.put("message","Nhân viên đang bị ngừng hoạt động!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            thongBao.put("message",messMap);
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
 
         LocalDate today = LocalDate.now();
 
@@ -1082,6 +1214,9 @@ public class BillController extends BaseBill {
         if(staffLogin == null) {
             return "redirect:/login";
         }
+        if(staffLogin.getStatus() != 1) {
+            return "redirect:/home_manage";
+        }
 
         ReturnBillExchangeBill returnBillExchangeBill = this.returnBillService.getReturnBillByIdBill(bill.getId());
         if(returnBillExchangeBill != null) {
@@ -1107,6 +1242,17 @@ public class BillController extends BaseBill {
         Staff staff = (Staff) session.getAttribute("staffLogin");
         if(staff == null) {
             return "redirect:/login";
+        }
+        if(staff.getStatus() != 1) {
+            return "redirect:/home_manage";
+        }
+
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staff.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            this.mess = messMap;
+            this.colorMess = "3";
+            return "redirect:/staff/bill/home";
         }
 
         Integer idBill = (Integer) session.getAttribute("IdBill");

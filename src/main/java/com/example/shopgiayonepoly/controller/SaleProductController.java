@@ -44,7 +44,15 @@ public class SaleProductController {
     @GetMapping("/list")
     public String getFormListSaleProduct(@RequestParam(name = "pageNumber", defaultValue = "0") int pageNumber,
                                          @RequestParam(name = "pageNumberDelete", defaultValue = "0") int pageNumberDelete,
-                                         Model model) {
+                                         Model model,HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return "redirect:/login";
+        }
+        if(staffLogin.getStatus() != 1) {
+            return "redirect:/home_manage";
+        }
+
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<SaleProduct> pageSale = saleProductService.getAllSaleProductByPage(pageable);
         Pageable pageableDelete = PageRequest.of(pageNumberDelete, pageSize);
@@ -63,7 +71,15 @@ public class SaleProductController {
     }
 
     @GetMapping("/create")
-    public String getFormCreateSale(Model model) {
+    public String getFormCreateSale(Model model,HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return "redirect:/login";
+        }
+        if(staffLogin.getStatus() != 1) {
+            return "redirect:/home_manage";
+        }
+
         SaleProductRequest saleProduct = new SaleProductRequest();
         model.addAttribute("saleProduct", saleProduct);
         return "sale_product/create";
@@ -118,7 +134,16 @@ public class SaleProductController {
     }
 
     @GetMapping("/delete/{id}")
-    public String deleteSaleProduct(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
+    public String deleteSaleProduct(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes,HttpSession session) {
+
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return "redirect:/login";
+        }
+        if(staffLogin.getStatus() != 1) {
+            return "redirect:/home_manage";
+        }
+
         SaleProduct saleProduct = saleProductService.getSaleProductByID(id);
         List<ProductDetail> listProductDetail = saleProductService.findProducDetailByIDDiscout(saleProduct.getId());
         System.out.println(listProductDetail);
@@ -135,7 +160,15 @@ public class SaleProductController {
     }
 
     @GetMapping("/restore/{id}")
-    public String RestoreSaleProduct(RedirectAttributes redirectAttributes, @PathVariable("id") Integer id) {
+    public String RestoreSaleProduct(RedirectAttributes redirectAttributes, @PathVariable("id") Integer id,HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return "redirect:/login";
+        }
+        if(staffLogin.getStatus() != 1) {
+            return "redirect:/home_manage";
+        }
+
         saleProductService.restoreSaleProductStatus(id);
         redirectAttributes.addFlashAttribute("mes", "Khôi phục đợt giảm giá thành công");
         mess = "Khôi phục thành công đợt giảm giá với ID: "+id;
@@ -144,7 +177,15 @@ public class SaleProductController {
     }
 
     @GetMapping("/edit/{id}")
-    public String getFormUpdateSale(Model model, @PathVariable("id") Integer id) {
+    public String getFormUpdateSale(Model model, @PathVariable("id") Integer id,HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return "redirect:/login";
+        }
+        if(staffLogin.getStatus() != 1) {
+            return "redirect:/home_manage";
+        }
+
         SaleProduct saleProduct = saleProductService.getSaleProductByID(id);
         SaleProductRequest saleProductRequest = new SaleProductRequest();
         BeanUtils.copyProperties(saleProduct, saleProductRequest);
@@ -156,7 +197,14 @@ public class SaleProductController {
     @PostMapping("/update")
     public String UpdateSale(RedirectAttributes redirectAttributes, Model model,
                              @Valid @ModelAttribute("saleProductRequest") SaleProductRequest saleProductRequest,
-                             BindingResult result) {
+                             BindingResult result,HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return "redirect:/login";
+        }
+        if(staffLogin.getStatus() != 1) {
+            return "redirect:/home_manage";
+        }
         BigDecimal zero = BigDecimal.ZERO;
         BigDecimal niceTeen = new BigDecimal("91");
         BigDecimal tenHundred = new BigDecimal("10000");
@@ -282,7 +330,15 @@ public class SaleProductController {
     }
 
     @GetMapping("/extend/{id}")
-    public String extendSaleproductExpired(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
+    public String extendSaleproductExpired(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes,HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return "redirect:/login";
+        }
+        if(staffLogin.getStatus() != 1) {
+            return "redirect:/home_manage";
+        }
+
         saleProductService.updateSaleProductExpired(id);
         redirectAttributes.addFlashAttribute("mes", "Gia hạn phiếu giảm giá thành công");
         mess = "Gia hạn đợt giảm giá có id: "+id+" thành công!";

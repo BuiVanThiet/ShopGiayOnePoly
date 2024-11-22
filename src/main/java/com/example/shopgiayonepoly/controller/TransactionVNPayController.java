@@ -24,6 +24,9 @@ public class TransactionVNPayController {
         if(staffLogin == null) {
             return "redirect:/login";
         }
+        if(staffLogin.getStatus() != 1) {
+            return "redirect:/home_manage";
+        }
         return "transactionVNPay/transactionVNPayHome";
     }
     @GetMapping("/transaction-by-id/{id}")
@@ -31,6 +34,9 @@ public class TransactionVNPayController {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if(staffLogin == null) {
             return "redirect:/login";
+        }
+        if(staffLogin.getStatus() != 1) {
+            return "redirect:/home_manage";
         }
         try {
             Integer idNumber = Integer.parseInt(id);
