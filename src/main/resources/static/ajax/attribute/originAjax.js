@@ -1,6 +1,6 @@
 function saveRow(index, event) { // hàm edit dữ liệu trên table
     event.preventDefault();
-    var updatedData = {
+    let updatedData = {
         codeOrigin: document.getElementById('code-input-' + index).value,
         nameOrigin: document.getElementById('name-input-' + index).value,
         id: document.getElementById('row-' + index).getAttribute('data-id')  // Lấy ID của đối tượng từ hàng
@@ -24,8 +24,8 @@ function saveRow(index, event) { // hàm edit dữ liệu trên table
 }
 
 function toggleStatus(element) { // hàm thay đổi trạng thái bằng button
-    var index = element.getAttribute('data-index');  // Lấy index
-    var status = element.getAttribute('data-status') === '1' ? 2 : 1;  // Lấy trạng thái mới
+    let index = element.getAttribute('data-index');  // Lấy index
+    let status = element.getAttribute('data-status') === '1' ? 2 : 1;  // Lấy trạng thái mới
 
     // Thay đổi biểu tượng toggle
     if (status === 1) {
@@ -40,7 +40,7 @@ function toggleStatus(element) { // hàm thay đổi trạng thái bằng button
     element.setAttribute('data-status', status);
 
     // Lấy ID thực tế của đối tượng thay vì index
-    var id = $('#row-' + index).data('id');  // Giả định bạn có thuộc tính id trong hàng
+    let id = $('#row-' + index).data('id');  // Giả định bạn có thuộc tính id trong hàng
 
     // Thực hiện Ajax request để cập nhật trạng thái trong database
     $.ajax({
@@ -61,19 +61,19 @@ function toggleStatus(element) { // hàm thay đổi trạng thái bằng button
     });
 }
 document.addEventListener('show.bs.modal', function (event) {
-    var button = event.relatedTarget;  // Lấy nút kích hoạt modal
-    var index = button.getAttribute('data-index');  // Lấy index từ nút kích hoạt
-    var id = button.getAttribute('data-id');  // Lấy id từ nút kích hoạt
+    let button = event.relatedTarget;  // Lấy nút kích hoạt modal
+    let index = button.getAttribute('data-index');  // Lấy index từ nút kích hoạt
+    let id = button.getAttribute('data-id');  // Lấy id từ nút kích hoạt
 
     // Gán index và id vào nút "Xóa" trong modal
-    var deleteButton = document.querySelector('#confirm-create-bill-modal .btn-success');
+    let deleteButton = document.querySelector('#confirm-create-bill-modal .btn-success');
     deleteButton.setAttribute('data-index', index);
     deleteButton.setAttribute('data-id', id);
 });
 
 function deleteByID(element) {
-    var index = element.getAttribute('data-index');  // Lấy index từ nút "Xóa" trong modal
-    var id = element.getAttribute('data-id');  // Lấy id từ nút "Xóa" trong modal
+    let index = element.getAttribute('data-index');  // Lấy index từ nút "Xóa" trong modal
+    let id = element.getAttribute('data-id');  // Lấy id từ nút "Xóa" trong modal
 
     $.ajax({
         url: '/attribute/delete-origin',  // Đường dẫn API để xóa
@@ -272,8 +272,8 @@ async function add() {
 fetchActiveOrigins();
 
 function restoreOrigin(element) {
-    var index = element.getAttribute('data-index');
-    var id = element.getAttribute('data-id');
+    let index = element.getAttribute('data-index');
+    let id = element.getAttribute('data-id');
     $.ajax({
         url: '/attribute/delete-origin',
         method: 'POST',
@@ -293,9 +293,9 @@ function restoreOrigin(element) {
 
 }
 
-var codeOriginInput = document.getElementById("codeOriginInput");
-var nameOriginInput = document.getElementById("nameOriginInput");
-var originError = document.getElementById("originError");
+let codeOriginInput = document.getElementById("codeOriginInput");
+let nameOriginInput = document.getElementById("nameOriginInput");
+let originError = document.getElementById("originError");
 codeOriginInput.addEventListener('input', function () {
     validateOrigin();
 });
@@ -303,16 +303,16 @@ nameOriginInput.addEventListener('input', function () {
     validateOrigin();
 });
 
-var arrayCodeOrigin = [];
-var arrayNameOrigin = [];
+let arrayCodeOrigin = [];
+let arrayNameOrigin = [];
 
 
 async function validateOrigin() {
-    var codeOrigin = await fetch('/attribute/origin/get-code');
+    let codeOrigin = await fetch('/attribute/origin/get-code');
     if (codeOrigin.ok) {
         arrayCodeOrigin = await codeOrigin.json(); // Đảm bảo đây là một mảng
     }
-    var nameOrigin = await fetch('/attribute/origin/get-name');
+    let nameOrigin = await fetch('/attribute/origin/get-name');
     if (nameOrigin.ok) {
         arrayNameOrigin = await nameOrigin.json(); // Đảm bảo đây là một mảng
     }

@@ -119,7 +119,7 @@
               <div class="form-control-createProduct">
                 <label for="myInput-nameProduct">Loại đế</label>
                 <div style="display: flex">
-                  <input type="text" id="myInput-sole"
+                  <input data-sole-id="" type="text" id="myInput-sole"
                          onfocus="showDropdown(event)"
                          onkeyup="filterFunction(event)" autocomplete="off">
                   <ul id="dataList-sole" class="dropdown-content-createProduct">
@@ -187,7 +187,7 @@
               <div class="upload-container-createProduct">
                 <div class="upload-item-createProduct">
                   <i class="fas fa-cloud-upload-alt"></i>
-                  <p>Nhấp để thêm ảnh</p>
+                  <p>Nhấp để chọn ảnh</p>
                   <input type="file" id="file-input-createProduct" name="imageFiles" accept="image/*" multiple
                          style="display: none;"
                          onchange="previewImages(event)">
@@ -195,7 +195,7 @@
               </div>
               <div id="image-preview-createProduct" class="image-preview-createProduct"></div>
             </div>
-            <p style="display: block; color: red; margin-bottom: 0px" id="errorText-image">* Vui lòng thêm ít nhất 1 ảnh</p>
+            <p style="display: block; color: red; margin-bottom: 0px" id="errorText-image">* Vui lòng chọn ít nhất 1 ảnh</p>
           </div>
           <div class="main-content-createProduct" style="display: none" id="table-productDetail-createProduct">
             <table class="table-createProduct" id="productDetailTable">
@@ -222,9 +222,9 @@
           <div class="buttons-createProduct">
             <button data-bs-toggle="modal" data-bs-target="#confirm-create-bill-modal" type="button"
                     id="create-btn-createProduct" class="create-btn-createProduct" style="display: none">
-              Tạo sản phẩm mới
+              Thêm sản phẩm
             </button>
-            <button type="button" class="cancel-btn-createProduct" onclick="resetFormAndTable()" >Hủy bỏ</button>
+            <button type="button" class="cancel-btn-createProduct" onclick="resetFormAndTable()" >Reset</button>
           </div>
         </div>
       </form>

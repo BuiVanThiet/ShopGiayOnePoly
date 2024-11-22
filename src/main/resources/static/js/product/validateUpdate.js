@@ -1,19 +1,21 @@
-var codeProduct = document.getElementById('codeProduct');
-var errorTextCodeProduct = document.getElementById('errorText-codeProduct');
-var nameProduct = document.getElementById('myInput-nameProduct');
-var errorTextNameProduct = document.getElementById('errorText-nameProduct');
-var material = document.getElementById('myInput-material');
-var errorTextMaterial = document.getElementById('errorText-material');
-var manufacturer = document.getElementById('myInput-manufacturer');
-var errorTextManufacturer = document.getElementById('errorText-manufacturer');
-var origin = document.getElementById('myInput-origin');
-var errorTextOrigin = document.getElementById('errorText-origin');
-var sole = document.getElementById('myInput-sole');
-var errorTextSole = document.getElementById('errorText-sole');
-var errorTextCategory = document.getElementById('errorText-category');
-var buttonAdd = document.getElementById('update-btn-updateProduct');
-var arrayCodeProduct = [];
-var initialCodeProduct = '';
+let codeProduct = document.getElementById('codeProduct');
+let errorTextCodeProduct = document.getElementById('errorText-codeProduct');
+let nameProduct = document.getElementById('myInput-nameProduct');
+let errorTextNameProduct = document.getElementById('errorText-nameProduct');
+let material = document.getElementById('myInput-material');
+let errorTextMaterial = document.getElementById('errorText-material');
+let manufacturer = document.getElementById('myInput-manufacturer');
+let errorTextManufacturer = document.getElementById('errorText-manufacturer');
+let origin = document.getElementById('myInput-origin');
+let errorTextOrigin = document.getElementById('errorText-origin');
+let sole = document.getElementById('myInput-sole');
+let errorTextSole = document.getElementById('errorText-sole');
+let errorTextCategory = document.getElementById('errorText-category');
+let errorTextImage = document.getElementById('errorText-image');
+let fileInputCreateProduct = document.getElementById('file-input-updateProduct');
+let buttonAdd = document.getElementById('update-btn-updateProduct');
+let arrayCodeProduct = [];
+let initialCodeProduct = '';
 
 window.addEventListener('load', () => {
     initialCodeProduct = codeProduct.value.trim();
@@ -40,9 +42,8 @@ document.querySelectorAll(".category-checkbox").forEach(checkbox => {
 async function validate(type) {
     let check = true;
 
-    // Ensure that the product codes are fetched before validation
     if (arrayCodeProduct.length === 0) {
-        await fetchProductCodes(); // Fetch the codes if not already done
+        await fetchProductCodes();
     }
 
     // Kiểm tra checkbox danh mục
@@ -68,7 +69,7 @@ async function validate(type) {
         showError(errorTextCodeProduct, '* Mã sản phẩm <= 10 kí tự');
         check = false;
     } else if (arrayCodeProduct.includes(trimmedCodeProduct)) {
-        showError(errorTextCodeProduct, '* Mã sản phẩm đã tồn tại trong cơ sở dữ liệu');
+        showError(errorTextCodeProduct, '* Mã sản phẩm đã tồn tại');
         check = false;
     } else {
         hideError(errorTextCodeProduct);
@@ -85,6 +86,20 @@ async function validate(type) {
     } else {
         hideError(errorTextNameProduct);
     }
+
+    const imagePreviewDiv = document.getElementById('image-preview-updateProduct');
+
+    // Kiểm tra nếu trong div không có thẻ <img>
+    if (imagePreviewDiv && imagePreviewDiv.querySelectorAll('img').length === 0) {
+        if (fileInputCreateProduct.files.length > 0) {
+            hideError(errorTextImage);
+        } else {
+            showError(errorTextImage, '* Vui lòng chọn ít nhất 1 ảnh');
+            check = false;
+        }
+    }
+
+
 
     // Kiểm tra các thuộc tính khác
     check = validateField(material, errorTextMaterial, 'material', type) && check;

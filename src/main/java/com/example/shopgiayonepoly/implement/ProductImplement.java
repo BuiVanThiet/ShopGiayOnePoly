@@ -65,15 +65,7 @@ public class ProductImplement implements ProductService {
         return this.productRepository.getProductDelete();
     }
 
-    @Override
-    public void updateStatus(int id, int status) {
-        Optional<Product> optionalProduct = productRepository.findById(id);
-        if (optionalProduct.isPresent()) {
-            Product product = optionalProduct.get();
-            product.setStatus(status);
-            productRepository.save(product);
-        }
-    }
+
 
     @Override
     public void deleteByID(int id) {
