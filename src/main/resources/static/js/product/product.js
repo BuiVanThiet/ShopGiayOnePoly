@@ -1,5 +1,5 @@
 function toggleDropdownProduct(event, icon) {
-    var menu = icon.nextElementSibling;
+    let menu = icon.nextElementSibling;
 
     // Kiểm tra và thay đổi trạng thái hiển thị menu
     menu.classList.toggle('show-product');
@@ -11,7 +11,7 @@ function toggleDropdownProduct(event, icon) {
 // Đóng menu khi hover ra khỏi khu vực
 document.querySelectorAll('.dropdown-product').forEach(function(dropdown) {
     dropdown.addEventListener('mouseleave', function() {
-        var menu = this.querySelector('.dropdown-menu-product');
+        let menu = this.querySelector('.dropdown-menu-product');
         if (menu.classList.contains('show-product')) {
             menu.classList.remove('show-product');
         }
@@ -21,9 +21,9 @@ document.querySelectorAll('.dropdown-product').forEach(function(dropdown) {
 // Đóng menu khi click ra ngoài khu vực menu
 window.onclick = function(event) {
     if (!event.target.matches('.fa-ellipsis-v-product')) {
-        var dropdowns = document.getElementsByClassName("dropdown-menu-product");
-        for (var i = 0; i < dropdowns.length; i++) {
-            var openDropdown = dropdowns[i];
+        let dropdowns = document.getElementsByClassName("dropdown-menu-product");
+        for (let i = 0; i < dropdowns.length; i++) {
+            let openDropdown = dropdowns[i];
             if (openDropdown.classList.contains('show-product')) {
                 openDropdown.classList.remove('show-product');
             }
@@ -58,61 +58,16 @@ document.querySelectorAll('.select-row-product').forEach((checkbox) => {
 // Hàm cập nhật hiển thị các nút dựa vào checkbox được chọn
 function toggleSaveButton() {
     const anyChecked = document.querySelectorAll('.select-row-product:checked').length > 0;
-    document.getElementById('btn-export-product').style.display = anyChecked ? "block" : "none";
-    document.getElementById('btn-delete-product').style.display = anyChecked ? "block" : "none";
+    if (document.getElementById('btn-findProduct-delete').style.display !== 'none'){
+        document.getElementById('btn-export-product').style.display = anyChecked ? "block" : "none";
+        document.getElementById('btn-delete-product').style.display = anyChecked ? "block" : "none";
+    } else {
+        document.getElementById('btn-export-product').style.display = anyChecked ? "block" : "none";
+        document.getElementById('btn-restore-product').style.display = anyChecked ? "block" : "none";
+    }
+
 }
 
-
-// Lưu thay đổi (tuỳ chỉnh hàm này theo nhu cầu)
-function saveChanges() {
-    // Tạo mảng chứa dữ liệu từ các hàng được chọn
-    const updatedData = [];
-
-    // Duyệt qua các hàng có checkbox được chọn
-    document.querySelectorAll('.select-row-product:checked').forEach((checkbox) => {
-        const row = checkbox.closest('tr');
-        const dataId = row.getAttribute('data-id');  // Lấy ID của sản phẩm (dùng để xác định bản ghi trong database)
-        const updatedRow = {
-            id: dataId,
-            codeProduct: row.cells[1].innerText,
-            nameProduct: row.cells[2].querySelector("div").innerText,
-            material: row.cells[3].innerText,
-            manufacturer: row.cells[4].innerText,
-            origin: row.cells[5].innerText,
-            sole: row.cells[6].innerText,
-            describe: row.cells[7].innerText,
-            status: row.cells[8].innerText === 'Đang bán' ? 1 : 2  // Chuyển trạng thái thành số để lưu vào database
-        };
-        updatedData.push(updatedRow);
-    });
-
-    // Gửi dữ liệu đến server qua AJAX
-    fetch('/product-api/updateProducts', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updatedData), // Chuyển đổi dữ liệu sang JSON
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert("Thay đổi đã được lưu vào database!");
-                // Đặt lại trạng thái tất cả các checkbox và ô không chỉnh sửa
-                document.querySelectorAll('.select-row-product:checked').forEach((checkbox) => {
-                    checkbox.checked = false;
-                });
-                document.getElementById('select-all-product').checked = false;
-                toggleSaveButton();
-            } else {
-                alert("Có lỗi xảy ra khi lưu dữ liệu!");
-            }
-        })
-        .catch((error) => {
-            console.error("Lỗi khi gửi dữ liệu:", error);
-            alert("Không thể kết nối tới server!");
-        });
-}
 
 function initImageSlidersGridView() {
     // Tìm tất cả các phần tử có class 'form-control-product'
@@ -126,7 +81,7 @@ function initImageSlidersGridView() {
         setInterval(() => {
             currentSlide = (currentSlide + 1) % slideElements.length; // Chuyển tới slide tiếp theo
             slides.style.transform = `translateX(-${currentSlide * 100}%)`; // Trượt hình ảnh
-        }, 7000); // Thay đổi sau mỗi 10 giây
+        }, 5000); // Thay đổi sau mỗi 10 giây
     });
 } // hàm chuyển ảnh grid view
 initImageSlidersGridView();
@@ -144,42 +99,59 @@ function initImageSlidersTable() {
         setInterval(() => {
             currentSlide = (currentSlide + 1) % slideElements.length; // Chuyển tới slide tiếp theo
             slides.style.transform = `translateX(-${currentSlide * 100}%)`; // Trượt hình ảnh
-        }, 7000); // Thay đổi sau mỗi 7 giây
+        }, 5000); // Thay đổi sau mỗi 7 giây
     });
 }
 
 initImageSlidersTable();
 
 // Sự kiện khi người dùng thay đổi danh mục
-document.querySelector('#search-select-product').addEventListener('change', function () {
+document.querySelector('#search-select-product').addEventListener('change', async function () {
     const idCategory = this.value;
     const searchTerm = document.querySelector('.search-input-product').value;
-    fetchProductsByCategoryAndSearch(idCategory, searchTerm);
+    await fetchProductsByCategoryAndSearch(idCategory, searchTerm);
 });
 
 // Sự kiện khi người dùng nhập vào ô tìm kiếm
-document.querySelector('.search-input-product').addEventListener('input', function () {
+document.querySelector('.search-input-product').addEventListener('input', async function () {
     const searchTerm = this.value;
     const idCategory = document.querySelector('#search-select-product').value;
-    fetchProductsByCategoryAndSearch(idCategory, searchTerm);
+    await fetchProductsByCategoryAndSearch(idCategory, searchTerm);
 });
 
 // Hàm tìm kiếm sản phẩm theo danh mục và ô input
 async function fetchProductsByCategoryAndSearch(idCategory, searchTerm, url = `/product-api/search`) {
+    document.getElementById('select-all-product').checked
+        ? document.getElementById('select-all-product').checked = false
+        : null;
     if (url === `/product-api/search`) {
+        if (searchTerm === '' || idCategory === 0){
+            searchTerm = document.querySelector('.search-input-product').value;
+            idCategory = document.querySelector('#search-select-product').value;
+        }
         url += `?idCategory=${idCategory}&searchTerm=${searchTerm}`;
         document.getElementById('btn-findProduct-delete').style.display = 'block';
         document.getElementById('btn-findProduct-active').style.display = 'none';
     } else {
+        if (searchTerm === '' || idCategory === 0){
+            searchTerm = document.querySelector('.search-input-product').value;
+            idCategory = document.querySelector('#search-select-product').value;
+        }
+        url = `/product-api/findProductDelete?idCategory=${idCategory}&searchTerm=${searchTerm}`
         document.getElementById('btn-findProduct-delete').style.display = 'none';
         document.getElementById('btn-findProduct-active').style.display = 'block';
     }
     await fetch(url)
         .then(response => response.json())
         .then(data => {
-            products = data;
-            currentPage = 1; // Đặt lại trang hiện tại là trang đầu tiên
-            displayPage(currentPage); // Hiển thị lại trang với dữ liệu mới
+            if (data === null) {
+
+            } else {
+                products = data;
+                currentPage = 1; // Đặt lại trang hiện tại là trang đầu tiên
+                displayPage(currentPage); // Hiển thị lại trang với dữ liệu mới
+            }
+
         })
         .catch(error => console.error('Error:', error));
 }
@@ -210,13 +182,13 @@ function showListViewProduct() {
 
 
 // Hàm cập nhật các nút điều khiển phân trang
+let nextButton = document.createElement('button');
+let prevButton = document.createElement('button');
+
 function updatePaginationControls(totalPages, page) {
     const pagination = document.getElementById('pagination-product');
     pagination.innerHTML = '';
     const itemsPerPage = isGridView ? itemsPerPageGrid : itemsPerPageList;
-    // Các nút phân trang tiếp tục như trong code gốc
-    // Tạo nút "Trang trước"
-    const prevButton = document.createElement('button');
     prevButton.innerHTML = '<i class="fas fa-angle-left"></i>';
     prevButton.onclick = () => changePage(page - 1);
     prevButton.style.display = page === 1 ? 'none' : 'inline-block';
@@ -269,21 +241,24 @@ function updatePaginationControls(totalPages, page) {
         pagination.appendChild(lastPageButton);
     }
 
-    const nextButton = document.createElement('button');
     nextButton.innerHTML = '<i class="fas fa-angle-right"></i>';
 
     nextButton.onclick = () => changePage(page + 1);
     nextButton.style.display = page === totalPages ? 'none' : 'inline-block';
     pagination.appendChild(nextButton);
+    if (products.length === 0) {
+        nextButton.style.display = 'none';
+        prevButton.style.display = 'none';
+    }
 }
 
-var itemsPerPageList = 10; // Chế độ danh sách: 5 sản phẩm mỗi trang
-var itemsPerPageGrid = 12; // Chế độ lưới: 12 sản phẩm mỗi trang
+let itemsPerPageList = 10; // Chế độ danh sách: 5 sản phẩm mỗi trang
+let itemsPerPageGrid = 12; // Chế độ lưới: 12 sản phẩm mỗi trang
 let currentPage = 1;
 let products = []; // Mảng chứa các sản phẩm từ API
 let isGridView = false; // Xác định chế độ hiện tại (false = danh sách, true = lưới)
 function updateItemsPerPage(event) {
-    if (parseInt(event.target.value) === 25){
+    if (parseInt(event.target.value) === 25) {
         itemsPerPageList = products.length;
     } else {
         itemsPerPageList = parseInt(event.target.value);
@@ -321,6 +296,7 @@ function displayPage(page) {
     if (document.getElementById('btn-export-product').style.display !== 'none'){
         document.getElementById('btn-export-product').style.display = 'none';
         document.getElementById('btn-delete-product').style.display = 'none';
+        document.getElementById('btn-restore-product').style.display = 'none';
     }
     const itemsPerPage = isGridView ? itemsPerPageGrid : itemsPerPageList;
     const totalPages = Math.ceil(products.length / itemsPerPage);
@@ -328,15 +304,16 @@ function displayPage(page) {
     const end = start + itemsPerPage;
     const tableBody = document.getElementById('product-table-body');
     tableBody.innerHTML = '';
-
     // Kiểm tra chế độ hiện tại để hiển thị đúng kiểu
     if (isGridView) {
         const gridContainer = document.querySelector('.form-group-product');
         gridContainer.style.display = 'flex'; // Hiển thị lại container grid khi vào chế độ grid
         gridContainer.innerHTML = ''; // Xóa nội dung trước đó để không bị trùng sản phẩm
-
-        products.slice(start, end).forEach(product => {
-            const productHtml = `
+        if (products.length === 0) {
+            gridContainer.innerHTML += `<h3>Không tìm thấy sản phẩm nào</h3>`
+        } else {
+            products.slice(start, end).forEach(product => {
+                const productHtml = `
             <div class="form-control-product">
                 <p>${product.nameProduct}</p>
                 <div class="image-slider">
@@ -350,23 +327,28 @@ function displayPage(page) {
                 </div>
             </div>
         `;
-            gridContainer.innerHTML += productHtml;
-        });
+                gridContainer.innerHTML += productHtml;
+            });
+        }
     } else {
-        products.slice(start, end).forEach(product => {
-            const row = document.createElement('tr');
-            row.id = `row-product-${product.id}`;
-            row.dataset.id = product.id;
-            row.ondblclick = () => viewProductDetail(product.id);
+        if (products.length === 0) {
+            document.getElementById('nullProduct').style.display = 'block';
+        } else {
+            document.getElementById('nullProduct').style.display = 'none';
+            products.slice(start, end).forEach(product => {
+                const row = document.createElement('tr');
+                row.id = `row-product-${product.id}`;
+                row.dataset.id = product.id;
+                row.ondblclick = () => viewProductDetail(product.id);
 
-            // Xây dựng HTML cho slider ảnh
-            const imageSliderHtml = product.images.map(image => `
+                // Xây dựng HTML cho slider ảnh
+                const imageSliderHtml = product.images.map(image => `
                 <div class="slide">
                     <img src="https://res.cloudinary.com/dfy4umpja/image/upload/v1728725582/${image.nameImage}" alt="Ảnh sản phẩm">
                 </div>
             `).join('');
 
-            row.innerHTML = `
+                row.innerHTML = `
                 <td>
                         <input type="checkbox" class="select-row-product"/>
                 </td>
@@ -409,14 +391,15 @@ function displayPage(page) {
 
             `;
 
-            tableBody.appendChild(row);
-            // Thiết lập sự kiện cho checkbox
-            const checkbox = row.querySelector('.select-row-product');
-            checkbox.addEventListener('change', function() {
-                const allChecked = document.querySelectorAll('.select-row-product:checked').length === document.querySelectorAll('.select-row-product').length;
-                document.getElementById('select-all-product').checked = allChecked;
+                tableBody.appendChild(row);
+                // Thiết lập sự kiện cho checkbox
+                const checkbox = row.querySelector('.select-row-product');
+                checkbox.addEventListener('change', function () {
+                    const allChecked = document.querySelectorAll('.select-row-product:checked').length === document.querySelectorAll('.select-row-product').length;
+                    document.getElementById('select-all-product').checked = allChecked;
+                });
             });
-        });
+        }
     }
     document.querySelectorAll('.select-row-product').forEach((checkbox) => {
         checkbox.addEventListener('change', function() {
@@ -438,48 +421,7 @@ function viewProductDetail(idProduct){
 }
 
 
-function updateProduct(idProduct) {
-    const product = [];
-    const rows = document.querySelectorAll('#productTable tbody tr');
 
-    // Duyệt qua từng hàng trong bảng để lấy dữ liệu
-    rows.forEach(row => {
-        const codeProduct = row.cells[2].innerText.trim(); // Mô tả
-        const nameProduct = row.cells[2].innerText.trim(); // Mô tả
-        const price = parseFloat(row.cells[3].innerText.trim()) || 0; // Giá bán
-        const importPrice = parseFloat(row.cells[4].innerText.trim()) || 0; // Giá nhập
-        const quantity = parseInt(row.cells[5].innerText.trim(), 10) || 0; // Số lượng
-        const weight = parseFloat(row.cells[6].innerText.trim()) || 0; // Trọng lượng
-        const description = row.cells[7].innerText.trim(); // Mô tả
-        const status = 1;
-
-        // Tạo đối tượng chi tiết sản phẩm
-        const productDetail = {
-            product: {id: idProduct}, // Thay thế với cấu trúc thực tế trong Java backend
-            color: {id: colorId}, // ID màu
-            size: {id: sizeId}, // ID kích thước
-            price: price,
-            import_price: importPrice,
-            quantity: quantity,
-            describe: description,
-            weight: weight,
-            status: status // Trạng thái
-        };
-
-        productDetails.push(productDetail);
-    })
-    fetch('/staff/product/add-productDetail', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(productDetails)
-    })
-        .then(response => response.json())
-    window.location.href = 'http://localhost:8080/staff/product/detail/' + idProduct;
-}
-
-// Đảm bảo thêm sự kiện cho tất cả các nút Xóa
 
 function getIdProduct(element) {
     const productId = element.getAttribute('data-product-id');
@@ -493,7 +435,7 @@ function getIdProduct(element) {
 
 async function updateStatus(id, status) {
     if (id === null){
-        var modal = document.getElementById('confirm-create-bill-modal');
+        let modal = document.getElementById('confirm-create-bill-modal');
         id = modal.getAttribute('data-product-id');
     }
 
@@ -505,9 +447,121 @@ async function updateStatus(id, status) {
     // Thực hiện các hành động tùy theo trạng thái
     if (status === 0) {
         createToast('1', 'Xóa sản phẩm thành công');
-        fetchProductsByCategoryAndSearch(0, '');
+        await fetchProductsByCategoryAndSearch(0, '');
     } else {
         createToast('1', 'Khôi phục sản phẩm thành công');
-        fetchProductsByCategoryAndSearch(0, '', `/product-api/findProductDelete?idCategory=${0}&searchTerm=${''}`);
+        await fetchProductsByCategoryAndSearch(0, '', `/product-api/findProductDelete?idCategory=${0}&searchTerm=${''}`);
+    }
+}
+
+
+async function deleteMultipleProduct() {
+    // Lấy các checkbox được chọn
+    const selectedRows = document.querySelectorAll('.select-row-product:checked');
+    const productIds = Array.from(selectedRows).map(row => {
+        const tr = row.closest('tr');
+        return parseInt(tr.dataset.id, 10);
+    });
+
+    if (productIds.length > 0) {
+        try {
+            // Gửi yêu cầu xóa sản phẩm
+            const response = await fetch('/product-api/delete-multiple', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(productIds),
+            });
+
+            if (!response.ok) {
+                throw new Error('Xóa sản phẩm thất bại.');
+            }
+
+            // Tải lại danh sách sản phẩm sau khi xóa
+            await fetchProductsByCategoryAndSearch(0, '');
+
+            // Thông báo thành công
+            createToast('1', 'Xóa sản phẩm thành công');
+        } catch (error) {
+            // Thông báo lỗi nếu có
+            createToast('2', 'Đã xảy ra lỗi khi xóa sản phẩm.');
+            console.error('Lỗi khi xóa sản phẩm:', error);
+        }
+    } else {
+        createToast('2', 'Vui lòng chọn ít nhất một sản phẩm để xóa.');
+    }
+}
+
+async function restoreMultipleProduct() {
+    // Lấy các checkbox được chọn
+    const selectedRows = document.querySelectorAll('.select-row-product:checked');
+    const productIds = Array.from(selectedRows).map(row => {
+        const tr = row.closest('tr');
+        return parseInt(tr.dataset.id, 10);
+    });
+
+    if (productIds.length > 0) {
+        try {
+            // Gửi yêu cầu xóa sản phẩm
+            const response = await fetch('/product-api/restore-multiple', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(productIds),
+            });
+
+            if (!response.ok) {
+                throw new Error('Xóa sản phẩm thất bại.');
+            }
+
+            // Tải lại danh sách sản phẩm sau khi xóa
+            await fetchProductsByCategoryAndSearch(0, '');
+
+            // Thông báo thành công
+            createToast('1', 'Khôi phục sản phẩm thành công');
+        } catch (error) {
+            // Thông báo lỗi nếu có
+            createToast('2', 'Đã xảy ra lỗi khi khôi phục sản phẩm.');
+        }
+    } else {
+        createToast('2', 'Vui lòng chọn ít nhất một sản phẩm để khôi phục.');
+    }
+}
+
+function exportExcelProduct() {
+    // Lấy các checkbox được chọn
+    const selectedRows = document.querySelectorAll('.select-row-product:checked');
+    const data = [];
+
+    selectedRows.forEach(row => {
+        const tr = row.closest('tr');
+        const rowData = {
+            "Mã sản phẩm": tr.querySelector('[data-column="codeProduct"]').textContent,
+            "Tên sản phẩm": tr.querySelector('[data-column="nameProduct"]').textContent,
+            "Chất liệu": tr.querySelector('[data-column="material"]').textContent,
+            "Nhà sản xuất": tr.querySelector('[data-column="manufacturer"]').textContent,
+            "Xuất xứ": tr.querySelector('[data-column="origin"]').textContent,
+            "Loại đế": tr.querySelector('[data-column="sole"]').textContent,
+            "Mô tả": tr.querySelector('[data-column="describe"]').textContent,
+            "Trạng thái": tr.querySelector('[data-column="status"]').textContent,
+        };
+        data.push(rowData);
+    });
+
+    if (data.length > 0) {
+        // Tạo bảng Excel từ dữ liệu
+        const ws = XLSX.utils.json_to_sheet(data);
+
+        // Tạo workbook
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Sản phẩm');
+
+        // Xuất file Excel
+        XLSX.writeFile(wb, 'products.xlsx');
+        createToast('1', 'Xuất dữ liệu đã chọn ra Excel thành công');
+    } else {
+        createToast('2', 'Vui lòng chọn ít nhất một sản phẩm để xuất Excel.');
     }
 }

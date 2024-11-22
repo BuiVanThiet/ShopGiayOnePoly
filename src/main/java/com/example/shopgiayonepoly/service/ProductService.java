@@ -32,7 +32,7 @@ public interface ProductService {
 
     List<Product> getProductDelete();
 
-    void updateStatus(int id, int status);
+    void updateStatus(Integer id, Integer status);
 
     void updateProduct(int id, String codeProduct, String nameProduct);
 
@@ -57,8 +57,6 @@ public interface ProductService {
     List<String> findAllCodeProduct();
 
     List<Product> findProductDelete(Integer idCategory, String searchTerm);
-
-    void updateStatus( Integer id,  Integer status);
 
     Integer findQuantityByIDProduct( Integer id);
 

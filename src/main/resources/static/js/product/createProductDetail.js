@@ -1,11 +1,11 @@
 function showDropdown(event) {
-    var input = event.target;
-    var listId = input.id.replace("myInput-", "dataList-"); // Tạo ID cho danh sách từ ID của input
-    var ul = document.getElementById(listId);
+    let input = event.target;
+    let listId = input.id.replace("myInput-", "dataList-"); // Tạo ID cho danh sách từ ID của input
+    let ul = document.getElementById(listId);
 
     // Đóng tất cả dropdown khác
-    var dropdowns = document.getElementsByClassName("dropdown-content-createProductDetail");
-    for (var i = 0; i < dropdowns.length; i++) {
+    let dropdowns = document.getElementsByClassName("dropdown-content-createProductDetail");
+    for (let i = 0; i < dropdowns.length; i++) {
         dropdowns[i].classList.remove('show-createProductDetail'); // Đóng tất cả dropdown
     }
 
@@ -24,15 +24,15 @@ function showDropdown(event) {
 }
 
 function filterFunction(event) {
-    var input = event.target;
-    var filter = input.value.toUpperCase();
-    var listId = input.id.replace("myInput-", "dataList-"); // Tạo ID cho danh sách từ ID của input
-    var ul = document.getElementById(listId);
-    var li = ul.getElementsByTagName("li");
+    let input = event.target;
+    let filter = input.value.toUpperCase();
+    let listId = input.id.replace("myInput-", "dataList-"); // Tạo ID cho danh sách từ ID của input
+    let ul = document.getElementById(listId);
+    let li = ul.getElementsByTagName("li");
 
     // Lọc các sản phẩm dựa trên giá trị nhập vào
-    for (var i = 0; i < li.length; i++) {
-        var txtValue = li[i].textContent || li[i].innerText;
+    for (let i = 0; i < li.length; i++) {
+        let txtValue = li[i].textContent || li[i].innerText;
         li[i].style.display = txtValue.toUpperCase().indexOf(filter) > -1 ? "" : "none";
     }
 }

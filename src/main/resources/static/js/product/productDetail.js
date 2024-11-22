@@ -1,5 +1,5 @@
 function toggleDropdownproductDetail(event, icon) {
-    var menu = icon.nextElementSibling;
+    let menu = icon.nextElementSibling;
 
     // Kiểm tra và thay đổi trạng thái hiển thị menu
     menu.classList.toggle('show-productDetail');
@@ -11,7 +11,7 @@ function toggleDropdownproductDetail(event, icon) {
 // Đóng menu khi hover ra khỏi khu vực
 document.querySelectorAll('.dropdown-productDetail').forEach(function (dropdown) {
     dropdown.addEventListener('mouseleave', function () {
-        var menu = this.querySelector('.dropdown-menu-productDetail');
+        let menu = this.querySelector('.dropdown-menu-productDetail');
         if (menu.classList.contains('show-productDetail')) {
             menu.classList.remove('show-productDetail');
         }
@@ -21,9 +21,9 @@ document.querySelectorAll('.dropdown-productDetail').forEach(function (dropdown)
 // Đóng menu khi click ra ngoài khu vực menu
 window.onclick = function (event) {
     if (!event.target.matches('.fa-ellipsis-v-productDetail')) {
-        var dropdowns = document.getElementsByClassName("dropdown-menu-productDetail");
-        for (var i = 0; i < dropdowns.length; i++) {
-            var openDropdown = dropdowns[i];
+        let dropdowns = document.getElementsByClassName("dropdown-menu-productDetail");
+        for (let i = 0; i < dropdowns.length; i++) {
+            let openDropdown = dropdowns[i];
             if (openDropdown.classList.contains('show-productDetail')) {
                 openDropdown.classList.remove('show-productDetail');
             }
@@ -91,10 +91,10 @@ const itemsPerPage = 10; // Display 5 products per page
 let currentPage = 1;
 let productDetails = [];
 // Lấy thẻ p
-var pElement = document.querySelector('p[data-value]');
+let pElement = document.querySelector('p[data-value]');
 
 // Lấy giá trị từ thuộc tính data-value
-var idProduct = pElement.getAttribute('data-value');
+let idProduct = pElement.getAttribute('data-value');
 
 console.log(idProduct)
 document.querySelector('.search-input-productDetail').addEventListener('input', function () {
