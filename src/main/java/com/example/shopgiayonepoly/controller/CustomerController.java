@@ -210,8 +210,7 @@ public class CustomerController {
         }
         if (result.hasErrors()) {
             model.addAttribute("mes", "Thêm thất bại");
-            // Nếu có lỗi, trả về trang form để người dùng sửa lại
-            return "Customer/update"; // Bạn có thể trả về tên view của form nhập liệu
+            return "Customer/update";
         }
         Customer customer = customerService.getCustomerByID(customerRequest.getId());
         customerRequest.setCreateDate(customer.getCreateDate());
