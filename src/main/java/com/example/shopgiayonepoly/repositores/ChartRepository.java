@@ -18,72 +18,166 @@ import java.util.Map;
 
 @Repository
 public interface ChartRepository extends JpaRepository<Bill, Integer> {
-    @Query("SELECT COALESCE(COUNT(b), 0) " +  // Thay đổi COUNT(b) thành COALESCE(COUNT(b), 0)
-            "FROM Bill b " +
-            "WHERE b.status IN (5, 8, 9) " +
-            "AND MONTH(b.updateDate) = MONTH(CURRENT_DATE) " +
-            "AND YEAR(b.updateDate) = YEAR(CURRENT_DATE)")
+    @Query(value = """
+        SELECT
+          SUM(CASE
+                  WHEN b.status = 5 AND MONTH(b.update_date) = MONTH(GETDATE()) AND YEAR(b.update_date) = YEAR(GETDATE()) THEN 1
+                  ELSE 0
+              END) +
+          SUM(CASE
+                  WHEN b.status = 8 AND MONTH(b.create_date) = MONTH(GETDATE()) AND YEAR(b.create_date) = YEAR(GETDATE()) THEN 1
+                  ELSE 0
+              END) +
+          SUM(CASE
+                  WHEN b.status = 8 AND MONTH(b.update_date) = MONTH(GETDATE()) AND YEAR(b.update_date) = YEAR(GETDATE()) THEN 1
+                  ELSE 0
+              END) +
+          SUM(CASE
+                  WHEN b.status = 9 AND b.bill_type = 1 AND MONTH(b.create_date) = MONTH(GETDATE()) AND YEAR(b.create_date) = YEAR(GETDATE()) THEN 1
+                  ELSE 0
+              END) +
+          SUM(CASE
+                  WHEN b.status = 9 AND b.bill_type = 1 AND MONTH(b.update_date) = MONTH(GETDATE()) AND YEAR(b.update_date) = YEAR(GETDATE()) THEN 1
+                  ELSE 0
+              END) +
+          SUM(CASE
+                  WHEN b.status = 9 AND b.bill_type = 2 AND MONTH(b.update_date) = MONTH(GETDATE()) AND YEAR(b.update_date) = YEAR(GETDATE()) THEN 1
+                  ELSE 0
+              END) AS TotalHoaDon
+      FROM
+          Bill b
+      WHERE
+          b.status IN (5, 8, 9);
+        """,nativeQuery = true)
     Long monthlyBill();
 
     @Query(value = """
-        SELECT 
-            CASE 
-                WHEN SUM(b.total_amount - b.price_discount) - 
-                     SUM(ex.customer_refund - ex.exchange_and_return_fee - ex.customer_payment + ex.discounted_amount) < 0 
-                THEN 0
-                ELSE SUM(b.total_amount - b.price_discount) - 
-                     SUM(ex.customer_refund - ex.exchange_and_return_fee - ex.customer_payment + ex.discounted_amount)
-            END AS result
-        FROM Bill b
-        LEFT JOIN return_bill_exchange_bill ex ON b.id = ex.id_bill
-        WHERE b.status IN (5, 8, 9)
-        AND MONTH(b.update_date) = MONTH(CURRENT_TIMESTAMP)
-        AND YEAR(b.update_date) = YEAR(CURRENT_TIMESTAMP)
+        SELECT
+            COALESCE(SUM(CASE
+                            WHEN b.status IN (5, 8, 9) THEN (b.total_amount - b.price_discount)
+                            ELSE 0
+                        END), 0)
+            -
+            COALESCE(SUM(
+                ex.customer_refund
+                - ex.exchange_and_return_fee
+                - ex.customer_payment
+                + ex.discounted_amount), 0)
+         
+            +
+            COALESCE(SUM(CASE
+                            WHEN b.status IN (9) THEN (b.total_amount - b.price_discount)
+                            ELSE 0
+                        END), 0) AS result
+        FROM
+            Bill b
+        LEFT JOIN
+            return_bill_exchange_bill ex
+        ON
+            b.id = ex.id_bill
+        WHERE
+            b.status IN (5, 8, 9)
+            AND MONTH(b.update_date) = MONTH(GETDATE()) 
+            AND YEAR(b.update_date) = YEAR(GETDATE());              
     """, nativeQuery = true)
     Long totalMonthlyBill();
 
-    @Query(value = "SELECT " +
-            "(SELECT SUM(CASE WHEN b.status = 5 THEN bd.quantity ELSE 0 END) " +
-            "FROM dbo.Bill b " +
-            "LEFT JOIN dbo.bill_detail bd ON bd.id_bill = b.id " +
-            "WHERE b.status = 5 " +
-            "AND MONTH(b.update_date) = MONTH(GETDATE()) " +
-            "AND YEAR(b.update_date) = YEAR(GETDATE())) " +
-            "+ SUM(CASE WHEN ebd2.id_exchang_bill IS NOT NULL THEN ebd2.quantity_exchange ELSE 0 END) " +
-            "+ SUM(CASE WHEN b2.status = 8 THEN bd2.quantity ELSE 0 END) " +
-            "- SUM(CASE WHEN rbd2.id_return_bill IS NOT NULL THEN rbd2.quantity_return ELSE 0 END) " +
-            "AS Total_Quantity " +
-            "FROM dbo.Bill b " +
-            "LEFT JOIN dbo.bill_detail bd ON bd.id_bill = b.id " +
-            "LEFT JOIN dbo.Bill b2 ON b2.id = bd.id_bill " +
-            "LEFT JOIN dbo.bill_detail bd2 ON bd2.id_bill = b2.id " +
-            "LEFT JOIN dbo.return_bill_exchange_bill rbeb ON rbeb.id_bill = b.id " +
-            "LEFT JOIN dbo.exchange_bill_detail ebd2 ON ebd2.id_exchang_bill = rbeb.id " +
-            "LEFT JOIN dbo.return_bill_detail rbd2 ON rbd2.id_return_bill = rbeb.id " +
-            "WHERE b.status IN (5, 8, 9) " +
-            "AND MONTH(b.update_date) = MONTH(GETDATE()) " +
-            "AND YEAR(b.update_date) = YEAR(GETDATE())", nativeQuery = true)
+    @Query(value = """
+        SELECT
+           
+            (
+                COALESCE(SUM(CASE
+                                WHEN b.status IN (5,8,9) THEN bd.quantity
+                                ELSE 0
+                            END), 0)
+                + COALESCE(SUM(ebd2.quantity_exchange), 0)
+                - COALESCE(SUM(CASE
+                                WHEN rbeb.status = 1 THEN rbd2.quantity_return
+                                ELSE 0
+                            END), 0)
+            ) AS Total_Quantity
+        FROM dbo.Bill b
+        LEFT JOIN dbo.bill_detail bd
+            ON bd.id_bill = b.id
+        LEFT JOIN dbo.Bill b2
+            ON b2.id = bd.id_bill
+        LEFT JOIN dbo.bill_detail bd2
+            ON bd2.id_bill = b2.id
+        LEFT JOIN dbo.return_bill_exchange_bill rbeb
+            ON rbeb.id_bill = b.id
+        LEFT JOIN dbo.exchange_bill_detail ebd2
+            ON ebd2.id_exchang_bill = rbeb.id
+        LEFT JOIN dbo.return_bill_detail rbd2
+            ON rbd2.id_return_bill = rbeb.id
+        WHERE
+            b.status IN (5, 8, 9)
+            AND MONTH(b.update_date) = MONTH(GETDATE())
+            AND YEAR(b.update_date) = YEAR(GETDATE());
+        """,
+            nativeQuery = true)
     Long totalMonthlyInvoiceProducts();
 
-    @Query("SELECT COALESCE(COUNT(b), 0) " +  // Thay đổi COUNT(b) thành COALESCE(COUNT(b), 0)
-            "FROM Bill b " +
-            "WHERE b.status IN(5,8, 9) " +
-            "AND CAST(b.updateDate AS DATE) = CAST(CURRENT_DATE AS DATE)")
+    @Query(value = """
+        SELECT
+          SUM(CASE
+                  WHEN b.status = 5 AND CAST(b.update_date AS DATE) = CAST(GETDATE() AS DATE) THEN 1
+                  ELSE 0
+              END) +
+          SUM(CASE
+                  WHEN b.status = 8 AND CAST(b.create_date AS DATE) = CAST(GETDATE() AS DATE) THEN 1
+                  ELSE 0
+              END) +
+          SUM(CASE
+                  WHEN b.status = 8 AND CAST(b.update_date AS DATE) = CAST(GETDATE() AS DATE) THEN 1
+                  ELSE 0
+              END) +
+          SUM(CASE
+                  WHEN b.status = 9 AND b.bill_type = 1 AND CAST(b.create_date AS DATE) = CAST(GETDATE() AS DATE) THEN 1
+                  ELSE 0
+              END) +
+          SUM(CASE
+                  WHEN b.status = 9 AND b.bill_type = 1 AND CAST(b.update_date AS DATE) = CAST(GETDATE() AS DATE) THEN 1
+                  ELSE 0
+              END) +
+          SUM(CASE
+                  WHEN b.status = 9 AND b.bill_type = 2 AND CAST(b.update_date AS DATE) = CAST(GETDATE() AS DATE) THEN 1
+                  ELSE 0
+              END) AS TotalHoaDon
+      FROM
+          Bill b
+      WHERE
+          b.status IN (5, 8, 9);
+    """, nativeQuery = true)
     Long billOfTheDay();
 
     @Query(value = """
-        SELECT 
-            CASE 
-                WHEN COALESCE(SUM(b.total_amount - b.price_discount), 0) - 
-                     COALESCE(SUM(ex.customer_refund - ex.exchange_and_return_fee - ex.customer_payment + ex.discounted_amount), 0) < 0 
-                THEN 0
-                ELSE COALESCE(SUM(b.total_amount - b.price_discount), 0) - 
-                     COALESCE(SUM(ex.customer_refund - ex.exchange_and_return_fee - ex.customer_payment + ex.discounted_amount), 0)
-            END AS result
-        FROM Bill b
-        LEFT JOIN return_bill_exchange_bill ex ON b.id = ex.id_bill
-        WHERE b.status IN (5, 8, 9)
-          AND CAST(b.update_date AS DATE) = CAST(GETDATE() AS DATE)
+        SELECT
+            COALESCE(SUM(CASE
+                            WHEN b.status IN (5, 8, 9) THEN (b.total_amount - b.price_discount)
+                            ELSE 0
+                        END), 0)
+            -
+            COALESCE(SUM(
+                ex.customer_refund
+                - ex.exchange_and_return_fee
+                - ex.customer_payment
+                + ex.discounted_amount), 0)
+         
+            +
+            COALESCE(SUM(CASE
+                            WHEN b.status IN (9) THEN (b.total_amount - b.price_discount)
+                            ELSE 0
+                        END), 0) AS result
+        FROM
+            Bill b
+        LEFT JOIN
+            return_bill_exchange_bill ex
+        ON
+            b.id = ex.id_bill
+        WHERE
+            b.status IN (5, 8, 9)
+            AND CAST(b.update_date AS DATE) = CAST(GETDATE() AS DATE);  -- Lọc theo ngày hôm nay
+        
         """, nativeQuery = true)
     Long totalPriceToday();
 
@@ -94,147 +188,310 @@ public interface ChartRepository extends JpaRepository<Bill, Integer> {
             "ORDER BY CAST(MAX(b.updateDate) AS date)")
     List<Date> findLastBillDates();
     // Lấy ngày cuối tháng có hóa đơn
-    @Query(value = "SELECT " +
-            "FORMAT(MAX(b.update_date), 'dd-MM-yyyy') AS Thang, " +
-            "COUNT(DISTINCT b.id) AS HoaDonThang, " +
-            "(SELECT SUM(CASE WHEN b.status = 5 THEN bd.quantity ELSE 0 END) " +
-            "FROM dbo.Bill b " +
-            "LEFT JOIN dbo.bill_detail bd ON bd.id_bill = b.id " +
-            "WHERE b.status = 5 " +
-            "AND MONTH(b.update_date) = MONTH(GETDATE()) " +
-            "AND YEAR(b.update_date) = YEAR(GETDATE())) " +
-            "+ SUM(CASE WHEN ebd2.id_exchang_bill IS NOT NULL THEN ebd2.quantity_exchange ELSE 0 END) " +
-            "+ SUM(CASE WHEN b2.status = 8 THEN bd2.quantity ELSE 0 END) " +
-            "- SUM(CASE WHEN rbd2.id_return_bill IS NOT NULL THEN rbd2.quantity_return ELSE 0 END) AS soLuong " +
-            "FROM Bill b " +
-            "LEFT JOIN bill_detail bd ON bd.id_bill = b.id " +
-            "LEFT JOIN Bill b2 ON b2.id = bd.id_bill " +
-            "LEFT JOIN bill_detail bd2 ON bd2.id_bill = b2.id " +
-            "LEFT JOIN return_bill_exchange_bill rbeb ON rbeb.id_bill = b.id " +
-            "LEFT JOIN exchange_bill_detail ebd2 ON ebd2.id_exchang_bill = rbeb.id " +
-            "LEFT JOIN return_bill_detail rbd2 ON rbd2.id_return_bill = rbeb.id " +
-            "WHERE b.status IN (5, 8, 9) " +
-            "AND b.update_date >= DATEADD(MONTH, -12, GETDATE()) " +
-            "GROUP BY FORMAT(b.update_date, 'MM-yyyy') " +
-            "ORDER BY FORMAT(b.update_date, 'MM-yyyy') DESC",
-            nativeQuery = true)
+    @Query(value = """
+        WITH MonthRange AS (
+            -- Tạo danh sách các tháng trong 6 tháng gần đây
+            SELECT CAST(DATEADD(MONTH, -5, GETDATE()) AS DATE) AS MonthStart
+            UNION ALL
+            SELECT DATEADD(MONTH, 1, MonthStart)
+            FROM MonthRange
+            WHERE MonthStart < CAST(GETDATE() AS DATE)
+        )
+        SELECT
+            FORMAT(MAX(dr.MonthStart), 'dd-MM-yyyy') AS Thang,
+            ISNULL(
+                SUM(CASE
+                        WHEN b.status = 5 AND MONTH(b.update_date) = MONTH(dr.MonthStart) AND YEAR(b.update_date) = YEAR(dr.MonthStart) THEN 1
+                        ELSE 0
+                    END) +
+                SUM(CASE
+                        WHEN b.status = 8 AND MONTH(b.create_date) = MONTH(dr.MonthStart) AND YEAR(b.create_date) = YEAR(dr.MonthStart) THEN 1
+                        ELSE 0
+                    END) +
+                SUM(CASE
+                        WHEN b.status = 8 AND MONTH(b.update_date) = MONTH(dr.MonthStart) AND YEAR(b.update_date) = YEAR(dr.MonthStart) THEN 1
+                        ELSE 0
+                    END) +
+                SUM(CASE
+                        WHEN b.status = 9 AND b.bill_type = 1 AND MONTH(b.create_date) = MONTH(dr.MonthStart) AND YEAR(b.create_date) = YEAR(dr.MonthStart) THEN 1
+                        ELSE 0
+                    END) +
+                SUM(CASE
+                        WHEN b.status = 9 AND b.bill_type = 1 AND MONTH(b.update_date) = MONTH(dr.MonthStart) AND YEAR(b.update_date) = YEAR(dr.MonthStart) THEN 1
+                        ELSE 0
+                    END) +
+                SUM(CASE
+                        WHEN b.status = 9 AND b.bill_type = 2 AND MONTH(b.update_date) = MONTH(dr.MonthStart) AND YEAR(b.update_date) = YEAR(dr.MonthStart) THEN 1
+                        ELSE 0
+                    END), 0
+            ) AS HoaDonThang,
+            ISNULL((\s
+                COALESCE(SUM(CASE WHEN b.status IN (5, 8, 9) THEN bd.quantity ELSE 0 END), 0)
+                + COALESCE(SUM(ebd2.quantity_exchange), 0)
+                - COALESCE(SUM(CASE WHEN rbeb.status = 1 THEN rbd2.quantity_return ELSE 0 END), 0)
+            ), 0) AS SoLuong
+        FROM
+            MonthRange dr
+        LEFT JOIN dbo.Bill b
+            ON (MONTH(b.update_date) = MONTH(dr.MonthStart) AND YEAR(b.update_date) = YEAR(dr.MonthStart))
+            OR (MONTH(b.create_date) = MONTH(dr.MonthStart) AND YEAR(b.create_date) = YEAR(dr.MonthStart))
+        LEFT JOIN dbo.bill_detail bd
+            ON bd.id_bill = b.id
+        LEFT JOIN dbo.return_bill_exchange_bill rbeb
+            ON rbeb.id_bill = b.id
+        LEFT JOIN dbo.exchange_bill_detail ebd2
+            ON ebd2.id_exchang_bill = rbeb.id
+        LEFT JOIN dbo.return_bill_detail rbd2
+            ON rbd2.id_return_bill = rbeb.id
+        GROUP BY
+            dr.MonthStart
+        HAVING
+            ISNULL(
+                SUM(CASE
+                        WHEN b.status = 5 AND MONTH(b.update_date) = MONTH(dr.MonthStart) AND YEAR(b.update_date) = YEAR(dr.MonthStart) THEN 1
+                        ELSE 0
+                    END) +
+                SUM(CASE
+                        WHEN b.status = 8 AND MONTH(b.create_date) = MONTH(dr.MonthStart) AND YEAR(b.create_date) = YEAR(dr.MonthStart) THEN 1
+                        ELSE 0
+                    END) +
+                SUM(CASE
+                        WHEN b.status = 8 AND MONTH(b.update_date) = MONTH(dr.MonthStart) AND YEAR(b.update_date) = YEAR(dr.MonthStart) THEN 1
+                        ELSE 0
+                    END) +
+                SUM(CASE
+                        WHEN b.status = 9 AND b.bill_type = 1 AND MONTH(b.create_date) = MONTH(dr.MonthStart) AND YEAR(b.create_date) = YEAR(dr.MonthStart) THEN 1
+                        ELSE 0
+                    END) +
+                SUM(CASE
+                        WHEN b.status = 9 AND b.bill_type = 1 AND MONTH(b.update_date) = MONTH(dr.MonthStart) AND YEAR(b.update_date) = YEAR(dr.MonthStart) THEN 1
+                        ELSE 0
+                    END) +
+                SUM(CASE
+                        WHEN b.status = 9 AND b.bill_type = 2 AND MONTH(b.update_date) = MONTH(dr.MonthStart) AND YEAR(b.update_date) = YEAR(dr.MonthStart) THEN 1
+                        ELSE 0
+                    END), 0
+            ) > 0
+        ORDER BY
+            dr.MonthStart ASC;
+    """,nativeQuery = true)
     List<Object[]> findMonthlyStatistics();
 
     @Query(value = """
-            SELECT 
-                FORMAT(b.update_date, 'dd-MM-yyyy') AS ngay, 
-                COUNT(DISTINCT b.id) AS hoaDonHomNay, 
-                COALESCE((
-                    SELECT SUM(CASE WHEN b.status = 5 THEN bd.quantity ELSE 0 END)
-                    FROM dbo.Bill b
-                    LEFT JOIN dbo.bill_detail bd ON bd.id_bill = b.id
-                    WHERE b.status = 5
-                    AND CAST(b.update_date AS DATE) = CAST(GETDATE() AS DATE)
-                ), 0)
-                
-                + COALESCE(SUM(CASE WHEN ebd2.id_exchang_bill IS NOT NULL THEN ebd2.quantity_exchange ELSE 0 END), 0) 
-                + COALESCE(SUM(CASE WHEN b2.status = 8 THEN bd2.quantity ELSE 0 END), 0) 
-                - COALESCE(SUM(CASE WHEN rbd2.id_return_bill IS NOT NULL THEN rbd2.quantity_return ELSE 0 END), 0) AS soLuong 
-            FROM Bill b 
-            LEFT JOIN bill_detail bd ON bd.id_bill = b.id 
-            LEFT JOIN Bill b2 ON b2.id = bd.id_bill 
-            LEFT JOIN bill_detail bd2 ON bd2.id_bill = b2.id 
-            LEFT JOIN return_bill_exchange_bill rbeb ON rbeb.id_bill = b.id 
-            LEFT JOIN exchange_bill_detail ebd2 ON ebd2.id_exchang_bill = rbeb.id 
-            LEFT JOIN return_bill_detail rbd2 ON rbd2.id_return_bill = rbeb.id 
-            WHERE b.status IN (5, 8, 9) 
-            AND CAST(b.update_date AS DATE) = CAST(GETDATE() AS DATE) 
-            GROUP BY FORMAT(b.update_date, 'dd-MM-yyyy') 
-            ORDER BY MAX(b.update_date) DESC
+            SELECT
+                -- Lấy ngày hôm nay dưới định dạng 'dd-MM-yyyy'
+                FORMAT(b.update_date, 'dd-MM-yyyy') AS Ngay,
+            
+                -- Tổng số lượng hóa đơn với các điều kiện status và ngày hôm nay
+                SUM(CASE
+                        WHEN b.status = 5 AND CAST(b.update_date AS DATE) = CAST(GETDATE() AS DATE) THEN 1
+                        ELSE 0
+                    END) +
+                SUM(CASE
+                        WHEN b.status = 8 AND CAST(b.create_date AS DATE) = CAST(GETDATE() AS DATE) THEN 1
+                        ELSE 0
+                    END) +
+                SUM(CASE
+                        WHEN b.status = 8 AND CAST(b.update_date AS DATE) = CAST(GETDATE() AS DATE) THEN 1
+                        ELSE 0
+                    END) +
+                SUM(CASE
+                        WHEN b.status = 9 AND b.bill_type = 1 AND CAST(b.create_date AS DATE) = CAST(GETDATE() AS DATE) THEN 1
+                        ELSE 0
+                    END) +
+                SUM(CASE
+                        WHEN b.status = 9 AND b.bill_type = 1 AND CAST(b.update_date AS DATE) = CAST(GETDATE() AS DATE) THEN 1
+                        ELSE 0
+                    END) +
+                SUM(CASE
+                        WHEN b.status = 9 AND b.bill_type = 2 AND CAST(b.update_date AS DATE) = CAST(GETDATE() AS DATE) THEN 1
+                        ELSE 0
+                    END) AS HoaDonHomNay,
+            
+                -- Tổng số lượng với các tính toán từ bảng `bill_detail`, `exchange_bill_detail`, và `return_bill_detail`
+                (
+                    COALESCE(SUM(CASE
+                                    WHEN b.status IN (5, 8, 9) THEN bd.quantity
+                                    ELSE 0
+                                END), 0)
+                    + COALESCE(SUM(ebd2.quantity_exchange), 0)
+                    - COALESCE(SUM(CASE
+                                    WHEN rbeb.status = 1 THEN rbd2.quantity_return
+                                    ELSE 0
+                                END), 0)
+                ) AS soLuong
+            FROM
+                dbo.Bill b
+            LEFT JOIN dbo.bill_detail bd
+                ON bd.id_bill = b.id
+            LEFT JOIN dbo.Bill b2
+                ON b2.id = bd.id_bill
+            LEFT JOIN dbo.bill_detail bd2
+                ON bd2.id_bill = b2.id
+            LEFT JOIN dbo.return_bill_exchange_bill rbeb
+                ON rbeb.id_bill = b.id
+            LEFT JOIN dbo.exchange_bill_detail ebd2
+                ON ebd2.id_exchang_bill = rbeb.id
+            LEFT JOIN dbo.return_bill_detail rbd2
+                ON rbd2.id_return_bill = rbeb.id
+            WHERE
+                b.status IN (5, 8, 9)
+                AND CAST(b.update_date AS DATE) = CAST(GETDATE() AS DATE)  -- Lọc theo ngày hôm nay
+            GROUP BY
+                FORMAT(b.update_date, 'dd-MM-yyyy');  -- Nhóm theo ngày hôm nay
+            
             """, nativeQuery = true)
     List<Object[]> findTodayStatistics();
 
     @Query(value = """
-             WITH DateRange AS (
-                    SELECT CAST(GETDATE() AS DATE) AS Ngay
-                    UNION ALL
-                    SELECT DATEADD(DAY, -1, Ngay)
-                    FROM DateRange\s
-                    WHERE Ngay > DATEADD(DAY, -7, GETDATE()) -- Lấy dữ liệu từ ngày hôm nay đến 7 ngày trước
-                )
-                SELECT\s
-                    FORMAT(dr.Ngay, 'dd-MM-yyyy') AS Ngay,  -- Định dạng ngày
-                    COALESCE(
-                        COUNT(
-                            DISTINCT\s
-                            CASE\s
-                                WHEN CAST(b.update_date AS DATE) = dr.Ngay THEN b.id  -- Tính hóa đơn theo update_date
-                                WHEN CAST(b.create_date AS DATE) = dr.Ngay THEN b.id  -- Tính hóa đơn theo create_date
-                            END
-                        ),\s
-                    0) AS HoaDon,  -- Số lượng hóa đơn
-                    -- Sử dụng SELECT con để tính tổng số lượng cho mỗi ngày
-                    COALESCE((
-                        SELECT SUM(CASE WHEN b.status = 5 THEN bd.quantity ELSE 0 END)
-                        FROM dbo.Bill b
-                        LEFT JOIN dbo.bill_detail bd ON bd.id_bill = b.id
-                        WHERE b.status = 5
-                        AND CAST(b.update_date AS DATE) = dr.Ngay
-                    ), 0)+
-                    COALESCE((
-                        SELECT SUM(CASE WHEN b.status = 9 THEN bd.quantity ELSE 0 END)
-                        FROM dbo.Bill b
-                        LEFT JOIN dbo.bill_detail bd ON bd.id_bill = b.id
-                        WHERE b.status = 9
-                        AND CAST(b.create_date AS DATE) = dr.Ngay
-                    ), 0)
-                    + COALESCE((
-                        SELECT SUM(CASE WHEN ebd2.id_exchang_bill IS NOT NULL THEN ebd2.quantity_exchange ELSE 0 END)
-                        FROM dbo.return_bill_exchange_bill rbeb
-                        LEFT JOIN dbo.exchange_bill_detail ebd2 ON ebd2.id_exchang_bill = rbeb.id
-                        LEFT JOIN dbo.Bill b ON b.id = rbeb.id_bill
-                        WHERE CAST(b.update_date AS DATE) = dr.Ngay
-                    ), 0)
-                    + COALESCE(SUM(CASE WHEN b2.status = 8 THEN bd2.quantity ELSE 0 END), 0)
-                    - COALESCE((
-                        SELECT SUM(CASE WHEN rbd2.id_return_bill IS NOT NULL THEN rbd2.quantity_return ELSE 0 END)
-                        FROM dbo.return_bill_exchange_bill rbeb
-                        LEFT JOIN dbo.return_bill_detail rbd2 ON rbd2.id_return_bill = rbeb.id
-                        LEFT JOIN dbo.Bill b ON b.id = rbeb.id_bill
-                        WHERE CAST(b.update_date AS DATE) = dr.Ngay
-                    ), 0) AS SoLuong
-                FROM DateRange dr
-                LEFT JOIN Bill b  ON (CAST(b.update_date AS DATE) = dr.Ngay OR CAST(b.create_date AS DATE) = dr.Ngay)
-                LEFT JOIN bill_detail bd ON b.id = bd.id_bill
-                LEFT JOIN return_bill_exchange_bill rbeb ON rbeb.id_bill = b.id
-                LEFT JOIN exchange_bill_detail ebd2 ON ebd2.id_exchang_bill = rbeb.id
-                LEFT JOIN return_bill_detail rbd2 ON rbd2.id_return_bill = rbeb.id
-                LEFT JOIN bill_detail bd2 ON bd2.id_bill = b.id
-                LEFT JOIN Bill b2 ON b2.id = bd2.id_bill
-                GROUP BY dr.Ngay
-                ORDER BY dr.Ngay ASC
-                OPTION (MAXRECURSION 0);
+        WITH DateRange AS (
+            -- Tạo danh sách các ngày trong 7 ngày gần đây
+            SELECT CAST(DATEADD(DAY, -6, GETDATE()) AS DATE) AS DateValue
+            UNION ALL
+            SELECT DATEADD(DAY, 1, DateValue)
+            FROM DateRange
+            WHERE DateValue < CAST(GETDATE() AS DATE)
+        )
+        SELECT
+            FORMAT(dr.DateValue, 'dd-MM-yyyy') AS Ngay,
+            ISNULL(
+                SUM(CASE
+                          WHEN b.status = 5 AND CAST(b.update_date AS DATE) = dr.DateValue THEN 1
+                          ELSE 0
+                      END) +
+                  SUM(CASE
+                          WHEN b.status = 8 AND CAST(b.create_date AS DATE) = dr.DateValue THEN 1
+                          ELSE 0
+                      END) +
+                  SUM(CASE
+                          WHEN b.status = 8 AND CAST(b.update_date AS DATE) = dr.DateValue THEN 1
+                          ELSE 0
+                      END) +
+                  SUM(CASE
+                          WHEN b.status = 9 AND b.bill_type = 1 AND CAST(b.create_date AS DATE) = dr.DateValue THEN 1
+                          ELSE 0
+                      END) +
+                  SUM(CASE
+                          WHEN b.status = 9 AND b.bill_type = 1 AND CAST(b.update_date AS DATE) = dr.DateValue THEN 1
+                          ELSE 0
+                      END) +
+                  SUM(CASE
+                          WHEN b.status = 9 AND b.bill_type = 2 AND CAST(b.update_date AS DATE) = dr.DateValue THEN 1
+                          ELSE 0
+                      END), 0
+            ) AS HoaDonThang,
+            ISNULL((
+                COALESCE(SUM(CASE WHEN b.status IN (5, 8, 9) THEN bd.quantity ELSE 0 END), 0)
+                + COALESCE(SUM(ebd2.quantity_exchange), 0)
+                - COALESCE(SUM(CASE WHEN rbeb.status = 1 THEN rbd2.quantity_return ELSE 0 END), 0)
+            ), 0) AS SoLuong
+        FROM
+            DateRange dr
+        LEFT JOIN dbo.Bill b
+            ON CAST(b.update_date AS DATE) = dr.DateValue
+            OR CAST(b.create_date AS DATE) = dr.DateValue
+        LEFT JOIN dbo.bill_detail bd
+            ON bd.id_bill = b.id
+        LEFT JOIN dbo.return_bill_exchange_bill rbeb
+            ON rbeb.id_bill = b.id
+        LEFT JOIN dbo.exchange_bill_detail ebd2
+            ON ebd2.id_exchang_bill = rbeb.id
+        LEFT JOIN dbo.return_bill_detail rbd2
+            ON rbd2.id_return_bill = rbeb.id
+        GROUP BY
+            dr.DateValue
+        ORDER BY
+            dr.DateValue ASC;                      
         """, nativeQuery = true)
     List<Object[]> findLast7DaysStatistics();
 
-    @Query(value = "SELECT " +
-            "FORMAT(MAX(b.update_date), 'dd-MM-yyyy') AS Thang, " +
-            "COUNT(DISTINCT b.id) AS HoaDonThang, " +
-            "(SELECT SUM(CASE WHEN b.status = 5 THEN bd.quantity ELSE 0 END) " +
-            "FROM dbo.Bill b " +
-            "LEFT JOIN dbo.bill_detail bd ON bd.id_bill = b.id " +
-            "WHERE b.status = 5 " +
-            "AND MONTH(b.update_date) = MONTH(GETDATE()) " +
-            "AND YEAR(b.update_date) = YEAR(GETDATE())) " +
-            "+ SUM(CASE WHEN ebd2.id_exchang_bill IS NOT NULL THEN ebd2.quantity_exchange ELSE 0 END) " +
-            "+ SUM(CASE WHEN b2.status = 8 THEN bd2.quantity ELSE 0 END) " +
-            "- SUM(CASE WHEN rbd2.id_return_bill IS NOT NULL THEN rbd2.quantity_return ELSE 0 END) AS soLuong " +
-            "FROM Bill b " +
-            "LEFT JOIN bill_detail bd ON bd.id_bill = b.id " +
-            "LEFT JOIN Bill b2 ON b2.id = bd.id_bill " +
-            "LEFT JOIN bill_detail bd2 ON bd2.id_bill = b2.id " +
-            "LEFT JOIN return_bill_exchange_bill rbeb ON rbeb.id_bill = b.id " +
-            "LEFT JOIN exchange_bill_detail ebd2 ON ebd2.id_exchang_bill = rbeb.id " +
-            "LEFT JOIN return_bill_detail rbd2 ON rbd2.id_return_bill = rbeb.id " +
-            "WHERE b.status IN (5, 8, 9) " +
-            "AND b.update_date >= DATEADD(YEAR, -7, GETDATE()) "+
-            "GROUP BY FORMAT(b.update_date, 'MM-yyyy') " +
-            "ORDER BY FORMAT(b.update_date, 'MM-yyyy') DESC", nativeQuery = true)
+    @Query(value = """
+        WITH YearRange AS (
+            -- Tạo danh sách các năm trong 5 năm gần đây
+            SELECT CAST(DATEADD(YEAR, -4, GETDATE()) AS DATE) AS YearStart
+            UNION ALL
+            SELECT DATEADD(YEAR, 1, YearStart)
+            FROM YearRange
+            WHERE YearStart < CAST(GETDATE() AS DATE)
+        )
+        SELECT
+            FORMAT(MAX(dr.YearStart), 'dd-MM-yyyy') AS Nam,
+            ISNULL(
+                SUM(CASE
+                        WHEN b.status = 5 AND YEAR(b.update_date) = YEAR(dr.YearStart) THEN 1
+                        ELSE 0
+                    END) +
+                SUM(CASE
+                        WHEN b.status = 8 AND YEAR(b.create_date) = YEAR(dr.YearStart) THEN 1
+                        ELSE 0
+                    END) +
+                SUM(CASE
+                        WHEN b.status = 8 AND YEAR(b.update_date) = YEAR(dr.YearStart) THEN 1
+                        ELSE 0
+                    END) +
+                SUM(CASE
+                        WHEN b.status = 9 AND b.bill_type = 1 AND YEAR(b.create_date) = YEAR(dr.YearStart) THEN 1
+                        ELSE 0
+                    END) +
+                SUM(CASE
+                        WHEN b.status = 9 AND b.bill_type = 1 AND YEAR(b.update_date) = YEAR(dr.YearStart) THEN 1
+                        ELSE 0
+                    END) +
+                SUM(CASE
+                        WHEN b.status = 9 AND b.bill_type = 2 AND YEAR(b.update_date) = YEAR(dr.YearStart) THEN 1
+                        ELSE 0
+                    END), 0
+            ) AS HoaDonNam,
+            ISNULL((\s
+                COALESCE(SUM(CASE WHEN b.status IN (5, 8, 9) THEN bd.quantity ELSE 0 END), 0)
+                + COALESCE(SUM(ebd2.quantity_exchange), 0)
+                - COALESCE(SUM(CASE WHEN rbeb.status = 1 THEN rbd2.quantity_return ELSE 0 END), 0)
+            ), 0) AS SoLuong
+        FROM
+            YearRange dr
+        LEFT JOIN dbo.Bill b
+            ON YEAR(b.update_date) = YEAR(dr.YearStart)
+            OR YEAR(b.create_date) = YEAR(dr.YearStart)
+        LEFT JOIN dbo.bill_detail bd
+            ON bd.id_bill = b.id
+        LEFT JOIN dbo.return_bill_exchange_bill rbeb
+            ON rbeb.id_bill = b.id
+        LEFT JOIN dbo.exchange_bill_detail ebd2
+            ON ebd2.id_exchang_bill = rbeb.id
+        LEFT JOIN dbo.return_bill_detail rbd2
+            ON rbd2.id_return_bill = rbeb.id
+        GROUP BY
+            dr.YearStart
+        HAVING
+            ISNULL(
+                SUM(CASE
+                        WHEN b.status = 5 AND YEAR(b.update_date) = YEAR(dr.YearStart) THEN 1
+                        ELSE 0
+                    END) +
+                SUM(CASE
+                        WHEN b.status = 8 AND YEAR(b.create_date) = YEAR(dr.YearStart) THEN 1
+                        ELSE 0
+                    END) +
+                SUM(CASE
+                        WHEN b.status = 8 AND YEAR(b.update_date) = YEAR(dr.YearStart) THEN 1
+                        ELSE 0
+                    END) +
+                SUM(CASE
+                        WHEN b.status = 9 AND b.bill_type = 1 AND YEAR(b.create_date) = YEAR(dr.YearStart) THEN 1
+                        ELSE 0
+                    END) +
+                SUM(CASE
+                        WHEN b.status = 9 AND b.bill_type = 1 AND YEAR(b.update_date) = YEAR(dr.YearStart) THEN 1
+                        ELSE 0
+                    END) +
+                SUM(CASE
+                        WHEN b.status = 9 AND b.bill_type = 2 AND YEAR(b.update_date) = YEAR(dr.YearStart) THEN 1
+                        ELSE 0
+                    END), 0
+            ) > 0
+        ORDER BY
+            dr.YearStart ASC;
+    """, nativeQuery = true)
     List<Object[]> getAnnualStatistics();
 
     @Query(value = """
@@ -298,20 +555,20 @@ public interface ChartRepository extends JpaRepository<Bill, Integer> {
                 s.name_size AS SizeName,
                 -- Thay giá trị âm của OriginalPrice bằng 0
                 CAST(
-                    CASE\s
-                        WHEN pdt.price < 0 THEN 0\s
-                        ELSE pdt.price\s
+                    CASE
+                        WHEN pdt.price < 0 THEN 0
+                        ELSE pdt.price
                     END AS DECIMAL(10, 2)
                 ) AS OriginalPrice,
                 -- Thay giá trị âm của DiscountedPrice bằng 0
                 CAST(
-                    CASE\s
-                        WHEN sp.discount_type = 1 AND pdt.id_sale_product IS NOT NULL\s
+                    CASE
+                        WHEN sp.discount_type = 1 AND pdt.id_sale_product IS NOT NULL
                             THEN CASE WHEN pdt.price * (1 - sp.discount_value / 100.0) < 0 THEN 0 ELSE pdt.price * (1 - sp.discount_value / 100.0) END
-                        WHEN sp.discount_type = 2 AND pdt.id_sale_product IS NOT NULL\s
+                        WHEN sp.discount_type = 2 AND pdt.id_sale_product IS NOT NULL
                             THEN CASE WHEN (pdt.price - sp.discount_value) < 0 THEN 0 ELSE (pdt.price - sp.discount_value) END
                         ELSE CASE WHEN pdt.price < 0 THEN 0 ELSE pdt.price END
-                    END\s
+                    END
                 AS DECIMAL(10, 2)) AS DiscountedPrice,
                 SUM(bd.quantity) AS TotalQuantity,
                 STUFF(
@@ -339,17 +596,17 @@ public interface ChartRepository extends JpaRepository<Bill, Integer> {
             LEFT JOIN
                 dbo.sale_product sp ON pdt.id_sale_product = sp.id
             WHERE
-                b.status IN (5, 8, 9)
+                b.status IN (5, 8)
             GROUP BY
                 pd.name_product,
                 c.name_color,
                 s.name_size,
                 pdt.price,
                 CAST(
-                    CASE\s
-                        WHEN sp.discount_type = 1 AND pdt.id_sale_product IS NOT NULL\s
+                    CASE
+                        WHEN sp.discount_type = 1 AND pdt.id_sale_product IS NOT NULL
                             THEN pdt.price * (1 - sp.discount_value / 100.0)
-                        WHEN sp.discount_type = 2 AND pdt.id_sale_product IS NOT NULL\s
+                        WHEN sp.discount_type = 2 AND pdt.id_sale_product IS NOT NULL
                             THEN (pdt.price - sp.discount_value)
                         ELSE pdt.price
                     END AS DECIMAL(10, 2)),
@@ -465,17 +722,17 @@ public interface ChartRepository extends JpaRepository<Bill, Integer> {
                 -- Thay giá trị âm của DiscountedPrice bằng 0
                 CAST(
                     CASE
-                        WHEN sp.discount_type = 1 AND pdt.id_sale_product IS NOT NULL THEN\s
-                            CASE WHEN pdt.price * (1 - sp.discount_value / 100.0) < 0\s
-                                 THEN 0\s
-                                 ELSE pdt.price * (1 - sp.discount_value / 100.0)\s
+                        WHEN sp.discount_type = 1 AND pdt.id_sale_product IS NOT NULL THEN
+                            CASE WHEN pdt.price * (1 - sp.discount_value / 100.0) < 0
+                                 THEN 0
+                                 ELSE pdt.price * (1 - sp.discount_value / 100.0)
                             END
-                        WHEN sp.discount_type = 2 AND pdt.id_sale_product IS NOT NULL THEN\s
-                            CASE WHEN (pdt.price - sp.discount_value) < 0\s
-                                 THEN 0\s
-                                 ELSE (pdt.price - sp.discount_value)\s
+                        WHEN sp.discount_type = 2 AND pdt.id_sale_product IS NOT NULL THEN
+                            CASE WHEN (pdt.price - sp.discount_value) < 0
+                                 THEN 0
+                                 ELSE (pdt.price - sp.discount_value)
                             END
-                        ELSE\s
+                        ELSE
                             CASE WHEN pdt.price < 0 THEN 0 ELSE pdt.price END
                     END
                 AS DECIMAL(10, 2)) AS DiscountedPrice,
@@ -503,7 +760,7 @@ public interface ChartRepository extends JpaRepository<Bill, Integer> {
             LEFT JOIN
                 dbo.sale_product sp ON pdt.id_sale_product = sp.id
             WHERE
-                b.status IN (5, 8, 9)
+                b.status IN (5, 8)
                 AND CAST(b.update_date AS DATE) BETWEEN :startDate AND :endDate
             GROUP BY
                 pd.name_product,
@@ -524,7 +781,7 @@ public interface ChartRepository extends JpaRepository<Bill, Integer> {
             rp.DiscountedPrice,
             -- Thay giá trị âm của AdjustedTotalQuantity bằng 0
             CASE
-                WHEN (rp.TotalQuantity + COALESCE(ebd.quantity_exchange, 0) - COALESCE(rbd.quantity_return, 0)) < 0\s
+                WHEN (rp.TotalQuantity + COALESCE(ebd.quantity_exchange, 0) - COALESCE(rbd.quantity_return, 0)) < 0
                 THEN 0
                 ELSE (rp.TotalQuantity + COALESCE(ebd.quantity_exchange, 0) - COALESCE(rbd.quantity_return, 0))
             END AS AdjustedTotalQuantity,
@@ -711,37 +968,66 @@ public interface ChartRepository extends JpaRepository<Bill, Integer> {
     List<Object[]> getBillStatisticsByDateRange(@Param("startDate") String startDate, @Param("endDate") String endDate);
 
 
-    @Query(value =
-            "WITH DateRange AS ( " +
-                    "    SELECT CAST(:startDate AS DATE) AS Ngay " +
-                    "    UNION ALL " +
-                    "    SELECT DATEADD(DAY, 1, Ngay) " +
-                    "    FROM DateRange " +
-                    "    WHERE Ngay < CAST(:endDate AS DATE) " +
-            ") " +
-                    "SELECT " +
-                    "    FORMAT(dr.Ngay, 'dd-MM-yyyy') AS Ngay, " +
-                    "    COALESCE(COUNT(DISTINCT b.id), 0) AS HoaDon, " +
-                    "    COALESCE( " +
-                    "        (SELECT SUM(CASE WHEN b.status = 5 THEN bd.quantity ELSE 0 END) " +
-                    "         FROM dbo.Bill b " +
-                    "         LEFT JOIN dbo.bill_detail bd ON bd.id_bill = b.id " +
-                    "         WHERE b.status = 5 " +
-                    "         AND CAST(b.update_date AS DATE) = dr.Ngay), 0 " +
-                    "    ) + COALESCE(SUM(CASE WHEN ebd2.id_exchang_bill IS NOT NULL THEN ebd2.quantity_exchange ELSE 0 END), 0) " +
-                    "    + COALESCE(SUM(CASE WHEN b2.status = 8 THEN bd2.quantity ELSE 0 END), 0) " +
-                    "    - COALESCE(SUM(CASE WHEN rbd2.id_return_bill IS NOT NULL THEN rbd2.quantity_return ELSE 0 END), 0) AS SoLuong " +
-                    "FROM DateRange dr " +
-                    "LEFT JOIN bill b ON CAST(b.update_date AS DATE) = dr.Ngay AND b.status IN(5,8) " +
-                    "LEFT JOIN bill_detail bd ON b.id = bd.id_bill " +
-                    "LEFT JOIN return_bill_exchange_bill rbeb ON rbeb.id_bill = b.id " +
-                    "LEFT JOIN exchange_bill_detail ebd2 ON ebd2.id_exchang_bill = rbeb.id " +
-                    "LEFT JOIN return_bill_detail rbd2 ON rbd2.id_return_bill = rbeb.id " +
-                    "LEFT JOIN bill_detail bd2 ON bd2.id_bill = b.id " +
-                    "LEFT JOIN Bill b2 ON b2.id = bd2.id_bill " +
-                    "GROUP BY dr.Ngay " +
-                    "ORDER BY dr.Ngay ASC " +
-                    "OPTION (MAXRECURSION 0)", nativeQuery = true)
+    @Query(value = """
+        WITH DateRange AS (
+            -- Tạo danh sách ngày trong khoảng từ startDate đến endDate
+            SELECT CAST(:startDate AS DATE) AS DateValue
+            UNION ALL
+            SELECT DATEADD(DAY, 1, DateValue)
+            FROM DateRange
+            WHERE DateValue < CAST(:endDate AS DATE)
+        )
+        SELECT
+            FORMAT(dr.DateValue, 'dd-MM-yyyy') AS Ngay,
+            ISNULL(
+                SUM(CASE
+                        WHEN b.status = 5 AND CAST(b.update_date AS DATE) = dr.DateValue THEN 1
+                        ELSE 0
+                    END) +
+                SUM(CASE
+                        WHEN b.status = 8 AND CAST(b.create_date AS DATE) = dr.DateValue THEN 1
+                        ELSE 0
+                    END) +
+                SUM(CASE
+                        WHEN b.status = 8 AND CAST(b.update_date AS DATE) = dr.DateValue THEN 1
+                        ELSE 0
+                    END) +
+                SUM(CASE
+                        WHEN b.status = 9 AND b.bill_type = 1 AND CAST(b.create_date AS DATE) = dr.DateValue THEN 1
+                        ELSE 0
+                    END) +
+                SUM(CASE
+                        WHEN b.status = 9 AND b.bill_type = 1 AND CAST(b.update_date AS DATE) = dr.DateValue THEN 1
+                        ELSE 0
+                    END) +
+                SUM(CASE
+                        WHEN b.status = 9 AND b.bill_type = 2 AND CAST(b.update_date AS DATE) = dr.DateValue THEN 1
+                        ELSE 0
+                    END), 0
+            ) AS HoaDonNgay,
+            ISNULL((\s
+                COALESCE(SUM(CASE WHEN b.status IN (5, 8, 9) THEN bd.quantity ELSE 0 END), 0)
+                + COALESCE(SUM(ebd2.quantity_exchange), 0)
+                - COALESCE(SUM(CASE WHEN rbeb.status = 1 THEN rbd2.quantity_return ELSE 0 END), 0)
+            ), 0) AS SoLuong
+        FROM
+            DateRange dr
+        LEFT JOIN dbo.Bill b
+            ON CAST(b.update_date AS DATE) = dr.DateValue
+            OR CAST(b.create_date AS DATE) = dr.DateValue
+        LEFT JOIN dbo.bill_detail bd
+            ON bd.id_bill = b.id
+        LEFT JOIN dbo.return_bill_exchange_bill rbeb
+            ON rbeb.id_bill = b.id
+        LEFT JOIN dbo.exchange_bill_detail ebd2
+            ON ebd2.id_exchang_bill = rbeb.id
+        LEFT JOIN dbo.return_bill_detail rbd2
+            ON rbd2.id_return_bill = rbeb.id
+        GROUP BY
+            dr.DateValue
+        ORDER BY
+            dr.DateValue ASC;
+    """,nativeQuery = true)
     List<Object[]> findStatisticsByDateRange(@Param("startDate") String startDate, @Param("endDate") String endDate);
 
 }
