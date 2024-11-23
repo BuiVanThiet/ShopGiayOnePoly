@@ -466,6 +466,43 @@ public class ClientRestController extends BaseEmail {
             return ResponseEntity.ok("Thêm địa chỉ mới thất bại");
         }
 
+    @PostMapping("/update-address-customer/{idAddress}")
+    public ResponseEntity<String> updateAddressForCustomer(HttpSession session,
+                                                           @PathVariable("idAddress") Integer idAddress,
+                                                           @RequestBody AddressForCustomerRequest addressForCustomerRequest) {
+        String addressForCustomer = String.valueOf(addressForCustomerRequest.getAddressCustomer());
+        ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
+        Integer idCustomerLogin = clientLoginResponse.getId();
+
+        if (idCustomerLogin != null) {
+            // Tìm địa chỉ đã có từ cơ sở dữ liệu
+            AddressShip addressShip = addressShipRepository.findById(idAddress).orElse(null);
+
+            if (addressShip == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Địa chỉ không tồn tại");
+            }
+
+            Customer customer = customerService.getCustomerByID(idCustomerLogin);
+
+            if (customer == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Khách hàng không tồn tại");
+            }
+            addressShip.setCustomer(customer);
+            addressShip.setSpecificAddress(addressForCustomer);
+            addressShip.setCreateDate(addressShip.getCreateDate());
+            addressShip.setUpdateDate(new Date());
+            addressShip.setStatus(1);
+
+            addressShipRepository.save(addressShip);
+            System.out.println("Cập nhật địa chỉ thành công");
+            return ResponseEntity.ok("Cập nhật địa chỉ thành công");
+        }
+        System.out.println("Cập nhật địa chỉ thất bại");
+        // Trả về phản hồi lỗi nếu khách hàng chưa đăng nhập
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Bạn cần đăng nhập để cập nhật địa chỉ");
+    }
+
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @GetMapping("/show-status-bill")

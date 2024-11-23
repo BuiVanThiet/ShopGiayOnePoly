@@ -293,12 +293,11 @@ public class ClientController extends BaseBill {
                 if (specificAddress != null) {
                     String[] parts = specificAddress.split(",");
 
-                    // Kiểm tra xem địa chỉ có đủ các phần như Phường, Quận, Tỉnh không
+                    // Khai báo các thành phần địa chỉ
                     String shipProvince = "", shipDistrict = "", shipWard = "", detailedAddress = "";
 
-                    // Kiểm tra địa chỉ có đúng định dạng (địa chỉ chuẩn như khách hàng hay không)
                     if (parts.length >= 7) {
-                        // Địa chỉ có đủ các phần: Phường, Quận, Tỉnh
+                        // Nếu địa chỉ có đủ các phần
                         shipProvince = parts.length > 3 ? parts[3].trim() : "";
                         shipDistrict = parts.length > 4 ? parts[4].trim() : "";
                         shipWard = parts.length > 5 ? parts[5].trim() : "";
@@ -306,27 +305,28 @@ public class ClientController extends BaseBill {
                                 ? String.join(", ", Arrays.copyOfRange(parts, 6, parts.length)).trim()
                                 : "";
                     } else {
-                        // Địa chỉ không có đủ các phần: Phường, Quận, Tỉnh, xử lý đặc biệt
-                        shipProvince = "UnknownProvince"; // Gán giá trị mặc định
-                        shipDistrict = "UnknownDistrict"; // Gán giá trị mặc định
-                        shipWard = "UnknownWard"; // Gán giá trị mặc định
-                        detailedAddress = specificAddress.trim(); // Toàn bộ địa chỉ là chi tiết
+                        // Xử lý đặc biệt nếu không đủ định dạng
+                        shipProvince = "UnknownProvince";
+                        shipDistrict = "UnknownDistrict";
+                        shipWard = "UnknownWard";
+                        detailedAddress = specificAddress.trim();
                     }
-
 
                     String formattedShipAddress = String.join(", ", shipProvince, shipDistrict, shipWard, detailedAddress).replaceAll(", $", "");
 
-// Kiểm tra số lượng dấu phẩy trong địa chỉ đã chuẩn hóa
+                    // Đếm số lượng dấu phẩy
                     long commaCount = formattedShipAddress.chars().filter(ch -> ch == ',').count();
 
-// Nếu địa chỉ có 4 dấu phẩy (có 5 phần khi tách), thì thêm vào danh sách
-                    if (commaCount >3) {
-                        responseListAddress.add(new AddressShipReponse(formattedShipAddress, detailedAddress));
+                    // Nếu định dạng đúng (có hơn 3 dấu phẩy), thêm vào danh sách
+                    if (commaCount > 3) {
+                        responseListAddress.add(new AddressShipReponse(
+                                address.getId(), // Gán ID từ AddressShip
+                                formattedShipAddress, // Địa chỉ chuẩn hóa
+                                detailedAddress       // Địa chỉ chi tiết
+                        ));
                         System.out.println("Formatted Ship Address: " + formattedShipAddress);
                     }
-
                 }
-
         }
 
         model.addAttribute("listAddress", responseListAddress);
