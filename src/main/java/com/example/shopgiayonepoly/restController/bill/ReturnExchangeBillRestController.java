@@ -33,6 +33,9 @@ public class ReturnExchangeBillRestController extends BaseBill {
         if(staffLogin == null) {
             return null;
         }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
 
         Integer idBill = (Integer) session.getAttribute("IdBill");
         String validateIdBill = validateInteger(idBill != null ? idBill.toString() : "");
@@ -59,6 +62,9 @@ public class ReturnExchangeBillRestController extends BaseBill {
         if(staffLogin == null) {
             return null;
         }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
 
         Integer idBill = (Integer) session.getAttribute("IdBill");
         String validateIdBill = validateInteger(idBill != null ? idBill.toString() : "");
@@ -81,6 +87,11 @@ public class ReturnExchangeBillRestController extends BaseBill {
         if(staffLogin == null) {
             return null;
         }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
+
+
         String validatePage = validateInteger(pageNumber);
         if (!validatePage.trim().equals("")) {
             return null;
@@ -112,6 +123,9 @@ public class ReturnExchangeBillRestController extends BaseBill {
         if(staffLogin == null) {
             return null;
         }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
 
         returnBillDetailResponses = (List<ReturnBillDetailResponse>) session.getAttribute("returnBillDetailResponses");
         if(returnBillDetailResponses == null) {
@@ -134,6 +148,11 @@ public class ReturnExchangeBillRestController extends BaseBill {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if(staffLogin == null) {
             thongBao.put("message", "Nhân viên chưa đăng nhập!");
+            thongBao.put("check", "3");
+            return ResponseEntity.ok(thongBao);
+        }
+        if(staffLogin.getStatus() != 1) {
+            thongBao.put("message", "Nhân viên đang bị ngừng hoạt động!");
             thongBao.put("check", "3");
             return ResponseEntity.ok(thongBao);
         }
@@ -246,6 +265,11 @@ public class ReturnExchangeBillRestController extends BaseBill {
             thongBao.put("check", "3");
             return ResponseEntity.ok(thongBao);
         }
+        if(staffLogin.getStatus() != 1) {
+            thongBao.put("message", "Nhân viên đang bị ngừng hoạt động!");
+            thongBao.put("check", "3");
+            return ResponseEntity.ok(thongBao);
+        }
 
         Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
         String messMap = checkLoginAndLogout.get("message");
@@ -296,6 +320,9 @@ public class ReturnExchangeBillRestController extends BaseBill {
         if(staffLogin == null) {
             return null;
         }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
 
         Integer idBill = (Integer) session.getAttribute("IdBill");
         String validateIdBill = validateInteger(idBill != null ? idBill.toString() : "");
@@ -338,6 +365,9 @@ public class ReturnExchangeBillRestController extends BaseBill {
         if(staffLogin == null) {
             return null;
         }
+        if(staffLogin.getStatus() != 1) {
+           return null;
+        }
 
         session.setAttribute("returnBillDetailResponses", null); // Reset lại dữ liệu trong session mỗi lần tải trang
         session.setAttribute("totalMoneyReturn", 0); // Reset lại dữ liệu trong session mỗi lần tải trang
@@ -370,6 +400,11 @@ public class ReturnExchangeBillRestController extends BaseBill {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if(staffLogin == null) {
             thongBao.put("message", "Nhân viên chưa đăng nhập!");
+            thongBao.put("check", "3");
+            return ResponseEntity.ok(thongBao);
+        }
+        if(staffLogin.getStatus() != 1) {
+            thongBao.put("message", "Nhân viên đang bị ngừng hoạt động!");
             thongBao.put("check", "3");
             return ResponseEntity.ok(thongBao);
         }
@@ -445,7 +480,13 @@ public class ReturnExchangeBillRestController extends BaseBill {
 
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if(staffLogin == null) {
-            System.out.println("bi vao day do chua dang nhap");
+            thongBao.put("message", "Nhân viên chưa đăng nhập!");
+            thongBao.put("check", "3");
+            return ResponseEntity.ok(thongBao);
+        }
+        if(staffLogin.getStatus() != 1) {
+            thongBao.put("message", "Nhân viên đang bị ngừng hoạt động!");
+            thongBao.put("check", "3");
             return ResponseEntity.ok(thongBao);
         }
 
@@ -544,6 +585,9 @@ public class ReturnExchangeBillRestController extends BaseBill {
         if(staffLogin == null) {
             return null;
         }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
 
         Integer idBill = (Integer) session.getAttribute("IdBill");
         String validateIdBill = validateInteger(idBill != null ? idBill.toString() : "");
@@ -582,6 +626,9 @@ public class ReturnExchangeBillRestController extends BaseBill {
         if(staffLogin == null) {
             return null;
         }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
 
         Integer idReturnBill = (Integer) session.getAttribute("IdReturnBill");
         String validateIdReturnBill = validateInteger(idReturnBill != null ? idReturnBill.toString() : "");
@@ -604,6 +651,9 @@ public class ReturnExchangeBillRestController extends BaseBill {
 
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
             return null;
         }
 
@@ -685,6 +735,9 @@ public class ReturnExchangeBillRestController extends BaseBill {
         if(staffLogin == null) {
             return null;
         }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
 
         String validatePage = validateInteger(pageNumber);
         if (!validatePage.trim().equals("")) {
@@ -705,6 +758,9 @@ public class ReturnExchangeBillRestController extends BaseBill {
         if(staffLogin == null) {
             return null;
         }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
 
         exchangeBillDetailResponses = (List<ExchangeBillDetailResponse>) session.getAttribute("exchangeBillDetailResponses");
         if(exchangeBillDetailResponses == null) {
@@ -718,6 +774,9 @@ public class ReturnExchangeBillRestController extends BaseBill {
     public List<Object[]> getProductDetailSell(@PathVariable("page") String pageNumber, HttpSession session) {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
             return null;
         }
 
@@ -742,6 +801,9 @@ public class ReturnExchangeBillRestController extends BaseBill {
         if(staffLogin == null) {
             return null;
         }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
 
         Integer idBill = (Integer) session.getAttribute("IdBill");
         String validateIdBill = validateInteger(idBill != null ? idBill.toString() : "");
@@ -763,6 +825,9 @@ public class ReturnExchangeBillRestController extends BaseBill {
         if(staffLogin == null) {
             return null;
         }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
 
         this.productDetailCheckMark2Request = productDetailCheckRequest2;
         return ResponseEntity.ok("Done");
@@ -780,6 +845,11 @@ public class ReturnExchangeBillRestController extends BaseBill {
         if(staffLogin == null) {
             thongBao.put("message","Nhân viên chưa đăng nhập!");
             thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+        if(staffLogin.getStatus() != 1) {
+            thongBao.put("message", "Nhân viên đang bị ngừng hoạt động!");
+            thongBao.put("check", "3");
             return ResponseEntity.ok(thongBao);
         }
 
@@ -921,6 +991,11 @@ public class ReturnExchangeBillRestController extends BaseBill {
             thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }
+        if(staffLogin.getStatus() != 1) {
+            thongBao.put("message", "Nhân viên đang bị ngừng hoạt động!");
+            thongBao.put("check", "3");
+            return ResponseEntity.ok(thongBao);
+        }
 
         Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
         String messMap = checkLoginAndLogout.get("message");
@@ -983,6 +1058,11 @@ public class ReturnExchangeBillRestController extends BaseBill {
         if(staffLogin == null) {
             thongBao.put("message","Nhân viên chưa đăng nhập!");
             thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+        if(staffLogin.getStatus() != 1) {
+            thongBao.put("message", "Nhân viên đang bị ngừng hoạt động!");
+            thongBao.put("check", "3");
             return ResponseEntity.ok(thongBao);
         }
 
@@ -1049,6 +1129,9 @@ public class ReturnExchangeBillRestController extends BaseBill {
         if(staffLogin == null) {
             return null;
         }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
 
         String validatePage = validateInteger(page);
         if (!validatePage.trim().equals("")) {
@@ -1073,6 +1156,9 @@ public class ReturnExchangeBillRestController extends BaseBill {
         if(staffLogin == null) {
             return null;
         }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
 
         Integer idReturnBill = (Integer) session.getAttribute("IdReturnBill");
         String validateIdReturnBill = validateInteger(idReturnBill != null ? idReturnBill.toString() : "");
@@ -1090,6 +1176,9 @@ public class ReturnExchangeBillRestController extends BaseBill {
     public ResponseEntity<?> getExchangeAndReturnFee(@PathVariable("monney") String money,HttpSession session) {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
             return null;
         }
 

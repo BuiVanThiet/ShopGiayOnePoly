@@ -52,6 +52,8 @@ public class SecurityConfig {
                 .httpBasic(basic -> basic.disable())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+//                        .maximumSessions(1) // Giới hạn 1 session cho mỗi user
+//                        .maxSessionsPreventsLogin(false)
                 )
                 .userDetailsService(staffSecuritiImplement)
                 .formLogin(form -> form

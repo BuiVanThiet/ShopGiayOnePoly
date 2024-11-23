@@ -136,7 +136,7 @@ public interface BillDetailRepository extends JpaRepository<BillDetail,Integer> 
         pd.quantity, --10
         pd.quantity AS updated_quantity,  -- 11 Trừ số lượng ảo
         CASE
-          WHEN sp.start_date <= CAST(GETDATE() AS DATE) AND sp.end_date >= CAST(GETDATE() AS DATE) THEN
+          WHEN (sp.start_date <= CAST(GETDATE() AS DATE)) AND (sp.end_date >= CAST(GETDATE() AS DATE)) AND sp.status = 1 THEN
               CASE
                   WHEN sp.discount_type = 1 THEN
                       CASE
@@ -155,7 +155,7 @@ public interface BillDetailRepository extends JpaRepository<BillDetail,Integer> 
         p.status AS product_status, --13
         pd.status AS product_detail_status, --14
         CASE
-            WHEN sp.start_date <= CAST(GETDATE() AS DATE) AND sp.end_date >= CAST(GETDATE() AS DATE) THEN
+            WHEN (sp.start_date <= CAST(GETDATE() AS DATE)) AND (sp.end_date >= CAST(GETDATE() AS DATE))AND sp.status = 1 THEN
                 CASE
                     WHEN sp.discount_type = 1 THEN N'Giảm ' + CAST(CAST(sp.discount_value AS INT) AS NVARCHAR) + N' %'
                     WHEN sp.discount_type = 2 THEN N'Giảm ' + FORMAT(CAST(sp.discount_value AS INT), '#,###') + N' VNĐ'
@@ -214,7 +214,8 @@ public interface BillDetailRepository extends JpaRepository<BillDetail,Integer> 
              sp.start_date,
              sp.end_date,
              sp.discount_type,
-             sp.discount_value;
+             sp.discount_value,
+             sp.status;
       ;
 """, nativeQuery = true)
     List<Object[]> findProductDetailSaleTest(

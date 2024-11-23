@@ -1,3 +1,4 @@
+var listCodeSaleProducts = [];
 document.getElementById('discountType').addEventListener('change',function () {
     console.log(document.getElementById('discountType').value)
     var value = document.getElementById('discountType').value;
@@ -21,13 +22,15 @@ function formatDateVoucher(date) {
 }
 
 $('#methodAddAndRemoverSaleProduct').html(`<button type="button" class="btn btn-outline-success" onclick="addOrUpdateSaleProductInProduct()">Thêm-sửa đợt giảm giá</button>`)
+var codeUpdate = document.getElementById('formUpdateSaleProduct');
+if(!codeUpdate) {
+    // Lấy ngày hiện tại
+    let today = new Date();
+    document.getElementById('startDate').value = formatDateVoucher(today);
 
-// Lấy ngày hiện tại
-let today = new Date();
-document.getElementById('startDate').value = formatDateVoucher(today);
-
-let nexttoday = today.setDate(today.getDate() + 1);
-document.getElementById('endDate').value = formatDateVoucher(nexttoday);
+    let nexttoday = today.setDate(today.getDate() + 1);
+    document.getElementById('endDate').value = formatDateVoucher(nexttoday);
+}
 
 
 function setActiveProductSaleAndNotSale(element, value) {
@@ -70,10 +73,11 @@ function validateAllSaleProduct() {
     var startDateError = document.getElementById('startDateError');
     var endDateError = document.getElementById('endDateError');
 
-
-
-    var checkCodeSaleProduct = checkNullInputSaleProduct(codeSaleProduct.value.trim(),codeSaleProductError,'Mời nhập mã đợt giảm giá');
-    var checkNameSaleProduct = checkNullInputSaleProduct(nameSaleProduct.value.trim(),nameSaleProductError,'Mời nhập tên đợt giảm giá');
+    var checkCodeSaleProduct = checkNullInputSaleProduct(codeSaleProduct.value.trim(),codeSaleProductError,100,'Mời nhập mã đợt giảm giá(tối đa 100 ký tự)');
+    if(checkCodeSaleProduct) {
+        checkCodeSaleProduct = checkSame(codeSaleProduct.value.trim(),codeSaleProductError,'Mã đợt giảm giá đã tồn tại!')
+    }
+    var checkNameSaleProduct = checkNullInputSaleProduct(nameSaleProduct.value.trim(),nameSaleProductError,255,'Mời nhập tên đợt giảm giá(tối đa 255 ký tự)');
     var checkDiscountType = true;
     var checkValue = discountType.value === '2' ? checkNumberLimitInputSaleProductCash(value.value,valueError) : checkNumberLimitInputSaleProductPercent(value.value,valueError);
     var checkStartDate = checkStartDateSaleProduct(startDate.value,startDateError);
@@ -91,10 +95,13 @@ function resetFormAddSaleProduct() {
     document.getElementById('nameSaleProduct').value = '';
     document.getElementById('discountType').value = '2';
     document.getElementById('value').value = '';
-    today = new Date();
-    document.getElementById('startDate').value = formatDateVoucher(today);
-    nexttoday = today.setDate(today.getDate() + 1);
-    document.getElementById('endDate').value = formatDateVoucher(nexttoday);
+    // Kiểm tra và xóa mã trong list nếu giống với mã cần cập nhật
+    if (!codeUpdate) {
+        today = new Date();
+        document.getElementById('startDate').value = formatDateVoucher(today);
+        nexttoday = today.setDate(today.getDate() + 1);
+        document.getElementById('endDate').value = formatDateVoucher(nexttoday);
+    }
     validateAllSaleProduct()
 }
 document.getElementById('codeSaleProduct').addEventListener('input',function () {
@@ -116,10 +123,51 @@ document.getElementById('endDate').addEventListener('input',function () {
     validateAllSaleProduct();
 })
 
+//kiem tra trung ma
+function checkSameCodeVoucher() {
+   $.ajax({
+       type: "GET",
+       url: "/api-sale-product/check-code-sale-product-same",
+       success: function (response) {
+           listCodeSaleProducts = response
+            // Kiểm tra và xóa mã trong list nếu giống với mã cần cập nhật
+           if (codeUpdate) {
+               console.log(codeUpdate)
+               // Sử dụng filter để loại bỏ các mã trùng với codeUpdate
+               listCodeSaleProducts = listCodeSaleProducts.filter(function(code) {
+                   return code !== codeUpdate.value.trim();  // Giữ lại các mã không trùng
+               });
+           }
+           console.log(listCodeSaleProducts)
+       },
+       error: function (xhr) {
+           console.error('loi ' + xhr.responseText)
+       }
+   })
+}
+checkSameCodeVoucher()
+
+function checkSame(inputValue,spanError,mess) {
+    console.log('da vao check some')
+    if (listCodeSaleProducts.includes(inputValue)) {
+        spanError.style.display = 'block';
+        spanError.innerText = mess;
+        return false;
+    }else {
+        spanError.style.display = 'none';
+        spanError.innerText = '';
+        return true;
+    }
+}
+
 //check trong
-function checkNullInputSaleProduct(inputValue,spanError,mess) {
+function checkNullInputSaleProduct(inputValue,spanError,lengthValue,mess) {
     var nameCheck = inputValue;
     if(nameCheck === '' || nameCheck.length < 1){
+        spanError.style.display = 'block';
+        spanError.innerText = mess;
+        return false;
+    }if (nameCheck.length > lengthValue) {
         spanError.style.display = 'block';
         spanError.innerText = mess;
         return false;
@@ -139,7 +187,7 @@ function checkNumberLimitInputSaleProductCash(inputValue, spanError) {
     }else {
         var value = parseFloat(inputValue); // Chuyển đổi chuỗi thành số thực
         // Kiểm tra giá trị nhập có hợp lệ hay không
-        if (isNaN(value) || inputValue === '' || value < 0) {
+        if (isNaN(value) || inputValue === '' || value <= 0) {
             spanError.style.display = 'block';
             spanError.innerText = 'Mời nhập giá trị hợp lệ!';
             return false;

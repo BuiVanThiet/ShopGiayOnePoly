@@ -36,7 +36,7 @@ public class StaffSecuritiImplement implements UserDetailsService {
 
         // Lưu đối tượng staff vào session
         session.setAttribute("staffLogin", staff);
-
+        session.setMaxInactiveInterval(24 * 60 * 60);
         String username = (staff.getAcount() != null) ? staff.getAcount() : staff.getEmail();
         String role = staff.getRole() != null ? staff.getRole().getNameRole() : "USER";
         System.out.println(username);

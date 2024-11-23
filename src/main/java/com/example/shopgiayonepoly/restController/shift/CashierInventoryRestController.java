@@ -31,6 +31,14 @@ public class CashierInventoryRestController {
 
     @GetMapping("/list/{page}")
     public List<Object[]> getListCashierInventory(@PathVariable("page") String page, HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
+
         try {
             if(cashierInventoryFilterByIdStaffRequest == null) {
                 try {
@@ -75,6 +83,14 @@ public class CashierInventoryRestController {
 
     @GetMapping("/max-page-cashierInventory")
     public Integer getTimekeepingMaxPage(HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
+
         if(cashierInventoryFilterByIdStaffRequest == null) {
             try {
                 // Định dạng để parse chuỗi thành đối tượng Date
@@ -113,6 +129,14 @@ public class CashierInventoryRestController {
 
     @PostMapping("/filter-cashierInventory")
     public CashierInventoryFilterByIdStaffRequest getFilterCashierInventory(@RequestBody CashierInventoryFilterByIdStaffRequest cashierInventoryFilterByIdStaffRequest2, HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
+
         try {
             // Định dạng để parse chuỗi thành đối tượng Date
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -165,6 +189,13 @@ public class CashierInventoryRestController {
     @GetMapping("/infor-detail-cashierInventory/{page}")
     public List<Object[]> getInfoDetailCashierInventory(@PathVariable("page") String page,HttpSession session) {
         Staff staff = (Staff) session.getAttribute("staffLogin");
+        if(staff == null) {
+            return null;
+        }
+        if(staff.getStatus() != 1) {
+            return null;
+        }
+
         try {
             if(cashierInventoryFilterByIdStaffRequest == null) {
                 try {
@@ -217,6 +248,13 @@ public class CashierInventoryRestController {
     @GetMapping("/max-page-cashierInventory-by-idStaff")
     public Integer getTimekeepingMaxPageByIdStaff(HttpSession session) {
         Staff staff = (Staff) session.getAttribute("staffLogin");
+        if(staff == null) {
+            return null;
+        }
+        if(staff.getStatus() != 1) {
+            return null;
+        }
+
         if(cashierInventoryFilterByIdStaffRequest == null) {
             try {
                 // Định dạng để parse chuỗi thành đối tượng Date
@@ -261,6 +299,13 @@ public class CashierInventoryRestController {
     @PostMapping("/filter-cashierInventory-by-idStaff")
     public CashierInventoryFilterByIdStaffRequest getFilterCashierInventoryByIdStaff(@RequestBody CashierInventoryFilterByIdStaffRequest cashierInventoryFilterByIdStaffRequest2, HttpSession session) {
         Staff staff = (Staff) session.getAttribute("staffLogin");
+        if(staff == null) {
+            return null;
+        }
+        if(staff.getStatus() != 1) {
+            return null;
+        }
+
         try {
             // Định dạng để parse chuỗi thành đối tượng Date
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -323,7 +368,7 @@ public class CashierInventoryRestController {
             return null;
         }
     }
-
+    ///validate same
 
     protected Page<Object[]> convertListToPage(List<Object[]> list, Pageable pageable) {
         int start = (int) pageable.getOffset();
