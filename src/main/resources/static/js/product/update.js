@@ -109,37 +109,60 @@ function closeQuickAddForm() {
     document.getElementById("input2").value = ""// Ẩn form
 }
 
-function submitQuickAdd() {
-    const code = document.getElementById("input1").value;
-    const name = document.getElementById("input2").value;
+async function submitQuickAdd() {
+    const codeInput = document.getElementById("input1").value.trim();
+    const nameInput = document.getElementById("input2").value.trim();
+    let arrayNameAttribute = [];
+    let arrayCodeAttribute = [];
+
+    let codeAttribute = await fetch(`/attribute/${currentType}/get-code`);
+    if (codeAttribute.ok) {
+        arrayCodeAttribute = await codeAttribute.json(); // Đảm bảo đây là một mảng
+    }
+    let nameAttribute = await fetch(`/attribute/${currentType}/get-name`);
+    if (nameAttribute.ok) {
+        arrayNameAttribute = await nameAttribute.json(); // Đảm bảo đây là một mảng
+    }
+    if (codeInput.length > 0 && nameInput.length > 0) {
+        if (arrayCodeAttribute.some(code => code.toLowerCase() === codeInput.toLowerCase())) {
+            createToast('2', 'Mã thuộc tính đã tồn tại')
+        } else if (arrayNameAttribute.some(name => name.toLowerCase() === nameInput.toLowerCase())) {
+            createToast('2', 'Tên thuộc tính đã tồn tại')
+        } else {
+            fetch('/product-api/attribute/quickly-add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Lỗi khi thêm thuộc tính');
+                    }
+                    createToast('1', 'Thêm thuộc tính thành công')
+                    closeQuickAddForm(); // Đóng form thêm thuộc tính
+                    reloadOptions(`${currentType}`); // Tải lại danh sách thuộc tính mới cho select
+                })
+                .catch(error => {
+                    console.error('Lỗi:', error);
+                    createToast('3', 'Thêm thuộc tính thất bại')
+                });
+        }
+
+    } else {
+        createToast('2', 'Nhập đầy đủ mã và tên thuộc tính')
+    }
 
     // Dữ liệu JSON để gửi
     const data = {
-        code: code,
-        name: name,
+        code: codeInput,
+        name: nameInput,
         type: currentType // Gửi loại thuộc tính (danh mục, màu sắc, kích thước)
     };
 
     // Gửi yêu cầu POST đến API
-    fetch('/product-api/attribute/quickly-add', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Lỗi khi thêm thuộc tính');
-            }
-            createToast('1', 'Thêm thuộc tính thành công')
-            closeQuickAddForm(); // Đóng form thêm thuộc tính
-            reloadOptions(`${currentType}`); // Tải lại danh sách thuộc tính mới cho select
-        })
-        .catch(error => {
-            console.error('Lỗi:', error);
-            createToast('3', 'Thêm thuộc tính thất bại')
-        });
+
 }
 
 function reloadOptions(type) {
@@ -232,9 +255,6 @@ function updateOptions(elementId, data, elementType, textKey, type) {
     }
 }
 
-
-
-
 async function updateProduct() {
     const formElement = document.getElementById('updateProductForm');
     const productId = formElement.getAttribute('data-product-id');
@@ -248,33 +268,15 @@ async function updateProduct() {
     formData.append('material', materialID); // Thêm idOrigin vào phần dữ liệu sản phẩm
     formData.append('manufacturer', manufacturerID); // Thêm idOrigin vào phần dữ liệu sản phẩm
     formData.append('sole', soleID); // Thêm idOrigin vào phần dữ liệu sản phẩm
-    try {
-        await fetch(`/staff/product/update-product/${productId}`, {
-            method: 'POST',
-            body: formData
-        });
-        window.location.href = `/staff/product/view-update/${productId}`;
-        sessionStorage.setItem('toastMessage', 'Sửa sản phẩm thành công');
-    } catch (error) {
-        createToast('3', 'Thêm sản phẩm thất bại')
-    }
+    await fetch(`/staff/product/update-product/${productId}`, {
+        method: 'POST',
+        body: formData
+    });
+    window.location.href = `/staff/product/view-update/${productId}`;
 
 }
-document.addEventListener('DOMContentLoaded', () => {
-    const message = sessionStorage.getItem('toastMessage');
-    if (message) {
-        createToast('1', message); // Gọi hàm tạo thông báo
-        sessionStorage.removeItem('toastMessage'); // Xóa thông báo để tránh hiển thị lại khi reload
-    }
-});
 
 function resetForm() {
-    // // Đặt lại tất cả các trường input trong form
-    // document.getElementById('updateProductForm').reset();
-    // document.getElementById('image-preview-updateProduct').innerHTML = '';
-    // const img = document.createElement('img');
-    // img.src = e.target.result;
-    validate();
     const formElement = document.getElementById('updateProductForm');
     const productId = formElement.getAttribute('data-product-id');
     window.location.href = "/staff/product/view-update/" + productId;

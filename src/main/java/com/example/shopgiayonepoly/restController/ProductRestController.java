@@ -120,59 +120,112 @@ public class ProductRestController extends BaseProduct {
 
 
     @PostMapping("/attribute/quickly-add")
-    public ResponseEntity<?> addAttribute(@RequestBody AttributeRequet request) {
+    public ResponseEntity<Map<String, String>> addAttribute(@RequestBody AttributeRequet request, HttpSession session) {
+        Map<String, String> thongBao = new HashMap<>();
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            thongBao.put("message", "Nhân viên chưa đăng nhập");
+            thongBao.put("check", "3");
+            return ResponseEntity.ok(thongBao);
+        }
+        if (staffLogin.getStatus() != 1) {
+            thongBao.put("message", "Nhân viên đang bị ngừng hoạt động!");
+            thongBao.put("check", "3");
+            return ResponseEntity.ok(thongBao);
+        }
+        boolean checkCode = true;
+        boolean checkName = true;
         switch (request.getType()) {
             case "category":
                 Category category = new Category();
                 category.setCodeCategory(request.getCode());
                 category.setNameCategory(request.getName());
-                category.setStatus(1);
-                categoryService.save(category);
-                return ResponseEntity.ok("Thêm danh mục thành công!");
+                for (Category listCategory : categoryService.findAll()) {
+                    if (category.getCodeCategory().trim().toLowerCase().equals(listCategory.getCodeCategory().trim().toLowerCase())) {
+                        checkCode = false;
+                        break;
+                    }
+                }
+                for (Category listCategory : categoryService.findAll()) {
+                    if (category.getNameCategory().trim().toLowerCase().equals(listCategory.getNameCategory().trim().toLowerCase())) {
+                        checkName = false;
+                        break;
+                    }
+                }
+                if (!checkCode || !checkName || category.getCodeCategory().isEmpty() || category.getNameCategory().isEmpty() || category.getCodeCategory().length() > 10 || category.getNameCategory().length() > 50) {
+                    thongBao.put("message", "Dữ liệu không hợp lệ");
+                    thongBao.put("check", "2");
+                } else {
+                    category.setStatus(1);
+                    categoryService.save(category);
+                    thongBao.put("message", "Thêm danh mục thành công");
+                    thongBao.put("check", "1");
+                }
+                return ResponseEntity.ok(thongBao);
             case "color":
                 Color color = new Color();
                 color.setCodeColor(request.getCode());
                 color.setNameColor(request.getName());
-                color.setStatus(1);
-                colorService.save(color);
-                return ResponseEntity.ok("Thêm màu sắc thành công!");
+
+                for (Color listColor : colorService.findAll()) {
+                    if (color.getCodeColor().trim().toLowerCase().equals(listColor.getCodeColor().trim().toLowerCase())) {
+                        checkCode = false;
+                    }
+                }
+                for (Color listColor : colorService.findAll()) {
+                    if (color.getNameColor().trim().toLowerCase().equals(listColor.getNameColor().trim().toLowerCase())) {
+                        checkName = false;
+                    }
+                }
+                if (!checkCode || !checkName || color.getCodeColor().isEmpty() || color.getNameColor().isEmpty() || color.getCodeColor().length() > 10 || color.getNameColor().length() > 50) {
+                    thongBao.put("message", "Dữ liệu không hợp lệ");
+                    thongBao.put("check", "2");
+                } else {
+                    color.setStatus(1);
+                    colorService.save(color);
+                    thongBao.put("message", "Thêm màu sắc thành công");
+                    thongBao.put("check", "1");
+                }
+                return ResponseEntity.ok(thongBao);
             case "size":
                 Size size = new Size();
                 size.setCodeSize(request.getCode());
                 size.setNameSize(request.getName());
                 size.setStatus(1);
                 sizeService.save(size);
-                return ResponseEntity.ok("Thêm kích thước thành công!");
+                return ResponseEntity.ok(thongBao);
             case "material":
                 Material material = new Material();
                 material.setCodeMaterial(request.getCode());
                 material.setNameMaterial(request.getName());
                 material.setStatus(1);
                 materialService.save(material);
-                return ResponseEntity.ok("Thêm chất liệu thành công!");
+                return ResponseEntity.ok(thongBao);
             case "manufacturer":
                 Manufacturer manufacturer = new Manufacturer();
                 manufacturer.setCodeManufacturer(request.getCode());
                 manufacturer.setNameManufacturer(request.getName());
                 manufacturer.setStatus(1);
                 manufacturerService.save(manufacturer);
-                return ResponseEntity.ok("Thêm nhà sản xuất thành công!");
+                return ResponseEntity.ok(thongBao);
             case "origin":
                 Origin origin = new Origin();
                 origin.setCodeOrigin(request.getCode());
                 origin.setNameOrigin(request.getName());
                 origin.setStatus(1);
                 originService.save(origin);
-                return ResponseEntity.ok("Thêm nguồn gốc thành công!");
+                return ResponseEntity.ok(thongBao);
             case "sole":
                 Sole sole = new Sole();
                 sole.setCodeSole(request.getCode());
                 sole.setNameSole(request.getName());
                 sole.setStatus(1);
                 soleService.save(sole);
-                return ResponseEntity.ok("Thêm đế thành công!");
+                return ResponseEntity.ok(thongBao);
             default:
-                return ResponseEntity.badRequest().body("Thêm mới không thành công!");
+                thongBao.put("message", "Thêm thuộc tính thành côngfsdfdsfds");
+                thongBao.put("check", "1");
+                return ResponseEntity.ok(thongBao);
         }
     }
 

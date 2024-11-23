@@ -29,6 +29,9 @@ public class SizeController {
         if (staffLogin == null) {
             return "redirect:/login";
         }
+        if(staffLogin.getStatus() != 1) {
+            return "redirect:/home_manage";
+        }
         model.addAttribute("sizeList", sizeService.getSizeNotStatus0());
         model.addAttribute("sizeAdd", new Size());
         return "Attribute/size";
@@ -38,6 +41,9 @@ public class SizeController {
     public ResponseEntity<List<Size>> listSizeDelete(HttpSession session) {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if (staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
             return null;
         }
         List<Size> deletedSizes = sizeService.getSizeDelete();
@@ -50,6 +56,9 @@ public class SizeController {
         if (staffLogin == null) {
             return null;
         }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
         List<Size> listSizeActive = sizeService.getSizeNotStatus0();
         return new ResponseEntity<>(listSizeActive, HttpStatus.OK);
     }
@@ -58,6 +67,9 @@ public class SizeController {
     public ResponseEntity<List<String>> findAllCodeSize(HttpSession session) {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if (staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
             return null;
         }
         List<String> codeSize = new ArrayList<>();
@@ -71,6 +83,9 @@ public class SizeController {
     public ResponseEntity<List<String>> findAllNameSize(HttpSession session) {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if (staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
             return null;
         }
         List<String> nameSize = new ArrayList<>();
@@ -88,6 +103,11 @@ public class SizeController {
         if (staffLogin == null) {
             thongBao.put("message", "Nhân viên chưa đăng nhập");
             thongBao.put("check", "3");
+            return ResponseEntity.ok(thongBao);
+        }
+        if(staffLogin.getStatus() != 1) {
+            thongBao.put("message","Nhân viên đang bị ngừng hoạt động!");
+            thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }
         boolean checkCode = true;
@@ -119,6 +139,9 @@ public class SizeController {
     public ResponseEntity<String> updateStatus(@RequestBody Map<String, Object> payload, HttpSession session) {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if (staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
             return null;
         }
         try {
@@ -154,6 +177,11 @@ public class SizeController {
         if (staffLogin == null) {
             thongBao.put("message", "Nhân viên chưa đăng nhập");
             thongBao.put("check", "3");
+            return ResponseEntity.ok(thongBao);
+        }
+        if(staffLogin.getStatus() != 1) {
+            thongBao.put("message","Nhân viên đang bị ngừng hoạt động!");
+            thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }
         try {
@@ -218,6 +246,11 @@ public class SizeController {
         if (staffLogin == null) {
             thongBao.put("message", "Nhân viên chưa đăng nhập");
             thongBao.put("check", "3");
+            return ResponseEntity.ok(thongBao);
+        }
+        if(staffLogin.getStatus() != 1) {
+            thongBao.put("message","Nhân viên đang bị ngừng hoạt động!");
+            thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }
         try {
