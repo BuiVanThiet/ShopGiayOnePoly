@@ -30,6 +30,7 @@
 
                 <div class="card-body" style="margin-top: 10px">
                     <form th:action="@{/sale-product/update}" th:object="${saleProductRequest}" method="post">
+                        <input type="hidden" id="formUpdateSaleProduct" th:value="${saleProductRequest.getCodeSale()}">
                         <input type="hidden" th:field="*{id}">
                         <div class="row">
                             <div class="col-6 mb-3">
@@ -61,7 +62,7 @@
                                 <label class="form-label" for="value">Giá trị</label>
                                 <div class="input-group mb-3">
                                     <input type="number" class="form-control" th:field="*{discountValue}" id="value" min="0">
-                                    <span class="input-group-text" id="discountText" th:text="${discountType == 2 ? '₫' : '%'}"></span>
+                                    <span class="input-group-text" id="discountText" th:text="${saleProductRequest.discountType == 2 ? '₫' : '%'}"></span>
                                 </div>
                                 <span class="text-danger" id="valueError"></span>
                                 <div class="text-danger" th:errors="*{discountValue}"></div>
@@ -144,6 +145,8 @@
         </div>
     </section>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <input type="hidden" id="toastMessage" th:value="${message}">
+    <input type="hidden" id="toastCheck" th:value="${check}">
     <script th:src="@{/js/sale_product/homev2.js}" type="text/javascript"></script>
 <!--    <script th:src="@{/js/sale_product/create_update.js}" type="text/javascript"></script>-->
 <!--    <script th:src="@{/js/sale_product/home.js}" type="text/javascript"></script>-->

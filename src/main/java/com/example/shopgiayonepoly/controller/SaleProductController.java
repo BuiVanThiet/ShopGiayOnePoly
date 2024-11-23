@@ -1,5 +1,6 @@
 package com.example.shopgiayonepoly.controller;
 
+import com.example.shopgiayonepoly.baseMethod.BaseSaleProduct;
 import com.example.shopgiayonepoly.dto.request.DiscountApplyRequest;
 import com.example.shopgiayonepoly.dto.request.SaleProductRequest;
 import com.example.shopgiayonepoly.entites.ProductDetail;
@@ -27,7 +28,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/sale-product")
@@ -36,6 +39,8 @@ public class SaleProductController {
     private SaleProductService saleProductService;
     @Autowired
     private ProductDetailService productDetailService;
+
+    private BaseSaleProduct baseSaleProduct = new BaseSaleProduct();
 
     private static final int pageSize = 5;
     String mess = "";
@@ -134,7 +139,7 @@ public class SaleProductController {
     }
 
     @GetMapping("/delete/{id}")
-    public String deleteSaleProduct(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes,HttpSession session) {
+    public String deleteSaleProduct(@PathVariable("id") String id, RedirectAttributes redirectAttributes,HttpSession session) {
 
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if(staffLogin == null) {
@@ -144,7 +149,25 @@ public class SaleProductController {
             return "redirect:/home_manage";
         }
 
-        SaleProduct saleProduct = saleProductService.getSaleProductByID(id);
+        try {
+            Integer.parseInt(id);
+        }catch (NumberFormatException e) {
+            return "redirect:/404";
+        }
+
+        SaleProduct saleProduct = saleProductService.getSaleProductByID(Integer.parseInt(id));
+        if(saleProduct == null) {
+            mess = "Đợt giảm giá có id: "+id+" không tồn tại!";
+            check = "3";
+            return "redirect:/sale-product/list";
+        }
+        if(saleProduct.getId() == null) {
+            mess = "Đợt giảm giá có id: "+id+" không tồn tại!";
+            check = "3";
+            return "redirect:/sale-product/list";
+        }
+
+
         List<ProductDetail> listProductDetail = saleProductService.findProducDetailByIDDiscout(saleProduct.getId());
         System.out.println(listProductDetail);
         System.out.println("đến đây");
@@ -152,7 +175,7 @@ public class SaleProductController {
             productDetail.setSaleProduct(null);
             productDetailService.save(productDetail);
         }
-        saleProductService.deleteSaleProductBySetStatus(id);
+        saleProductService.deleteSaleProductBySetStatus(Integer.parseInt(id));
         redirectAttributes.addFlashAttribute("mes", "Xóa thành công đợt giảm giá với ID: " + id);
         mess = "Xóa thành công đợt giảm giá với ID: "+id;
         check = "1";
@@ -160,7 +183,7 @@ public class SaleProductController {
     }
 
     @GetMapping("/restore/{id}")
-    public String RestoreSaleProduct(RedirectAttributes redirectAttributes, @PathVariable("id") Integer id,HttpSession session) {
+    public String RestoreSaleProduct(RedirectAttributes redirectAttributes, @PathVariable("id") String id,HttpSession session) {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if(staffLogin == null) {
             return "redirect:/login";
@@ -169,7 +192,25 @@ public class SaleProductController {
             return "redirect:/home_manage";
         }
 
-        saleProductService.restoreSaleProductStatus(id);
+        try {
+            Integer.parseInt(id);
+        }catch (NumberFormatException e) {
+            return "redirect:/404";
+        }
+
+        SaleProduct saleProduct = saleProductService.getSaleProductByID(Integer.parseInt(id));
+        if(saleProduct == null) {
+            mess = "Đợt giảm giá có id: "+id+" không tồn tại!";
+            check = "3";
+            return "redirect:/sale-product/list";
+        }
+        if(saleProduct.getId() == null) {
+            mess = "Đợt giảm giá có id: "+id+" không tồn tại!";
+            check = "3";
+            return "redirect:/sale-product/list";
+        }
+
+        saleProductService.restoreSaleProductStatus(Integer.parseInt(id));
         redirectAttributes.addFlashAttribute("mes", "Khôi phục đợt giảm giá thành công");
         mess = "Khôi phục thành công đợt giảm giá với ID: "+id;
         check = "1";
@@ -177,7 +218,7 @@ public class SaleProductController {
     }
 
     @GetMapping("/edit/{id}")
-    public String getFormUpdateSale(Model model, @PathVariable("id") Integer id,HttpSession session) {
+    public String getFormUpdateSale(Model model, @PathVariable("id") String id,HttpSession session) {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if(staffLogin == null) {
             return "redirect:/login";
@@ -186,18 +227,36 @@ public class SaleProductController {
             return "redirect:/home_manage";
         }
 
-        SaleProduct saleProduct = saleProductService.getSaleProductByID(id);
+        try {
+            Integer.parseInt(id);
+        }catch (NumberFormatException e) {
+            return "redirect:/404";
+        }
+
+        SaleProduct saleProduct = saleProductService.getSaleProductByID(Integer.parseInt(id));
+        if(saleProduct == null) {
+            mess = "Đợt giảm giá có id: "+id+" không tồn tại!";
+            check = "3";
+            return "redirect:/sale-product/list";
+        }
+        if(saleProduct.getId() == null) {
+            mess = "Đợt giảm giá có id: "+id+" không tồn tại!";
+            check = "3";
+            return "redirect:/sale-product/list";
+        }
+
         SaleProductRequest saleProductRequest = new SaleProductRequest();
         BeanUtils.copyProperties(saleProduct, saleProductRequest);
+        System.out.println(saleProductRequest.toString());
         model.addAttribute("saleProductRequest", saleProductRequest);
         model.addAttribute("title", "CẬP NHẬT ĐỢT GIẢM GIÁ VỚI ID: " + id);
         return "sale_product/update";
     }
 
     @PostMapping("/update")
-    public String UpdateSale(RedirectAttributes redirectAttributes, Model model,
-                             @Valid @ModelAttribute("saleProductRequest") SaleProductRequest saleProductRequest,
-                             BindingResult result,HttpSession session) {
+    public String UpdateSale(Model model,
+                             @ModelAttribute("saleProductRequest") SaleProductRequest saleProductRequest,
+                             HttpSession session) {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if(staffLogin == null) {
             return "redirect:/login";
@@ -205,52 +264,44 @@ public class SaleProductController {
         if(staffLogin.getStatus() != 1) {
             return "redirect:/home_manage";
         }
-        BigDecimal zero = BigDecimal.ZERO;
-        BigDecimal niceTeen = new BigDecimal("91");
-        BigDecimal tenHundred = new BigDecimal("10000");
-        BigDecimal oneMillion = new BigDecimal("1000000");
-        LocalDate dateNow = LocalDate.now();
-        if (saleProductRequest.getDiscountValue() == null) {
-            result.rejectValue("discountValue", "error.saleProduct", "Giá trị giảm không được để trống!");
-        } else {
-            if (saleProductRequest.getDiscountType() == 1) {
-                if (saleProductRequest.getDiscountValue().compareTo(zero) <= 0 || saleProductRequest.getDiscountValue().compareTo(niceTeen) >= 0) {
-                    result.rejectValue("discountValue", "error.saleProduct", "Giá trị giảm phải lớn hơn 0% và nhỏ hơn 90%!");
-                }
-            } else {
-                if (saleProductRequest.getDiscountValue().compareTo(tenHundred) < 0 || saleProductRequest.getDiscountValue().compareTo(oneMillion) > 0) {
-                    result.rejectValue("discountValue", "error.saleProduct", "Giá trị giảm phải lớn hơn 10.000₫ và nhỏ hơn 1.000.000₫!");
-                }
-            }
-        }
-        // Kiểm tra startDate
-        if (saleProductRequest.getStartDate() == null) {
-            result.rejectValue("startDate", "error.saleProduct", "Ngày bắt đầu không được để trống!");
-        } else if (saleProductRequest.getStartDate().isBefore(dateNow)) {
-            result.rejectValue("startDate", "error.saleProduct", "Ngày bắt đầu phải là ngày hiện tại hoặc sau ngày hiện tại: " + dateNow);
-        }
+        Map<String,String> thongBao = this.baseSaleProduct.validateAddAndUpdateSaleProduct(saleProductRequest);
 
-        // Kiểm tra endDate
-        if (saleProductRequest.getEndDate() == null) {
-            result.rejectValue("endDate", "error.saleProduct", "Ngày kết thúc không được để trống!");
-        } else {
-            if (saleProductRequest.getEndDate().isBefore(dateNow)) {
-                result.rejectValue("endDate", "error.voucher", "Ngày kết thúc phải lớn hơn ngày hiện tại: " + dateNow);
-            } else if (saleProductRequest.getEndDate().isBefore(saleProductRequest.getStartDate())) {
-                result.rejectValue("endDate", "error.saleProduct", "Ngày kết thúc phải lớn hơn ngày bắt đầu");
+        if(thongBao.get("check").equals("1")) {
+            SaleProduct saleProduct = saleProductService.getSaleProductByID(saleProductRequest.getId());
+            if(saleProduct == null) {
+                mess = "Đợt giảm giá có id: "+saleProductRequest.getId()+" không tồn tại!";
+                check = "3";
+                return "redirect:/sale-product/list";
             }
+            if(saleProduct.getId() == null) {
+                mess = "Đợt giảm giá có id: "+saleProductRequest.getId()+" không tồn tại!";
+                check = "3";
+                return "redirect:/sale-product/list";
+            }
+            List<SaleProduct> saleProducts = this.saleProductService.getAllSaleProducts();
+            saleProducts.remove(saleProduct);
+
+            for (SaleProduct saleProductCheckSame: saleProducts) {
+                if(saleProductCheckSame.getCodeSale().equals(saleProductRequest.getCodeSale())) {
+                    mess = "Mã đợt giảm giá đã tồn tại!";
+                    check = "3";
+                    return "redirect:/sale-product/list";
+                }
+            }
+
+            saleProductRequest.setCreateDate(saleProduct.getCreateDate());
+            saleProductRequest.setUpdateDate(new Date());
+            saleProductService.createNewSale(saleProductRequest);
+            mess = "Sửa thành công đợt giảm giá với ID: "+saleProductRequest.getId();
+            check = "1";
+            return "redirect:/sale-product/list";
+        }else {
+            model.addAttribute("title", "CẬP NHẬT ĐỢT GIẢM GIÁ VỚI ID: " + saleProductRequest.getId());
+            model.addAttribute("saleProductRequest",saleProductRequest);
+            model.addAttribute("message",thongBao.get("message"));
+            model.addAttribute("check","3");
+            return "/sale_product/update";
         }
-        if (result.hasErrors()) {
-            model.addAttribute("mes", "Cập nhật thất bại");
-            return "sale_product/update";
-        }
-        SaleProduct saleProduct = saleProductService.getSaleProductByID(saleProductRequest.getId());
-        saleProductRequest.setCreateDate(saleProduct.getCreateDate());
-        saleProductService.createNewSale(saleProductRequest);
-        redirectAttributes.addFlashAttribute("mes", "Cập nhật đợt giảm giá với ID " + saleProductRequest.getId() + " thành công");
-        mess = "Sửa thành công đợt giảm giá với ID: "+saleProductRequest.getId();
-        check = "1";
-        return "redirect:/sale-product/list";
     }
 
     @GetMapping("/search-type")
@@ -330,7 +381,7 @@ public class SaleProductController {
     }
 
     @GetMapping("/extend/{id}")
-    public String extendSaleproductExpired(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes,HttpSession session) {
+    public String extendSaleproductExpired(@PathVariable("id") String id, RedirectAttributes redirectAttributes,HttpSession session) {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if(staffLogin == null) {
             return "redirect:/login";
@@ -339,7 +390,25 @@ public class SaleProductController {
             return "redirect:/home_manage";
         }
 
-        saleProductService.updateSaleProductExpired(id);
+        try {
+            Integer.parseInt(id);
+        }catch (NumberFormatException e) {
+            return "redirect:/404";
+        }
+
+        SaleProduct saleProduct = saleProductService.getSaleProductByID(Integer.parseInt(id));
+        if(saleProduct == null) {
+            mess = "Đợt giảm giá có id: "+id+" không tồn tại!";
+            check = "3";
+            return "redirect:/sale-product/list";
+        }
+        if(saleProduct.getId() == null) {
+            mess = "Đợt giảm giá có id: "+id+" không tồn tại!";
+            check = "3";
+            return "redirect:/sale-product/list";
+        }
+
+        saleProductService.updateSaleProductExpired(Integer.parseInt(id));
         redirectAttributes.addFlashAttribute("mes", "Gia hạn phiếu giảm giá thành công");
         mess = "Gia hạn đợt giảm giá có id: "+id+" thành công!";
         check = "1";

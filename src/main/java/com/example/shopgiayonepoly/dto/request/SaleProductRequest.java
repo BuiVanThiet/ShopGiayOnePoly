@@ -15,15 +15,17 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @ToString
 public class SaleProductRequest extends BaseDTO {
-    @NotBlank(message = "Mã phiếu giảm giá không được để trống!")
+//    @NotBlank(message = "Mã phiếu giảm giá không được để trống!")
     private String codeSale;
-    @NotBlank(message = "Tên phiếu giảm giá không được để trống!")
+//    @NotBlank(message = "Tên phiếu giảm giá không được để trống!")
     private String nameSale;
-    @NotNull(message = "Hãy chọn loại phiếu giảm giá!")
+//    @NotNull(message = "Hãy chọn loại phiếu giảm giá!")
     private Integer discountType;
     private BigDecimal discountValue;
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+//    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+@DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate startDate;
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+//    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+@DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate endDate;
 }

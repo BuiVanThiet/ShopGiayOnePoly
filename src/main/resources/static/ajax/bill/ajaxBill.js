@@ -113,7 +113,7 @@ function loadBillDetail(page)  {
                         textErrorQuantity = '';
                     }
 
-                    if(getPriceAfterDiscount(billDetail.productDetail) != billDetail.price) {
+                    if(getPriceAfterDiscount(billDetail.productDetail) != billDetail.price && billDetail.bill.status >= 1) {
                         btnBuyProduct =`
                                     <div class="number" id="pageNumber">${billDetail.quantity}</div>
                         `

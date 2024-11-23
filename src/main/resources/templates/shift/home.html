@@ -15,7 +15,7 @@
     <div layout:fragment="content">
         <article class=" bd-gutter mt-5 my-md-4 bd-layout">
             <!-- Button trigger modal -->
-            <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#addShiftModal" onclick=" validateAddShift('#startTimeAdd', '#endTimeAdd', '#statusShiftAdd1', '#statusShiftAdd2', '#errorStartTimeAdd', '#errorEndTimeAdd', '#errorStatusShiftAdd', '#buttonAddShift')">
+            <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#addShiftModal" onclick="validateAddShift('#startTimeAdd', '#endTimeAdd', '#statusShiftAdd1', '#statusShiftAdd2', '#errorStartTimeAdd', '#errorEndTimeAdd', '#errorStatusShiftAdd', '#buttonAddShift','#errorSameShiftAdd')">
                 Thêm mới ca làm
             </button>
 
@@ -56,6 +56,7 @@
                                     </div>
                                     <span id="errorStatusShiftAdd" class="text-danger">Mời chọn trạng thái!</span>
                                 </div>
+                            <span id="errorSameShiftAdd" class="text-danger">Ca làm đã tồn tại!</span>
                         </div>
                         <div class="modal-footer">
                             <button id="buttonAddShift" class="btn btn-outline-success" data-bs-target="#addShiftModal2" data-bs-toggle="modal">Thêm</button>
@@ -121,6 +122,7 @@
                                 <span id="errorStatusShiftUpdate" class="text-danger">Mời chọn trạng thái!</span>
 
                             </div>
+                            <span id="errorSameShiftUpdate" class="text-danger">Ca làm đã tồn tại!</span>
 
                         </div>
                         <div class="modal-footer" id="btnUpdateShift">

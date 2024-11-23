@@ -28,8 +28,10 @@ public class VoucherRescontroller {
     @GetMapping("/list/{page}")
     public List<Object[]> getListVoucher(@PathVariable("page") String page, HttpSession session) {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
-
         if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
             return null;
         }
 
@@ -49,7 +51,15 @@ public class VoucherRescontroller {
 
     //phan trang
     @GetMapping("/max-page-voucher")
-    public Integer getMaxPageVoucher() {
+    public Integer getMaxPageVoucher(HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
+
         if(voucherSearchRequest == null) {
             voucherSearchRequest = new Voucher_SaleProductSearchRequest(null,"",1);
         }
@@ -60,7 +70,15 @@ public class VoucherRescontroller {
 
     //bo loc
     @PostMapping("/search-voucher")
-    public Voucher_SaleProductSearchRequest getSearchVoucher(@RequestBody Voucher_SaleProductSearchRequest voucherSearchRequest2) {
+    public Voucher_SaleProductSearchRequest getSearchVoucher(@RequestBody Voucher_SaleProductSearchRequest voucherSearchRequest2,HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
+
         voucherSearchRequest = new Voucher_SaleProductSearchRequest(voucherSearchRequest2.getDiscountTypeCheck(),voucherSearchRequest2.getNameCheck(),voucherSearchRequest2.getStatusCheck());
         if(voucherSearchRequest == null) {
             voucherSearchRequest = new Voucher_SaleProductSearchRequest(null,"",1);
@@ -74,10 +92,14 @@ public class VoucherRescontroller {
         Map<String,String> thongBao = new HashMap<>();
 
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
-
         if(staffLogin == null) {
             thongBao.put("message","Nhân viên chưa đăng nhập!");
-            thongBao.put("check","1");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+        if(staffLogin.getStatus() != 1) {
+            thongBao.put("message","Nhân viên đang bị ngừng hoạt động!");
+            thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }
 
@@ -90,11 +112,19 @@ public class VoucherRescontroller {
     }
 
     @GetMapping("/reset-filter-voucher")
-    public String getResetFilterVoucher() {
+    public String getResetFilterVoucher(HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
+
         voucherSearchRequest = new Voucher_SaleProductSearchRequest(null,"",1);
         return "done";
     }
-
+    // validate checkTrung
     ///////////////////////////////////////////////////
     protected Page<Object[]> convertListToPage(List<Object[]> list, Pageable pageable) {
         int start = (int) pageable.getOffset();

@@ -32,6 +32,14 @@ public class TimekeepingRestController {
     @GetMapping("/list/{page}")
     public List<Object[]> getListTimekeeping(@PathVariable("page") String page, HttpSession session) {
         System.out.println(page + "day la so trang");
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
+
         try {
             if(timekeepingFilterRequest == null) {
                 try {
@@ -77,6 +85,14 @@ public class TimekeepingRestController {
     }
     @GetMapping("/max-page-timekeeping")
     public Integer getTimekeepingMaxPage(HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
+
         if(timekeepingFilterRequest == null) {
             try {
                 // Định dạng để parse chuỗi thành đối tượng Date
@@ -111,6 +127,14 @@ public class TimekeepingRestController {
 
     @PostMapping("/filter-timekeeping")
     public TimekeepingFilterRequest getFilterShift(@RequestBody TimekeepingFilterRequest timekeepingFilterRequest2, HttpSession session) {
+            Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+            if(staffLogin == null) {
+                return null;
+            }
+            if(staffLogin.getStatus() != 1) {
+                return null;
+            }
+
             try {
                 // Định dạng để parse chuỗi thành đối tượng Date
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -165,7 +189,19 @@ public class TimekeepingRestController {
     @PostMapping("/check-in-staff")
     public ResponseEntity<Map<String,String>> getCheckIn(@RequestBody Map<String,String> data,HttpSession session) {
         Map<String,String> thongBao = new HashMap<>();
+
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            thongBao.put("message","Nhân viên chưa đăng nhập!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+        if(staffLogin.getStatus() != 1) {
+            thongBao.put("message","Nhân viên đang bị ngừng hoạt động!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+
         String checkLogin = getCheckStaffAttendanceYet(staffLogin.getId(),1);
         System.out.println(checkLogin);
         if(checkLogin.equals("Có")) {
@@ -197,6 +233,17 @@ public class TimekeepingRestController {
     public ResponseEntity<Map<String,String>> getCheckOut(@RequestBody Map<String,String> data,HttpSession session) {
         Map<String,String> thongBao = new HashMap<>();
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            thongBao.put("message","Nhân viên chưa đăng nhập!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+        if(staffLogin.getStatus() != 1) {
+            thongBao.put("message","Nhân viên đang bị ngừng hoạt động!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+
         String checkLogin = getCheckStaffAttendanceYet(staffLogin.getId(),1);
         String checkLogOut = getCheckStaffAttendanceYet(staffLogin.getId(),2);
         if (checkLogin.equals("Có") && checkLogOut.equals("Không")) {

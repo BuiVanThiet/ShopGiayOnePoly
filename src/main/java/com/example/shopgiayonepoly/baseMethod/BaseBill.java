@@ -317,7 +317,7 @@ public abstract class BaseBill extends BaseEmail {
 
                 // Kiểm tra ngày bắt đầu và kết thúc giảm giá
                 if ((startDate == null || !now.isBefore(startDate)) &&
-                        (endDate == null || !now.isAfter(endDate))) {
+                        (endDate == null || !now.isAfter(endDate)) && saleProduct.getStatus() == 1) {
 
                     // Kiểm tra loại giảm giá (1 = giảm theo %, 2 = giảm theo giá trị cụ thể)
                     if (saleProduct.getDiscountType() == 1) {
@@ -482,25 +482,27 @@ public abstract class BaseBill extends BaseEmail {
 
         // Kiểm tra nếu SaleProduct không phải null
         if (productDetail.getSaleProduct() != null) {
-            LocalDate startDate = productDetail.getSaleProduct().getStartDate();
-            LocalDate endDate = productDetail.getSaleProduct().getEndDate();
-            LocalDate today = LocalDate.now();
+            if(productDetail.getSaleProduct().getStatus() == 1) {
+                LocalDate startDate = productDetail.getSaleProduct().getStartDate();
+                LocalDate endDate = productDetail.getSaleProduct().getEndDate();
+                LocalDate today = LocalDate.now();
 
-            // Kiểm tra ngày hiện tại có nằm trong khoảng startDate và endDate hay không
-            if (startDate != null && endDate != null && (today.isEqual(startDate) || today.isEqual(endDate) || (today.isAfter(startDate) && today.isBefore(endDate)))) {
-                BigDecimal discountValue = productDetail.getSaleProduct().getDiscountValue();
+                // Kiểm tra ngày hiện tại có nằm trong khoảng startDate và endDate hay không
+                if (startDate != null && endDate != null && (today.isEqual(startDate) || today.isEqual(endDate) || (today.isAfter(startDate) && today.isBefore(endDate)))) {
+                    BigDecimal discountValue = productDetail.getSaleProduct().getDiscountValue();
 
-                if (productDetail.getSaleProduct().getDiscountType() == 1) {
-                    // Tính phần trăm giảm (discountValue là %)
-                    BigDecimal percent = discountValue.divide(BigDecimal.valueOf(100));
-                    BigDecimal pricePercent = productDetail.getPrice().multiply(percent);
-                    priceBuy = productDetail.getPrice().subtract(pricePercent);
-                } else {
-                    // Trường hợp giảm trực tiếp theo giá trị cụ thể
-                    priceBuy = productDetail.getPrice().subtract(discountValue);
+                    if (productDetail.getSaleProduct().getDiscountType() == 1) {
+                        // Tính phần trăm giảm (discountValue là %)
+                        BigDecimal percent = discountValue.divide(BigDecimal.valueOf(100));
+                        BigDecimal pricePercent = productDetail.getPrice().multiply(percent);
+                        priceBuy = productDetail.getPrice().subtract(pricePercent);
+                    } else {
+                        // Trường hợp giảm trực tiếp theo giá trị cụ thể
+                        priceBuy = productDetail.getPrice().subtract(discountValue);
+                    }
+                    // Đảm bảo giá sau khi giảm không âm
+                    return priceBuy.max(BigDecimal.ZERO);
                 }
-                // Đảm bảo giá sau khi giảm không âm
-                return priceBuy.max(BigDecimal.ZERO);
             }
         }
 
