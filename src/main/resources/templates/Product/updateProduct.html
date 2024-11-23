@@ -44,7 +44,7 @@
                     <th:block th:each="category : ${categoryList}">
                       <li style="display: flex; justify-content: space-between" onclick="toggleCheckbox(this, 'category')">
                         <span th:text="${category.nameCategory}"></span>
-                        <input class="category-checkbox" style="width: 20px" type="checkbox" name="categories" th:value="${category.id}" data-type="category">
+                        <input th:checked="${selectedCategoryIds.contains(category.id)}" class="category-checkbox" style="width: 20px" type="checkbox" name="categories" th:value="${category.id}" data-type="category">
                       </li>
                     </th:block>
                   </ul>
@@ -60,7 +60,7 @@
               <div class="form-control-updateProduct">
                 <label>Chất liệu</label>
                 <div style="display: flex">
-                  <input th:value="${product.get().material.nameMaterial}" data-material-id="" type="text" id="myInput-material"
+                  <input th:value="${product.get().material.nameMaterial}" th:data-material-id="${product.get().material.id}" type="text" id="myInput-material"
                          onfocus="showDropdown(event)"
                          onkeyup="filterFunction(event)" autocomplete="off">
                   <ul id="dataList-material" class="dropdown-content-updateProduct">
@@ -79,7 +79,7 @@
               <div class="form-control-updateProduct">
                 <label>Hãng</label>
                 <div style="display: flex">
-                  <input th:value="${product.get().manufacturer.nameManufacturer}" data-manufacturer-id="" type="text" id="myInput-manufacturer"
+                  <input th:value="${product.get().manufacturer.nameManufacturer}" th:data-manufacturer-id="${product.get().manufacturer.id}" type="text" id="myInput-manufacturer"
                          onfocus="showDropdown(event)"
                          onkeyup="filterFunction(event)" autocomplete="off">
                   <ul id="dataList-manufacturer" class="dropdown-content-updateProduct">
@@ -98,7 +98,7 @@
               <div class="form-control-updateProduct">
                 <label>Xuất xứ</label>
                 <div style="display: flex">
-                  <input th:value="${product.get().origin.nameOrigin}" data-origin-id="" type="text" id="myInput-origin"
+                  <input th:value="${product.get().origin.nameOrigin}" th:data-origin-id="${product.get().origin.id}" type="text" id="myInput-origin"
                          onfocus="showDropdown(event)"
                          onkeyup="filterFunction(event)" autocomplete="off">
                   <ul id="dataList-origin" class="dropdown-content-updateProduct">
@@ -120,7 +120,7 @@
                 <label for="myInput-nameProduct">Loại đế</label>
                 <div style="display: flex">
                   <input th:value="${product.get().sole.nameSole}" type="text" id="myInput-sole"
-                         onfocus="showDropdown(event)"
+                         onfocus="showDropdown(event)" th:data-sole-id="${product.get().sole.id}"
                          onkeyup="filterFunction(event)" autocomplete="off">
                   <ul id="dataList-sole" class="dropdown-content-updateProduct">
                     <th:block th:each="sole: ${soleList}">
@@ -147,20 +147,26 @@
               <div class="upload-container-updateProduct">
                 <div class="upload-item-updateProduct">
                   <i class="fas fa-cloud-upload-alt"></i>
-                  <p>Nhấp để thêm ảnh</p>
+                  <p>Nhấp để chọn ảnh</p>
                   <input type="file" id="file-input-updateProduct" name="imageFiles" accept="image/*" multiple
                          style="display: none;"
                          onchange="previewImages(event)">
                 </div>
               </div>
-              <div id="image-preview-updateProduct" class="image-preview-updateProduct"></div>
+              <div id="image-preview-updateProduct" class="image-preview-updateProduct">
+                <th:block th:each="image : ${listImage}">
+                    <img th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728725582/' + ${image}"
+                         alt="Ảnh sản phẩm" />
+                </th:block>
+              </div>
             </div>
+            <p style="display: none; color: red; margin-bottom: 0px" id="errorText-image">* Vui lòng chọn ít nhất 1 ảnh</p>
           </div>
           <div class="buttons-updateProduct">
             <button data-bs-toggle="modal" data-bs-target="#confirm-update-bill-modal" type="button"
                     id="update-btn-updateProduct" class="update-btn-updateProduct" >Sửa sản phẩm
             </button>
-            <button type="button" class="cancel-btn-updateProduct" onclick="resetFormAndTable()" >Hủy bỏ</button>
+            <button type="button" class="cancel-btn-updateProduct" onclick="resetForm()" >Reset</button>
           </div>
         </div>
       </form>

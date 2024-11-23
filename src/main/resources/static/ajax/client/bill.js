@@ -8,7 +8,6 @@ function payBill() {
     const selectedRadioPaymentMethod = document.querySelector('input[name="payment_method_id"]:checked');
 
     if (selectedRadioPaymentMethod) {
-        // Nếu có radio button được chọn, in ra giá trị của nó
         console.log('Selected payment method value: ' + selectedRadioPaymentMethod.value);
     } else {
         // Nếu không có radio button nào được chọn

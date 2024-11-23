@@ -50,7 +50,14 @@ public class CustomerController {
 //    }
 
     @GetMapping("/list")
-    public String getListCustomrByPage(@RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber, Model model) {
+    public String getListCustomrByPage(@RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber, Model model, HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            return "redirect:/login";
+        }
+        if(staffLogin.getStatus() != 1) {
+            return "redirect:/home_manage";
+        }
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<CustomerResponse> pageCustomer = customerService.getAllCustomerByPage(pageable);
         model.addAttribute("pageCustomer", pageCustomer);
@@ -80,7 +87,14 @@ public class CustomerController {
     }
 
     @PostMapping("/add")
-    public String addCustomer(Model model, @Valid @ModelAttribute(name = "customer") CustomerRequest customerRequest, BindingResult result) throws IOException {
+    public String addCustomer(Model model, @Valid @ModelAttribute(name = "customer") CustomerRequest customerRequest, BindingResult result, HttpSession session) throws IOException {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            return "redirect:/login";
+        }
+        if(staffLogin.getStatus() != 1) {
+            return "redirect:/home_manage";
+        }
         // Kiểm tra tên
         if (customerRequest.getFullName() == null || customerRequest.getFullName().trim().isEmpty()) {
             result.rejectValue("fullName", "error.customer", "Tên không được để trống!"); // Thông báo nếu tên rỗng hoặc chỉ chứa khoảng trắng
@@ -151,7 +165,14 @@ public class CustomerController {
     }
 
     @GetMapping("/edit/{id}")
-    public String editCustomer(Model model, @PathVariable("id") Integer id) {
+    public String editCustomer(Model model, @PathVariable("id") Integer id, HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            return "redirect:/login";
+        }
+        if(staffLogin.getStatus() != 1) {
+            return "redirect:/home_manage";
+        }
         Customer customer = customerService.getOne(id);
         CustomerRequest customerRequest = new CustomerRequest();
         customerRequest.setId(customer.getId());
@@ -173,7 +194,14 @@ public class CustomerController {
     }
 
     @PostMapping("/update")
-    public String updateCustomer(Model model, @Valid @ModelAttribute(name = "customer") CustomerRequest customerRequest, BindingResult result) throws IOException {
+    public String updateCustomer(Model model, @Valid @ModelAttribute(name = "customer") CustomerRequest customerRequest, BindingResult result, HttpSession session) throws IOException {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            return "redirect:/login";
+        }
+        if(staffLogin.getStatus() != 1) {
+            return "redirect:/home_manage";
+        }
         // Kiểm tra tên
         if (customerRequest.getFullName() == null || customerRequest.getFullName().trim().isEmpty()) {
             result.rejectValue("fullName", "error.customer", "Tên không được để trống!"); // Thông báo nếu tên rỗng hoặc chỉ chứa khoảng trắng
@@ -239,7 +267,14 @@ public class CustomerController {
     }
 
     @GetMapping("/detail/{id}")
-    public String detailCustomer(Model model, @PathVariable("id") Integer id) {
+    public String detailCustomer(Model model, @PathVariable("id") Integer id, HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            return "redirect:/login";
+        }
+        if(staffLogin.getStatus() != 1) {
+            return "redirect:/home_manage";
+        }
         Customer customer = customerService.getOne(id);
         CustomerRequest customerRequest = new CustomerRequest();
         customerRequest.setId(customer.getId());
@@ -261,7 +296,14 @@ public class CustomerController {
     }
 
     @GetMapping("/delete/{id}")
-    public String deleteCustomer(RedirectAttributes ra, @PathVariable("id") Integer id) {
+    public String deleteCustomer(RedirectAttributes ra, @PathVariable("id") Integer id, HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            return "redirect:/login";
+        }
+        if(staffLogin.getStatus() != 1) {
+            return "redirect:/home_manage";
+        }
         customerService.deleteCustomer(id);
         ra.addFlashAttribute("mes", "Xóa thành công Khach hang với ID là: " + id);
         return "redirect:/customer/list";

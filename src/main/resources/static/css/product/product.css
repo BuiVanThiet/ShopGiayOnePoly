@@ -106,7 +106,7 @@ body-product {
     cursor: pointer;
     position: absolute;
     top: 20px;
-    right: 20px;
+    right: 0px;
     text-decoration: none;
     color: black;
 
@@ -263,11 +263,20 @@ body-product {
     margin-bottom: 20px;
 }
 .btn-export-product {
-    background-color: #fceb97;
+    background-color: rgb(12, 215, 12);
     color: #000;
     padding: 10px 20px;
     border: none;
     border-radius: 8px;
+    cursor: pointer;
+}
+.btn-restore-product {
+    background-color: rgb(252, 235, 151);
+    color: #000;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    margin-left: 10px;
     cursor: pointer;
 }
 .btn-delete-product {
@@ -279,7 +288,6 @@ body-product {
     margin-left: 10px;
     cursor: pointer;
 }
-
 .btn-delete-product:hover{
     background-color: red;
 }

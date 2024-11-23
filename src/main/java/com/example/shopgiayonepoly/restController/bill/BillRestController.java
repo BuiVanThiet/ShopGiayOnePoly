@@ -3,6 +3,7 @@ package com.example.shopgiayonepoly.restController.bill;
 import com.example.shopgiayonepoly.baseMethod.BaseBill;
 import com.example.shopgiayonepoly.baseMethod.BaseEmail;
 import com.example.shopgiayonepoly.baseMethod.BaseProduct;
+import com.example.shopgiayonepoly.dto.request.Shift.CashierInventoryFilterByIdStaffRequest;
 import com.example.shopgiayonepoly.dto.request.bill.*;
 import com.example.shopgiayonepoly.dto.response.bill.*;
 import com.example.shopgiayonepoly.entites.*;
@@ -32,6 +33,7 @@ import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -47,6 +49,9 @@ public class BillRestController extends BaseBill {
         if(staffLogin == null) {
             return -1;
         }
+        if(staffLogin.getStatus() != 1) {
+            return -1;
+        }
         return (Integer) session.getAttribute("IdBill");
     }
 
@@ -56,6 +61,9 @@ public class BillRestController extends BaseBill {
         if(staffLogin == null) {
             return null;
         }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
         return billService.findAll();
     }
 
@@ -63,6 +71,9 @@ public class BillRestController extends BaseBill {
     public List<Bill> getAllNew(HttpSession session) {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
             return null;
         }
         keyVoucher = "";
@@ -76,6 +87,9 @@ public class BillRestController extends BaseBill {
 
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
             return null;
         }
 
@@ -113,6 +127,19 @@ public class BillRestController extends BaseBill {
 
         if(staffLogin == null) {
             thongBao.put("message","Nhân viên chưa đăng nhập!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+        if(staffLogin.getStatus() != 1) {
+            thongBao.put("message","Nhân viên đang bị ngừng hoạt động!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            thongBao.put("message",messMap);
             thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }
@@ -199,7 +226,19 @@ public class BillRestController extends BaseBill {
             thongBao.put("message","Nhân viên chưa đăng nhập!");
             thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
+        }
+        if(staffLogin.getStatus() != 1) {
+            thongBao.put("message","Nhân viên đang bị ngừng hoạt động!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
 
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            thongBao.put("message",messMap);
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
         }
 
         Integer idBill = (Integer) session.getAttribute("IdBill");
@@ -264,6 +303,9 @@ public class BillRestController extends BaseBill {
         if(staffLogin == null) {
             return null;
         }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
         return this.billDetailService.getAllProductDetail();
     }
 
@@ -273,6 +315,9 @@ public class BillRestController extends BaseBill {
     public Integer numberPage(HttpSession session) {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
             return null;
         }
         Integer idBill = (Integer) session.getAttribute("IdBill");
@@ -293,6 +338,9 @@ public class BillRestController extends BaseBill {
         if(staffLogin == null) {
             return null;
         }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
         if(this.productDetailCheckMark2Request == null) {
             this.productDetailCheckMark2Request = new ProductDetailCheckMark2Request("",null,null,null,null,null,null,null);
         }
@@ -306,12 +354,18 @@ public class BillRestController extends BaseBill {
         if(staffLogin == null) {
             return null;
         }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
         return this.billDetailService.getImageByBill(idProduct);
     }
     @GetMapping("/category-product/{idProduct}")
     public List<CategoryProductResponse> getCategoryByProduct(@PathVariable("idProduct") Integer idProduct,HttpSession session) {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
             return null;
         }
         return this.billDetailService.getCategoryByBill(idProduct);
@@ -321,6 +375,9 @@ public class BillRestController extends BaseBill {
     public Integer getMaxPageProduct(HttpSession session) {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
             return null;
         }
         if(this.productDetailCheckMark2Request == null) {
@@ -343,6 +400,9 @@ public class BillRestController extends BaseBill {
         if(staffLogin == null) {
             return null;
         }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
         this.productDetailCheckMark2Request = productDetailCheckRequest2;
         System.out.println("Thong tin loc " + productDetailCheckRequest2.toString());
         return ResponseEntity.ok("Done");
@@ -355,6 +415,9 @@ public class BillRestController extends BaseBill {
         if(staffLogin == null) {
             return null;
         }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
         return this.colorService.getColorNotStatus0();
     }
 
@@ -362,6 +425,9 @@ public class BillRestController extends BaseBill {
     public List<Size> getFilterSize(HttpSession session) {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
             return null;
         }
         return this.sizeService.getSizeNotStatus0();
@@ -373,6 +439,9 @@ public class BillRestController extends BaseBill {
         if(staffLogin == null) {
             return null;
         }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
         return this.materialService.getMaterialNotStatus0();
     }
 
@@ -380,6 +449,9 @@ public class BillRestController extends BaseBill {
     public List<Manufacturer> getFilterManufacturer(HttpSession session) {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
             return null;
         }
         return this.manufacturerService.getManufacturerNotStatus0();
@@ -391,12 +463,18 @@ public class BillRestController extends BaseBill {
         if(staffLogin == null) {
             return null;
         }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
         return this.originService.getOriginNotStatus0();
     }
     @GetMapping("/filter-sole")
     public List<Sole> getFilterSole(HttpSession session) {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
             return null;
         }
         return this.soleService.getSoleNotStatus0();
@@ -409,6 +487,9 @@ public class BillRestController extends BaseBill {
         if(staffLogin == null) {
             return null;
         }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
         Pageable pageable = PageRequest.of(0,5);
         return this.billService.getClientNotStatus0();
     }
@@ -417,6 +498,9 @@ public class BillRestController extends BaseBill {
     public BillTotalInfornationResponse billTotalInfornationResponse(HttpSession session) {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
             return null;
         }
         Integer idBill = (Integer) session.getAttribute("IdBill");
@@ -432,6 +516,9 @@ public class BillRestController extends BaseBill {
     public ClientBillInformationResponse getClientBillInformation(HttpSession session) {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
             return null;
         }
         List<ClientBillInformationResponse> clientBillInformationResponses = this.billService.getClientBillInformationResponse((Integer) session.getAttribute("IdClient"));
@@ -456,6 +543,15 @@ public class BillRestController extends BaseBill {
     public Bill getUploadBillPay(@RequestBody PayMethodRequest payMethodRequest,HttpSession session) {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
+
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
             return null;
         }
 
@@ -485,6 +581,9 @@ public class BillRestController extends BaseBill {
         if(staffLogin == null) {
             return null;
         }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
         Integer idBill = (Integer) session.getAttribute("IdBill");
 
         String validateIdBill = validateInteger(idBill != null ? idBill.toString() : "");
@@ -505,6 +604,9 @@ public class BillRestController extends BaseBill {
         if(staffLogin == null) {
             return null;
         }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
         String keyword = voucherSearch.get("keyword");
         this.keyVoucher = keyword;
         System.out.println("du lieu loc vc " + voucherSearch);
@@ -515,6 +617,9 @@ public class BillRestController extends BaseBill {
     public Integer getMaxPageVoucher(HttpSession session) {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
             return null;
         }
         Integer idBill = (Integer) session.getAttribute("IdBill");
@@ -539,6 +644,9 @@ public class BillRestController extends BaseBill {
         if(staffLogin == null) {
             return null;
         }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
         return this.billDetailService.getAllCategores();
     }
 
@@ -548,6 +656,16 @@ public class BillRestController extends BaseBill {
         if(staffLogin == null) {
             return null;
         }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
+
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            return null;
+        }
+
         Integer idBill = (Integer) session.getAttribute("IdBill");
 
         String validateIdBill = validateInteger(idBill != null ? idBill.toString() : "");
@@ -576,10 +694,13 @@ public class BillRestController extends BaseBill {
         if(staffLogin == null) {
             return null;
         }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
 
         String validatePage = validateInteger(page);
         if(!validatePage.trim().equals("")) {
-           return null;
+            return null;
         }
 
         Pageable pageable = PageRequest.of(Integer.parseInt(page)-1,5);
@@ -596,6 +717,9 @@ public class BillRestController extends BaseBill {
         if(staffLogin == null) {
             return null;
         }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
         if(searchBillByStatusRequest == null) {
             searchBillByStatusRequest = new SearchBillByStatusRequest();
         }
@@ -610,6 +734,9 @@ public class BillRestController extends BaseBill {
         if(staffLogin == null) {
             return null;
         }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
         System.out.println(status.toString());
         this.searchBillByStatusRequest = status;
         return ResponseEntity.ok("done");
@@ -619,6 +746,9 @@ public class BillRestController extends BaseBill {
     public ResponseEntity<?> getSearchBillManage(@RequestBody Map<String, String> billSearch,HttpSession session) {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
             return null;
         }
         String keyword = billSearch.get("keywordBill");
@@ -665,11 +795,14 @@ public class BillRestController extends BaseBill {
         if(staffLogin == null) {
             return null;
         }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
         Integer idBill = (Integer) session.getAttribute("IdBill");
 
         String validateIdBill = validateInteger(idBill != null ? idBill.toString() : "");
         if (!validateIdBill.trim().equals("")) {
-           return null;
+            return null;
         }
         List<InvoiceStatus> invoiceStatuses = this.invoiceStatusService.getALLInvoiceStatusByBill(idBill);
         if(invoiceStatuses.size() < 0) {
@@ -683,6 +816,9 @@ public class BillRestController extends BaseBill {
     public InformationBillByIdBillResponse getInformationBillByIdBill(HttpSession session) {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
             return null;
         }
 
@@ -703,6 +839,9 @@ public class BillRestController extends BaseBill {
     public ClientBillInformationResponse getCustomerInBillShip(HttpSession session) {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
             return null;
         }
 
@@ -738,6 +877,9 @@ public class BillRestController extends BaseBill {
     public InfomationCustomerBillResponse getShowCustomerInBillNotShip(HttpSession session) {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
             return null;
         }
 
@@ -792,6 +934,19 @@ public class BillRestController extends BaseBill {
             thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }
+        if(staffLogin.getStatus() != 1) {
+            thongBao.put("message","Nhân viên đang bị ngừng hoạt động!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            thongBao.put("message",messMap);
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
 
         Integer idBill = (Integer) session.getAttribute("IdBill");
         String validateIdBill = validateInteger(idBill != null ? idBill.toString() : "");
@@ -834,6 +989,19 @@ public class BillRestController extends BaseBill {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if(staffLogin == null) {
             thongBao.put("message","Nhân viên chưa đăng nhập!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+        if(staffLogin.getStatus() != 1) {
+            thongBao.put("message","Nhân viên đang bị ngừng hoạt động!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            thongBao.put("message",messMap);
             thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }
@@ -887,6 +1055,19 @@ public class BillRestController extends BaseBill {
             thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }
+        if(staffLogin.getStatus() != 1) {
+            thongBao.put("message","Nhân viên đang bị ngừng hoạt động!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            thongBao.put("message",messMap);
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
 
         Integer idBill = (Integer) session.getAttribute("IdBill");
         String validateIdBill = validateInteger(idBill != null ? idBill.toString() : "");
@@ -929,7 +1110,7 @@ public class BillRestController extends BaseBill {
             bill.setStatus(6);
             mess = "Hóa đơn đã được hủy!";
             colorMess = "3";
-            this.billService.save(bill);
+            billSave = this.billService.save(bill);
 
             String getAddRessDetail = bill.getAddRess();
             String[] part = getAddRessDetail.split(",\\s*");
@@ -945,6 +1126,15 @@ public class BillRestController extends BaseBill {
             if (billSave.getVoucher() != null) {
                 this.getSubtractVoucher(billSave.getVoucher(),-1);
             }
+
+            String checkCashierInventory = getCheckStaffCashierInventory(staffLogin.getId());
+            if(!checkCashierInventory.trim().equals("Có")) {
+                cashierInventoryService.getInsertRevenue(billSave.getStaff().getId(),new BigDecimal(0),new BigDecimal(0),new BigDecimal(0));
+                cashierInventoryService.getUpdateRevenue(billSave.getStaff().getId(),new BigDecimal(0).subtract(bill.getTotalAmount().subtract(billSave.getPriceDiscount())),new BigDecimal(0),new BigDecimal(0));
+            }else {
+                cashierInventoryService.getUpdateRevenue(billSave.getStaff().getId(),new BigDecimal(0).subtract(bill.getTotalAmount().subtract(billSave.getPriceDiscount())),new BigDecimal(0),new BigDecimal(0));
+            }
+
             this.setBillStatus(bill.getId(),bill.getStatus(),session);
         }else if (content.equals("agree")) {
             if(bill.getStatus() == 4 && bill.getPaymentStatus() == 0) {
@@ -1035,6 +1225,29 @@ public class BillRestController extends BaseBill {
                 }
             }
 
+            if(staffLogin != null){
+                String checkCashierInventory = getCheckStaffCashierInventory(staffLogin.getId());
+                BigDecimal totalReturn =
+                        (returnBillExchangeBill.getCustomerRefund().subtract(returnBillExchangeBill.getExchangeAndReturnFee()).add(returnBillExchangeBill.getDiscountedAmount())).subtract(returnBillExchangeBill.getCustomerPayment())
+                        ;
+                if (totalReturn.compareTo(BigDecimal.ZERO) <= 0) {
+                    totalReturn = BigDecimal.ZERO;
+                }
+                BigDecimal totalExchange =
+                        returnBillExchangeBill.getCustomerPayment().subtract(returnBillExchangeBill.getCustomerRefund().subtract(returnBillExchangeBill.getExchangeAndReturnFee()).add(returnBillExchangeBill.getDiscountedAmount()))
+                        ;
+                if (totalExchange.compareTo(BigDecimal.ZERO) <= 0) {
+                    totalExchange = BigDecimal.ZERO;
+                }
+
+                if(!checkCashierInventory.trim().equals("Có")) {
+                    cashierInventoryService.getInsertRevenue(staffLogin.getId(),new BigDecimal(0),new BigDecimal(0),new BigDecimal(0));
+                    cashierInventoryService.getUpdateRevenue(staffLogin.getId(),new BigDecimal(0),totalReturn,totalExchange);
+                }else {
+                    cashierInventoryService.getUpdateRevenue(staffLogin.getId(),new BigDecimal(0),totalReturn,totalExchange);
+                }
+            }
+
             bill.setUpdateDate(new Date());
             bill.setStatus(8);
             mess = "Hóa đơn đã được xác nhận!";
@@ -1071,6 +1284,19 @@ public class BillRestController extends BaseBill {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if(staffLogin == null) {
             thongBao.put("message","Nhân viên chưa đăng nhập!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+        if(staffLogin.getStatus() != 1) {
+            thongBao.put("message","Nhân viên đang bị ngừng hoạt động!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            thongBao.put("message",messMap);
             thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }
@@ -1394,6 +1620,9 @@ public class BillRestController extends BaseBill {
         if(staffLogin == null) {
             return null;
         }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
 
         Integer idBill = (Integer) session.getAttribute("IdBill");
         String validateIdBill = validateInteger(idBill != null ? idBill.toString() : "");
@@ -1409,6 +1638,10 @@ public class BillRestController extends BaseBill {
         if(staffLogin == null) {
             return null;
         }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
+
 
         Integer idBill = (Integer) session.getAttribute("IdBill");
         String validateIdBill = validateInteger(idBill != null ? idBill.toString() : "");
@@ -1430,9 +1663,10 @@ public class BillRestController extends BaseBill {
     @GetMapping("/bill-pdf/{idBill}")
     public ResponseEntity<byte[]> getbillPDF(@PathVariable("idBill") String idBill,HttpSession session) throws Exception {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
-        System.out.println("da vao phuong thuc xuat pdf");
         if(staffLogin == null) {
-            System.out.println("pdf: neu khong dang nhap vao day");
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
             return null;
         }
 
@@ -1488,9 +1722,10 @@ public class BillRestController extends BaseBill {
     @GetMapping("/bill-return-exchange-pdf/{idBill}")
     public ResponseEntity<byte[]> getBillReturnExchangePDF(@PathVariable("idBill") String idBill,HttpSession session) throws Exception {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
-        System.out.println("da vao phuong thuc xuat pdf");
         if(staffLogin == null) {
-            System.out.println("pdf: neu khong dang nhap vao day");
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
             return null;
         }
 
@@ -1583,31 +1818,211 @@ public class BillRestController extends BaseBill {
         return "notBtnPayExchange";
     }
 
-//    @GetMapping("/get-browser-info")
-//    public String getBrowserInfo(HttpServletRequest request) {
-//        try {
-//            InetAddress inetAddress = InetAddress.getLocalHost();
-//            String localIp = inetAddress.getHostAddress();
-//            // Lấy thông tin User-Agent từ header
-//            String userAgent = request.getHeader("User-Agent").toLowerCase();
-//            String abountAccess = "";
-//            // Kiểm tra nếu là điện thoại
-//            if (userAgent.contains("mobile") || userAgent.contains("android") || userAgent.contains("iphone")) {
-//                abountAccess = "Điện thoại";
-//            }
-//            // Kiểm tra nếu là máy tính
-//            else if (userAgent.contains("windows") || userAgent.contains("mac") || userAgent.contains("linux")) {
-//                abountAccess = "Máy tính";
-//            }else {
-//                abountAccess = "Không xác định";
-//            }
-//
-//            // Trả về thông tin User-Agent (có thể xử lý chi tiết hơn nếu cần phân tích)
-//            return "Local IP: " + localIp + "---User-Agent: " + abountAccess;
-//        } catch (UnknownHostException e) {
-//            e.printStackTrace();
-//            return "Unable to get local IP";
-//        }
-//    }
+    @GetMapping("/get-invoice-status-by-staff/{page}")
+    public List<Object[]> getListInvoiceStatusByStaff(@PathVariable("page") String page,HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
+        try {
+            if(cashierInventoryFilterByIdStaffRequest == null) {
+                try {
+                    // Định dạng để parse chuỗi thành đối tượng Date
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
+                    // Lấy ngày hiện tại
+                    Date currentDate = new Date();
+
+                    // Đặt thời gian bắt đầu (00:00:00)
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(currentDate);
+                    calendar.set(Calendar.HOUR_OF_DAY, 0);
+                    calendar.set(Calendar.MINUTE, 0);
+                    calendar.set(Calendar.SECOND, 0);
+                    calendar.set(Calendar.MILLISECOND, 0);
+                    Date startDate = calendar.getTime();
+
+                    // Đặt thời gian kết thúc (23:59:59)
+                    calendar.set(Calendar.HOUR_OF_DAY, 23);
+                    calendar.set(Calendar.MINUTE, 59);
+                    calendar.set(Calendar.SECOND, 59);
+                    calendar.set(Calendar.MILLISECOND, 999);
+                    Date endDate = calendar.getTime();
+
+                    LocalTime currentTime = LocalTime.now();
+                    DateTimeFormatter formatterTime = DateTimeFormatter.ofPattern("HH:mm:ss");
+                    String currentTimeString = currentTime.format(formatterTime);
+
+                    cashierInventoryFilterByIdStaffRequest = new CashierInventoryFilterByIdStaffRequest(staffLogin.getId(),startDate,endDate,currentTimeString,currentTimeString);
+                } catch (Exception e) {
+                    return null;
+                }
+            }
+            int pageNumber = Integer.parseInt(page); // Nếu không phải số hợp lệ sẽ ném ra NumberFormatException
+
+            Pageable pageable = PageRequest.of(pageNumber-1,5);
+            return convertListToPage(invoiceStatusService.getAllInvoiceStatusByStaff(
+                    cashierInventoryFilterByIdStaffRequest.getIdStaff(),
+                    cashierInventoryFilterByIdStaffRequest.getStartDate(),
+                    cashierInventoryFilterByIdStaffRequest.getEndDate(),
+                    cashierInventoryFilterByIdStaffRequest.getStartTime(),
+                    cashierInventoryFilterByIdStaffRequest.getEndTime()),pageable).getContent();
+        }catch (NumberFormatException e) {
+            System.out.println("Lỗi: Tham số 'page' không phải là số hợp lệ.");
+            return null; // Hoặc trả về một thông báo lỗi nếu cần thiết
+        }
+    }
+
+    @GetMapping("/get-max-page-invoice-status-by-staff")
+    public Integer getMaxPageInvoiceStatusByStaff(HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
+        if(cashierInventoryFilterByIdStaffRequest == null) {
+            try {
+                // Định dạng để parse chuỗi thành đối tượng Date
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
+                // Lấy ngày hiện tại
+                Date currentDate = new Date();
+
+                // Đặt thời gian bắt đầu (00:00:00)
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(currentDate);
+                calendar.set(Calendar.HOUR_OF_DAY, 0);
+                calendar.set(Calendar.MINUTE, 0);
+                calendar.set(Calendar.SECOND, 0);
+                calendar.set(Calendar.MILLISECOND, 0);
+                Date startDate = calendar.getTime();
+
+                // Đặt thời gian kết thúc (23:59:59)
+                calendar.set(Calendar.HOUR_OF_DAY, 23);
+                calendar.set(Calendar.MINUTE, 59);
+                calendar.set(Calendar.SECOND, 59);
+                calendar.set(Calendar.MILLISECOND, 999);
+                Date endDate = calendar.getTime();
+
+                LocalTime currentTime = LocalTime.now();
+                DateTimeFormatter formatterTime = DateTimeFormatter.ofPattern("HH:mm:ss");
+                String currentTimeString = currentTime.format(formatterTime);
+
+                cashierInventoryFilterByIdStaffRequest = new CashierInventoryFilterByIdStaffRequest(staffLogin.getId(),startDate,endDate,currentTimeString,currentTimeString);
+            } catch (Exception e) {
+                return null;
+            }
+        }
+        Integer pageNumber = (int) Math.ceil((double) invoiceStatusService.getAllInvoiceStatusByStaff(
+                cashierInventoryFilterByIdStaffRequest.getIdStaff(),
+                cashierInventoryFilterByIdStaffRequest.getStartDate(),
+                cashierInventoryFilterByIdStaffRequest.getEndDate(),
+                cashierInventoryFilterByIdStaffRequest.getStartTime(),
+                cashierInventoryFilterByIdStaffRequest.getEndTime()).size() / 5);
+        return pageNumber;
+    }
+
+    @PostMapping("/filter-invoice-status-by-staff")
+    public CashierInventoryFilterByIdStaffRequest getFilterCashierInventoryByIdStaff(@RequestBody CashierInventoryFilterByIdStaffRequest cashierInventoryFilterByIdStaffRequest2, HttpSession session) {
+        Staff staff = (Staff) session.getAttribute("staffLogin");
+        if(staff == null) {
+            return null;
+        }
+        if(staff.getStatus() != 1) {
+            return null;
+        }
+        try {
+            // Định dạng để parse chuỗi thành đối tượng Date
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
+            // Lấy ngày bat dau
+            Date currentDate = null;
+
+            if(cashierInventoryFilterByIdStaffRequest2.getStartDate() == null) {
+                currentDate = new Date();
+            }else {
+                currentDate = cashierInventoryFilterByIdStaffRequest2.getStartDate();
+            }
+
+            // Đặt thời gian bắt đầu (00:00:00)
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(currentDate);
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+
+            Date startDate = calendar.getTime();
+
+            Date currentDate2 = null;
+            if(cashierInventoryFilterByIdStaffRequest2.getEndDate() == null) {
+                currentDate2 = new Date();
+            }else {
+                currentDate2 = cashierInventoryFilterByIdStaffRequest2.getEndDate();
+            }
+            Calendar calendar2 = Calendar.getInstance();
+            // Đặt thời gian kết thúc (23:59:59)
+            calendar2.setTime(currentDate2);
+            calendar2.set(Calendar.HOUR_OF_DAY, 23);
+            calendar2.set(Calendar.MINUTE, 59);
+            calendar2.set(Calendar.SECOND, 59);
+            calendar2.set(Calendar.MILLISECOND, 999);
+            Date endDate = calendar2.getTime();
+
+            LocalTime currentTime = LocalTime.now();
+            DateTimeFormatter formatterTime = DateTimeFormatter.ofPattern("HH:mm:ss");
+            String currentTimeString = currentTime.format(formatterTime);
+
+            if(cashierInventoryFilterByIdStaffRequest2.getStartTime() == null) {
+                cashierInventoryFilterByIdStaffRequest2.setStartTime(currentTimeString);
+            }
+
+            if(cashierInventoryFilterByIdStaffRequest2.getEndTime() == null) {
+                cashierInventoryFilterByIdStaffRequest2.setEndTime(currentTimeString);
+            }
+
+            cashierInventoryFilterByIdStaffRequest = new CashierInventoryFilterByIdStaffRequest(
+                    staff.getId(),
+                    startDate,
+                    endDate,
+                    cashierInventoryFilterByIdStaffRequest2.getStartTime(),
+                    cashierInventoryFilterByIdStaffRequest2.getEndTime()
+            );
+            return cashierInventoryFilterByIdStaffRequest;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @GetMapping("/get-browser-info")
+    public String getBrowserInfo(HttpServletRequest request) {
+        try {
+            InetAddress inetAddress = InetAddress.getLocalHost();
+            String localIp = inetAddress.getHostAddress();
+            // Lấy thông tin User-Agent từ header
+            String userAgent = request.getHeader("User-Agent").toLowerCase();
+            String abountAccess = "";
+            // Kiểm tra nếu là điện thoại
+            if (userAgent.contains("mobile") || userAgent.contains("android") || userAgent.contains("iphone")) {
+                abountAccess = "Điện thoại";
+            }
+            // Kiểm tra nếu là máy tính
+            else if (userAgent.contains("windows") || userAgent.contains("mac") || userAgent.contains("linux")) {
+                abountAccess = "Máy tính";
+            }else {
+                abountAccess = "Không xác định";
+            }
+
+            // Trả về thông tin User-Agent (có thể xử lý chi tiết hơn nếu cần phân tích)
+            return "Local IP: " + localIp + "---User-Agent: " + abountAccess;
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+            return "Unable to get local IP";
+        }
+    }
 }

@@ -448,9 +448,6 @@ public class ClientRestController extends BaseEmail {
         @PostMapping("/new-address-customer")
         public ResponseEntity<String> createNewAddressForCustomer(HttpSession session,
                                                                   @RequestBody AddressForCustomerRequest addressForCustomerRequest) {
-            String nameCustomer = String.valueOf(addressForCustomerRequest.getNameCustomer());
-            String phoneNumber = String.valueOf(addressForCustomerRequest.getPhoneNumber());
-            String emailCustomer = String.valueOf(addressForCustomerRequest.getEmailCustomer());
             String addressForCustomer = String.valueOf(addressForCustomerRequest.getAddressCustomer());
 
             ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
@@ -459,7 +456,7 @@ public class ClientRestController extends BaseEmail {
                 AddressShip addressShip = new AddressShip();
                 Customer customer = customerService.getCustomerByID(idCustomerLogin);
                 addressShip.setCustomer(customer);
-                addressShip.setSpecificAddress(nameCustomer + "," + phoneNumber + "," + emailCustomer + "," + addressForCustomer);
+                addressShip.setSpecificAddress(addressForCustomer);
                 addressShip.setCreateDate(new Date());
                 addressShip.setUpdateDate(new Date());
                 addressShip.setStatus(1);

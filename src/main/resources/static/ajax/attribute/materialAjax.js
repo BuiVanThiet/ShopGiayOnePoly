@@ -1,6 +1,6 @@
 function saveRow(index, event) { // hàm edit dữ liệu trên table
     event.preventDefault();
-    var updatedData = {
+    let updatedData = {
         codeMaterial: document.getElementById('code-input-' + index).value,
         nameMaterial: document.getElementById('name-input-' + index).value,
         id: document.getElementById('row-' + index).getAttribute('data-id')  // Lấy ID của đối tượng từ hàng
@@ -24,8 +24,8 @@ function saveRow(index, event) { // hàm edit dữ liệu trên table
 }
 
 function toggleStatus(element) { // hàm thay đổi trạng thái bằng button
-    var index = element.getAttribute('data-index');  // Lấy index
-    var status = element.getAttribute('data-status') === '1' ? 2 : 1;  // Lấy trạng thái mới
+    let index = element.getAttribute('data-index');  // Lấy index
+    let status = element.getAttribute('data-status') === '1' ? 2 : 1;  // Lấy trạng thái mới
 
     // Thay đổi biểu tượng toggle
     if (status === 1) {
@@ -40,7 +40,7 @@ function toggleStatus(element) { // hàm thay đổi trạng thái bằng button
     element.setAttribute('data-status', status);
 
     // Lấy ID thực tế của đối tượng thay vì index
-    var id = $('#row-' + index).data('id');  // Giả định bạn có thuộc tính id trong hàng
+    let id = $('#row-' + index).data('id');  // Giả định bạn có thuộc tính id trong hàng
 
     // Thực hiện Ajax request để cập nhật trạng thái trong database
     $.ajax({
@@ -61,19 +61,19 @@ function toggleStatus(element) { // hàm thay đổi trạng thái bằng button
     });
 }
 document.addEventListener('show.bs.modal', function (event) {
-    var button = event.relatedTarget;  // Lấy nút kích hoạt modal
-    var index = button.getAttribute('data-index');  // Lấy index từ nút kích hoạt
-    var id = button.getAttribute('data-id');  // Lấy id từ nút kích hoạt
+    let button = event.relatedTarget;  // Lấy nút kích hoạt modal
+    let index = button.getAttribute('data-index');  // Lấy index từ nút kích hoạt
+    let id = button.getAttribute('data-id');  // Lấy id từ nút kích hoạt
 
     // Gán index và id vào nút "Xóa" trong modal
-    var deleteButton = document.querySelector('#confirm-create-bill-modal .btn-success');
+    let deleteButton = document.querySelector('#confirm-create-bill-modal .btn-success');
     deleteButton.setAttribute('data-index', index);
     deleteButton.setAttribute('data-id', id);
 });
 
 function deleteByID(element) {
-    var index = element.getAttribute('data-index');  // Lấy index từ nút "Xóa" trong modal
-    var id = element.getAttribute('data-id');  // Lấy id từ nút "Xóa" trong modal
+    let index = element.getAttribute('data-index');  // Lấy index từ nút "Xóa" trong modal
+    let id = element.getAttribute('data-id');  // Lấy id từ nút "Xóa" trong modal
 
     $.ajax({
         url: '/attribute/delete-material',  // Đường dẫn API để xóa
@@ -272,8 +272,8 @@ async function add() {
 fetchActiveMaterials();
 
 function restoreMaterial(element) {
-    var index = element.getAttribute('data-index');
-    var id = element.getAttribute('data-id');
+    let index = element.getAttribute('data-index');
+    let id = element.getAttribute('data-id');
     $.ajax({
         url: '/attribute/delete-material',
         method: 'POST',
@@ -293,9 +293,9 @@ function restoreMaterial(element) {
 
 }
 
-var codeMaterialInput = document.getElementById("codeMaterialInput");
-var nameMaterialInput = document.getElementById("nameMaterialInput");
-var materialError = document.getElementById("materialError");
+let codeMaterialInput = document.getElementById("codeMaterialInput");
+let nameMaterialInput = document.getElementById("nameMaterialInput");
+let materialError = document.getElementById("materialError");
 codeMaterialInput.addEventListener('input', function () {
     validateMaterial();
 });
@@ -303,16 +303,16 @@ nameMaterialInput.addEventListener('input', function () {
     validateMaterial();
 });
 
-var arrayCodeMaterial = [];
-var arrayNameMaterial = [];
+let arrayCodeMaterial = [];
+let arrayNameMaterial = [];
 
 
 async function validateMaterial() {
-    var codeMaterial = await fetch('/attribute/material/get-code');
+    let codeMaterial = await fetch('/attribute/material/get-code');
     if (codeMaterial.ok) {
         arrayCodeMaterial = await codeMaterial.json(); // Đảm bảo đây là một mảng
     }
-    var nameMaterial = await fetch('/attribute/material/get-name');
+    let nameMaterial = await fetch('/attribute/material/get-name');
     if (nameMaterial.ok) {
         arrayNameMaterial = await nameMaterial.json(); // Đảm bảo đây là một mảng
     }
@@ -325,7 +325,7 @@ async function validateMaterial() {
     } else if (arrayCodeMaterial.some(code => code.toLowerCase() === codeMaterialInput.value.trim().toLowerCase())) {
         materialError.textContent = "* Mã chất liệu đã tồn tại";
         return false;
-    } else if (arrayNameMaterial.some(name => name.toLowerCase() === codeMaterialInput.value.trim().toLowerCase())) {
+    } else if (arrayNameMaterial.some(name => name.toLowerCase() === nameMaterialInput.value.trim().toLowerCase())) {
         materialError.textContent = "* Tên chất liệu đã tồn tại";
         return false;
     } else if (codeMaterialInput.value.trim() === "") {

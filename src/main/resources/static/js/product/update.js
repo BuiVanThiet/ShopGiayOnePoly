@@ -19,17 +19,18 @@ function previewImages(event) {
         };
         reader.readAsDataURL(file);
     }
+    validate();
 }
 
 
 function showDropdown(event) {
-    var input = event.target;
-    var listId = input.id.replace("myInput-", "dataList-"); // Tạo ID cho danh sách từ ID của input
-    var ul = document.getElementById(listId);
+    let input = event.target;
+    let listId = input.id.replace("myInput-", "dataList-"); // Tạo ID cho danh sách từ ID của input
+    let ul = document.getElementById(listId);
 
     // Đóng tất cả dropdown khác
-    var dropdowns = document.getElementsByClassName("dropdown-content-updateProduct");
-    for (var i = 0; i < dropdowns.length; i++) {
+    let dropdowns = document.getElementsByClassName("dropdown-content-updateProduct");
+    for (let i = 0; i < dropdowns.length; i++) {
         dropdowns[i].classList.remove('show-updateProduct'); // Đóng tất cả dropdown
     }
 
@@ -51,15 +52,15 @@ function showDropdown(event) {
 
 
 function filterFunction(event) {
-    var input = event.target;
-    var filter = input.value.toUpperCase();
-    var listId = input.id.replace("myInput-", "dataList-"); // Tạo ID cho danh sách từ ID của input
-    var ul = document.getElementById(listId);
-    var li = ul.getElementsByTagName("li");
+    let input = event.target;
+    let filter = input.value.toUpperCase();
+    let listId = input.id.replace("myInput-", "dataList-"); // Tạo ID cho danh sách từ ID của input
+    let ul = document.getElementById(listId);
+    let li = ul.getElementsByTagName("li");
 
     // Lọc các mục dựa trên giá trị nhập vào
-    for (var i = 0; i < li.length; i++) {
-        var txtValue = li[i].textContent || li[i].innerText;
+    for (let i = 0; i < li.length; i++) {
+        let txtValue = li[i].textContent || li[i].innerText;
 
         // Nếu có kết quả phù hợp, hiển thị, nếu không thì ẩn
         li[i].style.display = txtValue.toUpperCase().indexOf(filter) > -1 ? "" : "none";
@@ -79,8 +80,8 @@ function selectAttribute(item, inputId, dataType) {
 
 
 function closeAllDropdowns() {
-    var dropdowns = document.getElementsByClassName("dropdown-content-updateProduct");
-    for (var i = 0; i < dropdowns.length; i++) {
+    let dropdowns = document.getElementsByClassName("dropdown-content-updateProduct");
+    for (let i = 0; i < dropdowns.length; i++) {
         dropdowns[i].classList.remove('show-updateProduct'); // Đóng tất cả dropdown
     }
 }
@@ -232,123 +233,6 @@ function updateOptions(elementId, data, elementType, textKey, type) {
 }
 
 
-function insertTableProductDetail() {
-
-    const selectedColors = Array.from(document.querySelectorAll('#dataList-color input[type="checkbox"]:checked'))
-        .map(checkbox => {
-            const colorName = checkbox.closest('li').querySelector('span').innerText;
-            const colorId = checkbox.value; // Lấy ID màu
-            return {name: colorName, id: colorId};
-        });
-
-    const selectedSizes = Array.from(document.querySelectorAll('#dataList-size input[type="checkbox"]:checked'))
-        .map(checkbox => {
-            const sizeName = checkbox.closest('li').querySelector('span').innerText;
-            const sizeId = checkbox.value; // Lấy ID kích cỡ
-            return {name: sizeName, id: sizeId};
-        });
-    document.getElementById('table-productDetail-updateProduct').style.display = 'block';
-    const tableBody = document.querySelector('#productDetailTable tbody');
-    tableBody.innerHTML = '';
-
-    selectedColors.forEach(color => {
-        selectedSizes.forEach(size => {
-            const row = document.updateElement('tr');
-
-            row.innerHTML = `
-        <td><input type="checkbox" class="row-selector"></td>
-        <td class="editable-cell" data-color-id="${color.id}">${color.name}</td>
-        <td class="editable-cell" data-size-id="${size.id}">${size.name}</td>
-        <td contenteditable="true" class="editable-cell"></td> <!-- Giá bán -->
-        <td contenteditable="true" class="editable-cell"></td> <!-- Giá nhập -->
-        <td contenteditable="true" class="editable-cell"></td> <!-- Số lượng -->
-        <td contenteditable="true" class="editable-cell"></td> <!-- Trọng lượng -->
-        <td contenteditable="true" class="editable-cell"></td> <!-- Mô tả -->
-        <td><span class="material-symbols-outlined" onclick="deleteRow(this)">delete_forever</span></td>
-      `;
-
-            tableBody.appendChild(row);
-        });
-    });
-
-    // Lắng nghe sự kiện thay đổi trên các ô có thể chỉnh sửa
-    document.querySelectorAll('.editable-cell').forEach(cell => {
-        cell.addEventListener('input', function (event) {
-            // Chỉ xử lý nếu hàng đang được chỉnh sửa có checkbox được chọn
-            const row = cell.closest('tr');
-            const checkbox = row.querySelector('.row-selector');
-
-            if (!checkbox.checked) return; // Nếu checkbox không được chọn, không làm gì
-
-            const colIndex = cell.cellIndex;
-            const newValue = cell.innerText;
-            const selection = window.getSelection();
-            const range = selection.getRangeAt(0);
-            const cursorPosition = range.startOffset; // Lưu vị trí con trỏ
-
-            // Cập nhật các ô tương ứng trong các hàng đã chọn
-            document.querySelectorAll('.row-selector:checked').forEach(checkbox => {
-                const selectedRow = checkbox.closest('tr');
-                const targetCell = selectedRow.cells[colIndex];
-                targetCell.innerText = newValue;
-            });
-
-            // Khôi phục vị trí con trỏ
-            range.setStart(cell.childNodes[0], cursorPosition);
-            range.collapse(true);
-            selection.removeAllRanges();
-            selection.addRange(range);
-        });
-    });
-}
-
-
-function toggleCheckbox(liElement, type) {
-    const checkbox = liElement.querySelector(`input[data-type="${type}"]`);
-    if (checkbox) {
-        checkbox.checked = !checkbox.checked;
-        handleCheckboxChange(); // Gọi hàm kiểm tra sau khi thay đổi trạng thái
-    }
-}
-
-function handleCheckboxChange() {
-    const selectedColors = document.querySelectorAll('#dataList-color input[type="checkbox"]:checked').length;
-    const selectedSizes = document.querySelectorAll('#dataList-size input[type="checkbox"]:checked').length;
-
-    // Kiểm tra nếu có ít nhất 1 màu và 1 kích cỡ được chọn
-    if (selectedColors > 0 && selectedSizes > 0) {
-        insertTableProductDetail();
-    }
-}
-
-function deleteRow(deleteButton) {
-    const row = deleteButton.closest('tr');
-    const color = row.cells[1].innerText; // Cột màu sắc
-    const size = row.cells[2].innerText;  // Cột kích cỡ
-
-    row.remove(); // Xóa hàng hiện tại
-
-    // Kiểm tra nếu màu hoặc kích cỡ không còn trong bảng thì bỏ chọn checkbox tương ứng
-    checkAndUncheckOption('#dataList-color', color);
-    checkAndUncheckOption('#dataList-size', size);
-}
-
-function checkAndUncheckOption(listSelector, value) {
-    // Kiểm tra nếu không còn hàng nào chứa giá trị cần kiểm tra
-    const isValueInTable = Array.from(document.querySelectorAll('#productDetailTable tbody tr')).some(row => {
-        return row.cells[1].innerText === value || row.cells[2].innerText === value;
-    });
-
-    // Nếu không còn hàng nào chứa giá trị này thì bỏ chọn checkbox tương ứng
-    if (!isValueInTable) {
-        document.querySelectorAll(`${listSelector} input[type="checkbox"]`).forEach(checkbox => {
-            const itemText = checkbox.closest('li').querySelector('span').innerText;
-            if (itemText === value) {
-                checkbox.checked = false;
-            }
-        });
-    }
-}
 
 
 async function updateProduct() {
@@ -364,67 +248,43 @@ async function updateProduct() {
     formData.append('material', materialID); // Thêm idOrigin vào phần dữ liệu sản phẩm
     formData.append('manufacturer', manufacturerID); // Thêm idOrigin vào phần dữ liệu sản phẩm
     formData.append('sole', soleID); // Thêm idOrigin vào phần dữ liệu sản phẩm
-    // Thu thập dữ liệu chi tiết sản phẩm từ bảng và thêm vào FormData
-    const rows = document.querySelectorAll('#productDetailTable tbody tr');
-    const productDetails = [];
-
-    rows.forEach(row => {
-        const detail = {
-            color: {id: row.cells[1].getAttribute('data-color-id')}, // Truyền đối tượng color
-            size: {id: row.cells[2].getAttribute('data-size-id')}, // Truyền đối tượng size
-            price: row.cells[3].innerText.trim(),
-            import_price: row.cells[4].innerText.trim(),
-            quantity: row.cells[5].innerText.trim(),
-            weight: row.cells[6].innerText.trim(),
-            describe: row.cells[7].innerText.trim(),
-            status: 1
-        };
-        productDetails.push(detail);
-    });
-
-    if (productDetails.length > 0) {
-        formData.append("productDetails", JSON.stringify(productDetails));
-    }
     try {
         await fetch(`/staff/product/update-product/${productId}`, {
             method: 'POST',
             body: formData
         });
-        createToast('1', 'Sửa sản phẩm thành công')
-        // window.location.href = 'http://localhost:8080/staff/product';
+        window.location.href = `/staff/product/view-update/${productId}`;
+        sessionStorage.setItem('toastMessage', 'Sửa sản phẩm thành công');
     } catch (error) {
         createToast('3', 'Thêm sản phẩm thất bại')
     }
 
 }
-
-function resetFormAndTable() {
-    // Đặt lại tất cả các trường input trong form
-    document.getElementById('updateProductForm').reset();
-
-    // Làm trống phần preview ảnh nếu có
-    document.getElementById('image-preview-updateProduct').innerHTML = '';
-
-    // Làm trống các hàng trong bảng sản phẩm chi tiết
-    const tableBody = document.getElementById('productDetailTable').querySelector('tbody');
-    tableBody.innerHTML = '';
-}
-
-
-function toggleSelectAllproductDetail(selectAllCheckbox) {
-    // Chọn tất cả các checkbox trong phần tbody của bảng sản phẩm
-    const checkboxes = document.querySelectorAll('#productDetail-table-body .row-selector');
-
-    checkboxes.forEach((checkbox) => {
-        checkbox.checked = selectAllCheckbox.checked; // Đánh dấu hoặc bỏ đánh dấu checkbox
-    });
-}
-
-document.querySelectorAll('.row-selector').forEach((checkbox) => {
-    checkbox.addEventListener('change', function () {
-        const allChecked = document.querySelectorAll('.row-selector:checked').length === document.querySelectorAll('.row-selector').length;
-        document.getElementById('select-all-productDetail').checked = allChecked;
-    });
+document.addEventListener('DOMContentLoaded', () => {
+    const message = sessionStorage.getItem('toastMessage');
+    if (message) {
+        createToast('1', message); // Gọi hàm tạo thông báo
+        sessionStorage.removeItem('toastMessage'); // Xóa thông báo để tránh hiển thị lại khi reload
+    }
 });
 
+function resetForm() {
+    // // Đặt lại tất cả các trường input trong form
+    // document.getElementById('updateProductForm').reset();
+    // document.getElementById('image-preview-updateProduct').innerHTML = '';
+    // const img = document.createElement('img');
+    // img.src = e.target.result;
+    validate();
+    const formElement = document.getElementById('updateProductForm');
+    const productId = formElement.getAttribute('data-product-id');
+    window.location.href = "/staff/product/view-update/" + productId;
+}
 
+
+function toggleCheckbox(liElement, type) {
+    const checkbox = liElement.querySelector(`input[data-type="${type}"]`);
+    if (checkbox) {
+        checkbox.checked = !checkbox.checked;
+        validate();
+    }
+}

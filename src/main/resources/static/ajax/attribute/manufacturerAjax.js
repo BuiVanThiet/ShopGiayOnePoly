@@ -1,6 +1,6 @@
 function saveRow(index, event) { // hàm edit dữ liệu trên table
     event.preventDefault();
-    var updatedData = {
+    let updatedData = {
         codeManufacturer: document.getElementById('code-input-' + index).value,
         nameManufacturer: document.getElementById('name-input-' + index).value,
         id: document.getElementById('row-' + index).getAttribute('data-id')  // Lấy ID của đối tượng từ hàng
@@ -24,8 +24,8 @@ function saveRow(index, event) { // hàm edit dữ liệu trên table
 }
 
 function toggleStatus(element) { // hàm thay đổi trạng thái bằng button
-    var index = element.getAttribute('data-index');  // Lấy index
-    var status = element.getAttribute('data-status') === '1' ? 2 : 1;  // Lấy trạng thái mới
+    let index = element.getAttribute('data-index');  // Lấy index
+    let status = element.getAttribute('data-status') === '1' ? 2 : 1;  // Lấy trạng thái mới
 
     // Thay đổi biểu tượng toggle
     if (status === 1) {
@@ -40,7 +40,7 @@ function toggleStatus(element) { // hàm thay đổi trạng thái bằng button
     element.setAttribute('data-status', status);
 
     // Lấy ID thực tế của đối tượng thay vì index
-    var id = $('#row-' + index).data('id');  // Giả định bạn có thuộc tính id trong hàng
+    let id = $('#row-' + index).data('id');  // Giả định bạn có thuộc tính id trong hàng
 
     // Thực hiện Ajax request để cập nhật trạng thái trong database
     $.ajax({
@@ -61,19 +61,19 @@ function toggleStatus(element) { // hàm thay đổi trạng thái bằng button
     });
 }
 document.addEventListener('show.bs.modal', function (event) {
-    var button = event.relatedTarget;  // Lấy nút kích hoạt modal
-    var index = button.getAttribute('data-index');  // Lấy index từ nút kích hoạt
-    var id = button.getAttribute('data-id');  // Lấy id từ nút kích hoạt
+    let button = event.relatedTarget;  // Lấy nút kích hoạt modal
+    let index = button.getAttribute('data-index');  // Lấy index từ nút kích hoạt
+    let id = button.getAttribute('data-id');  // Lấy id từ nút kích hoạt
 
     // Gán index và id vào nút "Xóa" trong modal
-    var deleteButton = document.querySelector('#confirm-create-bill-modal .btn-success');
+    let deleteButton = document.querySelector('#confirm-create-bill-modal .btn-success');
     deleteButton.setAttribute('data-index', index);
     deleteButton.setAttribute('data-id', id);
 });
 
 function deleteByID(element) {
-    var index = element.getAttribute('data-index');  // Lấy index từ nút "Xóa" trong modal
-    var id = element.getAttribute('data-id');  // Lấy id từ nút "Xóa" trong modal
+    let index = element.getAttribute('data-index');  // Lấy index từ nút "Xóa" trong modal
+    let id = element.getAttribute('data-id');  // Lấy id từ nút "Xóa" trong modal
 
     $.ajax({
         url: '/attribute/delete-manufacturer',  // Đường dẫn API để xóa
@@ -272,8 +272,8 @@ async function add() {
 fetchActiveManufacturers();
 
 function restoreManufacturer(element) {
-    var index = element.getAttribute('data-index');
-    var id = element.getAttribute('data-id');
+    let index = element.getAttribute('data-index');
+    let id = element.getAttribute('data-id');
     $.ajax({
         url: '/attribute/delete-manufacturer',
         method: 'POST',
@@ -293,9 +293,9 @@ function restoreManufacturer(element) {
 
 }
 
-var codeManufacturerInput = document.getElementById("codeManufacturerInput");
-var nameManufacturerInput = document.getElementById("nameManufacturerInput");
-var manufacturerError = document.getElementById("manufacturerError");
+let codeManufacturerInput = document.getElementById("codeManufacturerInput");
+let nameManufacturerInput = document.getElementById("nameManufacturerInput");
+let manufacturerError = document.getElementById("manufacturerError");
 codeManufacturerInput.addEventListener('input', function () {
     validateManufacturer();
 });
@@ -303,16 +303,16 @@ nameManufacturerInput.addEventListener('input', function () {
     validateManufacturer();
 });
 
-var arrayCodeManufacturer = [];
-var arrayNameManufacturer = [];
+let arrayCodeManufacturer = [];
+let arrayNameManufacturer = [];
 
 
 async function validateManufacturer() {
-    var codeManufacturer = await fetch('/attribute/manufacturer/get-code');
+    let codeManufacturer = await fetch('/attribute/manufacturer/get-code');
     if (codeManufacturer.ok) {
         arrayCodeManufacturer = await codeManufacturer.json(); // Đảm bảo đây là một mảng
     }
-    var nameManufacturer = await fetch('/attribute/manufacturer/get-name');
+    let nameManufacturer = await fetch('/attribute/manufacturer/get-name');
     if (nameManufacturer.ok) {
         arrayNameManufacturer = await nameManufacturer.json(); // Đảm bảo đây là một mảng
     }
@@ -325,7 +325,7 @@ async function validateManufacturer() {
     } else if (arrayCodeManufacturer.some(code => code.toLowerCase() === codeManufacturerInput.value.trim().toLowerCase())) {
         manufacturerError.textContent = "* Mã nhà sản xuất đã tồn tại";
         return false;
-    } else if (arrayNameManufacturer.some(name => name.toLowerCase() === codeManufacturerInput.value.trim().toLowerCase())) {
+    } else if (arrayNameManufacturer.some(name => name.toLowerCase() === nameManufacturerInput.value.trim().toLowerCase())) {
         manufacturerError.textContent = "* Tên nhà sản xuất đã tồn tại";
         return false;
     } else if (codeManufacturerInput.value.trim() === "") {

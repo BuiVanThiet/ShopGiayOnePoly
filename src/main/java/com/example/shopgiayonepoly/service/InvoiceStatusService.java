@@ -5,6 +5,7 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,4 +34,12 @@ public interface InvoiceStatusService {
     List<Object[]> getBillClient(Integer id);
 
     List<Object[]> getInformationBillStatusClient(Integer id);
+
+    List<Object[]> getAllInvoiceStatusByStaff(
+            Integer idStaff,
+            Date startDate,
+            Date endDate,
+            String startTime,
+            String endTime
+    );
 }

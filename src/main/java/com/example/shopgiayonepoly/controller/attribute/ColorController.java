@@ -88,7 +88,7 @@ public class ColorController {
         if (staffLogin == null) {
             thongBao.put("message", "Nhân viên chưa đăng nhập");
             thongBao.put("check", "3");
-            return null;
+            return ResponseEntity.ok(thongBao);
         }
         boolean checkCode = true;
         boolean checkName = true;
@@ -116,7 +116,11 @@ public class ColorController {
 
     @PostMapping("/color/update-status")
     @ResponseBody
-    public ResponseEntity<String> updateStatus(@RequestBody Map<String, Object> payload) {
+    public ResponseEntity<String> updateStatus(@RequestBody Map<String, Object> payload, HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            return null;
+        }
         try {
             int id;
             int status;

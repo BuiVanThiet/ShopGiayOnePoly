@@ -19,17 +19,18 @@ function previewImages(event) {
         };
         reader.readAsDataURL(file);
     }
+    validate();
 }
 
 
 function showDropdown(event) {
-    var input = event.target;
-    var listId = input.id.replace("myInput-", "dataList-"); // Tạo ID cho danh sách từ ID của input
-    var ul = document.getElementById(listId);
+    let input = event.target;
+    let listId = input.id.replace("myInput-", "dataList-"); // Tạo ID cho danh sách từ ID của input
+    let ul = document.getElementById(listId);
 
     // Đóng tất cả dropdown khác
-    var dropdowns = document.getElementsByClassName("dropdown-content-createProduct");
-    for (var i = 0; i < dropdowns.length; i++) {
+    let dropdowns = document.getElementsByClassName("dropdown-content-createProduct");
+    for (let i = 0; i < dropdowns.length; i++) {
         dropdowns[i].classList.remove('show-createProduct'); // Đóng tất cả dropdown
     }
 
@@ -51,15 +52,15 @@ function showDropdown(event) {
 
 
 function filterFunction(event) {
-    var input = event.target;
-    var filter = input.value.toUpperCase();
-    var listId = input.id.replace("myInput-", "dataList-"); // Tạo ID cho danh sách từ ID của input
-    var ul = document.getElementById(listId);
-    var li = ul.getElementsByTagName("li");
+    let input = event.target;
+    let filter = input.value.toUpperCase();
+    let listId = input.id.replace("myInput-", "dataList-"); // Tạo ID cho danh sách từ ID của input
+    let ul = document.getElementById(listId);
+    let li = ul.getElementsByTagName("li");
 
     // Lọc các mục dựa trên giá trị nhập vào
-    for (var i = 0; i < li.length; i++) {
-        var txtValue = li[i].textContent || li[i].innerText;
+    for (let i = 0; i < li.length; i++) {
+        let txtValue = li[i].textContent || li[i].innerText;
 
         // Nếu có kết quả phù hợp, hiển thị, nếu không thì ẩn
         li[i].style.display = txtValue.toUpperCase().indexOf(filter) > -1 ? "" : "none";
@@ -79,8 +80,8 @@ function selectAttribute(item, inputId, dataType) {
 
 
 function closeAllDropdowns() {
-    var dropdowns = document.getElementsByClassName("dropdown-content-createProduct");
-    for (var i = 0; i < dropdowns.length; i++) {
+    let dropdowns = document.getElementsByClassName("dropdown-content-createProduct");
+    for (let i = 0; i < dropdowns.length; i++) {
         dropdowns[i].classList.remove('show-createProduct'); // Đóng tất cả dropdown
     }
 }
@@ -309,6 +310,7 @@ function toggleCheckbox(liElement, type) {
     if (checkbox) {
         checkbox.checked = !checkbox.checked;
         handleCheckboxChange(); // Gọi hàm kiểm tra sau khi thay đổi trạng thái
+        validate();
     }
 }
 
@@ -385,12 +387,15 @@ async function addProductWithDetails() {
         formData.append("productDetails", JSON.stringify(productDetails));
     }
     try {
-        await fetch('/staff/product/add-product-with-details', {
+        const response = await fetch('/staff/product/add-product-with-details', {
             method: 'POST',
             body: formData
         });
-        createToast('1', 'Thêm sản phẩm thành công')
-        window.location.href = 'http://localhost:8080/staff/product';
+        if (await response.text() === 'Thêm sản phẩm thành công') {
+            window.location.href = 'http://localhost:8080/staff/product';
+        } else {
+            window.location.href = 'http://localhost:8080/staff/product/create';
+        }
     } catch (error) {
         createToast('3', 'Thêm sản phẩm thất bại')
     }
@@ -400,6 +405,23 @@ async function addProductWithDetails() {
 function resetFormAndTable() {
     // Đặt lại tất cả các trường input trong form
     document.getElementById('createProductForm').reset();
+    errorTextCodeProduct.style.display = 'block'
+    errorTextImage.style.display = 'block'
+    errorTextCategory.style.display = 'block'
+    errorTextMaterial.style.display = 'block'
+    errorTextManufacturer.style.display = 'block'
+    errorTextSole.style.display = 'block'
+    errorTextOrigin.style.display = 'block'
+    errorTextNameProduct.style.display = 'block'
+    buttonAdd.style.display = 'none';
+    material.placeholder = '';
+    manufacturer.placeholder = '';
+    origin.placeholder = '';
+    sole.placeholder = '';
+    material.setAttribute('data-material-id', '');
+    manufacturer.setAttribute('data-material-id', '');
+    origin.setAttribute('data-material-id', '');
+    sole.setAttribute('data-material-id', '');
 
     // Làm trống phần preview ảnh nếu có
     document.getElementById('image-preview-createProduct').innerHTML = '';
@@ -407,6 +429,7 @@ function resetFormAndTable() {
     // Làm trống các hàng trong bảng sản phẩm chi tiết
     const tableBody = document.getElementById('productDetailTable').querySelector('tbody');
     tableBody.innerHTML = '';
+    validate();
 }
 
 

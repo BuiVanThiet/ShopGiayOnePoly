@@ -138,6 +138,14 @@ public class ReturnExchangeBillRestController extends BaseBill {
             return ResponseEntity.ok(thongBao);
         }
 
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            thongBao.put("message",messMap);
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+
         System.out.println("so luong tra la " + request.getQuantityReturn());
         // Kiểm tra xem sản phẩm đã tồn tại trong danh sách trả lại hay chưa
         int index = getReturnBillDetailResponseIndex(productDetail.getId());
@@ -236,6 +244,14 @@ public class ReturnExchangeBillRestController extends BaseBill {
         if(staffLogin == null) {
             thongBao.put("message", "Nhân viên chưa đăng nhập!");
             thongBao.put("check", "3");
+            return ResponseEntity.ok(thongBao);
+        }
+
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            thongBao.put("message",messMap);
+            thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }
 
@@ -357,6 +373,15 @@ public class ReturnExchangeBillRestController extends BaseBill {
             thongBao.put("check", "3");
             return ResponseEntity.ok(thongBao);
         }
+
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            thongBao.put("message",messMap);
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+
         if(!method.equals("cong") && !method.equals("tru")) {
             thongBao.put("message","Sai phương thức!");
             thongBao.put("check","3");
@@ -421,6 +446,14 @@ public class ReturnExchangeBillRestController extends BaseBill {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if(staffLogin == null) {
             System.out.println("bi vao day do chua dang nhap");
+            return ResponseEntity.ok(thongBao);
+        }
+
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            thongBao.put("message",messMap);
+            thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }
 
@@ -750,6 +783,14 @@ public class ReturnExchangeBillRestController extends BaseBill {
             return ResponseEntity.ok(thongBao);
         }
 
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            thongBao.put("message",messMap);
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+
         String validateQuantity = validateInteger(quantity);
         if (!validateQuantity.trim().equals("")) {
             thongBao.put("message","Sai định dạng số lượng!");
@@ -881,6 +922,14 @@ public class ReturnExchangeBillRestController extends BaseBill {
             return ResponseEntity.ok(thongBao);
         }
 
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            thongBao.put("message",messMap);
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+
         String validateIdProductDetail = validateInteger(idProductDetail);
         if (!validateIdProductDetail.trim().equals("")) {
             thongBao.put("message","Sai định dạng sản phẩm đổi!");
@@ -933,6 +982,14 @@ public class ReturnExchangeBillRestController extends BaseBill {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if(staffLogin == null) {
             thongBao.put("message","Nhân viên chưa đăng nhập!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            thongBao.put("message",messMap);
             thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }

@@ -1,6 +1,6 @@
 function saveRow(index, event) { // hàm edit dữ liệu trên table
     event.preventDefault();
-    var updatedData = {
+    let updatedData = {
         codeSole: document.getElementById('code-input-' + index).value,
         nameSole: document.getElementById('name-input-' + index).value,
         id: document.getElementById('row-' + index).getAttribute('data-id')  // Lấy ID của đối tượng từ hàng
@@ -24,8 +24,8 @@ function saveRow(index, event) { // hàm edit dữ liệu trên table
 }
 
 function toggleStatus(element) { // hàm thay đổi trạng thái bằng button
-    var index = element.getAttribute('data-index');  // Lấy index
-    var status = element.getAttribute('data-status') === '1' ? 2 : 1;  // Lấy trạng thái mới
+    let index = element.getAttribute('data-index');  // Lấy index
+    let status = element.getAttribute('data-status') === '1' ? 2 : 1;  // Lấy trạng thái mới
 
     // Thay đổi biểu tượng toggle
     if (status === 1) {
@@ -40,7 +40,7 @@ function toggleStatus(element) { // hàm thay đổi trạng thái bằng button
     element.setAttribute('data-status', status);
 
     // Lấy ID thực tế của đối tượng thay vì index
-    var id = $('#row-' + index).data('id');  // Giả định bạn có thuộc tính id trong hàng
+    let id = $('#row-' + index).data('id');  // Giả định bạn có thuộc tính id trong hàng
 
     // Thực hiện Ajax request để cập nhật trạng thái trong database
     $.ajax({
@@ -61,19 +61,19 @@ function toggleStatus(element) { // hàm thay đổi trạng thái bằng button
     });
 }
 document.addEventListener('show.bs.modal', function (event) {
-    var button = event.relatedTarget;  // Lấy nút kích hoạt modal
-    var index = button.getAttribute('data-index');  // Lấy index từ nút kích hoạt
-    var id = button.getAttribute('data-id');  // Lấy id từ nút kích hoạt
+    let button = event.relatedTarget;  // Lấy nút kích hoạt modal
+    let index = button.getAttribute('data-index');  // Lấy index từ nút kích hoạt
+    let id = button.getAttribute('data-id');  // Lấy id từ nút kích hoạt
 
     // Gán index và id vào nút "Xóa" trong modal
-    var deleteButton = document.querySelector('#confirm-create-bill-modal .btn-success');
+    let deleteButton = document.querySelector('#confirm-create-bill-modal .btn-success');
     deleteButton.setAttribute('data-index', index);
     deleteButton.setAttribute('data-id', id);
 });
 
 function deleteByID(element) {
-    var index = element.getAttribute('data-index');  // Lấy index từ nút "Xóa" trong modal
-    var id = element.getAttribute('data-id');  // Lấy id từ nút "Xóa" trong modal
+    let index = element.getAttribute('data-index');  // Lấy index từ nút "Xóa" trong modal
+    let id = element.getAttribute('data-id');  // Lấy id từ nút "Xóa" trong modal
 
     $.ajax({
         url: '/attribute/delete-sole',  // Đường dẫn API để xóa
@@ -272,8 +272,8 @@ async function add() {
 fetchActiveSoles();
 
 function restoreSole(element) {
-    var index = element.getAttribute('data-index');
-    var id = element.getAttribute('data-id');
+    let index = element.getAttribute('data-index');
+    let id = element.getAttribute('data-id');
     $.ajax({
         url: '/attribute/delete-sole',
         method: 'POST',
@@ -293,9 +293,9 @@ function restoreSole(element) {
 
 }
 
-var codeSoleInput = document.getElementById("codeSoleInput");
-var nameSoleInput = document.getElementById("nameSoleInput");
-var soleError = document.getElementById("soleError");
+let codeSoleInput = document.getElementById("codeSoleInput");
+let nameSoleInput = document.getElementById("nameSoleInput");
+let soleError = document.getElementById("soleError");
 codeSoleInput.addEventListener('input', function () {
     validateSole();
 });
@@ -303,16 +303,16 @@ nameSoleInput.addEventListener('input', function () {
     validateSole();
 });
 
-var arrayCodeSole = [];
-var arrayNameSole = [];
+let arrayCodeSole = [];
+let arrayNameSole = [];
 
 
 async function validateSole() {
-    var codeSole = await fetch('/attribute/sole/get-code');
+    let codeSole = await fetch('/attribute/sole/get-code');
     if (codeSole.ok) {
         arrayCodeSole = await codeSole.json(); // Đảm bảo đây là một mảng
     }
-    var nameSole = await fetch('/attribute/sole/get-name');
+    let nameSole = await fetch('/attribute/sole/get-name');
     if (nameSole.ok) {
         arrayNameSole = await nameSole.json(); // Đảm bảo đây là một mảng
     }
@@ -325,7 +325,7 @@ async function validateSole() {
     } else if (arrayCodeSole.some(code => code.toLowerCase() === codeSoleInput.value.trim().toLowerCase())) {
         soleError.textContent = "* Mã đế giày đã tồn tại";
         return false;
-    } else if (arrayNameSole.some(name => name.toLowerCase() === codeSoleInput.value.trim().toLowerCase())) {
+    } else if (arrayNameSole.some(name => name.toLowerCase() === nameSoleInput.value.trim().toLowerCase())) {
         soleError.textContent = "* Tên đế giày đã tồn tại";
         return false;
     } else if (codeSoleInput.value.trim() === "") {

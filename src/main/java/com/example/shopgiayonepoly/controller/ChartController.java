@@ -28,11 +28,11 @@ public class ChartController {
 
     @GetMapping("/form")
     public String form(Model model, @RequestParam(defaultValue ="0") int page) {
-        long monthlyBill = chartService.monthlyBill();
-        long totalMonthlyBill = chartService.totalMonthlyBill();
-        long totalMonthlyInvoiceProducts = chartService.totalMonthlyInvoiceProducts();
-        long billOfTheDay = chartService.billOfTheDay();
-        long totalPriceToday = chartService.totalPriceToday();
+        Long monthlyBill = chartService.monthlyBill();
+        Long totalMonthlyBill = chartService.totalMonthlyBill();
+        Long totalMonthlyInvoiceProducts = chartService.totalMonthlyInvoiceProducts();
+        Long billOfTheDay = chartService.billOfTheDay();
+        Long totalPriceToday = chartService.totalPriceToday();
         List<Date> findLastBillDates = chartService.findLastBillDates();
         // chuyển tiền sang VND
         NumberFormat numberFormat = NumberFormat.getInstance(new Locale("vi", "VN"));

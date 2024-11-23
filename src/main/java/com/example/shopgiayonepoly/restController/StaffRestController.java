@@ -28,6 +28,10 @@ public class StaffRestController {
         if(staff == null || staff.getId() == null) {
             return null;
         }
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            return null;
+        }
         Pageable pageable = PageRequest.of(Integer.parseInt(page)-1, 5);
         Page<StaffResponse> pageStaff = staffService.searchStaffByKeywordPage(keyWord,pageable, staff.getId());
         return pageStaff.getContent();

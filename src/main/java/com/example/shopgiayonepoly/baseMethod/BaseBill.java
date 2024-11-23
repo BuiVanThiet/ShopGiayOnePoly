@@ -1,5 +1,6 @@
 package com.example.shopgiayonepoly.baseMethod;
 
+import com.example.shopgiayonepoly.dto.request.Shift.CashierInventoryFilterByIdStaffRequest;
 import com.example.shopgiayonepoly.dto.request.bill.ProductDetailCheckMark2Request;
 import com.example.shopgiayonepoly.dto.request.bill.ProductDetailCheckRequest;
 import com.example.shopgiayonepoly.dto.request.VoucherRequest;
@@ -19,9 +20,7 @@ import org.springframework.data.domain.Pageable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public abstract class BaseBill extends BaseEmail {
     @Autowired
@@ -69,7 +68,10 @@ public abstract class BaseBill extends BaseEmail {
     protected PaymentExchangeService paymentExchangeService;
     @Autowired
     protected TransactionVNPayService transactionVNPayService;
-
+    @Autowired
+    protected TimekeepingService timekeepingService;
+    @Autowired
+    protected CashierInventoryService cashierInventoryService;
     @Autowired
     protected ClientService clientService;
 
@@ -103,6 +105,7 @@ public abstract class BaseBill extends BaseEmail {
     protected BigDecimal exchangeAndReturnFee = BigDecimal.valueOf(0);
     protected BigDecimal discountedAmount = BigDecimal.valueOf(0);
 
+    protected CashierInventoryFilterByIdStaffRequest cashierInventoryFilterByIdStaffRequest = null;
 
     //method chung
     //sua lai gia khi them san pham
@@ -314,7 +317,7 @@ public abstract class BaseBill extends BaseEmail {
 
                 // Kiểm tra ngày bắt đầu và kết thúc giảm giá
                 if ((startDate == null || !now.isBefore(startDate)) &&
-                    (endDate == null || !now.isAfter(endDate))) {
+                        (endDate == null || !now.isAfter(endDate))) {
 
                     // Kiểm tra loại giảm giá (1 = giảm theo %, 2 = giảm theo giá trị cụ thể)
                     if (saleProduct.getDiscountType() == 1) {
@@ -341,18 +344,18 @@ public abstract class BaseBill extends BaseEmail {
                         // Sử dụng compareTo() để so sánh giá
                         if (billDetail.getPrice().compareTo(currentPrice) == 0) {
                             System.out.println("Bill ID: " + bill.getId() + ", BillDetail ID: " + billDetail.getId() +
-                                               ", Product ID: " + billDetail.getProductDetail().getId() +
-                                               ", Quantity: " + billDetail.getQuantity() +
-                                               ", Price(trong bill): " + billDetail.getPrice() +
-                                               ", Price(trong san pham): " + currentPrice +
-                                               ", ỔN");
+                                    ", Product ID: " + billDetail.getProductDetail().getId() +
+                                    ", Quantity: " + billDetail.getQuantity() +
+                                    ", Price(trong bill): " + billDetail.getPrice() +
+                                    ", Price(trong san pham): " + currentPrice +
+                                    ", ỔN");
                         } else {
                             System.out.println("Bill ID: " + bill.getId() + ", BillDetail ID: " + billDetail.getId() +
-                                               ", Product ID: " + billDetail.getProductDetail().getId() +
-                                               ", Quantity: " + billDetail.getQuantity() +
-                                               ", Price(trong bill): " + billDetail.getPrice() +
-                                               ", Price(trong san pham): " + currentPrice +
-                                               ", ko ỔN");
+                                    ", Product ID: " + billDetail.getProductDetail().getId() +
+                                    ", Quantity: " + billDetail.getQuantity() +
+                                    ", Price(trong bill): " + billDetail.getPrice() +
+                                    ", Price(trong san pham): " + currentPrice +
+                                    ", ko ỔN");
                             BillDetail billDetailSave = billDetail;
                             billDetailSave.setPriceRoot(productDetail.getPrice());
                             billDetailSave.setUpdateDate(new Date());
@@ -505,5 +508,51 @@ public abstract class BaseBill extends BaseEmail {
         return productDetail.getPrice();
     }
 
+    protected String getCheckStaffAttendanceYetBill(
+//            @PathVariable("id") Integer idStaff,@PathVariable("type") Integer timekeepingTypeCheck
+            Integer idStaff, Integer timekeepingTypeCheck
+    ) {
+        List<Object[]> checkLoginLogOut = this.timekeepingService.getCheckStaffAttendanceYet(idStaff, timekeepingTypeCheck);
+
+        // Kiểm tra nếu danh sách không rỗng và có kết quả
+        if (!checkLoginLogOut.isEmpty() && checkLoginLogOut.get(0).length > 0) {
+            // Lấy giá trị đầu tiên từ kết quả
+            return checkLoginLogOut.get(0)[0].toString();
+        }
+        // Trường hợp không có dữ liệu
+        return "Không";
+    }
+
+    protected Map<String,String> checkLoginAndLogOutByStaff(Integer idStaff) {
+        Map<String,String> thongBao = new HashMap<>();
+        String checkLogin = getCheckStaffAttendanceYetBill(idStaff,1);
+        String checkLogOut = getCheckStaffAttendanceYetBill(idStaff,2);
+        System.out.println(checkLogin);
+        if(!checkLogin.equals("Có")) {
+            thongBao.put("message","Mời bạn điểm danh trước khi làm việc!");
+            return thongBao;
+        }
+
+        if(checkLogin.equals("Có") && checkLogOut.equals("Có")) {
+            thongBao.put("message","Bạn đã điểm danh vào và ra rồi, không thể làm việc được nữa!");
+            return thongBao;
+        }
+        thongBao.put("message","");
+        return thongBao;
+    }
+
+    protected String getCheckStaffCashierInventory(
+            Integer idStaff
+    ) {
+        List<Object[]> checkCashierInventory = this.cashierInventoryService.getCheckCashierInventoryStaff(idStaff);
+
+        // Kiểm tra nếu danh sách không rỗng và có kết quả
+        if (!checkCashierInventory.isEmpty() && checkCashierInventory.get(0).length > 0) {
+            // Lấy giá trị đầu tiên từ kết quả
+            return checkCashierInventory.get(0)[0].toString();
+        }
+        // Trường hợp không có dữ liệu
+        return "Không";
+    }
 
 }
