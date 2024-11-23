@@ -58,7 +58,13 @@ public class StaffController extends BaseEmail {
         if(staff == null || staff.getId() == null) {
             return "redirect:/login";
         }
-
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            return "redirect:/login";
+        }
+        if(staffLogin.getStatus() != 1) {
+            return "redirect:/home_manage";
+        }
         Page<StaffResponse> pageStaff = staffService.getAllStaffByPage(pageable, staff.getId());
         model.addAttribute("pageStaff", pageStaff);
         model.addAttribute("staff", new StaffRequest());
@@ -87,8 +93,15 @@ public class StaffController extends BaseEmail {
     }
 
     @PostMapping("/add")
-    public String addStaff(Model model, @Valid @ModelAttribute(name = "staff") StaffRequest staffRequest, BindingResult result) throws IOException {
-// Kiểm tra tên
+    public String addStaff(Model model, @Valid @ModelAttribute(name = "staff") StaffRequest staffRequest, BindingResult result, HttpSession session) throws IOException {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            return "redirect:/login";
+        }
+        if(staffLogin.getStatus() != 1) {
+            return "redirect:/home_manage";
+        }
+        // Kiểm tra tên
         if (staffRequest.getFullName() == null || staffRequest.getFullName().trim().isEmpty()) {
             result.rejectValue("fullName", "error.staff", "Tên không được để trống!"); // Thông báo nếu tên rỗng hoặc chỉ chứa khoảng trắng
         } else if (staffRequest.getFullName().length() < 2 || staffRequest.getFullName().length() > 50) {
@@ -171,7 +184,14 @@ public class StaffController extends BaseEmail {
     }
 
     @GetMapping("/edit/{id}")
-    public String editStaff(Model model, @PathVariable("id") Integer id) {
+    public String editStaff(Model model, @PathVariable("id") Integer id, HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            return "redirect:/login";
+        }
+        if(staffLogin.getStatus() != 1) {
+            return "redirect:/home_manage";
+        }
         Staff staff = staffService.getOne(id);
         StaffRequest staffRequest = new StaffRequest();
         staffRequest.setId(staff.getId());
@@ -195,8 +215,15 @@ public class StaffController extends BaseEmail {
     }
 
     @PostMapping("/update")
-    public String updateStaff(Model model, @Valid @ModelAttribute(name = "staff") StaffRequest staffRequest, BindingResult result) throws IOException {
-// Kiểm tra tên
+    public String updateStaff(Model model, @Valid @ModelAttribute(name = "staff") StaffRequest staffRequest, BindingResult result, HttpSession session) throws IOException {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            return "redirect:/login";
+        }
+        if(staffLogin.getStatus() != 1) {
+            return "redirect:/home_manage";
+        }
+        // Kiểm tra tên
         if (staffRequest.getFullName() == null || staffRequest.getFullName().trim().isEmpty()) {
             result.rejectValue("fullName", "error.staff", "Tên không được để trống!"); // Thông báo nếu tên rỗng hoặc chỉ chứa khoảng trắng
         } else if (staffRequest.getFullName().length() < 2 || staffRequest.getFullName().length() > 50) {
@@ -261,7 +288,14 @@ public class StaffController extends BaseEmail {
     }
 
     @GetMapping("/detail/{id}")
-    public String detailStaff(Model model, @PathVariable("id") Integer id) {
+    public String detailStaff(Model model, @PathVariable("id") Integer id, HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            return "redirect:/login";
+        }
+        if(staffLogin.getStatus() != 1) {
+            return "redirect:/home_manage";
+        }
         Staff staff = staffService.getOne(id);
         StaffRequest staffRequest = new StaffRequest();
         staffRequest.setId(staff.getId());
@@ -285,7 +319,14 @@ public class StaffController extends BaseEmail {
     }
 
     @GetMapping("/delete/{id}")
-    public String deleteStaff(RedirectAttributes ra, @PathVariable("id") Integer id) {
+    public String deleteStaff(RedirectAttributes ra, @PathVariable("id") Integer id, HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            return "redirect:/login";
+        }
+        if(staffLogin.getStatus() != 1) {
+            return "redirect:/home_manage";
+        }
         staffService.deleteStaff(id);
 //        ra.addFlashAttribute("mes", "Xóa thành công nhan vien với ID là: " + id);
         mess = "Xoa nhan vien thanh cong";
@@ -296,7 +337,6 @@ public class StaffController extends BaseEmail {
     @GetMapping("/exchange-pass-word/{id}")
     public String getExchangePassWord(@PathVariable("id") String id) {
         Staff staff = this.staffService.getStaffByID(Integer.parseInt(id));
-
         setUpToken(Integer.parseInt(id),"staff",staff.getEmail());
         return "redirect:/staff/list";
     }
