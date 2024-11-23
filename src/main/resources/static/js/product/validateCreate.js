@@ -78,7 +78,11 @@ async function validate(type) {
     }
 
     // Kiểm tra ảnh
-    if (fileInputCreateProduct.files.length > 0) {
+    if (fileInputCreateProduct.files.length > 10) {
+        errorTextImage.style.display = 'block';
+        errorTextImage.innerText = '* Tối đa 10 ảnh';
+        check = false;
+    } else if (fileInputCreateProduct.files.length > 0) {
         errorTextImage.style.display = 'none';
     } else {
         errorTextImage.style.display = 'block';

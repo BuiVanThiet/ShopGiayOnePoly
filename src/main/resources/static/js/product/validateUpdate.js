@@ -13,7 +13,7 @@ let errorTextSole = document.getElementById('errorText-sole');
 let errorTextCategory = document.getElementById('errorText-category');
 let errorTextImage = document.getElementById('errorText-image');
 let fileInputCreateProduct = document.getElementById('file-input-updateProduct');
-let buttonAdd = document.getElementById('update-btn-updateProduct');
+let buttonUpdate = document.getElementById('update-btn-updateProduct');
 let arrayCodeProduct = [];
 let initialCodeProduct = '';
 
@@ -91,7 +91,10 @@ async function validate(type) {
 
     // Kiểm tra nếu trong div không có thẻ <img>
     if (imagePreviewDiv && imagePreviewDiv.querySelectorAll('img').length === 0) {
-        if (fileInputCreateProduct.files.length > 0) {
+        if (fileInputCreateProduct.files.length > 10) {
+            showError(errorTextImage, '* Tối đa 10 ảnh');
+            check = false;
+        } else if (fileInputCreateProduct.files.length > 0) {
             hideError(errorTextImage);
         } else {
             showError(errorTextImage, '* Vui lòng chọn ít nhất 1 ảnh');
@@ -108,6 +111,11 @@ async function validate(type) {
     check = validateField(sole, errorTextSole, 'sole', type) && check;
 
     // Hiển thị nút thêm sản phẩm nếu hợp lệ
+    if (check){
+        buttonUpdate.style.display = 'block';
+    } else {
+        buttonUpdate.style.display = 'none';
+    }
 }
 
 // Hàm kiểm tra từng trường input
