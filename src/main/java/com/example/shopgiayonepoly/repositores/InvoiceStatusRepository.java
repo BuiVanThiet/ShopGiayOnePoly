@@ -132,7 +132,8 @@ public interface InvoiceStatusRepository extends JpaRepository<InvoiceStatus,Int
     left join bill b
         on b.id = inst.id_bill
     where
-        CAST(SUBSTRING(inst.note, 1, CHARINDEX(',', inst.note) - 1) AS INT) = :idStaff
+        SUBSTRING(inst.note, 1, CHARINDEX(',', inst.note) - 1) != 'Không có'
+        and CAST(SUBSTRING(inst.note, 1, CHARINDEX(',', inst.note) - 1) AS INT) = :idStaff
         and inst.create_date BETWEEN :startDate AND :endDate
         AND CONVERT(TIME, inst.create_date) BETWEEN :startTime AND :endTime
     order by

@@ -1396,6 +1396,9 @@ public class BillRestController extends BaseBill {
                 }
                 cash = new BigDecimal(cashPay).subtract(new BigDecimal(surplusMoneyPay));
                 billPayment.setCash(cash);
+                if(billPayment.getNote() == null) {
+                    billPayment.setNote("Thanh toán bằng tiền mặt!");
+                }
                 if(billPayment.getNote().trim().equals("")) {
                     billPayment.setNote("Thanh toán bằng tiền mặt!");
                 }
