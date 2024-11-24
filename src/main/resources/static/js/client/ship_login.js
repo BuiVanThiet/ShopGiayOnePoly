@@ -608,41 +608,42 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function updateAddress() {
-    const fullName = document.getElementById("FullNameUpdate").textContent;
-    const phone = document.getElementById("PhoneUpdate").textContent;
-    const mail = document.getElementById("MailUpdate").textContent;
-    const provinceId = document.getElementById("province-update").textContent;
-    const districtId = document.getElementById("district-update").textContent;
-    const wardCode = document.getElementById("ward-update").textContent;
-    const province = document.getElementById("province-update").options[document.getElementById("province-update").selectedIndex].text;
-    const district = document.getElementById("district-update").options[document.getElementById("district-update").selectedIndex].text;
-    const ward = document.getElementById("ward-update").options[document.getElementById("ward-update").selectedIndex].text;
-    const specificAddress = document.getElementById("specificAddressUpdate").textContent;
-
-    const fullAddressText = `${specificAddress}, ${ward}, ${district}, ${province}`;
-    const addressForCustomerText = `${fullName},${phone},${mail},${provinceId},${districtId},${wardCode},${fullAddressText}`;
-
-    const addressForCustomerRequest = {
-        addressCustomer: addressForCustomerText
-    };
-    const idAddress = document.getElementById("id-address").value;
-    console.log("ID address: " + idAddress)
-    $.ajax({
-        url: `/api-client/update-address-customer/${idAddress}`,
-        type: "POST",
-        contentType: "application/json",
-        data: JSON.stringify(addressForCustomerRequest),
-        success: function (response) {
-            console.log("Response từ server:", response);
-            alert("Cập nhật thành công!");
-            $("#updateAddressModal").modal("hide"); // Ẩn modal
-        },
-        error: function (xhr) {
-            console.error("Error status:", xhr.status);
-            console.error("Error response:", xhr.responseJSON);
-            alert("Có lỗi xảy ra khi update địa chỉ: " + xhr.responseText);
-        }
-    });
+    console.log("Hello")
+    // const fullName = document.getElementById("FullNameUpdate").textContent;
+    // const phone = document.getElementById("PhoneUpdate").textContent;
+    // const mail = document.getElementById("MailUpdate").textContent;
+    // const provinceId = document.getElementById("province-update").textContent;
+    // const districtId = document.getElementById("district-update").textContent;
+    // const wardCode = document.getElementById("ward-update").textContent;
+    // const province = document.getElementById("province-update").options[document.getElementById("province-update").selectedIndex].text;
+    // const district = document.getElementById("district-update").options[document.getElementById("district-update").selectedIndex].text;
+    // const ward = document.getElementById("ward-update").options[document.getElementById("ward-update").selectedIndex].text;
+    // const specificAddress = document.getElementById("specificAddressUpdate").textContent;
+    //
+    // const fullAddressText = `${specificAddress}, ${ward}, ${district}, ${province}`;
+    // const addressForCustomerText = `${fullName},${phone},${mail},${provinceId},${districtId},${wardCode},${fullAddressText}`;
+    //
+    // const addressForCustomerRequest = {
+    //     addressCustomer: addressForCustomerText
+    // };
+    // const idAddress = document.getElementById("id-address").value;
+    // console.log("ID address: " + idAddress)
+    // $.ajax({
+    //     url: `/api-client/update-address-customer/${idAddress}`,
+    //     type: "POST",
+    //     contentType: "application/json",
+    //     data: JSON.stringify(addressForCustomerRequest),
+    //     success: function (response) {
+    //         console.log("Response từ server:", response);
+    //         alert("Cập nhật thành công!");
+    //         $("#updateAddressModal").modal("hide"); // Ẩn modal
+    //     },
+    //     error: function (xhr) {
+    //         console.error("Error status:", xhr.status);
+    //         console.error("Error response:", xhr.responseJSON);
+    //         alert("Có lỗi xảy ra khi update địa chỉ: " + xhr.responseText);
+    //     }
+    // });
 }
 
 
