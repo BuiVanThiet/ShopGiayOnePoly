@@ -288,46 +288,46 @@ public class ClientController extends BaseBill {
             List<AddressShip> addressList = clientService.getListAddressShipByIDCustomer(clientLoginResponse.getId());
             List<AddressShipReponse> responseListAddress = new ArrayList<>();
 
-            for (AddressShip address : addressList) {
-                String specificAddress = address.getSpecificAddress();
-                if (specificAddress != null) {
-                    String[] parts = specificAddress.split(",");
+                for (AddressShip address : addressList) {
+                    String specificAddress = address.getSpecificAddress();
+                    if (specificAddress != null) {
+                        String[] parts = specificAddress.split(",");
 
-                    // Khai báo các thành phần địa chỉ
-                    String shipProvince = "", shipDistrict = "", shipWard = "", detailedAddress = "";
+                        // Khai báo các thành phần địa chỉ
+                        String shipProvince = "", shipDistrict = "", shipWard = "", detailedAddress = "";
 
-                    if (parts.length >= 7) {
-                        // Nếu địa chỉ có đủ các phần
-                        shipProvince = parts.length > 3 ? parts[3].trim() : "";
-                        shipDistrict = parts.length > 4 ? parts[4].trim() : "";
-                        shipWard = parts.length > 5 ? parts[5].trim() : "";
-                        detailedAddress = parts.length > 6
-                                ? String.join(", ", Arrays.copyOfRange(parts, 6, parts.length)).trim()
-                                : "";
-                    } else {
-                        // Xử lý đặc biệt nếu không đủ định dạng
-                        shipProvince = "UnknownProvince";
-                        shipDistrict = "UnknownDistrict";
-                        shipWard = "UnknownWard";
-                        detailedAddress = specificAddress.trim();
+                        if (parts.length >= 7) {
+                            // Nếu địa chỉ có đủ các phần
+                            shipProvince = parts.length > 3 ? parts[3].trim() : "";
+                            shipDistrict = parts.length > 4 ? parts[4].trim() : "";
+                            shipWard = parts.length > 5 ? parts[5].trim() : "";
+                            detailedAddress = parts.length > 6
+                                    ? String.join(", ", Arrays.copyOfRange(parts, 6, parts.length)).trim()
+                                    : "";
+                        } else {
+                            // Xử lý đặc biệt nếu không đủ định dạng
+                            shipProvince = "UnknownProvince";
+                            shipDistrict = "UnknownDistrict";
+                            shipWard = "UnknownWard";
+                            detailedAddress = specificAddress.trim();
+                        }
+
+                        String formattedShipAddress = String.join(", ", shipProvince, shipDistrict, shipWard, detailedAddress).replaceAll(", $", "");
+
+                        // Đếm số lượng dấu phẩy
+                        long commaCount = formattedShipAddress.chars().filter(ch -> ch == ',').count();
+
+                        // Nếu định dạng đúng (có hơn 3 dấu phẩy), thêm vào danh sách
+                        if (commaCount > 3) {
+                            responseListAddress.add(new AddressShipReponse(
+                                    address.getId(), // Gán ID từ AddressShip
+                                    formattedShipAddress, // Địa chỉ chuẩn hóa
+                                    specificAddress
+                            ));
+                            System.out.println("Formatted Ship Address: " + formattedShipAddress);
+                        }
                     }
-
-                    String formattedShipAddress = String.join(", ", shipProvince, shipDistrict, shipWard, detailedAddress).replaceAll(", $", "");
-
-                    // Đếm số lượng dấu phẩy
-                    long commaCount = formattedShipAddress.chars().filter(ch -> ch == ',').count();
-
-                    // Nếu định dạng đúng (có hơn 3 dấu phẩy), thêm vào danh sách
-                    if (commaCount > 3) {
-                        responseListAddress.add(new AddressShipReponse(
-                                address.getId(), // Gán ID từ AddressShip
-                                formattedShipAddress, // Địa chỉ chuẩn hóa
-                                detailedAddress       // Địa chỉ chi tiết
-                        ));
-                        System.out.println("Formatted Ship Address: " + formattedShipAddress);
-                    }
-                }
-        }
+            }
 
         model.addAttribute("listAddress", responseListAddress);
     }

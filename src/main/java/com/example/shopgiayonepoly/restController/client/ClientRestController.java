@@ -445,26 +445,38 @@ public class ClientRestController extends BaseEmail {
         return totalPrice;
     }
 
-        @PostMapping("/new-address-customer")
-        public ResponseEntity<String> createNewAddressForCustomer(HttpSession session,
-                                                                  @RequestBody AddressForCustomerRequest addressForCustomerRequest) {
-            String addressForCustomer = String.valueOf(addressForCustomerRequest.getAddressCustomer());
+    @PostMapping("/new-address-customer")
+    public ResponseEntity<String> createNewAddressForCustomer(HttpSession session,
+                                                              @RequestBody AddressForCustomerRequest addressForCustomerRequest) {
+        String addressForCustomer = String.valueOf(addressForCustomerRequest.getAddressCustomer());
 
-            ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
-            Integer idCustomerLogin = clientLoginResponse.getId();
-            if (idCustomerLogin != null) {
-                AddressShip addressShip = new AddressShip();
-                Customer customer = customerService.getCustomerByID(idCustomerLogin);
-                addressShip.setCustomer(customer);
-                addressShip.setSpecificAddress(addressForCustomer);
-                addressShip.setCreateDate(new Date());
-                addressShip.setUpdateDate(new Date());
-                addressShip.setStatus(1);
-                addressShipRepository.save(addressShip);
-                return ResponseEntity.ok("Thêm địa chỉ mới thành công");
-            }
-            return ResponseEntity.ok("Thêm địa chỉ mới thất bại");
+        ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
+        Integer idCustomerLogin = clientLoginResponse.getId();
+        if (idCustomerLogin != null) {
+            AddressShip addressShip = new AddressShip();
+            Customer customer = customerService.getCustomerByID(idCustomerLogin);
+            addressShip.setCustomer(customer);
+            addressShip.setSpecificAddress(addressForCustomer);
+            addressShip.setCreateDate(new Date());
+            addressShip.setUpdateDate(new Date());
+            addressShip.setStatus(1);
+            addressShipRepository.save(addressShip);
+            return ResponseEntity.ok("Thêm địa chỉ mới thành công");
         }
+        return ResponseEntity.ok("Thêm địa chỉ mới thất bại");
+    }
+
+    @GetMapping("/edit-address-customer/{idAddress}")
+    public ResponseEntity<AddressShip> getAddressDetails(@PathVariable("idAddress") Integer idAddress) {
+        AddressShip addressShip = addressShipRepository.findById(idAddress).orElse(null);
+        if (addressShip == null) {
+            return ResponseEntity.notFound().build();  // Trả về mã 404 nếu không tìm thấy địa chỉ
+        }
+        return ResponseEntity.ok(addressShip);  // Trả về thông tin địa chỉ nếu tìm thấy
+    }
+
+
+
 
     @PostMapping("/update-address-customer/{idAddress}")
     public ResponseEntity<String> updateAddressForCustomer(HttpSession session,
@@ -473,9 +485,7 @@ public class ClientRestController extends BaseEmail {
         String addressForCustomer = String.valueOf(addressForCustomerRequest.getAddressCustomer());
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
         Integer idCustomerLogin = clientLoginResponse.getId();
-
         if (idCustomerLogin != null) {
-            // Tìm địa chỉ đã có từ cơ sở dữ liệu
             AddressShip addressShip = addressShipRepository.findById(idAddress).orElse(null);
 
             if (addressShip == null) {
