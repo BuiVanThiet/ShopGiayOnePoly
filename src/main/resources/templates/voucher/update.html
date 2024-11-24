@@ -11,7 +11,7 @@
     <div class="bd-gutter mt-5 my-md-4 bd-layout">
         <div class="mb-3 text-center p-3 text-dark fs-3" style="background-color: #cececd" th:text="${title}"></div>
         <hr>
-        <form th:action="@{/voucher/update}" th:object="${voucher}" method="post"
+        <form th:action="@{/voucher/update}" th:object="${voucher}" method="post" id="formUpdateVoucherRoot"
               style="border: 1px solid #bdb5b5;padding: 50px">
             <input type="hidden" th:field="*{id}">
             <div class="row">
@@ -42,28 +42,30 @@
                 <div class="col-md-6 mb-3">
                     <label for="value">Giá trị</label>
                     <div class="input-group">
-                        <input type="number" id="value" th:field="*{priceReduced}" class="form-control" min="0"/>
+                        <input type="text" id="value" th:field="*{priceReduced}" class="form-control" min="0"/>
                         <span class="input-group-text" id="discountTextDola" th:style="${voucher.discountType == 1} ? 'display: block;' : 'display: none;'">%</span>
                         <span class="input-group-text" id="discountTextCash" th:style="${voucher.discountType == 2} ? 'display: block;' : 'display: none;'">₫</span>
                     </div>
                     <div class="text-danger" th:errors="*{priceReduced}"></div>
                     <span class="text-danger" id="valueError"></span>
+                    <span class="text-danger" id="valueError2"></span>
                 </div>
 
                 <div class="col-md-6 mb-3">
                     <label for="applyValue">Giá trị áp dụng</label>
                     <div class="input-group">
-                        <input type="number" id="applyValue" th:field="*{pricesApply}" class="form-control" min="0"/>
+                        <input type="text" id="applyValue" th:field="*{pricesApply}" class="form-control" min="0"/>
                         <span class="input-group-text">₫</span>
                     </div>
                     <span class="text-danger" id="applyValueError"></span>
+                    <span class="text-danger" id="applyValueError2"></span>
                     <div class="text-danger" th:errors="*{pricesApply}"></div>
                 </div>
 
                 <div class="col-md-6 mb-3" id="boxOfMaxiumDiscount" th:style="${voucher.discountType == 2} ? 'display: none;' : 'display: block;'">
                     <label for="maxDiscount">Giảm tối đa</label>
                     <div class="input-group">
-                        <input type="number" id="maxDiscount" th:field="*{pricesMax}" class="form-control" min="0"/>
+                        <input type="text" id="maxDiscount" th:field="*{pricesMax}" class="form-control" min="0"/>
                         <span class="input-group-text">₫</span>
                     </div>
                     <div class="text-danger" th:errors="*{pricesMax}"></div>
@@ -93,7 +95,7 @@
 
                 <div class="col-md-6 mb-3">
                     <label for="quantity">Số lượng</label>
-                    <input type="number" id="quantity" th:field="*{quantity}" class="form-control mt-1"/>
+                    <input type="text" id="quantity" th:field="*{quantity}" class="form-control mt-1"/>
                     <div class="text-danger" th:errors="*{quantity}"></div>
                     <span class="text-danger" id="quantityError"></span>
                 </div>
@@ -150,6 +152,13 @@
         </form>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script th:src="@{/js/voucher/home.js}" type="text/javascript"></script>
+        <script>
+            document.getElementById('formUpdateVoucherRoot').addEventListener('submit', function(event) {
+                removeThousandSeparator('value');
+                removeThousandSeparator('applyValue');
+                removeThousandSeparator('maxDiscount');
+            });
+        </script>
     </div>
 </div>
 </body>

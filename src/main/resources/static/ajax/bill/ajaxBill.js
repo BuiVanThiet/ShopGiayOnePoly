@@ -112,7 +112,7 @@ function loadBillDetail(page)  {
                         checkQuantityOrder = true;
                         textErrorQuantity = '';
                     }
-
+                    console.log('gia cua san pham dang trong quay ' + getPriceAfterDiscount(billDetail.productDetail))
                     if(getPriceAfterDiscount(billDetail.productDetail) != billDetail.price && billDetail.bill.status >= 1) {
                         btnBuyProduct =`
                                     <div class="number" id="pageNumber">${billDetail.quantity}</div>

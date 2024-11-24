@@ -190,6 +190,7 @@ function getSelectedStatus() {
 }
 function addSaleProductNew() {
     var selectedStatus = getSelectedStatus();
+    console.log(removeThousandSeparator('value'))
     $.ajax({
         type: "POST",
         url: "/api-sale-product/add-new-sale-product",
@@ -198,7 +199,7 @@ function addSaleProductNew() {
             codeSale: $('#codeSaleProduct').val().trim(),
             nameSale: $('#nameSaleProduct').val().trim(),
             discountType: parseInt($('#discountType').val().trim()),
-            discountValue: $('#value').val().trim(),
+            discountValue: removeThousandSeparator('value'),
             startDate: $('#startDate').val().trim(),
             endDate: $('#endDate').val().trim(),
             status: selectedStatus
