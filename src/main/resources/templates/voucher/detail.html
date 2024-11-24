@@ -11,35 +11,35 @@
     <div class="bd-gutter mt-5 my-md-4 bd-layout">
         <div class="row">
             <div class="col-md-12 text-center">
-                <h1 style="color: #007BFF" th:text="${title}">Voucher Detail</h1>
+                <h1 style="color: #007BFF" th:text="${title}">Phiếu giảm giá chi tiết</h1>
             </div>
         </div>
         <div class="row mt-4">
             <div class="col-md-8 offset-md-2">
                 <div class="card">
                     <div class="card-header text-white" style="background-color: #007BFF">
-                        <h3 th:text="${voucher.nameVoucher}">Voucher Name</h3>
+                        <h3 th:text="'Tên phiếu giảm giá: ' + ${voucher.nameVoucher}">Voucher Name</h3>
                     </div>
                     <div class="card-body">
                         <ul class="list-group">
-                            <li class="list-group-item"><strong>Code: </strong><span th:text="${voucher.codeVoucher}">Code</span>
+                            <li class="list-group-item"><strong>Mã: </strong><span th:text="${voucher.codeVoucher}">Code</span>
                             </li>
-                            <li class="list-group-item"><strong>Discount Type: </strong>
-                                <span th:text="${voucher.discountType == 1 ? 'Percentage' : 'Fixed Amount'}"></span>
+                            <li class="list-group-item"><strong>Loại phiếu: </strong>
+                                <span th:text="${voucher.discountType == 1 ? 'Theo %' : 'Theo tiền'}"></span>
                             </li>
-                            <li class="list-group-item"><strong>Price Reduced: </strong><span
-                                    th:text="${voucher.priceReduced}"></span></li>
-                            <li class="list-group-item"><strong>Applicable Price: </strong><span
-                                    th:text="${voucher.pricesApply}"></span></li>
-                            <li class="list-group-item"><strong>Max Price: </strong><span
-                                    th:text="${voucher.pricesMax}"></span></li>
-                            <li class="list-group-item"><strong>Start Date: </strong><span
+                            <li class="list-group-item"><strong>Giá trị giảm: </strong><span
+                                    th:text="${formattedPriceReduced}"></span></li>
+                            <li class="list-group-item"><strong>Giá trị áp dụng: </strong><span
+                                    th:text="${formattedPricesApply}"></span></li>
+                            <li class="list-group-item"><strong>Giá trị tối đa: </strong><span
+                                    th:text="${formattedPricesMax}"></span></li>
+                            <li class="list-group-item"><strong>Ngày bắt đầu: </strong><span
                                     th:text="${voucher.startDate}"></span></li>
-                            <li class="list-group-item"><strong>End Date: </strong><span
+                            <li class="list-group-item"><strong>Ngày kết thúc: </strong><span
                                     th:text="${voucher.endDate}"></span></li>
-                            <li class="list-group-item"><strong>Quantity: </strong><span
+                            <li class="list-group-item"><strong>Số lượng: </strong><span
                                     th:text="${voucher.quantity}"></span></li>
-                            <li class="list-group-item"><strong>Description: </strong><span
+                            <li class="list-group-item"><strong>Ghi chú: </strong><span
                                     th:text="${voucher.describe}"></span></li>
                         </ul>
                     </div>

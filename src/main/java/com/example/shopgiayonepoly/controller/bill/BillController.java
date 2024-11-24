@@ -811,6 +811,8 @@ public class BillController extends BaseBill {
                 this.setBillStatus(payBillOrder.getId(), 1, session);
                 this.setBillStatus(payBillOrder.getId(),101,session);
                 this.billService.save(payBillOrder);
+                String host = "http://localhost:8080/onepoly/status-bill/" + payBillOrder.getId();
+                this.templateCreateBillClient("thietzero909@gmail.com",host,payBillOrder.getCodeBill());
 
                 return "redirect:/onepoly/order-success";
             }else {

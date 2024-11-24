@@ -1,8 +1,11 @@
 package com.example.shopgiayonepoly.restController;
 
+import com.example.shopgiayonepoly.baseMethod.BaseVoucherProduct;
 import com.example.shopgiayonepoly.dto.request.VoucherRequest;
 import com.example.shopgiayonepoly.dto.request.Voucher_SaleProductSearchRequest;
+import com.example.shopgiayonepoly.entites.SaleProduct;
 import com.example.shopgiayonepoly.entites.Staff;
+import com.example.shopgiayonepoly.entites.Voucher;
 import com.example.shopgiayonepoly.service.VoucherService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +25,7 @@ import java.util.Map;
 public class VoucherRescontroller {
     @Autowired
     VoucherService voucherService;
+    private BaseVoucherProduct baseVoucherProduct = new BaseVoucherProduct();
     Voucher_SaleProductSearchRequest voucherSearchRequest = null;
 
     //tai danh sach
@@ -103,12 +107,26 @@ public class VoucherRescontroller {
             return ResponseEntity.ok(thongBao);
         }
 
-        System.out.println(voucherRequest.toString());
+        Map<String,String> thongBaoValidate = this.baseVoucherProduct.validateAddAndUpdateVoucher(voucherRequest);
+        if(thongBaoValidate.get("check").equals("1")) {
+            System.out.println(voucherRequest.toString());
+            List<Voucher> vouchers = this.voucherService.getAll();
 
-        voucherService.createNewVoucher(voucherRequest);
-        thongBao.put("message","Thêm mới phiếu giảm giá thành công!");
-        thongBao.put("check","1");
-        return ResponseEntity.ok(thongBao);
+            for (Voucher voucher: vouchers) {
+                if(voucher.getCodeVoucher().equals(voucherRequest.getCodeVoucher())) {
+                    thongBao.put("message","Mã phiếu giảm giá đã tồn tại");
+                    thongBao.put("check","3");
+                    return ResponseEntity.ok(thongBao);
+                }
+            }
+
+            voucherService.createNewVoucher(voucherRequest);
+            thongBao.put("message","Thêm mới phiếu giảm giá thành công!");
+            thongBao.put("check","1");
+            return ResponseEntity.ok(thongBao);
+        }else {
+            return ResponseEntity.ok(thongBaoValidate);
+        }
     }
 
     @GetMapping("/reset-filter-voucher")
