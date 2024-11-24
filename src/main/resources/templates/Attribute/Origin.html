@@ -15,7 +15,7 @@
         <h1 class="h1-attribute">Quản lý xuất xứ</h1>
         <div class="combobox-container">
             <div class="combobox-header" onclick="toggleDiv()">
-                <span></span>
+                <span>Thêm xuất xứ</span>
                 <span class="arrow" id="arrow">&#9660;</span> <!-- Mũi tên -->
             </div>
             <div id="collapsibleDiv" class="combobox-content">
@@ -24,9 +24,9 @@
                         <div class="attribute-search-bar search-bar">
                             <input id="codeOriginInput" th:field="*{codeOrigin}" type="text" placeholder="Mã xuất xứ" required/>
                             <input id="nameOriginInput" th:field="*{nameOrigin}" type="text" placeholder="Tên xuất xứ" required/>
-                            <button type="button" onclick="add()" class="attribute-btn-add btn-add">Thêm xuất xứ</button>
+                            <button type="button" data-bs-toggle="modal" data-bs-target="#confirm-create-origin-modal" class="attribute-btn-add btn-add">Thêm xuất xứ</button>
                         </div>
-                        <p id="originError" style="color: red">* Mã và tên không được để trống</p>
+                        <p id="originError" style="color: red; margin-left: 400px">* Mã và tên không được để trống</p>
                     </div>
                 </form>
             </div>
@@ -67,6 +67,25 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
                         <button onclick="deleteByID(this)" type="submit" class="btn btn-success" data-bs-dismiss="modal" aria-label="Close">Xóa</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="confirm-create-origin-modal" tabindex="-1"
+             aria-labelledby="confirmCreateOriginModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="confirmCreateOriginModalLabel">
+                            Xác nhận thêm xuất xứ
+                        </h1>
+                    </div>
+                    <div class="modal-body">
+                        Bạn muốn thêm xuất xứ ?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button onclick="add()" type="submit" class="btn btn-success" data-bs-dismiss="modal" aria-label="Close">Thêm</button>
                     </div>
                 </div>
             </div>

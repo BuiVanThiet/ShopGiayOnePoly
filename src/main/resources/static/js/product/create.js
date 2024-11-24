@@ -112,100 +112,98 @@ function closeQuickAddForm() {
 async function submitQuickAdd() {
     const codeInput = document.getElementById("input1").value.trim();
     const nameInput = document.getElementById("input2").value.trim();
-    let arrayNameAttribute = [];
-    let arrayCodeAttribute = [];
 
-    let codeAttribute = await fetch(`/attribute/${currentType}/get-code`);
-    if (codeAttribute.ok) {
-        arrayCodeAttribute = await codeAttribute.json(); // Đảm bảo đây là một mảng
-    }
-    let nameAttribute = await fetch(`/attribute/${currentType}/get-name`);
-    if (nameAttribute.ok) {
-        arrayNameAttribute = await nameAttribute.json(); // Đảm bảo đây là một mảng
-    }
-    if (codeInput.length > 0 && nameInput.length > 0) {
-        if (arrayCodeAttribute.some(code => code.toLowerCase() === codeInput.toLowerCase())) {
-            createToast('2', 'Mã thuộc tính đã tồn tại')
-        } else if (arrayNameAttribute.some(name => name.toLowerCase() === nameInput.toLowerCase())) {
-            createToast('2', 'Tên thuộc tính đã tồn tại')
-        } else {
-            const data = {
-                code: codeInput,
-                name: nameInput,
-                type: currentType
-            };
-            const response = await fetch('/product-api/attribute/quickly-add', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            });
-            if (response.ok){
-                const result = await response.json();
-                createToast(result.check, result.message);
-                closeQuickAddForm(); // Đóng form thêm thuộc tính
-                reloadOptions(`${currentType}`); // Tải lại danh sách thuộc tính mới cho select
-            }
-
-        }
-
-    } else {
-        createToast('2', 'Nhập đầy đủ mã và tên thuộc tính')
+    if (!codeInput || !nameInput) {
+        createToast('2', 'Nhập đầy đủ mã và tên thuộc tính');
+        return;
     }
 
+    if (codeInput.length > 10) {
+        createToast('2', 'Mã thuộc tính <= 10 kí tự');
+        return;
+    }
 
+    if (nameInput.length > 50) {
+        createToast('2', 'Tên thuộc tính <= 50 kí tự');
+        return;
+    }
+
+    const [codeResponse, nameResponse] = await Promise.all([
+        fetch(`/attribute/${currentType}/get-code`),
+        fetch(`/attribute/${currentType}/get-name`)
+    ]);
+
+    const arrayCodeAttribute = codeResponse.ok ? await codeResponse.json() : [];
+    const arrayNameAttribute = nameResponse.ok ? await nameResponse.json() : [];
+
+    if (arrayCodeAttribute.some(code => code.toLowerCase() === codeInput.toLowerCase())) {
+        createToast('2', 'Mã thuộc tính đã tồn tại');
+        return;
+    }
+
+    if (arrayNameAttribute.some(name => name.toLowerCase() === nameInput.toLowerCase())) {
+        createToast('2', 'Tên thuộc tính đã tồn tại');
+        return;
+    }
+
+    const data = {
+        code: codeInput,
+        name: nameInput,
+        type: currentType
+    };
+
+    const response = await fetch('/product-api/attribute/quickly-add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    });
+
+    if (response.ok) {
+        const result = await response.json();
+        createToast(result.check, result.message);
+        closeQuickAddForm(); // Đóng form thêm thuộc tính
+        reloadOptions(currentType); // Tải lại danh sách thuộc tính mới cho select
+    }
 }
-
 function reloadOptions(type) {
     // URL API dựa trên loại thuộc tính (type)
     const url = `/product-api/attribute/list?type=${type}`;
 
     fetch(url)
         .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
+            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
             return response.json();
         })
         .then(data => {
-            console.log("Dữ liệu API trả về:", data); // Kiểm tra dữ liệu từ API
-
-            // Kiểm tra nếu dữ liệu không hợp lệ hoặc không phải là mảng
             if (!Array.isArray(data)) {
                 console.error("Dữ liệu không hợp lệ:", data);
                 return;
             }
 
-            // Cấu hình phần tử cần cập nhật
             const mapping = {
-                category: { elementId: "dataList-category", type: "ul", textKey: "nameCategory" },
-                color: { elementId: "dataList-color", type: "ul", textKey: "nameColor" },
-                size: { elementId: "dataList-size", type: "ul", textKey: "nameSize" },
-                sole: { elementId: "dataList-sole", type: "ul", textKey: "nameSole" },
-                material: { elementId: "dataList-material", type: "ul", textKey: "nameMaterial" },
-                manufacturer: { elementId: "dataList-manufacturer", type: "ul", textKey: "nameManufacturer" },
-                origin: { elementId: "dataList-origin", type: "ul", textKey: "nameOrigin" }
+                category: "nameCategory",
+                color: "nameColor",
+                size: "nameSize",
+                sole: "nameSole",
+                material: "nameMaterial",
+                manufacturer: "nameManufacturer",
+                origin: "nameOrigin"
             };
 
-            const config = mapping[type];
+            const textKey = mapping[type];
+            const elementId = `dataList-${type}`;
 
-            if (!config) {
+            if (!textKey) {
                 console.error("Loại thuộc tính không hợp lệ:", type);
                 return;
             }
 
-            updateOptions(config.elementId, data, config.type, config.textKey, type);
+            updateOptions(elementId, data, textKey, type);
         })
-        .catch(error => {
-            console.error("Lỗi xảy ra:", error);
-        });
+        .catch(error => console.error("Lỗi xảy ra:", error));
 }
-
-
-function updateOptions(elementId, data, elementType, textKey, type) {
+function updateOptions(elementId, data, textKey, type) {
     const element = document.getElementById(elementId);
-
     if (!element) {
         console.error(`Không tìm thấy phần tử với ID: ${elementId}`);
         return;
@@ -213,39 +211,46 @@ function updateOptions(elementId, data, elementType, textKey, type) {
 
     element.innerHTML = ''; // Xóa nội dung cũ
 
-    if (elementType === "ul") {
-        data.forEach(item => {
-            const li = document.createElement("li");
+    data.forEach(item => {
+        const li = document.createElement("li");
+        li.style.display = "flex";
+        li.style.justifyContent = "space-between";
 
-            // Tùy chỉnh giao diện cho checkbox hoặc chọn
-            if (type === "category" || type === "color" || type === "size") {
-                li.style.display = "flex";
-                li.style.justifyContent = "space-between";
+        // Thêm nội dung chính
+        const span = document.createElement("span");
+        span.textContent = item[textKey];
+        li.appendChild(span);
 
-                const span = document.createElement("span");
-                span.textContent = item[textKey];
-                li.appendChild(span);
+        // Tùy chỉnh theo loại thuộc tính
+        if (["category", "color", "size"].includes(type)) {
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.value = item.id;
+            checkbox.style.width = "20px";
+            checkbox.setAttribute("data-type", type);
+            checkbox.classList.add(`${type}-checkbox`); // Thêm class cho checkbox
 
-                const checkbox = document.createElement("input");
-                checkbox.type = "checkbox";
-                checkbox.value = item.id;
-                checkbox.style.width = "20px";
-                checkbox.setAttribute("data-type", type);
-                li.appendChild(checkbox);
+            // Thêm checkbox vào li
+            li.appendChild(checkbox);
 
-                li.onclick = () => toggleCheckbox(li, type);
-            } else {
-                li.textContent = item[textKey];
-                li.setAttribute("value", item.id);
-                li.onclick = () => selectAttribute(li, `myInput-${type}`, type);
-            }
+            // Thiết lập sự kiện click để toggle checkbox
+            li.onclick = () => toggleCheckbox(li, type);
+        } else {
+            li.setAttribute("value", item.id);
+            li.onclick = () => selectAttribute(li, `myInput-${type}`, type);
+        }
 
-            element.appendChild(li);
-        });
-    } else {
-        console.error("Hiện tại chỉ hỗ trợ phần tử <ul>.");
-    }
+        // Thêm class cho li
+        li.classList.add(`${type}-item`);
+
+        // Thêm id cho li (nếu cần thiết, ví dụ cho mỗi loại thuộc tính)
+        li.id = `${type}-item-${item.id}`;
+
+        // Thêm phần tử vào danh sách
+        element.appendChild(li);
+    });
 }
+
 
 
 
@@ -317,6 +322,8 @@ function insertTableProductDetail() {
             selection.addRange(range);
         });
     });
+    addValidationListeners(); // Thêm sự kiện validate
+
 }
 
 
@@ -330,10 +337,21 @@ function toggleCheckbox(liElement, type) {
 }
 
 function handleCheckboxChange() {
+    const categoryInput = document.getElementById('myInput-category');
+    const selectedCheckboxes = document.querySelectorAll('#dataList-category input[type="checkbox"]:checked');
+    const selectedNames = Array.from(selectedCheckboxes).map(checkbox => {
+        // Lấy tên từ phần tử `span` chứa text bên cạnh checkbox
+        const liElement = checkbox.closest('li');
+        return liElement.querySelector('span').innerText;
+    });
+
+    // Cập nhật giá trị vào input, nối bằng dấu phẩy nếu có nhiều hơn một
+    categoryInput.value = selectedNames.join(', ');
+
+    // Xử lý logic khác nếu cần (ví dụ, kiểm tra màu và kích cỡ)
     const selectedColors = document.querySelectorAll('#dataList-color input[type="checkbox"]:checked').length;
     const selectedSizes = document.querySelectorAll('#dataList-size input[type="checkbox"]:checked').length;
 
-    // Kiểm tra nếu có ít nhất 1 màu và 1 kích cỡ được chọn
     if (selectedColors > 0 && selectedSizes > 0) {
         insertTableProductDetail();
     }
