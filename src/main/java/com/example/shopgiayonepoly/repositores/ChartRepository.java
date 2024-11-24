@@ -747,110 +747,105 @@ public interface ChartRepository extends JpaRepository<Bill, Integer> {
     Page<Object[]> getProductSalesPage(Pageable pageable);
 
     @Query(value = """ 
-        WITH RankedProducts AS (
-            SELECT
-                pd.name_product AS ProductName,
-                c.name_color AS ColorName,
-                s.name_size AS SizeName,
-                -- Thay giá trị âm của OriginalPrice bằng 0
-                CAST(
+        SELECT
+            p.name_product AS ProductName,
+            c.name_color AS ColorName,
+            s.name_size AS SizeName,
+            -- Giá gốc (nếu âm thì bằng 0)
+            CASE
+                WHEN pd.price < 0 THEN 0
+                ELSE pd.price
+            END AS OriginalPrice,
+            -- Giá sau giảm giá (nếu âm thì bằng 0)
+            CASE
+                WHEN sp.discount_type = 1 AND pd.id_sale_product IS NOT NULL THEN
                     CASE
-                        WHEN pdt.price < 0 THEN 0
-                        ELSE pdt.price
-                    END AS DECIMAL(10, 2)
-                ) AS OriginalPrice,
-                -- Thay giá trị âm của DiscountedPrice bằng 0
-                CAST(
-                    CASE
-                        WHEN sp.discount_type = 1 AND pdt.id_sale_product IS NOT NULL THEN
-                            CASE WHEN pdt.price * (1 - sp.discount_value / 100.0) < 0
-                                 THEN 0
-                                 ELSE pdt.price * (1 - sp.discount_value / 100.0)
-                            END
-                        WHEN sp.discount_type = 2 AND pdt.id_sale_product IS NOT NULL THEN
-                            CASE WHEN (pdt.price - sp.discount_value) < 0
-                                 THEN 0
-                                 ELSE (pdt.price - sp.discount_value)
-                            END
-                        ELSE
-                            CASE WHEN pdt.price < 0 THEN 0 ELSE pdt.price END
+                        WHEN pd.price * (1 - sp.discount_value / 100.0) < 0 THEN 0
+                        ELSE pd.price * (1 - sp.discount_value / 100.0)
                     END
-                AS DECIMAL(10, 2)) AS DiscountedPrice,
-                SUM(bd.quantity) AS TotalQuantity,
+                WHEN sp.discount_type = 2 AND pd.id_sale_product IS NOT NULL THEN
+                    CASE
+                        WHEN (pd.price - sp.discount_value) < 0 THEN 0
+                        ELSE (pd.price - sp.discount_value)
+                    END
+                ELSE
+                    CASE
+                        WHEN pd.price < 0 THEN 0
+                        ELSE pd.price
+                    END
+            END AS DiscountedPrice,
+            ISNULL(
+                (SELECT SUM(bd.quantity)
+                 FROM dbo.bill_detail bd
+                 JOIN dbo.bill b ON bd.id_bill = b.id
+                 WHERE bd.id_product_detail = pd.id AND b.status IN (5, 8, 9)
+                 AND CAST(b.create_date AS DATE) BETWEEN :startDate AND :endDate), 0
+            )
+            + ISNULL(
+                (SELECT SUM(ebd.quantity_exchange)
+                 FROM dbo.exchange_bill_detail ebd
+                 LEFT JOIN dbo.return_bill_exchange_bill rbe_exchange ON ebd.id_exchang_bill = rbe_exchange.id
+                 WHERE ebd.id_product_detail = pd.id AND rbe_exchange.status = 1
+                 AND CAST(ebd.create_date AS DATE) BETWEEN :startDate AND :endDate), 0
+            )
+            - ISNULL(
+                (SELECT SUM(rb.quantity_return)
+                 FROM dbo.return_bill_detail rb
+                 LEFT JOIN dbo.return_bill_exchange_bill rbe_return ON rb.id_return_bill = rbe_return.id
+                 WHERE rb.id_product_detail = pd.id AND rbe_return.status = 1
+                 AND CAST(rb.create_date AS DATE) BETWEEN :startDate AND :endDate), 0
+            ) AS FinalQuantity,
+            -- Danh sách tên ảnh
+            ISNULL(
                 STUFF(
                     (SELECT DISTINCT ', ' + i.name_image
                      FROM dbo.image i
-                     WHERE i.id_product = pd.id
-                     FOR XML PATH('')), 1, 2, '') AS ImageNames,
-                ROW_NUMBER() OVER (ORDER BY SUM(bd.quantity) DESC) AS RowNum,
-                pdt.id AS ProductDetailID,
-                pdt.id_sale_product  -- Thêm cột này vào phần SELECT
-            FROM
-                dbo.bill b
-            JOIN
-                dbo.bill_detail bd ON b.id = bd.id_bill
-            JOIN
-                dbo.product_detail pdt ON bd.id_product_detail = pdt.id
-            JOIN
-                dbo.product pd ON pdt.id_product = pd.id
-            JOIN
-                dbo.color c ON pdt.id_color = c.id
-            JOIN
-                dbo.size s ON pdt.id_size = s.id
-            LEFT JOIN
-                dbo.sale_product sp ON pdt.id_sale_product = sp.id
-            WHERE
-                b.status IN (5, 8)
-                AND CAST(b.update_date AS DATE) BETWEEN :startDate AND :endDate
-            GROUP BY
-                pd.name_product,
-                c.name_color,
-                s.name_size,
-                pdt.price,
-                pd.id,
-                pdt.id,
-                sp.discount_type,
-                sp.discount_value,
-                pdt.id_sale_product  -- Thêm vào phần GROUP BY
-        )
-        SELECT
-            rp.ProductName,
-            rp.ColorName,
-            rp.SizeName,
-            rp.OriginalPrice,
-            rp.DiscountedPrice,
-            -- Thay giá trị âm của AdjustedTotalQuantity bằng 0
-            CASE
-                WHEN (rp.TotalQuantity + COALESCE(ebd.quantity_exchange, 0) - COALESCE(rbd.quantity_return, 0)) < 0
-                THEN 0
-                ELSE (rp.TotalQuantity + COALESCE(ebd.quantity_exchange, 0) - COALESCE(rbd.quantity_return, 0))
-            END AS AdjustedTotalQuantity,
-            rp.ImageNames
-        FROM RankedProducts rp
-        LEFT JOIN (
-            SELECT
-                rbd.id_product_detail,
-                SUM(rbd.quantity_return) AS quantity_return
-            FROM
-                dbo.return_bill_detail rbd
-            WHERE CAST(update_date AS DATE) BETWEEN :startDate AND :endDate
-            GROUP BY
-                rbd.id_product_detail
-        ) rbd ON rp.ProductDetailID = rbd.id_product_detail
-        LEFT JOIN (
-            SELECT
-                ebd.id_product_detail,
-                SUM(ebd.quantity_exchange) AS quantity_exchange
-            FROM
-                dbo.exchange_bill_detail ebd
-            WHERE CAST(update_date AS DATE) BETWEEN :startDate AND :endDate
-            GROUP BY
-                ebd.id_product_detail
-        ) ebd ON rp.ProductDetailID = ebd.id_product_detail
+                     WHERE i.id_product = p.id
+                     FOR XML PATH('')), 1, 2, ''
+                ), 'Không có ảnh') AS ImageNames
+        FROM
+            dbo.product_detail pd
+        LEFT JOIN
+            dbo.bill_detail bd ON pd.id = bd.id_product_detail
+        LEFT JOIN
+            dbo.product p ON pd.id_product = p.id
+        LEFT JOIN
+            dbo.color c ON pd.id_color = c.id
+        LEFT JOIN
+            dbo.size s ON pd.id_size = s.id
+        LEFT JOIN
+            dbo.sale_product sp ON pd.id_sale_product = sp.id
+        LEFT JOIN
+            dbo.image i ON p.id = i.id_product
         WHERE
-            rp.RowNum <= 10
-        ORDER BY AdjustedTotalQuantity DESC;
-        
+            pd.id IS NOT NULL -- Loại bỏ các giá trị không hợp lệ
+            AND (
+                EXISTS (
+                    SELECT 1
+                    FROM dbo.bill_detail bd
+                    JOIN dbo.bill b ON bd.id_bill = b.id
+                    WHERE bd.id_product_detail = pd.id AND b.status IN (5, 8, 9)
+                    AND CAST(b.create_date AS DATE) BETWEEN :startDate AND :endDate
+                )
+                OR EXISTS (
+                    SELECT 1
+                    FROM dbo.exchange_bill_detail ebd
+                    LEFT JOIN dbo.return_bill_exchange_bill rbe_exchange ON ebd.id_exchang_bill = rbe_exchange.id
+                    WHERE ebd.id_product_detail = pd.id AND rbe_exchange.status = 1
+                    AND CAST(ebd.create_date AS DATE) BETWEEN :startDate AND :endDate
+                )
+                OR EXISTS (
+                    SELECT 1
+                    FROM dbo.return_bill_detail rb
+                    LEFT JOIN dbo.return_bill_exchange_bill rbe_return ON rb.id_return_bill = rbe_return.id
+                    WHERE rb.id_product_detail = pd.id AND rbe_return.status = 1
+                    AND CAST(rb.create_date AS DATE) BETWEEN :startDate AND :endDate
+                )
+            )
+        GROUP BY
+            pd.id, p.name_product, c.name_color, s.name_size, pd.price, sp.discount_type, sp.discount_value, pd.id_sale_product, p.id
+        ORDER BY
+            FinalQuantity DESC;
     """, countQuery = """
         WITH RankedProducts AS (
             SELECT
