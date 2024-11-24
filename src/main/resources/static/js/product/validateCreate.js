@@ -131,9 +131,88 @@ async function validate(type) {
     }
 
     // Kiểm tra nếu tất cả đều hợp lệ, thì hiển thị nút thêm sản phẩm
-    if (check === true) {
+    if (check && validateAndFormatCells()) {
         buttonAdd.style.display = 'block';
     } else {
         buttonAdd.style.display = 'none';
     }
+}
+
+function formatNumber(number) {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+
+function validateAndFormatCells() {
+    const errorText = document.getElementById('errorTextProductDetail');
+    const numericColumns = {
+        3: { name: "Giá bán", min: 1000, max: Infinity }, // Giá bán: >= 1000
+        4: { name: "Giá nhập", min: 1000, max: Infinity }, // Giá nhập: >= 1000
+        5: { name: "Số lượng", min: 1, max: Infinity },    // Số lượng: > 0
+        6: { name: "Trọng lượng", min: 1, max: 5000 }      // Trọng lượng: <= 5000
+    };
+
+    let hasError = false; // Biến đánh dấu nếu có lỗi
+
+    document.querySelectorAll('#productDetailTable tbody tr').forEach(row => {
+        Object.keys(numericColumns).forEach(colIndex => {
+            const cell = row.cells[colIndex];
+            const rawValue = cell.textContent.trim(); // Giá trị chưa xử lý
+            const value = rawValue.replace(/\./g, ''); // Loại bỏ dấu chấm để kiểm tra
+            const columnRules = numericColumns[colIndex];
+
+            // Lưu trạng thái con trỏ trước khi sửa đổi
+            const selection = window.getSelection();
+            const range = selection.rangeCount > 0 ? selection.getRangeAt(0) : null;
+            const cursorOffset = range ? range.startOffset : null;
+
+            // Kiểm tra điều kiện hợp lệ
+            if (isNaN(value) || value === "" || Number(value) < columnRules.min || Number(value) > columnRules.max) {
+                // Không hợp lệ
+                cell.style.backgroundColor = 'red';
+                hasError = true;
+            } else {
+                // Hợp lệ
+                cell.style.backgroundColor = '';
+                const formattedValue = formatNumber(Number(value));
+                if (rawValue !== formattedValue) {
+                    // Cập nhật chỉ khi cần định dạng
+                    cell.textContent = formattedValue;
+                }
+            }
+
+            // Khôi phục vị trí con trỏ
+            if (cursorOffset !== null && cell.contains(selection.anchorNode)) {
+                const newRange = document.createRange();
+                const textNode = cell.childNodes[0];
+                const newCursorPosition = Math.min(cursorOffset, textNode.length); // Đảm bảo vị trí không vượt quá độ dài nội dung
+                newRange.setStart(textNode, newCursorPosition);
+                newRange.collapse(true);
+                selection.removeAllRanges();
+                selection.addRange(newRange);
+            }
+        });
+    });
+
+    // Hiển thị hoặc ẩn thông báo lỗi
+    if (hasError) {
+        errorText.style.display = 'block';
+        errorText.innerText = "Các ô Giá bán, Giá nhập phải >= 1.000. Trọng lượng phải <= 5.000. Tất cả phải là số dương!";
+        return false;
+    } else {
+        errorText.style.display = 'none';
+        return true;
+    }
+}
+
+function addValidationListeners() {
+    const numericColumns = [3, 4, 5, 6]; // Các cột cần kiểm tra
+
+    document.querySelectorAll('#productDetailTable tbody tr').forEach(row => {
+        numericColumns.forEach(colIndex => {
+            const cell = row.cells[colIndex];
+            if (cell && cell.contentEditable === "true") {
+                cell.addEventListener('input', validateAndFormatCells); // Gọi validate và format mỗi khi nhập
+            }
+        });
+    });
 }

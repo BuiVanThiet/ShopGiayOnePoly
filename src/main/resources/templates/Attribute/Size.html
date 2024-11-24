@@ -15,7 +15,7 @@
         <h1 class="h1-attribute">Quản lý kích cỡ</h1>
         <div class="combobox-container">
             <div class="combobox-header" onclick="toggleDiv()">
-                <span></span>
+                <span>Thêm kích cỡ</span>
                 <span class="arrow" id="arrow">&#9660;</span> <!-- Mũi tên -->
             </div>
             <div id="collapsibleDiv" class="combobox-content">
@@ -24,9 +24,9 @@
                         <div class="attribute-search-bar search-bar">
                             <input id="codeSizeInput" th:field="*{codeSize}" type="text" placeholder="Mã kích cỡ" required/>
                             <input id="nameSizeInput" th:field="*{nameSize}" type="text" placeholder="Tên kích cỡ" required/>
-                            <button type="button" onclick="add()" class="attribute-btn-add btn-add">Thêm kích cỡ</button>
+                            <button type="button" data-bs-toggle="modal" data-bs-target="#confirm-create-size-modal" class="attribute-btn-add btn-add">Thêm kích cỡ</button>
                         </div>
-                        <p id="sizeError" style="color: red">* Mã và tên không được để trống</p>
+                        <p id="sizeError" style="color: red;; margin-left: 400px">* Mã và tên không được để trống</p>
                     </div>
                 </form>
             </div>
@@ -71,6 +71,26 @@
                 </div>
             </div>
         </div>
+        <div class="modal fade" id="confirm-create-color-modal" tabindex="-1"
+             aria-labelledby="confirmCreateSizeModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="confirmCreateSizeModalLabel">
+                            Xác nhận thêm kích cỡ
+                        </h1>
+                    </div>
+                    <div class="modal-body">
+                        Bạn muốn thêm kích cỡ ?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button onclick="add()" type="submit" class="btn btn-success" data-bs-dismiss="modal" aria-label="Close">Thêm</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </article>
     <script th:src="@{/js/attribute/attribute.js}" type="text/javascript"></script>
     <script th:src="@{/ajax/attribute/sizeAjax.js}" type="text/javascript"></script>

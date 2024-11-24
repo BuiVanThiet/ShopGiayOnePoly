@@ -39,7 +39,7 @@
                 <div style="display: flex">
                   <input type="text" id="myInput-category"
                          onfocus="showDropdown(event)"
-                         onkeyup="filterFunction(event)" autocomplete="off">
+                         readonly autocomplete="off">
                   <ul id="dataList-category" class="dropdown-content-createProduct">
                     <th:block th:each="category : ${categoryList}">
                       <li style="display: flex; justify-content: space-between" onclick="toggleCheckbox(this, 'category')">
@@ -209,8 +209,8 @@
                 <th style="width: 150px">Giá bán</th>
                 <th style="width: 150px">Giá nhập</th>
                 <th style="width: 150px">Số lượng</th>
-                <th style="width: 150px">Trọng lượng</th>
-                <th style="width: 300px">Mô tả</th>
+                <th style="width: 150px">Trọng lượng(g)</th>
+                <th style="width: 280px">Mô tả</th>
                 <th style="width: 30px"><span class="material-symbols-outlined">delete_forever</span></th>
               </tr>
               </thead>
@@ -218,6 +218,7 @@
 
               </tbody>
             </table>
+            <p style="color: red; display: none" id="errorTextProductDetail"></p>
           </div>
           <div class="buttons-createProduct">
             <button data-bs-toggle="modal" data-bs-target="#confirm-create-bill-modal" type="button"

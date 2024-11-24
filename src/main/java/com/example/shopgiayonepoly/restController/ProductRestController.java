@@ -191,40 +191,125 @@ public class ProductRestController extends BaseProduct {
                 Size size = new Size();
                 size.setCodeSize(request.getCode());
                 size.setNameSize(request.getName());
-                size.setStatus(1);
-                sizeService.save(size);
+                for (Size listSize : sizeService.findAll()) {
+                    if (size.getCodeSize().trim().toLowerCase().equals(listSize.getCodeSize().trim().toLowerCase())) {
+                        checkCode = false;
+                    }
+                }
+                for (Size listSize : sizeService.findAll()) {
+                    if (size.getNameSize().trim().toLowerCase().equals(listSize.getNameSize().trim().toLowerCase())) {
+                        checkName = false;
+                    }
+                }
+                if (!checkCode || !checkName || size.getCodeSize().isEmpty() || size.getNameSize().isEmpty() || size.getCodeSize().length() > 10 || size.getNameSize().length() > 50) {
+                    thongBao.put("message", "Dữ liệu không hợp lệ");
+                    thongBao.put("check", "2");
+                } else {
+                    size.setStatus(1);
+                    sizeService.save(size);
+                    thongBao.put("message", "Thêm kích cỡ thành công");
+                    thongBao.put("check", "1");
+                }
                 return ResponseEntity.ok(thongBao);
             case "material":
                 Material material = new Material();
                 material.setCodeMaterial(request.getCode());
                 material.setNameMaterial(request.getName());
-                material.setStatus(1);
-                materialService.save(material);
+                for (Material listMaterial : materialService.findAll()) {
+                    if (material.getCodeMaterial().trim().toLowerCase().equals(listMaterial.getCodeMaterial().trim().toLowerCase())) {
+                        checkCode = false;
+                    }
+                }
+                for (Material listMaterial : materialService.findAll()) {
+                    if (material.getNameMaterial().trim().toLowerCase().equals(listMaterial.getNameMaterial().trim().toLowerCase())) {
+                        checkName = false;
+                    }
+                }
+                if (!checkCode || !checkName || material.getCodeMaterial().isEmpty() || material.getNameMaterial().isEmpty() || material.getCodeMaterial().length() > 10 || material.getNameMaterial().length() > 50) {
+                    thongBao.put("message", "Dữ liệu không hợp lệ");
+                    thongBao.put("check", "2");
+                } else {
+                    material.setStatus(1);
+                    materialService.save(material);
+                    thongBao.put("message", "Thêm chất liệu thành công");
+                    thongBao.put("check", "1");
+                }
                 return ResponseEntity.ok(thongBao);
             case "manufacturer":
                 Manufacturer manufacturer = new Manufacturer();
                 manufacturer.setCodeManufacturer(request.getCode());
                 manufacturer.setNameManufacturer(request.getName());
-                manufacturer.setStatus(1);
-                manufacturerService.save(manufacturer);
+                for (Manufacturer listManufacturer : manufacturerService.findAll()) {
+                    if (manufacturer.getCodeManufacturer().trim().toLowerCase().equals(listManufacturer.getCodeManufacturer().trim().toLowerCase())) {
+                        checkCode = false;
+                    }
+                }
+                for (Manufacturer listManufacturer : manufacturerService.findAll()) {
+                    if (manufacturer.getNameManufacturer().trim().toLowerCase().equals(listManufacturer.getNameManufacturer().trim().toLowerCase())) {
+                        checkName = false;
+                    }
+                }
+                if (!checkCode || !checkName || manufacturer.getCodeManufacturer().isEmpty() || manufacturer.getNameManufacturer().isEmpty() || manufacturer.getCodeManufacturer().length() > 10 || manufacturer.getNameManufacturer().length() > 50) {
+                    thongBao.put("message", "Dữ liệu không hợp lệ");
+                    thongBao.put("check", "2");
+                } else {
+                    manufacturer.setStatus(1);
+                    manufacturerService.save(manufacturer);
+                    thongBao.put("message", "Thêm nhà sản xuất thành công");
+                    thongBao.put("check", "1");
+                }
                 return ResponseEntity.ok(thongBao);
             case "origin":
                 Origin origin = new Origin();
                 origin.setCodeOrigin(request.getCode());
                 origin.setNameOrigin(request.getName());
-                origin.setStatus(1);
-                originService.save(origin);
+                for (Origin listOrigin : originService.findAll()) {
+                    if (origin.getCodeOrigin().trim().toLowerCase().equals(listOrigin.getCodeOrigin().trim().toLowerCase())) {
+                        checkCode = false;
+                    }
+                }
+                for (Origin listOrigin : originService.findAll()) {
+                    if (origin.getNameOrigin().trim().toLowerCase().equals(listOrigin.getNameOrigin().trim().toLowerCase())) {
+                        checkName = false;
+                    }
+                }
+                if (!checkCode || !checkName || origin.getCodeOrigin().isEmpty() || origin.getNameOrigin().isEmpty() || origin.getCodeOrigin().length() > 10 || origin.getNameOrigin().length() > 50) {
+                    thongBao.put("message", "Dữ liệu không hợp lệ");
+                    thongBao.put("check", "2");
+                } else {
+                    origin.setStatus(1);
+                    originService.save(origin);
+                    thongBao.put("message", "Thêm xuất xứ thành công");
+                    thongBao.put("check", "1");
+                }
                 return ResponseEntity.ok(thongBao);
             case "sole":
                 Sole sole = new Sole();
                 sole.setCodeSole(request.getCode());
                 sole.setNameSole(request.getName());
-                sole.setStatus(1);
-                soleService.save(sole);
+                for (Sole listSole : soleService.findAll()) {
+                    if (sole.getCodeSole().trim().toLowerCase().equals(listSole.getCodeSole().trim().toLowerCase())) {
+                        checkCode = false;
+                    }
+                }
+                for (Sole listSole : soleService.findAll()) {
+                    if (sole.getNameSole().trim().toLowerCase().equals(listSole.getNameSole().trim().toLowerCase())) {
+                        checkName = false;
+                    }
+                }
+                if (!checkCode || !checkName || sole.getCodeSole().isEmpty() || sole.getNameSole().isEmpty() || sole.getCodeSole().length() > 10 || sole.getNameSole().length() > 50) {
+                    thongBao.put("message", "Dữ liệu không hợp lệ");
+                    thongBao.put("check", "2");
+                } else {
+                    sole.setStatus(1);
+                    soleService.save(sole);
+                    thongBao.put("message", "Thêm đế giày thành công");
+                    thongBao.put("check", "1");
+                }
                 return ResponseEntity.ok(thongBao);
             default:
-                thongBao.put("message", "Thêm thuộc tính thành côngfsdfdsfds");
-                thongBao.put("check", "1");
+                thongBao.put("message", "Lỗi khi thêm thuộc tính");
+                thongBao.put("check", "3");
                 return ResponseEntity.ok(thongBao);
         }
     }
@@ -233,25 +318,25 @@ public class ProductRestController extends BaseProduct {
     public ResponseEntity<?> getAttributeList(@RequestParam String type) {
         switch (type) {
             case "category":
-                List<Category> categories = categoryService.findAll();
+                List<Category> categories = categoryService.getCategoryNotStatus0();
                 return ResponseEntity.ok(categories);
             case "color":
-                List<Color> colors = colorService.findAll();
+                List<Color> colors = colorService.getColorNotStatus0();
                 return ResponseEntity.ok(colors);
             case "size":
-                List<Size> sizes = sizeService.findAll();
+                List<Size> sizes = sizeService.getSizeNotStatus0();
                 return ResponseEntity.ok(sizes);
             case "material":
-                List<Material> materials = materialService.findAll();
+                List<Material> materials = materialService.getMaterialNotStatus0();
                 return ResponseEntity.ok(materials);
             case "manufacturer":
-                List<Manufacturer> manufacturers = manufacturerService.findAll();
+                List<Manufacturer> manufacturers = manufacturerService.getManufacturerNotStatus0();
                 return ResponseEntity.ok(manufacturers);
             case "origin":
-                List<Origin> origins = originService.findAll();
+                List<Origin> origins = originService.getOriginNotStatus0();
                 return ResponseEntity.ok(origins);
             case "sole":
-                List<Sole> soles = soleService.findAll();
+                List<Sole> soles = soleService.getSoleNotStatus0();
                 return ResponseEntity.ok(soles);
             default:
                 return ResponseEntity.badRequest().body("Loại thuộc tính không hợp lệ!");
