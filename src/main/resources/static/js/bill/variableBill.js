@@ -210,26 +210,49 @@ function getPriceAfterDiscount(productDetail) {
     let priceBuy = productDetail.price;
 
     // Kiểm tra nếu SaleProduct không phải null
-    if (productDetail.saleProduct && productDetail.saleProduct.id !== null) {
+    if (productDetail.saleProduct != null) {
         const startDate = new Date(productDetail.saleProduct.startDate);
         const endDate = new Date(productDetail.saleProduct.endDate);
         const today = new Date();
 
-        // Kiểm tra nếu ngày hiện tại nằm trong khoảng startDate và endDate
-        if (startDate && endDate && (today >= startDate && today <= endDate)) {
-            const discountValue = productDetail.saleProduct.discountValue;
+        // Đảm bảo ngày bắt đầu và kết thúc không có giờ, phút, giây
+        startDate.setHours(0, 0, 0, 0);
+        endDate.setHours(23, 59, 59, 999);
+        today.setHours(0, 0, 0, 0);
 
-            if (productDetail.saleProduct.discountType === 1) {
-                // Tính phần trăm giảm (discountValue là %)
-                const percent = discountValue / 100;
-                const pricePercent = productDetail.price * percent;
-                priceBuy = productDetail.price - pricePercent;
+        // Định dạng các ngày thành chuỗi
+        const formattedStartDate = formatDateCompare(startDate);
+        const formattedEndDate = formatDateCompare(endDate);
+        const formattedToday = formatDateCompare(today);
+
+        console.log('Ngày bắt đầu:', formattedStartDate);
+        console.log('Ngày kết thúc:', formattedEndDate);
+        console.log('Ngày hiện tại:', formattedToday);
+
+        if (productDetail.saleProduct.status === 1) {
+            console.log('dot giam gia dang con on');
+            // Kiểm tra nếu ngày hiện tại nằm trong khoảng startDate và endDate
+            if (formattedToday >= formattedStartDate && formattedToday <= formattedEndDate) {
+                console.log('dot giam gia dang con thoi gian');
+
+                const discountValue = productDetail.saleProduct.discountValue;
+
+                if (productDetail.saleProduct.discountType === 1) {
+                    // Tính phần trăm giảm (discountValue là %)
+                    const percent = discountValue / 100;
+                    const pricePercent = productDetail.price * percent;
+                    priceBuy = productDetail.price - pricePercent;
+                } else {
+                    // Giảm trực tiếp theo giá trị cụ thể
+                    priceBuy = productDetail.price - discountValue;
+                }
+                // Đảm bảo giá sau khi giảm không âm
+                priceBuy = Math.max(priceBuy, 0);
+
+                console.log('Giá sau khi giảm: ', priceBuy);
             } else {
-                // Giảm trực tiếp theo giá trị cụ thể
-                priceBuy = productDetail.price - discountValue;
+                console.log('Đợt giảm giá không còn thời gian hiệu lực');
             }
-            // Đảm bảo giá sau khi giảm không âm
-            priceBuy = Math.max(priceBuy, 0);
         }
     }
 
@@ -237,5 +260,15 @@ function getPriceAfterDiscount(productDetail) {
     return priceBuy;
 }
 
+function formatDateCompare(date) {
+    const day = ("0" + date.getDate()).slice(-2); // Lấy ngày (2 chữ số)
+    const month = ("0" + (date.getMonth() + 1)).slice(-2); // Lấy tháng (2 chữ số)
+    const year = date.getFullYear(); // Lấy năm
+    const hours = ("0" + date.getHours()).slice(-2); // Lấy giờ (2 chữ số)
+    const minutes = ("0" + date.getMinutes()).slice(-2); // Lấy phút (2 chữ số)
+    const seconds = ("0" + date.getSeconds()).slice(-2); // Lấy giây (2 chữ số)
+
+    return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
+}
 
 

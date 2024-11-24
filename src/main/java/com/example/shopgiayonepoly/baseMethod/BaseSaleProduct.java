@@ -32,19 +32,19 @@ public class BaseSaleProduct {
         }
         //validate ten
         if(saleProductRequest.getNameSale() == null) {
-            thongBao.put("message","Tên mã giảm giá không được để trống!");
+            thongBao.put("message","Tên giảm giá không được để trống!");
             thongBao.put("check","3");
             return thongBao;
         }
 
         if(saleProductRequest.getNameSale().trim().equals("")) {
-            thongBao.put("message","Tên mã giảm giá không được để trống!");
+            thongBao.put("message","Tên giảm giá không được để trống!");
             thongBao.put("check","3");
             return thongBao;
         }
 
         if(saleProductRequest.getNameSale().trim().length() > 255) {
-            thongBao.put("message","Tên mã giảm giá không được quá 100 ký tự!");
+            thongBao.put("message","Tên giảm giá không được quá 100 ký tự!");
             thongBao.put("check","3");
             return thongBao;
         }
@@ -62,24 +62,29 @@ public class BaseSaleProduct {
                 thongBao.put("check", "3");
                 return thongBao;
             }
+            if(isIntegerValue(saleProductRequest.getDiscountValue()) == false) {
+                thongBao.put("message", "Giá trị giảm phải là số thực!");
+                thongBao.put("check", "3");
+                return thongBao;
+            }
 
             if (saleProductRequest.getDiscountType() == 2) {
-                if (saleProductRequest.getDiscountValue().compareTo(BigDecimal.ZERO) < 0) {
-                    thongBao.put("message", "Loại giảm giá không được nhỏ hơn 0!");
+                if (saleProductRequest.getDiscountValue().compareTo(new BigDecimal(10000)) < 0) {
+                    thongBao.put("message", "Giá giảm không được nhỏ hơn 10 nghìn!");
                     thongBao.put("check", "3");
                     return thongBao;
                 } else if (saleProductRequest.getDiscountValue().compareTo(new BigDecimal("10000000")) > 0) {
-                    thongBao.put("message", "Loại giảm giá không được lớn hơn 10 triệu!");
+                    thongBao.put("message", "Giá giảm không được lớn hơn 10 triệu!");
                     thongBao.put("check", "3");
                     return thongBao;
                 }
             }else if (saleProductRequest.getDiscountType() == 1) {
                 if (saleProductRequest.getDiscountValue().compareTo(BigDecimal.ZERO) < 0) {
-                    thongBao.put("message", "Loại giảm giá không được nhỏ hơn 0%!");
+                    thongBao.put("message", "Giá giảm không được nhỏ hơn 0%!");
                     thongBao.put("check", "3");
                     return thongBao;
                 } else if (saleProductRequest.getDiscountValue().compareTo(new BigDecimal("90")) > 0) {
-                    thongBao.put("message", "Loại giảm giá không được lớn hơn 90%!");
+                    thongBao.put("message", "Giá giảm không được lớn hơn 90%!");
                     thongBao.put("check", "3");
                     return thongBao;
                 }
@@ -135,4 +140,13 @@ public class BaseSaleProduct {
         thongBao.put("check", "1");
         return thongBao;
     }
+
+    public Boolean isIntegerValue(BigDecimal value) {
+        if (value == null) {
+            return false; // hoặc true tùy theo logic bạn muốn
+        }
+        // Kiểm tra nếu phần dư khi chia 1 bằng 0
+        return value.remainder(BigDecimal.ONE).compareTo(BigDecimal.ZERO) == 0;
+    }
+
 }

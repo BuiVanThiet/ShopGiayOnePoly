@@ -1,5 +1,6 @@
 package com.example.shopgiayonepoly.controller;
 
+import com.example.shopgiayonepoly.baseMethod.BaseVoucherProduct;
 import com.example.shopgiayonepoly.dto.request.VoucherRequest;
 import com.example.shopgiayonepoly.dto.response.VoucherResponse;
 import com.example.shopgiayonepoly.entites.Staff;
@@ -20,13 +21,16 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.time.LocalDate;
+import java.util.Locale;
 
 @Controller
 @RequestMapping("/voucher")
 public class VoucherController {
     @Autowired
     private VoucherService voucherService;
+    private BaseVoucherProduct baseVoucherProduct = new BaseVoucherProduct();
     private final int pageSize = 5;
     String mess = "";
     String check = "";
@@ -354,7 +358,18 @@ public class VoucherController {
 
         Voucher voucher = voucherService.getOne(id);
         model.addAttribute("voucher", voucher);
-        model.addAttribute("title", "Voucher Detail ID " + id);
+        // Định dạng các giá trị thành chuỗi với dấu phẩy ngăn cách hàng nghìn và thêm "VNĐ"
+        NumberFormat currencyFormat = NumberFormat.getInstance(new Locale("vi", "VN"));
+        String formattedPriceReduced = currencyFormat.format(voucher.getPriceReduced()) + (voucher.getDiscountType() == 1 ? " %" : " VNĐ");
+        String formattedPricesApply = currencyFormat.format(voucher.getPricesApply()) + " VNĐ";
+        String formattedPricesMax = currencyFormat.format(voucher.getPricesMax()) + " VNĐ";
+
+        // Thêm vào model
+        model.addAttribute("formattedPriceReduced", formattedPriceReduced);
+        model.addAttribute("formattedPricesApply", formattedPricesApply);
+        model.addAttribute("formattedPricesMax", formattedPricesMax);
+
+        model.addAttribute("title", "Phiếu giảm giá chi tiết id " + id);
         return "voucher/detail";
     }
 

@@ -258,10 +258,11 @@ public abstract class BaseBill extends BaseEmail {
             // Kiểm tra nếu sản phẩm có giảm giá
             if (idProductDetail.getSaleProduct() != null) {
                 priceCheck = getPriceAfterDiscount(idProductDetail);
+                System.out.println("gia hien tai 1 la " + priceCheck);
             } else {
-                priceCheck = billDetail.getPrice() != null ? billDetail.getPrice() : BigDecimal.ZERO;
+                priceCheck = billDetail.getProductDetail().getPrice();
+                System.out.println("gia hien tai la 2 " + priceCheck);
             }
-
             // Kiểm tra sự thay đổi của giá
             if (priceCheck.compareTo(billDetail.getPrice() != null ? billDetail.getPrice() : BigDecimal.ZERO) != 0) {
                 billDetail = new BillDetail();
@@ -486,11 +487,16 @@ public abstract class BaseBill extends BaseEmail {
                 LocalDate startDate = productDetail.getSaleProduct().getStartDate();
                 LocalDate endDate = productDetail.getSaleProduct().getEndDate();
                 LocalDate today = LocalDate.now();
+                // Chuyển LocalDate thành LocalDateTime
+                LocalDateTime startDateTime = startDate.atStartOfDay(); // Thêm giờ 00:00:00
+                LocalDateTime endDateTime = endDate.atTime(23, 59, 59); // Thêm giờ 23:59:59 cho ngày kết thúc
+                LocalDateTime todayDateTime = today.atStartOfDay(); // Thêm giờ 00:00:00 cho ngày hiện tại
 
                 // Kiểm tra ngày hiện tại có nằm trong khoảng startDate và endDate hay không
-                if (startDate != null && endDate != null && (today.isEqual(startDate) || today.isEqual(endDate) || (today.isAfter(startDate) && today.isBefore(endDate)))) {
+                if (startDate != null && endDate != null && (todayDateTime.isEqual(startDateTime) || todayDateTime.isEqual(endDateTime) || (todayDateTime.isAfter(startDateTime) && todayDateTime.isBefore(endDateTime)))) {
                     BigDecimal discountValue = productDetail.getSaleProduct().getDiscountValue();
 
+                    // Tính toán giá giảm
                     if (productDetail.getSaleProduct().getDiscountType() == 1) {
                         // Tính phần trăm giảm (discountValue là %)
                         BigDecimal percent = discountValue.divide(BigDecimal.valueOf(100));
