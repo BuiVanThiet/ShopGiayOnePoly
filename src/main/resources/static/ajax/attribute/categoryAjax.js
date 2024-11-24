@@ -296,11 +296,11 @@ function restoreCategory(element) {
 let codeCategoryInput = document.getElementById("codeCategoryInput");
 let nameCategoryInput = document.getElementById("nameCategoryInput");
 let categoryError = document.getElementById("categoryError");
-codeCategoryInput.addEventListener('input', function () {
-    validateCategory();
+codeCategoryInput.addEventListener('input',async function () {
+    await validateCategory();
 });
-nameCategoryInput.addEventListener('input', function () {
-    validateCategory();
+nameCategoryInput.addEventListener('input', async function () {
+   await validateCategory();
 });
 
 let arrayCodeCategory = [];

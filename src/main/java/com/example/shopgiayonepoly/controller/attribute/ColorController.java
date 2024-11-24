@@ -29,6 +29,9 @@ public class ColorController {
         if (staffLogin == null) {
             return "redirect:/login";
         }
+        if(staffLogin.getStatus() != 1) {
+            return "redirect:/home_manage";
+        }
         model.addAttribute("colorList", colorService.getColorNotStatus0());
         model.addAttribute("colorAdd", new Color());
         return "Attribute/color";
@@ -38,6 +41,9 @@ public class ColorController {
     public ResponseEntity<List<Color>> listColorDelete(HttpSession session) {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if (staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
             return null;
         }
         List<Color> deletedColors = colorService.getColorDelete();
@@ -50,6 +56,9 @@ public class ColorController {
         if (staffLogin == null) {
             return null;
         }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
         List<Color> listColorActive = colorService.getColorNotStatus0();
         return new ResponseEntity<>(listColorActive, HttpStatus.OK);
     }
@@ -58,6 +67,9 @@ public class ColorController {
     public ResponseEntity<List<String>> findAllCodeColor(HttpSession session) {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if (staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
             return null;
         }
         List<String> codeColor = new ArrayList<>();
@@ -71,6 +83,9 @@ public class ColorController {
     public ResponseEntity<List<String>> findAllNameColor(HttpSession session) {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if (staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
             return null;
         }
         List<String> nameColor = new ArrayList<>();
@@ -88,6 +103,11 @@ public class ColorController {
         if (staffLogin == null) {
             thongBao.put("message", "Nhân viên chưa đăng nhập");
             thongBao.put("check", "3");
+            return ResponseEntity.ok(thongBao);
+        }
+        if(staffLogin.getStatus() != 1) {
+            thongBao.put("message","Nhân viên đang bị ngừng hoạt động!");
+            thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }
         boolean checkCode = true;
@@ -119,6 +139,9 @@ public class ColorController {
     public ResponseEntity<String> updateStatus(@RequestBody Map<String, Object> payload, HttpSession session) {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if (staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
             return null;
         }
         try {
@@ -155,6 +178,11 @@ public class ColorController {
             thongBao.put("message", "Nhân viên chưa đăng nhập");
             thongBao.put("check", "3");
             return null;
+        }
+        if(staffLogin.getStatus() != 1) {
+            thongBao.put("message","Nhân viên đang bị ngừng hoạt động!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
         }
         try {
             int id;
@@ -219,6 +247,11 @@ public class ColorController {
             thongBao.put("message", "Nhân viên chưa đăng nhập");
             thongBao.put("check", "3");
             return null;
+        }
+        if(staffLogin.getStatus() != 1) {
+            thongBao.put("message","Nhân viên đang bị ngừng hoạt động!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
         }
         try {
             int id;

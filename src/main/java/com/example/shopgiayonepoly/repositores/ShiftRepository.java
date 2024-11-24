@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalTime;
 import java.util.List;
 
 @Repository
@@ -34,7 +35,8 @@ public interface ShiftRepository extends JpaRepository<Shift,Integer> {
                             WHEN CONVERT(time, GETDATE()) > end_time THEN 3 -- ĐÃ KẾT THÚC
                             ELSE 0 -- KHÔNG XÁC ĐỊNH
                         END = :statusShift)
-          AND (:status IS NULL OR status = :status)
+          AND (:status IS NULL OR status = :status) 
+    order by update_date desc
 """, nativeQuery = true)
     List<Object[]> getAllShiftByTime(
             @Param("startTimeBegin") String startTimeBegin,
@@ -122,6 +124,7 @@ public interface ShiftRepository extends JpaRepository<Shift,Integer> {
         and CONCAT(s.full_name, s.number_phone,s.email,s.code_staff) LIKE CONCAT('%', :searchTerm, '%')
         and (:checkShift = 2 AND id_shift IS NOT NULL)
                OR (:checkShift = 1 AND id_shift IS NULL)
+    order by s.update_date desc
 """,nativeQuery = true)
     List<Object[]> getAllStaffByShift(
             @Param("idShiftCheck") Integer idShiftCheck,

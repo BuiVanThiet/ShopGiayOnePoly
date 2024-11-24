@@ -29,6 +29,9 @@ public class ManufacturerController {
         if (staffLogin == null) {
             return "redirect:/login";
         }
+        if(staffLogin.getStatus() != 1) {
+            return "redirect:/home_manage";
+        }
         model.addAttribute("manufacturerList", manufacturerService.getManufacturerNotStatus0());
         model.addAttribute("manufacturerAdd", new Manufacturer());
         return "Attribute/manufacturer";
@@ -38,6 +41,9 @@ public class ManufacturerController {
     public ResponseEntity<List<Manufacturer>> listManufacturerDelete(HttpSession session) {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if (staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
             return null;
         }
         List<Manufacturer> deletedManufacturers = manufacturerService.getManufacturerDelete();
@@ -50,6 +56,9 @@ public class ManufacturerController {
         if (staffLogin == null) {
             return null;
         }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
         List<Manufacturer> listManufacturerActive = manufacturerService.getManufacturerNotStatus0();
         return new ResponseEntity<>(listManufacturerActive, HttpStatus.OK);
     }
@@ -58,6 +67,9 @@ public class ManufacturerController {
     public ResponseEntity<List<String>> findAllCodeManufacturer(HttpSession session) {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if (staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
             return null;
         }
         List<String> codeManufacturer = new ArrayList<>();
@@ -71,6 +83,9 @@ public class ManufacturerController {
     public ResponseEntity<List<String>> findAllNameManufacturer(HttpSession session) {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if (staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
             return null;
         }
         List<String> nameManufacturer = new ArrayList<>();
@@ -88,6 +103,11 @@ public class ManufacturerController {
         if (staffLogin == null) {
             thongBao.put("message", "Nhân viên chưa đăng nhập");
             thongBao.put("check", "3");
+            return ResponseEntity.ok(thongBao);
+        }
+        if(staffLogin.getStatus() != 1) {
+            thongBao.put("message","Nhân viên đang bị ngừng hoạt động!");
+            thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }
         boolean checkCode = true;
@@ -119,6 +139,9 @@ public class ManufacturerController {
     public ResponseEntity<String> updateStatus(@RequestBody Map<String, Object> payload, HttpSession session) {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if (staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
             return null;
         }
         try {
@@ -154,6 +177,11 @@ public class ManufacturerController {
         if (staffLogin == null) {
             thongBao.put("message", "Nhân viên chưa đăng nhập");
             thongBao.put("check", "3");
+            return ResponseEntity.ok(thongBao);
+        }
+        if(staffLogin.getStatus() != 1) {
+            thongBao.put("message","Nhân viên đang bị ngừng hoạt động!");
+            thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }
         try {
@@ -218,6 +246,11 @@ public class ManufacturerController {
         if (staffLogin == null) {
             thongBao.put("message", "Nhân viên chưa đăng nhập");
             thongBao.put("check", "3");
+            return ResponseEntity.ok(thongBao);
+        }
+        if(staffLogin.getStatus() != 1) {
+            thongBao.put("message","Nhân viên đang bị ngừng hoạt động!");
+            thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }
         try {

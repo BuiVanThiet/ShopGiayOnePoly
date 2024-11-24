@@ -1,5 +1,6 @@
 package com.example.shopgiayonepoly.restController;
 
+import com.example.shopgiayonepoly.baseMethod.BaseSaleProduct;
 import com.example.shopgiayonepoly.dto.request.DiscountApplyRequest;
 import com.example.shopgiayonepoly.dto.request.SaleProductRequest;
 import com.example.shopgiayonepoly.dto.request.VoucherRequest;
@@ -19,10 +20,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api-sale-product")
@@ -31,6 +31,7 @@ public class SaleProductRescontroller {
     SaleProductService saleProductService;
     @Autowired
     ProductDetailService productDetailService;
+    private BaseSaleProduct baseSaleProduct = new BaseSaleProduct();
     Voucher_SaleProductSearchRequest saleProductSearchRequest = null;
 
     ProductDetailCheckMark2Request productDetailCheckMark2Request = null;
@@ -38,7 +39,15 @@ public class SaleProductRescontroller {
 
     //tai danh sach
     @GetMapping("/list/{page}")
-    public List<Object[]> getListSaleProduct(@PathVariable("page") String page) {
+    public List<Object[]> getListSaleProduct(@PathVariable("page") String page,HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
+
         if(saleProductSearchRequest == null) {
             saleProductSearchRequest = new Voucher_SaleProductSearchRequest(null,"",1);
         }
@@ -55,7 +64,15 @@ public class SaleProductRescontroller {
 
     //phan trang
     @GetMapping("/max-page-sale-product")
-    public Integer getMaxPageSaleProduct() {
+    public Integer getMaxPageSaleProduct(HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
+
         if(saleProductSearchRequest == null) {
             saleProductSearchRequest = new Voucher_SaleProductSearchRequest(null,"",1);
         }
@@ -66,7 +83,15 @@ public class SaleProductRescontroller {
 
     //bo loc
     @PostMapping("/search-sale-product")
-    public Voucher_SaleProductSearchRequest getSearchSaleProduct(@RequestBody Voucher_SaleProductSearchRequest voucherSearchRequest2) {
+    public Voucher_SaleProductSearchRequest getSearchSaleProduct(@RequestBody Voucher_SaleProductSearchRequest voucherSearchRequest2,HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
+
         saleProductSearchRequest = new Voucher_SaleProductSearchRequest(voucherSearchRequest2.getDiscountTypeCheck(),voucherSearchRequest2.getNameCheck(),voucherSearchRequest2.getStatusCheck());
         if(saleProductSearchRequest == null) {
             saleProductSearchRequest = new Voucher_SaleProductSearchRequest(null,"",1);
@@ -75,25 +100,68 @@ public class SaleProductRescontroller {
     }
 
     @GetMapping("/reset-filter-sale-product")
-    public String getResetFilterSaleProduct() {
+    public String getResetFilterSaleProduct(HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
+
         saleProductSearchRequest = new Voucher_SaleProductSearchRequest(null,"",1);
         return "done";
     }
 
     @PostMapping("/add-new-sale-product")
-    public ResponseEntity<Map<String,String>> getMethodAddNewSaleProduct(@RequestBody SaleProductRequest saleProductRequest) {
+    public ResponseEntity<Map<String,String>> getMethodAddNewSaleProduct(@RequestBody SaleProductRequest saleProductRequest,HttpSession session) {
         Map<String,String> thongBao = new HashMap<>();
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            thongBao.put("message","Nhân viên chưa đăng nhập!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+        if(staffLogin.getStatus() != 1) {
+            thongBao.put("message","Nhân viên đang bị ngừng hoạt động!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
 
-        System.out.println(saleProductRequest.toString());
+        System.out.println(saleProductRequest);
+        //validate danh cho codecheckThongBao
+        Map<String,String> thongBaoValidate = this.baseSaleProduct.validateAddAndUpdateSaleProduct(saleProductRequest);
+        if(thongBaoValidate.get("check").equals("1")) {
+            System.out.println(saleProductRequest.toString());
+            List<SaleProduct> saleProducts = this.saleProductService.getAllSaleProducts();
 
-        saleProductService.createNewSale(saleProductRequest);
-        thongBao.put("message","Thêm mới đợt giảm giá thành công!");
-        thongBao.put("check","1");
-        return ResponseEntity.ok(thongBao);
+            for (SaleProduct saleProductCheckSame: saleProducts) {
+                if(saleProductCheckSame.getCodeSale().equals(saleProductRequest.getCodeSale())) {
+                    thongBao.put("message","Mã đợt giảm giá đã tồn tại");
+                    thongBao.put("check","3");
+                    return ResponseEntity.ok(thongBao);
+                }
+            }
+
+            saleProductService.createNewSale(saleProductRequest);
+            thongBao.put("message","Thêm mới đợt giảm giá thành công!");
+            thongBao.put("check","1");
+            return ResponseEntity.ok(thongBao);
+        }else {
+            return ResponseEntity.ok(thongBaoValidate);
+        }
     }
 
     @GetMapping("/all-product/{page}")
-    public List<Object[]> getAllProduct(@PathVariable("page") String page) {
+    public List<Object[]> getAllProduct(@PathVariable("page") String page,HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
+
         if(this.productDetailCheckMark2Request == null) {
             this.productDetailCheckMark2Request = new ProductDetailCheckMark2Request("",null,null,null,null,null,null,null,1);
         }
@@ -103,6 +171,13 @@ public class SaleProductRescontroller {
 
     @GetMapping("/page-max-product")
     public Integer getMaxPageProduct(HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
 
         if(this.productDetailCheckMark2Request == null) {
             this.productDetailCheckMark2Request = new ProductDetailCheckMark2Request("",null,null,null,null,null,null,null,1);
@@ -115,15 +190,35 @@ public class SaleProductRescontroller {
 
     @PostMapping("/filter-product-deatail")
     public ResponseEntity<?> getFilterProduct(@RequestBody ProductDetailCheckMark2Request productDetailCheckRequest2, HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
+
         this.productDetailCheckMark2Request = productDetailCheckRequest2;
         System.out.println("Thong tin loc " + productDetailCheckRequest2.toString());
         return ResponseEntity.ok("Done");
     }
     @PostMapping("/save-or-update-sale-product-in-product")
-    public  ResponseEntity<Map<String,String>> getAddOrUpdateSalePoduct(@RequestBody DiscountApplyRequest data) {
+    public  ResponseEntity<Map<String,String>> getAddOrUpdateSalePoduct(@RequestBody DiscountApplyRequest data,HttpSession session) {
         Map<String,String> thongBao = new HashMap<>();
         System.out.println(data.toString());
 //
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            thongBao.put("message","Nhân viên chưa đăng nhập!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+        if(staffLogin.getStatus() != 1) {
+            thongBao.put("message","Nhân viên đang bị ngừng hoạt động!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+
         SaleProduct saleProduct = this.saleProductService.getSaleProductByID(data.getSaleProductId());
         if(saleProduct == null) {
             thongBao.put("message","Đợt giảm giá không tồn tại!");
@@ -144,9 +239,20 @@ public class SaleProductRescontroller {
     }
 
     @PostMapping("/remove-sale-product-in-product")
-    public ResponseEntity<Map<String,String>> getRemoveSalePoduct(@RequestBody DiscountApplyRequest data) {
+    public ResponseEntity<Map<String,String>> getRemoveSalePoduct(@RequestBody DiscountApplyRequest data,HttpSession session) {
         Map<String,String> thongBao = new HashMap<>();
         System.out.println(data.toString());
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            thongBao.put("message","Nhân viên chưa đăng nhập!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+        if(staffLogin.getStatus() != 1) {
+            thongBao.put("message","Nhân viên đang bị ngừng hoạt động!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
 
         for (Integer idSale: data.getProductIds()) {
             ProductDetail productDetail = this.productDetailService.findById(idSale).orElse(null);
@@ -159,6 +265,23 @@ public class SaleProductRescontroller {
         thongBao.put("message","Xóa đợt giảm giá cho sản phẩm thành công!");
         thongBao.put("check","1");
         return ResponseEntity.ok(thongBao);
+    }
+
+    //check trung sale product
+    @GetMapping("/check-code-sale-product-same")
+    public List<String> getCheckCodeVoucher(HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
+        List<String> codeSaleProducts = new ArrayList<>();
+        for (SaleProduct saleProduct: this.saleProductService.getAllSaleProducts()) {
+            codeSaleProducts.add(saleProduct.getCodeSale());
+        }
+        return codeSaleProducts;
     }
 
     ///////////////////////////////////////////////////

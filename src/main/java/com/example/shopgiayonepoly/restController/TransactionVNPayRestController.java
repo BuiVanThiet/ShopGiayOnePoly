@@ -29,6 +29,9 @@ public class TransactionVNPayRestController {
         if(staffLogin == null) {
             return null;
         }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
 
         // Nếu transactionCheckRequest là null, khởi tạo mặc định
         if(transactionCheckRequest == null) {
@@ -51,6 +54,9 @@ public class TransactionVNPayRestController {
         if(staffLogin == null) {
             return null;
         }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
         if(transactionCheckRequest2.getTransactionStatus().equals("--Tất cả--")) {
             transactionCheckRequest2.setTransactionStatus(null);
         }
@@ -60,6 +66,14 @@ public class TransactionVNPayRestController {
 
     @PostMapping("/search-transaction-test")
     public List<Object[]> getSearchTransactionTest(@RequestBody TransactionCheckRequest transactionCheckRequest2, HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
+
         System.out.println(transactionCheckRequest2.toString());
         transactionCheckRequest = transactionCheckRequest2;
         return transactionVNPayService.getAllTransactionVNPay(transactionCheckRequest);
@@ -71,6 +85,10 @@ public class TransactionVNPayRestController {
         if(staffLogin == null) {
             return null;
         }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
+
         transactionCheckRequest = null;
         return "done";
 
@@ -82,6 +100,10 @@ public class TransactionVNPayRestController {
         if(staffLogin == null) {
             return null;
         }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
+
         if(transactionCheckRequest == null) {
             String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date()); // Lấy ngày hiện tại dưới dạng chuỗi
             String[] bankCodeList = null;
@@ -101,6 +123,12 @@ public class TransactionVNPayRestController {
             thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }
+        if(staffLogin.getStatus() != 1) {
+            thongBao.put("message","Nhân viên đang bị ngừng hoạt động!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+
         List<Object[]> transactions = transactionVNPayService.getAllTransactionVNPay(transactionCheckRequest);
         List<Object[]> tranSactionExportList = new ArrayList<>();
         Object[] objectTransactionAdd;

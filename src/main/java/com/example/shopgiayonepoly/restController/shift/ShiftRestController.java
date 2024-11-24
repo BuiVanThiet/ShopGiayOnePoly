@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +35,14 @@ public class ShiftRestController {
     ShiftFilterRequest shiftFilterRequest = null;
     @GetMapping("/list/{page}")
     public List<Object[]> getAllShift(@PathVariable("page") String page, HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
+
         if(shiftFilterRequest == null) {
             shiftFilterRequest = new ShiftFilterRequest(null,null,null,null,null,null);
         }
@@ -42,6 +51,14 @@ public class ShiftRestController {
     }
     @GetMapping("/max-page")
     public Integer getMaxPageShift(HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
+
         if(shiftFilterRequest == null) {
             shiftFilterRequest = new ShiftFilterRequest(null,null,null,null,null,null);
         }
@@ -50,13 +67,33 @@ public class ShiftRestController {
     }
     @PostMapping("/filter-shift")
     public ShiftFilterRequest getFilterShift(@RequestBody ShiftFilterRequest shiftFilterRequest2,HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
+
         shiftFilterRequest = shiftFilterRequest2;
         return shiftFilterRequest;
     }
 
     @GetMapping("/restore-shift/{id}")
-    public ResponseEntity<Map<String,String>> getRestoreShift(@PathVariable("id") String id) {
+    public ResponseEntity<Map<String,String>> getRestoreShift(@PathVariable("id") String id,HttpSession session) {
         Map<String,String> thongBao = new HashMap<>();
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            thongBao.put("message","Nhân viên chưa đăng nhập!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+        if(staffLogin.getStatus() != 1) {
+            thongBao.put("message","Nhân viên đang bị ngừng hoạt động!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+
         Shift shift = this.shiftService.findById(Integer.parseInt(id)).orElse(null);
         if(shift == null) {
             thongBao.put("message","Ca làm không tồn tại!");
@@ -72,8 +109,20 @@ public class ShiftRestController {
     }
 
     @GetMapping("/delete-shift/{id}")
-    public ResponseEntity<Map<String,String>> getDeleteShift(@PathVariable("id") String id) {
+    public ResponseEntity<Map<String,String>> getDeleteShift(@PathVariable("id") String id,HttpSession session) {
         Map<String,String> thongBao = new HashMap<>();
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            thongBao.put("message","Nhân viên chưa đăng nhập!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+        if(staffLogin.getStatus() != 1) {
+            thongBao.put("message","Nhân viên đang bị ngừng hoạt động!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+
         Shift shift = this.shiftService.findById(Integer.parseInt(id)).orElse(null);
         if(shift == null) {
             thongBao.put("message","Ca làm không tồn tại!");
@@ -89,9 +138,19 @@ public class ShiftRestController {
     }
 
     @PostMapping("/add-or-update-shift")
-    public ResponseEntity<Map<String,String>> getAddOrUpdateShift(@RequestBody ShiftRequest shiftRequest) {
+    public ResponseEntity<Map<String,String>> getAddOrUpdateShift(@RequestBody ShiftRequest shiftRequest,HttpSession session) {
         Map<String,String> thongBao = new HashMap<>();
-
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            thongBao.put("message","Nhân viên chưa đăng nhập!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+        if(staffLogin.getStatus() != 1) {
+            thongBao.put("message","Nhân viên đang bị ngừng hoạt động!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
 
         Shift shift = null;
         if(shiftRequest.getId() == null) {
@@ -124,17 +183,41 @@ public class ShiftRestController {
 
     @GetMapping("/list-staff/{page}")
     public List<Object[]> getListCustomer(@PathVariable("page") String page,HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
+
         Pageable pageable = PageRequest.of(Integer.parseInt(page)-1,5);
         return convertListToPage(this.shiftService.getAllStaffByShift(idShift,keySearch,checkShift),pageable).getContent();
     }
 
     @GetMapping("/max-page-list-staff")
     public Integer getMaxPageListCustomer(HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
+
         Integer pageNumber = (int) Math.ceil((double) this.shiftService.getAllStaffByShift(idShift,keySearch,checkShift).size() / 5);
         return pageNumber;
     }
     @PostMapping("/filter-list-staff")
     public ResponseEntity<?> getFilterListCustomer(@RequestBody Map<String, String> requestData,HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
+
         String idShiftData = requestData.get("idShiftData");
         String keySearchData = requestData.get("keySearchData");
         String checkShiftData = requestData.get("checkShiftData");
@@ -145,8 +228,19 @@ public class ShiftRestController {
     }
 
     @PostMapping("/save-or-update-shift-in-staff")
-    public ResponseEntity<Map<String,String>> getAddOrUpdateShift(@RequestBody ShiftApplyRequest data) {
+    public ResponseEntity<Map<String,String>> getAddOrUpdateShift(@RequestBody ShiftApplyRequest data,HttpSession session) {
         Map<String,String> thongBao = new HashMap<>();
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            thongBao.put("message","Nhân viên chưa đăng nhập!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+        if(staffLogin.getStatus() != 1) {
+            thongBao.put("message","Nhân viên đang bị ngừng hoạt động!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
 
         Shift shift = this.shiftService.findById(data.getIdShift()).orElse(null);
 
@@ -169,8 +263,19 @@ public class ShiftRestController {
     }
 
     @PostMapping("/remove-shift-in-staff")
-    public ResponseEntity<Map<String,String>> getRemoveShiftStaff(@RequestBody ShiftApplyRequest data) {
+    public ResponseEntity<Map<String,String>> getRemoveShiftStaff(@RequestBody ShiftApplyRequest data,HttpSession session) {
         Map<String,String> thongBao = new HashMap<>();
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            thongBao.put("message","Nhân viên chưa đăng nhập!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+        if(staffLogin.getStatus() != 1) {
+            thongBao.put("message","Nhân viên đang bị ngừng hoạt động!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
 
         for (Integer idSt: data.getStaffIds()) {
             Staff staff = this.staffService.getStaffByID(idSt);
@@ -183,6 +288,12 @@ public class ShiftRestController {
         thongBao.put("message","Xóa ca làm cho nhân viên thành công!");
         thongBao.put("check","1");
         return ResponseEntity.ok(thongBao);
+    }
+
+    //validate trùng
+    @GetMapping("/check-shift-same")
+    public ResponseEntity<List<Shift>> getCheckSaneShift() {
+        return ResponseEntity.ok(this.shiftService.findAll());
     }
 
     protected Page<Object[]> convertListToPage(List<Object[]> list, Pageable pageable) {

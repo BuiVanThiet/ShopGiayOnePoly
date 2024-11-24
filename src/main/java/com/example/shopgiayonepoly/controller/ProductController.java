@@ -34,7 +34,7 @@ public class ProductController extends BaseProduct {
             return "redirect:/login";
         }
         model.addAttribute("productList", productService.getProductNotStatus0());
-        model.addAttribute("categoryList", categoryService.findAll());
+        model.addAttribute("categoryList", categoryService.getCategoryNotStatus0());
         model.addAttribute("message", message);
         model.addAttribute("check", check);
         check = "";
@@ -48,15 +48,15 @@ public class ProductController extends BaseProduct {
         if (staffLogin == null) {
             return "redirect:/login";
         }
-        model.addAttribute("productList", productService.findAllProductsWithOneImage());
+//        model.addAttribute("productList", productService.findAllProductsWithOneImage());
         model.addAttribute("product", new Product());
-        model.addAttribute("materialList", materialService.findAll());
-        model.addAttribute("manufacturerList", manufacturerService.findAll());
-        model.addAttribute("originList", originService.findAll());
-        model.addAttribute("colorList", colorService.findAll());
-        model.addAttribute("sizeList", sizeService.findAll());
-        model.addAttribute("soleList", soleService.findAll());
-        model.addAttribute("categoryList", categoryService.findAll());
+        model.addAttribute("materialList", materialService.getMaterialNotStatus0());
+        model.addAttribute("manufacturerList", manufacturerService.getManufacturerNotStatus0());
+        model.addAttribute("originList", originService.getOriginNotStatus0());
+        model.addAttribute("colorList", colorService.getColorNotStatus0());
+        model.addAttribute("sizeList", sizeService.getSizeNotStatus0());
+        model.addAttribute("soleList", soleService.getSoleNotStatus0());
+        model.addAttribute("categoryList", categoryService.getCategoryNotStatus0());
         model.addAttribute("nameProductList", productService.findAllNameProduct());
         model.addAttribute("message", message);
         model.addAttribute("check", check);
@@ -105,21 +105,8 @@ public class ProductController extends BaseProduct {
         product.setStatus(1);
 
         // Xử lý ảnh
-        List<Image> newImages = new ArrayList<>();
-        for (MultipartFile multipartFile : imageFiles) {
-            if (!multipartFile.isEmpty()) {
-                String nameImage = UUID.randomUUID().toString();
-                cloudinary.uploader()
-                        .upload(multipartFile.getBytes(), Map.of("public_id", nameImage))
-                        .get("url");
-                Image image = new Image();
-                image.setNameImage(nameImage);
-                image.setProduct(product);
-                image.setStatus(1);
-                newImages.add(image);
-            }
-        }
-        product.setImages(newImages);
+
+
         boolean checkCodeProduct = true;
         for (Product listProduct : productService.findAll()) {
             if (product.getCodeProduct().trim().equalsIgnoreCase(listProduct.getCodeProduct().trim().toLowerCase())) {
@@ -137,22 +124,35 @@ public class ProductController extends BaseProduct {
                 !checkCodeProduct || product.getNameProduct() == null ||
                 product.getNameProduct().trim().isEmpty() || product.getNameProduct().length() > 255 ||
                 !checkMaterial || !checkOrigin || !checkManufacturer ||
-                imageFiles.isEmpty() || imageFiles.stream().allMatch(MultipartFile::isEmpty)) {
+                imageFiles.isEmpty() || imageFiles.size() > 10 || imageFiles.stream().allMatch(MultipartFile::isEmpty)) {
             check = "3";
             message = "Lỗi khi thêm sản phẩm";
             return ResponseEntity.ok("Lỗi khi thêm sản phẩm");
         } else {
+            List<Image> newImages = new ArrayList<>();
+            for (MultipartFile multipartFile : imageFiles) {
+                if (!multipartFile.isEmpty()) {
+                    String nameImage = UUID.randomUUID().toString();
+                    cloudinary.uploader()
+                            .upload(multipartFile.getBytes(), Map.of("public_id", nameImage))
+                            .get("url");
+                    Image image = new Image();
+                    image.setNameImage(nameImage);
+                    image.setProduct(product);
+                    image.setStatus(1);
+                    newImages.add(image);
+                }
+            }
+            product.setImages(newImages);
+            Product savedProduct = productService.save(product);
+
+            // Nếu có productDetails, cập nhật ID sản phẩm cho các chi tiết sản phẩm và lưu
+            if (!productDetails.isEmpty()) {
+                productDetails.forEach(detail -> detail.setProduct(savedProduct));
+                productDetailRepository.saveAll(productDetails);
+            }
             check = "1";
             message = "Thêm sản phẩm thành công";
-        }
-
-        // Lưu sản phẩm
-        Product savedProduct = productService.save(product);
-
-        // Nếu có productDetails, cập nhật ID sản phẩm cho các chi tiết sản phẩm và lưu
-        if (!productDetails.isEmpty()) {
-            productDetails.forEach(detail -> detail.setProduct(savedProduct));
-            productDetailRepository.saveAll(productDetails);
         }
 
         return ResponseEntity.ok("Thêm sản phẩm thành công");
@@ -210,38 +210,42 @@ public class ProductController extends BaseProduct {
                 product.getCategories() == null || product.getCategories().isEmpty() || product.getCodeProduct().length() > 10 ||
                 !checkCodeProduct || product.getNameProduct() == null ||
                 product.getNameProduct().trim().isEmpty() || product.getNameProduct().length() > 255 ||
-                !checkMaterial || !checkOrigin || !checkManufacturer ||
-                imageFiles.isEmpty() || imageFiles.stream().allMatch(MultipartFile::isEmpty)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Lỗi khi cập nhật sản phẩm: Các trường thông tin không hợp lệ");
-        }
+                !checkMaterial || !checkOrigin || !checkManufacturer || imageFiles.size() > 10 ||
+                imageFiles.isEmpty() && existingProduct.getImages().isEmpty() || imageFiles.stream().allMatch(MultipartFile::isEmpty) && existingProduct.getImages().isEmpty()) {
+            check = "3";
+            message = "Lỗi khi sửa sản phẩm";
+            return ResponseEntity.ok("Lỗi khi sửa sản phẩm");
+        } else {
+            if (!imageFiles.isEmpty() && !imageFiles.stream().allMatch(MultipartFile::isEmpty)){
+                existingProduct.getImages().clear();
 
-        existingProduct.getImages().clear();
+                // Thêm các ảnh mới vào sản phẩm
+                List<Image> newImages = new ArrayList<>();
+                for (MultipartFile multipartFile : imageFiles) {
+                    if (!multipartFile.isEmpty()) {
+                        String nameImage = UUID.randomUUID().toString();
+                        cloudinary.uploader()
+                                .upload(multipartFile.getBytes(), Map.of("public_id", nameImage))
+                                .get("url");
 
-        // Thêm các ảnh mới vào sản phẩm
-        List<Image> newImages = new ArrayList<>();
-        for (MultipartFile multipartFile : imageFiles) {
-            if (!multipartFile.isEmpty()) {
-                String nameImage = UUID.randomUUID().toString();
-                cloudinary.uploader()
-                        .upload(multipartFile.getBytes(), Map.of("public_id", nameImage))
-                        .get("url");
+                        Image image = new Image();
+                        image.setNameImage(nameImage);
+                        image.setProduct(existingProduct);  // Liên kết ảnh với sản phẩm
+                        image.setStatus(1);  // Đảm bảo trạng thái ảnh là 1 (hoặc trạng thái khác mà bạn mong muốn)
+                        newImages.add(image);
+                    }
+                }
 
-                Image image = new Image();
-                image.setNameImage(nameImage);
-                image.setProduct(existingProduct);  // Liên kết ảnh với sản phẩm
-                image.setStatus(1);  // Đảm bảo trạng thái ảnh là 1 (hoặc trạng thái khác mà bạn mong muốn)
-                newImages.add(image);
+                existingProduct.getImages().addAll(newImages);
             }
+
+
+            // Cập nhật sản phẩm vào cơ sở dữ liệu
+            productService.save(existingProduct);
+            check = "1";
+            message = "Sửa sản phẩm thành công";
         }
 
-        // Thêm ảnh mới vào collection ảnh của sản phẩm
-        existingProduct.getImages().addAll(newImages);
-
-        // Cập nhật sản phẩm vào cơ sở dữ liệu
-        Product updatedProduct = productService.save(existingProduct);
-        if (updatedProduct == null) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi khi cập nhật sản phẩm");
-        }
 
         return ResponseEntity.ok("Sản phẩm đã được cập nhật thành công");
     }
@@ -295,7 +299,10 @@ public class ProductController extends BaseProduct {
         model.addAttribute("soleList", soleService.findAll());
         model.addAttribute("categoryList", categoryService.findAll());
         model.addAttribute("nameProductList", productService.findAllNameProduct());
-
+        model.addAttribute("message", message);
+        model.addAttribute("check", check);
+        check = "";
+        message = "";
         // Trả về tên view tương ứng (template Thymeleaf)
         return "/Product/updateProduct";
     }

@@ -109,37 +109,52 @@ function closeQuickAddForm() {
     document.getElementById("input2").value = ""// Ẩn form
 }
 
-function submitQuickAdd() {
-    const code = document.getElementById("input1").value;
-    const name = document.getElementById("input2").value;
+async function submitQuickAdd() {
+    const codeInput = document.getElementById("input1").value.trim();
+    const nameInput = document.getElementById("input2").value.trim();
+    let arrayNameAttribute = [];
+    let arrayCodeAttribute = [];
 
-    // Dữ liệu JSON để gửi
-    const data = {
-        code: code,
-        name: name,
-        type: currentType // Gửi loại thuộc tính (danh mục, màu sắc, kích thước)
-    };
-
-    // Gửi yêu cầu POST đến API
-    fetch('/product-api/attribute/quickly-add', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Lỗi khi thêm thuộc tính');
+    let codeAttribute = await fetch(`/attribute/${currentType}/get-code`);
+    if (codeAttribute.ok) {
+        arrayCodeAttribute = await codeAttribute.json(); // Đảm bảo đây là một mảng
+    }
+    let nameAttribute = await fetch(`/attribute/${currentType}/get-name`);
+    if (nameAttribute.ok) {
+        arrayNameAttribute = await nameAttribute.json(); // Đảm bảo đây là một mảng
+    }
+    if (codeInput.length > 0 && nameInput.length > 0) {
+        if (arrayCodeAttribute.some(code => code.toLowerCase() === codeInput.toLowerCase())) {
+            createToast('2', 'Mã thuộc tính đã tồn tại')
+        } else if (arrayNameAttribute.some(name => name.toLowerCase() === nameInput.toLowerCase())) {
+            createToast('2', 'Tên thuộc tính đã tồn tại')
+        } else {
+            const data = {
+                code: codeInput,
+                name: nameInput,
+                type: currentType
+            };
+            const response = await fetch('/product-api/attribute/quickly-add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            if (response.ok){
+                const result = await response.json();
+                createToast(result.check, result.message);
+                closeQuickAddForm(); // Đóng form thêm thuộc tính
+                reloadOptions(`${currentType}`); // Tải lại danh sách thuộc tính mới cho select
             }
-            createToast('1', 'Thêm thuộc tính thành công')
-            closeQuickAddForm(); // Đóng form thêm thuộc tính
-            reloadOptions(`${currentType}`); // Tải lại danh sách thuộc tính mới cho select
-        })
-        .catch(error => {
-            console.error('Lỗi:', error);
-            createToast('3', 'Thêm thuộc tính thất bại')
-        });
+
+        }
+
+    } else {
+        createToast('2', 'Nhập đầy đủ mã và tên thuộc tính')
+    }
+
+
 }
 
 function reloadOptions(type) {

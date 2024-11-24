@@ -107,6 +107,9 @@ function resetFormAddVoucher() {
     validateAllVoucher()
 }
 function validateAllVoucher() {
+    formatInputWithThousandSeparator('value')
+    formatInputWithThousandSeparator('applyValue')
+    formatInputWithThousandSeparator('maxDiscount')
     var codeVoucher = document.getElementById('codeVoucher');
     var nameVoucher = document.getElementById('nameVoucher');
     var discountType = document.getElementById('discountType');
@@ -129,18 +132,19 @@ function validateAllVoucher() {
     var endDateError = document.getElementById('endDateError');
     var quantityError = document.getElementById('quantityError');
 
-
-
     var checkCodeVoucher = checkNullInputVoucher(codeVoucher.value.trim(),codeVoucherError,'Mời nhập mã phiếu giảm giá');
     var checkNameVoucher = checkNullInputVoucher(nameVoucher.value.trim(),nameVoucherError,'Mời nhập tên phiếu giảm giá');
     var checkDiscountType = true;
-    var checkValue = discountType.value === '2' ? checkNumberLimitInputVoucherCash(value.value,valueError) : checkNumberLimitInputVoucherPercent(value.value,valueError);
-    var checkApplyValue = checkNumberApplyLimitInputVoucherCash(applyValue.value,applyValueError);
-    var checkMaxDiscount = discountType.value === '2' ? true : checkNumberMaxLimitInputVoucherCash(maxDiscount.value,maxDiscountError);
+    var checkValue = discountType.value === '2' ? checkNumberLimitInputVoucherCash(removeThousandSeparator('value'),valueError) : checkNumberLimitInputVoucherPercent(removeThousandSeparator('value'),valueError);
+    var checkApplyValue = checkNumberApplyLimitInputVoucherCash(removeThousandSeparator('applyValue'),applyValueError);
+    var checkMaxDiscount = discountType.value === '2' ? true : checkNumberMaxLimitInputVoucherCash(removeThousandSeparator('maxDiscount'),maxDiscountError);
     var checkNote = checkNullInputVoucher(note.value,noteError,'Mời nhập ghi chú');
     var checkStartDate = checkStartDateVoucher(startDate.value,startDateError);
     var checkEndDate = checkEndDateVoucher(endDate.value,startDate.value,endDateError);
     var checkQuantity = checkNumberMaxQuantityInputVoucher(quantity.value,quantityError);
+
+    var checkVoucherLogic = checkVoucherValues(value.value, applyValue.value,discountType.value === '1' ? maxDiscount.value : value.value);
+
 // In kết quả ra console
     console.log("checkCodeVoucher: ", checkCodeVoucher);
     console.log("checkNameVoucher: ", checkNameVoucher);
@@ -152,12 +156,110 @@ function validateAllVoucher() {
     console.log("checkStartDate: ", checkStartDate);
     console.log("checkEndDate: ", checkEndDate);
     console.log("checkQuantity: ", checkQuantity);
+    console.log("checkVoucherLogic: ", checkVoucherLogic);
+    formatInputWithThousandSeparator('value')
+    formatInputWithThousandSeparator('applyValue')
+    formatInputWithThousandSeparator('maxDiscount')
     // Kiểm tra tất cả các biến, tất cả phải là true
-    if (checkCodeVoucher && checkNameVoucher && checkValue && checkApplyValue && checkMaxDiscount && checkNote && checkStartDate && checkEndDate && checkQuantity) {
+    if (checkVoucherLogic && checkCodeVoucher && checkNameVoucher && checkValue && checkApplyValue && checkMaxDiscount && checkNote && checkStartDate && checkEndDate && checkQuantity) {
         document.getElementById('btnOpenModalConfirmAddVoucher').disabled = false;
     } else {
         document.getElementById('btnOpenModalConfirmAddVoucher').disabled = true;
     }
+}
+
+//ep kieu so
+function formatInputWithThousandSeparator(inputId) {
+    const inputElement = document.getElementById(inputId);
+
+    if (!inputElement) {
+        console.error(`Không tìm thấy phần tử với ID: ${inputId}`);
+        return;
+    }
+
+    // Định dạng giá trị sẵn có khi trang tải
+    if (inputElement.value) {
+        let rawValue2 = inputElement.value.replace(/,/g, '');
+        if (!isNaN(rawValue2) && rawValue2 !== '') {
+            inputElement.value = Number(rawValue2).toLocaleString('en-US');
+        }
+    }
+
+    // Thêm sự kiện khi người dùng nhập
+    inputElement.addEventListener("input", function () {
+        // Lấy giá trị gốc, loại bỏ dấu phân cách (nếu có)
+        let rawValue = this.value.replace(/,/g, '');
+        // Kiểm tra nếu giá trị là số
+        if (!isNaN(rawValue) && rawValue !== '') {
+            // Thêm dấu phân cách hàng nghìn
+            this.value = Number(rawValue).toLocaleString('en-US');
+        } else {
+            // Nếu không phải số, xóa giá trị
+            this.value = '';
+        }
+    });
+}
+function removeThousandSeparator(inputId) {
+    const inputElement = document.getElementById(inputId);
+
+    if (!inputElement) {
+        console.error(`Không tìm thấy phần tử với ID: ${inputId}`);
+        return;
+    }
+
+    // Lấy giá trị hiện tại của input và loại bỏ dấu phẩy
+    const rawValue = inputElement.value.replace(/,/g, '');
+
+    // Gán lại giá trị không có dấu phẩy
+    inputElement.value = rawValue;
+
+    return rawValue; // Trả về giá trị dạng số nguyên (chuỗi)
+}
+
+
+//phai la so nguyen
+function isIntegerValue(value) {
+    console.log(value)
+    // Kiểm tra nếu giá trị là số và không có phần dư khi chia 1
+    return Number.isFinite(value) && value % 1 === 0;
+}
+
+//
+// Check business logic for voucher values
+// Giá trị giảm không được lớn hơn giảm tối đa.
+// 5. Giá trị giảm kh đc lớn hơn giá trị áp dụng.
+// 4. Giá trị áp dụng phải lớn hon hoac bang giảm tối đa.
+function checkVoucherValues(value, applyValue, maxDiscount) {
+    var errorMessage = '';
+    var valueError = document.getElementById('valueError2'); // For value field error
+    var applyValueError = document.getElementById('applyValueError2'); // For apply value field error
+
+    // Clear previous error messages
+    valueError.innerText = '';
+    applyValueError.innerText = '';
+
+    // Check if value exceeds max discount
+    if (parseFloat(value) > parseFloat(maxDiscount)) {
+        errorMessage = 'Giá trị giảm không được lớn hơn giá trị giảm tối đa!';
+        valueError.innerText = errorMessage; // Show error in value field
+    }
+    // Check if value exceeds apply value
+    else if (parseFloat(value) > parseFloat(applyValue)) {
+        errorMessage = 'Giá trị giảm không được lớn hơn giá trị áp dụng!';
+        applyValueError.innerText = errorMessage; // Show error in apply value field
+    }
+    // Check if apply value is less than max discount
+    else if (parseFloat(applyValue) < parseFloat(maxDiscount)) {
+        errorMessage = 'Giá trị áp dụng phải lớn hơn hoặc bằng giá trị giảm tối đa!';
+        applyValueError.innerText = errorMessage; // Show error in apply value field
+    }
+
+    // If there's any error message, log it and return false
+    if (errorMessage) {
+        console.log(errorMessage); // Log the error message for debugging
+        return false; // Return false if there's a business rule violation
+    }
+    return true; // Return true if all checks pass
 }
 //check trong
 function checkNullInputVoucher(inputValue,spanError,mess) {
@@ -181,19 +283,25 @@ function checkNumberLimitInputVoucherCash(inputValue, spanError) {
         return false;
     }else {
         var value = parseFloat(inputValue); // Chuyển đổi chuỗi thành số thực
-        // Kiểm tra giá trị nhập có hợp lệ hay không
-        if (isNaN(value) || inputValue === '' || value < 0) {
+        if(isIntegerValue(value) == true) {
+            // Kiểm tra giá trị nhập có hợp lệ hay không
+            if (isNaN(value) || inputValue === '' || value < 10000) {
+                spanError.style.display = 'block';
+                spanError.innerText = 'Mời nhập giá trị hợp lệ!(thấp nhất là 10 nghìn)';
+                return false;
+            } else if (value > 10000000) {
+                spanError.style.display = 'block';
+                spanError.innerText = 'Giá trị không được vượt quá 10 triệu!';
+                return false;
+            } else {
+                spanError.style.display = 'none';
+                spanError.innerText = '';
+                return true;
+            }
+        }else {
             spanError.style.display = 'block';
-            spanError.innerText = 'Mời nhập giá trị hợp lệ!';
+            spanError.innerText = 'Giá trị giảm phải là số nguyên!';
             return false;
-        } else if (value > 10000000) {
-            spanError.style.display = 'block';
-            spanError.innerText = 'Giá trị không được vượt quá 10 triệu!';
-            return false;
-        } else {
-            spanError.style.display = 'none';
-            spanError.innerText = '';
-            return true;
         }
     }
 }
@@ -206,19 +314,25 @@ function checkNumberLimitInputVoucherPercent(inputValue, spanError) {
         return false;
     }else {
         var value = parseFloat(inputValue); // Chuyển đổi chuỗi thành số thực
-        // Kiểm tra giá trị nhập có hợp lệ hay không
-        if (isNaN(value) || inputValue === '' || value < 0) {
+        if(isIntegerValue(value) == true) {
+            // Kiểm tra giá trị nhập có hợp lệ hay không
+            if (isNaN(value) || inputValue === '' || value <= 0) {
+                spanError.style.display = 'block';
+                spanError.innerText = 'Mời nhập giá trị hợp lệ!(thấp nhất là 1%)';
+                return false;
+            } else if (value > 90) {
+                spanError.style.display = 'block';
+                spanError.innerText = 'Giá trị không được vượt quá 90%!';
+                return false;
+            } else {
+                spanError.style.display = 'none';
+                spanError.innerText = '';
+                return true;
+            }
+        }else {
             spanError.style.display = 'block';
-            spanError.innerText = 'Mời nhập giá trị hợp lệ!';
+            spanError.innerText = 'Giá trị giảm phải là số nguyên!';
             return false;
-        } else if (value > 90) {
-            spanError.style.display = 'block';
-            spanError.innerText = 'Giá trị không được vượt quá 90%!';
-            return false;
-        } else {
-            spanError.style.display = 'none';
-            spanError.innerText = '';
-            return true;
         }
     }
 }
@@ -231,20 +345,27 @@ function checkNumberApplyLimitInputVoucherCash(inputValue, spanError) {
         return false;
     }else {
         var value = parseFloat(inputValue); // Chuyển đổi chuỗi thành số thực
-        // Kiểm tra giá trị nhập có hợp lệ hay không
-        if (isNaN(value) || inputValue === '' || value < 0) {
+        if(isIntegerValue(value) == true) {
+            // Kiểm tra giá trị nhập có hợp lệ hay không
+            if (isNaN(value) || inputValue === '' || value < 10000) {
+                spanError.style.display = 'block';
+                spanError.innerText = 'Mời nhập giá trị áp dụng hợp lệ!(thấp nhất là 10 nghìn)';
+                return false;
+            } else if (value > 10000000) {
+                spanError.style.display = 'block';
+                spanError.innerText = 'Giá trị áp dụng không được vượt quá 10 triệu!';
+                return false;
+            } else {
+                spanError.style.display = 'none';
+                spanError.innerText = '';
+                return true;
+            }
+        }else {
             spanError.style.display = 'block';
-            spanError.innerText = 'Mời nhập giá trị áp dụng hợp lệ!';
+            spanError.innerText = 'Giá trị áp dụng phải là số nguyên!';
             return false;
-        } else if (value > 10000000) {
-            spanError.style.display = 'block';
-            spanError.innerText = 'Giá trị áp dụng không được vượt quá 10 triệu!';
-            return false;
-        } else {
-            spanError.style.display = 'none';
-            spanError.innerText = '';
-            return true;
         }
+
     }
 }
 
@@ -256,20 +377,27 @@ function checkNumberMaxLimitInputVoucherCash(inputValue, spanError) {
         return false;
     }else {
         var value = parseFloat(inputValue); // Chuyển đổi chuỗi thành số thực
-        // Kiểm tra giá trị nhập có hợp lệ hay không
-        if (isNaN(value) || inputValue === '' || value < 0) {
+        if(isIntegerValue(value) == true) {
+            // Kiểm tra giá trị nhập có hợp lệ hay không
+            if (isNaN(value) || inputValue === '' || value < 10000) {
+                spanError.style.display = 'block';
+                spanError.innerText = 'Mời nhập giá trị tối đa hợp lệ!(thấp nhất là 10 nghìn)';
+                return false;
+            } else if (value > 10000000) {
+                spanError.style.display = 'block';
+                spanError.innerText = 'Giá trị tối đa không được vượt quá 10 triệu!';
+                return false;
+            } else {
+                spanError.style.display = 'none';
+                spanError.innerText = '';
+                return true;
+            }
+        }else {
             spanError.style.display = 'block';
-            spanError.innerText = 'Mời nhập giá trị tối đa hợp lệ!';
+            spanError.innerText = 'Giá trị giảm tối đa phải là số nguyên!';
             return false;
-        } else if (value > 10000000) {
-            spanError.style.display = 'block';
-            spanError.innerText = 'Giá trị tối đa không được vượt quá 10 triệu!';
-            return false;
-        } else {
-            spanError.style.display = 'none';
-            spanError.innerText = '';
-            return true;
         }
+
     }
 }
 
@@ -315,20 +443,27 @@ function checkNumberMaxQuantityInputVoucher(inputValue, spanError) {
         return false;
     }else {
         var value = parseFloat(inputValue); // Chuyển đổi chuỗi thành số thực
-        // Kiểm tra giá trị nhập có hợp lệ hay không
-        if (isNaN(value) || inputValue === '' || value < 0) {
+        if(isIntegerValue(value) == true) {
+            // Kiểm tra giá trị nhập có hợp lệ hay không
+            if (isNaN(value) || inputValue === '' || value <= 0) {
+                spanError.style.display = 'block';
+                spanError.innerText = 'Mời nhập số lượng hợp lệ!(ít nhất phải có 1)';
+                return false;
+            } else if (value > 100) {
+                spanError.style.display = 'block';
+                spanError.innerText = 'Số lượng không quá 100!';
+                return false;
+            } else {
+                spanError.style.display = 'none';
+                spanError.innerText = '';
+                return true;
+            }
+        }else {
             spanError.style.display = 'block';
-            spanError.innerText = 'Mời nhập số lượng hợp lệ!';
+            spanError.innerText = 'Số lượng phải là số nguyên!';
             return false;
-        } else if (value > 100) {
-            spanError.style.display = 'block';
-            spanError.innerText = 'Số lượng không quá 100!';
-            return false;
-        } else {
-            spanError.style.display = 'none';
-            spanError.innerText = '';
-            return true;
         }
+
     }
 }
 
@@ -354,3 +489,6 @@ document.getElementById('endDate').value = formatDateVoucher(nexttoday);
 ////////////////////
 
 validateAllVoucher()
+// formatInputWithThousandSeparator('value')
+// formatInputWithThousandSeparator('applyValue')
+// formatInputWithThousandSeparator('maxDiscount')

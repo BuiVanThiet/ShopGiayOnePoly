@@ -2,7 +2,9 @@ package com.example.shopgiayonepoly.restController;
 
 import com.example.shopgiayonepoly.dto.request.CustomerRequest;
 import com.example.shopgiayonepoly.dto.response.CustomerResponse;
+import com.example.shopgiayonepoly.entites.Staff;
 import com.example.shopgiayonepoly.service.CustomerService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,7 +23,11 @@ public class CustomerRestController {
     CustomerService customerService;
     String keyWord = "";
     @GetMapping("/all-customer-status-dislike-0/{page}")
-    public List<CustomerResponse> getAllListCustomerDislike0(@PathVariable("page") String page) {
+    public List<CustomerResponse> getAllListCustomerDislike0(@PathVariable("page") String page, HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if (staffLogin == null) {
+            return null;
+        }
         Pageable pageable = PageRequest.of(Integer.parseInt(page)-1, 5);
         Page<CustomerResponse> pageCustomer = customerService.searchCustomerByKeywordPage(keyWord,pageable);
         return pageCustomer.getContent();

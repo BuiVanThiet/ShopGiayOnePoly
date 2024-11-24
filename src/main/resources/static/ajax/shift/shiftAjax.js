@@ -183,13 +183,13 @@ function addShift(idStart,idEnd) {
 }
 
 function setIdShift(id,start,end,status,statusShift) {
-    validateAddShift('#startTimeUpdate', '#endTimeUpdate', '#statusShiftUpdate1', '#statusShiftUpdate2', '#errorStartTimeUpdate', '#errorEndTimeUpdate', '#errorStatusShiftUpdate', '#buttonUpdateShift')
+    validateAddShift('#startTimeUpdate', '#endTimeUpdate', '#statusShiftUpdate1', '#statusShiftUpdate2', '#errorStartTimeUpdate', '#errorEndTimeUpdate', '#errorStatusShiftUpdate', '#buttonUpdateShift','#errorSameShiftUpdate')
     if(statusShift != 2 || status == 2) {
         $('#btnUpdateShift').html(`<button id="buttonUpdateShift" class="btn btn-outline-success" data-bs-target="#updateShiftModal2" data-bs-toggle="modal">Sửa</button>`)
     }else {
         $('#btnUpdateShift').html(``)
     }
-
+    $('#errorStatusShiftUpdate').hide()
     idShiftUpdate = id;
     console.log(id, start, end, status); // Kiểm tra giá trị nhận được
 

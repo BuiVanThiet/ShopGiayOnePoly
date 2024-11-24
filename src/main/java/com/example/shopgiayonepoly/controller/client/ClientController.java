@@ -428,8 +428,8 @@ public class ClientController extends BaseBill {
                         billDetail.setProductDetail(productDetail);
                         billDetail.setQuantity(quantity);
                         billDetail.setPriceRoot(productDetail.getPrice());
-                        billDetail.setPrice(productDetail.getPrice());
-                        BigDecimal totalAmount = productDetail.getPrice().multiply(BigDecimal.valueOf(quantity));
+                        billDetail.setPrice(getPriceAfterDiscount(productDetail));
+                        BigDecimal totalAmount = getPriceAfterDiscount(productDetail).multiply(BigDecimal.valueOf(quantity));
                         billDetail.setTotalAmount(totalAmount);
                         billDetail.setStatus(1);
                         billDetail.setCreateDate(new Date());
@@ -480,7 +480,7 @@ public class ClientController extends BaseBill {
         String host = "http://localhost:8080/onepoly/status-bill/" + bill.getId();
         this.setBillStatus(bill.getId(), 0, session);
         this.setBillStatus(bill.getId(), bill.getStatus(), session);
-
+        this.templateCreateBillClient("thietzero909@gmail.com",host,bill.getCodeBill());
         return "/onepoly/order-success";
     }
 
@@ -555,6 +555,7 @@ public class ClientController extends BaseBill {
         ClientLoginResponse clientLoginResponse = this.clientLoginResponse.getCustomerByEmailAndAcount(username, username);
         if (clientLoginResponse != null && passwordEncoder.matches(password, passwordEncoder.encode(clientLoginResponse.getPassword()))) {
             session.setAttribute("clientLogin", clientLoginResponse);
+            session.setMaxInactiveInterval(24 * 60 * 60);
             System.out.println(clientLoginResponse.toString());
             return "redirect:/onepoly/home";
         } else {

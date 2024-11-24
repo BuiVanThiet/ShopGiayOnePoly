@@ -347,7 +347,7 @@ function downloadQRCode(productDetailId) {
     const dataToEncode = String(productDetailId);
 
     // Tạo mã QR
-    QRCode.toDataURL(dataToEncode, { width: 400, height: 400 }, function (err, url) {
+    QRCode.toDataURL(`{"id":"${dataToEncode}"}`, { width: 400, height: 400 }, function (err, url) {
         if (err) {
             console.error('Error generating QR code:', err);
             return;
