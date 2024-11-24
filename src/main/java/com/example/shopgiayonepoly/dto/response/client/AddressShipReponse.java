@@ -13,4 +13,5 @@ public class AddressShipReponse {
     private Integer id; // Địa chỉ gốc
     private String originalAddress; // Địa chỉ gốc
     private String shortAddress;    // Địa chỉ rút gọn
+//    private String fullAddress;
 }

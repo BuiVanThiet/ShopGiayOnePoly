@@ -173,15 +173,15 @@
                                                        th:value="${address.originalAddress}"/>
 
                                                 <div class="button-container">
-                                                    <button class="btn-update-address" data-bs-toggle="modal"
-                                                            data-bs-target="#updateAddressModal">
+                                                    <button class="btn-update-address" type="button"
+                                                            data-bs-toggle="modal" data-bs-target="#updateAddressModal"
+                                                            onclick="getAddressDetails(this)">
                                                         <span class="text">Thay đổi</span>
                                                         <span class="icon"><i class="fas fa-sync-alt"></i></span>
                                                     </button>
                                                 </div>
                                             </div>
                                         </div>
-
                                         <!-- Nút Thêm Địa Chỉ Mới -->
                                         <div class="add-new-address mt-4 text-center">
                                             <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"
@@ -210,65 +210,58 @@
                     <!-- Modal update -->
                     <div class="modal fade" id="updateAddressModal" tabindex="-1"
                          aria-labelledby="updateAddressModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-dialog">
                             <div class="modal-content">
-                                <!-- Header -->
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="updateAddressModalLabel">Cập nhật địa chỉ</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                             aria-label="Close"></button>
                                 </div>
-                                <!-- Body -->
                                 <div class="modal-body">
-                                    <form id="updateAddressForm" class="row">
-                                        <div class="col-md-12">
+                                    <form id="updateAddressForm">
+                                        <div class="form-group">
+                                            <label for="FullNameUpdate">Họ và tên</label>
                                             <input type="text" class="form-control" id="FullNameUpdate"
-                                                   placeholder="Họ tên"
-                                                   required>
+                                                   name="FullNameUpdate">
                                         </div>
-                                        <div class="col-md-12">
-                                            <input type="text" class="form-control" id="PhoneUpdate" placeholder="SĐT"
-                                                   required>
+                                        <div class="form-group">
+                                            <label for="PhoneUpdate">Số điện thoại</label>
+                                            <input type="text" class="form-control" id="PhoneUpdate" name="PhoneUpdate">
                                         </div>
-                                        <div class="col-md-12">
-                                            <input type="email" class="form-control" id="MailUpdate" placeholder="Mail"
-                                                   required>
+                                        <div class="form-group">
+                                            <label for="MailUpdate">Email</label>
+                                            <input type="email" class="form-control" id="MailUpdate" name="MailUpdate">
                                         </div>
-                                        <div class="mb-3">
-                                            <label for="specificAddressUpdate" class="form-label">Địa chỉ cụ
-                                                thể:</label>
-                                            <textarea class="form-control" id="specificAddressUpdate"
-                                                      name="specificAddress" rows="3" required></textarea>
+                                        <!-- Các trường khác cho địa chỉ -->
+                                        <div class="form-group">
+                                            <label for="specificAddressUpdate">Địa chỉ cụ thể</label>
+                                            <input type="text" class="form-control" id="specificAddressUpdate"
+                                                   name="specificAddressUpdate">
                                         </div>
-                                        <!-- Tỉnh/Thành phố -->
-                                        <div class="mb-3">
-                                            <label for="province-update" class="form-label">Tỉnh/Thành phố:</label>
-                                            <select id="province-update" class="form-select" required>
-                                                <option value="">Chọn Tỉnh</option>
-                                                <!-- Options sẽ được thêm động qua JavaScript -->
+                                        <div class="form-group">
+                                            <label for="province-update">Tỉnh/Thành phố</label>
+                                            <select class="form-control" id="province-update" name="province-update">
+                                                <!-- Các option tỉnh thành sẽ được load ở đây -->
                                             </select>
                                         </div>
-                                        <!-- Huyện -->
-                                        <div class="mb-3">
-                                            <label for="district-update" class="form-label">Huyện:</label>
-                                            <select id="district-update" class="form-select" required>
-                                                <option value="">Chọn Huyện</option>
+                                        <div class="form-group">
+                                            <label for="district-update">Quận/Huyện</label>
+                                            <select class="form-control" id="district-update" name="district-update">
+                                                <!-- Các option quận huyện sẽ được load ở đây -->
                                             </select>
                                         </div>
-                                        <!-- Xã/Phường -->
-                                        <div class="mb-3">
-                                            <label for="ward-update" class="form-label">Xã/Phường:</label>
-                                            <select id="ward-update" class="form-select" required>
-                                                <option value="">Chọn Xã, Phường</option>
+                                        <div class="form-group">
+                                            <label for="ward-update">Phường/Xã</label>
+                                            <select class="form-control" id="ward-update" name="ward-update">
+                                                <!-- Các option phường xã sẽ được load ở đây -->
                                             </select>
                                         </div>
                                     </form>
                                 </div>
-                                <!-- Footer -->
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng
                                     </button>
-                                    <button type="submit" form="updateAddressForm" class="btn btn-primary" onclick="updateAddress()">Cập nhật
+                                    <button type="button" class="btn btn-primary" onclick="updateAddress()">Cập nhật
                                     </button>
                                 </div>
                             </div>

@@ -605,44 +605,96 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Gọi hàm lấy danh sách tỉnh khi tải trang
     fetchProvinces();
+
+
 });
 
+let selectedAddressId = null;
+function getAddressDetails(buttonElement) {
+    // Lấy giá trị original address từ input hidden
+    var originalAddress = $(buttonElement).closest('.info-address-shipping').find('.original-address').val();
+    console.log("Original Address: " + originalAddress);
+
+    // Tách chuỗi originalAddress thành các phần
+    var addressParts = originalAddress.split(',');
+
+    // Kiểm tra sự phân tách
+    console.log(addressParts);
+
+    // Gán các giá trị vào các trường tương ứng
+    document.getElementById("province-update").value = addressParts[0].trim(); // ID Tỉnh
+    document.getElementById("district-update").value = addressParts[1].trim(); // ID Huyện
+    document.getElementById("ward-update").value = addressParts[2].trim(); // ID Xã
+    document.getElementById("specificAddressUpdate").value = addressParts[3].trim(); // Địa chỉ cụ thể
+
+    // Nếu các giá trị sau là các tên thì bạn có thể làm như sau
+    document.getElementById("ward-name").value = addressParts[4].trim(); // Tên Xã
+    document.getElementById("district-name").value = addressParts[5].trim(); // Tên Huyện
+    document.getElementById("province-name").value = addressParts[6].trim(); // Tên Tỉnh
+}
+
+
+// Hàm lấy ID địa chỉ khi ấn "Thay đổi"
+document.querySelectorAll('.btn-update-address').forEach(button => {
+    button.addEventListener('click', function () {
+        // Lấy ID của địa chỉ từ hidden input trong phần tử cha
+        selectedAddressId = this.closest('.info-address-shipping').querySelector('.id-address').value;
+        console.log("ID địa chỉ được chọn:", selectedAddressId);
+
+        // Có thể cập nhật các thông tin trong modal nếu cần (như điền thông tin cũ vào form)
+        const addressShort = this.closest('.info-address-shipping').querySelector('.short-address').textContent;
+        document.getElementById('FullNameUpdate').value = addressShort; // Cập nhật vào form update
+        // Tương tự cho các trường khác nếu cần
+    });
+});
+
+// Hàm cập nhật địa chỉ khi ấn nút "Cập nhật"
 function updateAddress() {
-    const fullName = document.getElementById("FullNameUpdate").textContent;
-    const phone = document.getElementById("PhoneUpdate").textContent;
-    const mail = document.getElementById("MailUpdate").textContent;
-    const provinceId = document.getElementById("province-update").textContent;
-    const districtId = document.getElementById("district-update").textContent;
-    const wardCode = document.getElementById("ward-update").textContent;
+    // Lấy thông tin từ các trường nhập liệu
+    const fullName = document.getElementById("FullNameUpdate").value;
+    const phone = document.getElementById("PhoneUpdate").value;
+    const mail = document.getElementById("MailUpdate").value;
+    const provinceId = document.getElementById("province-update").value;
+    const districtId = document.getElementById("district-update").value;
+    const wardCode = document.getElementById("ward-update").value;
+
+    // Lấy tên tỉnh, huyện, xã
     const province = document.getElementById("province-update").options[document.getElementById("province-update").selectedIndex].text;
     const district = document.getElementById("district-update").options[document.getElementById("district-update").selectedIndex].text;
     const ward = document.getElementById("ward-update").options[document.getElementById("ward-update").selectedIndex].text;
-    const specificAddress = document.getElementById("specificAddressUpdate").textContent;
 
+    const specificAddress = document.getElementById("specificAddressUpdate").value;
+
+    // Ghép thành địa chỉ đầy đủ
     const fullAddressText = `${specificAddress}, ${ward}, ${district}, ${province}`;
     const addressForCustomerText = `${fullName},${phone},${mail},${provinceId},${districtId},${wardCode},${fullAddressText}`;
 
+    if (!selectedAddressId) {
+        alert("Bạn chưa chọn địa chỉ để cập nhật!");
+        return;
+    }
+
+    // Chuẩn bị dữ liệu gửi đến server
     const addressForCustomerRequest = {
         addressCustomer: addressForCustomerText
     };
-    const idAddress = document.getElementById("id-address").value;
-    console.log("ID address: " + idAddress)
+
+    // Gửi request AJAX
     $.ajax({
-        url: `/api-client/update-address-customer/${idAddress}`,
+        url: '/api-client/update-address-customer/' + selectedAddressId,
         type: "POST",
         contentType: "application/json",
         data: JSON.stringify(addressForCustomerRequest),
         success: function (response) {
             console.log("Response từ server:", response);
             alert("Cập nhật thành công!");
-            $("#updateAddressModal").modal("hide"); // Ẩn modal
+            $("#updateAddressModal").modal("hide");
         },
         error: function (xhr) {
             console.error("Error status:", xhr.status);
-            console.error("Error response:", xhr.responseJSON);
-            alert("Có lỗi xảy ra khi update địa chỉ: " + xhr.responseText);
+            console.error("Error response:", xhr.responseText);
+            alert("Có lỗi xảy ra khi cập nhật địa chỉ: " + xhr.responseText);
         }
     });
 }
-
 
