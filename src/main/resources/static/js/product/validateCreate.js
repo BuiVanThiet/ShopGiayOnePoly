@@ -16,17 +16,17 @@ let fileInputCreateProduct = document.getElementById('file-input-createProduct')
 let buttonAdd = document.getElementById('create-btn-createProduct');
 let arrayCodeProduct = [];
 // Bắt sự kiện khi người dùng nhập vào ô tên sản phẩm
-codeProduct.addEventListener('input', function () {
-    validate();
+codeProduct.addEventListener('input', async function () {
+    await validate();
 });
-nameProduct.addEventListener('input', function () {
-    validate();
+nameProduct.addEventListener('input', async function () {
+    await validate();
 });
 
 // Lắng nghe sự kiện thay đổi cho tất cả checkbox với class '.category-checkbox'
 document.querySelectorAll(".category-checkbox").forEach(checkbox => {
-    checkbox.addEventListener('input', function () {
-        validate();  // Gọi hàm validate mỗi khi người dùng thay đổi trạng thái checkbox
+    checkbox.addEventListener('input', async function () {
+        await validate();  // Gọi hàm validate mỗi khi người dùng thay đổi trạng thái checkbox
     });
 });
 
@@ -41,101 +41,103 @@ async function validate(type) {
     let categoryCheckboxes = document.querySelectorAll(".category-checkbox");
     let isChecked = Array.from(categoryCheckboxes).some(checkbox => checkbox.checked);  // Kiểm tra ít nhất một checkbox được chọn
     if (isChecked) {
-        errorTextCategory.style.display = 'none';
+        errorTextCategory.style.visibility = 'hidden';
     } else {
-        errorTextCategory.style.display = 'block';
+        errorTextCategory.style.visibility = 'visible';
         check = false;
     }
 
     // Kiểm tra Mã sản phẩm
     if (codeProduct.value.length > 10) {
-        errorTextCodeProduct.style.display = 'block';
+        errorTextCodeProduct.style.visibility = 'visible';
         errorTextCodeProduct.innerText = '* Mã sản phẩm <= 10 kí tự';
         check = false;
     } else if (arrayCodeProduct.includes(codeProduct.value.trim())) {
-        errorTextCodeProduct.style.display = 'block';
+        errorTextCodeProduct.style.visibility = 'visible';
         errorTextCodeProduct.innerText = '* Mã sản phẩm đã tồn tại';
         check = false;
     } else if (codeProduct.value.length > 0) {
-        errorTextCodeProduct.style.display = 'none';
+        errorTextCodeProduct.style.visibility = 'hidden';
     } else {
-        errorTextCodeProduct.style.display = 'block';
+        errorTextCodeProduct.style.visibility = 'visible';
         errorTextCodeProduct.innerText = '* Mã sản phẩm không được để trống';
         check = false;
     }
 
     // Kiểm tra tên sản phẩm
     if (nameProduct.value.length > 255) {
-        errorTextNameProduct.style.display = 'block';
+        errorTextNameProduct.style.visibility = 'visible';
         errorTextNameProduct.innerText = '* Tên sản phẩm <= 255 kí tự';
         check = false;
     } else if (nameProduct.value.length > 0) {
-        errorTextNameProduct.style.display = 'none';
+        errorTextNameProduct.style.visibility = 'hidden';
     } else {
-        errorTextNameProduct.style.display = 'block';
+        errorTextNameProduct.style.visibility = 'visible';
         errorTextNameProduct.innerText = '* Tên sản phẩm không được để trống';
         check = false;
     }
 
     // Kiểm tra ảnh
     if (fileInputCreateProduct.files.length > 10) {
-        errorTextImage.style.display = 'block';
+        errorTextImage.style.visibility = 'visible';
         errorTextImage.innerText = '* Tối đa 10 ảnh';
         check = false;
     } else if (fileInputCreateProduct.files.length > 0) {
-        errorTextImage.style.display = 'none';
+        errorTextImage.style.visibility = 'hidden';
     } else {
-        errorTextImage.style.display = 'block';
+        errorTextImage.style.visibility = 'visible';
         check = false;
     }
 
 
     if (material.getAttribute('data-material-id')) {
-        errorTextMaterial.style.display = 'none';
+        errorTextMaterial.style.visibility = 'hidden';
         if (type === 'material') {
             material.placeholder = 'Đang chọn ' + material.value.trim();
         }
     } else {
-        errorTextMaterial.style.display = 'block';
+        errorTextMaterial.style.visibility = 'visible';
         check = false;
     }
 
     if (manufacturer.getAttribute('data-manufacturer-id')) {
-        errorTextManufacturer.style.display = 'none';
+        errorTextManufacturer.style.visibility = 'hidden';
         if (type === 'manufacturer') {
             manufacturer.placeholder = 'Đang chọn ' + manufacturer.value.trim();
         }
     } else {
-        errorTextManufacturer.style.display = 'block';
+        errorTextManufacturer.style.visibility = 'visible';
         check = false;
     }
 
     if (origin.getAttribute('data-origin-id')) {
-        errorTextOrigin.style.display = 'none';
+        errorTextOrigin.style.visibility = 'hidden';
         if (type === 'origin') {
             origin.placeholder = 'Đang chọn ' + origin.value.trim();
         }
     } else {
-        errorTextOrigin.style.display = 'block';
+        errorTextOrigin.style.visibility = 'visible';
         check = false;
     }
 
     if (sole.getAttribute('data-sole-id')) {
-        errorTextSole.style.display = 'none';
+        errorTextSole.style.visibility = 'hidden';
         if (type === 'sole') {
             sole.placeholder = 'Đang chọn ' + sole.value.trim();
         }
     } else {
-        errorTextSole.style.display = 'block';
+        errorTextSole.style.visibility = 'visible';
         check = false;
     }
 
     // Kiểm tra nếu tất cả đều hợp lệ, thì hiển thị nút thêm sản phẩm
-    if (check && validateAndFormatCells()) {
-        buttonAdd.style.display = 'block';
+    if (check) {
+        buttonAdd.style.visibility = 'visible';
+        validateAndFormatCells();
     } else {
-        buttonAdd.style.display = 'none';
+        buttonAdd.style.visibility = 'hidden';
     }
+
 }
 
 function formatNumber(number) {
@@ -168,15 +170,17 @@ function validateAndFormatCells() {
             // Kiểm tra điều kiện hợp lệ
             if (isNaN(value) || value === "" || Number(value) < columnRules.min || Number(value) > columnRules.max) {
                 // Không hợp lệ
-                cell.style.backgroundColor = 'red';
+                cell.style.backgroundColor = '#d3d3d3';
                 hasError = true;
             } else {
                 // Hợp lệ
                 cell.style.backgroundColor = '';
-                const formattedValue = formatNumber(Number(value));
-                if (rawValue !== formattedValue) {
-                    // Cập nhật chỉ khi cần định dạng
-                    cell.textContent = formattedValue;
+                if (colIndex !== '5' && colIndex !== '6') { // Không định dạng cột "Số lượng" và "Trọng lượng"
+                    const formattedValue = formatNumber(Number(value));
+                    if (rawValue !== formattedValue) {
+                        // Cập nhật chỉ khi cần định dạng
+                        cell.textContent = formattedValue;
+                    }
                 }
             }
 
@@ -195,12 +199,12 @@ function validateAndFormatCells() {
 
     // Hiển thị hoặc ẩn thông báo lỗi
     if (hasError) {
-        errorText.style.display = 'block';
-        errorText.innerText = "Các ô Giá bán, Giá nhập phải >= 1.000. Trọng lượng phải <= 5.000. Tất cả phải là số dương!";
-        return false;
+        buttonAdd.style.visibility = 'hidden';
+        errorText.style.visibility = 'visible';
+        errorText.innerText = "Giá bán, Giá nhập > 1.000. Trọng lượng <= 5.000";
     } else {
-        errorText.style.display = 'none';
-        return true;
+        buttonAdd.style.visibility = 'visible';
+        errorText.style.visibility = 'hidden';
     }
 }
 
@@ -211,7 +215,7 @@ function addValidationListeners() {
         numericColumns.forEach(colIndex => {
             const cell = row.cells[colIndex];
             if (cell && cell.contentEditable === "true") {
-                cell.addEventListener('input', validateAndFormatCells); // Gọi validate và format mỗi khi nhập
+                cell.addEventListener('input', validateAndFormatCells);
             }
         });
     });

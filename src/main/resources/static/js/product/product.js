@@ -61,9 +61,11 @@ function toggleSaveButton() {
     if (document.getElementById('btn-findProduct-delete').style.display !== 'none'){
         document.getElementById('btn-export-product').style.display = anyChecked ? "block" : "none";
         document.getElementById('btn-delete-product').style.display = anyChecked ? "block" : "none";
+        document.getElementById('btn-cancel-product').style.display = anyChecked ? "block" : "none";
     } else {
         document.getElementById('btn-export-product').style.display = anyChecked ? "block" : "none";
         document.getElementById('btn-restore-product').style.display = anyChecked ? "block" : "none";
+        document.getElementById('btn-cancel-product').style.display = anyChecked ? "block" : "none";
     }
 
 }
@@ -297,6 +299,7 @@ function displayPage(page) {
         document.getElementById('btn-export-product').style.display = 'none';
         document.getElementById('btn-delete-product').style.display = 'none';
         document.getElementById('btn-restore-product').style.display = 'none';
+        document.getElementById('btn-cancel-product').style.display = 'none';
     }
     const itemsPerPage = isGridView ? itemsPerPageGrid : itemsPerPageList;
     const totalPages = Math.ceil(products.length / itemsPerPage);
@@ -530,6 +533,17 @@ async function restoreMultipleProduct() {
     }
 }
 
+function cancelButton(){
+    const selectedRows = document.querySelectorAll('.select-row-product:checked');
+    selectedRows.forEach(row => {
+        row.checked = false;
+    });
+    document.getElementById('select-all-product').checked = false;
+    document.getElementById('btn-export-product').style.display = "none";
+    document.getElementById('btn-delete-product').style.display = "none";
+    document.getElementById('btn-cancel-product').style.display = "none";
+    document.getElementById('btn-restore-product').style.display = "none";
+}
 function exportExcelProduct() {
     // Lấy các checkbox được chọn
     const selectedRows = document.querySelectorAll('.select-row-product:checked');

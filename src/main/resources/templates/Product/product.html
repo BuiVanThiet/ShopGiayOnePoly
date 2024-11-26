@@ -49,6 +49,7 @@
                 <button data-bs-toggle="modal" data-bs-target="#confirm-restore-product-modal" id="btn-restore-product"
                         class="btn-restore-product" style="display: none">KHÔI PHỤC
                 </button>
+                <button id="btn-cancel-product" class="btn-cancel-product" onclick="cancelButton()" style="display: none">HỦY</button>
                 <button id="btn-findProduct-delete" class="btn-findProduct-delete"
                         onclick="fetchProductsByCategoryAndSearch(0,'',`/product-api/findProductDelete?idCategory=${0}&searchTerm=${''}`)">
                     Danh sách đã xóa
