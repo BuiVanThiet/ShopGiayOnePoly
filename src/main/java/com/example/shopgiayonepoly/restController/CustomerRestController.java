@@ -28,6 +28,9 @@ public class CustomerRestController {
         if (staffLogin == null) {
             return null;
         }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
         Pageable pageable = PageRequest.of(Integer.parseInt(page)-1, 5);
         Page<CustomerResponse> pageCustomer = customerService.searchCustomerByKeywordPage(keyWord,pageable);
         return pageCustomer.getContent();

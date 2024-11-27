@@ -155,10 +155,12 @@
                             <div class="form-group">
                                 <label>Chức vụ</label>
                                 <select class="form-select" th:field="${staff.role.id}">
-                                    <option value="1">Nhân viên bán hàng</option>
-                                    <option value="2">Quản trị viên</option>
-                                    <option value="3">Kế toán</option>
+<!--                                    <option value="1">Nhân viên bán hàng</option>-->
+<!--                                    <option value="2">Quản trị viên</option>-->
+<!--                                    <option value="3">Kế toán</option>-->
+                                    <option th:each="role : ${listRole}" th:value="${role.id}" th:text="${role.nameRole}"></option>
                                 </select>
+                                <div class="text-danger" th:errors="*{role}"></div>
                             </div>
                         </div>
                         <div class="col-4">
