@@ -114,5 +114,9 @@ function handlePageClick(pageNumber, elementId, totalPages) {
         invoiceStatusByStaffByIdStaff(pageNumber)
     }
 
+    if(elementId == 'maxPageTimKeepingByStaff-manage') {
+        infoCheckInAndCheckOutByStaff(pageNumber);
+    }
+
     createPagination(elementId, totalPages, pageNumber); // Cập nhật phân trang
 }

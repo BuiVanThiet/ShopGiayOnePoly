@@ -493,6 +493,29 @@ public class ClientController extends BaseBill {
 
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //chinhh sach doi tra
+    @GetMapping("/policy-exchange-return-bill")
+    public String getFormPolicyExchangeReturnBill(Model model) {
+        return "client/policyExchangeReturnBill";
+    }
+
+    //tim kiem hoa don
+    @GetMapping("/search-bill-by-code-bill")
+    public String getFormSearchBill(Model model) {
+        return "client/searchBillNotLogin";
+    }
+    @PostMapping("/search-bill")
+    public String getSearchBill(
+            @RequestParam(name = "codeBill") String codeBill,
+            Model model) {
+        Bill billSearch = this.billRepository.getBillByCodeBill(codeBill);
+        if(billSearch != null) {
+            return "redirect:/onepoly/status-bill/"+billSearch.getId();
+        }else {
+            model.addAttribute("error","Không tìm thấy hóa đơn!");
+            return "client/searchBillNotLogin";
+        }
+    }
     // thong tin hoa don
     @GetMapping("/status-bill/{id}")
     public String getFormStatusBill(@PathVariable("id") String idBill, Model model, HttpSession session) {

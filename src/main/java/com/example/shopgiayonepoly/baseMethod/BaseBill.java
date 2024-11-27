@@ -74,7 +74,8 @@ public abstract class BaseBill extends BaseEmail {
     protected CashierInventoryService cashierInventoryService;
     @Autowired
     protected ClientService clientService;
-
+    @Autowired
+    protected StaffService staffService;
     //bien cuc bo cua bill
     protected Bill billPay;
     protected String mess = "";
@@ -340,6 +341,11 @@ public abstract class BaseBill extends BaseEmail {
                 Bill bill = billDetail.getBill();
                 // Kiểm tra nếu status của bill == 0
                 if (bill.getStatus() == 0) {
+                    if (bill.getCustomer() != null) {
+                        if(bill.getCustomer().getStatus() != 1) {
+                            bill.setCustomer(null);
+                        }
+                    }
                     // So sánh ID của ProductDetail và BillDetail để kiểm tra tính hợp lệ
                     if (billDetail.getProductDetail().getId().equals(productDetail.getId())) {
                         // Sử dụng compareTo() để so sánh giá

@@ -2,6 +2,7 @@ package com.example.shopgiayonepoly.service;
 
 import com.example.shopgiayonepoly.dto.request.Shift.TimekeepingFilterRequest;
 
+import java.util.Date;
 import java.util.List;
 
 public interface TimekeepingService {
@@ -14,5 +15,15 @@ public interface TimekeepingService {
     List<Object[]> getCheckStaffAttendanceYet(
             Integer idStaff,
             Integer timekeepingTypeCheck
+    );
+
+    List<Object[]> getCheckStaffCheckOut(Integer idStaff);
+
+    List<Object[]> getAllTimekeepingByIdStaff(
+            Integer idStaffCheck,
+            Date startDate,
+            Date endtDate,
+            String startTime,
+            String endTime
     );
 }

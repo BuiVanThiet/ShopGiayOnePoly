@@ -1,6 +1,7 @@
 package com.example.shopgiayonepoly.repositores;
 
 import com.example.shopgiayonepoly.entites.Shift;
+import com.example.shopgiayonepoly.entites.Staff;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -131,4 +132,32 @@ public interface ShiftRepository extends JpaRepository<Shift,Integer> {
             @Param("searchTerm") String searchTerm,
             @Param("checkShift") Integer checkShift
             );
+    @Query(value = """
+		SELECT
+         CASE
+             WHEN EXISTS (
+                 -- Kiểm tra xem còn nhân viên nào chưa điểm danh ra về
+                 SELECT 1
+                 FROM timekeeping tk_in
+                 LEFT JOIN staff s ON tk_in.id_staff = s.id
+                 LEFT JOIN shift sh ON sh.id = s.id_shift
+                 WHERE s.id_shift = :idShift -- Thay @shift_id bằng ID của ca làm việc bạn muốn kiểm tra
+                     AND tk_in.timekeeping_type = 1 -- Nhân viên đã điểm danh vào
+                     AND CONVERT(DATE, tk_in.create_date) = CONVERT(DATE, GETDATE()) -- Cùng ngày hôm nay
+                     AND NOT EXISTS (
+                         -- Kiểm tra nếu nhân viên đã điểm danh ra
+                         SELECT 1
+                         FROM timekeeping tk_out
+                         WHERE tk_out.id_staff = s.id
+                             AND tk_out.timekeeping_type = 2 -- Loại điểm danh ra
+                             AND CONVERT(DATE, tk_out.create_date) = CONVERT(DATE, GETDATE()) -- Cùng ngày hôm nay
+                     )
+             ) THEN N'Vẫn còn người chưa điểm danh ra'
+             ELSE N'Không còn người chưa điểm danh ra'
+         END AS status
+""",nativeQuery = true)
+    List<Object[]> getCheckShiftStaffWorking(@Param("idShift") Integer idShift);
+
+    @Query("select s from Staff s")
+    List<Staff> getAllStaff();
 }

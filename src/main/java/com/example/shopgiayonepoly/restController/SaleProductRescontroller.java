@@ -26,12 +26,11 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/api-sale-product")
-public class SaleProductRescontroller {
+public class SaleProductRescontroller extends BaseSaleProduct{
     @Autowired
     SaleProductService saleProductService;
     @Autowired
     ProductDetailService productDetailService;
-    private BaseSaleProduct baseSaleProduct = new BaseSaleProduct();
     Voucher_SaleProductSearchRequest saleProductSearchRequest = null;
 
     ProductDetailCheckMark2Request productDetailCheckMark2Request = null;
@@ -128,9 +127,17 @@ public class SaleProductRescontroller {
             return ResponseEntity.ok(thongBao);
         }
 
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            thongBao.put("message",messMap);
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+
         System.out.println(saleProductRequest);
         //validate danh cho codecheckThongBao
-        Map<String,String> thongBaoValidate = this.baseSaleProduct.validateAddAndUpdateSaleProduct(saleProductRequest);
+        Map<String,String> thongBaoValidate = this.validateAddAndUpdateSaleProduct(saleProductRequest);
         if(thongBaoValidate.get("check").equals("1")) {
             System.out.println(saleProductRequest.toString());
             List<SaleProduct> saleProducts = this.saleProductService.getAllSaleProducts();
@@ -219,6 +226,14 @@ public class SaleProductRescontroller {
             return ResponseEntity.ok(thongBao);
         }
 
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            thongBao.put("message",messMap);
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+
         SaleProduct saleProduct = this.saleProductService.getSaleProductByID(data.getSaleProductId());
         if(saleProduct == null) {
             thongBao.put("message","Đợt giảm giá không tồn tại!");
@@ -250,6 +265,14 @@ public class SaleProductRescontroller {
         }
         if(staffLogin.getStatus() != 1) {
             thongBao.put("message","Nhân viên đang bị ngừng hoạt động!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            thongBao.put("message",messMap);
             thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }

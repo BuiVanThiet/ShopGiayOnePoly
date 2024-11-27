@@ -5,6 +5,8 @@ import com.example.shopgiayonepoly.baseMethod.BaseEmail;
 import com.example.shopgiayonepoly.baseMethod.BaseProduct;
 import com.example.shopgiayonepoly.dto.request.Shift.CashierInventoryFilterByIdStaffRequest;
 import com.example.shopgiayonepoly.dto.request.bill.*;
+import com.example.shopgiayonepoly.dto.response.CustomerResponse;
+import com.example.shopgiayonepoly.dto.response.StaffResponse;
 import com.example.shopgiayonepoly.dto.response.bill.*;
 import com.example.shopgiayonepoly.entites.*;
 import com.example.shopgiayonepoly.entites.baseEntity.Base;
@@ -2000,6 +2002,25 @@ public class BillRestController extends BaseBill {
         } catch (Exception e) {
             return null;
         }
+    }
+    //validate trung email
+    @GetMapping("/check-same-email-customer")
+    public List<String> getAllEmailCustomer(HttpSession session) {
+        Staff staff = (Staff) session.getAttribute("staffLogin");
+        if(staff == null) {
+            return null;
+        }
+        if(staff.getStatus() != 1) {
+            return null;
+        }
+        List<String> emails = new ArrayList<>();
+        for (CustomerResponse customer: this.customerService.getAllCustomer()) {
+            emails.add(customer.getEmail());
+        }
+        for (StaffResponse staffResponse: this.staffService.getAllStaff()) {
+            emails.add(staffResponse.getEmail());
+        }
+        return emails;
     }
 
     @GetMapping("/get-browser-info")

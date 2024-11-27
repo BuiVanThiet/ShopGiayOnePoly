@@ -16,16 +16,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api_voucher")
-public class VoucherRescontroller {
+public class VoucherRescontroller extends BaseVoucherProduct{
     @Autowired
     VoucherService voucherService;
-    private BaseVoucherProduct baseVoucherProduct = new BaseVoucherProduct();
     Voucher_SaleProductSearchRequest voucherSearchRequest = null;
 
     //tai danh sach
@@ -107,7 +107,15 @@ public class VoucherRescontroller {
             return ResponseEntity.ok(thongBao);
         }
 
-        Map<String,String> thongBaoValidate = this.baseVoucherProduct.validateAddAndUpdateVoucher(voucherRequest);
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            thongBao.put("message",messMap);
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+
+        Map<String,String> thongBaoValidate = this.validateAddAndUpdateVoucher(voucherRequest);
         if(thongBaoValidate.get("check").equals("1")) {
             System.out.println(voucherRequest.toString());
             List<Voucher> vouchers = this.voucherService.getAll();
@@ -143,6 +151,22 @@ public class VoucherRescontroller {
         return "done";
     }
     // validate checkTrung
+
+    @GetMapping("/check-same-code-voucher")
+    public List<String> getAllCodeVouchers(HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
+        List<String> codeVouchers = new ArrayList<>();
+        for (Voucher voucher: this.voucherService.getAll()) {
+            codeVouchers.add(voucher.getCodeVoucher());
+        }
+        return codeVouchers;
+    }
     ///////////////////////////////////////////////////
     protected Page<Object[]> convertListToPage(List<Object[]> list, Pageable pageable) {
         int start = (int) pageable.getOffset();

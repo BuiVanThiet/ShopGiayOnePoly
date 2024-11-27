@@ -91,7 +91,7 @@ function showToast(mess, check) {
     toastContainer.appendChild(toastElement);
 
     // Hiển thị toast
-    var toast = new bootstrap.Toast(toastElement, { delay: 5000 });
+    var toast = new bootstrap.Toast(toastElement, { delay: 3000 });
     console.log('da chat toast')
     toast.show();
 }

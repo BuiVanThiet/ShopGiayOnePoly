@@ -8,7 +8,6 @@ $('#startTimeUpdate, #endTimeUpdate, #statusShiftUpdate1, #statusShiftUpdate2').
 
 
 function validateAddShift(startTimeId, endTimeId, statusId1, statusId2, errorStartId, errorEndId, errorStatusId, buttonId,errorSameShift) {
-    checkShift(startTimeId)
     $(errorSameShift).hide()
     // Lấy giá trị của các trường input từ các ID được truyền vào
     var startTime = $(startTimeId).val();
@@ -25,22 +24,22 @@ function validateAddShift(startTimeId, endTimeId, statusId1, statusId2, errorSta
 
     // Kiểm tra nếu tất cả các trường hợp hợp lệ, enable hoặc disable button
     if (isValidStartTime && isValidEndTime && isValidStatus && isValidTime && isValidDuration) {
-        // Kiểm tra nếu ca làm việc đã tồn tại trong shiftsData
-        var isShiftExists = shiftsData.some(function (shift) {
-            // Kiểm tra trùng ca làm việc (có thể so sánh theo startTime, endTime hoặc các thuộc tính khác)
-            return shift.startTime === convertTo24HourFormat(startTime) && shift.endTime === convertTo24HourFormat(endTime);
-        });
-        console.log(isShiftExists)
-        if (isShiftExists) {
-            // Nếu ca làm việc đã tồn tại, disable button
-            $(errorSameShift).show()
-            $(buttonId).prop('disabled', true);
-        } else {
-            $(errorSameShift).hide()
-            // Nếu ca làm việc không tồn tại, enable button
-            $(buttonId).prop('disabled', false);
-        }
+        checkShift(startTimeId, function () {
+            console.log('Shifts data: ', shiftsData);
 
+            var isShiftExists = shiftsData.some(function (shift) {
+                return shift.startTime === convertTo24HourFormat(startTime) && shift.endTime === convertTo24HourFormat(endTime);
+            });
+
+            if (isShiftExists) {
+                $(errorSameShift).text("Ca làm đã tồn tại!");
+                $(errorSameShift).show();
+                $(buttonId).prop('disabled', true);
+            } else {
+                $(errorSameShift).hide();
+                $(buttonId).prop('disabled', false);
+            }
+        });
     } else {
         $(buttonId).prop('disabled', true);
     }
@@ -58,7 +57,6 @@ function validateShiftDuration(startTime, endTime, errorId) {
         $(errorId).text("Khoảng thời gian không được vượt quá 8 tiếng").show();
         return false;
     } else {
-        $(errorId).text("Ca làm đã tồn tại!")
         $(errorId).hide();
         return true;
     }
@@ -108,28 +106,31 @@ function validateStartEndTime(startTime, endTime, errorStartId, errorEndId) {
 
 //check trung
 let shiftsData = [];
-function checkShift(startTimeId) {
-    // Chỉ kiểm tra nếu cả hai trường đã có giá trị
-        $.ajax({
-            url: '/shift-api/check-shift-same', // API kiểm tra ca làm
-            type: 'GET',
-            success: function (exists) {
-                shiftsData = exists;
-                if(startTimeId == '#startTimeUpdate') {
-                    console.log('da vao day vi la update')
-                    shiftsData = shiftsData.filter(function(shift) {
-                        return shift.id !== idShiftUpdate;  // Giữ lại các mã không trùng
-                    });
-                }
-                console.log('ngoai nay la add')
-                console.log(shiftsData)
-
-            },
-            error: function () {
-                return null;
+function checkShift(startTimeId, callback) {
+    shiftsData = [];
+    $.ajax({
+        url: '/shift-api/check-shift-same', // API kiểm tra ca làm
+        type: 'GET',
+        success: function (exists) {
+            shiftsData = exists;
+            if (startTimeId === '#startTimeUpdate') {
+                console.log('Đã vào đây vì là update');
+                shiftsData = shiftsData.filter(function (shift) {
+                    return shift.id !== idShiftUpdate; // Loại bỏ các mã trùng
+                });
             }
-        });
+            console.log('Ngoài này là add');
+            console.log(shiftsData);
+
+            // Gọi callback sau khi dữ liệu được cập nhật
+            if (callback) callback();
+        },
+        error: function () {
+            console.error("Không thể kiểm tra ca làm việc!");
+        }
+    });
 }
+
 
 function convertTo24HourFormat(time) {
     // Kiểm tra nếu thời gian trống hoặc không hợp lệ
@@ -149,3 +150,5 @@ function convertTo24HourFormat(time) {
 
     return (hours < 10 ? '0' : '') + hours + ':' + minutes + ':' + '00';  // Return in 24-hour format
 }
+
+checkShift('')

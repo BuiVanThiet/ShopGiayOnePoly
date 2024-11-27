@@ -7,6 +7,7 @@ import com.example.shopgiayonepoly.entites.Shift;
 import com.example.shopgiayonepoly.entites.Staff;
 import com.example.shopgiayonepoly.service.ShiftService;
 import com.example.shopgiayonepoly.service.StaffService;
+import com.example.shopgiayonepoly.service.TimekeepingService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,6 +30,8 @@ public class ShiftRestController {
     ShiftService shiftService;
     @Autowired
     StaffService staffService;
+    @Autowired
+    TimekeepingService timekeepingService;
     Integer idShift = null;
     String keySearch = "";
     Integer checkShift = 1;
@@ -123,6 +126,14 @@ public class ShiftRestController {
             return ResponseEntity.ok(thongBao);
         }
 
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            thongBao.put("message",messMap);
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+
         Shift shift = this.shiftService.findById(Integer.parseInt(id)).orElse(null);
         if(shift == null) {
             thongBao.put("message","Ca làm không tồn tại!");
@@ -148,6 +159,13 @@ public class ShiftRestController {
         }
         if(staffLogin.getStatus() != 1) {
             thongBao.put("message","Nhân viên đang bị ngừng hoạt động!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            thongBao.put("message",messMap);
             thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }
@@ -242,6 +260,14 @@ public class ShiftRestController {
             return ResponseEntity.ok(thongBao);
         }
 
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            thongBao.put("message",messMap);
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+
         Shift shift = this.shiftService.findById(data.getIdShift()).orElse(null);
 
         if(shift == null) {
@@ -276,6 +302,14 @@ public class ShiftRestController {
             thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            thongBao.put("message",messMap);
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+
 
         for (Integer idSt: data.getStaffIds()) {
             Staff staff = this.staffService.getStaffByID(idSt);
@@ -295,11 +329,62 @@ public class ShiftRestController {
     public ResponseEntity<List<Shift>> getCheckSaneShift() {
         return ResponseEntity.ok(this.shiftService.findAll());
     }
-
+    //check co nhan vien lam khong
+    @GetMapping("/check-shift-staff-working/{idShift}")
+    public String getCheckShiftStaffWorking(@PathVariable("idShift") Integer idShift,HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
+        List<Object[]> list = this.shiftService.getCheckShiftStaffWorking(idShift);
+        if (!list.isEmpty() && list.get(0).length > 0) {
+            // Lấy giá trị đầu tiên từ kết quả
+            String mess = list.get(0)[0].toString();
+            System.out.println("mess check shift: " + mess);
+            return mess;
+        }
+        return null;
+    }
     protected Page<Object[]> convertListToPage(List<Object[]> list, Pageable pageable) {
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), list.size());
         List<Object[]> sublist = list.subList(start, end);
         return new PageImpl<>(sublist, pageable, list.size());
+    }
+
+    protected Map<String,String> checkLoginAndLogOutByStaff(Integer idStaff) {
+        Map<String,String> thongBao = new HashMap<>();
+        String checkLogin = getCheckStaffAttendanceYetBill(idStaff,1);
+        String checkLogOut = getCheckStaffAttendanceYetBill(idStaff,2);
+        System.out.println(checkLogin);
+        if(!checkLogin.equals("Có")) {
+            thongBao.put("message","Mời bạn điểm danh trước khi làm việc!");
+            return thongBao;
+        }
+
+        if(checkLogin.equals("Có") && checkLogOut.equals("Có")) {
+            thongBao.put("message","Bạn đã điểm danh vào và ra rồi, không thể làm việc được nữa!");
+            return thongBao;
+        }
+        thongBao.put("message","");
+        return thongBao;
+    }
+
+    protected String getCheckStaffAttendanceYetBill(
+//            @PathVariable("id") Integer idStaff,@PathVariable("type") Integer timekeepingTypeCheck
+            Integer idStaff, Integer timekeepingTypeCheck
+    ) {
+        List<Object[]> checkLoginLogOut = this.timekeepingService.getCheckStaffAttendanceYet(idStaff, timekeepingTypeCheck);
+
+        // Kiểm tra nếu danh sách không rỗng và có kết quả
+        if (!checkLoginLogOut.isEmpty() && checkLoginLogOut.get(0).length > 0) {
+            // Lấy giá trị đầu tiên từ kết quả
+            return checkLoginLogOut.get(0)[0].toString();
+        }
+        // Trường hợp không có dữ liệu
+        return "Không";
     }
 }
