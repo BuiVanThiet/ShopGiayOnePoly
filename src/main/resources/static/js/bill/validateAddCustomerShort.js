@@ -51,17 +51,19 @@ wardSelect.addEventListener("change", function() {
 
 
 function validateAllFormAddCustomerShort() {
-    validateNameCustomer(nameCustomerInput.value.trim(),errorNameCustomer);
+    validateNameCustomerIsText(nameCustomerInput.value.trim(),errorNameCustomer);
     validateNumberPhone(numberPhoneInput.value.trim(),errorNumberPhone);
     validateEmail(emailInput.value.trim(),errorEmail);
     validateAddRessDetail(addResDetailInput.value.trim(),errorAddResDetail);
     validateProvince(provinceSelect);
     validateDistrict(districtSelect);
     validateWard(wardSelect);
+    var checkSameEmail =
     console.log(provinceSelect.value)
-    if(validateNameCustomer(nameCustomerInput.value.trim(),errorNameCustomer) == true &&
+    if(validateNameCustomerIsText(nameCustomerInput.value.trim(),errorNameCustomer) == true &&
         validateNumberPhone(numberPhoneInput.value.trim(),errorNumberPhone) == true &&
         validateEmail(emailInput.value.trim(),errorEmail) == true &&
+        isEmailUnique(emailInput.value.trim(),errorEmail) == true &&
         validateAddRessDetail(addResDetailInput.value.trim(),errorAddResDetail) == true &&
         validateProvince(provinceSelect) == true &&
         validateDistrict(districtSelect) == true &&
@@ -72,3 +74,56 @@ function validateAllFormAddCustomerShort() {
         btnAddCustomerShort.disabled = true;
     }
 }
+
+function validateNameCustomerIsText(value, inputError) {
+    var nameCheck = value; // Loại bỏ khoảng trắng ở đầu và cuối
+    const regex = /^[A-Za-z\s\u00C0-\u00FF\u0100-\u017F\u0180-\u024F\u1E00-\u1EFF]*$/;
+
+    if (nameCheck === '' || nameCheck.length < 1) {
+        inputError.style.display = 'block';
+        inputError.innerText = 'Mời nhập tên khách hàng!';
+        return false;
+    } else if (!regex.test(nameCheck)) {
+        // Biểu thức chính quy kiểm tra chỉ bao gồm chữ cái (có dấu hoặc không dấu) và khoảng trắng
+        inputError.style.display = 'block';
+        inputError.innerText = 'Tên khách hàng không hợp lệ!';
+        return false;
+    } else {
+        inputError.style.display = 'none';
+        inputError.innerText = '';
+        return true;
+    }
+}
+
+
+
+var listEmailCheck = [];
+function isEmailUnique(emailInput,inputError) {
+    // Kiểm tra nếu email đã tồn tại trong danh sách
+    var exists = listEmailCheck.includes(emailInput);
+
+    if (exists) {
+        inputError.style.display = 'block';
+        inputError.innerText = 'Email đã tồn tại, mời chọn email khác!';
+        return false; // Email đã tồn tại
+    } else {
+        inputError.style.display = 'none';
+        inputError.innerText = '';
+        return true; // Email không trùng
+    }
+}
+
+function getAllEmailCheckSame() {
+    $.ajax({
+        type: "GET",
+        url: "/bill-api/check-same-email-customer",
+        success: function (response) {
+            listEmailCheck = response;
+        },
+        error: function (xhr) {
+            console.log(xhr.responseText)
+        }
+    })
+}
+
+getAllEmailCheckSame()

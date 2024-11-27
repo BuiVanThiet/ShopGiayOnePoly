@@ -4,6 +4,7 @@ import com.example.shopgiayonepoly.dto.request.Shift.CashierInventoryFilterByIdS
 import com.example.shopgiayonepoly.entites.Staff;
 import com.example.shopgiayonepoly.service.CashierInventoryService;
 import com.example.shopgiayonepoly.service.StaffService;
+import com.example.shopgiayonepoly.service.TimekeepingService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -26,6 +27,8 @@ public class CashierInventoryRestController {
     StaffService staffService;
     @Autowired
     CashierInventoryService cashierInventoryService;
+    @Autowired
+    TimekeepingService timekeepingService;
 
     CashierInventoryFilterByIdStaffRequest cashierInventoryFilterByIdStaffRequest = null;
 
@@ -368,6 +371,118 @@ public class CashierInventoryRestController {
             return null;
         }
     }
+
+    @GetMapping("/infor-check-in-and-check-out-by-staff/{page}")
+    public List<Object[]> getInfoDetailCheckInAndCheckOutByStaff(@PathVariable("page") String page,HttpSession session) {
+        Staff staff = (Staff) session.getAttribute("staffLogin");
+        if(staff == null) {
+            return null;
+        }
+        if(staff.getStatus() != 1) {
+            return null;
+        }
+
+        try {
+            if(cashierInventoryFilterByIdStaffRequest == null) {
+                try {
+                    // Định dạng để parse chuỗi thành đối tượng Date
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
+                    // Lấy ngày hiện tại
+                    Date currentDate = new Date();
+
+                    // Đặt thời gian bắt đầu (00:00:00)
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(currentDate);
+                    calendar.set(Calendar.HOUR_OF_DAY, 0);
+                    calendar.set(Calendar.MINUTE, 0);
+                    calendar.set(Calendar.SECOND, 0);
+                    calendar.set(Calendar.MILLISECOND, 0);
+                    Date startDate = calendar.getTime();
+
+                    // Đặt thời gian kết thúc (23:59:59)
+                    calendar.set(Calendar.HOUR_OF_DAY, 23);
+                    calendar.set(Calendar.MINUTE, 59);
+                    calendar.set(Calendar.SECOND, 59);
+                    calendar.set(Calendar.MILLISECOND, 999);
+                    Date endDate = calendar.getTime();
+
+                    LocalTime currentTime = LocalTime.now();
+                    DateTimeFormatter formatterTime = DateTimeFormatter.ofPattern("HH:mm:ss");
+                    String currentTimeString = currentTime.format(formatterTime);
+
+                    cashierInventoryFilterByIdStaffRequest = new CashierInventoryFilterByIdStaffRequest(staff.getId(),startDate,endDate,currentTimeString,currentTimeString);
+                } catch (Exception e) {
+                    return null;
+                }
+            }
+            int pageNumber = Integer.parseInt(page); // Nếu không phải số hợp lệ sẽ ném ra NumberFormatException
+
+            Pageable pageable = PageRequest.of(pageNumber-1,5);
+            return convertListToPage(timekeepingService.getAllTimekeepingByIdStaff(
+                    cashierInventoryFilterByIdStaffRequest.getIdStaff(),
+                    cashierInventoryFilterByIdStaffRequest.getStartDate(),
+                    cashierInventoryFilterByIdStaffRequest.getEndDate(),
+                    cashierInventoryFilterByIdStaffRequest.getStartTime(),
+                    cashierInventoryFilterByIdStaffRequest.getEndTime()),pageable).getContent();
+        }catch (NumberFormatException e) {
+            System.out.println("Lỗi: Tham số 'page' không phải là số hợp lệ.");
+            return null; // Hoặc trả về một thông báo lỗi nếu cần thiết
+        }
+    }
+
+    @GetMapping("/max-page-check-in-and-check-out-by-staff")
+    public Integer getMaxPageInfoDetailCheckInAndCheckOutByStaff(HttpSession session) {
+        Staff staff = (Staff) session.getAttribute("staffLogin");
+        if(staff == null) {
+            return null;
+        }
+        if(staff.getStatus() != 1) {
+            return null;
+        }
+
+        if(cashierInventoryFilterByIdStaffRequest == null) {
+            try {
+                // Định dạng để parse chuỗi thành đối tượng Date
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
+                // Lấy ngày hiện tại
+                Date currentDate = new Date();
+
+                // Đặt thời gian bắt đầu (00:00:00)
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(currentDate);
+                calendar.set(Calendar.HOUR_OF_DAY, 0);
+                calendar.set(Calendar.MINUTE, 0);
+                calendar.set(Calendar.SECOND, 0);
+                calendar.set(Calendar.MILLISECOND, 0);
+                Date startDate = calendar.getTime();
+
+                // Đặt thời gian kết thúc (23:59:59)
+                calendar.set(Calendar.HOUR_OF_DAY, 23);
+                calendar.set(Calendar.MINUTE, 59);
+                calendar.set(Calendar.SECOND, 59);
+                calendar.set(Calendar.MILLISECOND, 999);
+                Date endDate = calendar.getTime();
+
+                LocalTime currentTime = LocalTime.now();
+                DateTimeFormatter formatterTime = DateTimeFormatter.ofPattern("HH:mm:ss");
+                String currentTimeString = currentTime.format(formatterTime);
+
+                cashierInventoryFilterByIdStaffRequest = new CashierInventoryFilterByIdStaffRequest(staff.getId(),startDate,endDate,currentTimeString,currentTimeString);
+            } catch (Exception e) {
+                return null;
+            }
+        }
+        Integer pageNumber = (int) Math.ceil((double) timekeepingService.getAllTimekeepingByIdStaff(
+                cashierInventoryFilterByIdStaffRequest.getIdStaff(),
+                cashierInventoryFilterByIdStaffRequest.getStartDate(),
+                cashierInventoryFilterByIdStaffRequest.getEndDate(),
+                cashierInventoryFilterByIdStaffRequest.getStartTime(),
+                cashierInventoryFilterByIdStaffRequest.getEndTime()).size() / 5);
+        return pageNumber;
+    }
+
     ///validate same
 
     protected Page<Object[]> convertListToPage(List<Object[]> list, Pageable pageable) {

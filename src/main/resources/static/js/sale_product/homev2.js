@@ -191,7 +191,7 @@ function isIntegerValue(value) {
     return Number.isFinite(value) && value % 1 === 0;
 }
 //kiem tra trung ma
-function checkSameCodeVoucher() {
+function checkSameCodeSaleProduct() {
    $.ajax({
        type: "GET",
        url: "/api-sale-product/check-code-sale-product-same",
@@ -212,7 +212,7 @@ function checkSameCodeVoucher() {
        }
    })
 }
-checkSameCodeVoucher()
+checkSameCodeSaleProduct()
 
 function checkSame(inputValue,spanError,mess) {
     console.log('da vao check some')

@@ -19,7 +19,7 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
     //ngay 3thang9
     @Query("select b from Bill b where b.status = 0 order by b.createDate desc")
     List<Bill> getBillByStatusNew(Pageable pageable);
-    @Query("select client from Customer client where client.status <> 0")
+    @Query("select client from Customer client where client.status = 1")
     List<Customer> getClientNotStatus0();
 
     @Query("""
@@ -630,4 +630,11 @@ select case
     List<Object[]> getListProductExchange(@Param("idExchangeBillCheck") Integer idReturnBillCheck);
     @Query("select pd from ProductDetail  pd where pd.id = :idCheck")
     ProductDetail getProductDteailById(@Param("idCheck") Integer id);
+
+    @Query("""
+    select b from Bill b where b.codeBill = :codeBillCheck
+""")
+    Bill getBillByCodeBill(
+            @Param("codeBillCheck") String codeBillCheck
+    );
 }

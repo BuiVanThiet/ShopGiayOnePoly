@@ -3,6 +3,7 @@ package com.example.shopgiayonepoly.controller;
 import com.example.shopgiayonepoly.baseMethod.BaseVoucherProduct;
 import com.example.shopgiayonepoly.dto.request.VoucherRequest;
 import com.example.shopgiayonepoly.dto.response.VoucherResponse;
+import com.example.shopgiayonepoly.entites.SaleProduct;
 import com.example.shopgiayonepoly.entites.Staff;
 import com.example.shopgiayonepoly.entites.Voucher;
 import com.example.shopgiayonepoly.service.VoucherService;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,14 +25,16 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/voucher")
-public class VoucherController {
+public class VoucherController extends BaseVoucherProduct{
     @Autowired
     private VoucherService voucherService;
-    private BaseVoucherProduct baseVoucherProduct = new BaseVoucherProduct();
     private final int pageSize = 5;
     String mess = "";
     String check = "";
@@ -204,62 +208,44 @@ public class VoucherController {
             return "redirect:/home_manage";
         }
 
-        BigDecimal zero = BigDecimal.ZERO;
-        BigDecimal oneHundred = new BigDecimal("90");
-        BigDecimal tenHundred = new BigDecimal("10000");
-        BigDecimal oneMillion = new BigDecimal("1000000");
-        LocalDate dateNow = LocalDate.now();
+        Map<String,String> thongBaoValidate = this.validateAddAndUpdateVoucher(voucherRequest);
 
-// Kiểm tra priceReduced
-        if (voucherRequest.getPriceReduced() == null) {
-            result.rejectValue("priceReduced", "error.voucher", "Giá trị giảm không được để trống!");
-        } else {
-            if (voucherRequest.getDiscountType() == 1) { // Loại giảm giá là phần trăm
-                if (voucherRequest.getPriceReduced().compareTo(zero) <= 0 || voucherRequest.getPriceReduced().compareTo(oneHundred) >= 0) {
-                    result.rejectValue("priceReduced", "error.voucher", "Giá trị giảm phải lớn hơn 0% và nhỏ hơn 90%!");
-                }
-            } else { // Loại giảm giá là tiền mặt
-                if (voucherRequest.getPriceReduced().compareTo(tenHundred) < 0 || voucherRequest.getPriceReduced().compareTo(oneMillion) > 0) {
-                    result.rejectValue("priceReduced", "error.voucher", "Giá trị giảm phải lớn hơn 10.000₫ và nhỏ hơn 1.000.000₫!");
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            this.mess = messMap;
+            this.check = "3";
+            return "redirect:/sale-product/list";
+        }
+
+        if(thongBaoValidate.get("check").equals("1")) {
+            Voucher existingVoucher = voucherService.getOne(voucherRequest.getId());
+            voucherRequest.setCreateDate(existingVoucher.getCreateDate());
+
+            List<Voucher> vouchers = this.voucherService.getAll().stream()
+                    .filter(voucher -> voucher.getId() != voucherRequest.getId())
+                    .collect(Collectors.toList());
+
+//            List<Voucher> vouchers = this.voucherService.getAll();
+//            vouchers.remove(existingVoucher);
+            for (Voucher voucher: vouchers) {
+                if(voucher.getCodeVoucher().equals(voucherRequest.getCodeVoucher())) {
+                    mess = "Mã phiếu giảm giá đã tồn tại!";
+                    check = "3";
+                    return "voucher/update";
                 }
             }
-        }
-
-// Kiểm tra startDate
-        if (voucherRequest.getStartDate() == null) {
-            result.rejectValue("startDate", "error.voucher", "Ngày bắt đầu không được để trống!");
-        } else if (voucherRequest.getStartDate().isBefore(dateNow)) {
-            result.rejectValue("startDate", "error.voucher", "Ngày bắt đầu phải là ngày hiện tại hoặc sau ngày hiện tại: " + dateNow);
-        }
-
-// Kiểm tra endDate
-        if (voucherRequest.getEndDate() == null) {
-            result.rejectValue("endDate", "error.voucher", "Ngày kết thúc không được để trống!");
-        } else {
-            if (voucherRequest.getEndDate().isBefore(dateNow)) {
-                result.rejectValue("endDate", "error.voucher", "Ngày kết thúc phải lớn hơn ngày hiện tại: " + dateNow);
-            } else if (voucherRequest.getEndDate().isBefore(voucherRequest.getStartDate())) {
-                result.rejectValue("endDate", "error.voucher", "Ngày kết thúc phải lớn hơn ngày bắt đầu");
-            }
-        }
-
-// Kiểm tra pricesApply và pricesMax
-        if (voucherRequest.getPricesApply() != null && voucherRequest.getPricesMax() != null && voucherRequest.getPricesApply().compareTo(voucherRequest.getPricesMax()) < 0) {
-            result.rejectValue("pricesApply", "error.voucher", "Giá trị áp dụng phải lớn hơn giá trị giảm tối đa!");
-        }
-        if (result.hasErrors()) {
+            voucherService.updateVoucher(voucherRequest);
+            mess = "Sửa phiếu giảm giá có id: "+voucherRequest.getId()+" thành công!";
+            check = "1";
+            return "redirect:/voucher/list";
+        }else {
+            model.addAttribute("message",thongBaoValidate.get("message"));
+            model.addAttribute("check","3");
+            model.addAttribute("voucher", voucherRequest);
             model.addAttribute("title", "UPDATE VOUCHER WITH ID: " + voucherRequest.getId());
             return "voucher/update";
         }
-
-        Voucher existingVoucher = voucherService.getOne(voucherRequest.getId());
-        voucherRequest.setCreateDate(existingVoucher.getCreateDate());
-
-        voucherService.updateVoucher(voucherRequest);
-        mess = "Sửa phiếu giảm giá có id: "+voucherRequest.getId()+" thành công!";
-        check = "1";
-        redirectAttributes.addFlashAttribute("mes", "Update voucher successfully with ID: " + voucherRequest.getId());
-        return "redirect:/voucher/list";
     }
 
     @GetMapping("/search-key")

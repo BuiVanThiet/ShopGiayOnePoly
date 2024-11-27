@@ -6,6 +6,7 @@ import com.example.shopgiayonepoly.dto.request.SaleProductRequest;
 import com.example.shopgiayonepoly.entites.ProductDetail;
 import com.example.shopgiayonepoly.entites.SaleProduct;
 import com.example.shopgiayonepoly.entites.Staff;
+import com.example.shopgiayonepoly.entites.Voucher;
 import com.example.shopgiayonepoly.service.ProductDetailService;
 import com.example.shopgiayonepoly.service.ProductService;
 import com.example.shopgiayonepoly.service.SaleProductService;
@@ -31,16 +32,15 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/sale-product")
-public class SaleProductController {
+public class SaleProductController extends BaseSaleProduct{
     @Autowired
     private SaleProductService saleProductService;
     @Autowired
     private ProductDetailService productDetailService;
-
-    private BaseSaleProduct baseSaleProduct = new BaseSaleProduct();
 
     private static final int pageSize = 5;
     String mess = "";
@@ -264,7 +264,15 @@ public class SaleProductController {
         if(staffLogin.getStatus() != 1) {
             return "redirect:/home_manage";
         }
-        Map<String,String> thongBao = this.baseSaleProduct.validateAddAndUpdateSaleProduct(saleProductRequest);
+        Map<String,String> thongBao = this.validateAddAndUpdateSaleProduct(saleProductRequest);
+
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            this.mess = messMap;
+            this.check = "3";
+            return "redirect:/sale-product/list";
+        }
 
         if(thongBao.get("check").equals("1")) {
             SaleProduct saleProduct = saleProductService.getSaleProductByID(saleProductRequest.getId());
@@ -278,8 +286,11 @@ public class SaleProductController {
                 check = "3";
                 return "redirect:/sale-product/list";
             }
-            List<SaleProduct> saleProducts = this.saleProductService.getAllSaleProducts();
-            saleProducts.remove(saleProduct);
+            List<SaleProduct> saleProducts = this.saleProductService.getAllSaleProducts().stream()
+                    .filter(saleProduct1 -> saleProduct1.getId() != saleProductRequest.getId())
+                    .collect(Collectors.toList());
+//            List<SaleProduct> saleProducts = this.saleProductService.getAllSaleProducts();
+//            saleProducts.remove(saleProduct);
 
             for (SaleProduct saleProductCheckSame: saleProducts) {
                 if(saleProductCheckSame.getCodeSale().equals(saleProductRequest.getCodeSale())) {
