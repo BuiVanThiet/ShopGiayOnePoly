@@ -6,6 +6,9 @@ import com.example.shopgiayonepoly.dto.request.StatusBill;
 import com.example.shopgiayonepoly.service.ChartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,19 +49,24 @@ public class chartRestController {
     }
 
     @GetMapping("/productSales")
-    public ResponseEntity<Map<String, Object>> getProductSales(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "3") int size) {
-
-        Page<ProductInfoDto> productSales = chartService.getProductSalesPage(page, size);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("content", productSales.getContent());
-        response.put("pageable", productSales.getPageable());
-        response.put("totalPages", productSales.getTotalPages());
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
+    public List<ProductInfoDto> getProductSales() {
+        return chartService.getProductSales();
     }
+
+//    @GetMapping("/productSalesPage")
+//    public ResponseEntity<?> getProductSalesPage(
+//            @RequestParam(defaultValue = "0") int page,
+//            @RequestParam(defaultValue = "3") int size) {
+//        try {
+//            Pageable pageable = PageRequest.of(page, size);
+//            Page<ProductInfoDto> products = chartService.getProductSalesPage(pageable);
+//            return ResponseEntity.ok(products);
+//        } catch (Exception e) {
+//            e.printStackTrace(); // Ghi lại log chi tiết lỗi
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body("Lỗi server: " + e.getMessage());
+//        }
+//    }
 
     @GetMapping("/getProductsByDateRange")
     public ResponseEntity<Map<String, Object>> getProductSalesByDateRange(
@@ -118,14 +126,7 @@ public class chartRestController {
     public ResponseEntity<?> getStatisticsByDateRange(@RequestBody Map<String, String> dateRange) {
         String startDate = dateRange.get("startDate");
         String endDate = dateRange.get("endDate");
-        LocalDate start = LocalDate.parse(startDate);
-        LocalDate end = LocalDate.parse(endDate);
 
-        // Kiểm tra xem ngày kết thúc cách ngày bắt đầu không quá 10 ngày
-        long daysBetween = ChronoUnit.DAYS.between(start, end);
-        if (daysBetween > 9) {
-            return ResponseEntity.badRequest().body("Khoảng cách giữa ngày bắt đầu và ngày kết thúc không được vượt quá 10 ngày.");
-        }
 
         // Nếu hợp lệ, gọi service để lấy dữ liệu
         return ResponseEntity.ok(chartService.findStatisticsByDateRange(startDate, endDate));
