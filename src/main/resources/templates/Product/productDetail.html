@@ -9,11 +9,18 @@
 </head>
 
 <body>
-<div layout:fragment="content">
+<div  layout:fragment="content">
   <article class=" bd-gutter mt-5 my-md-4 bd-layout">
-    <div th:if="${message != null}" class="alert alert-warning">
-      <p th:text="${message}"></p>
+    <div th:if="${messagee != null}" >
+      <p th:text="${messagee}"></p>
+      <a th:if="${addDetailUrl != null}" th:href="${addDetailUrl}" class="add-button-productDetail" style="text-decoration: none;">
+        <i class="fas fa-plus"></i> Thêm chi tiết
+      </a>
+      <p th:attr="data-value=${idProduct}"></p>
+      <input type="hidden" id="toastMessage" th:value="${message}">
+      <input type="hidden" id="toastCheck" th:value="${check}">
     </div>
+
     <div th:if="${productDetailList != null and !#lists.isEmpty(productDetailList)}" class="container-productDetail">
       <div th:text="${'Danh sách chi tiết  ' + productDetailList.get(1).product.nameProduct}" class="header-productDetail">
       </div>
@@ -74,10 +81,12 @@
 
       <a class="add-button-productDetail" style="text-decoration: none;" th:href="@{/staff/product/create/product-detail/{idProduct}(idProduct=${productDetailList.get(1).product.id})}" ><i
               class="fas fa-plus"></i> Thêm chi tiết </a>
+      <script th:src="@{/js/product/productDetail.js}" type="text/javascript"></script>
+      <input type="hidden" id="toastMessage" th:value="${message}">
+      <input type="hidden" id="toastCheck" th:value="${check}">
     </div>
 
   </article>
-  <script th:src="@{/js/product/productDetail.js}" type="text/javascript"></script>
 </div>
 </body>
 

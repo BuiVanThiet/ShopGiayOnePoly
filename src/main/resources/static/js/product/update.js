@@ -209,46 +209,79 @@ function updateOptions(elementId, data, textKey, type) {
         return;
     }
 
-    element.innerHTML = ''; // Xóa nội dung cũ
+    // Xóa nội dung cũ
+    element.innerHTML = '';
 
+    // Thêm thẻ li chứa input tìm kiếm
+    const searchLi = document.createElement("li");
+    searchLi.style.display = "flex";
+    searchLi.style.justifyContent = "space-between";
+
+    const searchInput = document.createElement("input");
+    searchInput.type = "text";
+    searchInput.style.height = "30px";
+    searchInput.placeholder = "Tìm kiếm";
+    searchInput.onkeyup = (event) => filterFunctionCheckBox(event); // Gắn sự kiện tìm kiếm
+
+    searchLi.appendChild(searchInput);
+    element.appendChild(searchLi);
+
+    // Duyệt qua dữ liệu và tạo các mục danh sách
     data.forEach(item => {
         const li = document.createElement("li");
         li.style.display = "flex";
         li.style.justifyContent = "space-between";
 
-        // Thêm nội dung chính
+        // Tạo phần hiển thị tên
         const span = document.createElement("span");
         span.textContent = item[textKey];
         li.appendChild(span);
 
-        // Tùy chỉnh theo loại thuộc tính
-        if (["category", "color", "size"].includes(type)) {
+        // Nếu là category, color hoặc size, thêm checkbox
+        if (type === "category" || type === "color" || type === "size") {
             const checkbox = document.createElement("input");
             checkbox.type = "checkbox";
             checkbox.value = item.id;
+            checkbox.name = `${type}s`;
             checkbox.style.width = "20px";
             checkbox.setAttribute("data-type", type);
-            checkbox.classList.add(`${type}-checkbox`); // Thêm class cho checkbox
+            checkbox.classList.add(`${type}-checkbox`);
 
-            // Thêm checkbox vào li
             li.appendChild(checkbox);
 
-            // Thiết lập sự kiện click để toggle checkbox
+            // Gắn sự kiện click cho li
             li.onclick = () => toggleCheckbox(li, type);
-        } else {
-            li.setAttribute("value", item.id);
-            li.onclick = () => selectAttribute(li, `myInput-${type}`, type);
         }
 
-        // Thêm class cho li
+        // Thêm class và ID cho li
         li.classList.add(`${type}-item`);
-
-        // Thêm id cho li (nếu cần thiết, ví dụ cho mỗi loại thuộc tính)
         li.id = `${type}-item-${item.id}`;
 
-        // Thêm phần tử vào danh sách
+        // Thêm li vào danh sách
         element.appendChild(li);
     });
+}
+function filterFunctionCheckBox(event) {
+    let input = event.target;
+    let filter = input.value.toUpperCase();
+    let ul = input.closest('ul');  // Lấy phần tử <ul> chứa input
+
+    // Kiểm tra nếu ul tồn tại
+    if (ul) {
+        let li = ul.getElementsByTagName("li");  // Lấy tất cả các mục li trong danh sách
+
+        // Bắt đầu từ mục thứ hai để bỏ qua ô tìm kiếm đầu tiên
+        for (let i = 1; i < li.length; i++) {
+            let span = li[i].getElementsByTagName("span")[0];  // Lấy thẻ span chứa tên danh mục
+            if (span) {
+                let txtValue = span.textContent || span.innerText;
+                // Nếu có kết quả phù hợp, hiển thị, nếu không thì ẩn
+                li[i].style.display = txtValue.toUpperCase().indexOf(filter) > -1 ? "" : "none";
+            }
+        }
+    } else {
+        console.error("Không tìm thấy phần tử ul chứa input tìm kiếm");
+    }
 }
 
 
@@ -280,10 +313,27 @@ function resetForm() {
 }
 
 
+
 function toggleCheckbox(liElement, type) {
     const checkbox = liElement.querySelector(`input[data-type="${type}"]`);
     if (checkbox) {
         checkbox.checked = !checkbox.checked;
+        handleCheckboxChange(); // Gọi hàm kiểm tra sau khi thay đổi trạng thái
         validate();
     }
 }
+
+function handleCheckboxChange() {
+    const categoryInput = document.getElementById('myInput-category');
+    const selectedCheckboxes = document.querySelectorAll('#dataList-category input[type="checkbox"]:checked');
+    const selectedNames = Array.from(selectedCheckboxes).map(checkbox => {
+        // Lấy tên từ phần tử `span` chứa text bên cạnh checkbox
+        const liElement = checkbox.closest('li');
+        return liElement.querySelector('span').innerText;
+    });
+    // Cập nhật giá trị vào input, nối bằng dấu phẩy nếu có nhiều hơn một
+    categoryInput.value = selectedNames.join(', ');
+
+
+}
+handleCheckboxChange();

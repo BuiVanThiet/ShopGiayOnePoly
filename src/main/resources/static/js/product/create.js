@@ -50,6 +50,29 @@ function showDropdown(event) {
 }
 
 
+function filterFunctionCheckBox(event) {
+    let input = event.target;
+    let filter = input.value.toUpperCase();
+    let ul = input.closest('ul');  // Lấy phần tử <ul> chứa input
+
+    // Kiểm tra nếu ul tồn tại
+    if (ul) {
+        let li = ul.getElementsByTagName("li");  // Lấy tất cả các mục li trong danh sách
+
+        // Bắt đầu từ mục thứ hai để bỏ qua ô tìm kiếm đầu tiên
+        for (let i = 1; i < li.length; i++) {
+            let span = li[i].getElementsByTagName("span")[0];  // Lấy thẻ span chứa tên danh mục
+            if (span) {
+                let txtValue = span.textContent || span.innerText;
+                // Nếu có kết quả phù hợp, hiển thị, nếu không thì ẩn
+                li[i].style.display = txtValue.toUpperCase().indexOf(filter) > -1 ? "" : "none";
+            }
+        }
+    } else {
+        console.error("Không tìm thấy phần tử ul chứa input tìm kiếm");
+    }
+}
+
 
 function filterFunction(event) {
     let input = event.target;
@@ -209,44 +232,55 @@ function updateOptions(elementId, data, textKey, type) {
         return;
     }
 
-    element.innerHTML = ''; // Xóa nội dung cũ
+    // Xóa nội dung cũ
+    element.innerHTML = '';
 
+    // Thêm thẻ li chứa input tìm kiếm
+    const searchLi = document.createElement("li");
+    searchLi.style.display = "flex";
+    searchLi.style.justifyContent = "space-between";
+
+    const searchInput = document.createElement("input");
+    searchInput.type = "text";
+    searchInput.style.height = "30px";
+    searchInput.placeholder = "Tìm kiếm";
+    searchInput.onkeyup = (event) => filterFunctionCheckBox(event); // Gắn sự kiện tìm kiếm
+
+    searchLi.appendChild(searchInput);
+    element.appendChild(searchLi);
+
+    // Duyệt qua dữ liệu và tạo các mục danh sách
     data.forEach(item => {
         const li = document.createElement("li");
         li.style.display = "flex";
         li.style.justifyContent = "space-between";
 
-        // Thêm nội dung chính
+        // Tạo phần hiển thị tên
         const span = document.createElement("span");
         span.textContent = item[textKey];
         li.appendChild(span);
 
-        // Tùy chỉnh theo loại thuộc tính
-        if (["category", "color", "size"].includes(type)) {
+        // Nếu là category, color hoặc size, thêm checkbox
+        if (type === "category" || type === "color" || type === "size") {
             const checkbox = document.createElement("input");
             checkbox.type = "checkbox";
             checkbox.value = item.id;
+            checkbox.name = `${type}s`;
             checkbox.style.width = "20px";
             checkbox.setAttribute("data-type", type);
-            checkbox.classList.add(`${type}-checkbox`); // Thêm class cho checkbox
+            checkbox.classList.add(`${type}-checkbox`);
 
-            // Thêm checkbox vào li
             li.appendChild(checkbox);
 
-            // Thiết lập sự kiện click để toggle checkbox
+            // Gắn sự kiện click cho li
             li.onclick = () => toggleCheckbox(li, type);
-        } else {
-            li.setAttribute("value", item.id);
-            li.onclick = () => selectAttribute(li, `myInput-${type}`, type);
         }
 
-        // Thêm class cho li
+        // Thêm class và ID cho li
         li.classList.add(`${type}-item`);
-
-        // Thêm id cho li (nếu cần thiết, ví dụ cho mỗi loại thuộc tính)
         li.id = `${type}-item-${item.id}`;
 
-        // Thêm phần tử vào danh sách
+        // Thêm li vào danh sách
         element.appendChild(li);
     });
 }
@@ -255,7 +289,9 @@ function updateOptions(elementId, data, textKey, type) {
 
 
 function insertTableProductDetail() {
-
+    if (document.getElementById('select-all-productDetail').checked){
+        document.getElementById('select-all-productDetail').checked = false;
+    }
     const selectedColors = Array.from(document.querySelectorAll('#dataList-color input[type="checkbox"]:checked'))
         .map(checkbox => {
             const colorName = checkbox.closest('li').querySelector('span').innerText;
@@ -323,7 +359,6 @@ function insertTableProductDetail() {
         });
     });
     addValidationListeners(); // Thêm sự kiện validate
-
 }
 
 
@@ -336,26 +371,77 @@ function toggleCheckbox(liElement, type) {
     }
 }
 
+// Hàm xử lý sự kiện thay đổi của checkbox
 function handleCheckboxChange() {
+    // Kiểm tra nếu thay đổi thuộc danh mục
+    let isCategoryChange = false;
+    if (event.target.closest('#dataList-category')) {
+        isCategoryChange = true;  // Đặt cờ nếu là thay đổi checkbox thuộc danh mục
+    }
+
+    // Cập nhật giá trị cho các input tương ứng
     const categoryInput = document.getElementById('myInput-category');
     const selectedCheckboxes = document.querySelectorAll('#dataList-category input[type="checkbox"]:checked');
     const selectedNames = Array.from(selectedCheckboxes).map(checkbox => {
-        // Lấy tên từ phần tử `span` chứa text bên cạnh checkbox
         const liElement = checkbox.closest('li');
         return liElement.querySelector('span').innerText;
     });
 
-    // Cập nhật giá trị vào input, nối bằng dấu phẩy nếu có nhiều hơn một
+    const colorInput = document.getElementById('myInput-color');
+    const selectedCheckboxesColor = document.querySelectorAll('#dataList-color input[type="checkbox"]:checked');
+    const selectedNamesColor = Array.from(selectedCheckboxesColor).map(checkbox => {
+        const liElement = checkbox.closest('li');
+        return liElement.querySelector('span').innerText;
+    });
+
+    const sizeInput = document.getElementById('myInput-size');
+    const selectedCheckboxesSize = document.querySelectorAll('#dataList-size input[type="checkbox"]:checked');
+    const selectedNamesSize = Array.from(selectedCheckboxesSize).map(checkbox => {
+        const liElement = checkbox.closest('li');
+        return liElement.querySelector('span').innerText;
+    });
+
     categoryInput.value = selectedNames.join(', ');
+    colorInput.value = selectedNamesColor.join(', ');
+    sizeInput.value = selectedNamesSize.join(', ');
 
-    // Xử lý logic khác nếu cần (ví dụ, kiểm tra màu và kích cỡ)
-    const selectedColors = document.querySelectorAll('#dataList-color input[type="checkbox"]:checked').length;
-    const selectedSizes = document.querySelectorAll('#dataList-size input[type="checkbox"]:checked').length;
+    // Xử lý xóa hàng khỏi bảng khi checkbox màu hoặc kích cỡ bị bỏ chọn
+    const uncheckedColors = Array.from(document.querySelectorAll('#dataList-color input[type="checkbox"]:not(:checked)'));
+    const uncheckedSizes = Array.from(document.querySelectorAll('#dataList-size input[type="checkbox"]:not(:checked)'));
 
-    if (selectedColors > 0 && selectedSizes > 0) {
-        insertTableProductDetail();
+    const tableBody = document.querySelector('#productDetailTable tbody');
+
+    // Xóa các hàng liên quan đến màu bị bỏ chọn
+    uncheckedColors.forEach(checkbox => {
+        const colorId = checkbox.value;
+        Array.from(tableBody.querySelectorAll(`tr[data-color-id="${colorId}"]`)).forEach(row => row.remove());
+    });
+
+    // Xóa các hàng liên quan đến kích cỡ bị bỏ chọn
+    uncheckedSizes.forEach(checkbox => {
+        const sizeId = checkbox.value;
+        Array.from(tableBody.querySelectorAll(`tr[data-size-id="${sizeId}"]`)).forEach(row => row.remove());
+    });
+
+    // Kiểm tra nếu không còn màu hoặc kích cỡ được chọn thì ẩn bảng
+    if (selectedCheckboxesColor.length === 0 || selectedCheckboxesSize.length === 0) {
+        tableBody.innerHTML = ''; // Xóa toàn bộ hàng trong bảng
+        document.getElementById('table-productDetail-createProduct').style.display = 'none';
+        buttonAdd.style.visibility = 'hidden'
+    } else {
+        document.getElementById('table-productDetail-createProduct').style.display = 'block';
+    }
+
+    // Nếu không phải thay đổi danh mục, gọi `insertTableProductDetail`
+    if (!isCategoryChange) {
+        if (selectedCheckboxesColor.length > 0 && selectedCheckboxesSize.length > 0) {
+            insertTableProductDetail();
+        }
     }
 }
+
+// Lắng nghe sự kiện thay đổi cho các checkbox
+
 
 function deleteRow(deleteButton) {
     const row = deleteButton.closest('tr');
@@ -383,7 +469,9 @@ function checkAndUncheckOption(listSelector, value) {
                 checkbox.checked = false;
             }
         });
+        handleCheckboxChange();
     }
+
 }
 
 
@@ -404,17 +492,18 @@ async function addProductWithDetails() {
 
     rows.forEach(row => {
         const detail = {
-            color: {id: row.cells[1].getAttribute('data-color-id')}, // Truyền đối tượng color
-            size: {id: row.cells[2].getAttribute('data-size-id')}, // Truyền đối tượng size
-            price: row.cells[3].innerText.trim(),
-            import_price: row.cells[4].innerText.trim(),
-            quantity: row.cells[5].innerText.trim(),
-            weight: row.cells[6].innerText.trim(),
+            color: { id: row.cells[1].getAttribute('data-color-id') }, // Truyền đối tượng color
+            size: { id: row.cells[2].getAttribute('data-size-id') }, // Truyền đối tượng size
+            price: row.cells[3].innerText.trim().replace(/\./g, ''), // Loại bỏ dấu chấm trong giá bán
+            import_price: row.cells[4].innerText.trim().replace(/\./g, ''), // Loại bỏ dấu chấm trong giá nhập
+            quantity: row.cells[5].innerText.trim().replace(/\./g, ''), // Loại bỏ dấu chấm trong số lượng
+            weight: row.cells[6].innerText.trim().replace(/\./g, ''), // Loại bỏ dấu chấm trong trọng lượng
             describe: row.cells[7].innerText.trim(),
             status: 1
         };
         productDetails.push(detail);
     });
+
 
     if (productDetails.length > 0) {
         formData.append("productDetails", JSON.stringify(productDetails));
@@ -425,9 +514,9 @@ async function addProductWithDetails() {
             body: formData
         });
         if (await response.text() === 'Thêm sản phẩm thành công') {
-            window.location.href = 'http://localhost:8080/staff/product';
+            window.location.href = '/staff/product';
         } else {
-            window.location.href = 'http://localhost:8080/staff/product/create';
+            window.location.href = '/staff/product/create';
         }
     } catch (error) {
         createToast('3', 'Thêm sản phẩm thất bại')
@@ -438,23 +527,23 @@ async function addProductWithDetails() {
 function resetFormAndTable() {
     // Đặt lại tất cả các trường input trong form
     document.getElementById('createProductForm').reset();
-    errorTextCodeProduct.style.display = 'block'
-    errorTextImage.style.display = 'block'
-    errorTextCategory.style.display = 'block'
-    errorTextMaterial.style.display = 'block'
-    errorTextManufacturer.style.display = 'block'
-    errorTextSole.style.display = 'block'
-    errorTextOrigin.style.display = 'block'
-    errorTextNameProduct.style.display = 'block'
-    buttonAdd.style.display = 'none';
+    errorTextCodeProduct.style.visibility = 'visible'
+    errorTextImage.style.visibility = 'visible'
+    errorTextCategory.style.visibility = 'visible'
+    errorTextMaterial.style.visibility = 'visible'
+    errorTextManufacturer.style.visibility = 'visible'
+    errorTextSole.style.visibility = 'visible'
+    errorTextOrigin.style.visibility = 'visible'
+    errorTextNameProduct.style.visibility = 'visible'
+    buttonAdd.style.visibility = 'hidden';
     material.placeholder = '';
     manufacturer.placeholder = '';
     origin.placeholder = '';
     sole.placeholder = '';
     material.setAttribute('data-material-id', '');
-    manufacturer.setAttribute('data-material-id', '');
-    origin.setAttribute('data-material-id', '');
-    sole.setAttribute('data-material-id', '');
+    manufacturer.setAttribute('data-manufacturer-id', '');
+    origin.setAttribute('data-origin-id', '');
+    sole.setAttribute('data-sole-id', '');
 
     // Làm trống phần preview ảnh nếu có
     document.getElementById('image-preview-createProduct').innerHTML = '';

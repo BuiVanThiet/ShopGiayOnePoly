@@ -1,3 +1,6 @@
+
+
+
 function toggleDropdownproductDetail(event, icon) {
     let menu = icon.nextElementSibling;
 
@@ -96,7 +99,6 @@ let pElement = document.querySelector('p[data-value]');
 // Lấy giá trị từ thuộc tính data-value
 let idProduct = pElement.getAttribute('data-value');
 
-console.log(idProduct)
 document.querySelector('.search-input-productDetail').addEventListener('input', function () {
     const searchTerm = this.value;
     console.log('Search Term:', searchTerm); // Ghi lại từ khóa tìm kiếm

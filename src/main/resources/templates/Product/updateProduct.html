@@ -39,8 +39,11 @@
                 <div style="display: flex">
                   <input type="text" id="myInput-category"
                          onfocus="showDropdown(event)"
-                         onkeyup="filterFunction(event)" autocomplete="off">
+                         readonly autocomplete="off">
                   <ul id="dataList-category" class="dropdown-content-updateProduct">
+                    <li style="display: flex; justify-content: space-between">
+                      <input style="height: 30px" placeholder="Tìm kiếm" onkeyup="filterFunctionCheckBox(event)" type="text">
+                    </li>
                     <th:block th:each="category : ${categoryList}">
                       <li style="display: flex; justify-content: space-between" onclick="toggleCheckbox(this, 'category')">
                         <span th:text="${category.nameCategory}"></span>
