@@ -434,11 +434,8 @@ public class ClientRestController extends BaseEmail {
         for (CartResponse item : cartItems) {
             BigDecimal itemPrice = item.getDiscountedPrice(); // Giá của sản phẩm
             BigDecimal itemQuantity = BigDecimal.valueOf(item.getQuantity()); // Số lượng sản phẩm
-
-            // Tính giá trị sản phẩm trong giỏ hàng
             BigDecimal itemTotal = itemPrice.multiply(itemQuantity);
 
-            // Cộng dồn vào tổng giỏ hàng
             totalPrice = totalPrice.add(itemTotal);
         }
 
@@ -475,9 +472,6 @@ public class ClientRestController extends BaseEmail {
         return ResponseEntity.ok(addressShip);  // Trả về thông tin địa chỉ nếu tìm thấy
     }
 
-
-
-
     @PostMapping("/update-address-customer/{idAddress}")
     public ResponseEntity<String> updateAddressForCustomer(HttpSession session,
                                                            @PathVariable("idAddress") Integer idAddress,
@@ -512,7 +506,64 @@ public class ClientRestController extends BaseEmail {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Bạn cần đăng nhập để cập nhật địa chỉ");
     }
 
+    @GetMapping("/delete/address-customer/{idAddress}")
+    public ResponseEntity<Map<String, String>> deleteAddressForCustomer(@PathVariable("idAddress") Integer idAddress) {
+        Map<String, String> messages = new HashMap<>();
+        addressShipRepository.deleteById(idAddress);
+        messages.put("message", "Xóa địa chỉ giao hàng thành công!");
+        messages.put("check", "1");
+        return ResponseEntity.ok(messages);
+    }
 
+    @GetMapping("/list-address-for-customer")
+    public List<AddressShipReponse> getListAddressShipForCustomer(HttpSession session) {
+        ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
+        List<AddressShip> addressList = clientService.getListAddressShipByIDCustomer(clientLoginResponse.getId());
+        List<AddressShipReponse> responseListAddress = new ArrayList<>();
+        for (AddressShip address : addressList) {
+            String specificAddress = address.getSpecificAddress();
+            if (specificAddress != null) {
+                String[] parts = specificAddress.split(",");
+                // Khai báo các thành phần địa chỉ
+                String shipProvince = "", shipDistrict = "", shipWard = "", detailedAddress = "";
+                String fullName = "", phoneNumber = "", mail = "";
+                if (parts.length >= 7) {
+                    // Gán giá trị từ các phần tử mảng
+                    fullName = parts[0].trim();
+                    phoneNumber = parts[1].trim();
+                    mail = parts[2].trim();
+                    shipProvince = parts[3].trim();
+                    shipDistrict = parts[4].trim();
+                    shipWard = parts[5].trim();
+                    detailedAddress = String.join(", ", Arrays.copyOfRange(parts, 6, parts.length)).trim();
+                } else {
+                    // Xử lý nếu không đủ định dạng
+                    shipProvince = "UnknownProvince";
+                    shipDistrict = "UnknownDistrict";
+                    shipWard = "UnknownWard";
+                    detailedAddress = specificAddress.trim();
+                }
+                // Tạo chuỗi địa chỉ hoàn chỉnh
+                String nameAndPhoneNumber = fullName + ", " + phoneNumber.trim() + ", " + mail;
+                String formattedShipAddress = String.join(", ", shipProvince, shipDistrict, shipWard, detailedAddress).replaceAll(", $", "");
+
+                // Đếm số dấu phẩy để kiểm tra
+                long commaCount = formattedShipAddress.chars().filter(ch -> ch == ',').count();
+
+                if (commaCount > 3) {
+                    responseListAddress.add(new AddressShipReponse(
+                            address.getId(),
+                            nameAndPhoneNumber,
+                            formattedShipAddress,
+                            detailedAddress,
+                            specificAddress
+                    ));
+                    System.out.println("Formatted Ship Address: " + formattedShipAddress);
+                }
+            }
+        }
+        return responseListAddress;
+    }
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @GetMapping("/show-status-bill")
@@ -608,5 +659,6 @@ public class ClientRestController extends BaseEmail {
         List<Object[]> sublist = list.subList(start, end);
         return new PageImpl<>(sublist, pageable, list.size());
     }
+
 
 }

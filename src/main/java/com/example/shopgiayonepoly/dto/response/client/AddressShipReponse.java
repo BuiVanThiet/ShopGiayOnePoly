@@ -11,7 +11,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class AddressShipReponse {
     private Integer id; // Địa chỉ gốc
+    private String nameAndPhoneNumber;
     private String originalAddress; // Địa chỉ gốc
     private String shortAddress;    // Địa chỉ rút gọn
-//    private String fullAddress;
+    private String fullAddress;
 }

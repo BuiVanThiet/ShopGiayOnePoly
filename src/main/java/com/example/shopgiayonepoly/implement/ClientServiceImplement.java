@@ -85,5 +85,10 @@ public class ClientServiceImplement implements ClientService {
         return clientRepository.getListAddressShipByIDCustomer(idBill);
     }
 
+    @Override
+    public List<AddressShip> getListAddressShipByIDCustomer() {
+        return clientRepository.getListAddressShipByIDCustomer();
+    }
+
 
 }
