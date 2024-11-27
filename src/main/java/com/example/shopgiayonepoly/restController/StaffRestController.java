@@ -24,16 +24,15 @@ public class StaffRestController {
     String keyWord = "";
     @GetMapping("/all-staff-status-dislike-0/{page}")
     public List<StaffResponse> getAllListStaffDislike0(@PathVariable("page") String page, HttpSession session) {
-        Staff staff = (Staff) session.getAttribute("staffLogin");
-        if(staff == null || staff.getId() == null) {
-            return null;
-        }
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if (staffLogin == null) {
             return null;
         }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
         Pageable pageable = PageRequest.of(Integer.parseInt(page)-1, 5);
-        Page<StaffResponse> pageStaff = staffService.searchStaffByKeywordPage(keyWord,pageable, staff.getId());
+        Page<StaffResponse> pageStaff = staffService.searchStaffByKeywordPage(keyWord,pageable, staffLogin.getId());
         return pageStaff.getContent();
     }
 

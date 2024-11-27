@@ -30,10 +30,6 @@ function loadTableStaff(page) {
                            class="btn btn-sm btn-outline-info btn-outline-info-staff me-1">
                             <i class="fas fa-info-circle" title="Chi tiết"></i>
                         </a>
-                        <a href="/staff/delete/${staff.id}" class="btn btn-sm btn-outline-danger btn-outline-danger-staff"
-                           onclick="return confirm('Bạn có chắc chắn muốn xóa nhân viên?')">
-                            <i class="fas fa-trash" title="Xóa"></i>
-                        </a>
                     </td>
                 </tr>
                 `);

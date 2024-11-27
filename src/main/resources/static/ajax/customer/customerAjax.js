@@ -26,11 +26,6 @@ function loadTableCustomer(page) {
                            class="btn btn-sm btn-outline-info btn-outline-info-customer me-1">
                             <i class="fas fa-info-circle" title="Chi tiết"></i>
                         </a>
-                        <a href="/customer/delete/${customer.id}"
-                           class="btn btn-sm btn-outline-danger btn-outline-danger-customer"
-                           onclick="return confirm('Bạn có chắc chắn muốn xóa khách hàng?')">
-                            <i class="fas fa-trash" title="Xóa"></i>
-                        </a>
                     </td>
                 </tr>
                 `);

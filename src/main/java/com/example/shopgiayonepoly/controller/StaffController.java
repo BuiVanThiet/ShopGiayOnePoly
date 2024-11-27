@@ -4,9 +4,10 @@ import com.example.shopgiayonepoly.baseMethod.BaseEmail;
 import com.example.shopgiayonepoly.dto.request.StaffRequest;
 import com.example.shopgiayonepoly.dto.response.StaffResponse;
 import com.example.shopgiayonepoly.entites.Customer;
+import com.example.shopgiayonepoly.entites.Role;
 import com.example.shopgiayonepoly.entites.Staff;
-import com.example.shopgiayonepoly.repositores.CustomerRepository;
 import com.example.shopgiayonepoly.repositores.StaffRepository;
+import com.example.shopgiayonepoly.repositores.RoleReponsitory;
 import com.example.shopgiayonepoly.service.CustomerService;
 import com.example.shopgiayonepoly.service.StaffService;
 import jakarta.servlet.http.HttpSession;
@@ -15,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -38,6 +38,9 @@ public class StaffController extends BaseEmail {
 
     @Autowired
     CustomerService customerService;
+
+    @Autowired
+    RoleReponsitory roleReponsitory;
 
     String mess = "";
     String check = "";
@@ -123,6 +126,15 @@ public class StaffController extends BaseEmail {
         } else if (!staffRequest.getNumberPhone().matches("^(0[3|5|7|8|9])+([0-9]{8})$")) {
             result.rejectValue("numberPhone", "error.staff", "Số điện thoại không hợp lệ!");
         }
+        //Kiem tra role
+        if (staffRequest.getRole() == null) {
+            result.rejectValue("role", "error.staff", "Chức vụ không được để trống!");
+        }
+
+        if (staffRequest.getRole().getId() == null) {
+            result.rejectValue("role", "error.staff", "Chức vụ không được để trống!");
+        }
+
 //        // Kiểm tra email
 //        if (staffRequest.getEmail() == null || staffRequest.getEmail().isEmpty()) {
 //            result.rejectValue("email", "error.customer", "Email không được để trống!");
@@ -171,7 +183,7 @@ public class StaffController extends BaseEmail {
 //        staff.setImage("fileName");
         System.out.println(staff.toString());
         System.out.println("Hello");
-        mess = "Them nhan vien thanh cong";
+        mess = "Thêm nhân viên thành công";
         check = "1";
 //        staffService.uploadFile(staffRequest.getNameImage(),staffSave.getId());
         return "redirect:/staff/list";
@@ -282,7 +294,7 @@ public class StaffController extends BaseEmail {
             // Đặt ảnh mặc định nếu không có ảnh được tải lên
             staff.setImage("Ảnh nhân viên");
         }
-        mess = "Sua nhan vien thanh cong";
+        mess = "Sửa nhân viên thành công";
         check = "1";
         return "redirect:/staff/list";
     }
@@ -339,6 +351,14 @@ public class StaffController extends BaseEmail {
         Staff staff = this.staffService.getStaffByID(Integer.parseInt(id));
         setUpToken(Integer.parseInt(id),"staff",staff.getEmail());
         return "redirect:/staff/list";
+    }
+
+    @ModelAttribute("listRole")
+    public List<Role> getListRole(){
+        for (Role role: roleReponsitory.getListRole()) {
+            System.out.println("RoleL " + role.getCodeRole());
+        }
+        return roleReponsitory.getListRole();
     }
 
 }
