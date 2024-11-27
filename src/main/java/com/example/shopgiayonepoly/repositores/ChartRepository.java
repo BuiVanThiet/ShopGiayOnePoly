@@ -83,10 +83,10 @@ public interface ChartRepository extends JpaRepository<Bill, Integer> {
     @Query(value = """
         SELECT
             ISNULL((
-                COALESCE(SUM(CASE WHEN b.status IN (5, 8, 9) THEN bd.quantity ELSE 0 END), 0)
-                + COALESCE(SUM(DISTINCT ebd2.quantity_exchange), 0)
-                - COALESCE(SUM(CASE WHEN rbeb.status = 1 THEN rbd2.quantity_return ELSE 0 END), 0)
-            ), 0) AS SoLuong
+                    COALESCE(SUM(CASE WHEN b.status IN (5, 8, 9) THEN bd.quantity ELSE 0 END), 0)  -- Tổng số lượng từ bảng hóa đơn chi tiết
+                    + COALESCE(SUM(CASE WHEN ebd2.quantity_exchange IS NOT NULL THEN ebd2.quantity_exchange ELSE 0 END), 0)  -- Tổng số lượng đổi từ bảng chi tiết hóa đơn đổi
+                    - COALESCE(SUM(CASE WHEN rbeb.status = 1 THEN rbd2.quantity_return ELSE 0 END), 0)  -- Tổng số lượng trả lại từ bảng chi tiết hóa đơn trả lại
+                ), 0) AS SoLuong
         FROM dbo.Bill b
         LEFT JOIN dbo.bill_detail bd ON bd.id_bill = b.id
         LEFT JOIN dbo.return_bill_exchange_bill rbeb ON rbeb.id_bill = b.id
@@ -170,157 +170,82 @@ public interface ChartRepository extends JpaRepository<Bill, Integer> {
     List<Date> findLastBillDates();
     // Lấy ngày cuối tháng có hóa đơn
     @Query(value = """
-        WITH MonthRange AS (
-            -- Tạo danh sách các tháng trong 6 tháng gần đây
-            SELECT CAST(DATEADD(MONTH, -5, GETDATE()) AS DATE) AS MonthStart
-            UNION ALL
-            SELECT DATEADD(MONTH, 1, MonthStart)
-            FROM MonthRange
-            WHERE MonthStart < CAST(GETDATE() AS DATE)
-        )
         SELECT
-            FORMAT(MAX(dr.MonthStart), 'dd-MM-yyyy') AS Thang,
-            ISNULL(
-                SUM(CASE
-                        WHEN b.status = 5 AND MONTH(b.update_date) = MONTH(dr.MonthStart) AND YEAR(b.update_date) = YEAR(dr.MonthStart) THEN 1
-                        ELSE 0
-                    END) +
-                SUM(CASE
-                        WHEN b.status = 8 AND MONTH(b.create_date) = MONTH(dr.MonthStart) AND YEAR(b.create_date) = YEAR(dr.MonthStart) THEN 1
-                        ELSE 0
-                    END) +
-                SUM(CASE
-                        WHEN b.status = 8 AND MONTH(b.update_date) = MONTH(dr.MonthStart) AND YEAR(b.update_date) = YEAR(dr.MonthStart) THEN 1
-                        ELSE 0
-                    END) +
-                SUM(CASE
-                        WHEN b.status = 9 AND b.bill_type = 1 AND MONTH(b.create_date) = MONTH(dr.MonthStart) AND YEAR(b.create_date) = YEAR(dr.MonthStart) THEN 1
-                        ELSE 0
-                    END) +
-                SUM(CASE
-                        WHEN b.status = 9 AND b.bill_type = 1 AND MONTH(b.update_date) = MONTH(dr.MonthStart) AND YEAR(b.update_date) = YEAR(dr.MonthStart) THEN 1
-                        ELSE 0
-                    END) +
-                SUM(CASE
-                        WHEN b.status = 9 AND b.bill_type = 2 AND MONTH(b.update_date) = MONTH(dr.MonthStart) AND YEAR(b.update_date) = YEAR(dr.MonthStart) THEN 1
-                        ELSE 0
-                    END), 0
-            ) AS HoaDonThang,
+        	 FORMAT(MAX(b.update_date), 'dd-MM-yyyy') AS Thang,
+            -- Tính toán số lượng hóa đơn
+            SUM(CASE WHEN b.status = 5 AND MONTH(b.update_date) = MONTH(GETDATE()) AND YEAR(b.update_date) = YEAR(GETDATE()) THEN 1 ELSE 0 END) +
+            SUM(CASE WHEN b.status = 8 AND MONTH(b.create_date) = MONTH(GETDATE()) AND YEAR(b.create_date) = YEAR(GETDATE()) THEN 1 ELSE 0 END) +
+            SUM(CASE WHEN b.status = 8 AND MONTH(b.update_date) = MONTH(GETDATE()) AND YEAR(b.update_date) = YEAR(GETDATE()) THEN 1 ELSE 0 END) + 
+            SUM(CASE WHEN b.status = 9 AND b.bill_type = 1 AND MONTH(b.create_date) = MONTH(GETDATE()) AND YEAR(b.create_date) = YEAR(GETDATE()) THEN 1 ELSE 0 END) +
+            SUM(CASE WHEN b.status = 9 AND b.bill_type = 1 AND MONTH(b.update_date) = MONTH(GETDATE()) AND YEAR(b.update_date) = YEAR(GETDATE()) THEN 1 ELSE 0 END) + 
+            SUM(CASE WHEN b.status = 9 AND b.bill_type = 2 AND MONTH(b.update_date) = MONTH(GETDATE()) AND YEAR(b.update_date) = YEAR(GETDATE()) THEN 1 ELSE 0 END) AS TotalHoaDon,
+        
+            -- Tính toán tổng số lượng từ các bảng chi tiết và hóa đơn trả lại
             ISNULL((
-                COALESCE(SUM(CASE WHEN b.status IN (5, 8, 9) THEN bd.quantity ELSE 0 END), 0)
-                + COALESCE(SUM(ebd2.quantity_exchange), 0)
-                - COALESCE(SUM(CASE WHEN rbeb.status = 1 THEN rbd2.quantity_return ELSE 0 END), 0)
+                COALESCE(SUM(CASE WHEN b.status IN (5, 8, 9) THEN bd.quantity ELSE 0 END), 0)  -- Tổng số lượng từ bảng hóa đơn chi tiết
+                + COALESCE(SUM(CASE WHEN ebd2.quantity_exchange IS NOT NULL THEN ebd2.quantity_exchange ELSE 0 END), 0)  -- Tổng số lượng đổi từ bảng chi tiết hóa đơn đổi
+                - COALESCE(SUM(CASE WHEN rbeb.status = 1 THEN rbd2.quantity_return ELSE 0 END), 0)  -- Tổng số lượng trả lại từ bảng chi tiết hóa đơn trả lại
             ), 0) AS SoLuong
         FROM
-            MonthRange dr
-        LEFT JOIN dbo.Bill b
-            ON (MONTH(b.update_date) = MONTH(dr.MonthStart) AND YEAR(b.update_date) = YEAR(dr.MonthStart))
-            OR (MONTH(b.create_date) = MONTH(dr.MonthStart) AND YEAR(b.create_date) = YEAR(dr.MonthStart))
-        LEFT JOIN dbo.bill_detail bd
-            ON bd.id_bill = b.id
-        LEFT JOIN dbo.return_bill_exchange_bill rbeb
-            ON rbeb.id_bill = b.id
-        LEFT JOIN dbo.exchange_bill_detail ebd2
-            ON ebd2.id_exchang_bill = rbeb.id
-        LEFT JOIN dbo.return_bill_detail rbd2
-            ON rbd2.id_return_bill = rbeb.id
+            dbo.Bill b
+        LEFT JOIN
+            dbo.bill_detail bd ON bd.id_bill = b.id
+        LEFT JOIN
+            dbo.return_bill_exchange_bill rbeb ON rbeb.id_bill = b.id
+        LEFT JOIN
+            dbo.exchange_bill_detail ebd2 ON ebd2.id_exchang_bill = rbeb.id
+        LEFT JOIN
+            dbo.return_bill_detail rbd2 ON rbd2.id_return_bill = rbeb.id
+        WHERE
+            b.status IN (5, 8, 9)  -- Điều kiện trạng thái hóa đơn
+           AND (
+                CAST(b.update_date AS DATE) >= DATEADD(MONTH, -6, GETDATE())
+                OR CAST(b.create_date AS DATE) >= DATEADD(MONTH, -6, GETDATE())
+            )
         GROUP BY
-            dr.MonthStart
-        HAVING
-            ISNULL(
-                SUM(CASE
-                        WHEN b.status = 5 AND MONTH(b.update_date) = MONTH(dr.MonthStart) AND YEAR(b.update_date) = YEAR(dr.MonthStart) THEN 1
-                        ELSE 0
-                    END) +
-                SUM(CASE
-                        WHEN b.status = 8 AND MONTH(b.create_date) = MONTH(dr.MonthStart) AND YEAR(b.create_date) = YEAR(dr.MonthStart) THEN 1
-                        ELSE 0
-                    END) +
-                SUM(CASE
-                        WHEN b.status = 8 AND MONTH(b.update_date) = MONTH(dr.MonthStart) AND YEAR(b.update_date) = YEAR(dr.MonthStart) THEN 1
-                        ELSE 0
-                    END) +
-                SUM(CASE
-                        WHEN b.status = 9 AND b.bill_type = 1 AND MONTH(b.create_date) = MONTH(dr.MonthStart) AND YEAR(b.create_date) = YEAR(dr.MonthStart) THEN 1
-                        ELSE 0
-                    END) +
-                SUM(CASE
-                        WHEN b.status = 9 AND b.bill_type = 1 AND MONTH(b.update_date) = MONTH(dr.MonthStart) AND YEAR(b.update_date) = YEAR(dr.MonthStart) THEN 1
-                        ELSE 0
-                    END) +
-                SUM(CASE
-                        WHEN b.status = 9 AND b.bill_type = 2 AND MONTH(b.update_date) = MONTH(dr.MonthStart) AND YEAR(b.update_date) = YEAR(dr.MonthStart) THEN 1
-                        ELSE 0
-                    END), 0
-            ) > 0
+            FORMAT(b.update_date, 'MM-yyyy') -- Nhóm theo tháng và năm
         ORDER BY
-            dr.MonthStart ASC;
+            FORMAT(b.update_date, 'MM-yyyy') ASC;
     """,nativeQuery = true)
     List<Object[]> findMonthlyStatistics();
 
     @Query(value = """
             SELECT
-                -- Lấy ngày hôm nay dưới định dạng 'dd-MM-yyyy'
-                FORMAT(b.update_date, 'dd-MM-yyyy') AS Ngay,
+                FORMAT(MAX(b.update_date), 'dd-MM-yyyy') AS Thang,
+                -- Tính toán số lượng hóa đơn
+                SUM(CASE WHEN b.status = 5 AND CAST(b.update_date AS DATE) = CAST(GETDATE() AS DATE) THEN 1 ELSE 0 END) +
+                SUM(CASE WHEN b.status = 8 AND CAST(b.create_date AS DATE) = CAST(GETDATE() AS DATE) THEN 1 ELSE 0 END) +
+                SUM(CASE WHEN b.status = 8 AND CAST(b.update_date AS DATE) = CAST(GETDATE() AS DATE) THEN 1 ELSE 0 END) + 
+                SUM(CASE WHEN b.status = 9 AND b.bill_type = 1 AND CAST(b.create_date AS DATE) = CAST(GETDATE() AS DATE) THEN 1 ELSE 0 END) +
+                SUM(CASE WHEN b.status = 9 AND b.bill_type = 1 AND CAST(b.update_date AS DATE) = CAST(GETDATE() AS DATE) THEN 1 ELSE 0 END) + 
+                SUM(CASE WHEN b.status = 9 AND b.bill_type = 2 AND CAST(b.update_date AS DATE) = CAST(GETDATE() AS DATE) THEN 1 ELSE 0 END) AS TotalHoaDon,
             
-                -- Tổng số lượng hóa đơn với các điều kiện status và ngày hôm nay
-                SUM(CASE
-                        WHEN b.status = 5 AND CAST(b.update_date AS DATE) = CAST(GETDATE() AS DATE) THEN 1
-                        ELSE 0
-                    END) +
-                SUM(CASE
-                        WHEN b.status = 8 AND CAST(b.create_date AS DATE) = CAST(GETDATE() AS DATE) THEN 1
-                        ELSE 0
-                    END) +
-                SUM(CASE
-                        WHEN b.status = 8 AND CAST(b.update_date AS DATE) = CAST(GETDATE() AS DATE) THEN 1
-                        ELSE 0
-                    END) +
-                SUM(CASE
-                        WHEN b.status = 9 AND b.bill_type = 1 AND CAST(b.create_date AS DATE) = CAST(GETDATE() AS DATE) THEN 1
-                        ELSE 0
-                    END) +
-                SUM(CASE
-                        WHEN b.status = 9 AND b.bill_type = 1 AND CAST(b.update_date AS DATE) = CAST(GETDATE() AS DATE) THEN 1
-                        ELSE 0
-                    END) +
-                SUM(CASE
-                        WHEN b.status = 9 AND b.bill_type = 2 AND CAST(b.update_date AS DATE) = CAST(GETDATE() AS DATE) THEN 1
-                        ELSE 0
-                    END) AS HoaDonHomNay,
-            
-                -- Tổng số lượng với các tính toán từ bảng `bill_detail`, `exchange_bill_detail`, và `return_bill_detail`
-                (
-                    COALESCE(SUM(CASE
-                                    WHEN b.status IN (5, 8, 9) THEN bd.quantity
-                                    ELSE 0
-                                END), 0)
-                    + COALESCE(SUM(ebd2.quantity_exchange), 0)
-                    - COALESCE(SUM(CASE
-                                    WHEN rbeb.status = 1 THEN rbd2.quantity_return
-                                    ELSE 0
-                                END), 0)
-                ) AS soLuong
+                -- Tính toán tổng số lượng từ các bảng chi tiết và hóa đơn trả lại
+                ISNULL((
+                    COALESCE(SUM(CASE WHEN b.status IN (5, 8, 9) THEN bd.quantity ELSE 0 END), 0)  -- Tổng số lượng từ bảng hóa đơn chi tiết
+                    + COALESCE(SUM(CASE WHEN ebd2.quantity_exchange IS NOT NULL THEN ebd2.quantity_exchange ELSE 0 END), 0)  -- Tổng số lượng đổi từ bảng chi tiết hóa đơn đổi
+                    - COALESCE(SUM(CASE WHEN rbeb.status = 1 THEN rbd2.quantity_return ELSE 0 END), 0)  -- Tổng số lượng trả lại từ bảng chi tiết hóa đơn trả lại
+                ), 0) AS SoLuong
             FROM
                 dbo.Bill b
-            LEFT JOIN dbo.bill_detail bd
-                ON bd.id_bill = b.id
-            LEFT JOIN dbo.Bill b2
-                ON b2.id = bd.id_bill
-            LEFT JOIN dbo.bill_detail bd2
-                ON bd2.id_bill = b2.id
-            LEFT JOIN dbo.return_bill_exchange_bill rbeb
-                ON rbeb.id_bill = b.id
-            LEFT JOIN dbo.exchange_bill_detail ebd2
-                ON ebd2.id_exchang_bill = rbeb.id
-            LEFT JOIN dbo.return_bill_detail rbd2
-                ON rbd2.id_return_bill = rbeb.id
+            LEFT JOIN
+                dbo.bill_detail bd ON bd.id_bill = b.id
+            LEFT JOIN
+                dbo.return_bill_exchange_bill rbeb ON rbeb.id_bill = b.id
+            LEFT JOIN
+                dbo.exchange_bill_detail ebd2 ON ebd2.id_exchang_bill = rbeb.id
+            LEFT JOIN
+                dbo.return_bill_detail rbd2 ON rbd2.id_return_bill = rbeb.id
             WHERE
-                b.status IN (5, 8, 9)
-                AND CAST(b.update_date AS DATE) = CAST(GETDATE() AS DATE)  -- Lọc theo ngày hôm nay
+                b.status IN (5, 8, 9)  -- Điều kiện trạng thái hóa đơn
+                AND (
+                    CAST(b.update_date AS DATE) = CAST(GETDATE() AS DATE)
+                    OR CAST(b.create_date AS DATE) = CAST(GETDATE() AS DATE)
+                )
             GROUP BY
-                FORMAT(b.update_date, 'dd-MM-yyyy');  -- Nhóm theo ngày hôm nay
-            
+                FORMAT(b.update_date, 'MM-yyyy') -- Nhóm theo tháng và năm
+            ORDER BY
+                FORMAT(b.update_date, 'MM-yyyy') ASC;
             """, nativeQuery = true)
     List<Object[]> findTodayStatistics();
 
@@ -335,37 +260,19 @@ public interface ChartRepository extends JpaRepository<Bill, Integer> {
         )
         SELECT
             FORMAT(dr.DateValue, 'dd-MM-yyyy') AS Ngay,
-            ISNULL(
-                SUM(CASE
-                          WHEN b.status = 5 AND CAST(b.update_date AS DATE) = dr.DateValue THEN 1
-                          ELSE 0
-                      END) +
-                  SUM(CASE
-                          WHEN b.status = 8 AND CAST(b.create_date AS DATE) = dr.DateValue THEN 1
-                          ELSE 0
-                      END) +
-                  SUM(CASE
-                          WHEN b.status = 8 AND CAST(b.update_date AS DATE) = dr.DateValue THEN 1
-                          ELSE 0
-                      END) +
-                  SUM(CASE
-                          WHEN b.status = 9 AND b.bill_type = 1 AND CAST(b.create_date AS DATE) = dr.DateValue THEN 1
-                          ELSE 0
-                      END) +
-                  SUM(CASE
-                          WHEN b.status = 9 AND b.bill_type = 1 AND CAST(b.update_date AS DATE) = dr.DateValue THEN 1
-                          ELSE 0
-                      END) +
-                  SUM(CASE
-                          WHEN b.status = 9 AND b.bill_type = 2 AND CAST(b.update_date AS DATE) = dr.DateValue THEN 1
-                          ELSE 0
-                      END), 0
-            ) AS HoaDonThang,
-            ISNULL((
-                COALESCE(SUM(CASE WHEN b.status IN (5, 8, 9) THEN bd.quantity ELSE 0 END), 0)
-                + COALESCE(SUM(ebd2.quantity_exchange), 0)
-                - COALESCE(SUM(CASE WHEN rbeb.status = 1 THEN rbd2.quantity_return ELSE 0 END), 0)
-            ), 0) AS SoLuong
+                SUM(CASE WHEN b.status = 5 AND CAST(b.update_date AS DATE) = dr.DateValue THEN 1 ELSE 0 END) +
+                SUM(CASE WHEN b.status = 8 AND CAST(b.create_date AS DATE) = dr.DateValue THEN 1 ELSE 0 END) +
+                SUM(CASE WHEN b.status = 8 AND CAST(b.update_date AS DATE) = dr.DateValue THEN 1 ELSE 0 END) + 
+                SUM(CASE WHEN b.status = 9 AND b.bill_type = 1 AND CAST(b.create_date AS DATE) = dr.DateValue THEN 1 ELSE 0 END) +
+                SUM(CASE WHEN b.status = 9 AND b.bill_type = 1 AND CAST(b.update_date AS DATE) = dr.DateValue THEN 1 ELSE 0 END) + 
+                SUM(CASE WHEN b.status = 9 AND b.bill_type = 2 AND CAST(b.update_date AS DATE) = dr.DateValue THEN 1 ELSE 0 END) AS TotalHoaDon,
+            
+                -- Tính toán tổng số lượng từ các bảng chi tiết và hóa đơn trả lại
+                ISNULL((
+                    COALESCE(SUM(CASE WHEN b.status IN (5, 8, 9) THEN bd.quantity ELSE 0 END), 0)  -- Tổng số lượng từ bảng hóa đơn chi tiết
+                    + COALESCE(SUM(CASE WHEN ebd2.quantity_exchange IS NOT NULL THEN ebd2.quantity_exchange ELSE 0 END), 0)  -- Tổng số lượng đổi từ bảng chi tiết hóa đơn đổi
+                    - COALESCE(SUM(CASE WHEN rbeb.status = 1 THEN rbd2.quantity_return ELSE 0 END), 0)  -- Tổng số lượng trả lại từ bảng chi tiết hóa đơn trả lại
+                ), 0) AS SoLuong
         FROM
             DateRange dr
         LEFT JOIN dbo.Bill b
@@ -397,37 +304,19 @@ public interface ChartRepository extends JpaRepository<Bill, Integer> {
         )
         SELECT
             FORMAT(MAX(dr.YearStart), 'dd-MM-yyyy') AS Nam,
-            ISNULL(
-                SUM(CASE
-                        WHEN b.status = 5 AND YEAR(b.update_date) = YEAR(dr.YearStart) THEN 1
-                        ELSE 0
-                    END) +
-                SUM(CASE
-                        WHEN b.status = 8 AND YEAR(b.create_date) = YEAR(dr.YearStart) THEN 1
-                        ELSE 0
-                    END) +
-                SUM(CASE
-                        WHEN b.status = 8 AND YEAR(b.update_date) = YEAR(dr.YearStart) THEN 1
-                        ELSE 0
-                    END) +
-                SUM(CASE
-                        WHEN b.status = 9 AND b.bill_type = 1 AND YEAR(b.create_date) = YEAR(dr.YearStart) THEN 1
-                        ELSE 0
-                    END) +
-                SUM(CASE
-                        WHEN b.status = 9 AND b.bill_type = 1 AND YEAR(b.update_date) = YEAR(dr.YearStart) THEN 1
-                        ELSE 0
-                    END) +
-                SUM(CASE
-                        WHEN b.status = 9 AND b.bill_type = 2 AND YEAR(b.update_date) = YEAR(dr.YearStart) THEN 1
-                        ELSE 0
-                    END), 0
-            ) AS HoaDonNam,
-            ISNULL((
-                COALESCE(SUM(CASE WHEN b.status IN (5, 8, 9) THEN bd.quantity ELSE 0 END), 0)
-                + COALESCE(SUM(ebd2.quantity_exchange), 0)
-                - COALESCE(SUM(CASE WHEN rbeb.status = 1 THEN rbd2.quantity_return ELSE 0 END), 0)
-            ), 0) AS SoLuong
+            SUM(CASE WHEN b.status = 5 AND YEAR(b.update_date) = YEAR(dr.YearStart) THEN 1 ELSE 0 END) +
+                SUM(CASE WHEN b.status = 8 AND YEAR(b.update_date) = YEAR(dr.YearStart) THEN 1 ELSE 0 END) +
+                SUM(CASE WHEN b.status = 8 AND YEAR(b.update_date) = YEAR(dr.YearStart) THEN 1 ELSE 0 END) + 
+                SUM(CASE WHEN b.status = 9 AND b.bill_type = 1 AND YEAR(b.update_date) = YEAR(dr.YearStart) THEN 1 ELSE 0 END) +
+                SUM(CASE WHEN b.status = 9 AND b.bill_type = 1 AND YEAR(b.update_date) = YEAR(dr.YearStart) THEN 1 ELSE 0 END) + 
+                SUM(CASE WHEN b.status = 9 AND b.bill_type = 2 AND YEAR(b.update_date) = YEAR(dr.YearStart) THEN 1 ELSE 0 END) AS TotalHoaDon,
+            
+                -- Tính toán tổng số lượng từ các bảng chi tiết và hóa đơn trả lại
+                ISNULL((
+                    COALESCE(SUM(CASE WHEN b.status IN (5, 8, 9) THEN bd.quantity ELSE 0 END), 0)  -- Tổng số lượng từ bảng hóa đơn chi tiết
+                    + COALESCE(SUM(CASE WHEN ebd2.quantity_exchange IS NOT NULL THEN ebd2.quantity_exchange ELSE 0 END), 0)  -- Tổng số lượng đổi từ bảng chi tiết hóa đơn đổi
+                    - COALESCE(SUM(CASE WHEN rbeb.status = 1 THEN rbd2.quantity_return ELSE 0 END), 0)  -- Tổng số lượng trả lại từ bảng chi tiết hóa đơn trả lại
+                ), 0) AS SoLuong
         FROM
             YearRange dr
         LEFT JOIN dbo.Bill b
@@ -477,59 +366,6 @@ public interface ChartRepository extends JpaRepository<Bill, Integer> {
 
     @Query(value = """
         SELECT TOP 10
-            pd.name_product AS ProductName,
-            c.name_color AS ColorName,
-            s.name_size AS SizeName,
-            CAST(pdt.price AS DECIMAL(10,2)) AS OriginalPrice, -- Giá gốc
-            CAST(
-                CASE 
-                    WHEN sp.discount_type = 1 AND pdt.id_sale_product IS NOT NULL THEN pdt.price * (1 - sp.discount_value / 100.0) -- Giảm theo phần trăm
-                    WHEN sp.discount_type = 2 AND pdt.id_sale_product IS NOT NULL THEN (pdt.price - sp.discount_value)             -- Giảm trực tiếp
-                    ELSE pdt.price                                                          -- Không có giảm giá
-                END 
-            AS DECIMAL(10,2)) AS DiscountedPrice,
-            SUM(bd.quantity) AS TotalQuantity, -- Tổng quantity khi gộp các sản phẩm giống nhau
-            STUFF(
-                (SELECT DISTINCT ', ' + i.name_image
-                 FROM dbo.image i
-                 WHERE i.id_product = pd.id
-                 FOR XML PATH('')), 1, 2, '') AS ImageNames -- Xóa dấu phẩy thừa ở đầu
-        FROM 
-            dbo.bill b
-        JOIN 
-            dbo.bill_detail bd ON b.id = bd.id_bill
-        JOIN 
-            dbo.product_detail pdt ON bd.id_product_detail = pdt.id
-        JOIN 
-            dbo.product pd ON pdt.id_product = pd.id
-        JOIN 
-            dbo.color c ON pdt.id_color = c.id
-        JOIN 
-            dbo.size s ON pdt.id_size = s.id
-        LEFT JOIN 
-            dbo.sale_product sp ON pdt.id_sale_product = sp.id
-        WHERE 
-            b.status = 5
-        GROUP BY 
-            pd.name_product, 
-            c.name_color, 
-            s.name_size, 
-            pdt.price,
-            CAST(
-                CASE 
-                    WHEN sp.discount_type = 1 AND pdt.id_sale_product IS NOT NULL THEN pdt.price * (1 - sp.discount_value / 100.0)
-                    WHEN sp.discount_type = 2 AND pdt.id_sale_product IS NOT NULL THEN (pdt.price - sp.discount_value)
-                    ELSE pdt.price 
-                END 
-            AS DECIMAL(10,2)),
-            pd.id
-        ORDER BY 
-            TotalQuantity DESC
-        """, nativeQuery = true)
-    List<Object[]> getProductSales();
-
-    @Query(value = """ 
-       SELECT
            p.name_product AS ProductName,
            c.name_color AS ColorName,
            s.name_size AS SizeName,
@@ -556,24 +392,27 @@ public interface ChartRepository extends JpaRepository<Bill, Integer> {
                        ELSE pd.price
                    END
            END AS DiscountedPrice,
-       	ISNULL(
+           -- Tính tổng số lượng (sau khi trả lại và đổi trả)
+           ISNULL(
                (SELECT SUM(bd.quantity)
                 FROM dbo.bill_detail bd
                 JOIN dbo.bill b ON bd.id_bill = b.id
                 WHERE bd.id_product_detail = pd.id AND b.status IN (5, 8, 9)
                ), 0
-           )
-           + ISNULL(
+           ) +
+           ISNULL(
                (SELECT SUM(ebd.quantity_exchange)
                 FROM dbo.exchange_bill_detail ebd
                 LEFT JOIN dbo.return_bill_exchange_bill rbe_exchange ON ebd.id_exchang_bill = rbe_exchange.id
-                WHERE ebd.id_product_detail = pd.id AND rbe_exchange.status = 1), 0
-           )
-           - ISNULL(
+                WHERE ebd.id_product_detail = pd.id AND rbe_exchange.status = 1
+               ), 0
+           ) -
+           ISNULL(
                (SELECT SUM(rb.quantity_return)
                 FROM dbo.return_bill_detail rb
                 LEFT JOIN dbo.return_bill_exchange_bill rbe_return ON rb.id_return_bill = rbe_return.id
-                WHERE rb.id_product_detail = pd.id AND rbe_return.status = 1), 0
+                WHERE rb.id_product_detail = pd.id AND rbe_return.status = 1
+               ), 0
            ) AS FinalQuantity,
            -- Danh sách tên ảnh
            ISNULL(
@@ -582,7 +421,8 @@ public interface ChartRepository extends JpaRepository<Bill, Integer> {
                     FROM dbo.image i
                     WHERE i.id_product = p.id
                     FOR XML PATH('')), 1, 2, ''
-               ), 'Không có ảnh') AS ImageNames
+               ), 'Không có ảnh'
+           ) AS ImageNames
        FROM
            dbo.product_detail pd
        LEFT JOIN
@@ -623,6 +463,208 @@ public interface ChartRepository extends JpaRepository<Bill, Integer> {
            pd.id, p.name_product, c.name_color, s.name_size, pd.price, sp.discount_type, sp.discount_value, pd.id_sale_product, p.id
        ORDER BY
            FinalQuantity DESC;
+        """, nativeQuery = true)
+    List<Object[]> getProductSales();
+
+    @Query(value = """
+        SELECT
+            p.name_product AS ProductName,
+            c.name_color AS ColorName,
+            s.name_size AS SizeName,
+            CASE
+                WHEN pd.price < 0 THEN 0
+                ELSE pd.price
+            END AS originalPrice,
+            CASE
+                WHEN sp.discount_type = 1 AND pd.id_sale_product IS NOT NULL THEN
+                    CASE
+                        WHEN pd.price * (1 - sp.discount_value / 100.0) < 0 THEN 0
+                        ELSE pd.price * (1 - sp.discount_value / 100.0)
+                    END
+                WHEN sp.discount_type = 2 AND pd.id_sale_product IS NOT NULL THEN
+                    CASE
+                        WHEN (pd.price - sp.discount_value) < 0 THEN 0
+                        ELSE (pd.price - sp.discount_value)
+                    END
+                ELSE
+                    CASE
+                        WHEN pd.price < 0 THEN 0
+                        ELSE pd.price
+                    END
+            END AS promotionalPrice,
+            ISNULL(
+                (SELECT SUM(bd.quantity)
+                 FROM dbo.bill_detail bd
+                 JOIN dbo.bill b ON bd.id_bill = b.id
+                 WHERE bd.id_product_detail = pd.id AND b.status IN (5, 8, 9)
+                ), 0
+            ) +
+            ISNULL(
+                (SELECT SUM(ebd.quantity_exchange)
+                 FROM dbo.exchange_bill_detail ebd
+                 LEFT JOIN dbo.return_bill_exchange_bill rbe_exchange ON ebd.id_exchang_bill = rbe_exchange.id
+                 WHERE ebd.id_product_detail = pd.id AND rbe_exchange.status = 1
+                ), 0
+            ) -
+            ISNULL(
+                (SELECT SUM(rb.quantity_return)
+                 FROM dbo.return_bill_detail rb
+                 LEFT JOIN dbo.return_bill_exchange_bill rbe_return ON rb.id_return_bill = rbe_return.id
+                 WHERE rb.id_product_detail = pd.id AND rbe_return.status = 1
+                ), 0
+            ) AS totalQuantity,
+            ISNULL(
+                STUFF(
+                    (SELECT DISTINCT ', ' + i.name_image
+                     FROM dbo.image i
+                     WHERE i.id_product = p.id
+                     FOR XML PATH('')), 1, 2, ''
+                ), 'Không có ảnh'
+            ) AS imageNames
+        FROM
+            dbo.product_detail pd
+        LEFT JOIN
+            dbo.bill_detail bd ON pd.id = bd.id_product_detail
+        LEFT JOIN
+            dbo.product p ON pd.id_product = p.id
+        LEFT JOIN
+            dbo.color c ON pd.id_color = c.id
+        LEFT JOIN
+            dbo.size s ON pd.id_size = s.id
+        LEFT JOIN
+            dbo.sale_product sp ON pd.id_sale_product = sp.id
+        LEFT JOIN
+            dbo.image i ON p.id = i.id_product
+        WHERE
+            pd.id IS NOT NULL
+            AND (
+                EXISTS (
+                    SELECT 1
+                    FROM dbo.bill_detail bd
+                    JOIN dbo.bill b ON bd.id_bill = b.id
+                    WHERE bd.id_product_detail = pd.id AND b.status IN (5, 8, 9)
+                )
+                OR EXISTS (
+                    SELECT 1
+                    FROM dbo.exchange_bill_detail ebd
+                    LEFT JOIN dbo.return_bill_exchange_bill rbe_exchange ON ebd.id_exchang_bill = rbe_exchange.id
+                    WHERE ebd.id_product_detail = pd.id AND rbe_exchange.status = 1
+                )
+                OR EXISTS (
+                    SELECT 1
+                    FROM dbo.return_bill_detail rb
+                    LEFT JOIN dbo.return_bill_exchange_bill rbe_return ON rb.id_return_bill = rbe_return.id
+                    WHERE rb.id_product_detail = pd.id AND rbe_return.status = 1
+                )
+            )
+        GROUP BY
+            pd.id, p.name_product, c.name_color, s.name_size, pd.price, sp.discount_type, sp.discount_value, pd.id_sale_product, p.id
+        ORDER BY
+            totalQuantity DESC
+        
+        """, nativeQuery = true)
+    Page<ProductInfoDto> getProductSalesPage(Pageable pageable);
+
+    @Query(value = """ 
+        SELECT
+            p.name_product AS ProductName,
+            c.name_color AS ColorName,
+            s.name_size AS SizeName,
+            -- Giá gốc (nếu âm thì bằng 0)
+            CASE
+                WHEN pd.price < 0 THEN 0
+                ELSE pd.price
+            END AS OriginalPrice,
+            -- Giá sau giảm giá (nếu âm thì bằng 0)
+            CASE
+                WHEN sp.discount_type = 1 AND pd.id_sale_product IS NOT NULL THEN
+                    CASE
+                        WHEN pd.price * (1 - sp.discount_value / 100.0) < 0 THEN 0
+                        ELSE pd.price * (1 - sp.discount_value / 100.0)
+                    END
+                WHEN sp.discount_type = 2 AND pd.id_sale_product IS NOT NULL THEN
+                    CASE
+                        WHEN (pd.price - sp.discount_value) < 0 THEN 0
+                        ELSE (pd.price - sp.discount_value)
+                    END
+                ELSE
+                    CASE
+                        WHEN pd.price < 0 THEN 0
+                        ELSE pd.price
+                    END
+            END AS DiscountedPrice,
+            ISNULL(
+                (SELECT SUM(bd.quantity)
+                 FROM dbo.bill_detail bd
+                 JOIN dbo.bill b ON bd.id_bill = b.id
+                 WHERE bd.id_product_detail = pd.id AND b.status IN (5, 8, 9)
+                 AND CAST(b.create_date AS DATE) BETWEEN :startDate AND :endDate), 0
+            )
+            + ISNULL(
+                (SELECT SUM(ebd.quantity_exchange)
+                 FROM dbo.exchange_bill_detail ebd
+                 LEFT JOIN dbo.return_bill_exchange_bill rbe_exchange ON ebd.id_exchang_bill = rbe_exchange.id
+                 WHERE ebd.id_product_detail = pd.id AND rbe_exchange.status = 1
+                 AND CAST(ebd.create_date AS DATE) BETWEEN :startDate AND :endDate), 0
+            )
+            - ISNULL(
+                (SELECT SUM(rb.quantity_return)
+                 FROM dbo.return_bill_detail rb
+                 LEFT JOIN dbo.return_bill_exchange_bill rbe_return ON rb.id_return_bill = rbe_return.id
+                 WHERE rb.id_product_detail = pd.id AND rbe_return.status = 1
+                 AND CAST(rb.create_date AS DATE) BETWEEN :startDate AND :endDate), 0
+            ) AS FinalQuantity,
+            -- Danh sách tên ảnh
+            ISNULL(
+                STUFF(
+                    (SELECT DISTINCT ', ' + i.name_image
+                     FROM dbo.image i
+                     WHERE i.id_product = p.id
+                     FOR XML PATH('')), 1, 2, ''
+                ), 'Không có ảnh') AS ImageNames
+        FROM
+            dbo.product_detail pd
+        LEFT JOIN
+            dbo.bill_detail bd ON pd.id = bd.id_product_detail
+        LEFT JOIN
+            dbo.product p ON pd.id_product = p.id
+        LEFT JOIN
+            dbo.color c ON pd.id_color = c.id
+        LEFT JOIN
+            dbo.size s ON pd.id_size = s.id
+        LEFT JOIN
+            dbo.sale_product sp ON pd.id_sale_product = sp.id
+        LEFT JOIN
+            dbo.image i ON p.id = i.id_product
+        WHERE
+            pd.id IS NOT NULL -- Loại bỏ các giá trị không hợp lệ
+            AND (
+                EXISTS (
+                    SELECT 1
+                    FROM dbo.bill_detail bd
+                    JOIN dbo.bill b ON bd.id_bill = b.id
+                    WHERE bd.id_product_detail = pd.id AND b.status IN (5, 8, 9)
+                    AND CAST(b.create_date AS DATE) BETWEEN :startDate AND :endDate
+                )
+                OR EXISTS (
+                    SELECT 1
+                    FROM dbo.exchange_bill_detail ebd
+                    LEFT JOIN dbo.return_bill_exchange_bill rbe_exchange ON ebd.id_exchang_bill = rbe_exchange.id
+                    WHERE ebd.id_product_detail = pd.id AND rbe_exchange.status = 1
+                    AND CAST(ebd.create_date AS DATE) BETWEEN :startDate AND :endDate
+                )
+                OR EXISTS (
+                    SELECT 1
+                    FROM dbo.return_bill_detail rb
+                    LEFT JOIN dbo.return_bill_exchange_bill rbe_return ON rb.id_return_bill = rbe_return.id
+                    WHERE rb.id_product_detail = pd.id AND rbe_return.status = 1
+                    AND CAST(rb.create_date AS DATE) BETWEEN :startDate AND :endDate
+                )
+            )
+        GROUP BY
+            pd.id, p.name_product, c.name_color, s.name_size, pd.price, sp.discount_type, sp.discount_value, pd.id_sale_product, p.id
+        ORDER BY
+            FinalQuantity DESC;
     """, countQuery = """
         WITH RankedProducts AS (
            SELECT
@@ -679,7 +721,7 @@ public interface ChartRepository extends JpaRepository<Bill, Integer> {
                         WHERE i.id_product = p.id
                         FOR XML PATH('')), 1, 2, ''
                    ), 'Không có ảnh') AS ImageNames,
-               ROW_NUMBER() OVER (ORDER BY\s
+               ROW_NUMBER() OVER (ORDER BY
                    ISNULL(
                        (SELECT SUM(bd.quantity)
                         FROM dbo.bill_detail bd
@@ -741,172 +783,6 @@ public interface ChartRepository extends JpaRepository<Bill, Integer> {
        SELECT COUNT(*)
        FROM RankedProducts
        WHERE RowNum <= 10;
-       
-    """, nativeQuery = true)
-
-    Page<Object[]> getProductSalesPage(Pageable pageable);
-
-    @Query(value = """ 
-        WITH RankedProducts AS (
-            SELECT
-                pd.name_product AS ProductName,
-                c.name_color AS ColorName,
-                s.name_size AS SizeName,
-                -- Thay giá trị âm của OriginalPrice bằng 0
-                CAST(
-                    CASE
-                        WHEN pdt.price < 0 THEN 0
-                        ELSE pdt.price
-                    END AS DECIMAL(10, 2)
-                ) AS OriginalPrice,
-                -- Thay giá trị âm của DiscountedPrice bằng 0
-                CAST(
-                    CASE
-                        WHEN sp.discount_type = 1 AND pdt.id_sale_product IS NOT NULL THEN
-                            CASE WHEN pdt.price * (1 - sp.discount_value / 100.0) < 0
-                                 THEN 0
-                                 ELSE pdt.price * (1 - sp.discount_value / 100.0)
-                            END
-                        WHEN sp.discount_type = 2 AND pdt.id_sale_product IS NOT NULL THEN
-                            CASE WHEN (pdt.price - sp.discount_value) < 0
-                                 THEN 0
-                                 ELSE (pdt.price - sp.discount_value)
-                            END
-                        ELSE
-                            CASE WHEN pdt.price < 0 THEN 0 ELSE pdt.price END
-                    END
-                AS DECIMAL(10, 2)) AS DiscountedPrice,
-                SUM(bd.quantity) AS TotalQuantity,
-                STUFF(
-                    (SELECT DISTINCT ', ' + i.name_image
-                     FROM dbo.image i
-                     WHERE i.id_product = pd.id
-                     FOR XML PATH('')), 1, 2, '') AS ImageNames,
-                ROW_NUMBER() OVER (ORDER BY SUM(bd.quantity) DESC) AS RowNum,
-                pdt.id AS ProductDetailID,
-                pdt.id_sale_product  -- Thêm cột này vào phần SELECT
-            FROM
-                dbo.bill b
-            JOIN
-                dbo.bill_detail bd ON b.id = bd.id_bill
-            JOIN
-                dbo.product_detail pdt ON bd.id_product_detail = pdt.id
-            JOIN
-                dbo.product pd ON pdt.id_product = pd.id
-            JOIN
-                dbo.color c ON pdt.id_color = c.id
-            JOIN
-                dbo.size s ON pdt.id_size = s.id
-            LEFT JOIN
-                dbo.sale_product sp ON pdt.id_sale_product = sp.id
-            WHERE
-                b.status IN (5, 8)
-                AND CAST(b.update_date AS DATE) BETWEEN :startDate AND :endDate
-            GROUP BY
-                pd.name_product,
-                c.name_color,
-                s.name_size,
-                pdt.price,
-                pd.id,
-                pdt.id,
-                sp.discount_type,
-                sp.discount_value,
-                pdt.id_sale_product  -- Thêm vào phần GROUP BY
-        )
-        SELECT
-            rp.ProductName,
-            rp.ColorName,
-            rp.SizeName,
-            rp.OriginalPrice,
-            rp.DiscountedPrice,
-            -- Thay giá trị âm của AdjustedTotalQuantity bằng 0
-            CASE
-                WHEN (rp.TotalQuantity + COALESCE(ebd.quantity_exchange, 0) - COALESCE(rbd.quantity_return, 0)) < 0
-                THEN 0
-                ELSE (rp.TotalQuantity + COALESCE(ebd.quantity_exchange, 0) - COALESCE(rbd.quantity_return, 0))
-            END AS AdjustedTotalQuantity,
-            rp.ImageNames
-        FROM RankedProducts rp
-        LEFT JOIN (
-            SELECT
-                rbd.id_product_detail,
-                SUM(rbd.quantity_return) AS quantity_return
-            FROM
-                dbo.return_bill_detail rbd
-            WHERE CAST(update_date AS DATE) BETWEEN :startDate AND :endDate
-            GROUP BY
-                rbd.id_product_detail
-        ) rbd ON rp.ProductDetailID = rbd.id_product_detail
-        LEFT JOIN (
-            SELECT
-                ebd.id_product_detail,
-                SUM(ebd.quantity_exchange) AS quantity_exchange
-            FROM
-                dbo.exchange_bill_detail ebd
-            WHERE CAST(update_date AS DATE) BETWEEN :startDate AND :endDate
-            GROUP BY
-                ebd.id_product_detail
-        ) ebd ON rp.ProductDetailID = ebd.id_product_detail
-        WHERE
-            rp.RowNum <= 10
-        ORDER BY AdjustedTotalQuantity DESC;
-        
-    """, countQuery = """
-        WITH RankedProducts AS (
-            SELECT
-                pd.name_product AS ProductName,
-                c.name_color AS ColorName,
-                s.name_size AS SizeName,
-                CAST(pdt.price AS DECIMAL(10, 2)) AS OriginalPrice,
-                CAST(
-                    CASE
-                        WHEN sp.discount_type = 1 AND pdt.id_sale_product IS NOT NULL THEN pdt.price * (1 - sp.discount_value / 100.0)
-                        WHEN sp.discount_type = 2 AND pdt.id_sale_product IS NOT NULL THEN (pdt.price - sp.discount_value)
-                        ELSE pdt.price
-                    END
-                AS DECIMAL(10, 2)) AS DiscountedPrice,
-                SUM(bd.quantity) AS TotalQuantity,
-                STUFF(
-                    (SELECT DISTINCT ', ' + i.name_image
-                     FROM dbo.image i
-                     WHERE i.id_product = pd.id
-                     FOR XML PATH('')), 1, 2, '') AS ImageNames,
-                ROW_NUMBER() OVER (ORDER BY SUM(bd.quantity) DESC) AS RowNum
-            FROM
-                dbo.bill b
-            JOIN
-                dbo.bill_detail bd ON b.id = bd.id_bill
-            JOIN
-                dbo.product_detail pdt ON bd.id_product_detail = pdt.id
-            JOIN
-                dbo.product pd ON pdt.id_product = pd.id
-            JOIN
-                dbo.color c ON pdt.id_color = c.id
-            JOIN
-                dbo.size s ON pdt.id_size = s.id
-            LEFT JOIN
-                dbo.sale_product sp ON pdt.id_sale_product = sp.id
-            WHERE
-                b.status = 5
-                AND CAST(b.update_date AS DATE) BETWEEN :startDate AND :endDate
-            
-            GROUP BY
-                pd.name_product,
-                c.name_color,
-                s.name_size,
-                pdt.price,
-                CAST(
-                    CASE
-                        WHEN sp.discount_type = 1 AND pdt.id_sale_product IS NOT NULL THEN pdt.price * (1 - sp.discount_value / 100.0)
-                        WHEN sp.discount_type = 2 AND pdt.id_sale_product IS NOT NULL THEN (pdt.price - sp.discount_value)
-                        ELSE pdt.price
-                    END
-                AS DECIMAL(10, 2)),
-                pd.id
-        )
-        SELECT COUNT(*) 
-        FROM RankedProducts
-        WHERE RowNum <= 10;
     """, nativeQuery = true)
 
     Page<Object[]> getProductSalesPageByDateRange(Pageable pageable, @Param("startDate") String startDate, @Param("endDate") String endDate);
@@ -1010,12 +886,17 @@ public interface ChartRepository extends JpaRepository<Bill, Integer> {
 
     @Query(value = """
         WITH DateRange AS (
-            -- Tạo danh sách ngày trong khoảng từ startDate đến endDate
+            -- Tạo danh sách ngày trong khoảng từ startDate đến endDate (hoặc startDate + 99 ngày nếu khoảng cách lớn hơn 99 ngày)
             SELECT CAST(:startDate AS DATE) AS DateValue
             UNION ALL
             SELECT DATEADD(DAY, 1, DateValue)
             FROM DateRange
-            WHERE DateValue < CAST(:endDate AS DATE)
+            WHERE DateValue <
+                CASE
+                    WHEN DATEDIFF(DAY, CAST(:startDate AS DATE), CAST(:endDate AS DATE)) > 99
+                    THEN DATEADD(DAY, 99, CAST(:startDate AS DATE))
+                    ELSE CAST(:endDate AS DATE)
+                END
         )
         SELECT
             FORMAT(dr.DateValue, 'dd-MM-yyyy') AS Ngay,
@@ -1067,7 +948,42 @@ public interface ChartRepository extends JpaRepository<Bill, Integer> {
             dr.DateValue
         ORDER BY
             dr.DateValue ASC;
+        
     """,nativeQuery = true)
     List<Object[]> findStatisticsByDateRange(@Param("startDate") String startDate, @Param("endDate") String endDate);
 
+    @Query(value = """
+    select sum(shipping_price) + sum(ex.exchange_and_return_fee)
+        from bill b 
+        left join  return_bill_exchange_bill ex on ex.id_bill = b.id
+    """, nativeQuery = true)
+    Long serviceFee();
+
+    @Query(value = """
+        SELECT                                 
+            SUM(rbeb.exchange_and_return_fee) AS TotalExchangeAndReturnFee
+        FROM
+            return_bill_detail rbd
+        JOIN
+            return_bill_exchange_bill rbeb
+        ON
+            rbd.id_return_bill = rbeb.id                       
+        WHERE
+            rbeb.status = 1
+    """,nativeQuery = true)
+    Long returnFee();
+
+    @Query(value = """
+        SELECT
+            SUM(rbeb.exchange_and_return_fee) AS ExchangeAndReturnFee
+        FROM
+            return_bill_exchange_bill rbeb
+        JOIN
+            exchange_bill_detail exb
+        ON
+            rbeb.id = exb.id_exchang_bill
+        WHERE
+            rbeb.status = 1;
+    """, nativeQuery = true)
+    Long exchangeFee();
 }

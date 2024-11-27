@@ -55,7 +55,7 @@
                                                 <input type="radio" value="1" th:field="${staff.gender}" />Nam
                                             </div>
                                             <div class="radio-item">
-                                                <input type="radio" value="2" th:field="${staff.gender}" />Nu
+                                                <input type="radio" value="2" th:field="${staff.gender}" />Nữ
                                             </div>
                                         </div>
                                     </div>
@@ -137,9 +137,10 @@
                             <div class="form-group">
                                 <label>Chức vụ</label>
                                 <select class="form-select" th:field="${staff.role.id}" disabled>
-                                    <option value="1">Nhân viên bán hàng</option>
-                                    <option value="2">Quản trị viên</option>
-                                    <option value="3">Kế toán</option>
+<!--                                    <option value="1">Nhân viên bán hàng</option>-->
+<!--                                    <option value="2">Quản trị viên</option>-->
+<!--                                    <option value="3">Kế toán</option>-->
+                                    <option th:each="role : ${listRole}" th:value="${role.id}" th:text="${role.nameRole}"></option>
                                 </select>
                             </div>
                         </div>
@@ -147,10 +148,10 @@
                             <div class="form-group">
                                 <label>Trạng thái</label>
                                 <div class="radio-group">
-                                    <input type="radio" value="1" th:field="${staff.status}"  />Hoat dong
+                                    <input type="radio" value="1" th:field="${staff.status}"  />Hoạt động
                                 </div>
                                 <div class="radio-group">
-                                    <input type="radio" value="2" th:field="${staff.status}"  />Ngung hoat dong
+                                    <input type="radio" value="2" th:field="${staff.status}"  />Ngưng hoạt động
                                 </div>
                             </div>
                         </div>

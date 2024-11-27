@@ -15,7 +15,7 @@
         <h1 class="h1-attribute">Quản lý đế giày</h1>
         <div class="combobox-container">
             <div class="combobox-header" onclick="toggleDiv()">
-                <span></span>
+                <span>Thêm đế giày</span>
                 <span class="arrow" id="arrow">&#9660;</span> <!-- Mũi tên -->
             </div>
             <div id="collapsibleDiv" class="combobox-content">
@@ -24,9 +24,9 @@
                         <div class="attribute-search-bar search-bar">
                             <input id="codeSoleInput" th:field="*{codeSole}" type="text" placeholder="Mã đế giày" required/>
                             <input id="nameSoleInput" th:field="*{nameSole}" type="text" placeholder="Tên đế giày" required/>
-                            <button type="button" onclick="add()" class="attribute-btn-add btn-add">Thêm đế giày</button>
+                            <button type="button" data-bs-toggle="modal" data-bs-target="#confirm-create-sole-modal" class="attribute-btn-add btn-add">Thêm đế giày</button>
                         </div>
-                        <p id="soleError" style="color: red">* Mã và tên không được để trống</p>
+                        <p id="soleError" style="color: red;; margin-left: 400px">* Mã và tên không được để trống</p>
                     </div>
                 </form>
             </div>
@@ -67,6 +67,25 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
                         <button onclick="deleteByID(this)" type="submit" class="btn btn-success" data-bs-dismiss="modal" aria-label="Close">Xóa</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="confirm-create-sole-modal" tabindex="-1"
+             aria-labelledby="confirmCreateSoleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="confirmCreateSoleModalLabel">
+                            Xác nhận thêm đế giày
+                        </h1>
+                    </div>
+                    <div class="modal-body">
+                        Bạn muốn thêm đế giày ?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button onclick="add()" type="submit" class="btn btn-success" data-bs-dismiss="modal" aria-label="Close">Thêm</button>
                     </div>
                 </div>
             </div>

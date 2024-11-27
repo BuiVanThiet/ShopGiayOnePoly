@@ -3,7 +3,7 @@ const buttonsToast = document.querySelectorAll(".buttons-toast-custom .btn");
 
 
 const toastDetails = {
-    timer: 5000,
+    timer: 3000,
     success: {
         icon: 'fa-circle-check',
         text: 'Success: This is a success toast.',

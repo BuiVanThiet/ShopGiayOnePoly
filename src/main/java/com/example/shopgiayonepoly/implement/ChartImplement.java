@@ -34,6 +34,21 @@ public class ChartImplement implements ChartService {
     }
 
     @Override
+    public Long serviceFee() {
+        return chartRepository.serviceFee();
+    }
+
+    @Override
+    public Long returnFee() {
+        return chartRepository.returnFee();
+    }
+
+    @Override
+    public Long exchangeFee() {
+        return chartRepository.exchangeFee();
+    }
+
+    @Override
     public Long totalMonthlyInvoiceProducts() {
         return chartRepository.totalMonthlyInvoiceProducts();
     }
@@ -157,55 +172,9 @@ public class ChartImplement implements ChartService {
     }
 
     @Override
-    public Page<ProductInfoDto> getProductSalesPage(int page, int size) {
-        // Tạo pageable với số trang và số sản phẩm trên mỗi trang
-        Pageable pageable = PageRequest.of(page, size);
-
+    public Page<ProductInfoDto> getProductSalesPage(Pageable pageable) {
         // Lấy kết quả phân trang từ repository
-        Page<Object[]> productPage = chartRepository.getProductSalesPage(pageable);
-
-        // Định dạng tiền tệ cho Việt Nam
-        NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
-
-        // Chuyển đổi Object[] sang ProductInfoDto
-        List<ProductInfoDto> productDtos = new ArrayList<>();
-        for (Object[] row : productPage.getContent()) {
-            ProductInfoDto productInfoDto = new ProductInfoDto();
-
-            // Lấy thông tin sản phẩm và gán vào DTO
-            productInfoDto.setProductName((String) row[0]);
-            productInfoDto.setColorName((String) row[1]);
-            productInfoDto.setSizeName((String) row[2]);
-
-            // Định dạng giá trị tiền tệ
-            BigDecimal originalPrice = (BigDecimal) row[3];
-            BigDecimal discountedPrice = (BigDecimal) row[4];
-            String originalPriceFormatted = currencyFormatter.format(originalPrice).replace("₫", "VND");
-            String promotionalPriceFormatted = currencyFormatter.format(discountedPrice).replace("₫", "VND");
-
-            productInfoDto.setOriginalPrice(originalPriceFormatted);
-            productInfoDto.setPromotionalPrice(promotionalPriceFormatted);
-
-            productInfoDto.setTotalQuantity((Integer) row[5]);
-
-            // Chuyển đổi chuỗi hình ảnh từ `STUFF` thành danh sách hình ảnh
-            String imageNames = (String) row[6];
-            List<String> imageUrls = new ArrayList<>();
-            if (imageNames != null && !imageNames.isEmpty()) {
-                String[] images = imageNames.split(", ");
-                for (String image : images) {
-                    // Kết hợp URL cố định của Cloudinary với tên ảnh
-                    imageUrls.add("https://res.cloudinary.com/dfy4umpja/image/upload/v1728721025/" + image);
-                }
-            }
-            productInfoDto.setImageUrls(imageUrls);
-
-            // Thêm đối tượng ProductInfoDto vào danh sách
-            productDtos.add(productInfoDto);
-        }
-
-        // Trả về page chứa danh sách DTO
-        return new PageImpl<>(productDtos, pageable, productPage.getTotalElements());
+        return chartRepository.getProductSalesPage(pageable);
     }
 
     @Override

@@ -152,7 +152,7 @@ public class CustomerController {
         //        this.customerService.save(customerSave);
 //        customer.setImage("fileName");
         System.out.println(customer.toString());
-        mess = "Them nhan vien thanh cong";
+        mess = "Thêm khách hàng thành công";
         check = "1";
 //        customerService.uploadFile(customerRequest.getNameImage(),customerSave.getId());
         return "redirect:/customer/list";
@@ -261,7 +261,7 @@ public class CustomerController {
             // Đặt ảnh mặc định nếu không có ảnh được tải lên
             customer.setImage("Ảnh khách hàng");
         }
-        mess = "Sua nhan vien thanh cong";
+        mess = "Sửa khách hàng thành công";
         check = "1";
         return "redirect:/customer/list";
     }

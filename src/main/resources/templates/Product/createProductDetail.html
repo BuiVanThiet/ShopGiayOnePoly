@@ -11,17 +11,20 @@
 <div layout:fragment="content">
     <article class=" bd-gutter mt-5 my-md-4 bd-layout">
         <div class="container-createProductDetail">
-                <div class="content-createProductDetail">
-                    <div class="main-content-createProductDetail">
-                        <h1 class="h1-createProductDetail" th:text="${'Thêm chi tiết  ' + product.get().nameProduct}"></h1>
-                        <div class="form-group-createProductDetail">
-                            <div class="form-control-createProductDetail">
-                                <label for="myInput-color">Màu sắc</label>
-                                <div style="display: flex">
-                                    <input  type="text" id="myInput-color"
-                                            onfocus="showDropdown(event)"
-                                            onkeyup="filterFunction(event)" autocomplete="off">
-                                    <ul id="dataList-color" class="dropdown-content-createProductDetail">
+            <div class="content-createProductDetail">
+                <div class="main-content-createProductDetail">
+                    <h1 class="h1-createProductDetail" th:text="${'Thêm chi tiết  ' + product.get().nameProduct}"></h1>
+                    <div class="form-group-createProductDetail">
+                        <div class="form-control-createProductDetail">
+                            <label for="myInput-color">Màu sắc</label>
+                            <div style="display: flex">
+                                <input type="text" id="myInput-color"
+                                       onfocus="showDropdown(event)"
+                                       readonly autocomplete="off">
+                                <ul id="dataList-color" class="dropdown-content-createProductDetail">
+                                    <li style="display: flex; justify-content: space-between">
+                                        <input style="height: 30px" placeholder="Tìm kiếm" onkeyup="filterFunctionCheckBox(event)" type="text">
+                                    </li>
                                         <th:block th:each="color : ${colorList}">
                                             <li style="display: flex; justify-content: space-between" onclick="toggleCheckbox(this, 'color')">
                                                 <span th:text="${color.nameColor}"></span>
@@ -40,8 +43,11 @@
                                 <div style="display: flex">
                                     <input name="size" type="text" id="myInput-size"
                                            onfocus="showDropdown(event)"
-                                           onkeyup="filterFunction(event)" autocomplete="off">
+                                           readonly autocomplete="off">
                                     <ul id="dataList-size" class="dropdown-content-createProductDetail">
+                                        <li style="display: flex; justify-content: space-between">
+                                            <input style="height: 30px" placeholder="Tìm kiếm" onkeyup="filterFunctionCheckBox(event)" type="text">
+                                        </li>
                                         <th:block th:each="size : ${sizeList}">
                                             <li style="display: flex; justify-content: space-between" onclick="toggleCheckbox(this, 'size')">
                                                 <span th:text="${size.nameSize}"></span>
@@ -69,7 +75,7 @@
                                 <th style="width: 150px">Giá bán</th>
                                 <th style="width: 150px">Giá nhập</th>
                                 <th style="width: 150px">Số lượng</th>
-                                <th style="width: 150px">Trọng lượng</th>
+                                <th style="width: 170px">Trọng lượng(g)</th>
                                 <th style="width: 300px">Mô tả</th>
                                 <th style="width: 30px"><span class="material-symbols-outlined">delete_forever</span></th>
                             </tr>
@@ -78,9 +84,10 @@
 
                             </tbody>
                         </table>
+                        <p id="errorTextCreateProductDetail" style="color: red; visibility: hidden"></p>
                     </div>
                     <div class="buttons-createProductDetail">
-                        <button type="button" class="create-btn-createProductDetail" onclick="addProductDetail(this.id)" th:id="${product.get().id}">Tạo sản phẩm mới</button>
+                        <button id="create-btn-createProductDetail" type="button" class="create-btn-createProductDetail" onclick="addProductDetail(this.id)" th:id="${product.get().id}">Thêm chi tiết</button>
                         <button type="button" class="cancel-btn-createProductDetail" >Hủy bỏ</button>
                     </div>
                 </div>
@@ -99,8 +106,8 @@
             </div>
         </div>
     </article>
-
     <script th:src="@{/js/product/createProductDetail.js}" type="text/javascript"></script>
+    <script th:src="@{/js/product/validateCreateProductDetail.js}" type="text/javascript"></script>
 </div>
 </body>
 

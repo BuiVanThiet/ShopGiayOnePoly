@@ -60,6 +60,33 @@
             </div>
         </div>
 
+        <div class="row">
+            <div class="col-md-4">
+                <div class="rectangle">
+                    <h6>Phí dịch vụ</h6>
+                    <p class="data-from-be">
+                        <span th:text="${serviceFee} + ' VND'"></span>
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="rectangle">
+                    <h6>Phí đổi hàng</h6>
+                    <p class="data-from-be">
+                        <span th:text="${exchangeFee} + ' VND'"></span>
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="rectangle">
+                    <h6>Phí trả hàng</h6>
+                    <p class="data-from-be">
+                        <span th:text="${returnFee} + ' VND'"></span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
         <div class="filter-section">
             <form id="timeFilterForm" class="row g-3 align-items-end">
                 <div class="col-md-4">
@@ -91,7 +118,7 @@
 
         <div class="row">
             <div class="col-md-7 product-table" style="height: 566px;">
-                <h4 id="topProductTitle" class="text-center">Top 10 sản phẩm bán chạy</h4>
+                <h4 id="topProductTitle" class="text-center">Top sản phẩm bán chạy</h4>
                 <div class="table-responsive" id="productTableContainer">
                     <table class="table table-hover">
                         <thead class="thead-dark">
@@ -109,9 +136,10 @@
                 </div>
 
                 <!-- Pagination buttons -->
-                <div>
-                    <ul class="pagination justify-content-center" id="paginationContainer">
-                    </ul>
+                <div class="pagination-section">
+                    <div class="pagination-custom d-flex justify-content-center">
+                        <ul id="topProduct" class="pagination"></ul>
+                    </div>
                 </div>
 
 <!--                <div>-->

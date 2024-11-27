@@ -253,10 +253,19 @@ public class BillController extends BaseBill {
         }
         bill.setStaff(staff);
         bill.setUpdateDate(new Date());
-        Customer customer = new Customer();
+        Customer customer = customerService.getCustomerByID(Integer.parseInt(idClient));
+        if(customer == null) {
+            this.mess = "Khách hàng không tồn tại!";
+            this.colorMess = "3";
+            return ResponseEntity.ok(thongBao);
+        }
+        if(customer.getStatus() != 1) {
+            this.mess = "Khách hàng đang bị ngừng hoạt động!";
+            this.colorMess = "3";
+            return ResponseEntity.ok(thongBao);
+        }
         this.mess = "Thêm khách hàng vào hóa đơn thành công!";
         this.colorMess = "1";
-        customer.setId(Integer.parseInt(idClient));
         bill.setCustomer(customer);
         if(bill.getStatus() == 0) {
             this.billService.save(bill);

@@ -13,6 +13,8 @@
         <hr>
         <form th:action="@{/voucher/update}" th:object="${voucher}" method="post" id="formUpdateVoucherRoot"
               style="border: 1px solid #bdb5b5;padding: 50px">
+            <input type="hidden" id="formUpdateVoucher" th:value="${voucher.codeVoucher}">
+
             <input type="hidden" th:field="*{id}">
             <div class="row">
                 <div class="col-md-6 mb-3">

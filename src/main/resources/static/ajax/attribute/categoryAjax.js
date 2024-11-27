@@ -13,7 +13,7 @@ function saveRow(index, event) { // hàm edit dữ liệu trên table
         contentType: 'application/json',
         data: JSON.stringify(updatedData),  // Gửi dữ liệu JSON
         success: function (response) {
-            fetchActiveCategorys();
+            fetchActiveCategories();
             createToast(response.check, response.message);
         },
         error: function (xhr, status, error) {
@@ -109,7 +109,7 @@ document.querySelector('.attribute-btn-listDelete').addEventListener('click', fu
 });
 
 document.querySelector('.attribute-btn-listActive').addEventListener('click', function () {
-    fetchActiveCategorys();
+    fetchActiveCategories();
     this.style.display = 'none';
     document.querySelector('.attribute-btn-listDelete').style.display = 'inline-block';
 });
@@ -180,7 +180,7 @@ function fetchDeletedCategorys() {
 }
 
 
-function fetchActiveCategorys() {
+function fetchActiveCategories() {
     fetch('/attribute/category/active')
         .then(response => response.json())
         .then(data => {
@@ -261,7 +261,7 @@ async function add() {
             document.querySelector('.attribute-btn-listActive').style.display = 'none';
             document.querySelector('.attribute-btn-listDelete').style.display = 'inline-block';
             createToast(result.check, result.message);
-            fetchActiveCategorys();
+            fetchActiveCategories();
         }
     } else {
         createToast('2', 'Dữ liệu không hợp lệ');
@@ -269,7 +269,7 @@ async function add() {
 
 }
 
-fetchActiveCategorys();
+fetchActiveCategories();
 
 function restoreCategory(element) {
     let index = element.getAttribute('data-index');

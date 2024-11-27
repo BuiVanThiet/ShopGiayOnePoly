@@ -336,13 +336,13 @@
                 <div class="menu-separator"></div>
             </h4>
             <li>
-                <a href="/staff/list"><span class="material-symbols-outlined"> person </span>Nhan vien</a>
+                <a href="/staff/list"><span class="material-symbols-outlined"> person </span>Nhân viên</a>
             </li>
             <h4>
                 <div class="menu-separator"></div>
             </h4>
             <li>
-                <a href="/customer/list"><span class="material-symbols-outlined"> person </span>Khach hang</a>
+                <a href="/customer/list"><span class="material-symbols-outlined"> person </span>Khách hàng</a>
             </li>
 
 
@@ -428,7 +428,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content ">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="rollCallModelLabel">Điêm danh</h1>
+                <h1 class="modal-title fs-5" id="rollCallModelLabel">Điểm danh</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -439,7 +439,7 @@
             </div>
             <hr style="border: 1px solid #000000;">
             <div class="text-center mb-3" id="buttonCheckInAndCheckOut">
-                <button type="button" class="btn btn-outline-danger" onclick="checkOutStaff()">Điểm danh ra về</button>
+                <button type="button" class="btn btn-outline-danger" onclick="checkOutStaff(1)">Điểm danh ra về</button>
                 <button type="button" class="btn btn-outline-success" onclick="checkInStaff()">Điểm danh vào làm</button>
             </div>
         </div>
@@ -455,8 +455,6 @@
 <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
     <!-- Đây là container nơi toast sẽ xuất hiện -->
 </div>
-
-<script th:src="@{/ajax/shift/rollCallAjax.js}" type="text/javascript"></script>
 
 <ul class="notifications-toast-custom"></ul>
 
@@ -513,6 +511,7 @@
 
 <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 <script src="https://www.gstatic.com/charts/loader.js" type="text/javascript"></script>
+<script th:src="@{/ajax/shift/rollCallAjax.js}" type="text/javascript"></script>
 
 </body>
 </html>

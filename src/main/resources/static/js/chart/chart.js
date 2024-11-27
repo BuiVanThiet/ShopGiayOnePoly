@@ -228,15 +228,10 @@ document.getElementById("timeFilterForm").addEventListener("submit", function(ev
     }
 
     // Kiểm tra khoảng cách ngày không vượt quá 10 ngày
-    const start = new Date(startDate), end = new Date(endDate);
-    if ((end - start) / (1000 * 3600 * 24) > 9) {
-        alert("Khoảng cách không vượt quá 10 ngày.");
-        return;
-    }
 
     // Định dạng tiêu đề
-    const formattedStart = formatDate(start), formattedEnd = formatDate(end);
-    const title = (startDate === endDate) ? `Ngày ${formattedStart}` : `Từ ${formattedStart} đến ${formattedEnd}`;
+
+    const title = (startDate === endDate) ? `Ngày ${startDate}` : `Từ ${startDate} đến ${endDate}`;
 
     // Hiển thị tiêu đề và fetch dữ liệu
     document.getElementById("topProductTitle").textContent = `Top 10 sản phẩm bán chạy ${title}`;
@@ -249,87 +244,87 @@ function formatDate(date) {
     return `${String(date.getDate()).padStart(2, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${date.getFullYear()}`;
 }
 
-async function fetchProductSalesInDateRange(startDate, endDate, page = 0) {
-    try {
-
-        const currentScrollPosition = window.scrollY;
-        const response = await fetch(`/api/getProductsByDateRange?startDate=${startDate}&endDate=${endDate}&page=${page}&size=3`);
-
-        if (!response.ok) return console.error('Lỗi tải dữ liệu');
-
-        const { content, pageable, totalPages } = await response.json();
-        const productTableBody = document.getElementById("productTableBody");
-        const paginationContainer = document.getElementById("paginationContainer");
-
-        productTableBody.innerHTML = '';
-        paginationContainer.innerHTML = '';
-
-        // Nếu không có sản phẩm
-        if (!content.length) {
-            productTableBody.innerHTML = '<tr><td colspan="5">Không có sản phẩm</td></tr>';
-            return;
-        }
-
-        // Thêm dữ liệu vào bảng
-        content.forEach((item, index) => {
-            const row = `
-                <tr>
-                    <td>${index + 1 + pageable.pageNumber * pageable.pageSize}</td>
-                    <td><img id="product-image-${index}" src="${item.imageUrls[0]}" width="100" height="100"></td>
-                    <td>
-                        <span>${item.productName}</span><br>
-                        <small>Màu: ${item.colorName} <br>
-                               Kích thước: ${item.sizeName}
-                         </small>
-                    </td>
-                    <td>${item.originalPrice === item.promotionalPrice
-                ? item.originalPrice
-                : `<span style="text-decoration: line-through;">${item.originalPrice}</span><br><span style="color: red;">${item.promotionalPrice}</span>`}
-                    </td>
-                    <td>${item.totalQuantity}</td>
-                </tr>
-            `;
-            productTableBody.insertAdjacentHTML('beforeend', row);
-
-            // Thay đổi ảnh mỗi 10 giây
-            let currentImageIndex = 0;
-            const imageElement = document.getElementById(`product-image-${index}`);
-            setInterval(() => {
-                imageElement.src = item.imageUrls[currentImageIndex];
-                currentImageIndex = (currentImageIndex + 1) % item.imageUrls.length;
-            }, 10000);
-        });
-
-        // Phân trang
-        if (totalPages > 1) {
-            const prevPage = pageable.pageNumber > 0 ? pageable.pageNumber - 1 : totalPages - 1;
-            paginationContainer.insertAdjacentHTML('beforeend', `
-                <li class="page-item">
-                    <a class="page-link" href="#" onclick="fetchProductSalesInDateRange('${startDate}', '${endDate}', ${prevPage})">Trước</a>
-                </li>
-            `);
-
-            for (let i = 0; i < totalPages; i++) {
-                paginationContainer.insertAdjacentHTML('beforeend', `
-                    <li class="page-item ${pageable.pageNumber === i ? 'active' : ''}">
-                        <a class="page-link" href="#" onclick="fetchProductSalesInDateRange('${startDate}', '${endDate}', ${i})">${i + 1}</a>
-                    </li>
-                `);
-            }
-
-            const nextPage = pageable.pageNumber < totalPages - 1 ? pageable.pageNumber + 1 : 0;
-            paginationContainer.insertAdjacentHTML('beforeend', `
-                <li class="page-item">
-                    <a class="page-link" href="#" onclick="fetchProductSalesInDateRange('${startDate}', '${endDate}', ${nextPage})">Sau</a>
-                </li>
-            `);
-        }
-
-        window.scrollTo(0, currentScrollPosition);
-    } catch (error) {
-        console.error('Error:', error);
-    }
-}
+// async function fetchProductSalesInDateRange(startDate, endDate, page = 0) {
+//     try {
+//
+//         const currentScrollPosition = window.scrollY;
+//         const response = await fetch(`/api/getProductsByDateRange?startDate=${startDate}&endDate=${endDate}&page=${page}&size=3`);
+//
+//         if (!response.ok) return console.error('Lỗi tải dữ liệu');
+//
+//         const { content, pageable, totalPages } = await response.json();
+//         const productTableBody = document.getElementById("productTableBody");
+//         const paginationContainer = document.getElementById("paginationContainer");
+//
+//         productTableBody.innerHTML = '';
+//         paginationContainer.innerHTML = '';
+//
+//         // Nếu không có sản phẩm
+//         if (!content.length) {
+//             productTableBody.innerHTML = '<tr><td colspan="5">Không có sản phẩm</td></tr>';
+//             return;
+//         }
+//
+//         // Thêm dữ liệu vào bảng
+//         content.forEach((item, index) => {
+//             const row = `
+//                 <tr>
+//                     <td>${index + 1 + pageable.pageNumber * pageable.pageSize}</td>
+//                     <td><img id="product-image-${index}" src="${item.imageUrls[0]}" width="100" height="100"></td>
+//                     <td>
+//                         <span>${item.productName}</span><br>
+//                         <small>Màu: ${item.colorName} <br>
+//                                Kích thước: ${item.sizeName}
+//                          </small>
+//                     </td>
+//                     <td>${item.originalPrice === item.promotionalPrice
+//                 ? item.originalPrice
+//                 : `<span style="text-decoration: line-through;">${item.originalPrice}</span><br><span style="color: red;">${item.promotionalPrice}</span>`}
+//                     </td>
+//                     <td>${item.totalQuantity}</td>
+//                 </tr>
+//             `;
+//             productTableBody.insertAdjacentHTML('beforeend', row);
+//
+//             // Thay đổi ảnh mỗi 10 giây
+//             let currentImageIndex = 0;
+//             const imageElement = document.getElementById(`product-image-${index}`);
+//             setInterval(() => {
+//                 imageElement.src = item.imageUrls[currentImageIndex];
+//                 currentImageIndex = (currentImageIndex + 1) % item.imageUrls.length;
+//             }, 10000);
+//         });
+//
+//         // Phân trang
+//         if (totalPages > 1) {
+//             const prevPage = pageable.pageNumber > 0 ? pageable.pageNumber - 1 : totalPages - 1;
+//             paginationContainer.insertAdjacentHTML('beforeend', `
+//                 <li class="page-item">
+//                     <a class="page-link" href="#" onclick="fetchProductSalesInDateRange('${startDate}', '${endDate}', ${prevPage})">Trước</a>
+//                 </li>
+//             `);
+//
+//             for (let i = 0; i < totalPages; i++) {
+//                 paginationContainer.insertAdjacentHTML('beforeend', `
+//                     <li class="page-item ${pageable.pageNumber === i ? 'active' : ''}">
+//                         <a class="page-link" href="#" onclick="fetchProductSalesInDateRange('${startDate}', '${endDate}', ${i})">${i + 1}</a>
+//                     </li>
+//                 `);
+//             }
+//
+//             const nextPage = pageable.pageNumber < totalPages - 1 ? pageable.pageNumber + 1 : 0;
+//             paginationContainer.insertAdjacentHTML('beforeend', `
+//                 <li class="page-item">
+//                     <a class="page-link" href="#" onclick="fetchProductSalesInDateRange('${startDate}', '${endDate}', ${nextPage})">Sau</a>
+//                 </li>
+//             `);
+//         }
+//
+//         window.scrollTo(0, currentScrollPosition);
+//     } catch (error) {
+//         console.error('Error:', error);
+//     }
+// }
 
 function filterTopProducts(filterType) {
     const today = new Date();
@@ -349,7 +344,7 @@ function filterTopProducts(filterType) {
             // Lấy ngày đầu tháng và ngày hiện tại
             startDate = new Date(today.getFullYear(), today.getMonth(), 1); // Ngày đầu tháng này
             endDate = today; // Ngày hiện tại
-            title = `Top 10 sản phẩm bán chạy tháng này`;
+            title = `Top sản phẩm bán chạy tháng này`;
             break;
 
         case 'last7days':
@@ -357,20 +352,20 @@ function filterTopProducts(filterType) {
             startDate = new Date(today);
             startDate.setDate(today.getDate() - 7);
             endDate = today;
-            title = `Top 10 sản phẩm bán chạy trong 7 ngày qua`;
+            title = `Top sản phẩm bán chạy trong 7 ngày qua`;
             break;
 
         case 'year':
             // Lấy từ đầu năm đến hiện tại
             startDate = new Date(today.getFullYear(), 0, 1); // Ngày đầu năm
             endDate = today; // Ngày hôm nay
-            title = `Top 10 sản phẩm bán chạy năm ${today.getFullYear()}`;
+            title = `Top sản phẩm bán chạy năm ${today.getFullYear()}`;
             break;
 
         default: // Hôm nay
             startDate = today;
             endDate = today;
-            title = `Top 10 sản phẩm bán chạy hôm nay`;
+            title = `Top sản phẩm bán chạy hôm nay`;
             break;
     }
 
@@ -447,39 +442,27 @@ function drawPieChart(data, title) {
 
 
 // Hàm để tải dữ liệu sản phẩm và phân trang
-async function fetchProductSales(page = 0) {
-    try {
-        // Lưu lại vị trí cuộn trước khi tải dữ liệu mới
-        const currentScrollPosition = window.scrollY;
+document.addEventListener("DOMContentLoaded", function () {
+    function loadProductData() {
+        fetch(`/api/productSales`) // API mới không phân trang
+            .then(response => response.json())
+            .then(data => {
+                displayProductTable(data); // Hiển thị dữ liệu bảng
+            })
+            .catch(error => {
+                console.error('Lỗi khi tải dữ liệu sản phẩm:', error);
+            });
+    }
 
-        const response = await fetch(`/api/productSales?page=${page}&size=3`);
-        if (!response.ok) {
-            console.error('Failed to fetch data');
-            return;
-        }
 
-        const data = await response.json();
-        console.log('Response Data:', data);
+    function displayProductTable(data) {
+        const productTableBody = document.getElementById('productTableBody');
+        productTableBody.innerHTML = '';  // Xóa dữ liệu cũ
 
-        const productTableBody = document.getElementById("productTableBody");
-        const paginationContainer = document.getElementById("paginationContainer");
-
-        productTableBody.innerHTML = '';
-        paginationContainer.innerHTML = '';
-
-        if (!data.content || data.content.length === 0) {
-            productTableBody.insertAdjacentHTML('beforeend', `<tr><td colspan="5">No products found</td></tr>`);
-            return;
-        }
-
-        // Kiểm tra `pageable` trước khi sử dụng
-        const pageable = data.pageable || { pageNumber: 0, pageSize: 3 };
-
-        // Thêm dữ liệu vào bảng
-        data.content.forEach((item, index) => {
+        data.forEach((item, index) => {
             const row = `
                 <tr>
-                    <td>${index + 1 + (pageable.pageNumber * pageable.pageSize)}</td>
+                    <td>${index + 1}</td>
                     <td><img id="product-image-${index}" src="${item.imageUrls[0]}" alt="Product Image" width="100" height="100"></td>
                     <td>
                         <span>${item.productName}</span><br>
@@ -487,73 +470,24 @@ async function fetchProductSales(page = 0) {
                             Màu: ${item.colorName}<br>
                             Kích thước: ${item.sizeName}
                         </small>
-
                     </td>
                     <td>
                         ${item.originalPrice === item.promotionalPrice
                 ? `${item.originalPrice}`
                 : `<span style="text-decoration: line-through;">${item.originalPrice}</span>
-                                <br>
-                                <span style="color: red; font-size: 1.2em;">${item.promotionalPrice}</span>`}
+                               <br>
+                               <span style="color: red; font-size: 1.2em;">${item.promotionalPrice}</span>`}
                     </td>
-
                     <td>${item.totalQuantity}</td>
                 </tr>
             `;
             productTableBody.insertAdjacentHTML('beforeend', row);
-
-            // Hiển thị ảnh thay đổi mỗi 3 giây cho mỗi sản phẩm
-            let currentImageIndex = 0;
-            const imageElement = document.getElementById(`product-image-${index}`);
-            const imageUrls = item.imageUrls;
-
-            // Hàm thay đổi ảnh
-            const changeImage = () => {
-                imageElement.src = imageUrls[currentImageIndex];
-                currentImageIndex = (currentImageIndex + 1) % imageUrls.length;  // Chuyển đến ảnh tiếp theo
-            };
-
-            // Thay đổi ảnh mỗi 10 giây (10000ms)
-            setInterval(changeImage, 10000);
-
-            // Hiển thị ảnh đầu tiên ngay lập tức
-            changeImage();
         });
-
-        // Hiển thị các nút phân trang nếu có nhiều hơn 1 trang
-        if (data.totalPages > 1) {
-            const prevPage = pageable.pageNumber > 0 ? pageable.pageNumber - 1 : data.totalPages - 1;
-            paginationContainer.insertAdjacentHTML('beforeend', `
-                <li class="page-item">
-                    <a class="page-link" href="#" onclick="fetchProductSales(${prevPage})">Trước</a>
-                </li>
-            `);
-
-            for (let i = 0; i < data.totalPages; i++) {
-                paginationContainer.insertAdjacentHTML('beforeend', `
-                    <li class="page-item ${pageable.pageNumber === i ? 'active' : ''}">
-                        <a class="page-link" href="#" onclick="fetchProductSales(${i})">${i + 1}</a>
-                    </li>
-                `);
-            }
-
-            const nextPage = pageable.pageNumber < data.totalPages - 1 ? pageable.pageNumber + 1 : 0;
-            paginationContainer.insertAdjacentHTML('beforeend', `
-                <li class="page-item">
-                    <a class="page-link" href="#" onclick="fetchProductSales(${nextPage})">Sau</a>
-                </li>
-            `);
-        }
-
-        // Phục hồi lại vị trí cuộn đã lưu trước khi tải lại trang
-        window.scrollTo(0, currentScrollPosition);
-
-    } catch (error) {
-        console.error('Error:', error);
     }
-}
 
-document.addEventListener('DOMContentLoaded', () => fetchProductSales());
+    // Load trang đầu tiên
+    loadProductData();
+});
 
 
 // BIểu đồ tròn

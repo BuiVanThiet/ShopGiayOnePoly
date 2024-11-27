@@ -6,6 +6,7 @@ import com.example.shopgiayonepoly.service.TimekeepingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -39,5 +40,22 @@ public class TimekeepingImplement implements TimekeepingService {
             Integer timekeepingTypeCheck
     ) {
         return timekeepingRepository.getCheckStaffAttendanceYet(idStaff,timekeepingTypeCheck);
+    }
+
+    @Override
+    public List<Object[]> getCheckStaffCheckOut(Integer idStaff) {
+        return timekeepingRepository.getCheckStaffCheckOut(idStaff);
+    }
+
+    @Override
+    public List<Object[]> getAllTimekeepingByIdStaff(
+            Integer idStaffCheck,
+            Date startDate,
+            Date endtDate,
+            String startTime,
+            String endTime
+    ) {
+        return timekeepingRepository.getAllTimekeepingByIdStaff(
+                idStaffCheck, startDate, endtDate, startTime, endTime);
     }
 }

@@ -183,20 +183,33 @@ function addShift(idStart,idEnd) {
 }
 
 function setIdShift(id,start,end,status,statusShift) {
-    validateAddShift('#startTimeUpdate', '#endTimeUpdate', '#statusShiftUpdate1', '#statusShiftUpdate2', '#errorStartTimeUpdate', '#errorEndTimeUpdate', '#errorStatusShiftUpdate', '#buttonUpdateShift','#errorSameShiftUpdate')
-    if(statusShift != 2 || status == 2) {
-        $('#btnUpdateShift').html(`<button id="buttonUpdateShift" class="btn btn-outline-success" data-bs-target="#updateShiftModal2" data-bs-toggle="modal">Sửa</button>`)
-    }else {
-        $('#btnUpdateShift').html(``)
-    }
-    $('#errorStatusShiftUpdate').hide()
-    idShiftUpdate = id;
-    console.log(id, start, end, status); // Kiểm tra giá trị nhận được
-
     console.log(start, end);
     // Hiển thị thời gian trong định dạng AM/PM vào input
     $('#startTimeUpdate').val(start);
     $('#endTimeUpdate').val(end);
+    validateAddShift('#startTimeUpdate', '#endTimeUpdate', '#statusShiftUpdate1', '#statusShiftUpdate2', '#errorStartTimeUpdate', '#errorEndTimeUpdate', '#errorStatusShiftUpdate', '#buttonUpdateShift','#errorSameShiftUpdate');
+
+    $('#errorStatusShiftUpdate').hide()
+    idShiftUpdate = id;
+    console.log(id, start, end, status); // Kiểm tra giá trị nhận được
+
+    if(statusShift != 2 || status == 2) {
+        checkShiftStaffWorking(idShiftUpdate)
+            .then((isShiftClear) => {
+                if (isShiftClear === true) {
+                    $('#btnUpdateShift').html(`<button id="buttonUpdateShift" class="btn btn-outline-success" data-bs-target="#updateShiftModal2" data-bs-toggle="modal">Sửa</button>`);
+                } else {
+                    $('#btnUpdateShift').html(``);
+                }
+            })
+            .catch((error) => {
+                console.error("Error checking shift status: ", error);
+                $('#btnUpdateShift').html(``);
+            });
+    }else {
+        $('#btnUpdateShift').html(``)
+    }
+
 
     // Xử lý trạng thái
     if (status == 1) {
@@ -517,6 +530,32 @@ function removeShiftStaffInStaff() {
         }
     });
 }
+
+//check ca lam co nhan vien khong
+function checkShiftStaffWorking(idShift) {
+    console.log(idShift);
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            type: "GET",
+            url: "/shift-api/check-shift-staff-working/" + idShift,
+            success: function (response) {
+                console.log('mess ben js(check shift): ' + response);
+                if (response == 'Vẫn còn người chưa điểm danh ra') {
+                    resolve(false); // Trả về false nếu còn người chưa điểm danh ra
+                } else if (response == 'Không còn người chưa điểm danh ra') {
+                    resolve(true); // Trả về true nếu không còn ai chưa điểm danh
+                } else {
+                    resolve(null); // Xử lý trường hợp không xác định
+                }
+            },
+            error: function (xhr) {
+                console.error(xhr.responseText);
+                reject(xhr.responseText); // Trả về lỗi nếu AJAX thất bại
+            }
+        });
+    });
+}
+
 
 $(document).ready(function () {
     $('#formFilterStaff').submit(function (event) {

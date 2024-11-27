@@ -1,6 +1,7 @@
 package com.example.shopgiayonepoly.implement;
 
 import com.example.shopgiayonepoly.entites.Shift;
+import com.example.shopgiayonepoly.entites.Staff;
 import com.example.shopgiayonepoly.repositores.ShiftRepository;
 import com.example.shopgiayonepoly.service.ShiftService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +9,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -67,5 +67,15 @@ public class ShiftImplement implements ShiftService {
             Integer checkShift
     ) {
         return shiftRepository.getAllStaffByShift(idShiftCheck,searchTerm,checkShift);
+    }
+
+    @Override
+    public List<Object[]> getCheckShiftStaffWorking(Integer idShift) {
+        return shiftRepository.getCheckShiftStaffWorking(idShift);
+    }
+
+    @Override
+    public List<Staff> getAllStaff() {
+        return shiftRepository.getAllStaff();
     }
 }

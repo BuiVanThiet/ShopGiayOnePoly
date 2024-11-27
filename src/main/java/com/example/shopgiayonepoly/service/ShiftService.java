@@ -1,6 +1,7 @@
 package com.example.shopgiayonepoly.service;
 
 import com.example.shopgiayonepoly.entites.Shift;
+import com.example.shopgiayonepoly.entites.Staff;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -33,4 +34,8 @@ public interface ShiftService {
             String searchTerm,
             Integer checkShift
     );
+
+    List<Object[]> getCheckShiftStaffWorking(Integer idShift);
+
+    List<Staff> getAllStaff();
 }

@@ -36,7 +36,7 @@ public interface ChartService {
 
     List<ProductInfoDto> getProductSales();
 
-    Page<ProductInfoDto> getProductSalesPage(int page, int size);
+    Page<ProductInfoDto> getProductSalesPage(Pageable pageable);
 
     Page<ProductInfoDto> getProductSalesPageByDateRange(int page, int size, @Param("startDate") String startDate, @Param("endDate") String endDate);
 
@@ -50,4 +50,9 @@ public interface ChartService {
 
     List<StatusBill> getBillStatisticsByDateRange(@Param("startDate") String startDate, @Param("endDate") String endDate);
 
+    Long serviceFee();
+
+    Long returnFee();
+
+    Long exchangeFee();
 }

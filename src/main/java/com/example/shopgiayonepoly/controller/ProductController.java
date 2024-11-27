@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -72,8 +73,8 @@ public class ProductController extends BaseProduct {
             return "redirect:/login";
         }
         model.addAttribute("product", productRepository.findById(idProduct));
-        model.addAttribute("colorList", colorService.findAll());
-        model.addAttribute("sizeList", sizeService.findAll());
+        model.addAttribute("colorList", colorService.getColorNotStatus0());
+        model.addAttribute("sizeList", sizeService.getSizeNotStatus0());
         return "/Product/createProductDetail";
     }
 
@@ -148,6 +149,15 @@ public class ProductController extends BaseProduct {
 
             // Nếu có productDetails, cập nhật ID sản phẩm cho các chi tiết sản phẩm và lưu
             if (!productDetails.isEmpty()) {
+                for (ProductDetail detail : productDetails) {
+                    if (detail.getPrice().compareTo(BigDecimal.valueOf(1000)) < 0 ||
+                            detail.getImport_price().compareTo(BigDecimal.valueOf(1000)) < 0 ||
+                            detail.getQuantity() <= 0 || detail.getWeight() <= 0 || detail.getWeight() > 5000) {
+                        check = "3";
+                        message = "Lỗi khi thêm sản phẩm";
+                        return ResponseEntity.ok("Lỗi khi thêm sản phẩm");
+                    }
+                }
                 productDetails.forEach(detail -> detail.setProduct(savedProduct));
                 productDetailRepository.saveAll(productDetails);
             }
@@ -158,6 +168,38 @@ public class ProductController extends BaseProduct {
         return ResponseEntity.ok("Thêm sản phẩm thành công");
 
     }
+
+
+    @PostMapping("/add-productDetail/{idProduct}")
+    public ResponseEntity<String> addProductDetail(Model model, @PathVariable("idProduct") Integer id,
+                                                   @RequestBody List<ProductDetail> productDetails) {
+        Product product = productRepository.findById(id).orElse(null);
+        if (product != null) {
+            for (ProductDetail productDetail : productDetails) {
+                if (productDetail.getPrice().compareTo(BigDecimal.valueOf(1000)) < 0 ||
+                        productDetail.getImport_price().compareTo(BigDecimal.valueOf(1000)) < 0 ||
+                        productDetail.getQuantity() <= 0 || productDetail.getWeight() <= 0 || productDetail.getWeight() > 5000) {
+                    check = "3";
+                    message = "Lỗi khi thêm sản phẩm";
+                    return ResponseEntity.ok("Lỗi khi thêm sản phẩm");
+                }
+            }
+            productDetails.forEach(detail -> detail.setProduct(product));
+            productDetailRepository.saveAll(productDetails);
+            check = "1";
+            message = "Thêm chi tiết sản phẩm thành công";
+            return ResponseEntity.ok("Thêm chi tiết sản phẩm thành công");
+        } else {
+            check = "3";
+            message = "Có lỗi khi thêm chi tiết sản phẩm";
+            model.addAttribute("check", check);
+            model.addAttribute("message", message);
+            check = "";
+            message = "";
+            return ResponseEntity.ok("");
+        }
+    }
+
 
     @PostMapping("/update-product/{id}")
     public ResponseEntity<String> updateProductWithDetails(
@@ -260,8 +302,18 @@ public class ProductController extends BaseProduct {
         List<ProductDetail> productDetails = productService.findAllProductDetailByIDProduct(idProduct);
 
         if (productDetails == null || productDetails.isEmpty()) {
-            model.addAttribute("message", "Chưa thêm sản phẩm chi tiết nào.");
+            model.addAttribute("check", check);
+            model.addAttribute("message", message);
+            check = "";
+            message = "";
+            model.addAttribute("messagee", "Chưa thêm sản phẩm chi tiết nào.");
+            model.addAttribute("idProduct", idProduct);
+            model.addAttribute("addDetailUrl", "/staff/product/create/product-detail/" + idProduct); // URL dẫn đến trang thêm chi tiết
         } else {
+            model.addAttribute("check", check);
+            model.addAttribute("message", message);
+            check = "";
+            message = "";
             model.addAttribute("productDetailList", productDetails);
         }
 
@@ -291,13 +343,13 @@ public class ProductController extends BaseProduct {
         model.addAttribute("listImage", listImage);
 
 
-        model.addAttribute("materialList", materialService.findAll());
-        model.addAttribute("manufacturerList", manufacturerService.findAll());
-        model.addAttribute("originList", originService.findAll());
-        model.addAttribute("colorList", colorService.findAll());
-        model.addAttribute("sizeList", sizeService.findAll());
-        model.addAttribute("soleList", soleService.findAll());
-        model.addAttribute("categoryList", categoryService.findAll());
+        model.addAttribute("materialList", materialService.getMaterialNotStatus0());
+        model.addAttribute("manufacturerList", manufacturerService.getManufacturerNotStatus0());
+        model.addAttribute("originList", originService.getOriginNotStatus0());
+        model.addAttribute("colorList", colorService.getColorNotStatus0());
+        model.addAttribute("sizeList", sizeService.getSizeNotStatus0());
+        model.addAttribute("soleList", soleService.getSoleNotStatus0());
+        model.addAttribute("categoryList", categoryService.getCategoryNotStatus0());
         model.addAttribute("nameProductList", productService.findAllNameProduct());
         model.addAttribute("message", message);
         model.addAttribute("check", check);

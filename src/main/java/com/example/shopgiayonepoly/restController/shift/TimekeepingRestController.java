@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api-timekeeping")
@@ -216,7 +217,10 @@ public class TimekeepingRestController {
                 return ResponseEntity.ok(thongBao);
             }
 
-            if(isShiftOver(staffLogin.getShift().getEndTime())) {
+            Boolean checkTime = isShiftActive(staffLogin.getShift().getStartTime(),staffLogin.getShift().getEndTime());
+            System.out.println(checkTime);
+
+            if(checkTime == false) {
                 thongBao.put("message","Ca làm của bạn đã qua, mời bạn báo cáo cho quản lý nếu bạn muốn làm việc!");
                 thongBao.put("check","3");
                 return ResponseEntity.ok(thongBao);
@@ -268,6 +272,53 @@ public class TimekeepingRestController {
         }
     }
 
+    @GetMapping("/check-time-out-90")
+    public String getCheckTimeOutStaff(HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
+        List<Staff> staffList = this.shiftService.getAllStaff().stream()
+                .filter(staff -> staff.getId() != staffLogin.getId())  // Lọc staff có id khác 1
+                .collect(Collectors.toList());
+        for (Staff staff: staffList) {
+            getLogoutEndTime(staff);
+        }
+        List<Object[]> checkTimeOut = this.timekeepingService.getCheckStaffCheckOut(staffLogin.getId());
+
+        // Kiểm tra nếu danh sách không rỗng và có kết quả
+        if (!checkTimeOut.isEmpty() && checkTimeOut.get(0).length > 0) {
+            // Lấy giá trị đầu tiên từ kết quả
+            return checkTimeOut.get(0)[0].toString();
+        }
+        return null;
+    }
+
+    public Boolean getLogoutEndTime(Staff staff) {
+        String checkLogin = getCheckStaffAttendanceYet(staff.getId(),1);
+        String checkLogOut = getCheckStaffAttendanceYet(staff.getId(),2);
+        if (checkLogin.equals("Có") && checkLogOut.equals("Không")) {
+            if(staff.getShift().getStatus() != 1) {
+                return false;
+            }
+            List<Object[]> checkTimeOut = this.timekeepingService.getCheckStaffCheckOut(staff.getId());
+            if(checkTimeOut.get(0)[0].toString().trim().equals("Khẩn cấp")) {
+                String note = "Đã hết thời gian";
+                timekeepingService.getCheckOut(staff.getId(), note.trim() == "" || note == null ? "Chấm công ra về" : note);
+                return true;
+            }else {
+                return false;
+            }
+        }else if (checkLogin.equals("Không")) {
+           return false;
+        }else {
+           return false;
+        }
+    }
+
 //    @GetMapping("/checkTest/{id}/{type}")
     public String getCheckStaffAttendanceYet(
 //            @PathVariable("id") Integer idStaff,@PathVariable("type") Integer timekeepingTypeCheck
@@ -290,9 +341,10 @@ public class TimekeepingRestController {
         return new PageImpl<>(sublist, pageable, list.size());
     }
 
-    public boolean isShiftOver(LocalTime endTime) {
+    public boolean isShiftActive(LocalTime startTime, LocalTime endTime) {
         LocalTime currentTime = LocalTime.now(); // Lấy thời gian hiện tại
-        return currentTime.isAfter(endTime); // Kiểm tra nếu thời gian hiện tại sau thời gian kết thúc
+        // Chỉ kiểm tra nếu thời gian hiện tại chưa vượt quá endTime
+        return !currentTime.isAfter(endTime);
     }
 
 

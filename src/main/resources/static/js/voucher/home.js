@@ -1,3 +1,6 @@
+var listCodeVouchers = [];
+var codeVoucherUpdate = document.getElementById('formUpdateVoucher');
+
 document.addEventListener("DOMContentLoaded", function () {
     // document.getElementById("button1").addEventListener("click", function () {
     //     changeTable(1);
@@ -133,6 +136,9 @@ function validateAllVoucher() {
     var quantityError = document.getElementById('quantityError');
 
     var checkCodeVoucher = checkNullInputVoucher(codeVoucher.value.trim(),codeVoucherError,'Mời nhập mã phiếu giảm giá');
+    if (checkCodeVoucher) {
+        checkCodeVoucher = checkSame(codeVoucher.value.trim(), codeVoucherError, 'Mã phiếu giảm giá đã tồn tại!');
+    }
     var checkNameVoucher = checkNullInputVoucher(nameVoucher.value.trim(),nameVoucherError,'Mời nhập tên phiếu giảm giá');
     var checkDiscountType = true;
     var checkValue = discountType.value === '2' ? checkNumberLimitInputVoucherCash(removeThousandSeparator('value'),valueError) : checkNumberLimitInputVoucherPercent(removeThousandSeparator('value'),valueError);
@@ -168,6 +174,42 @@ function validateAllVoucher() {
     }
 }
 
+
+//kiem tra trung ma
+function checkSameCodeVoucher() {
+    $.ajax({
+        type: "GET",
+        url: "/api_voucher/check-same-code-voucher",
+        success: function (response) {
+            listCodeVouchers = response
+            // Kiểm tra và xóa mã trong list nếu giống với mã cần cập nhật
+            if (codeVoucherUpdate) {
+                console.log(codeVoucherUpdate)
+                // Sử dụng filter để loại bỏ các mã trùng với codeUpdate
+                listCodeVouchers = listCodeVouchers.filter(function(code) {
+                    return code !== codeVoucherUpdate.value.trim();  // Giữ lại các mã không trùng
+                });
+            }
+            console.log(listCodeVouchers)
+        },
+        error: function (xhr) {
+            console.error('loi ' + xhr.responseText)
+        }
+    })
+}
+
+function checkSame(inputValue,spanError,mess) {
+    console.log('da vao check some')
+    if (listCodeVouchers.includes(inputValue)) {
+        spanError.style.display = 'block';
+        spanError.innerText = mess;
+        return false;
+    }else {
+        spanError.style.display = 'none';
+        spanError.innerText = '';
+        return true;
+    }
+}
 //ep kieu so
 function formatInputWithThousandSeparator(inputId) {
     const inputElement = document.getElementById(inputId);
@@ -489,6 +531,7 @@ document.getElementById('endDate').value = formatDateVoucher(nexttoday);
 ////////////////////
 
 validateAllVoucher()
+checkSameCodeVoucher()
 // formatInputWithThousandSeparator('value')
 // formatInputWithThousandSeparator('applyValue')
 // formatInputWithThousandSeparator('maxDiscount')
