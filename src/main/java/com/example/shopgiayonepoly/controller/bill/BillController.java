@@ -453,7 +453,7 @@ public class BillController extends BaseBill {
                 return "redirect:"+validateDistrict;
             }
 
-            String validateWard = validateInteger(ward);
+            String  validateWard = validateInteger(ward);
             if(!validateWard.trim().equals("")) {
                 return "redirect:"+validateWard;
             }

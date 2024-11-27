@@ -71,31 +71,248 @@ textarea {
     margin-bottom: 15px;
 }
 
-/*Shpping*/
 .info-shipping {
-    display: flex;
-    flex-wrap: wrap;  /* Đảm bảo các phần tử sẽ chuyển sang hàng mới nếu không đủ chỗ */
-    gap: 20px;        /* Khoảng cách giữa các phần tử */
-    border: 1px solid #ccc; /* Border xung quanh mỗi lựa chọn */
-    padding: 10px;
-    border-radius: 5px; /* Thêm bo góc cho border */
+    display: flex; /* Bố cục flex để sắp xếp các phần tử */
+    flex-wrap: wrap; /* Tự động xuống hàng nếu không đủ không gian */
+    gap: 15px; /* Khoảng cách giữa các phần tử */
+    /*padding: 15px;              !* Khoảng cách bên trong container *!*/
+    border: 1px solid #ccc; /* Đường viền xung quanh container */
+    border-radius: 5px; /* Bo góc container */
+    background-color: #ffffff; /* Màu nền nhạt để nổi bật */
 }
 
-.info-shipping .col-md-12,
+.info-shipping h5.section-header {
+    width: 100%; /* Đảm bảo tiêu đề chiếm toàn bộ chiều ngang */
+    margin-bottom: 10px; /* Khoảng cách dưới tiêu đề */
+    /*font-weight: bold;*/
+}
+
 .info-shipping .col-4 {
-    flex: 1 1 100%;  /* Đảm bảo các phần tử chiếm toàn bộ chiều rộng */
+    flex: 1 1 calc(33.33% - 15px); /* Đảm bảo mỗi trường chiếm 1/3 hàng, trừ khoảng cách */
+    min-width: 150px; /* Đảm bảo không quá nhỏ trên thiết bị nhỏ */
 }
 
-@media (min-width: 768px) {
-    .info-shipping .col-md-12 {
-        flex: 1 1 100%;  /* Các phần tử chiếm toàn bộ chiều rộng trên màn hình nhỏ */
-    }
-    .info-shipping .col-4 {
-        flex: 1 1 32%;   /* Các phần tử sẽ chia đều 1/3 trên màn hình rộng */
-    }
+.info-shipping .col-12 {
+    flex: 1 1 100%; /* Các phần tử chiếm toàn bộ chiều ngang */
 }
 
+.form-select, .form-control {
+    width: 100%; /* Chiều rộng full cho select và textarea */
+    padding: 8px; /* Khoảng cách bên trong */
+    border: 1px solid #ccc; /* Đường viền mỏng */
+    border-radius: 5px; /* Bo góc */
+    font-size: 14px; /* Kích thước chữ phù hợp */
+}
 
+.text-danger {
+    font-size: 12px; /* Kích thước chữ nhỏ cho thông báo lỗi */
+    color: #ff4d4f; /* Màu đỏ nổi bật cho lỗi */
+}
+
+/*Button thay đổi và xóa địa chỉ*/
+.list-address-customer {
+    max-width: 600px;
+    margin: auto;
+}
+
+.info-address-shipping {
+    transition: box-shadow 0.3s ease-in-out;
+}
+
+.info-address-shipping:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.short-address {
+    font-size: 1rem;
+    /*font-weight: bold;*/
+}
+
+.original-address {
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+.button-container .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.btn-update-address {
+    background-color: #007bff;
+    border: none;
+    width: 80px;
+    height: 40px;
+}
+
+.btn-update-address:hover {
+    background-color: #0056b3;
+}
+
+.btn-delete-address {
+    background-color: #dc3545;
+    border: none;
+    width: 80px;
+    height: 40px;
+}
+
+.btn-delete-address:hover {
+    background-color: #a71d2a;
+}
+
+.icon {
+    font-size: 0.875rem;
+}
+
+/*add địa chỉ00*/
+.modal-content {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.modal-header {
+    border-bottom: 0;
+}
+
+.modal-footer {
+    border-top: 0;
+}
+
+.form-label {
+    /*font-weight: bold;*/
+    color: #333;
+}
+
+.form-control {
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+button.btn {
+    border-radius: 8px;
+    padding: 10px 20px;
+}
+
+button.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+button.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+button.btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+button.btn-secondary:hover {
+    background-color: #5a6268;
+    border-color: #545b62;
+}
+
+/*Bảng địa chỉ*/
+/* Phong cách cho danh sách địa chỉ */
+.list-address-customer {
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.info-address-shipping {
+    background-color: #ffffff;
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.info-address-shipping:hover {
+    transform: scale(1.02);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+.address-info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.address-info p {
+    margin: 0;
+    font-size: 14px;
+    color: #495057;
+}
+
+.name-phoneNumber {
+    font-weight: 600;
+    font-size: 16px;
+    color: #343a40;
+}
+
+.short-address {
+    font-style: italic;
+    color: #6c757d;
+}
+
+.button-container button {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    border-radius: 8px;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.btn-update-address {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: #ffffff;
+}
+
+.btn-update-address:hover {
+    background-color: #0056b3;
+    border-color: #004085;
+}
+
+.btn-delete-address {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: #ffffff;
+}
+
+.btn-delete-address:hover {
+    background-color: #b21f2d;
+    border-color: #931523;
+}
+
+/* Nút thêm địa chỉ */
+.add-new-address button {
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #007bff;
+    border-color: #007bff;
+    transition: all 0.2s ease;
+}
+
+.add-new-address button:hover {
+    background-color: #007bff;
+    color: #ffffff;
+}
 
 
 /*CSS phần payment cart*/
@@ -202,13 +419,15 @@ textarea {
 .cart-list .item .btn-close:hover {
     color: #ee4d2d;
 }
+
 /*Thông tin địa chỉ*/
-.info-address{
+.info-address {
     margin-top: 30px;
     border: 1px solid #ccc; /* Border xung quanh mỗi lựa chọn */
     padding: 10px;
     border-radius: 5px; /* Thêm bo góc cho border */
 }
+
 .btn-change-address {
     background-color: transparent; /* Nền trong suốt */
     color: #065ebb; /* Màu chữ xanh giống màu viền */
@@ -263,6 +482,7 @@ textarea {
     background-color: #1f18ea; /* Màu xanh đậm hơn */
     color: #fff; /* Giữ chữ trắng */
 }
+
 /* Container căn chỉnh nút ở cuối */
 .button-container {
     display: flex;
@@ -270,12 +490,14 @@ textarea {
     align-items: center; /* Căn giữa theo chiều dọc nếu cần */
     padding: 10px; /* Khoảng cách bên trong container */
 }
+
 /* Nếu muốn căn giữa thủ công */
 .modal-address {
     max-width: 700px;
     max-height: 900px;
     margin: auto;
 }
+
 /*Địa chỉ danh sách*/
 .list-address-customer .info-address-shipping {
     padding: 10px 0; /* Tạo khoảng cách giữa các phần tử */
@@ -294,4 +516,51 @@ textarea {
 .form-check-input {
     margin-right: 10px; /* Tạo khoảng cách cho radio */
 }
+/* Tổng quan */
+.summary {
+    padding: 1rem; /* Khoảng cách bên trong */
+    border-radius: 0; /* Không bo tròn góc */
+    background: none; /* Loại bỏ nền */
+    box-shadow: none; /* Loại bỏ đổ bóng */
+}
 
+/* Các mục chi tiết */
+.summary-item {
+    font-size: 1rem; /* Kích thước chữ tiêu chuẩn */
+    border-bottom: 1px solid #ddd; /* Đường kẻ nhẹ giữa các mục */
+}
+
+/* Tổng cộng */
+.summary-total {
+    font-size: 1.2rem; /* Nhấn mạnh hơn một chút */
+    font-weight: bold;
+    border-top: 1px solid #ddd; /* Thêm đường kẻ phân cách trên */
+}
+
+/* Nút "Đặt hàng" */
+.btn-dat-hang {
+    background-color: #ee4d2d; /* Màu cam đặc trưng của các sàn TMĐT */
+    color: #fff; /* Chữ trắng để nổi bật */
+    /*font-size: 1.2rem; !* Kích thước chữ vừa phải *!*/
+    font-weight: bold; /*    Chữ đậm */
+    padding: 0.75rem 1.5rem; /* Khoảng cách bên trong */
+    border: none; /* Loại bỏ đường viền */
+    border-radius: 3px; /* Bo góc mềm mại */
+    transition: background-color 0.3s, transform 0.2s; /* Hiệu ứng hover */
+    cursor: pointer; /* Thêm hiệu ứng con trỏ */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Đổ bóng nhẹ */
+    width: 50%;
+}
+
+/* Hiệu ứng hover */
+.btn-dat-hang:hover {
+    background-color: #d9431b; /* Màu cam đậm hơn khi hover */
+    transform: scale(1.05); /* Tăng nhẹ kích thước */
+    box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.15); /* Đổ bóng mạnh hơn */
+}
+
+/* Hiệu ứng khi nhấn */
+.btn-dat-hang:active {
+    transform: scale(0.98); /* Giảm nhẹ kích thước */
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Đổ bóng nhỏ hơn */
+}

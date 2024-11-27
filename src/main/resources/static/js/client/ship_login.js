@@ -119,13 +119,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
     autoCalculateShippingFee();
 });
-
 // Channge address
 document.addEventListener("DOMContentLoaded", function () {
     const spanPriceVoucher = document.getElementById("spanPriceVoucher");
+    const shipAddress = document.getElementById("addressShip");
+    const fullAddressCustomerLogin = document.getElementById("fullAddressCustomerLogin").value;
     const voucherPriceText = spanPriceVoucher.textContent.trim();
     const priceVoucher = parseFloat(voucherPriceText.replace(/[^0-9.-]+/g, ''));
-
+    if (fullAddressCustomerLogin != null) {
+        console.log("fullAddressCustomerLogin: " + fullAddressCustomerLogin)
+        shipAddress.value = fullAddressCustomerLogin;
+    }
     if (isNaN(priceVoucher)) {
         spanPriceVoucher.textContent = "-";
     }
@@ -174,7 +178,6 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        // Gửi yêu cầu tính phí vận chuyển
         fetch('https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/fee', {
             method: 'POST', headers: {
                 'Content-Type': 'application/json', 'Token': apiKey // Đảm bảo rằng apiKey được khai báo đúng
@@ -265,7 +268,6 @@ document.addEventListener("DOMContentLoaded", function () {
             document.getElementById(id).value = value;
         });
 
-        // Gọi hàm tính phí vận chuyển
         getAvailableServices(districtId, wardCode);
     }
 
@@ -273,11 +275,9 @@ document.addEventListener("DOMContentLoaded", function () {
         const totalPriceCartItem = parseFloat(document.getElementById("spanTotalPriceCartItem").textContent.replace(/[^0-9.]/g, '').replace(',', '.')) || 0;
         const priceVoucher = parseFloat(document.getElementById("spanPriceVoucher").textContent.replace(/[^0-9.]/g, '').replace(',', '.')) || 0;
         const shippingFee = parseFloat(document.getElementById("spanShippingFee").textContent.replace(/[^0-9.]/g, '').replace(',', '.')) || 0;
-
         const totalPriceBill = totalPriceCartItem - priceVoucher + shippingFee;
         document.getElementById("spanTotalPriceBill").textContent = totalPriceBill.toFixed(2);
     }
-
 
     function extractAddressParts(fullAddress) {
         if (!fullAddress) {
@@ -299,63 +299,54 @@ document.addEventListener("DOMContentLoaded", function () {
 
     document.addEventListener('click', function (event) {
         if (event.target.closest('.change-address')) {
+            // Lấy radio button được chọn
             const selectedAddressElement = document.querySelector('.info-address-shipping input[type="radio"]:checked');
+
             if (!selectedAddressElement) {
-                console.error("Không có chưa nào được chọn.");
+                console.error("Không có địa chỉ nào được chọn.");
                 return;
             }
-            // Lấy phần tử cha của radio
+
+            // Lấy phần tử cha chứa thông tin địa chỉ
             const parentElement = selectedAddressElement.closest('.info-address-shipping');
             if (!parentElement) {
                 console.error("Không tìm thấy phần tử cha chứa địa chỉ.");
                 return;
             }
 
-            // Tìm phần tử chứa địa chỉ đầy đủ
-            const addressTextElement = parentElement.querySelector('.original-address');
-            if (!addressTextElement) {
-                console.error("Không tìm thấy phần tử chứa địa chỉ.");
+            // Truy xuất dữ liệu từ các trường
+            const nameAndPhoneNumber = parentElement.querySelector('.name-phoneNumber')?.textContent?.trim();
+            const shortAddress = parentElement.querySelector('.short-address')?.textContent?.trim();
+
+            if (!nameAndPhoneNumber || !shortAddress) {
+                console.error("Thông tin không hợp lệ hoặc bị thiếu.");
                 return;
             }
 
-            // Lấy giá trị đầy đủ từ địa chỉ
-            const fullAddress = addressTextElement.value?.trim();
-            if (!fullAddress) {
-                console.error("Địa chỉ không hợp lệ hoặc rỗng.");
-                return;
+            document.getElementById('infoCustomer').textContent = nameAndPhoneNumber + '.';
+            document.getElementById('original-address').textContent = shortAddress + '.';
+
+            const addressFull = document.getElementById('fullAddressInput');
+            if (addressFull) {
+                console.log('Địa chỉ đầy đủ:', addressFull.value);
+                document.getElementById('addressShip').value = addressFull.value;
+            } else {
+                console.error('Không tìm thấy input chứa địa chỉ đầy đủ!');
             }
-
-            // Hiển thị để debug
-            console.log("Địa chỉ đầy đủ:", fullAddress);
-
-            const {provinceId, districtId, wardCode} = extractAddressParts(fullAddress);
-            if (!provinceId || !districtId || !wardCode) {
-                console.error("Thiếu thông tin tỉnh, quận hoặc phường.");
-                return;
-            }
-
-            document.getElementById('IdProvince').value = provinceId;
-            document.getElementById('IdDistrict').value = districtId;
-            document.getElementById('IdWard').value = wardCode;
-
-            getAvailableServices(districtId, wardCode)
-
+            // Đóng modal
             const modalElement = document.getElementById('changeAddressModal');
             if (modalElement) {
                 modalElement.classList.remove('show');
                 modalElement.style.display = 'none';
                 document.body.classList.remove('modal-open');
+
                 const backdrop = document.querySelector('.modal-backdrop');
                 if (backdrop) backdrop.remove();
             }
+            autoCalculateShippingFee()
+            console.log("Cập nhật thành công: ", {nameAndPhoneNumber, shortAddress});
         }
     });
-
-
-    document.addEventListener('DOMContentLoaded', function () {
-        autoCalculateShippingFee();
-    });
-
 // Thêm địa chỉ mới
 });
 document.addEventListener("DOMContentLoaded", function () {
@@ -479,10 +470,10 @@ function createNewAddress() {
     const ward = document.getElementById("ward-create").options[document.getElementById("ward-create").selectedIndex].text;
 
     // Lấy địa chỉ cụ thể
-    const specificAddress = document.getElementById("specificAddress").value;
+    const specificAddress = document.getElementById("specificAddressCreate").value;
 
     // Ghép địa chỉ đầy đủ
-    const fullAddressText = `${specificAddress},${ward}, ${district}, ${province}`;
+    const fullAddressText = `${specificAddress},${ward},${district},${province}`;
     const addressForCustomerText = `${fullName},${phone},${mail},${provinceId},${districtId},${wardCode},${fullAddressText}`
 
 
@@ -494,7 +485,7 @@ function createNewAddress() {
         data: JSON.stringify(addressForCustomerText),
         success: function (response) {
             alert(response);
-            $("#addNewAddressModal").modal("hide"); // Ẩn modal
+            $("#addNewAddressModal").modal("hide");
         },
         error: function (xhr) {
             alert("Có lỗi xảy ra khi thêm địa chỉ: " + xhr.responseText);
@@ -551,6 +542,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         districtSelect.appendChild(option);
                     });
                     wardSelect.innerHTML = '<option value="">Chọn Xã, Phường</option>'; // Xóa danh sách xã khi chọn huyện mới
+                    $(districtSelect).trigger('change'); // Kích hoạt sự kiện change nếu cần
                 } else {
                     console.error('Lỗi lấy danh sách huyện:', data.message);
                 }
@@ -610,41 +602,82 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 let selectedAddressId = null;
+
 function getAddressDetails(buttonElement) {
     // Lấy giá trị original address từ input hidden
-    var originalAddress = $(buttonElement).closest('.info-address-shipping').find('.original-address').val();
+    var originalAddress = $(buttonElement).closest('.info-address-shipping').find('.full-address').val();
     console.log("Original Address: " + originalAddress);
+
+    if (!originalAddress) {
+        console.error("Original address không tồn tại hoặc bị null.");
+        return;
+    }
 
     // Tách chuỗi originalAddress thành các phần
     var addressParts = originalAddress.split(',');
 
-    // Kiểm tra sự phân tách
-    console.log(addressParts);
+    // Kiểm tra số lượng phần tử
+    if (addressParts.length < 7) {
+        console.error("Original address không đúng định dạng hoặc thiếu thông tin.");
+        return;
+    }
 
-    // Gán các giá trị vào các trường tương ứng
-    document.getElementById("province-update").value = addressParts[0].trim(); // ID Tỉnh
-    document.getElementById("district-update").value = addressParts[1].trim(); // ID Huyện
-    document.getElementById("ward-update").value = addressParts[2].trim(); // ID Xã
-    document.getElementById("specificAddressUpdate").value = addressParts[3].trim(); // Địa chỉ cụ thể
+    // Lấy các giá trị từ mảng sau khi tách
+    var fullName = addressParts[0]?.trim(); // Phần tử đầu tiên là họ tên
+    var phoneNumber = addressParts[1]?.trim();
+    var email = addressParts[2]?.trim();
+    var provinceId = addressParts[3]?.trim(); // Lấy ID tỉnh
+    var districtId = addressParts[4]?.trim(); // Lấy ID quận
+    var wardCode = addressParts[5]?.trim();  // Lấy ID xã/phường
+    var specificAddress = addressParts[6]?.trim();
 
-    // Nếu các giá trị sau là các tên thì bạn có thể làm như sau
-    document.getElementById("ward-name").value = addressParts[4].trim(); // Tên Xã
-    document.getElementById("district-name").value = addressParts[5].trim(); // Tên Huyện
-    document.getElementById("province-name").value = addressParts[6].trim(); // Tên Tỉnh
+    console.log("Full name:", fullName);
+    console.log("Province ID:", provinceId);
+    console.log("District ID:", districtId);
+    console.log("Ward Code:", wardCode);
+
+    // Gán các giá trị vào các input
+    document.getElementById("FullNameUpdate").value = fullName || '';
+    document.getElementById("PhoneUpdate").value = phoneNumber || '';
+    document.getElementById("MailUpdate").value = email || '';
+    document.getElementById("specificAddressUpdate").value = specificAddress || '';
+
+    // Gán các giá trị vào các select dựa trên ID
+    var provinceSelect = document.getElementById("province-update");
+    var districtSelect = document.getElementById("district-update");
+    var wardSelect = document.getElementById("ward-update");
+
+    if (provinceSelect) {
+        // Gán ID cho tỉnh
+        provinceSelect.value = provinceId;
+        $(provinceSelect).trigger('change'); // Kích hoạt sự kiện change để load danh sách huyện
+
+        // Đợi sự kiện change tỉnh và sau đó cập nhật quận
+        $(provinceSelect).on('change', function () {
+            if (districtSelect) {
+                // Gán ID cho quận
+                districtSelect.value = districtId;
+                $(districtSelect).trigger('change'); // Kích hoạt sự kiện change để load danh sách xã/phường
+            }
+        });
+    }
+
+    if (districtSelect) {
+        // Đợi sự kiện change quận và sau đó cập nhật xã/phường
+        $(districtSelect).on('change', function () {
+            if (wardSelect) {
+                // Gán ID cho xã/phường
+                wardSelect.value = wardCode;
+            }
+        });
+    }
 }
 
-
-// Hàm lấy ID địa chỉ khi ấn "Thay đổi"
 document.querySelectorAll('.btn-update-address').forEach(button => {
     button.addEventListener('click', function () {
         // Lấy ID của địa chỉ từ hidden input trong phần tử cha
         selectedAddressId = this.closest('.info-address-shipping').querySelector('.id-address').value;
         console.log("ID địa chỉ được chọn:", selectedAddressId);
-
-        // Có thể cập nhật các thông tin trong modal nếu cần (như điền thông tin cũ vào form)
-        const addressShort = this.closest('.info-address-shipping').querySelector('.short-address').textContent;
-        document.getElementById('FullNameUpdate').value = addressShort; // Cập nhật vào form update
-        // Tương tự cho các trường khác nếu cần
     });
 });
 

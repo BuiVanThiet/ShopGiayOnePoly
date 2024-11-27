@@ -23,8 +23,8 @@ document.addEventListener("DOMContentLoaded", function () {
         alert("Giá tổng tiền tại ship không hợp lệ.");
         return;
     }
-    console.log("Weight ship: "+weight)
-    console.log("Total amount ship: "+totalPriceCartItem)
+    console.log("Weight ship: " + weight)
+    console.log("Total amount ship: " + totalPriceCartItem)
 
     function fetchProvinces() {
         fetch('https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/province', {
@@ -194,15 +194,10 @@ document.addEventListener("DOMContentLoaded", function () {
         const province = document.getElementById("province").options[document.getElementById("province").selectedIndex].text;
         const district = document.getElementById("district").options[document.getElementById("district").selectedIndex].text;
         const ward = document.getElementById("ward").options[document.getElementById("ward").selectedIndex].text;
-
+        const specificAddress = document.getElementById("specificAddressNolog").value;
         const fullAddress = `${ward}, ${district}, ${province}`;
-        document.getElementById("addressShow").value = fullAddress;
 
-        const endAddress = document.getElementById("addressShow").value;
-        const addressParts = endAddress.split(',');
-        const lastPart = addressParts[addressParts.length - 1].trim();
-
-        const address = `${fullName},${phone},${mail},${provinceId},${districtId},${wardCode},${fullAddress},${lastPart}`;
+        const address = `${fullName},${phone},${mail},${provinceId},${districtId},${wardCode},${fullAddress},${specificAddress}`;
         document.getElementById("addressShip").value = address;
 
         console.log(address);
@@ -224,6 +219,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // Cập nhật giá trị tổng tiền vào phần tử hiển thị
         document.getElementById("spanTotalPriceBill").textContent = totalPriceBill.toFixed(2); // Định dạng thành 2 chữ số thập phân
     }
+
     document.getElementById("FullName").addEventListener("input", updateAddress);
     document.getElementById("Phone").addEventListener("input", updateAddress);
     document.getElementById("Mail").addEventListener("input", updateAddress);
@@ -247,11 +243,14 @@ document.addEventListener("DOMContentLoaded", function () {
         updateAddress(); // Gọi hàm cập nhật địa chỉ khi chọn xã/phường
         calculateTotalPrice();
     });
+    document.getElementById("specificAddressNolog").addEventListener("input", updateAddress);
+
     fetchProvinces();
 
 
 });
-window.addEventListener('load', function (){
+
+window.addEventListener('load', function () {
 // Lấy giá trị từ spanPriceVoucher (nếu cần)
     const spanPriceVoucher = document.getElementById("spanPriceVoucher");
     if (spanPriceVoucher) {

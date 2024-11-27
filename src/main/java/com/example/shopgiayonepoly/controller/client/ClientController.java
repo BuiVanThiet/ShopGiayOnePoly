@@ -276,75 +276,74 @@ public class ClientController extends BaseBill {
             String idDistrict = addressParts.length > 1 ? addressParts[1].trim() : "";
             String idProvince = addressParts.length > 2 ? addressParts[2].trim() : "";
             String originalAddress = addressParts.length > 3 ? addressParts[3].trim() : "";
-            String infoCustomer = clientLoginResponse.getFullName() + clientLoginResponse.getNumberPhone();
+            String infoCustomer = clientLoginResponse.getFullName() + ", " + clientLoginResponse.getNumberPhone() + ", " + clientLoginResponse.getEmail();
+            String fullAddressCustomerLogin = infoCustomer.trim() + ", " + originalAddress.trim();
             model.addAttribute("infoCustomer", infoCustomer);
             model.addAttribute("originalAddress", originalAddress);
-
+            model.addAttribute("fullAddressCustomerLogin", fullAddressCustomerLogin);
             model.addAttribute("IdWard", idWard);
             model.addAttribute("IdDistrict", idDistrict);
             model.addAttribute("IdProvince", idProvince);
 
-            // Lấy danh sách AddressShip và chuẩn hóa
             List<AddressShip> addressList = clientService.getListAddressShipByIDCustomer(clientLoginResponse.getId());
             List<AddressShipReponse> responseListAddress = new ArrayList<>();
-
-                for (AddressShip address : addressList) {
-                    String specificAddress = address.getSpecificAddress();
-                    if (specificAddress != null) {
-                        String[] parts = specificAddress.split(",");
-
-                        // Khai báo các thành phần địa chỉ
-                        String shipProvince = "", shipDistrict = "", shipWard = "", detailedAddress = "";
-
-                        if (parts.length >= 7) {
-                            // Nếu địa chỉ có đủ các phần
-                            shipProvince = parts.length > 3 ? parts[3].trim() : "";
-                            shipDistrict = parts.length > 4 ? parts[4].trim() : "";
-                            shipWard = parts.length > 5 ? parts[5].trim() : "";
-                            detailedAddress = parts.length > 6
-                                    ? String.join(", ", Arrays.copyOfRange(parts, 6, parts.length)).trim()
-                                    : "";
-                        } else {
-                            // Xử lý đặc biệt nếu không đủ định dạng
-                            shipProvince = "UnknownProvince";
-                            shipDistrict = "UnknownDistrict";
-                            shipWard = "UnknownWard";
-                            detailedAddress = specificAddress.trim();
-                        }
-
-                        String formattedShipAddress = String.join(", ", shipProvince, shipDistrict, shipWard, detailedAddress).replaceAll(", $", "");
-
-                        // Đếm số lượng dấu phẩy
-                        long commaCount = formattedShipAddress.chars().filter(ch -> ch == ',').count();
-
-                        // Nếu định dạng đúng (có hơn 3 dấu phẩy), thêm vào danh sách
-                        if (commaCount > 3) {
-                            responseListAddress.add(new AddressShipReponse(
-                                    address.getId(), // Gán ID từ AddressShip
-                                    formattedShipAddress, // Địa chỉ chuẩn hóa
-                                    specificAddress
-                            ));
-                            System.out.println("Formatted Ship Address: " + formattedShipAddress);
-                        }
+            for (AddressShip address : addressList) {
+                String specificAddress = address.getSpecificAddress();
+                if (specificAddress != null) {
+                    String[] parts = specificAddress.split(",");
+                    // Khai báo các thành phần địa chỉ
+                    String shipProvince = "", shipDistrict = "", shipWard = "", detailedAddress = "";
+                    String fullName = "", phoneNumber = "", mail = "";
+                    if (parts.length >= 7) {
+                        // Gán giá trị từ các phần tử mảng
+                        fullName = parts[0].trim();
+                        phoneNumber = parts[1].trim();
+                        mail = parts[2].trim();
+                        shipProvince = parts[3].trim();
+                        shipDistrict = parts[4].trim();
+                        shipWard = parts[5].trim();
+                        detailedAddress = String.join(", ", Arrays.copyOfRange(parts, 6, parts.length)).trim();
+                    } else {
+                        // Xử lý nếu không đủ định dạng
+                        shipProvince = "UnknownProvince";
+                        shipDistrict = "UnknownDistrict";
+                        shipWard = "UnknownWard";
+                        detailedAddress = specificAddress.trim();
                     }
+                    // Tạo chuỗi địa chỉ hoàn chỉnh
+                    String nameAndPhoneNumber = fullName + ", " + phoneNumber.trim() + ", " + mail;
+                    String formattedShipAddress = String.join(", ", shipProvince, shipDistrict, shipWard, detailedAddress).replaceAll(", $", "");
+
+                    // Đếm số dấu phẩy để kiểm tra
+                    long commaCount = formattedShipAddress.chars().filter(ch -> ch == ',').count();
+
+                    if (commaCount > 3) {
+                        responseListAddress.add(new AddressShipReponse(
+                                address.getId(),
+                                nameAndPhoneNumber,
+                                formattedShipAddress,
+                                detailedAddress,
+                                specificAddress
+                        ));
+                        System.out.println("Formatted Ship Address: " + formattedShipAddress);
+                    }
+                }
             }
+            model.addAttribute("listAddress", responseListAddress);
+        }
 
-        model.addAttribute("listAddress", responseListAddress);
+        // Cập nhật lại giỏ hàng và các thuộc tính vào model và session
+        model.addAttribute("cartItems", cartItems);
+        model.addAttribute("weight", weight);
+        model.addAttribute("totalPrice", totalPrice);
+        model.addAttribute("priceReducedShow", priceReduced);
+        session.setAttribute("idVoucherApply", idVoucherApply);
+        session.setAttribute("priceReduced", priceReduced);
+        session.setAttribute("selectedVoucher", selectedVoucher);
+
+        // Trả về view
+        return "client/bill_payment";
     }
-
-    // Cập nhật lại giỏ hàng và các thuộc tính vào model và session
-        model.addAttribute("cartItems",cartItems);
-        model.addAttribute("weight",weight);
-        model.addAttribute("totalPrice",totalPrice);
-        model.addAttribute("priceReducedShow",priceReduced);
-        session.setAttribute("idVoucherApply",idVoucherApply);
-        session.setAttribute("priceReduced",priceReduced);
-        session.setAttribute("selectedVoucher",selectedVoucher);
-
-    // Trả về view
-        return"client/bill_payment";
-}
-
 
     @PostMapping("/payment")
     @ResponseBody
@@ -365,9 +364,8 @@ public class ClientController extends BaseBill {
         BigDecimal priceReduced = (BigDecimal) session.getAttribute("priceReduced");
 
         if (priceReduced == null) {
-            priceReduced = BigDecimal.ZERO;  // Gán giá trị mặc định nếu priceReduced là null
+            priceReduced = BigDecimal.ZERO;
         }
-
         VoucherClientResponse voucherApply = (VoucherClientResponse) session.getAttribute("selectedVoucher");
         Voucher voucher = null;
         if (idVoucherApply != null) {
@@ -400,7 +398,7 @@ public class ClientController extends BaseBill {
 
             }
             // Cập nhật thông tin hóa đơn
-            bill.setAddRess(customer.getFullName() + "," + customer.getNumberPhone() + "," + customer.getEmail() + "," + customer.getAddRess());
+            bill.setAddRess(address);
             bill.setCustomer(customer);
             bill.setShippingPrice(shippingPrice);
             bill.setTotalAmount(totalAmountBill);
@@ -477,10 +475,14 @@ public class ClientController extends BaseBill {
             session.setAttribute("payBillOrder", bill);
             return vnpayUrl;
         }
+        String[] parts = address.split(",");
+        String mailSend = parts.length > 2 ? parts[2].trim() : "Không có mail";
+        System.out.println("Phần thứ 3 của địa chỉ: " + mailSend);
         String host = "http://localhost:8080/onepoly/status-bill/" + bill.getId();
         this.setBillStatus(bill.getId(), 0, session);
         this.setBillStatus(bill.getId(), bill.getStatus(), session);
-        this.templateCreateBillClient("thietzero909@gmail.com",host,bill.getCodeBill());
+        this.templateCreateBillClient(mailSend, host, bill.getCodeBill());
+
         return "/onepoly/order-success";
     }
 

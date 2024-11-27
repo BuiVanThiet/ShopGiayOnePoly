@@ -203,7 +203,6 @@ public class VoucherController {
         if(staffLogin.getStatus() != 1) {
             return "redirect:/home_manage";
         }
-
         BigDecimal zero = BigDecimal.ZERO;
         BigDecimal oneHundred = new BigDecimal("90");
         BigDecimal tenHundred = new BigDecimal("10000");
