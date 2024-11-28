@@ -127,8 +127,11 @@ body-productDetail {
     padding: 0.5rem;
     border-radius: 4px;
     border: 1px solid #ccc;
+    cursor: pointer;
 }
-
+.search-select-productDetail option {
+    cursor: pointer;
+}
 .search-input-productDetail {
     flex-grow: 1;
     padding: 0.5rem;
@@ -264,10 +267,23 @@ body-productDetail {
     color: #000;
     padding: 10px 20px;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     margin-left: 10px;
     cursor: pointer;
 }
+.btn-cancel-productDetail:hover{
+    background-color: #00ffe1;
+}
+.update-productDetail .btn-saveQR-productDetail {
+    background-color: #ab73c5;
+    color: #000;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
 .fa-list-productDetail{
     color: blue;
 }

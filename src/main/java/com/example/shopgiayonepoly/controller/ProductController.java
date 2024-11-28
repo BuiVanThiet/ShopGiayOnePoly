@@ -174,7 +174,7 @@ public class ProductController extends BaseProduct {
     public ResponseEntity<String> addProductDetail(Model model, @PathVariable("idProduct") Integer id,
                                                    @RequestBody List<ProductDetail> productDetails) {
         Product product = productRepository.findById(id).orElse(null);
-        if (product != null) {
+        if (product != null && productDetails.size() > 0) {
             for (ProductDetail productDetail : productDetails) {
                 if (productDetail.getPrice().compareTo(BigDecimal.valueOf(1000)) < 0 ||
                         productDetail.getImport_price().compareTo(BigDecimal.valueOf(1000)) < 0 ||
@@ -197,6 +197,31 @@ public class ProductController extends BaseProduct {
             check = "";
             message = "";
             return ResponseEntity.ok("");
+        }
+    }
+
+    @PutMapping  ("/update-multiple/product-detail")
+    public ResponseEntity<?> updateMultipleProductDetails(@RequestBody List<ProductDetail> productDetails) {
+        try {
+            for (ProductDetail detail : productDetails) {
+                // Tìm ProductDetail từ DB bằng ID
+                ProductDetail existingDetail = productDetailRepository.findById(detail.getId())
+                        .orElseThrow(() -> new RuntimeException("ProductDetail không tồn tại với ID: " + detail.getId()));
+
+                // Cập nhật các trường
+                existingDetail.setPrice(detail.getPrice());
+                existingDetail.setImport_price(detail.getImport_price());
+                existingDetail.setQuantity(detail.getQuantity());
+                existingDetail.setWeight(detail.getWeight());
+                existingDetail.setDescribe(detail.getDescribe());
+                // Lưu thay đổi vào DB
+                productDetailRepository.save(existingDetail);
+            }
+
+            return ResponseEntity.ok("Cập nhật thành công");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Lỗi trong quá trình cập nhật: " + e.getMessage());
         }
     }
 
