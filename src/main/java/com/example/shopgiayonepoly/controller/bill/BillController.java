@@ -1281,6 +1281,10 @@ public class BillController extends BaseBill {
             return "redirect:/404";
         }
 
+        if(customerShortRequest.getNameCustomer().length() > 255) {
+            return "redirect:/404";
+        }
+
         String validateProvince = validateInteger(customerShortRequest.getProvince());
         if(!validateProvince.trim().equals("")) {
             return "redirect:"+validateProvince;
@@ -1311,7 +1315,6 @@ public class BillController extends BaseBill {
         System.out.println("thong tin them nhanh la " + customerShortRequest.toString() + customerShortRequest.getStatus());
         if(bill.getStatus() > 1) {
             return "redirect:/404";
-
         }
 
         if (bill != null && bill.getStatus() == 0) {
