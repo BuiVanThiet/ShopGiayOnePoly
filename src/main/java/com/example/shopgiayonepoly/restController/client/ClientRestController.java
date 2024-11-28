@@ -69,6 +69,7 @@ public class ClientRestController extends BaseEmail {
     protected PdfTemplateService pdfTemplateService;
 
     String messages = "";
+    String check = "";
 
     @GetMapping("/products/top12-highest")
     public List<ProductIClientResponse> getTop12ProductHighest() {
@@ -199,8 +200,8 @@ public class ClientRestController extends BaseEmail {
                                     productDetail.getColor().getNameColor(),
                                     productDetail.getSize().getNameSize(),
                                     entry.getValue(),
-                                    originalPrice, // Giá gốc
-                                    discountedPrice // Giá giảm
+                                    originalPrice,
+                                    discountedPrice
                             );
                         }
                         return null;
@@ -239,6 +240,29 @@ public class ClientRestController extends BaseEmail {
         }).collect(Collectors.toList());
     }
 
+    private List<CartResponse> convertToCartResponseList(List<Cart> cartItems) {
+        List<CartResponse> responses = new ArrayList<>();
+        for (Cart cart : cartItems) {
+            ProductDetail productDetail = cart.getProductDetail();
+            BigDecimal discountedPrice = clientService.findDiscountedPriceByProductDetailId(productDetail.getId());
+            if (discountedPrice == null) {
+                discountedPrice = productDetail.getPrice();
+            }
+            CartResponse response = new CartResponse(
+                    cart.getId(),
+                    cart.getCustomer().getId(),
+                    productDetail.getId(),
+                    productDetail.getProduct().getNameProduct(),
+                    productDetail.getColor().getNameColor(),
+                    productDetail.getSize().getNameSize(),
+                    cart.getQuantity(),
+                    productDetail.getPrice(),
+                    discountedPrice
+            );
+            responses.add(response);
+        }
+        return responses;
+    }
 
     @PostMapping("/update-from-cart/{idProductDetailFromCart}")
     public ResponseEntity<Map<String, String>> updateProductDetailFromCart(
@@ -364,7 +388,6 @@ public class ClientRestController extends BaseEmail {
             boolean removed = cartItems.removeIf(cart -> cart.getProductDetail().getId().equals(idProductDetailFromCart));
             if (removed) {
                 clientService.deleteCartByCustomerIdAndProductDetailId(customerId, idProductDetailFromCart);
-                // Tải lại danh sách giỏ hàng và cập nhật session
                 cartItems = cartService.getCartItemsForCustomer(customerId);
                 List<CartResponse> cartResponses = convertToCartResponseList(cartItems);
                 session.setAttribute("cartItems", cartResponses);
@@ -402,31 +425,6 @@ public class ClientRestController extends BaseEmail {
 
         return ResponseEntity.ok(response);
     }
-
-    private List<CartResponse> convertToCartResponseList(List<Cart> cartItems) {
-        List<CartResponse> responses = new ArrayList<>();
-        for (Cart cart : cartItems) {
-            ProductDetail productDetail = cart.getProductDetail();
-            BigDecimal discountedPrice = clientService.findDiscountedPriceByProductDetailId(productDetail.getId());
-            if (discountedPrice == null) {
-                discountedPrice = productDetail.getPrice();
-            }
-            CartResponse response = new CartResponse(
-                    cart.getId(),
-                    cart.getCustomer().getId(),
-                    productDetail.getId(),
-                    productDetail.getProduct().getNameProduct(),
-                    productDetail.getColor().getNameColor(),
-                    productDetail.getSize().getNameSize(),
-                    cart.getQuantity(),
-                    productDetail.getPrice(),
-                    discountedPrice
-            );
-            responses.add(response);
-        }
-        return responses;
-    }
-
 
     public BigDecimal calculateTotalPrice(List<CartResponse> cartItems) {
         BigDecimal totalPrice = BigDecimal.ZERO;
@@ -469,7 +467,7 @@ public class ClientRestController extends BaseEmail {
         if (addressShip == null) {
             return ResponseEntity.notFound().build();  // Trả về mã 404 nếu không tìm thấy địa chỉ
         }
-        return ResponseEntity.ok(addressShip);  // Trả về thông tin địa chỉ nếu tìm thấy
+        return ResponseEntity.ok(addressShip);
     }
 
     @PostMapping("/update-address-customer/{idAddress}")
@@ -518,7 +516,11 @@ public class ClientRestController extends BaseEmail {
     @GetMapping("/list-address-for-customer")
     public List<AddressShipReponse> getListAddressShipForCustomer(HttpSession session) {
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
+        if (clientLoginResponse == null) {
+            return null;
+        }
         List<AddressShip> addressList = clientService.getListAddressShipByIDCustomer(clientLoginResponse.getId());
+
         List<AddressShipReponse> responseListAddress = new ArrayList<>();
         for (AddressShip address : addressList) {
             String specificAddress = address.getSpecificAddress();

@@ -6,7 +6,6 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Product Detail</title>
-    <!-- Bootstrap CSS -->
 </head>
 <body>
 <div layout:fragment="content">
@@ -132,8 +131,8 @@
                         <div class="add-cart">
                             <button class="btn-add-cart" id="btn-add-cart" onclick="showCartModal()">Thêm vào giỏ
                             </button>
+                            <button class="btn-pay-now" id="btn-pay-now" onclick="showPayNowModal()">Mua ngay</button>
                         </div>
-
                         <!-- Modal -->
                         <div class="modal fade" id="addCartModal" tabindex="-1" aria-labelledby="addCartModalLabel"
                              aria-hidden="true">
@@ -194,6 +193,62 @@
                                                     <a href="/onepoly/cart" id="go_cart" class="btn">Đi đến giỏ hàng</a>
                                                     <a id="add-to-cart" class="btn" onclick="addToCart()"
                                                        data-bs-dismiss="modal">Thêm vào giỏ</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal fade" id="payNowModal" tabindex="-1" aria-labelledby="payNowModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content add-product-modal">
+                                    <div class="modal-header" style="background: #004698">
+                                        <h5 class="modal-title text-center" id="payNowModalLabel">Mua ngay sản phẩm</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                            <span class="material-icons" style="color: white; font-size: 24px;">close</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <!-- ID sản phẩm chi tiết ẩn -->
+                                        <input type="hidden" id="productDetailID-hidden-paynow" name="productDetailId">
+                                        <div class="item line-item line-item-container">
+                                            <div class="left">
+                                                <div class="item-img">
+                                                    <a href="#">
+                                                        <img src="/img/client/product/SPCT_IMG_1.png" alt="product image" style="width:220px;height:220px;">
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="right" style="margin-left: 20px;">
+                                                <div class="item-info">
+                                                    <h3 id="product-name-paynow">Tên sản phẩm</h3>
+                                                    <div style="font-size: 25px;">
+                                                        <span id="price-modal-paynow">₫</span>
+                                                    </div>
+                                                    <div class="item-desc">
+                                                        <div class="variant-option">
+                                                            <span>Màu sắc: </span>
+                                                            <span id="color-modal-paynow">Color</span>
+                                                        </div>
+                                                        <div class="variant-option">
+                                                            <span>Kích thước: </span>
+                                                            <span id="size-modal-paynow">Size</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="item-quan">
+                                                        <button id="qtyminus-paynow" class="btn btn-outline-secondary">-</button>
+                                                        <input style="width: 60px;height: 35px" type="text" readonly value="1" name="quantity" class="item-quantity form-control text-center" id="qty-paynow">
+                                                        <button id="qtyplus-paynow" class="btn btn-outline-secondary">+</button>
+                                                    </div>
+                                                </div>
+                                                <div id="container-message-paynow" style="height: 20px;margin-left: 35px;margin-top: 10px">
+                                                    <span class="message-error text-danger" id="message-error-paynow"></span>
+                                                </div>
+                                                <div class="popup_action">
+                                                    <!-- Thực hiện Mua ngay -->
+                                                    <a id="buy-now-paynow" class="btn" onclick="buyNow()" data-bs-dismiss="modal">Mua ngay</a>
                                                 </div>
                                             </div>
                                         </div>

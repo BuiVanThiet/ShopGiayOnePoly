@@ -26,13 +26,20 @@
                             </div>
                         </div>
                         <div class="cart-right" style="margin-left: 50px;">
-                            <input type="hidden" id="idProductDetailFromCart" th:text="${item.productDetailId}">
+                            <input type="hidden" id="idProductDetailFromCart" th:value="${item.productDetailId}">
                             <div class="cart-item-info">
                                 <h3 th:text="${item.productName}"></h3>
-                                <div class="cart-item-price">
-                                    <span id="cart-spanPriceCartItem" th:text="${item.discountedPrice}"
-                                          class="cart-price-item"></span>
+                                <div class="d-flex">
+                                    <div class="cart-item-price" style="margin-right: 30px">
+                                        <span id="cart-spanPriceCartItem" th:text="${item.discountedPrice}"
+                                              class="cart-price-item"></span>
+                                    </div>
+                                    <div class="cart-item-price-original">
+                                        <span id="cart-spanPriceCartItemOriginal" th:text="${item.originalPrice}"
+                                              class="cart-price-item original-price"></span>
+                                    </div>
                                 </div>
+
                                 <div class="cart-item-desc">
                                     <div class="cart-variant-option">
                                         <span class="cart-title">Màu sắc:</span>
@@ -47,13 +54,15 @@
                                     <div class="cart-item-quan">
                                         <div class="cart-qty cart-quantity-parent cart-qty-click d-flex align-items-center btn-group">
                                             <button type="button"
-                                                    class="cart-qtyminus cart-qty-btn btn btn-outline-secondary" th:field="${item.productDetailId}">−
+                                                    class="cart-qtyminus cart-qty-btn btn btn-outline-secondary"
+                                                    th:field="${item.productDetailId}">−
                                             </button>
                                             <p id="quantityProductFormCart" name="quantity"
                                                class="cart-tc cart-line-item-qty cart-item-quantity text-center form-control m-0 bg-light"
                                                style="width: 60px; border: none;" th:text="${item.quantity}"></p>
                                             <button type="button"
-                                                    class="cart-qtyplus cart-qty-btn btn btn-outline-primary" th:field="${item.productDetailId}">+
+                                                    class="cart-qtyplus cart-qty-btn btn btn-outline-primary"
+                                                    th:field="${item.productDetailId}">+
                                             </button>
                                         </div>
                                     </div>
@@ -132,6 +141,7 @@
                             <span class="cart-total-quantity">(tạm tính)</span><br>
                             <span style="font-size: 30px" id="cart-spanTotalPriceCart"
                                   class="cart-js-total-price cart-total-price" th:text="${finalPrice}">₫</span>
+
                         </span>
             </div>
             <div class="cart-actions__btn">

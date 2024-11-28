@@ -65,15 +65,16 @@ function getProductDetail(productId, colorId, sizeId) {
                 // Kiểm tra nếu quantity > 0, hiển thị giá và enable nút thêm vào giỏ
                 if (quantity > 0) {
                     $('#productDetailID-hidden').val(data.productDetailId);
-                    $('#price-display').text(data.price.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'}));
+                    $('#price-display').text(data.price.toLocaleString('en-US') + " ₫");
 
-                    // Hiển thị giá giảm (nếu có)
-                    $('#price-apply-discount').text(data.priceDiscount.toLocaleString('vi-VN', {
-                        style: 'currency', currency: 'VND'
-                    }));
-                    $('#price-modal').text(data.priceDiscount.toLocaleString('vi-VN', {
-                        style: 'currency', currency: 'VND'
-                    }));
+                    $('#price-apply-discount').text(data.priceDiscount.toLocaleString('en-US') + " ₫");
+                    $('#price-modal').text(data.priceDiscount.toLocaleString('en-US')+" ₫");
+
+                    if (data.price === data.priceDiscount) {
+                        $('#price-display').hide();
+                    } else {
+                        $('#price-display').show();
+                    }
 
                     // Enable nút thêm vào giỏ
                     $('#btn-add-cart').prop('disabled', false);
@@ -150,7 +151,6 @@ document.addEventListener("DOMContentLoaded", function () {
             quantityInput.val(quantityBuy);
         }
     });
-
     // Sự kiện khi bấm nút cộng
     btnPlus.addEventListener("click", function () {
         let quantityBuy = parseInt(quantityInput.val());
@@ -172,16 +172,17 @@ document.addEventListener("DOMContentLoaded", function () {
             showCartModal();
             return;
         }
-
-        // Nếu chưa đạt giới hạn, tăng số lượng mua lên 1
         quantityBuy += 1;
         quantityInput.val(quantityBuy);
     });
 });
 
-
 function showCartModal() {
     $('#addCartModal').modal('show');
+}
+
+function showPayNowModal() {
+    $('#payNowModal').modal('show');
 }
 
 function addToCart() {
@@ -208,30 +209,6 @@ function addToCart() {
         }
     });
 }
-
-
-//
-// // Hàm xóa sản phẩm khỏi giỏ hàng
-// window.removeItem = function (productDetailId) {
-//     $.ajax({
-//         url: '/onepoly/remove-from-cart',
-//         type: 'POST',
-//         contentType: "application/json",
-//         data: JSON.stringify({productDetailId: productDetailId}),
-//         success: function (data) {
-//             if (data.success) {
-//                 alert("Sản phẩm đã được xóa khỏi giỏ hàng!");
-//                 fetchCartItems(); // Cập nhật lại danh sách giỏ hàng
-//             } else {
-//                 console.log(data.message || 'Có lỗi xảy ra khi xóa sản phẩm.');
-//             }
-//         },
-//         error: function (error) {
-//             console.error('Error removing item:', error);
-//             alert('Có lỗi xảy ra khi xóa sản phẩm.');
-//         }
-//     });
-// };
 $(document).ready(function () {
     checkQuantity();
 });

@@ -316,4 +316,8 @@ hr {
 #voucher-button-text {
     display: inline;
 }
+.original-price {
+    text-decoration: line-through;
+    color: #131313; /* Thêm màu xám nếu muốn */
+}
 
