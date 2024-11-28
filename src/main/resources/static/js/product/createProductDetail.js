@@ -401,7 +401,7 @@ async function addProductDetail(idProduct) {
         };
         productDetails.push(detail);
     })
-    if (validateAndFormatCells()){
+    if (validateAndFormatCells() && productDetails.length > 0){
         const response = await fetch(`/staff/product/add-productDetail/${idProduct}`, {
             method: 'POST',
             headers: {

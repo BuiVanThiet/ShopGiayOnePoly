@@ -10,7 +10,16 @@ function toggleDropdownproductDetail(event, icon) {
     // Ngăn chặn sự kiện click lan ra ngoài
     event.stopPropagation();
 }
-
+function cancelButton(){
+    const selectedRows = document.querySelectorAll('.select-row-productDetail:checked');
+    selectedRows.forEach(row => {
+        row.checked = false;
+    });
+    document.getElementById('select-all-productDetail').checked = false;
+    document.getElementById('btn-save-productDetail').style.display = "none";
+    document.getElementById('btn-saveQR-productDetail').style.display = "none";
+    document.getElementById('btn-cancel-productDetail').style.display = "none";
+}
 // Đóng menu khi hover ra khỏi khu vực
 document.querySelectorAll('.dropdown-productDetail').forEach(function (dropdown) {
     dropdown.addEventListener('mouseleave', function () {
@@ -59,22 +68,25 @@ document.querySelectorAll('.select-row-productDetail').forEach((checkbox) => {
 
 function toggleEditableRow(checkbox) {
     const row = checkbox.closest('tr');
-    const cells = row.querySelectorAll('td:not(:first-child):not(:last-child)');
+    const cells = row.querySelectorAll('td'); // Lấy tất cả các ô trong hàng
 
-    cells.forEach((cell) => {
-        if (checkbox.checked) {
-            if (!cell.hasAttribute('data-original-value')) {
-                cell.setAttribute('data-original-value', cell.innerHTML); // Lưu lại HTML ban đầu
+    cells.forEach((cell, index) => {
+        // Chỉ áp dụng chỉnh sửa cho các cột 4, 5, 6, 7, và 8 (index bắt đầu từ 0)
+        if (index >= 3 && index <= 7) {
+            if (checkbox.checked) {
+                if (!cell.hasAttribute('data-original-value')) {
+                    cell.setAttribute('data-original-value', cell.innerHTML); // Lưu lại HTML ban đầu
+                }
+                cell.contentEditable = "true";
+                cell.style.backgroundColor = "#eef2ff";
+            } else {
+                if (cell.hasAttribute('data-original-value')) {
+                    cell.innerHTML = cell.getAttribute('data-original-value'); // Khôi phục HTML ban đầu
+                    cell.removeAttribute('data-original-value');
+                }
+                cell.contentEditable = "false";
+                cell.style.backgroundColor = "";
             }
-            cell.contentEditable = "true";
-            cell.style.backgroundColor = "#eef2ff";
-        } else {
-            if (cell.hasAttribute('data-original-value')) {
-                cell.innerHTML = cell.getAttribute('data-original-value'); // Khôi phục HTML ban đầu
-                cell.removeAttribute('data-original-value');
-            }
-            cell.contentEditable = "false";
-            cell.style.backgroundColor = "";
         }
     });
 }
@@ -84,13 +96,30 @@ function toggleEditableRow(checkbox) {
 function toggleSaveButton() {
     const anyChecked = document.querySelectorAll('.select-row-productDetail:checked').length > 0;
     document.getElementById('btn-save-productDetail').style.display = anyChecked ? "block" : "none";
+    document.getElementById('btn-saveQR-productDetail').style.display = anyChecked ? "block" : "none";
     document.getElementById('btn-cancel-productDetail').style.display = anyChecked ? "block" : "none";
 }
 
 // Hủy bỏ chọn tất cả và đặt lại trạng thái các ô
+function updateItemsPerPage(event) {
+    if (parseInt(event.target.value) === 25) {
+        itemsPerPage = productDetails.length;
+    } else {
+        itemsPerPage = parseInt(event.target.value);
+    }
+    displayPage(currentPage); // Hiển thị lại trang hiện tại với số lượng mới
+    // Bỏ chọn tất cả các checkbox khi chuyển trang
+    const selectAllCheckbox = document.getElementById('select-all-productDetail');
+    selectAllCheckbox.checked = false; // Bỏ chọn checkbox "tất cả"
+
+    const checkboxes = document.querySelectorAll('.select-row-productDetail');
+    checkboxes.forEach((checkbox) => {
+        checkbox.checked = false; // Bỏ chọn tất cả các checkbox của sản phẩm
+    });
+}
 
 
-const itemsPerPage = 10; // Display 5 products per page
+let itemsPerPage = 10;
 let currentPage = 1;
 let productDetails = [];
 // Lấy thẻ p
@@ -127,7 +156,6 @@ function fetchProductDetails(searchTerm, idProduct) {
 
 // Function: Display the current page
 function displayPage(page) {
-    const itemsPerPage = 10;
     const totalPages = Math.ceil(productDetails.length / itemsPerPage);
     const start = (page - 1) * itemsPerPage;
     const end = start + itemsPerPage;
@@ -146,12 +174,12 @@ function displayPage(page) {
                 <td>
                     <input type="checkbox" class="select-row-productDetail"/>
                 </td>
-                <td data-column="codeproductDetail">${productDetail.color.nameColor}</td>
-                <td data-column="nameproductDetail">${productDetail.size.nameSize}</td>
-                <td data-column="material">${productDetail.price + 'đ'}</td>
-                <td data-column="manufacturer">${productDetail.import_price + 'đ'}</td>
-                <td data-column="origin">${productDetail.quantity}</td>
-                <td data-column="sole">${productDetail.weight + 'g'}</td>
+                <td data-column="color">${productDetail.color.nameColor}</td>
+                <td data-column="size">${productDetail.size.nameSize}</td>
+                <td data-column="price">${productDetail.price + 'đ'}</td>
+                <td data-column="importPrice">${productDetail.import_price + 'đ'}</td>
+                <td data-column="quantity">${productDetail.quantity}</td>
+                <td data-column="weight">${productDetail.weight + 'g'}</td>
                 <td data-column="describe">${productDetail.describe}</td>
                 <td data-column="status">${productDetail.status == 1 ? 'Đang bán' : (productDetail.status == 2 ? 'Ngừng bán' : '')}</td>
                 <td>
@@ -161,7 +189,6 @@ function displayPage(page) {
                             <a href="#">Xóa</a>
                             <a href="#" onclick="generateQRCode(${productDetail.id})">Tạo QR</a>
                             <a href="#" onclick="downloadQRCode(${productDetail.id})">Lưu QR</a>
-
                         </div>
                     </div>
                 </td>
@@ -335,9 +362,6 @@ function generateQRCode(productDetailId) {
     });
 }
 
-
-
-
 function downloadQRCode(productDetailId) {
     // Kiểm tra nếu ID không hợp lệ
     if (!productDetailId || typeof productDetailId !== 'number' && typeof productDetailId !== 'string') {
@@ -363,4 +387,61 @@ function downloadQRCode(productDetailId) {
         a.click();  // Tự động nhấn vào liên kết để tải ảnh xuống
         document.body.removeChild(a);  // Xóa liên kết sau khi tải về
     });
+}
+function downloadAllQRCode() {
+    // Lấy tất cả các checkbox đã được chọn
+    const selectedRows = document.querySelectorAll('.select-row-productDetail:checked');
+
+    // Duyệt qua từng checkbox và lấy ID sản phẩm chi tiết
+    selectedRows.forEach(row => {
+        // Tìm hàng cha (tr từ checkbox)
+        const parentRow = row.closest('tr');
+        if (!parentRow) return;
+
+        // Lấy ID sản phẩm chi tiết từ data attribute hoặc một cột ẩn
+        const productDetailId = parentRow.dataset.id ;
+        if (productDetailId) {
+            // Gọi hàm tải mã QR cho từng sản phẩm
+            downloadQRCode(productDetailId);
+        } else {
+            console.error('Không tìm thấy ID sản phẩm chi tiết cho dòng:', parentRow);
+        }
+    });
+}
+
+async function updateSelectedProductDetails() {
+    // Lấy tất cả các checkbox đã được chọn
+    const selectedRows = document.querySelectorAll('.select-row-productDetail:checked');
+
+    // Tạo danh sách productDetail cần cập nhật
+    const productDetailsToUpdate = [];
+
+    selectedRows.forEach(row => {
+        // Tìm hàng cha (tr) của checkbox
+        const parentRow = row.closest('tr');
+
+        if (!parentRow) return;
+
+        // Lấy dữ liệu từ các cột (nếu cần tùy chỉnh thêm, sửa lại phần này)
+        const productDetail = {
+            id: parseInt(parentRow.dataset.id, 10), // Đảm bảo id là kiểu số (Long)
+            price: parseFloat(parentRow.querySelector('[data-column="price"]').textContent.trim().replace('đ', '')),
+            import_price: parseFloat(parentRow.querySelector('[data-column="importPrice"]').textContent.trim().replace('đ', '')),
+            quantity: parseInt(parentRow.querySelector('[data-column="quantity"]').textContent.trim(), 10),
+            weight: parseFloat(parentRow.querySelector('[data-column="weight"]').textContent.trim().replace('g', '')),
+            describe: parentRow.querySelector('[data-column="describe"]').textContent.trim(),
+        };
+
+        productDetailsToUpdate.push(productDetail);
+    });
+
+    // Gửi dữ liệu đến API
+    const response = await fetch('/staff/product/update-multiple/product-detail', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(productDetailsToUpdate)
+    });
+
 }

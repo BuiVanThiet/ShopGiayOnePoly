@@ -22,15 +22,23 @@
     </div>
 
     <div th:if="${productDetailList != null and !#lists.isEmpty(productDetailList)}" class="container-productDetail">
-      <div th:text="${'Danh sách chi tiết  ' + productDetailList.get(1).product.nameProduct}" class="header-productDetail">
+      <div th:text="${'Danh sách chi tiết  ' + productDetailList.get(0).product.nameProduct}" class="header-productDetail">
       </div>
-      <p th:attr="data-value=${productDetailList.get(1).product.id}"></p>
+      <p th:attr="data-value=${productDetailList.get(0).product.id}"></p>
       <div class="search-bar-productDetail">
+        <select class="search-select-productDetail" id="items-per-page" onchange="updateItemsPerPage(event)">
+          <option value="5">5/1</option>
+          <option value="10" selected>10/1</option>
+          <option value="15">15/1</option>
+          <option value="20">20/1</option>
+          <option value="25">ALL</option>
+        </select>
         <input type="text" class="search-input-productDetail" placeholder="Tìm kiếm">
       </div>
       <div class="update-productDetail">
-        <button id="btn-save-productDetail" class="btn-save-productDetail" style="display: none" onclick="saveChanges()">Lưu lại</button>
-        <button id="btn-cancel-productDetail" class="btn-cancel-productDetail " style="display: none" onclick="cancelChanges()">Hủy bỏ</button>
+        <button id="btn-save-productDetail" class="btn-save-productDetail" style="display: none" onclick="updateSelectedProductDetails()">Lưu lại</button>
+        <button id="btn-saveQR-productDetail" class="btn-saveQR-productDetail" style="display: none" onclick="downloadAllQRCode()">Lưu QR</button>
+        <button id="btn-cancel-productDetail" class="btn-cancel-productDetail" style="display: none" onclick="cancelButton()">Hủy bỏ</button>
       </div>
       <table class="table-productDetail">
         <thead>
@@ -50,28 +58,7 @@
         </tr>
         </thead>
         <tbody id="productDetail-table-body">
-        <tr th:each="productDetail, iterStat : ${productDetailList}" th:id="'row-productDetail-' + ${iterStat.index}"
-            >
-          <td>
-            <input type="checkbox" class="select-row-productDetail"/>
-          </td>
-          <td data-column="codeproductDetail" th:text="${productDetail.color}"></td>
-          <td data-column="nameproductDetail" th:text="${productDetail.size}"></td>
-          <td data-column="material" th:text="${productDetail.price+'đ'}"></td>
-          <td data-column="manufacturer" th:text="${productDetail.import_price+'đ'}"></td>
-          <td data-column="origin" th:text="${productDetail.quantity}"></td>
-          <td data-column="sole" th:text="${productDetail.weight+ 'g'}" ></td>
-          <td data-column="describe" th:text="${productDetail.describe}"></td>
-          <td data-column="status" th:text="${productDetail.status == 1 ? 'Đang bán' : (productDetail.status == 2 ? 'Ngừng bán' : '')}"></td>
-          <td>
-            <div class="dropdown-productDetail">
-              <i class="fa fa-ellipsis-v fa-ellipsis-v-productDetail" aria-hidden="true" onclick="toggleDropdownproductDetail(event, this)"></i>
-              <div class="dropdown-menu-productDetail">
-                <a href="#">Xóa</a>
-              </div>
-            </div>
-          </td>
-        </tr>
+
         </tbody>
       </table>
 
@@ -79,7 +66,7 @@
         <ul id="pagination-productDetail" class="pagination-productDetail"></ul>
       </div>
 
-      <a class="add-button-productDetail" style="text-decoration: none;" th:href="@{/staff/product/create/product-detail/{idProduct}(idProduct=${productDetailList.get(1).product.id})}" ><i
+      <a class="add-button-productDetail" style="text-decoration: none;" th:href="@{/staff/product/create/product-detail/{idProduct}(idProduct=${productDetailList.get(0).product.id})}" ><i
               class="fas fa-plus"></i> Thêm chi tiết </a>
       <script th:src="@{/js/product/productDetail.js}" type="text/javascript"></script>
       <input type="hidden" id="toastMessage" th:value="${message}">
