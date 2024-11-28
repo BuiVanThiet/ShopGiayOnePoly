@@ -133,6 +133,10 @@ function validateNameCustomer(value,inputError) {
         inputError.style.display = 'block';
         inputError.innerText = 'Tên khách hàng không hợp lệ!';
         return false;
+    }else if (nameCheck.length > 255) {
+        inputError.style.display = 'block';
+        inputError.innerText = 'Tên khách hàng không được quá 255 ký tự!';
+        return false;
     } else {
         inputError.style.display = 'none';
         inputError.innerText = '';
@@ -171,6 +175,10 @@ function validateEmail(value,inputError) {
         inputError.style.display = 'block';
         inputError.innerText = 'Email khách hàng không hợp lệ!';
         return false;
+    }else if (emailRegex.length > 100) {
+        inputError.style.display = 'block';
+        inputError.innerText = 'Email khách hàng không được quá 100 ký tự!';
+        return false;
     } else {
         inputError.style.display = 'none';
         inputError.innerText = '';
@@ -185,6 +193,10 @@ function validateAddRessDetail(value,inputError) {
         console.log('rong ne')
         inputError.style.display = 'block';
         inputError.innerText = 'Mời nhập địa chỉ chi tiết khách hàng!';
+        return false;
+    }else if (addRessCheck.length > 260) {
+        inputError.style.display = 'block';
+        inputError.innerText = 'Địa chỉ chi tiết khách hàng không được quá 260 ký tự!';
         return false;
     } else {
         inputError.style.display = 'none';

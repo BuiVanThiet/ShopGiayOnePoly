@@ -88,7 +88,11 @@ function validateNameCustomerIsText(value, inputError) {
         inputError.style.display = 'block';
         inputError.innerText = 'Tên khách hàng không hợp lệ!';
         return false;
-    } else {
+    }else if (nameCheck.length > 255) {
+        inputError.style.display = 'block';
+        inputError.innerText = 'Tên khách hàng không được quá 255 ký tự!';
+        return false;
+    }else {
         inputError.style.display = 'none';
         inputError.innerText = '';
         return true;
