@@ -68,26 +68,17 @@ public class chartRestController {
 //        }
 //    }
 
-    @GetMapping("/getProductsByDateRange")
-    public ResponseEntity<Map<String, Object>> getProductSalesByDateRange(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "3") int size,
-            @RequestParam String startDate,
-            @RequestParam String endDate) {
-
-        // Không cần chuyển đổi từ String thành Date ở đây nữa
-        // Trực tiếp sử dụng startDate và endDate dưới dạng String
-
-        // Lấy dữ liệu từ service
-        Page<ProductInfoDto> productSales = chartService.getProductSalesPageByDateRange(page, size, startDate, endDate);
-
-        // Chuẩn bị dữ liệu trả về
-        Map<String, Object> response = new HashMap<>();
-        response.put("content", productSales.getContent());
-        response.put("pageable", productSales.getPageable());
-        response.put("totalPages", productSales.getTotalPages());
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
+    @GetMapping("/topProductSalesRenge")
+    public ResponseEntity<?> getTopProductsByDateRange(
+            @RequestParam("startDate") String startDate,
+            @RequestParam("endDate") String endDate) {
+        try {
+            List<ProductInfoDto> topProducts = chartService.findTopProductsByDateRange(startDate, endDate);
+            return ResponseEntity.ok(topProducts);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Đã xảy ra lỗi khi lấy danh sách sản phẩm: " + e.getMessage());
+        }
     }
 
     @GetMapping("/statusBillsMonth")

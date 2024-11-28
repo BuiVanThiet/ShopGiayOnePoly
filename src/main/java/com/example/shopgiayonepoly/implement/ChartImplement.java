@@ -172,68 +172,43 @@ public class ChartImplement implements ChartService {
     }
 
     @Override
-    public Page<ProductInfoDto> getProductSalesPage(Pageable pageable) {
-        // Lấy kết quả phân trang từ repository
-        return chartRepository.getProductSalesPage(pageable);
-    }
+    public List<ProductInfoDto> findTopProductsByDateRange(String startDate, String endDate) {
+        List<Object[]> result = chartRepository.findTopProductsByDateRange(startDate,endDate);
+        List<ProductInfoDto> productSales = new ArrayList<>();
 
-    @Override
-    public Page<ProductInfoDto> getProductSalesPageByDateRange(int page, int size, String startDate, String endDate) {
-        Pageable pageable = PageRequest.of(page, size);
-
-        // Lấy dữ liệu từ repository, truyền vào startDate, endDate và Pageable
-        Page<Object[]> productPage = chartRepository.getProductSalesPageByDateRange(pageable, startDate, endDate);
-
-        // Chuyển đổi dữ liệu từ Object[] thành ProductInfoDto
-        List<ProductInfoDto> productDtos = new ArrayList<>();
-        for (Object[] row : productPage.getContent()) {
-            ProductInfoDto productInfoDto = convertToProductInfoDto(row);
-            productDtos.add(productInfoDto);
-        }
-
-        // Trả về một Page chứa danh sách ProductInfoDto
-        return new PageImpl<>(productDtos, pageable, productPage.getTotalElements());
-    }
-
-    // Phương thức chuyển đổi từ Object[] thành ProductInfoDto
-    private ProductInfoDto convertToProductInfoDto(Object[] row) {
-        ProductInfoDto productInfoDto = new ProductInfoDto();
-
-        // Lấy thông tin sản phẩm từ Object[]
-        productInfoDto.setProductName((String) row[0]);
-        productInfoDto.setColorName((String) row[1]);
-        productInfoDto.setSizeName((String) row[2]);
-
-        // Định dạng giá trị tiền tệ
-        BigDecimal originalPrice = (BigDecimal) row[3];
-        BigDecimal discountedPrice = (BigDecimal) row[4];
-
-        // Định dạng tiền tệ (VND)
         NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
-        String originalPriceFormatted = currencyFormatter.format(originalPrice).replace("₫", "VND");
-        String promotionalPriceFormatted = currencyFormatter.format(discountedPrice).replace("₫", "VND");
 
-        productInfoDto.setOriginalPrice(originalPriceFormatted);
-        productInfoDto.setPromotionalPrice(promotionalPriceFormatted);
+        for (Object[] row : result) {
+            String productName = (String) row[0];
+            String colorName = (String) row[1];
+            String sizeName = (String) row[2];
+            BigDecimal OriginalPrice = (BigDecimal) row[3];
+            BigDecimal discountedPrice = (BigDecimal) row[4];
+            int totalQuantity = (int) row[5];
+            String imageNames = (String) row[6]; // Chuỗi chứa tên ảnh, phân cách bởi dấu phẩy
 
-        // Lấy tổng số lượng bán được
-        productInfoDto.setTotalQuantity((Integer) row[5]);
+            String originalPrice = currencyFormatter.format(OriginalPrice).replace("₫", "VND");
+            String promotionalPrice = currencyFormatter.format(discountedPrice).replace("₫", "VND");
 
-        // Chuyển đổi chuỗi hình ảnh từ STUFF thành danh sách hình ảnh
-        String imageNames = (String) row[6];
-        List<String> imageUrls = new ArrayList<>();
-        if (imageNames != null && !imageNames.isEmpty()) {
-            String[] images = imageNames.split(", ");
-            for (String image : images) {
-                // Kết hợp URL của Cloudinary với tên ảnh
-                imageUrls.add("https://res.cloudinary.com/dfy4umpja/image/upload/v1728721025/" + image);
+            // Tạo danh sách URL ảnh
+            List<String> imageUrls = new ArrayList<>();
+            if (imageNames != null && !imageNames.isEmpty()) {
+                String[] images = imageNames.split(", ");
+                for (String image : images) {
+                    // Kết hợp URL cố định của Cloudinary với tên ảnh
+                    imageUrls.add("https://res.cloudinary.com/dfy4umpja/image/upload/v1728721025/" + image);
+                }
             }
+
+            // Tạo đối tượng ProductInfoDto và thêm vào danh sách
+            ProductInfoDto productInfoDto = new ProductInfoDto(
+                    productName, colorName, sizeName, originalPrice, promotionalPrice, totalQuantity, imageUrls);
+
+            productSales.add(productInfoDto); // Thêm đối tượng vào danh sách
         }
-        productInfoDto.setImageUrls(imageUrls);
 
-        return productInfoDto;
+        return productSales;
     }
-
 
     @Override
     public List<StatusBill> findBillsWithStatusDescription() {

@@ -20,34 +20,38 @@ import java.util.Map;
 public interface ChartRepository extends JpaRepository<Bill, Integer> {
     @Query(value = """
         SELECT
-          SUM(CASE
-                  WHEN b.status = 5 AND MONTH(b.update_date) = MONTH(GETDATE()) AND YEAR(b.update_date) = YEAR(GETDATE()) THEN 1
-                  ELSE 0
-              END) +
-          SUM(CASE
-                  WHEN b.status = 8 AND MONTH(b.create_date) = MONTH(GETDATE()) AND YEAR(b.create_date) = YEAR(GETDATE()) THEN 1
-                  ELSE 0
-              END) +
-          SUM(CASE
-                  WHEN b.status = 8 AND MONTH(b.update_date) = MONTH(GETDATE()) AND YEAR(b.update_date) = YEAR(GETDATE()) THEN 1
-                  ELSE 0
-              END) +
-          SUM(CASE
-                  WHEN b.status = 9 AND b.bill_type = 1 AND MONTH(b.create_date) = MONTH(GETDATE()) AND YEAR(b.create_date) = YEAR(GETDATE()) THEN 1
-                  ELSE 0
-              END) +
-          SUM(CASE
-                  WHEN b.status = 9 AND b.bill_type = 1 AND MONTH(b.update_date) = MONTH(GETDATE()) AND YEAR(b.update_date) = YEAR(GETDATE()) THEN 1
-                  ELSE 0
-              END) +
-          SUM(CASE
-                  WHEN b.status = 9 AND b.bill_type = 2 AND MONTH(b.update_date) = MONTH(GETDATE()) AND YEAR(b.update_date) = YEAR(GETDATE()) THEN 1
-                  ELSE 0
-              END) AS TotalHoaDon
-      FROM
-          Bill b
-      WHERE
-          b.status IN (5, 8, 9);
+            COALESCE(
+                SUM(CASE
+                        WHEN b.status = 5 AND MONTH(b.update_date) = MONTH(GETDATE()) AND YEAR(b.update_date) = YEAR(GETDATE()) THEN 1
+                        ELSE 0
+                    END) +
+                SUM(CASE
+                        WHEN b.status = 8 AND MONTH(b.create_date) = MONTH(GETDATE()) AND YEAR(b.create_date) = YEAR(GETDATE()) THEN 1
+                        ELSE 0
+                    END) +
+                SUM(CASE
+                        WHEN b.status = 8 AND MONTH(b.update_date) = MONTH(GETDATE()) AND YEAR(b.update_date) = YEAR(GETDATE()) THEN 1
+                        ELSE 0
+                    END) +
+                SUM(CASE
+                        WHEN b.status = 9 AND b.bill_type = 1 AND MONTH(b.create_date) = MONTH(GETDATE()) AND YEAR(b.create_date) = YEAR(GETDATE()) THEN 1
+                        ELSE 0
+                    END) +
+                SUM(CASE
+                        WHEN b.status = 9 AND b.bill_type = 1 AND MONTH(b.update_date) = MONTH(GETDATE()) AND YEAR(b.update_date) = YEAR(GETDATE()) THEN 1
+                        ELSE 0
+                    END) +
+                SUM(CASE
+                        WHEN b.status = 9 AND b.bill_type = 2 AND MONTH(b.update_date) = MONTH(GETDATE()) AND YEAR(b.update_date) = YEAR(GETDATE()) THEN 1
+                        ELSE 0
+                    END),
+                0
+            ) AS TotalHoaDon
+        FROM
+            Bill b
+        WHERE
+            b.status IN (5, 8, 9);
+        
         """,nativeQuery = true)
     Long monthlyBill();
 
@@ -103,34 +107,38 @@ public interface ChartRepository extends JpaRepository<Bill, Integer> {
 
     @Query(value = """
         SELECT
-          SUM(CASE
-                  WHEN b.status = 5 AND CAST(b.update_date AS DATE) = CAST(GETDATE() AS DATE) THEN 1
-                  ELSE 0
-              END) +
-          SUM(CASE
-                  WHEN b.status = 8 AND CAST(b.create_date AS DATE) = CAST(GETDATE() AS DATE) THEN 1
-                  ELSE 0
-              END) +
-          SUM(CASE
-                  WHEN b.status = 8 AND CAST(b.update_date AS DATE) = CAST(GETDATE() AS DATE) THEN 1
-                  ELSE 0
-              END) +
-          SUM(CASE
-                  WHEN b.status = 9 AND b.bill_type = 1 AND CAST(b.create_date AS DATE) = CAST(GETDATE() AS DATE) THEN 1
-                  ELSE 0
-              END) +
-          SUM(CASE
-                  WHEN b.status = 9 AND b.bill_type = 1 AND CAST(b.update_date AS DATE) = CAST(GETDATE() AS DATE) THEN 1
-                  ELSE 0
-              END) +
-          SUM(CASE
-                  WHEN b.status = 9 AND b.bill_type = 2 AND CAST(b.update_date AS DATE) = CAST(GETDATE() AS DATE) THEN 1
-                  ELSE 0
-              END) AS TotalHoaDon
-      FROM
-          Bill b
-      WHERE
-          b.status IN (5, 8, 9);
+            COALESCE(
+                SUM(CASE
+                        WHEN b.status = 5 AND CAST(b.update_date AS DATE) = CAST(GETDATE() AS DATE) THEN 1
+                        ELSE 0
+                    END) +
+                SUM(CASE
+                        WHEN b.status = 8 AND CAST(b.create_date AS DATE) = CAST(GETDATE() AS DATE) THEN 1
+                        ELSE 0
+                    END) +
+                SUM(CASE
+                        WHEN b.status = 8 AND CAST(b.update_date AS DATE) = CAST(GETDATE() AS DATE) THEN 1
+                        ELSE 0
+                    END) +
+                SUM(CASE
+                        WHEN b.status = 9 AND b.bill_type = 1 AND CAST(b.create_date AS DATE) = CAST(GETDATE() AS DATE) THEN 1
+                        ELSE 0
+                    END) +
+                SUM(CASE
+                        WHEN b.status = 9 AND b.bill_type = 1 AND CAST(b.update_date AS DATE) = CAST(GETDATE() AS DATE) THEN 1
+                        ELSE 0
+                    END) +
+                SUM(CASE
+                        WHEN b.status = 9 AND b.bill_type = 2 AND CAST(b.update_date AS DATE) = CAST(GETDATE() AS DATE) THEN 1
+                        ELSE 0
+                    END),
+                0
+            ) AS TotalHoaDon
+        FROM
+            Bill b
+        WHERE
+            b.status IN (5, 8, 9);
+        
     """, nativeQuery = true)
     Long billOfTheDay();
 
@@ -365,7 +373,7 @@ public interface ChartRepository extends JpaRepository<Bill, Integer> {
     List<Object[]> getAnnualStatistics();
 
     @Query(value = """
-        SELECT TOP 10
+        SELECT TOP 3
            p.name_product AS ProductName,
            c.name_color AS ColorName,
            s.name_size AS SizeName,
@@ -467,325 +475,86 @@ public interface ChartRepository extends JpaRepository<Bill, Integer> {
     List<Object[]> getProductSales();
 
     @Query(value = """
-        SELECT
-            p.name_product AS ProductName,
-            c.name_color AS ColorName,
-            s.name_size AS SizeName,
-            CASE
-                WHEN pd.price < 0 THEN 0
-                ELSE pd.price
-            END AS originalPrice,
-            CASE
-                WHEN sp.discount_type = 1 AND pd.id_sale_product IS NOT NULL THEN
-                    CASE
-                        WHEN pd.price * (1 - sp.discount_value / 100.0) < 0 THEN 0
-                        ELSE pd.price * (1 - sp.discount_value / 100.0)
-                    END
-                WHEN sp.discount_type = 2 AND pd.id_sale_product IS NOT NULL THEN
-                    CASE
-                        WHEN (pd.price - sp.discount_value) < 0 THEN 0
-                        ELSE (pd.price - sp.discount_value)
-                    END
-                ELSE
-                    CASE
-                        WHEN pd.price < 0 THEN 0
-                        ELSE pd.price
-                    END
-            END AS promotionalPrice,
-            ISNULL(
-                (SELECT SUM(bd.quantity)
-                 FROM dbo.bill_detail bd
-                 JOIN dbo.bill b ON bd.id_bill = b.id
-                 WHERE bd.id_product_detail = pd.id AND b.status IN (5, 8, 9)
-                ), 0
-            ) +
-            ISNULL(
-                (SELECT SUM(ebd.quantity_exchange)
-                 FROM dbo.exchange_bill_detail ebd
-                 LEFT JOIN dbo.return_bill_exchange_bill rbe_exchange ON ebd.id_exchang_bill = rbe_exchange.id
-                 WHERE ebd.id_product_detail = pd.id AND rbe_exchange.status = 1
-                ), 0
-            ) -
-            ISNULL(
-                (SELECT SUM(rb.quantity_return)
-                 FROM dbo.return_bill_detail rb
-                 LEFT JOIN dbo.return_bill_exchange_bill rbe_return ON rb.id_return_bill = rbe_return.id
-                 WHERE rb.id_product_detail = pd.id AND rbe_return.status = 1
-                ), 0
-            ) AS totalQuantity,
-            ISNULL(
-                STUFF(
-                    (SELECT DISTINCT ', ' + i.name_image
-                     FROM dbo.image i
-                     WHERE i.id_product = p.id
-                     FOR XML PATH('')), 1, 2, ''
-                ), 'Không có ảnh'
-            ) AS imageNames
-        FROM
-            dbo.product_detail pd
-        LEFT JOIN
-            dbo.bill_detail bd ON pd.id = bd.id_product_detail
-        LEFT JOIN
-            dbo.product p ON pd.id_product = p.id
-        LEFT JOIN
-            dbo.color c ON pd.id_color = c.id
-        LEFT JOIN
-            dbo.size s ON pd.id_size = s.id
-        LEFT JOIN
-            dbo.sale_product sp ON pd.id_sale_product = sp.id
-        LEFT JOIN
-            dbo.image i ON p.id = i.id_product
-        WHERE
-            pd.id IS NOT NULL
-            AND (
-                EXISTS (
-                    SELECT 1
-                    FROM dbo.bill_detail bd
-                    JOIN dbo.bill b ON bd.id_bill = b.id
-                    WHERE bd.id_product_detail = pd.id AND b.status IN (5, 8, 9)
-                )
-                OR EXISTS (
-                    SELECT 1
-                    FROM dbo.exchange_bill_detail ebd
-                    LEFT JOIN dbo.return_bill_exchange_bill rbe_exchange ON ebd.id_exchang_bill = rbe_exchange.id
-                    WHERE ebd.id_product_detail = pd.id AND rbe_exchange.status = 1
-                )
-                OR EXISTS (
-                    SELECT 1
-                    FROM dbo.return_bill_detail rb
-                    LEFT JOIN dbo.return_bill_exchange_bill rbe_return ON rb.id_return_bill = rbe_return.id
-                    WHERE rb.id_product_detail = pd.id AND rbe_return.status = 1
-                )
-            )
-        GROUP BY
-            pd.id, p.name_product, c.name_color, s.name_size, pd.price, sp.discount_type, sp.discount_value, pd.id_sale_product, p.id
-        ORDER BY
-            totalQuantity DESC
-        
-        """, nativeQuery = true)
-    Page<ProductInfoDto> getProductSalesPage(Pageable pageable);
-
-    @Query(value = """ 
-        SELECT
-            p.name_product AS ProductName,
-            c.name_color AS ColorName,
-            s.name_size AS SizeName,
-            -- Giá gốc (nếu âm thì bằng 0)
-            CASE
-                WHEN pd.price < 0 THEN 0
-                ELSE pd.price
-            END AS OriginalPrice,
-            -- Giá sau giảm giá (nếu âm thì bằng 0)
-            CASE
-                WHEN sp.discount_type = 1 AND pd.id_sale_product IS NOT NULL THEN
-                    CASE
-                        WHEN pd.price * (1 - sp.discount_value / 100.0) < 0 THEN 0
-                        ELSE pd.price * (1 - sp.discount_value / 100.0)
-                    END
-                WHEN sp.discount_type = 2 AND pd.id_sale_product IS NOT NULL THEN
-                    CASE
-                        WHEN (pd.price - sp.discount_value) < 0 THEN 0
-                        ELSE (pd.price - sp.discount_value)
-                    END
-                ELSE
-                    CASE
-                        WHEN pd.price < 0 THEN 0
-                        ELSE pd.price
-                    END
-            END AS DiscountedPrice,
-            ISNULL(
-                (SELECT SUM(bd.quantity)
-                 FROM dbo.bill_detail bd
-                 JOIN dbo.bill b ON bd.id_bill = b.id
-                 WHERE bd.id_product_detail = pd.id AND b.status IN (5, 8, 9)
-                 AND CAST(b.create_date AS DATE) BETWEEN :startDate AND :endDate), 0
-            )
-            + ISNULL(
-                (SELECT SUM(ebd.quantity_exchange)
-                 FROM dbo.exchange_bill_detail ebd
-                 LEFT JOIN dbo.return_bill_exchange_bill rbe_exchange ON ebd.id_exchang_bill = rbe_exchange.id
-                 WHERE ebd.id_product_detail = pd.id AND rbe_exchange.status = 1
-                 AND CAST(ebd.create_date AS DATE) BETWEEN :startDate AND :endDate), 0
-            )
-            - ISNULL(
-                (SELECT SUM(rb.quantity_return)
-                 FROM dbo.return_bill_detail rb
-                 LEFT JOIN dbo.return_bill_exchange_bill rbe_return ON rb.id_return_bill = rbe_return.id
-                 WHERE rb.id_product_detail = pd.id AND rbe_return.status = 1
-                 AND CAST(rb.create_date AS DATE) BETWEEN :startDate AND :endDate), 0
-            ) AS FinalQuantity,
-            -- Danh sách tên ảnh
-            ISNULL(
-                STUFF(
-                    (SELECT DISTINCT ', ' + i.name_image
-                     FROM dbo.image i
-                     WHERE i.id_product = p.id
-                     FOR XML PATH('')), 1, 2, ''
-                ), 'Không có ảnh') AS ImageNames
-        FROM
-            dbo.product_detail pd
-        LEFT JOIN
-            dbo.bill_detail bd ON pd.id = bd.id_product_detail
-        LEFT JOIN
-            dbo.product p ON pd.id_product = p.id
-        LEFT JOIN
-            dbo.color c ON pd.id_color = c.id
-        LEFT JOIN
-            dbo.size s ON pd.id_size = s.id
-        LEFT JOIN
-            dbo.sale_product sp ON pd.id_sale_product = sp.id
-        LEFT JOIN
-            dbo.image i ON p.id = i.id_product
-        WHERE
-            pd.id IS NOT NULL -- Loại bỏ các giá trị không hợp lệ
-            AND (
-                EXISTS (
-                    SELECT 1
-                    FROM dbo.bill_detail bd
-                    JOIN dbo.bill b ON bd.id_bill = b.id
-                    WHERE bd.id_product_detail = pd.id AND b.status IN (5, 8, 9)
-                    AND CAST(b.create_date AS DATE) BETWEEN :startDate AND :endDate
-                )
-                OR EXISTS (
-                    SELECT 1
-                    FROM dbo.exchange_bill_detail ebd
-                    LEFT JOIN dbo.return_bill_exchange_bill rbe_exchange ON ebd.id_exchang_bill = rbe_exchange.id
-                    WHERE ebd.id_product_detail = pd.id AND rbe_exchange.status = 1
-                    AND CAST(ebd.create_date AS DATE) BETWEEN :startDate AND :endDate
-                )
-                OR EXISTS (
-                    SELECT 1
-                    FROM dbo.return_bill_detail rb
-                    LEFT JOIN dbo.return_bill_exchange_bill rbe_return ON rb.id_return_bill = rbe_return.id
-                    WHERE rb.id_product_detail = pd.id AND rbe_return.status = 1
-                    AND CAST(rb.create_date AS DATE) BETWEEN :startDate AND :endDate
-                )
-            )
-        GROUP BY
-            pd.id, p.name_product, c.name_color, s.name_size, pd.price, sp.discount_type, sp.discount_value, pd.id_sale_product, p.id
-        ORDER BY
-            FinalQuantity DESC;
-    """, countQuery = """
-        WITH RankedProducts AS (
-           SELECT
-               p.name_product AS ProductName,
-               c.name_color AS ColorName,
-               s.name_size AS SizeName,
-               -- Giá gốc (nếu âm thì bằng 0)
-               CASE
-                   WHEN pd.price < 0 THEN 0
-                   ELSE pd.price
-               END AS OriginalPrice,
-               -- Giá sau giảm giá (nếu âm thì bằng 0)
-               CASE
-                   WHEN sp.discount_type = 1 AND pd.id_sale_product IS NOT NULL THEN
-                       CASE
-                           WHEN pd.price * (1 - sp.discount_value / 100.0) < 0 THEN 0
-                           ELSE pd.price * (1 - sp.discount_value / 100.0)
-                       END
-                   WHEN sp.discount_type = 2 AND pd.id_sale_product IS NOT NULL THEN
-                       CASE
-                           WHEN (pd.price - sp.discount_value) < 0 THEN 0
-                           ELSE (pd.price - sp.discount_value)
-                       END
-                   ELSE
-                       CASE
-                           WHEN pd.price < 0 THEN 0
-                           ELSE pd.price
-                       END
-               END AS DiscountedPrice,
-               ISNULL(
-                   (SELECT SUM(bd.quantity)
-                    FROM dbo.bill_detail bd
-                    JOIN dbo.bill b ON bd.id_bill = b.id
-                    WHERE bd.id_product_detail = pd.id AND b.status IN (5, 8, 9)
-                   ), 0
-               )
-               + ISNULL(
-                   (SELECT SUM(ebd.quantity_exchange)
-                    FROM dbo.exchange_bill_detail ebd
-                    LEFT JOIN dbo.return_bill_exchange_bill rbe_exchange ON ebd.id_exchang_bill = rbe_exchange.id
-                    WHERE ebd.id_product_detail = pd.id AND rbe_exchange.status = 1), 0
-               )
-               - ISNULL(
-                   (SELECT SUM(rb.quantity_return)
-                    FROM dbo.return_bill_detail rb
-                    LEFT JOIN dbo.return_bill_exchange_bill rbe_return ON rb.id_return_bill = rbe_return.id
-                    WHERE rb.id_product_detail = pd.id AND rbe_return.status = 1), 0
-               ) AS FinalQuantity,
-               -- Danh sách tên ảnh
-               ISNULL(
-                   STUFF(
-                       (SELECT DISTINCT ', ' + i.name_image
-                        FROM dbo.image i
-                        WHERE i.id_product = p.id
-                        FOR XML PATH('')), 1, 2, ''
-                   ), 'Không có ảnh') AS ImageNames,
-               ROW_NUMBER() OVER (ORDER BY
-                   ISNULL(
-                       (SELECT SUM(bd.quantity)
-                        FROM dbo.bill_detail bd
-                        JOIN dbo.bill b ON bd.id_bill = b.id
-                        WHERE bd.id_product_detail = pd.id AND b.status IN (5, 8, 9)
-                       ), 0
-                   )
-                   + ISNULL(
-                       (SELECT SUM(ebd.quantity_exchange)
-                        FROM dbo.exchange_bill_detail ebd
-                        LEFT JOIN dbo.return_bill_exchange_bill rbe_exchange ON ebd.id_exchang_bill = rbe_exchange.id
-                        WHERE ebd.id_product_detail = pd.id AND rbe_exchange.status = 1), 0
-                   )
-                   - ISNULL(
-                       (SELECT SUM(rb.quantity_return)
-                        FROM dbo.return_bill_detail rb
-                        LEFT JOIN dbo.return_bill_exchange_bill rbe_return ON rb.id_return_bill = rbe_return.id
-                        WHERE rb.id_product_detail = pd.id AND rbe_return.status = 1), 0
-                   ) DESC
-               ) AS RowNum
-           FROM
-               dbo.product_detail pd
-           LEFT JOIN
-               dbo.bill_detail bd ON pd.id = bd.id_product_detail
-           LEFT JOIN
-               dbo.product p ON pd.id_product = p.id
-           LEFT JOIN
-               dbo.color c ON pd.id_color = c.id
-           LEFT JOIN
-               dbo.size s ON pd.id_size = s.id
-           LEFT JOIN
-               dbo.sale_product sp ON pd.id_sale_product = sp.id
-           LEFT JOIN
-               dbo.image i ON p.id = i.id_product
-           WHERE
-               pd.id IS NOT NULL -- Loại bỏ các giá trị không hợp lệ
-               AND (
+           SELECT TOP 3 
+               p.name_product AS productName, 
+               c.name_color AS colorName, 
+               s.name_size AS sizeName,
+               CASE 
+                   WHEN pd.price < 0 THEN 0 
+                   ELSE pd.price 
+               END AS originalPrice,
+               CASE 
+                   WHEN sp.discount_type = 1 AND pd.id_sale_product IS NOT NULL THEN 
+                       CASE 
+                           WHEN pd.price * (1 - sp.discount_value / 100.0) < 0 THEN 0 
+                           ELSE pd.price * (1 - sp.discount_value / 100.0) 
+                       END 
+                   WHEN sp.discount_type = 2 AND pd.id_sale_product IS NOT NULL THEN 
+                       CASE 
+                           WHEN (pd.price - sp.discount_value) < 0 THEN 0 
+                           ELSE (pd.price - sp.discount_value) 
+                       END 
+                   ELSE 
+                       CASE 
+                           WHEN pd.price < 0 THEN 0 
+                           ELSE pd.price 
+                       END 
+               END AS discountedPrice,
+               ISNULL((SELECT SUM(bd.quantity) 
+                       FROM dbo.bill_detail bd 
+                       JOIN dbo.bill b ON bd.id_bill = b.id 
+                       WHERE bd.id_product_detail = pd.id AND b.status IN (5, 8, 9) 
+                         AND b.create_date BETWEEN :startDate AND :endDate), 0) + 
+               ISNULL((SELECT SUM(ebd.quantity_exchange) 
+                       FROM dbo.exchange_bill_detail ebd 
+                       LEFT JOIN dbo.return_bill_exchange_bill rbe_exchange ON ebd.id_exchang_bill = rbe_exchange.id 
+                       WHERE ebd.id_product_detail = pd.id AND rbe_exchange.status = 1 
+                         AND ebd.create_date BETWEEN :startDate AND :endDate), 0) - 
+               ISNULL((SELECT SUM(rb.quantity_return) 
+                       FROM dbo.return_bill_detail rb 
+                       LEFT JOIN dbo.return_bill_exchange_bill rbe_return ON rb.id_return_bill = rbe_return.id 
+                       WHERE rb.id_product_detail = pd.id AND rbe_return.status = 1 
+                         AND rb.create_date BETWEEN :startDate AND :endDate), 0) AS finalQuantity,
+               ISNULL(STUFF((SELECT DISTINCT ', ' + i.name_image 
+                             FROM dbo.image i 
+                             WHERE i.id_product = p.id 
+                             FOR XML PATH('')), 1, 2, ''), 'Không có ảnh') AS imageNames
+           FROM 
+               dbo.product_detail pd 
+           LEFT JOIN 
+               dbo.product p ON pd.id_product = p.id 
+           LEFT JOIN 
+               dbo.color c ON pd.id_color = c.id 
+           LEFT JOIN 
+               dbo.size s ON pd.id_size = s.id 
+           LEFT JOIN 
+               dbo.sale_product sp ON pd.id_sale_product = sp.id 
+           WHERE 
+               pd.id IS NOT NULL AND (
                    EXISTS (
-                       SELECT 1
-                       FROM dbo.bill_detail bd
-                       JOIN dbo.bill b ON bd.id_bill = b.id
-                       WHERE bd.id_product_detail = pd.id AND b.status IN (5, 8, 9)
-                   )
-                   OR EXISTS (
-                       SELECT 1
-                       FROM dbo.exchange_bill_detail ebd
-                       LEFT JOIN dbo.return_bill_exchange_bill rbe_exchange ON ebd.id_exchang_bill = rbe_exchange.id
-                       WHERE ebd.id_product_detail = pd.id AND rbe_exchange.status = 1
-                   )
-                   OR EXISTS (
-                       SELECT 1
-                       FROM dbo.return_bill_detail rb
-                       LEFT JOIN dbo.return_bill_exchange_bill rbe_return ON rb.id_return_bill = rbe_return.id
-                       WHERE rb.id_product_detail = pd.id AND rbe_return.status = 1
+                       SELECT 1 
+                       FROM dbo.bill_detail bd 
+                       JOIN dbo.bill b ON bd.id_bill = b.id 
+                       WHERE bd.id_product_detail = pd.id AND b.status IN (5, 8, 9) 
+                         AND b.create_date BETWEEN :startDate AND :endDate
+                   ) OR EXISTS (
+                       SELECT 1 
+                       FROM dbo.exchange_bill_detail ebd 
+                       LEFT JOIN dbo.return_bill_exchange_bill rbe_exchange ON ebd.id_exchang_bill = rbe_exchange.id 
+                       WHERE ebd.id_product_detail = pd.id AND rbe_exchange.status = 1 
+                         AND ebd.create_date BETWEEN :startDate AND :endDate
+                   ) OR EXISTS (
+                       SELECT 1 
+                       FROM dbo.return_bill_detail rb 
+                       LEFT JOIN dbo.return_bill_exchange_bill rbe_return ON rb.id_return_bill = rbe_return.id 
+                       WHERE rb.id_product_detail = pd.id AND rbe_return.status = 1 
+                         AND rb.create_date BETWEEN :startDate AND :endDate
                    )
                )
-       )
-       -- Lọc và lấy top 10 sản phẩm
-       SELECT COUNT(*)
-       FROM RankedProducts
-       WHERE RowNum <= 10;
-    """, nativeQuery = true)
-
-    Page<Object[]> getProductSalesPageByDateRange(Pageable pageable, @Param("startDate") String startDate, @Param("endDate") String endDate);
+           ORDER BY 
+               finalQuantity DESC
+           """, nativeQuery = true)
+    List<Object[]> findTopProductsByDateRange(@Param("startDate") String startDate, @Param("endDate") String endDate);
 
     @Query(value = "SELECT " +
             "CASE " +
@@ -953,37 +722,27 @@ public interface ChartRepository extends JpaRepository<Bill, Integer> {
     List<Object[]> findStatisticsByDateRange(@Param("startDate") String startDate, @Param("endDate") String endDate);
 
     @Query(value = """
-    select sum(shipping_price) + sum(ex.exchange_and_return_fee)
-        from bill b 
-        left join  return_bill_exchange_bill ex on ex.id_bill = b.id
+    SELECT
+        COALESCE(SUM(b.shipping_price), 0) + COALESCE(SUM(ex.exchange_and_return_fee), 0) AS total
+    FROM
+        bill b
+    LEFT JOIN
+        return_bill_exchange_bill ex ON ex.id_bill = b.id;
+    
     """, nativeQuery = true)
     Long serviceFee();
 
     @Query(value = """
-        SELECT                                 
-            SUM(rbeb.exchange_and_return_fee) AS TotalExchangeAndReturnFee
-        FROM
-            return_bill_detail rbd
-        JOIN
-            return_bill_exchange_bill rbeb
-        ON
-            rbd.id_return_bill = rbeb.id                       
-        WHERE
-            rbeb.status = 1
+        select COALESCE(SUM(customer_refund - discounted_amount), 0)
+        As total
+        from return_bill_exchange_bill
     """,nativeQuery = true)
     Long returnFee();
 
     @Query(value = """
-        SELECT
-            SUM(rbeb.exchange_and_return_fee) AS ExchangeAndReturnFee
-        FROM
-            return_bill_exchange_bill rbeb
-        JOIN
-            exchange_bill_detail exb
-        ON
-            rbeb.id = exb.id_exchang_bill
-        WHERE
-            rbeb.status = 1;
+        SELECT COALESCE(SUM(customer_payment - discounted_amount), 0) 
+        AS total
+        FROM return_bill_exchange_bill;
     """, nativeQuery = true)
     Long exchangeFee();
 }
