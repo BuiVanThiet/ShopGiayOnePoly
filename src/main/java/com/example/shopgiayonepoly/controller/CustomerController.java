@@ -23,6 +23,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.List;
 
 @Controller
@@ -55,7 +56,7 @@ public class CustomerController {
         if (staffLogin == null) {
             return "redirect:/login";
         }
-        if(staffLogin.getStatus() != 1) {
+        if (staffLogin.getStatus() != 1) {
             return "redirect:/home_manage";
         }
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
@@ -92,42 +93,92 @@ public class CustomerController {
         if (staffLogin == null) {
             return "redirect:/login";
         }
-        if(staffLogin.getStatus() != 1) {
+        if (staffLogin.getStatus() != 1) {
             return "redirect:/home_manage";
         }
-        // Kiểm tra tên
+//        // Kiểm tra tên
+//        if (customerRequest.getFullName() == null || customerRequest.getFullName().trim().isEmpty()) {
+//            result.rejectValue("fullName", "error.customer", "Tên không được để trống!"); // Thông báo nếu tên rỗng hoặc chỉ chứa khoảng trắng
+//        } else if (customerRequest.getFullName().length() < 2 || customerRequest.getFullName().length() > 50) {
+//            result.rejectValue("fullName", "error.customer", "Tên phải có độ dài từ 2 đến 50 ký tự!");
+//        } else if (!customerRequest.getFullName().matches("^[\\p{L} ]+$")) {
+//            result.rejectValue("fullName", "error.customer", "Tên chỉ được chứa ký tự chữ cái và dấu cách!");
+//        }
+//        // Kiểm tra số điện thoại
+//        if (customerRequest.getNumberPhone() == null || customerRequest.getNumberPhone().isEmpty()) {
+//            result.rejectValue("numberPhone", "error.customer", "Số điện thoại không được để trống!");
+//        } else if (!customerRequest.getNumberPhone().matches("^(0[3|5|7|8|9])+([0-9]{8})$")) {
+//            result.rejectValue("numberPhone", "error.customer", "Số điện thoại không hợp lệ!");
+//        }
+//        // Kiểm tra email
+//        if (customerRequest.getEmail() == null || customerRequest.getEmail().isEmpty()) {
+//            result.rejectValue("email", "error.customer", "Email không được để trống!");
+//        } else if (customerService.existsByEmail(customerRequest.getEmail()) != null || staffService.existsByEmail(customerRequest.getEmail()) != null) {
+////            if (customerService.existsByEmail(customerRequest.getEmail()).getId() != customerRequest.getId()) {
+//                result.rejectValue("email", "error.customer", "Email đã được sử dụng!");
+////            }
+//        }
+//        // Kiểm tra ngày sinh
+//        if (customerRequest.getBirthDay() == null) {
+//            result.rejectValue("birthDay", "error.customer", "Ngày sinh không được để trống!");
+//        } else if (customerRequest.getBirthDay().isAfter(LocalDate.now())) {
+//            result.rejectValue("birthDay", "error.customer", "Ngày sinh không được lớn hơn ngày hiện tại!");
+//        }
+//        if (result.hasErrors()) {
+//            model.addAttribute("mes", "Thêm thất bại");
+//            // Nếu có lỗi, trả về trang form để người dùng sửa lại
+//            return "Customer/create"; // Bạn có thể trả về tên view của form nhập liệu
+//        }
+        // Kiểm tra tên khách hàng
         if (customerRequest.getFullName() == null || customerRequest.getFullName().trim().isEmpty()) {
-            result.rejectValue("fullName", "error.customer", "Tên không được để trống!"); // Thông báo nếu tên rỗng hoặc chỉ chứa khoảng trắng
-        } else if (customerRequest.getFullName().length() < 2 || customerRequest.getFullName().length() > 50) {
-            result.rejectValue("fullName", "error.customer", "Tên phải có độ dài từ 2 đến 50 ký tự!");
+            result.rejectValue("fullName", "error.customer", "Tên không được để trống!");
+        } else if (customerRequest.getFullName().length() > 255) {
+            result.rejectValue("fullName", "error.customer", "Tên không được vượt quá 255 ký tự!");
         } else if (!customerRequest.getFullName().matches("^[\\p{L} ]+$")) {
             result.rejectValue("fullName", "error.customer", "Tên chỉ được chứa ký tự chữ cái và dấu cách!");
         }
-        // Kiểm tra số điện thoại
-        if (customerRequest.getNumberPhone() == null || customerRequest.getNumberPhone().isEmpty()) {
+
+// Kiểm tra số điện thoại
+        if (customerRequest.getNumberPhone() == null || customerRequest.getNumberPhone().trim().isEmpty()) {
             result.rejectValue("numberPhone", "error.customer", "Số điện thoại không được để trống!");
-        } else if (!customerRequest.getNumberPhone().matches("^(0[3|5|7|8|9])+([0-9]{8})$")) {
+        } else if (!customerRequest.getNumberPhone().matches("^(0[3|5|7|8|9])[0-9]{8}$")) {
             result.rejectValue("numberPhone", "error.customer", "Số điện thoại không hợp lệ!");
         }
-        // Kiểm tra email
-        if (customerRequest.getEmail() == null || customerRequest.getEmail().isEmpty()) {
+
+// Kiểm tra email
+        if (customerRequest.getEmail() == null || customerRequest.getEmail().trim().isEmpty()) {
             result.rejectValue("email", "error.customer", "Email không được để trống!");
-        } else if (customerService.existsByEmail(customerRequest.getEmail()) != null || staffService.existsByEmail(customerRequest.getEmail()) != null) {
-//            if (customerService.existsByEmail(customerRequest.getEmail()).getId() != customerRequest.getId()) {
-                result.rejectValue("email", "error.customer", "Email đã được sử dụng!");
-//            }
+        } else if (customerRequest.getEmail().length() > 100) {
+            result.rejectValue("email", "error.customer", "Email không được vượt quá 100 ký tự!");
+        } else if (!customerRequest.getEmail().matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$")) {
+            result.rejectValue("email", "error.customer", "Email không hợp lệ!");
+        } else if (customerService.existsByEmail(customerRequest.getEmail()) != null
+                || staffService.existsByEmail(customerRequest.getEmail()) != null) {
+            result.rejectValue("email", "error.customer", "Email đã được sử dụng!");
         }
-        // Kiểm tra ngày sinh
+
+// Kiểm tra địa chỉ
+        if (customerRequest.getAddRessDetail() == null || customerRequest.getAddRessDetail().trim().isEmpty()) {
+            result.rejectValue("addRessDetail", "error.customer", "Địa chỉ cụ thể không được để trống!");
+        } else if (customerRequest.getAddRessDetail().length() > 260) {
+            result.rejectValue("addRessDetail", "error.customer", "Địa chỉ cụ thể không được vượt quá 260 ký tự!");
+        }
+
+// Kiểm tra ngày sinh
         if (customerRequest.getBirthDay() == null) {
             result.rejectValue("birthDay", "error.customer", "Ngày sinh không được để trống!");
         } else if (customerRequest.getBirthDay().isAfter(LocalDate.now())) {
             result.rejectValue("birthDay", "error.customer", "Ngày sinh không được lớn hơn ngày hiện tại!");
+        } else if (Period.between(customerRequest.getBirthDay(), LocalDate.now()).getYears() < 15) {
+            result.rejectValue("birthDay", "error.customer", "Khách hàng phải đủ 15 tuổi trở lên!");
         }
+
+// Kiểm tra lỗi và trả về thông báo
         if (result.hasErrors()) {
             model.addAttribute("mes", "Thêm thất bại");
-            // Nếu có lỗi, trả về trang form để người dùng sửa lại
-            return "Customer/create"; // Bạn có thể trả về tên view của form nhập liệu
+            return "Customer/create"; // Trả về view để người dùng chỉnh sửa
         }
+
         System.out.println("Du lieu khi them cua customer: " + customerRequest.toString());
         Customer customer = new Customer();
         customer.setFullName(customerRequest.getFullName());
@@ -170,7 +221,7 @@ public class CustomerController {
         if (staffLogin == null) {
             return "redirect:/login";
         }
-        if(staffLogin.getStatus() != 1) {
+        if (staffLogin.getStatus() != 1) {
             return "redirect:/home_manage";
         }
         Customer customer = customerService.getOne(id);
@@ -199,27 +250,67 @@ public class CustomerController {
         if (staffLogin == null) {
             return "redirect:/login";
         }
-        if(staffLogin.getStatus() != 1) {
+        if (staffLogin.getStatus() != 1) {
             return "redirect:/home_manage";
         }
-        // Kiểm tra tên
+//        // Kiểm tra tên
+//        if (customerRequest.getFullName() == null || customerRequest.getFullName().trim().isEmpty()) {
+//            result.rejectValue("fullName", "error.customer", "Tên không được để trống!"); // Thông báo nếu tên rỗng hoặc chỉ chứa khoảng trắng
+//        } else if (customerRequest.getFullName().length() < 2 || customerRequest.getFullName().length() > 50) {
+//            result.rejectValue("fullName", "error.customer", "Tên phải có độ dài từ 2 đến 50 ký tự!");
+//        } else if (!customerRequest.getFullName().matches("^[\\p{L} ]+$")) {
+//            result.rejectValue("fullName", "error.customer", "Tên chỉ được chứa ký tự chữ cái và dấu cách!");
+//        }
+//        // Kiểm tra số điện thoại
+//        if (customerRequest.getNumberPhone() == null || customerRequest.getNumberPhone().isEmpty()) {
+//            result.rejectValue("numberPhone", "error.customer", "Số điện thoại không được để trống!");
+//        } else if (!customerRequest.getNumberPhone().matches("^(0[3|5|7|8|9])+([0-9]{8})$")) {
+//            result.rejectValue("numberPhone", "error.customer", "Số điện thoại không hợp lệ!");
+//        }
+//        // Kiểm tra email
+//        if (customerRequest.getEmail() == null || customerRequest.getEmail().isEmpty()) {
+//            result.rejectValue("email", "error.customer", "Email không được để trống!");
+//        } else {
+//            Customer existingCustomer = customerService.existsByEmail(customerRequest.getEmail());
+//            Staff existingStaff = staffService.existsByEmail(customerRequest.getEmail());
+//            System.out.println(existingCustomer == null ? "Dell co(khach)" : "co(khach)");
+//            System.out.println(existingStaff == null ? "Dell co(nhanvien)" : "co(nhanvien)");
+//            if (existingCustomer != null && !existingCustomer.getId().equals(customerRequest.getId())) {
+//                result.rejectValue("email", "error.customer", "Email đã được sử dụng!");
+//            } else if (staffService.existsByEmail(customerRequest.getEmail()) != null) {
+//                result.rejectValue("email", "error.customer", "Email đã được sử dụng trong hệ thống nhân viên!");
+//            }
+//        }
+//        // Kiểm tra ngày sinh
+//        if (customerRequest.getBirthDay() == null) {
+//            result.rejectValue("birthDay", "error.customer", "Ngày sinh không được để trống!");
+//        } else if (customerRequest.getBirthDay().isAfter(LocalDate.now())) {
+//            result.rejectValue("birthDay", "error.customer", "Ngày sinh không được lớn hơn ngày hiện tại!");
+//        }
+        // Kiểm tra tên khách hàng
         if (customerRequest.getFullName() == null || customerRequest.getFullName().trim().isEmpty()) {
-            result.rejectValue("fullName", "error.customer", "Tên không được để trống!"); // Thông báo nếu tên rỗng hoặc chỉ chứa khoảng trắng
-        } else if (customerRequest.getFullName().length() < 2 || customerRequest.getFullName().length() > 50) {
-            result.rejectValue("fullName", "error.customer", "Tên phải có độ dài từ 2 đến 50 ký tự!");
+            result.rejectValue("fullName", "error.customer", "Tên không được để trống!");
+        } else if (customerRequest.getFullName().length() > 255) {
+            result.rejectValue("fullName", "error.customer", "Tên không được vượt quá 255 ký tự!");
         } else if (!customerRequest.getFullName().matches("^[\\p{L} ]+$")) {
             result.rejectValue("fullName", "error.customer", "Tên chỉ được chứa ký tự chữ cái và dấu cách!");
         }
-        // Kiểm tra số điện thoại
-        if (customerRequest.getNumberPhone() == null || customerRequest.getNumberPhone().isEmpty()) {
+
+// Kiểm tra số điện thoại
+        if (customerRequest.getNumberPhone() == null || customerRequest.getNumberPhone().trim().isEmpty()) {
             result.rejectValue("numberPhone", "error.customer", "Số điện thoại không được để trống!");
-        } else if (!customerRequest.getNumberPhone().matches("^(0[3|5|7|8|9])+([0-9]{8})$")) {
+        } else if (!customerRequest.getNumberPhone().matches("^(0[3|5|7|8|9])[0-9]{8}$")) {
             result.rejectValue("numberPhone", "error.customer", "Số điện thoại không hợp lệ!");
         }
-        // Kiểm tra email
+
+// Kiểm tra email
         if (customerRequest.getEmail() == null || customerRequest.getEmail().isEmpty()) {
             result.rejectValue("email", "error.customer", "Email không được để trống!");
-        } else {
+        } else if (customerRequest.getEmail().length() > 100) {
+            result.rejectValue("email", "error.customer", "Email không được vượt quá 100 ký tự!");
+        } else if (!customerRequest.getEmail().matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$")) {
+            result.rejectValue("email", "error.customer", "Email không hợp lệ!");
+        } else{
             Customer existingCustomer = customerService.existsByEmail(customerRequest.getEmail());
             Staff existingStaff = staffService.existsByEmail(customerRequest.getEmail());
             System.out.println(existingCustomer == null ? "Dell co(khach)" : "co(khach)");
@@ -230,11 +321,21 @@ public class CustomerController {
                 result.rejectValue("email", "error.customer", "Email đã được sử dụng trong hệ thống nhân viên!");
             }
         }
-        // Kiểm tra ngày sinh
+
+// Kiểm tra địa chỉ
+        if (customerRequest.getAddRessDetail() == null || customerRequest.getAddRessDetail().trim().isEmpty()) {
+            result.rejectValue("addRessDetail", "error.customer", "Địa chỉ cụ thể không được để trống!");
+        } else if (customerRequest.getAddRessDetail().length() > 260) {
+            result.rejectValue("addRessDetail", "error.customer", "Địa chỉ cụ thể không được vượt quá 260 ký tự!");
+        }
+
+// Kiểm tra ngày sinh
         if (customerRequest.getBirthDay() == null) {
             result.rejectValue("birthDay", "error.customer", "Ngày sinh không được để trống!");
         } else if (customerRequest.getBirthDay().isAfter(LocalDate.now())) {
             result.rejectValue("birthDay", "error.customer", "Ngày sinh không được lớn hơn ngày hiện tại!");
+        } else if (Period.between(customerRequest.getBirthDay(), LocalDate.now()).getYears() < 15) {
+            result.rejectValue("birthDay", "error.customer", "Khách hàng phải đủ 15 tuổi trở lên!");
         }
         if (result.hasErrors()) {
             model.addAttribute("mes", "Thêm thất bại");
@@ -272,7 +373,7 @@ public class CustomerController {
         if (staffLogin == null) {
             return "redirect:/login";
         }
-        if(staffLogin.getStatus() != 1) {
+        if (staffLogin.getStatus() != 1) {
             return "redirect:/home_manage";
         }
         Customer customer = customerService.getOne(id);
@@ -301,7 +402,7 @@ public class CustomerController {
         if (staffLogin == null) {
             return "redirect:/login";
         }
-        if(staffLogin.getStatus() != 1) {
+        if (staffLogin.getStatus() != 1) {
             return "redirect:/home_manage";
         }
         customerService.deleteCustomer(id);

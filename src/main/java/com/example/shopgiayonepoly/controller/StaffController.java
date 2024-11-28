@@ -25,6 +25,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.List;
 
 @Controller
@@ -107,8 +108,8 @@ public class StaffController extends BaseEmail {
         // Kiểm tra tên
         if (staffRequest.getFullName() == null || staffRequest.getFullName().trim().isEmpty()) {
             result.rejectValue("fullName", "error.staff", "Tên không được để trống!"); // Thông báo nếu tên rỗng hoặc chỉ chứa khoảng trắng
-        } else if (staffRequest.getFullName().length() < 2 || staffRequest.getFullName().length() > 50) {
-            result.rejectValue("fullName", "error.staff", "Tên phải có độ dài từ 2 đến 50 ký tự!");
+        } else if (staffRequest.getFullName().length() > 255) {
+            result.rejectValue("fullName", "error.staff", "Tên không được vượt quá 255 ký tự!");
         } else if (!staffRequest.getFullName().matches("^[\\p{L} ]+$")) {
             result.rejectValue("fullName", "error.staff", "Tên chỉ được chứa ký tự chữ cái và dấu cách!");
         }
@@ -126,11 +127,11 @@ public class StaffController extends BaseEmail {
         } else if (!staffRequest.getNumberPhone().matches("^(0[3|5|7|8|9])+([0-9]{8})$")) {
             result.rejectValue("numberPhone", "error.staff", "Số điện thoại không hợp lệ!");
         }
+
         //Kiem tra role
         if (staffRequest.getRole() == null) {
             result.rejectValue("role", "error.staff", "Chức vụ không được để trống!");
         }
-
         if (staffRequest.getRole().getId() == null) {
             result.rejectValue("role", "error.staff", "Chức vụ không được để trống!");
         }
@@ -144,12 +145,29 @@ public class StaffController extends BaseEmail {
             result.rejectValue("birthDay", "error.customer", "Ngày sinh không được để trống!");
         } else if (staffRequest.getBirthDay().isAfter(LocalDate.now())) {
             result.rejectValue("birthDay", "error.customer", "Ngày sinh không được lớn hơn ngày hiện tại!");
+        } else if (Period.between(staffRequest.getBirthDay(), LocalDate.now()).getYears() < 18) {
+            result.rejectValue("birthDay", "error.customer", "Nhân viên phải đủ 18 tuổi trở lên!");
         }
         // Kiểm tra email
+//        if (staffRequest.getEmail() == null || staffRequest.getEmail().isEmpty()) {
+//            result.rejectValue("email", "error.staff", "Email không được để trống!");
+//        } else if (customerService.existsByEmail(staffRequest.getEmail()) != null || staffService.existsByEmail(staffRequest.getEmail()) != null) {
+//            result.rejectValue("email", "error.staff", "Email đã được sử dụng!");
+//        }
         if (staffRequest.getEmail() == null || staffRequest.getEmail().isEmpty()) {
             result.rejectValue("email", "error.staff", "Email không được để trống!");
+        } else if (staffRequest.getEmail().length() > 100) {
+            result.rejectValue("email", "error.staff", "Email không được vượt quá 100 ký tự!");
+        } else if (!staffRequest.getEmail().matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$")) {
+            result.rejectValue("email", "error.staff", "Email không hợp lệ!");
         } else if (customerService.existsByEmail(staffRequest.getEmail()) != null || staffService.existsByEmail(staffRequest.getEmail()) != null) {
             result.rejectValue("email", "error.staff", "Email đã được sử dụng!");
+        }
+        // Kiểm tra địa chỉ
+        if (staffRequest.getAddRessDetail() == null || staffRequest.getAddRessDetail().trim().isEmpty()) {
+            result.rejectValue("addRessDetail", "error.staff", "Địa chỉ cụ thể không được để trống!");
+        } else if (staffRequest.getAddRessDetail().length() > 260) {
+            result.rejectValue("addRessDetail", "error.staff", "Địa chỉ cụ thể không được vượt quá 260 ký tự!");
         }
         if (result.hasErrors()) {
             model.addAttribute("mes", "Thêm thất bại");
@@ -235,11 +253,45 @@ public class StaffController extends BaseEmail {
         if(staffLogin.getStatus() != 1) {
             return "redirect:/home_manage";
         }
+//        // Kiểm tra tên
+//        if (staffRequest.getFullName() == null || staffRequest.getFullName().trim().isEmpty()) {
+//            result.rejectValue("fullName", "error.staff", "Tên không được để trống!"); // Thông báo nếu tên rỗng hoặc chỉ chứa khoảng trắng
+//        } else if (staffRequest.getFullName().length() < 2 || staffRequest.getFullName().length() > 50) {
+//            result.rejectValue("fullName", "error.staff", "Tên phải có độ dài từ 2 đến 50 ký tự!");
+//        } else if (!staffRequest.getFullName().matches("^[\\p{L} ]+$")) {
+//            result.rejectValue("fullName", "error.staff", "Tên chỉ được chứa ký tự chữ cái và dấu cách!");
+//        }
+//// Kiểm tra số điện thoại
+//        if (staffRequest.getNumberPhone() == null || staffRequest.getNumberPhone().isEmpty()) {
+//            result.rejectValue("numberPhone", "error.staff", "Số điện thoại không được để trống!");
+//        } else if (!staffRequest.getNumberPhone().matches("^(0[3|5|7|8|9])+([0-9]{8})$")) {
+//            result.rejectValue("numberPhone", "error.staff", "Số điện thoại không hợp lệ!");
+//        }
+//        // Kiểm tra email
+//        if (staffRequest.getEmail() == null || staffRequest.getEmail().isEmpty()) {
+//            result.rejectValue("email", "error.customer", "Email không được để trống!");
+//        } else {
+//            Customer existingCustomer = customerService.existsByEmail(staffRequest.getEmail());
+//            Staff existingStaff = staffService.existsByEmail(staffRequest.getEmail());
+//            System.out.println(existingCustomer == null ? "Dell co(khach)" : "co(khach)");
+//            System.out.println(existingStaff == null ? "Dell co(nhanvien)" : "co(nhanvien)");
+//            if (existingStaff != null && !existingStaff.getId().equals(staffRequest.getId())) {
+//                result.rejectValue("email", "error.customer", "Email đã được sử dụng!");
+//            } else if (customerService.existsByEmail(staffRequest.getEmail()) != null) {
+//                result.rejectValue("email", "error.customer", "Email đã được sử dụng trong hệ thống khach hang!");
+//            }
+//        }
+//        // Kiểm tra ngày sinh
+//        if (staffRequest.getBirthDay() == null) {
+//            result.rejectValue("birthDay", "error.customer", "Ngày sinh không được để trống!");
+//        } else if (staffRequest.getBirthDay().isAfter(LocalDate.now())) {
+//            result.rejectValue("birthDay", "error.customer", "Ngày sinh không được lớn hơn ngày hiện tại!");
+//        }
         // Kiểm tra tên
         if (staffRequest.getFullName() == null || staffRequest.getFullName().trim().isEmpty()) {
             result.rejectValue("fullName", "error.staff", "Tên không được để trống!"); // Thông báo nếu tên rỗng hoặc chỉ chứa khoảng trắng
-        } else if (staffRequest.getFullName().length() < 2 || staffRequest.getFullName().length() > 50) {
-            result.rejectValue("fullName", "error.staff", "Tên phải có độ dài từ 2 đến 50 ký tự!");
+        } else if (staffRequest.getFullName().length() > 255) {
+            result.rejectValue("fullName", "error.staff", "Tên không được vượt quá 255 ký tự!");
         } else if (!staffRequest.getFullName().matches("^[\\p{L} ]+$")) {
             result.rejectValue("fullName", "error.staff", "Tên chỉ được chứa ký tự chữ cái và dấu cách!");
         }
@@ -249,9 +301,34 @@ public class StaffController extends BaseEmail {
         } else if (!staffRequest.getNumberPhone().matches("^(0[3|5|7|8|9])+([0-9]{8})$")) {
             result.rejectValue("numberPhone", "error.staff", "Số điện thoại không hợp lệ!");
         }
+
+        //Kiem tra role
+        if (staffRequest.getRole() == null) {
+            result.rejectValue("role", "error.staff", "Chức vụ không được để trống!");
+        }
+        if (staffRequest.getRole().getId() == null) {
+            result.rejectValue("role", "error.staff", "Chức vụ không được để trống!");
+        }
+
+//        // Kiểm tra email
+//        if (staffRequest.getEmail() == null || staffRequest.getEmail().isEmpty()) {
+//            result.rejectValue("email", "error.customer", "Email không được để trống!");
+//        }
+        // Kiểm tra ngày sinh
+        if (staffRequest.getBirthDay() == null) {
+            result.rejectValue("birthDay", "error.customer", "Ngày sinh không được để trống!");
+        } else if (staffRequest.getBirthDay().isAfter(LocalDate.now())) {
+            result.rejectValue("birthDay", "error.customer", "Ngày sinh không được lớn hơn ngày hiện tại!");
+        } else if (Period.between(staffRequest.getBirthDay(), LocalDate.now()).getYears() < 18) {
+            result.rejectValue("birthDay", "error.customer", "Nhân viên phải đủ 18 tuổi trở lên!");
+        }
         // Kiểm tra email
         if (staffRequest.getEmail() == null || staffRequest.getEmail().isEmpty()) {
             result.rejectValue("email", "error.customer", "Email không được để trống!");
+        } else if (staffRequest.getEmail().length() > 100) {
+            result.rejectValue("email", "error.customer", "Email không được vượt quá 100 ký tự!");
+        } else if (!staffRequest.getEmail().matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$")) {
+            result.rejectValue("email", "error.customer", "Email không hợp lệ!");
         } else {
             Customer existingCustomer = customerService.existsByEmail(staffRequest.getEmail());
             Staff existingStaff = staffService.existsByEmail(staffRequest.getEmail());
@@ -263,11 +340,11 @@ public class StaffController extends BaseEmail {
                 result.rejectValue("email", "error.customer", "Email đã được sử dụng trong hệ thống khach hang!");
             }
         }
-        // Kiểm tra ngày sinh
-        if (staffRequest.getBirthDay() == null) {
-            result.rejectValue("birthDay", "error.customer", "Ngày sinh không được để trống!");
-        } else if (staffRequest.getBirthDay().isAfter(LocalDate.now())) {
-            result.rejectValue("birthDay", "error.customer", "Ngày sinh không được lớn hơn ngày hiện tại!");
+        // Kiểm tra địa chỉ
+        if (staffRequest.getAddRessDetail() == null || staffRequest.getAddRessDetail().trim().isEmpty()) {
+            result.rejectValue("addRessDetail", "error.staff", "Địa chỉ cụ thể không được để trống!");
+        } else if (staffRequest.getAddRessDetail().length() > 260) {
+            result.rejectValue("addRessDetail", "error.staff", "Địa chỉ cụ thể không được vượt quá 260 ký tự!");
         }
         if (result.hasErrors()) {
             model.addAttribute("mes", "Thêm thất bại");

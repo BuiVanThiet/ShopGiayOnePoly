@@ -20,6 +20,7 @@
         <form th:object="${staff}">
             <article class="container-xxl bd-gutter mt-4 my-md-3 bd-layout">
                 <h2>Chi tiết nhân viên</h2>
+                <a href="/staff/list" class="btn btn-primary" style="margin-bottom: 20px">Danh sách nhân viên</a>
                 <!-- <form action="/product/save" method="post" enctype="multipart/form-data"> -->
                 <input type="hidden" id="provinceHiden" th:value="${staff.province}">
                 <input type="hidden" id="districtHiden" th:value="${staff.district}">
