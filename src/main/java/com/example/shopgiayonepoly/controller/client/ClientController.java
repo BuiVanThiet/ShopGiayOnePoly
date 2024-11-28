@@ -210,7 +210,12 @@ public class ClientController extends BaseBill {
             } else if (voucherType == 2) {  // Giảm theo số tiền cố định
                 priceReduced = discountValue;
             }
+            // Cập nhật tổng giá trị giỏ hàng sau khi áp dụng giảm giá (voucher)
+            BigDecimal finalPrice = totalPriceCartItem.subtract(priceReduced);
 
+// Lưu giá cuối cùng vào session
+//            session.setAttribute("finalPrice", finalPrice);
+            model.addAttribute("finalPrice", finalPrice);
             session.setAttribute("priceReduced", priceReduced);
             model.addAttribute("priceReducedShow", priceReduced);
             session.setAttribute("idVoucherApply", idVoucherApply);
@@ -506,18 +511,20 @@ public class ClientController extends BaseBill {
     public String getFormSearchBill(Model model) {
         return "client/searchBillNotLogin";
     }
+
     @PostMapping("/search-bill")
     public String getSearchBill(
             @RequestParam(name = "codeBill") String codeBill,
             Model model) {
         Bill billSearch = this.billRepository.getBillByCodeBill(codeBill);
-        if(billSearch != null) {
-            return "redirect:/onepoly/status-bill/"+billSearch.getId();
-        }else {
-            model.addAttribute("error","Không tìm thấy hóa đơn!");
+        if (billSearch != null) {
+            return "redirect:/onepoly/status-bill/" + billSearch.getId();
+        } else {
+            model.addAttribute("error", "Không tìm thấy hóa đơn!");
             return "client/searchBillNotLogin";
         }
     }
+
     // thong tin hoa don
     @GetMapping("/status-bill/{id}")
     public String getFormStatusBill(@PathVariable("id") String idBill, Model model, HttpSession session) {

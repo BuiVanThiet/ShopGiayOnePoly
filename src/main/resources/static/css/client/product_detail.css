@@ -36,24 +36,36 @@
     outline: none;
     border: 3px solid #2222c4;
 }
-
-/*button add cart*/
-.btn-add-cart {
-    width: 100%;
-    height: 50px;
-    line-height: 40px;
-    font-size: 15px;
-    border: 0.5px;
-    border-radius: 2px;
-    color: white;
-    font-weight: lighter;
-    background-color: #004698;
+.add-cart {
+    display: flex; /* Sử dụng Flexbox để chia đều không gian */
+    gap: 10px; /* Khoảng cách giữa hai nút */
 }
 
-.btn-add-cart:hover {
-
-    background-color: #053870;
+.btn-add-cart, .btn-pay-now {
+    flex: 1; /* Cả hai nút chiếm đều không gian */
+    height: 50px; /* Đảm bảo chiều cao giống nhau */
+    line-height: 50px; /* Căn giữa chữ dọc */
+    font-size: 15px; /* Kích thước chữ */
+    border: 0.5px solid #004698; /* Đường viền */
+    border-radius: 2px; /* Góc bo tròn */
+    color: white; /* Màu chữ */
+    font-weight: lighter; /* Độ đậm của chữ */
+    background-color: #004698; /* Màu nền */
+    cursor: pointer; /* Hiển thị con trỏ như nút bấm */
 }
+
+.btn-add-cart:hover, .btn-pay-now:hover {
+    background-color: #053870; /* Màu nền khi hover */
+}
+
+.btn-pay-now {
+    background-color: #ff9800; /* Màu nền của nút "Mua ngay" */
+}
+
+.btn-pay-now:hover {
+    background-color: #e68900; /* Màu nền khi hover cho nút "Mua ngay" */
+}
+
 
 /**/
 
