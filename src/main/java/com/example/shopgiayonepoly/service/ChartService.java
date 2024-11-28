@@ -36,9 +36,7 @@ public interface ChartService {
 
     List<ProductInfoDto> getProductSales();
 
-    Page<ProductInfoDto> getProductSalesPage(Pageable pageable);
-
-    Page<ProductInfoDto> getProductSalesPageByDateRange(int page, int size, @Param("startDate") String startDate, @Param("endDate") String endDate);
+    List<ProductInfoDto> findTopProductsByDateRange(@Param("startDate") String startDate, @Param("endDate") String endDate);
 
     List<StatusBill> findBillsWithStatusDescription();
 

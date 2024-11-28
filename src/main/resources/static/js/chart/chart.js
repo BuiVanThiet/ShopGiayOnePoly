@@ -234,7 +234,7 @@ document.getElementById("timeFilterForm").addEventListener("submit", function(ev
     const title = (startDate === endDate) ? `Ngày ${startDate}` : `Từ ${startDate} đến ${endDate}`;
 
     // Hiển thị tiêu đề và fetch dữ liệu
-    document.getElementById("topProductTitle").textContent = `Top 10 sản phẩm bán chạy ${title}`;
+    document.getElementById("topProductTitle").textContent = `Top 3 sản phẩm bán chạy ${title}`;
     fetchProductSalesInDateRange(startDate, endDate);
     fetchDataForCharts(startDate, endDate, title);
 });
@@ -243,88 +243,60 @@ document.getElementById("timeFilterForm").addEventListener("submit", function(ev
 function formatDate(date) {
     return `${String(date.getDate()).padStart(2, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${date.getFullYear()}`;
 }
+async function fetchProductSalesInDateRange(startDate, endDate) {
+    try {
 
-// async function fetchProductSalesInDateRange(startDate, endDate, page = 0) {
-//     try {
-//
-//         const currentScrollPosition = window.scrollY;
-//         const response = await fetch(`/api/getProductsByDateRange?startDate=${startDate}&endDate=${endDate}&page=${page}&size=3`);
-//
-//         if (!response.ok) return console.error('Lỗi tải dữ liệu');
-//
-//         const { content, pageable, totalPages } = await response.json();
-//         const productTableBody = document.getElementById("productTableBody");
-//         const paginationContainer = document.getElementById("paginationContainer");
-//
-//         productTableBody.innerHTML = '';
-//         paginationContainer.innerHTML = '';
-//
-//         // Nếu không có sản phẩm
-//         if (!content.length) {
-//             productTableBody.innerHTML = '<tr><td colspan="5">Không có sản phẩm</td></tr>';
-//             return;
-//         }
-//
-//         // Thêm dữ liệu vào bảng
-//         content.forEach((item, index) => {
-//             const row = `
-//                 <tr>
-//                     <td>${index + 1 + pageable.pageNumber * pageable.pageSize}</td>
-//                     <td><img id="product-image-${index}" src="${item.imageUrls[0]}" width="100" height="100"></td>
-//                     <td>
-//                         <span>${item.productName}</span><br>
-//                         <small>Màu: ${item.colorName} <br>
-//                                Kích thước: ${item.sizeName}
-//                          </small>
-//                     </td>
-//                     <td>${item.originalPrice === item.promotionalPrice
-//                 ? item.originalPrice
-//                 : `<span style="text-decoration: line-through;">${item.originalPrice}</span><br><span style="color: red;">${item.promotionalPrice}</span>`}
-//                     </td>
-//                     <td>${item.totalQuantity}</td>
-//                 </tr>
-//             `;
-//             productTableBody.insertAdjacentHTML('beforeend', row);
-//
-//             // Thay đổi ảnh mỗi 10 giây
-//             let currentImageIndex = 0;
-//             const imageElement = document.getElementById(`product-image-${index}`);
-//             setInterval(() => {
-//                 imageElement.src = item.imageUrls[currentImageIndex];
-//                 currentImageIndex = (currentImageIndex + 1) % item.imageUrls.length;
-//             }, 10000);
-//         });
-//
-//         // Phân trang
-//         if (totalPages > 1) {
-//             const prevPage = pageable.pageNumber > 0 ? pageable.pageNumber - 1 : totalPages - 1;
-//             paginationContainer.insertAdjacentHTML('beforeend', `
-//                 <li class="page-item">
-//                     <a class="page-link" href="#" onclick="fetchProductSalesInDateRange('${startDate}', '${endDate}', ${prevPage})">Trước</a>
-//                 </li>
-//             `);
-//
-//             for (let i = 0; i < totalPages; i++) {
-//                 paginationContainer.insertAdjacentHTML('beforeend', `
-//                     <li class="page-item ${pageable.pageNumber === i ? 'active' : ''}">
-//                         <a class="page-link" href="#" onclick="fetchProductSalesInDateRange('${startDate}', '${endDate}', ${i})">${i + 1}</a>
-//                     </li>
-//                 `);
-//             }
-//
-//             const nextPage = pageable.pageNumber < totalPages - 1 ? pageable.pageNumber + 1 : 0;
-//             paginationContainer.insertAdjacentHTML('beforeend', `
-//                 <li class="page-item">
-//                     <a class="page-link" href="#" onclick="fetchProductSalesInDateRange('${startDate}', '${endDate}', ${nextPage})">Sau</a>
-//                 </li>
-//             `);
-//         }
-//
-//         window.scrollTo(0, currentScrollPosition);
-//     } catch (error) {
-//         console.error('Error:', error);
-//     }
-// }
+        const currentScrollPosition = window.scrollY;
+        const response = await fetch(`/api/topProductSalesRenge?startDate=${startDate}&endDate=${endDate}`);
+
+        if (!response.ok) return console.error('Lỗi tải dữ liệu');
+
+        const products = await response.json();
+        const productTableBody = document.getElementById("productTableBody");
+
+        productTableBody.innerHTML = '';
+
+        // Nếu không có sản phẩm
+        if (!products.length) {
+            productTableBody.innerHTML = '<tr><td colspan="5">Không có sản phẩm</td></tr>';
+            return;
+        }
+
+        // Thêm dữ liệu vào bảng
+        products.forEach((item, index) => {
+            const row = `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td><img id="product-image-${index}" src="${item.imageUrls[0]}" width="100" height="100"></td>
+                    <td>
+                        <span>${item.productName}</span><br>
+                        <small>Màu: ${item.colorName} <br>
+                               Kích thước: ${item.sizeName}
+                         </small>
+                    </td>
+                    <td>${item.originalPrice === item.promotionalPrice
+                ? item.originalPrice
+                : `<span style="text-decoration: line-through;">${item.originalPrice}</span><br><span style="color: red;">${item.promotionalPrice}</span>`}
+                    </td>
+                    <td>${item.totalQuantity}</td>
+                </tr>
+            `;
+            productTableBody.insertAdjacentHTML('beforeend', row);
+
+            // Thay đổi ảnh mỗi 10 giây
+            let currentImageIndex = 0;
+            const imageElement = document.getElementById(`product-image-${index}`);
+            setInterval(() => {
+                imageElement.src = item.imageUrls[currentImageIndex];
+                currentImageIndex = (currentImageIndex + 1) % item.imageUrls.length;
+            }, 10000);
+        });
+
+        window.scrollTo(0, currentScrollPosition);
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
 
 function filterTopProducts(filterType) {
     const today = new Date();
@@ -344,7 +316,7 @@ function filterTopProducts(filterType) {
             // Lấy ngày đầu tháng và ngày hiện tại
             startDate = new Date(today.getFullYear(), today.getMonth(), 1); // Ngày đầu tháng này
             endDate = today; // Ngày hiện tại
-            title = `Top sản phẩm bán chạy tháng này`;
+            title = `Top 3 sản phẩm bán chạy tháng này`;
             break;
 
         case 'last7days':
@@ -352,20 +324,20 @@ function filterTopProducts(filterType) {
             startDate = new Date(today);
             startDate.setDate(today.getDate() - 7);
             endDate = today;
-            title = `Top sản phẩm bán chạy trong 7 ngày qua`;
+            title = `Top 3 sản phẩm bán chạy trong 7 ngày qua`;
             break;
 
         case 'year':
             // Lấy từ đầu năm đến hiện tại
             startDate = new Date(today.getFullYear(), 0, 1); // Ngày đầu năm
             endDate = today; // Ngày hôm nay
-            title = `Top sản phẩm bán chạy năm ${today.getFullYear()}`;
+            title = `Top 3 sản phẩm bán chạy năm ${today.getFullYear()}`;
             break;
 
         default: // Hôm nay
             startDate = today;
             endDate = today;
-            title = `Top sản phẩm bán chạy hôm nay`;
+            title = `Top 3 sản phẩm bán chạy hôm nay`;
             break;
     }
 
@@ -454,10 +426,20 @@ document.addEventListener("DOMContentLoaded", function () {
             });
     }
 
-
     function displayProductTable(data) {
         const productTableBody = document.getElementById('productTableBody');
-        productTableBody.innerHTML = '';  // Xóa dữ liệu cũ
+        productTableBody.innerHTML = ''; // Xóa dữ liệu cũ
+
+        if (data.length === 0) {
+            // Hiển thị thông báo nếu không có sản phẩm
+            const noDataRow = `
+                <tr>
+                    <td colspan="5" style="text-align: center;">Không có sản phẩm</td>
+                </tr>
+            `;
+            productTableBody.insertAdjacentHTML('beforeend', noDataRow);
+            return;
+        }
 
         data.forEach((item, index) => {
             const row = `
