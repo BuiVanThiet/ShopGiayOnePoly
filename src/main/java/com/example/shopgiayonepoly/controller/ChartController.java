@@ -27,23 +27,23 @@ public class ChartController {
     ChartService chartService;
 
     @GetMapping("/form")
-    public String form(Model model, @RequestParam(defaultValue ="0") int page) {
+    public String form(Model model) {
         Long monthlyBill = chartService.monthlyBill();
         Long totalMonthlyBill = chartService.totalMonthlyBill();
         Long totalMonthlyInvoiceProducts = chartService.totalMonthlyInvoiceProducts();
         Long billOfTheDay = chartService.billOfTheDay();
         Long totalPriceToday = chartService.totalPriceToday();
         List<Date> findLastBillDates = chartService.findLastBillDates();
-        Long serviceFee = chartService.serviceFee();
-        Long returnFee = chartService.returnFee();
-        Long exchangeFee = chartService.exchangeFee();
+//        Long serviceFee = chartService.serviceFee();
+//        Long returnFee = chartService.returnFee();
+//        Long exchangeFee = chartService.exchangeFee();
         // chuyển tiền sang VND
         NumberFormat numberFormat = NumberFormat.getInstance(new Locale("vi", "VN"));
         String formattedTotalMonthlyBill = numberFormat.format(totalMonthlyBill);
         String formattedTotalPriceToday = numberFormat.format(totalPriceToday);
-        String formattedServiceFee = numberFormat.format(serviceFee);
-        String formattedReturnFee = numberFormat.format(returnFee);
-        String formattedExchangeFee = numberFormat.format(exchangeFee);
+//        String formattedServiceFee = numberFormat.format(serviceFee);
+//        String formattedReturnFee = numberFormat.format(returnFee);
+//        String formattedExchangeFee = numberFormat.format(exchangeFee);
 
         List<String> findLastDates = new ArrayList<>();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -51,11 +51,11 @@ public class ChartController {
             findLastDates.add(sdf.format(date));
         }
 
-        model.addAttribute("exchangeFee",formattedExchangeFee);
-
-        model.addAttribute("serviceFee",formattedServiceFee);
-
-        model.addAttribute("returnFee",formattedReturnFee);
+//        model.addAttribute("exchangeFee",formattedExchangeFee);
+//
+//        model.addAttribute("serviceFee",formattedServiceFee);
+//
+//        model.addAttribute("returnFee",formattedReturnFee);
         // Hóa đơn tháng này
         model.addAttribute("monthlyBill", monthlyBill);
         // Tổng tiền hóa đơn tháng này

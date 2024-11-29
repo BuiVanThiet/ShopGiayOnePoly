@@ -31,7 +31,7 @@ public class UserProfileController {
     @GetMapping("/userProfile")
     public String formProfile(Model model, HttpSession session) {
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
-        System.out.println("ben profile clinet: " + clientLoginResponse.toString());
+//        System.out.println("ben profile clinet: " + clientLoginResponse.toString());
         if (clientLoginResponse == null) {
             return "login/loginClient"; // Chuyển hướng đến trang đăng nhập nếu người dùng chưa đăng nhập
         }

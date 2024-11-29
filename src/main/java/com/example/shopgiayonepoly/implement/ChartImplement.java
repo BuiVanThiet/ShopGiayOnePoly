@@ -34,18 +34,18 @@ public class ChartImplement implements ChartService {
     }
 
     @Override
-    public Long serviceFee() {
-        return chartRepository.serviceFee();
+    public Long serviceFee(String startDate, String endDate) {
+        return chartRepository.serviceFee(startDate, endDate);
     }
 
     @Override
-    public Long returnFee() {
-        return chartRepository.returnFee();
+    public Long returnFee(String startDate, String endDate) {
+        return chartRepository.returnFee(startDate, endDate);
     }
 
     @Override
-    public Long exchangeFee() {
-        return chartRepository.exchangeFee();
+    public Long exchangeFee(String startDate, String endDate) {
+        return chartRepository.exchangeFee(startDate, endDate);
     }
 
     @Override
