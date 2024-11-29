@@ -1,15 +1,3 @@
-window.onload = function() {
-    const scrollPosition = sessionStorage.getItem('scrollPosition');
-    if (scrollPosition) {
-        window.scrollTo(0, scrollPosition);
-    }
-};
-
-// Trước khi trang bị làm mới, lưu lại vị trí cuộn hiện tại
-window.onbeforeunload = function() {
-    sessionStorage.setItem('scrollPosition', window.scrollY);
-};
-
 const customButtons = document.querySelectorAll('.custom-btn');
 customButtons.forEach(button => {
     button.addEventListener('click', function() {
@@ -21,33 +9,164 @@ customButtons.forEach(button => {
 // Khởi tạo Google Charts
 google.charts.load('current', {packages: ['corechart', 'bar']});
 google.charts.setOnLoadCallback(() => {
-    Last7DaysStatistics(); // Gọi hàm để vẽ biểu đồ cho 7 ngày gần đây
+    Last7DaysStatistics();
 });
-
+window.onload = function() {
+    filterDataPie('month-pieChart')
+};
+function initDefaultToday() {
+    filterData('today'); // Lọc theo năm mặc định khi không có lựa chọn nào được chọn
+}
+window.onload = initDefaultToday;
 // Hàm lọc dữ liệu và hiển thị biểu đồ
 function filterData(filterType) {
     if (filterType === 'month') {
-        MonthlyStatistics(); // Gọi hàm vẽ biểu đồ cột cho tháng
-        filterDataPie('month-pieChart'); // Gọi hàm vẽ biểu đồ tròn cho tháng
-        filterTopProducts('month'); // Gọi hàm để hiển thị top 10 sản phẩm trong tháng
+        MonthlyStatistics();
+        filterDataPie('month-pieChart');
+        filterTopProducts('month');
     } else if (filterType === 'today') {
-        TodayStatistics(); // Gọi hàm vẽ biểu đồ cột cho hôm nay
-        filterDataPie('today-pieChart'); // Gọi hàm vẽ biểu đồ tròn cho hôm nay
-        filterTopProducts('today'); // Gọi hàm để hiển thị top 10 sản phẩm hôm nay
+        TodayStatistics();
+        filterDataPie('today-pieChart');
+        filterTopProducts('today');
     } else if (filterType === 'last7days') {
-        Last7DaysStatistics(); // Gọi hàm vẽ biểu đồ cột cho 7 ngày qua
-        filterDataPie('last7days-pieChart'); // Gọi hàm vẽ biểu đồ tròn cho 7 ngày qua
-        filterTopProducts('last7days'); // Gọi hàm để hiển thị top 10 sản phẩm trong 7 ngày qua
+        Last7DaysStatistics();
+        filterDataPie('last7days-pieChart');
+        filterTopProducts('last7days');
     } else if (filterType === 'year') {
-        AnnualStatistics(); // Gọi hàm vẽ biểu đồ cột cho năm
-        filterDataPie('year-pieChart'); // Gọi hàm vẽ biểu đồ tròn cho năm
-        filterTopProducts('year'); // Gọi hàm để hiển thị top 10 sản phẩm trong năm
+        AnnualStatistics();
+        filterDataPie('year-pieChart');
+        filterTopProducts('year');
     }
+    const today = new Date(); // Ngày hiện tại
+    let startDate, endDate;
+
+    switch (filterType) {
+        case 'today': // Hôm nay
+            startDate = new Date(today);
+            endDate = new Date(today);
+            title = "hôm nay";
+            break;
+        case 'last7days': // 7 ngày qua
+            startDate = new Date(today);
+            startDate.setDate(today.getDate() - 7);
+            endDate = new Date(today);
+            title = "7 ngày qua";
+            break;
+        case 'month': // Tháng này
+            startDate = new Date(today.getFullYear(), today.getMonth(), 1);
+            endDate = new Date(today);
+            title = "tháng này";
+            break;
+        case 'year': // Năm nay
+            startDate = new Date(today.getFullYear(), 0, 1);
+            endDate = new Date(today);
+            title = "năm nay";
+            break;
+        default:
+            console.error("Filter type không hợp lệ!");
+            return;
+    }
+
+    document.getElementById('serviceFeeTitle').innerText = "Phí dịch vụ " + title;
+    document.getElementById('exchangeFeeTitle').innerText = "Phí đổi hàng " + title;
+    document.getElementById('returnFeeTitle').innerText = "Phí trả hàng " + title;
+    // Định dạng ngày thành YYYY-MM-DD để gửi lên server
+    const formattedStartDate = formatDateForAPI(startDate);
+    const formattedEndDate = formatDateForAPI(endDate);
+
+    console.log(`Lọc dữ liệu từ ${formattedStartDate} đến ${formattedEndDate}`);
+
+    // Gọi API với startDate và endDate
+    fetch(`/api/returnFee?startDate=${formattedStartDate}&endDate=${formattedEndDate}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Lỗi khi lấy dữ liệu từ API: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("Dữ liệu từ API:", data); // Kiểm tra dữ liệu từ API
+            const returnFee = data || 0;  // Nếu không có dữ liệu, gán giá trị mặc định là 0
+            console.log("Phí trả hàng:", returnFee); // In ra phí trả hàng
+
+            // Định dạng giá trị theo tiền tệ Việt Nam
+            const formattedReturnFee = new Intl.NumberFormat('vi-VN', {
+                style: 'decimal',
+                minimumFractionDigits: 0,
+            }).format(returnFee);
+
+            // Cập nhật phần tử HTML bằng giá trị trả về
+            const returnFeeElement = document.getElementById('returnFeeDisplay');
+            if (returnFeeElement) {
+                returnFeeElement.innerText = formattedReturnFee + ' VND'; // Hiển thị giá trị đã định dạng
+            } else {
+                console.error("Không tìm thấy phần tử với id 'returnFeeDisplay'");
+            }
+        })
+        .catch(error => {
+            console.error("Lỗi khi lấy dữ liệu:", error);
+        });
+    fetch(`/api/exchangeFee?startDate=${formattedStartDate}&endDate=${formattedEndDate}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Lỗi khi lấy dữ liệu từ API exchangeFee: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("Dữ liệu từ API exchangeFee:", data); // Kiểm tra dữ liệu từ API exchangeFee
+            const exchangeFee = data || 0;  // Nếu không có dữ liệu, gán giá trị mặc định là 0
+            console.log("Phí giao dịch:", exchangeFee); // In ra phí giao dịch
+
+            // Định dạng giá trị theo tiền tệ Việt Nam
+            const formattedExchangeFee = new Intl.NumberFormat('vi-VN', {
+                style: 'decimal',
+                minimumFractionDigits: 0,
+            }).format(exchangeFee);
+
+            // Cập nhật phần tử HTML bằng giá trị trả về
+            const exchangeFeeElement = document.getElementById('exchangeFeeDisplay');
+            if (exchangeFeeElement) {
+                exchangeFeeElement.innerText = formattedExchangeFee + ' VND'; // Hiển thị giá trị đã định dạng
+            } else {
+                console.error("Không tìm thấy phần tử với id 'exchangeFeeDisplay'");
+            }
+        })
+        .catch(error => {
+            console.error("Lỗi khi lấy dữ liệu từ exchangeFee:", error);
+        });
+
+    fetch(`/api/serviceFee?startDate=${formattedStartDate}&endDate=${formattedEndDate}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Lỗi khi lấy dữ liệu từ API serviceFee: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("Dữ liệu từ API serviceFee:", data); // Kiểm tra dữ liệu từ API serviceFee
+            const serviceFee = data || 0;  // Nếu không có dữ liệu, gán giá trị mặc định là 0
+            console.log("Phí dịch vụ:", serviceFee); // In ra phí dịch vụ
+
+            // Định dạng giá trị theo tiền tệ Việt Nam
+            const formattedServiceFee = new Intl.NumberFormat('vi-VN', {
+                style: 'decimal',
+                minimumFractionDigits: 0,
+            }).format(serviceFee);
+
+            // Cập nhật phần tử HTML bằng giá trị trả về
+            const serviceFeeElement = document.getElementById('serviceFeeDisplay');
+            if (serviceFeeElement) {
+                serviceFeeElement.innerText = formattedServiceFee + ' VND'; // Hiển thị giá trị đã định dạng
+            } else {
+                console.error("Không tìm thấy phần tử với id 'serviceFeeDisplay'");
+            }
+        })
+        .catch(error => {
+            console.error("Lỗi khi lấy dữ liệu từ serviceFee:", error);
+        });
 }
 
-
-
-// Hàm vẽ biểu đồ
 function MonthlyStatistics() {
     fetch('/api/MonthlyStatistics') // Gọi API để lấy dữ liệu
         .then(response => response.json())
@@ -213,7 +332,7 @@ document.getElementById("timeFilterForm").addEventListener("submit", function(ev
 
     const startDate = document.getElementById("startDate").value;
     const endDate = document.getElementById("endDate").value;
-    const today = new Date().toISOString().split("T")[0]; // Lấy ngày hiện tại
+    const today = new Date(); // Lấy ngày hiện tại
 
     // Kiểm tra nếu người dùng chọn ngày lớn hơn ngày hiện tại
     if (startDate > today || endDate > today) {
@@ -239,10 +358,10 @@ document.getElementById("timeFilterForm").addEventListener("submit", function(ev
     fetchDataForCharts(startDate, endDate, title);
 });
 
-// Hàm định dạng ngày
 function formatDate(date) {
     return `${String(date.getDate()).padStart(2, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${date.getFullYear()}`;
 }
+
 async function fetchProductSalesInDateRange(startDate, endDate) {
     try {
 
@@ -298,56 +417,61 @@ async function fetchProductSalesInDateRange(startDate, endDate) {
     }
 }
 
+function formatDateForAPI(date) {
+    return new Date(date.getTime() - date.getTimezoneOffset() * 60000) // Bù trừ múi giờ
+        .toISOString()
+        .split('T')[0]; // Lấy phần ngày
+}
+
 function filterTopProducts(filterType) {
     const today = new Date();
     let startDate, endDate;
-    let title = "Top 10 sản phẩm bán chạy";  // Mặc định tiêu đề
-
-    // Hàm chuyển đổi ngày sang định dạng dd/MM/yyyy
-    function formatDate(date) {
-        const day = String(date.getDate()).padStart(2, '0');  // Đảm bảo 2 chữ số
-        const month = String(date.getMonth() + 1).padStart(2, '0');  // Tháng bắt đầu từ 0, cộng thêm 1
-        const year = date.getFullYear();
-        return `${day}/${month}/${year}`;
-    }
+    let title = "Top 10 sản phẩm bán chạy"; // Tiêu đề mặc định
 
     switch (filterType) {
-        case 'month':
-            // Lấy ngày đầu tháng và ngày hiện tại
-            startDate = new Date(today.getFullYear(), today.getMonth(), 1); // Ngày đầu tháng này
-            endDate = today; // Ngày hiện tại
+        case 'month': // Lọc tháng này
+            startDate = new Date(today.getFullYear(), today.getMonth(), 1); // Ngày đầu tháng
+            endDate = new Date(today); // Ngày hiện tại
+            endDate.setHours(23, 59, 59, 999); // Cuối ngày
             title = `Top 3 sản phẩm bán chạy tháng này`;
             break;
 
-        case 'last7days':
-            // Lấy 7 ngày gần nhất
+        case 'last7days': // Lọc 7 ngày gần nhất
             startDate = new Date(today);
-            startDate.setDate(today.getDate() - 7);
-            endDate = today;
+            startDate.setDate(today.getDate() - 7); // Lấy ngày cách đây 7 ngày
+            endDate = new Date(today); // Ngày hiện tại
+            endDate.setHours(23, 59, 59, 999); // Cuối ngày
             title = `Top 3 sản phẩm bán chạy trong 7 ngày qua`;
             break;
 
-        case 'year':
-            // Lấy từ đầu năm đến hiện tại
+        case 'year': // Lọc năm hiện tại
             startDate = new Date(today.getFullYear(), 0, 1); // Ngày đầu năm
-            endDate = today; // Ngày hôm nay
+            endDate = new Date(today); // Ngày hiện tại
+            endDate.setHours(23, 59, 59, 999); // Cuối ngày
             title = `Top 3 sản phẩm bán chạy năm ${today.getFullYear()}`;
             break;
 
-        default: // Hôm nay
-            startDate = today;
-            endDate = today;
+        default: // Lọc hôm nay
+            startDate = new Date(today);
+            endDate = new Date(today);
+            endDate.setHours(23, 59, 59, 999); // Cuối ngày
             title = `Top 3 sản phẩm bán chạy hôm nay`;
             break;
     }
 
-    // Cập nhật tiêu đề
+    // Cập nhật tiêu đề hiển thị
     document.getElementById('topProductTitle').innerText = title;
 
-    // Gọi hàm fetch với startDate và endDate đã được chuyển đổi sang định dạng YYYY-MM-DD
-    fetchProductSalesInDateRange(startDate.toISOString().split('T')[0], endDate.toISOString().split('T')[0], 0); // Fetch với trang 0
-}
+    // Gọi API với startDate và endDate đã được định dạng
+    fetchProductSalesInDateRange(
+        formatDateForAPI(startDate),
+        formatDateForAPI(endDate)
+    );
 
+    // Debug: log ra giá trị startDate và endDate
+    console.log('Start Date:', formatDateForAPI(startDate));
+    console.log('End Date:', formatDateForAPI(endDate));
+}
 
 function fetchDataForCharts(startDate, endDate, title) {
     // Kiểm tra nếu ngày bắt đầu và ngày kết thúc giống nhau
@@ -396,7 +520,6 @@ function drawColumnChart(data, title) {
     new google.visualization.ColumnChart(document.getElementById('chart_div')).draw(googleData, options);
 }
 
-
 function drawPieChart(data, title) {
     const googleData = google.visualization.arrayToDataTable([
         ['Trạng thái', 'Số lượng'],
@@ -412,8 +535,6 @@ function drawPieChart(data, title) {
     new google.visualization.PieChart(document.getElementById('piechart')).draw(googleData, options);
 }
 
-
-// Hàm để tải dữ liệu sản phẩm và phân trang
 document.addEventListener("DOMContentLoaded", function () {
     function loadProductData() {
         fetch(`/api/productSales`) // API mới không phân trang
@@ -557,7 +678,6 @@ function drawChart(chartData, title, period) {
                 break;
         }
 
-        // Hiển thị thông báo nếu không có dữ liệu
         pieChartDiv.innerHTML = `
             <div class="text-center mt-4">
                 <h5>${title}</h5>
@@ -600,8 +720,4 @@ function filterDataPie(period) {
             break;
     }
 }
-
-window.onload = function() {
-    filterDataPie('month-pieChart'); // Hiển thị biểu đồ mặc định là tháng
-};
 

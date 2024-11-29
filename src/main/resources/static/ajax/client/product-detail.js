@@ -68,7 +68,7 @@ function getProductDetail(productId, colorId, sizeId) {
                     $('#price-display').text(data.price.toLocaleString('en-US') + " ₫");
 
                     $('#price-apply-discount').text(data.priceDiscount.toLocaleString('en-US') + " ₫");
-                    $('#price-modal').text(data.priceDiscount.toLocaleString('en-US')+" ₫");
+                    $('#price-modal').text(data.priceDiscount.toLocaleString('en-US') + " ₫");
 
                     if (data.price === data.priceDiscount) {
                         $('#price-display').hide();
@@ -143,7 +143,6 @@ document.addEventListener("DOMContentLoaded", function () {
         $('#cartModal').modal('show');
     }
 
-    // Sự kiện khi bấm nút trừ
     btnMinus.addEventListener("click", function () {
         let quantityBuy = parseInt(quantityInput.val());
         if (quantityBuy > 1) {
@@ -151,7 +150,6 @@ document.addEventListener("DOMContentLoaded", function () {
             quantityInput.val(quantityBuy);
         }
     });
-    // Sự kiện khi bấm nút cộng
     btnPlus.addEventListener("click", function () {
         let quantityBuy = parseInt(quantityInput.val());
         const addToCartButton = document.getElementById('add-to-cart');
@@ -189,6 +187,107 @@ function addToCart() {
     // Lấy productDetailId
     var productDetailId = $('#productDetailID-hidden').val();
 
+    // Lấy số lượng
+    var quantityBuy = parseInt($('input[name="quantity"]').val());
+
+    // Lấy các thông tin sản phẩm
+    var productName = $('#product-name').text();
+    var productPrice = $('#price-modal').text();
+    var productColor = $('#color-modal').text();
+    var productSize = $('#size-modal').text();
+    var productImage = $('.item-img img').attr('src');
+
+    $.ajax({
+        url: '/api-client/add-to-cart',
+        type: 'POST',
+        contentType: "application/json",
+        data: JSON.stringify({
+            productDetailId: productDetailId,
+            quantity: quantityBuy
+        }),
+        success: function (data) {
+            if (data && data.success) {
+                console.log(data)
+                // Cập nhật thông tin trong modal thành công
+                $('#success-product-image').attr('src', productImage);
+                $('#success-product-name').text(productName);
+                $('#success-price-modal').text(productPrice);
+                $('#success-color-modal').text(productColor);
+                $('#success-size-modal').text(productSize);
+                $('#success-quantity-modal').text(quantityBuy);
+
+                var successModal = new bootstrap.Modal(document.getElementById('addCartSuccessModal'));
+                successModal.show();
+            } else {
+                // Hiển thị lỗi
+                $('#container-message .message-error').text(data.message || 'Có lỗi xảy ra khi thêm vào giỏ hàng.');
+                showCartModal();
+            }
+        },
+        error: function (error) {
+            console.error('Error:', error);
+            $('#container-message .message-error').text('Có lỗi xảy ra khi thêm vào giỏ hàng.');
+            showCartModal();
+        }
+    });
+}
+
+
+// Sự kiện cho nút "Tiếp tục mua sắm" trong modal
+$('#continue-shopping').click(function () {
+    $('#successModal').modal('hide');
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    // Lấy các phần tử cần thiết cho modal "Mua ngay"
+    const quantityInputPayNow = $('input[name="quantity"]'); // Input số lượng trong modal "Mua ngay"
+    const quantityTextPayNow = document.getElementById('quantity-display-paynow').innerText;
+    var quantityPayNow = parseInt(quantityTextPayNow);
+
+    const btnMinusPayNow = document.getElementById('qtyminus-paynow');
+    const btnPlusPayNow = document.getElementById('qtyplus-paynow');
+
+    const addToCartButtonPayNow = document.getElementById('add-to-cart-paynow'); // Nút "Mua ngay" trong modal "Mua ngay"
+    const quantityNowTextPayNow = document.getElementById('quantity-display-paynow').innerText;
+    var quantityNowPayNow = parseInt(quantityNowTextPayNow);
+
+    // Hàm hiển thị modal lỗi khi vượt quá số lượng
+    function showPayNowModalError(message) {
+        $('#container-message-paynow .message-error').text(message);
+        $('#payNowModal').modal('show'); // Hiển thị modal khi có lỗi
+    }
+
+    // Sự kiện cho nút trừ số lượng
+    btnMinusPayNow.addEventListener("click", function () {
+        let quantityBuyPayNow = parseInt(quantityInputPayNow.val());
+        if (quantityBuyPayNow > 1) {
+            quantityBuyPayNow -= 1;
+            quantityInputPayNow.val(quantityBuyPayNow);
+        }
+    });
+
+    // Sự kiện cho nút cộng số lượng
+    btnPlusPayNow.addEventListener("click", function () {
+        let quantityBuyPayNow = parseInt(quantityInputPayNow.val());
+        if (quantityBuyPayNow >= quantityNowPayNow) {
+            showPayNowModalError("Bạn đã mua vượt quá số lượng hiện có.");
+            addToCartButtonPayNow.disabled = true; // Vô hiệu hóa nút mua
+            return;
+        }
+
+        // Kiểm tra nếu số lượng mua vượt quá giới hạn tối đa (10 sản phẩm)
+        if (quantityBuyPayNow >= 10) {
+            showPayNowModalError("Chỉ được mua tối đa 10 sản phẩm cùng loại.");
+            quantityInputPayNow.val(10); // Đặt số lượng tối đa là 10
+            return;
+        }
+        quantityBuyPayNow += 1;
+        quantityInputPayNow.val(quantityBuyPayNow); // Cập nhật số lượng
+    });
+});
+
+function buyNow() {
+    var productDetailId = $('#productDetailID-hidden').val();
     // Lấy quantity
     var quantityBuy = parseInt($('input[name="quantity"]').val());
 
@@ -200,15 +299,16 @@ function addToCart() {
                 window.location.href = '/onepoly/cart';
             } else {
                 $('#container-message .message-error').text(data.message || 'Có lỗi xảy ra khi thêm vào giỏ hàng.');
-                showCartModal();  // Hiển thị modal khi có lỗi
+                showCartModal();
             }
         }, error: function (error) {
             console.error('Error:', error);
             $('#container-message .message-error').text('Có lỗi xảy ra khi thêm vào giỏ hàng.');
-            showCartModal();  // Hiển thị modal khi có lỗi
+            showCartModal();
         }
     });
 }
+
 $(document).ready(function () {
     checkQuantity();
 });

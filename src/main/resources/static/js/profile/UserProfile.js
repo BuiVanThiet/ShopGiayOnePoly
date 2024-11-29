@@ -13,7 +13,7 @@ document.getElementById('file-upload').addEventListener('change', function (even
 
 // Xử lý gửi biểu mẫu
 document.getElementById('updateStaffProfileForm').addEventListener('submit', function (event) {
-    event.preventDefault(); // Ngăn chặn hành vi mặc định của biểu mẫu
+    // event.preventDefault(); // Ngăn chặn hành vi mặc định của biểu mẫu
 
     const day = document.getElementById('dob-day').value;
     const month = document.getElementById('dob-month').value;

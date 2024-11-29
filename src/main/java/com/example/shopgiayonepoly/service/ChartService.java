@@ -48,9 +48,9 @@ public interface ChartService {
 
     List<StatusBill> getBillStatisticsByDateRange(@Param("startDate") String startDate, @Param("endDate") String endDate);
 
-    Long serviceFee();
+    Long serviceFee(@Param("startDate") String startDate, @Param("endDate") String endDate);
 
-    Long returnFee();
+    Long returnFee(@Param("startDate") String startDate, @Param("endDate") String endDate);
 
-    Long exchangeFee();
+    Long exchangeFee(@Param("startDate") String startDate, @Param("endDate") String endDate);
 }
