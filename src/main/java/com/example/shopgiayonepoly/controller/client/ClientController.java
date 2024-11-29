@@ -438,6 +438,7 @@ public class ClientController extends BaseBill {
                         billDetail.setCreateDate(new Date());
                         billDetail.setUpdateDate(new Date());
                         billDetails.add(billDetail);
+                        System.out.println("Thong tin san pham: " + billDetail.toString());
                     }
                 }
                 // Cập nhật thông tin hóa đơn
@@ -515,9 +516,16 @@ public class ClientController extends BaseBill {
     @PostMapping("/search-bill")
     public String getSearchBill(
             @RequestParam(name = "codeBill") String codeBill,
+            @RequestParam(name = "emailBill") String emailBill,
             Model model) {
         Bill billSearch = this.billRepository.getBillByCodeBill(codeBill);
         if (billSearch != null) {
+            String[] part = billSearch.getAddRess().split(",\\s*");
+            String emailCheck = part[2];
+            if(!emailCheck.equals(emailBill)) {
+                model.addAttribute("error", "Không tìm thấy hóa đơn!");
+                return "client/searchBillNotLogin";
+            }
             return "redirect:/onepoly/status-bill/" + billSearch.getId();
         } else {
             model.addAttribute("error", "Không tìm thấy hóa đơn!");

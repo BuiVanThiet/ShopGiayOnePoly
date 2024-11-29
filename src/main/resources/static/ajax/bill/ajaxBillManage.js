@@ -518,10 +518,21 @@ function updateMoneyShipWait(moneyShipWait) {
     })
 }
 
-function confirmBill(content) {
+function confirmBill(content,checkConfirm) {
     var reasonConfirm = $('#reasonConfirm').val().trim();
     if (reasonConfirm === '') {
         reasonConfirm = 'trong';
+    }
+    console.log('checkConfirm: ' + checkConfirm);
+
+    if (checkConfirm !== 0 && checkConfirm !== 1) {
+        console.error('Invalid value for checkConfirm: ' + checkConfirm);
+        return;
+    }
+
+    if (checkConfirm === 1) {
+        console.log('checkConfirm 2: ' + checkConfirm);
+        setupLoadingOnButtonClick(12000);
     }
     $.ajax({
         type: "GET",
@@ -553,31 +564,31 @@ function actionModal() {
             if (action === 'cancel') {
                 modalTitle.textContent = 'Xác nhận hủy đơn';
                 modalBody.textContent = 'Bạn có chắc muốn hủy đơn hàng này?';
-                confirmButton.setAttribute('onclick', "confirmBill('cancel')");
+                confirmButton.setAttribute('onclick', "confirmBill('cancel',1)");
             } else if (action === 'confirm1') {
                 modalTitle.textContent = 'Xác nhận đơn hàng';
                 modalBody.textContent = 'Bạn có chắc muốn xác nhận đơn hàng này?';
-                confirmButton.setAttribute('onclick', "confirmBill('agree')");
+                confirmButton.setAttribute('onclick', "confirmBill('agree',1)");
             }else if (action === 'confirm2') {
                 modalTitle.textContent = 'Xác nhận đơn hàng';
                 modalBody.textContent = 'Bạn có chắc muốn giao đơn hàng này?';
-                confirmButton.setAttribute('onclick', "confirmBill('agree')");
+                confirmButton.setAttribute('onclick', "confirmBill('agree',0)");
             }else if (action === 'confirm3') {
                 modalTitle.textContent = 'Xác nhận đơn hàng';
                 modalBody.textContent = 'Bạn có chắc khách đã nhận được đơn hàng này?';
-                confirmButton.setAttribute('onclick', "confirmBill('agree')");
+                confirmButton.setAttribute('onclick', "confirmBill('agree',0)");
             }else if (action === 'confirm4') {
                 modalTitle.textContent = 'Xác nhận đơn hàng';
                 modalBody.textContent = 'Bạn có chắc muốn hoàn thành đơn hàng này?';
-                confirmButton.setAttribute('onclick', "confirmBill('agree')");
+                confirmButton.setAttribute('onclick', "confirmBill('agree',0)");
             }else if (action === 'confirm-return-bill') {
                 modalTitle.textContent = 'Xác nhận đổi-trả hàng';
                 modalBody.textContent = 'Bạn muốn xác nhận đơn đổi-trả hàng này?';
-                confirmButton.setAttribute('onclick', "confirmBill('agreeReturnBill')");
+                confirmButton.setAttribute('onclick', "confirmBill('agreeReturnBill',0)");
             }else if (action === 'cancel-return-bill') {
                 modalTitle.textContent = 'Xác nhận đổi-trả hàng';
                 modalBody.textContent = 'Bạn hủy đơn đổi-trả hàng này?';
-                confirmButton.setAttribute('onclick', "confirmBill('cancelReturnBill')");
+                confirmButton.setAttribute('onclick', "confirmBill('cancelReturnBill',0)");
             }
         });
     });

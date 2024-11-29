@@ -139,6 +139,18 @@ function validate(cash) {
                     checkButonCreateBill = true;
                 }
             }
+
+            if (cashClientNumber > 10000000000) {
+                console.log('da qua gioi han')
+                formErorrCash.style.display = 'block';
+                erorrCash.innerText = 'Đã vượt quá giới hạn(trên 10 tỷ VNĐ)!';
+                btnCreateBill.disabled = true;
+                surplusMoneySpan.style.display = 'none';
+                surplusMoney.innerText = '';
+                textSurplusMoney.value = '0';
+                cashClientText.value = cashClientValue;
+                checkButonCreateBill = false;
+            }
         }
     }
 }

@@ -223,28 +223,25 @@ function getPriceAfterDiscount(productDetail) {
 
     // Kiểm tra nếu SaleProduct không phải null
     if (productDetail.saleProduct != null) {
+
+        // Tạo đối tượng Date cho ngày bắt đầu, kết thúc và ngày hiện tại
         const startDate = new Date(productDetail.saleProduct.startDate);
         const endDate = new Date(productDetail.saleProduct.endDate);
         const today = new Date();
 
-        // Đảm bảo ngày bắt đầu và kết thúc không có giờ, phút, giây
-        startDate.setHours(0, 0, 0, 0);
-        endDate.setHours(23, 59, 59, 999);
-        today.setHours(0, 0, 0, 0);
+        // // Đảm bảo các đối tượng Date không chứa giờ, phút, giây
+        // startDate.setHours(0, 0, 0, 0);
+        // endDate.setHours(0, 0, 0, 0);
+        // today.setHours(0, 0, 0, 0);
 
-        // Định dạng các ngày thành chuỗi
-        const formattedStartDate = formatDateCompare(startDate);
-        const formattedEndDate = formatDateCompare(endDate);
-        const formattedToday = formatDateCompare(today);
-
-        console.log('Ngày bắt đầu:', formattedStartDate);
-        console.log('Ngày kết thúc:', formattedEndDate);
-        console.log('Ngày hiện tại:', formattedToday);
+        console.log('Ngày bắt đầu:', startDate);
+        console.log('Ngày kết thúc:', endDate);
+        console.log('Ngày hiện tại:', today);
 
         if (productDetail.saleProduct.status === 1) {
             console.log('dot giam gia dang con on');
             // Kiểm tra nếu ngày hiện tại nằm trong khoảng startDate và endDate
-            if (formattedToday >= formattedStartDate && formattedToday <= formattedEndDate) {
+            if (today >= startDate && today <= endDate) {
                 console.log('dot giam gia dang con thoi gian');
 
                 const discountValue = productDetail.saleProduct.discountValue;
@@ -270,6 +267,10 @@ function getPriceAfterDiscount(productDetail) {
 
     // Trả về giá sau khi giảm hoặc giá gốc nếu không có khuyến mãi
     return priceBuy;
+}
+
+function formatDateCompareYYYYMMDD(date) {
+    return date.toISOString().split('T')[0]; // Định dạng thành YYYY-MM-DD
 }
 
 function formatDateCompare(date) {
