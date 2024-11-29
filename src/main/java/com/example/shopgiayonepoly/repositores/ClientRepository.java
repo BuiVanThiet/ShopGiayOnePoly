@@ -117,9 +117,11 @@ public interface ClientRepository extends JpaRepository<Bill, Integer> {
                     pd.product.nameProduct,
                     pd.price,
                     CASE
-                        WHEN pd.saleProduct IS NOT NULL AND pd.saleProduct.discountType = 1
+                        WHEN pd.saleProduct IS NOT NULL AND (CURRENT_DATE BETWEEN pd.saleProduct.startDate AND pd.saleProduct.endDate)
+                             AND pd.saleProduct.discountType = 1
                             THEN pd.price - (pd.price * (CAST(pd.saleProduct.discountValue AS double) / 100))
-                        WHEN pd.saleProduct IS NOT NULL AND pd.saleProduct.discountType = 2
+                        WHEN pd.saleProduct IS NOT NULL AND (CURRENT_DATE BETWEEN pd.saleProduct.startDate AND pd.saleProduct.endDate)
+                             AND pd.saleProduct.discountType = 2
                             THEN pd.price - CAST(pd.saleProduct.discountValue AS double)
                         ELSE pd.price
                     END as priceDiscount, 
@@ -134,8 +136,9 @@ public interface ClientRepository extends JpaRepository<Bill, Integer> {
                 LEFT JOIN pd.color c 
                 LEFT JOIN pd.saleProduct sp
                 LEFT JOIN pd.product.images i 
-                WHERE pd.color.id = :colorId AND pd.size.id = :sizeId
-                AND pd.product.id = :productId
+                WHERE pd.color.id = :colorId 
+                  AND pd.size.id = :sizeId
+                  AND pd.product.id = :productId
                 GROUP BY pd.id,
                          pd.product.id,
                          pd.product.nameProduct,
@@ -146,23 +149,31 @@ public interface ClientRepository extends JpaRepository<Bill, Integer> {
                          s.nameSize,
                          pd.saleProduct,
                          sp.discountType,
-                         sp.discountValue
-                         
+                         sp.discountValue,
+                         pd.saleProduct.startDate,
+                         pd.saleProduct.endDate
             """)
     ProductDetailClientRespone findByProductDetailColorAndSizeAndProductId(
             @Param("colorId") Integer colorId,
             @Param("sizeId") Integer sizeId,
             @Param("productId") Integer productId);
 
+
+
     @Query("SELECT CASE " +
-           "WHEN pd.saleProduct IS NOT NULL AND pd.saleProduct.discountType = 1 " +
+           "WHEN pd.saleProduct IS NOT NULL AND " +
+           "(CURRENT_DATE BETWEEN pd.saleProduct.startDate AND pd.saleProduct.endDate) " +
+           "AND pd.saleProduct.discountType = 1 " +
            "THEN pd.price - (pd.price * (pd.saleProduct.discountValue / 100)) " +
-           "WHEN pd.saleProduct IS NOT NULL AND pd.saleProduct.discountType = 2 " +
+           "WHEN pd.saleProduct IS NOT NULL AND " +
+           "(CURRENT_DATE BETWEEN pd.saleProduct.startDate AND pd.saleProduct.endDate) " +
+           "AND pd.saleProduct.discountType = 2 " +
            "THEN pd.price - pd.saleProduct.discountValue " +
            "ELSE pd.price END " +
            "FROM ProductDetail pd " +
            "WHERE pd.id = :productDetailId")
     BigDecimal findDiscountedPriceByProductDetailId(@Param("productDetailId") Integer productDetailId);
+
 
     @Query("""
                 select new com.example.shopgiayonepoly.dto.response.client.VoucherClientResponse(
