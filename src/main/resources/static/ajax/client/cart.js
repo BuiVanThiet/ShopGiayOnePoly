@@ -128,7 +128,6 @@ function removeProductDetailFromCart(btn) {
 }
 
 // Tính tổng giỏ hàng và cập nhật giao diện
-// Tính tổng giỏ hàng và cập nhật giao diện
 document.addEventListener("DOMContentLoaded", function () {
     function calculateTotalPrice() {
         let totalPrice = 0;

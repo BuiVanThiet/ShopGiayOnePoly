@@ -136,8 +136,9 @@ public interface ClientRepository extends JpaRepository<Bill, Integer> {
                 LEFT JOIN pd.color c 
                 LEFT JOIN pd.saleProduct sp
                 LEFT JOIN pd.product.images i 
-                WHERE pd.color.id = :colorId AND pd.size.id = :sizeId
-                AND pd.product.id = :productId
+                WHERE pd.color.id = :colorId 
+                  AND pd.size.id = :sizeId
+                  AND pd.product.id = :productId
                 GROUP BY pd.id,
                          pd.product.id,
                          pd.product.nameProduct,
@@ -151,12 +152,13 @@ public interface ClientRepository extends JpaRepository<Bill, Integer> {
                          sp.discountValue,
                          pd.saleProduct.startDate,
                          pd.saleProduct.endDate
-                         
             """)
     ProductDetailClientRespone findByProductDetailColorAndSizeAndProductId(
             @Param("colorId") Integer colorId,
             @Param("sizeId") Integer sizeId,
             @Param("productId") Integer productId);
+
+
 
     @Query("SELECT CASE " +
             "WHEN pd.saleProduct IS NOT NULL AND " +
@@ -171,6 +173,7 @@ public interface ClientRepository extends JpaRepository<Bill, Integer> {
             "FROM ProductDetail pd " +
             "WHERE pd.id = :productDetailId")
     BigDecimal findDiscountedPriceByProductDetailId(@Param("productDetailId") Integer productDetailId);
+
 
     @Query("""
                 select new com.example.shopgiayonepoly.dto.response.client.VoucherClientResponse(

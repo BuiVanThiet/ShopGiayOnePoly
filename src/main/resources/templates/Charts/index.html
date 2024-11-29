@@ -63,25 +63,25 @@
         <div class="row">
             <div class="col-md-4">
                 <div class="rectangle">
-                    <h6>Phí dịch vụ</h6>
+                    <h6 id="serviceFeeTitle">Phí dịch vụ</h6>
                     <p class="data-from-be">
-                        <span th:text="${serviceFee} + ' VND'"></span>
+                        <span id="serviceFeeDisplay"></span>
                     </p>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="rectangle">
-                    <h6>Phí đổi hàng</h6>
+                    <h6 id="exchangeFeeTitle">Phí đổi hàng</h6>
                     <p class="data-from-be">
-                        <span th:text="${exchangeFee} + ' VND'"></span>
+                        <span id="exchangeFeeDisplay"></span>
                     </p>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="rectangle">
-                    <h6>Phí trả hàng</h6>
+                    <h6 id="returnFeeTitle">Phí trả hàng</h6>
                     <p class="data-from-be">
-                        <span th:text="${returnFee} + ' VND'"></span>
+                        <span id="returnFeeDisplay"></span>
                     </p>
                 </div>
             </div>
@@ -169,6 +169,44 @@
 <!--                    </div>-->
 <!--                </div>-->
                 <div id="piechart" style="width: 100%; height: 500px;"></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 product-table" style="height: 566px;">
+                <h4 id="topProductTitle1" class="text-center">Top sản phẩm đã đổi</h4>
+                <div class="table-responsive" id="productTableContainer1">
+                    <table class="table table-hover">
+                        <thead class="thead-dark">
+                        <tr>
+                            <th>STT</th>
+                            <th>Ảnh</th>
+                            <th>Tên sản phẩm</th>
+                            <th>Giá bán</th>
+                            <th>Tổng số lượng</th>
+                        </tr>
+                        </thead>
+                        <tbody id="productTableBody1">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-md-6 product-table" style="height: 566px;">
+                <h4 id="topProductTitle1e" class="text-center">Top sản phẩm đã trả</h4>
+                <div class="table-responsive" id="productTableContainer1e">
+                    <table class="table table-hover">
+                        <thead class="thead-dark">
+                        <tr>
+                            <th>STT</th>
+                            <th>Ảnh</th>
+                            <th>Tên sản phẩm</th>
+                            <th>Giá bán</th>
+                            <th>Tổng số lượng</th>
+                        </tr>
+                        </thead>
+                        <tbody id="productTableBody1e">
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
         <script th:src="@{/js/chart/chart.js}"></script>

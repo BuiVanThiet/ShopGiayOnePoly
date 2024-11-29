@@ -72,13 +72,9 @@ public class chartRestController {
     public ResponseEntity<?> getTopProductsByDateRange(
             @RequestParam("startDate") String startDate,
             @RequestParam("endDate") String endDate) {
-        try {
             List<ProductInfoDto> topProducts = chartService.findTopProductsByDateRange(startDate, endDate);
+            System.out.println("Products: " + topProducts);
             return ResponseEntity.ok(topProducts);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Đã xảy ra lỗi khi lấy danh sách sản phẩm: " + e.getMessage());
-        }
     }
 
     @GetMapping("/statusBillsMonth")
@@ -129,5 +125,32 @@ public class chartRestController {
 
         List<StatusBill> statusBills = chartService.getBillStatisticsByDateRange(startDate, endDate);
         return ResponseEntity.ok(statusBills);
+    }
+
+    @GetMapping("/returnFee")
+    public ResponseEntity<Long> getReturnFee(
+            @RequestParam("startDate") String startDate,
+            @RequestParam("endDate") String endDate) {
+
+        Long total = chartService.returnFee(startDate, endDate);
+        return ResponseEntity.ok(total);
+    }
+
+    @GetMapping("/exchangeFee")
+    public ResponseEntity<Long> getExchangeFee(
+            @RequestParam("startDate") String startDate,
+            @RequestParam("endDate") String endDate) {
+
+        Long total = chartService.exchangeFee(startDate, endDate);
+        return ResponseEntity.ok(total);
+    }
+
+    @GetMapping("/serviceFee")
+    public ResponseEntity<Long> getServiceFee(
+            @RequestParam("startDate") String startDate,
+            @RequestParam("endDate") String endDate) {
+
+        Long total = chartService.serviceFee(startDate, endDate);
+        return ResponseEntity.ok(total);
     }
 }
