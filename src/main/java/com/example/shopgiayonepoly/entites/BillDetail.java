@@ -2,10 +2,7 @@ package com.example.shopgiayonepoly.entites;
 
 import com.example.shopgiayonepoly.entites.baseEntity.Base;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 
@@ -15,6 +12,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Entity
 @Table(name = "bill_detail")
+@ToString
 public class BillDetail extends Base {
     @ManyToOne
     @JoinColumn(name = "id_bill")

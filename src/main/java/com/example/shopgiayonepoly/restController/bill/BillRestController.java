@@ -1128,15 +1128,15 @@ public class BillRestController extends BaseBill {
             if (billSave.getVoucher() != null) {
                 this.getSubtractVoucher(billSave.getVoucher(),-1);
             }
-
             String checkCashierInventory = getCheckStaffCashierInventory(staffLogin.getId());
-            if(!checkCashierInventory.trim().equals("Có")) {
-                cashierInventoryService.getInsertRevenue(billSave.getStaff().getId(),new BigDecimal(0),new BigDecimal(0),new BigDecimal(0));
-                cashierInventoryService.getUpdateRevenue(billSave.getStaff().getId(),new BigDecimal(0).subtract(bill.getTotalAmount().subtract(billSave.getPriceDiscount())),new BigDecimal(0),new BigDecimal(0));
-            }else {
-                cashierInventoryService.getUpdateRevenue(billSave.getStaff().getId(),new BigDecimal(0).subtract(bill.getTotalAmount().subtract(billSave.getPriceDiscount())),new BigDecimal(0),new BigDecimal(0));
+            if(billSave.getStaff() != null) {
+                if(!checkCashierInventory.trim().equals("Có")) {
+                    cashierInventoryService.getInsertRevenue(billSave.getStaff().getId(),new BigDecimal(0),new BigDecimal(0),new BigDecimal(0));
+                    cashierInventoryService.getUpdateRevenue(billSave.getStaff().getId(),new BigDecimal(0).subtract(bill.getTotalAmount().subtract(billSave.getPriceDiscount())),new BigDecimal(0),new BigDecimal(0));
+                }else {
+                    cashierInventoryService.getUpdateRevenue(billSave.getStaff().getId(),new BigDecimal(0).subtract(bill.getTotalAmount().subtract(billSave.getPriceDiscount())),new BigDecimal(0),new BigDecimal(0));
+                }
             }
-
             this.setBillStatus(bill.getId(),bill.getStatus(),session);
         }else if (content.equals("agree")) {
             if(bill.getStatus() == 4 && bill.getPaymentStatus() == 0) {

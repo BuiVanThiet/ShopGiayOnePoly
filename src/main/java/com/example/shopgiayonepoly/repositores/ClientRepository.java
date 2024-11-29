@@ -116,15 +116,15 @@ public interface ClientRepository extends JpaRepository<Bill, Integer> {
                     pd.product.id,
                     pd.product.nameProduct,
                     pd.price,
-                    CASE
-                        WHEN pd.saleProduct IS NOT NULL AND (CURRENT_DATE BETWEEN pd.saleProduct.startDate AND pd.saleProduct.endDate)
-                             AND pd.saleProduct.discountType = 1
-                            THEN pd.price - (pd.price * (CAST(pd.saleProduct.discountValue AS double) / 100))
-                        WHEN pd.saleProduct IS NOT NULL AND (CURRENT_DATE BETWEEN pd.saleProduct.startDate AND pd.saleProduct.endDate)
-                             AND pd.saleProduct.discountType = 2
-                            THEN pd.price - CAST(pd.saleProduct.discountValue AS double)
-                        ELSE pd.price
-                    END as priceDiscount, 
+                     CASE
+                          WHEN pd.saleProduct IS NOT NULL AND (CURRENT_DATE BETWEEN pd.saleProduct.startDate AND pd.saleProduct.endDate)
+                               AND pd.saleProduct.discountType = 1
+                              THEN pd.price - (pd.price * (CAST(pd.saleProduct.discountValue AS double) / 100))
+                          WHEN pd.saleProduct IS NOT NULL AND (CURRENT_DATE BETWEEN pd.saleProduct.startDate AND pd.saleProduct.endDate)
+                               AND pd.saleProduct.discountType = 2
+                              THEN pd.price - CAST(pd.saleProduct.discountValue AS double)
+                          ELSE pd.price
+                      END as priceDiscount,
                     pd.quantity,
                     pd.describe,
                     c.nameColor,
@@ -161,17 +161,17 @@ public interface ClientRepository extends JpaRepository<Bill, Integer> {
 
 
     @Query("SELECT CASE " +
-           "WHEN pd.saleProduct IS NOT NULL AND " +
-           "(CURRENT_DATE BETWEEN pd.saleProduct.startDate AND pd.saleProduct.endDate) " +
-           "AND pd.saleProduct.discountType = 1 " +
-           "THEN pd.price - (pd.price * (pd.saleProduct.discountValue / 100)) " +
-           "WHEN pd.saleProduct IS NOT NULL AND " +
-           "(CURRENT_DATE BETWEEN pd.saleProduct.startDate AND pd.saleProduct.endDate) " +
-           "AND pd.saleProduct.discountType = 2 " +
-           "THEN pd.price - pd.saleProduct.discountValue " +
-           "ELSE pd.price END " +
-           "FROM ProductDetail pd " +
-           "WHERE pd.id = :productDetailId")
+            "WHEN pd.saleProduct IS NOT NULL AND " +
+            "(CURRENT_DATE BETWEEN pd.saleProduct.startDate AND pd.saleProduct.endDate) " +
+            "AND pd.saleProduct.discountType = 1 " +
+            "THEN pd.price - (pd.price * (pd.saleProduct.discountValue / 100)) " +
+            "WHEN pd.saleProduct IS NOT NULL AND " +
+            "(CURRENT_DATE BETWEEN pd.saleProduct.startDate AND pd.saleProduct.endDate) " +
+            "AND pd.saleProduct.discountType = 2 " +
+            "THEN pd.price - pd.saleProduct.discountValue " +
+            "ELSE pd.price END " +
+            "FROM ProductDetail pd " +
+            "WHERE pd.id = :productDetailId")
     BigDecimal findDiscountedPriceByProductDetailId(@Param("productDetailId") Integer productDetailId);
 
 
