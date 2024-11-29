@@ -106,7 +106,7 @@
                         <div class="d-flex mt-2">
                             <p class="fs-10 fw-light" style="margin-right: 5px">Kích thước /</p>
                             <p class="fs-10" style="margin-left: 5px" id="selected-size">Chọn kích thước</p>
-                            <a href="#" class="fs-10" style="margin-left: auto;" data-bs-toggle="modal"
+                            <a href="#" class=" modal-title-chose-size fs-10" style="margin-left: auto;" data-bs-toggle="modal"
                                data-bs-target="#sizeGuideModal">Hướng dẫn chọn size</a>
                             <hr>
                         </div>
@@ -128,6 +128,15 @@
                             <label style="color: #f30909">Số lượng hiện tại: </label>
                             <p id="quantity-display" style="color: #f10c0c" th:text=" 0"></p>
                         </div>
+                        <div class="box-show-sale">
+                            <ul class="list-show-sale">
+                                <li>Black Friday - Giảm 50% sản phẩm nguyên giá</li>
+                                <li>Thời gian: 27/11/2024 - 02/12/2024.</li>
+                                <li>Áp dụng tại cửa hàng và Website</li>
+                                <li>Không áp dụng đồng thời với chương trình khuyến mãi khác.</li>
+                            </ul>
+                        </div>
+
                         <div class="add-cart">
                             <button class="btn-add-cart" id="btn-add-cart" onclick="showCartModal()">Thêm vào giỏ
                             </button>
@@ -190,7 +199,7 @@
                                                     <span class="message-error text-danger"></span>
                                                 </div>
                                                 <div class="popup_action">
-                                                    <a href="/onepoly/cart" id="go_cart" class="btn">Đi đến giỏ hàng</a>
+                                                    <a href="/onepoly/cart" id="go_cart1" class="btn">Đi đến giỏ hàng</a>
                                                     <a id="add-to-cart" class="btn" onclick="addToCart()"
                                                        data-bs-dismiss="modal">Thêm vào giỏ</a>
                                                 </div>
@@ -201,13 +210,58 @@
                             </div>
                         </div>
 
-                        <div class="modal fade" id="payNowModal" tabindex="-1" aria-labelledby="payNowModalLabel" aria-hidden="true">
+                        <div class="modal fade" id="addCartSuccessModal" tabindex="-1" aria-labelledby="addCartSuccessModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content add-product-modal">
+                                    <div class="modal-header" style="background: #004698">
+                                        <h5 class="modal-title text-center" id="addCartSuccessModalLabel">Thêm sản phẩm thành công</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                            <span class="material-icons" style="color:  white; font-size: 24px;">close</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="d-flex">
+                                            <!-- Ảnh sản phẩm -->
+                                            <div class="item-img">
+                                                <img id="success-product-image" src="" alt="product image" style="width:100px;height:100px;">
+                                            </div>
+                                            <!-- Thông tin sản phẩm -->
+                                            <div class="ms-3">
+                                                <h5 id="success-product-name" class="mb-1">Tên sản phẩm</h5>
+                                                <div class="text-muted" style="font-size: 18px;">
+                                                    <span id="success-price-modal">₫</span>
+                                                </div>
+                                                <div class="variant-option">
+                                                    <span>Màu sắc: </span><span id="success-color-modal">Color</span>
+                                                </div>
+                                                <div class="variant-option">
+                                                    <span>Kích thước: </span><span id="success-size-modal">Size</span>
+                                                </div>
+                                                <div class="item-quan">
+                                                    <span>Số lượng: </span><span id="success-quantity-modal"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <a href="/onepoly/cart" class="btn btn-primary">Đi đến giỏ hàng</a>
+                                        <button class="btn btn-secondary" data-bs-dismiss="modal">Tiếp tục mua sắm</button>
+                                    </div>
+                                    <div class="modal-footer">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal fade" id="payNowModal" tabindex="-1" aria-labelledby="payNowModalLabel"
+                             aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered">
                                 <div class="modal-content add-product-modal">
                                     <div class="modal-header" style="background: #004698">
                                         <h5 class="modal-title text-center" id="payNowModalLabel">Mua ngay sản phẩm</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                                            <span class="material-icons" style="color: white; font-size: 24px;">close</span>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close">
+                                            <span class="material-icons"
+                                                  style="color: white; font-size: 24px;">close</span>
                                         </button>
                                     </div>
                                     <div class="modal-body">
@@ -217,7 +271,8 @@
                                             <div class="left">
                                                 <div class="item-img">
                                                     <a href="#">
-                                                        <img src="/img/client/product/SPCT_IMG_1.png" alt="product image" style="width:220px;height:220px;">
+                                                        <img src="/img/client/product/SPCT_IMG_1.png"
+                                                             alt="product image" style="width:220px;height:220px;">
                                                     </a>
                                                 </div>
                                             </div>
@@ -238,17 +293,28 @@
                                                         </div>
                                                     </div>
                                                     <div class="item-quan">
-                                                        <button id="qtyminus-paynow" class="btn btn-outline-secondary">-</button>
-                                                        <input style="width: 60px;height: 35px" type="text" readonly value="1" name="quantity" class="item-quantity form-control text-center" id="qty-paynow">
-                                                        <button id="qtyplus-paynow" class="btn btn-outline-secondary">+</button>
+                                                        <button id="qtyminus-paynow" class="btn btn-outline-secondary">
+                                                            -
+                                                        </button>
+                                                        <input style="width: 60px;height: 35px" type="text" readonly
+                                                               value="1" name="quantity"
+                                                               class="item-quantity form-control text-center"
+                                                               id="quantity-display-paynow">
+                                                        <button id="qtyplus-paynow" class="btn btn-outline-secondary">
+                                                            +
+                                                        </button>
                                                     </div>
                                                 </div>
-                                                <div id="container-message-paynow" style="height: 20px;margin-left: 35px;margin-top: 10px">
-                                                    <span class="message-error text-danger" id="message-error-paynow"></span>
+                                                <div id="container-message-paynow"
+                                                     style="height: 20px;margin-left: 35px;margin-top: 10px">
+                                                    <span class="message-error text-danger"
+                                                          id="message-error-paynow"></span>
                                                 </div>
                                                 <div class="popup_action">
+                                                    <a href="/onepoly/cart" id="go_cart2" class="btn">Đi đến giỏ hàng</a>
                                                     <!-- Thực hiện Mua ngay -->
-                                                    <a id="buy-now-paynow" class="btn" onclick="buyNow()" data-bs-dismiss="modal">Mua ngay</a>
+                                                    <a id="buy-now-paynow" class="btn" onclick="buyNow()"
+                                                       data-bs-dismiss="modal">Mua ngay</a>
                                                 </div>
                                             </div>
                                         </div>
