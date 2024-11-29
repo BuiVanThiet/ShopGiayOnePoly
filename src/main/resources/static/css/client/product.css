@@ -100,18 +100,6 @@
     margin-top: 20px;
 }
 
-.info-product {
-    width: 100%;
-}
-
-.jus {
-    width: 95%;
-    transition: transform 0.3s ease;
-}
-
-.jus:hover {
-    transform: scale(1.02);
-}
 
 .custom-row {
     row-gap: 20px;
@@ -157,4 +145,15 @@
 .product-icons .cart-icon i,
 .product-icons .view-icon i {
     font-size: 18px;
+}
+.container-fluid .product-item img {
+    width: 100%; /* Đảm bảo ảnh chiếm hết chiều rộng */
+    height: auto; /* Tự động điều chỉnh chiều cao theo chiều rộng */
+    aspect-ratio: 1 / 1; /* Tạo tỷ lệ 1:1 để ảnh là hình vuông */
+    object-fit: cover; /* Cắt ảnh vừa khít hình vuông mà không méo */
+    border-radius: 5px; /* Tùy chọn: Bo góc ảnh nếu cần */
+}
+
+.container-fluid .col-3 {
+    padding: 15px; /* Khoảng cách giữa các sản phẩm */
 }

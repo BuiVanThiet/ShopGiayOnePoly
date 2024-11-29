@@ -147,11 +147,12 @@
             </div>
         </div>
         <div class="container-fluid">
-            <div class="row d-flex flex-wrap" style="margin-left: 30px">
-                <div th:each="product : ${listProduct}" class="col-3 position-relative">
-                    <div class="product-item" style="margin: 10px; position: relative;">
-                        <img th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728725582/' + ${product.images}"
-                             class="jus" height="350px">
+            <div class="row justify-content-between" style="margin-left: 0; margin-right: 0;">
+                <div th:each="product : ${listProduct}" class="col-3">
+                    <div class="product-item" style="position: relative;">
+                        <img id="imageProductClient"
+                             th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728725582/' + ${product.images}"
+                             alt="Product Image">
                         <div class="info-product mt-2 d-flex justify-content-between">
                             <p th:text="${product.nameProduct}"></p>
                             <p class="price-min fw-bold" style="margin-left: auto; color: #2f2a2a"
@@ -159,7 +160,9 @@
                         </div>
                         <div class="product-icons">
                             <a href="#" class="cart-icon"><i class="fas fa-shopping-cart"></i></a>
-                            <a class="view-icon" th:href="@{/onepoly/product-detail/{id}(id=${product.id})}"><i class="fas fa-eye"></i></a>
+                            <a class="view-icon" th:href="@{/onepoly/product-detail/{id}(id=${product.id})}">
+                                <i class="fas fa-eye"></i>
+                            </a>
                         </div>
                     </div>
                 </div>
