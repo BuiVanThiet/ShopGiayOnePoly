@@ -168,5 +168,10 @@ public class SaleProductServiceImplement implements SaleProductService {
         this.saleProductRepository.updateSaleProductExpired(id);
     }
 
+    @Override
+    public void updateSaleProductStatusForExpiredAuto() {
+        saleProductRepository.updateSaleProductStatusForExpiredAuto();
+    }
+
 
 }

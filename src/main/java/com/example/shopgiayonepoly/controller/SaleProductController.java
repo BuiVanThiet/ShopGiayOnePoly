@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/sale-product")
-public class SaleProductController extends BaseSaleProduct{
+public class SaleProductController extends BaseSaleProduct {
     @Autowired
     private SaleProductService saleProductService;
     @Autowired
@@ -49,12 +49,12 @@ public class SaleProductController extends BaseSaleProduct{
     @GetMapping("/list")
     public String getFormListSaleProduct(@RequestParam(name = "pageNumber", defaultValue = "0") int pageNumber,
                                          @RequestParam(name = "pageNumberDelete", defaultValue = "0") int pageNumberDelete,
-                                         Model model,HttpSession session) {
+                                         Model model, HttpSession session) {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
-        if(staffLogin == null) {
+        if (staffLogin == null) {
             return "redirect:/login";
         }
-        if(staffLogin.getStatus() != 1) {
+        if (staffLogin.getStatus() != 1) {
             return "redirect:/home_manage";
         }
 
@@ -68,20 +68,20 @@ public class SaleProductController extends BaseSaleProduct{
         model.addAttribute("pageSaleDelete", pageSaleDelete);
         model.addAttribute("listProductDetail", listProductDetail);
         model.addAttribute("listProductDetailWithDiscount", listProductDetailWithDiscount);
-        model.addAttribute("message",mess);
-        model.addAttribute("check",check);
+        model.addAttribute("message", mess);
+        model.addAttribute("check", check);
         mess = "";
         check = "";
         return "sale_product/index";
     }
 
     @GetMapping("/create")
-    public String getFormCreateSale(Model model,HttpSession session) {
+    public String getFormCreateSale(Model model, HttpSession session) {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
-        if(staffLogin == null) {
+        if (staffLogin == null) {
             return "redirect:/login";
         }
-        if(staffLogin.getStatus() != 1) {
+        if (staffLogin.getStatus() != 1) {
             return "redirect:/home_manage";
         }
 
@@ -139,38 +139,38 @@ public class SaleProductController extends BaseSaleProduct{
     }
 
     @GetMapping("/delete/{id}")
-    public String deleteSaleProduct(@PathVariable("id") String id, RedirectAttributes redirectAttributes,HttpSession session) {
+    public String deleteSaleProduct(@PathVariable("id") String id, RedirectAttributes redirectAttributes, HttpSession session) {
 
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
-        if(staffLogin == null) {
+        if (staffLogin == null) {
             return "redirect:/login";
         }
-        if(staffLogin.getStatus() != 1) {
+        if (staffLogin.getStatus() != 1) {
             return "redirect:/home_manage";
         }
 
         try {
             Integer.parseInt(id);
-        }catch (NumberFormatException e) {
+        } catch (NumberFormatException e) {
             return "redirect:/404";
         }
 
-        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        Map<String, String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
         String messMap = checkLoginAndLogout.get("message");
-        if(!messMap.trim().equals("")) {
+        if (!messMap.trim().equals("")) {
             this.mess = messMap;
             this.check = "3";
             return "redirect:/sale-product/list";
         }
 
         SaleProduct saleProduct = saleProductService.getSaleProductByID(Integer.parseInt(id));
-        if(saleProduct == null) {
-            mess = "Đợt giảm giá có id: "+id+" không tồn tại!";
+        if (saleProduct == null) {
+            mess = "Đợt giảm giá có id: " + id + " không tồn tại!";
             check = "3";
             return "redirect:/sale-product/list";
         }
-        if(saleProduct.getId() == null) {
-            mess = "Đợt giảm giá có id: "+id+" không tồn tại!";
+        if (saleProduct.getId() == null) {
+            mess = "Đợt giảm giá có id: " + id + " không tồn tại!";
             check = "3";
             return "redirect:/sale-product/list";
         }
@@ -185,78 +185,78 @@ public class SaleProductController extends BaseSaleProduct{
         }
         saleProductService.deleteSaleProductBySetStatus(Integer.parseInt(id));
         redirectAttributes.addFlashAttribute("mes", "Xóa thành công đợt giảm giá với ID: " + id);
-        mess = "Xóa thành công đợt giảm giá với ID: "+id;
+        mess = "Xóa thành công đợt giảm giá với ID: " + id;
         check = "1";
         return "redirect:/sale-product/list";
     }
 
     @GetMapping("/restore/{id}")
-    public String RestoreSaleProduct(RedirectAttributes redirectAttributes, @PathVariable("id") String id,HttpSession session) {
+    public String RestoreSaleProduct(RedirectAttributes redirectAttributes, @PathVariable("id") String id, HttpSession session) {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
-        if(staffLogin == null) {
+        if (staffLogin == null) {
             return "redirect:/login";
         }
-        if(staffLogin.getStatus() != 1) {
+        if (staffLogin.getStatus() != 1) {
             return "redirect:/home_manage";
         }
 
         try {
             Integer.parseInt(id);
-        }catch (NumberFormatException e) {
+        } catch (NumberFormatException e) {
             return "redirect:/404";
         }
 
-        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        Map<String, String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
         String messMap = checkLoginAndLogout.get("message");
-        if(!messMap.trim().equals("")) {
+        if (!messMap.trim().equals("")) {
             this.mess = messMap;
             this.check = "3";
             return "redirect:/sale-product/list";
         }
 
         SaleProduct saleProduct = saleProductService.getSaleProductByID(Integer.parseInt(id));
-        if(saleProduct == null) {
-            mess = "Đợt giảm giá có id: "+id+" không tồn tại!";
+        if (saleProduct == null) {
+            mess = "Đợt giảm giá có id: " + id + " không tồn tại!";
             check = "3";
             return "redirect:/sale-product/list";
         }
-        if(saleProduct.getId() == null) {
-            mess = "Đợt giảm giá có id: "+id+" không tồn tại!";
+        if (saleProduct.getId() == null) {
+            mess = "Đợt giảm giá có id: " + id + " không tồn tại!";
             check = "3";
             return "redirect:/sale-product/list";
         }
 
         saleProductService.restoreSaleProductStatus(Integer.parseInt(id));
         redirectAttributes.addFlashAttribute("mes", "Khôi phục đợt giảm giá thành công");
-        mess = "Khôi phục thành công đợt giảm giá với ID: "+id;
+        mess = "Khôi phục thành công đợt giảm giá với ID: " + id;
         check = "1";
         return "redirect:/sale-product/list";
     }
 
     @GetMapping("/edit/{id}")
-    public String getFormUpdateSale(Model model, @PathVariable("id") String id,HttpSession session) {
+    public String getFormUpdateSale(Model model, @PathVariable("id") String id, HttpSession session) {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
-        if(staffLogin == null) {
+        if (staffLogin == null) {
             return "redirect:/login";
         }
-        if(staffLogin.getStatus() != 1) {
+        if (staffLogin.getStatus() != 1) {
             return "redirect:/home_manage";
         }
 
         try {
             Integer.parseInt(id);
-        }catch (NumberFormatException e) {
+        } catch (NumberFormatException e) {
             return "redirect:/404";
         }
 
         SaleProduct saleProduct = saleProductService.getSaleProductByID(Integer.parseInt(id));
-        if(saleProduct == null) {
-            mess = "Đợt giảm giá có id: "+id+" không tồn tại!";
+        if (saleProduct == null) {
+            mess = "Đợt giảm giá có id: " + id + " không tồn tại!";
             check = "3";
             return "redirect:/sale-product/list";
         }
-        if(saleProduct.getId() == null) {
-            mess = "Đợt giảm giá có id: "+id+" không tồn tại!";
+        if (saleProduct.getId() == null) {
+            mess = "Đợt giảm giá có id: " + id + " không tồn tại!";
             check = "3";
             return "redirect:/sale-product/list";
         }
@@ -274,31 +274,31 @@ public class SaleProductController extends BaseSaleProduct{
                              @ModelAttribute("saleProductRequest") SaleProductRequest saleProductRequest,
                              HttpSession session) {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
-        if(staffLogin == null) {
+        if (staffLogin == null) {
             return "redirect:/login";
         }
-        if(staffLogin.getStatus() != 1) {
+        if (staffLogin.getStatus() != 1) {
             return "redirect:/home_manage";
         }
-        Map<String,String> thongBao = this.validateAddAndUpdateSaleProduct(saleProductRequest);
+        Map<String, String> thongBao = this.validateAddAndUpdateSaleProduct(saleProductRequest);
 
-        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        Map<String, String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
         String messMap = checkLoginAndLogout.get("message");
-        if(!messMap.trim().equals("")) {
+        if (!messMap.trim().equals("")) {
             this.mess = messMap;
             this.check = "3";
             return "redirect:/sale-product/list";
         }
 
-        if(thongBao.get("check").equals("1")) {
+        if (thongBao.get("check").equals("1")) {
             SaleProduct saleProduct = saleProductService.getSaleProductByID(saleProductRequest.getId());
-            if(saleProduct == null) {
-                mess = "Đợt giảm giá có id: "+saleProductRequest.getId()+" không tồn tại!";
+            if (saleProduct == null) {
+                mess = "Đợt giảm giá có id: " + saleProductRequest.getId() + " không tồn tại!";
                 check = "3";
                 return "redirect:/sale-product/list";
             }
-            if(saleProduct.getId() == null) {
-                mess = "Đợt giảm giá có id: "+saleProductRequest.getId()+" không tồn tại!";
+            if (saleProduct.getId() == null) {
+                mess = "Đợt giảm giá có id: " + saleProductRequest.getId() + " không tồn tại!";
                 check = "3";
                 return "redirect:/sale-product/list";
             }
@@ -308,8 +308,8 @@ public class SaleProductController extends BaseSaleProduct{
 //            List<SaleProduct> saleProducts = this.saleProductService.getAllSaleProducts();
 //            saleProducts.remove(saleProduct);
 
-            for (SaleProduct saleProductCheckSame: saleProducts) {
-                if(saleProductCheckSame.getCodeSale().equals(saleProductRequest.getCodeSale())) {
+            for (SaleProduct saleProductCheckSame : saleProducts) {
+                if (saleProductCheckSame.getCodeSale().equals(saleProductRequest.getCodeSale())) {
                     mess = "Mã đợt giảm giá đã tồn tại!";
                     check = "3";
                     return "redirect:/sale-product/list";
@@ -319,14 +319,14 @@ public class SaleProductController extends BaseSaleProduct{
             saleProductRequest.setCreateDate(saleProduct.getCreateDate());
             saleProductRequest.setUpdateDate(new Date());
             saleProductService.createNewSale(saleProductRequest);
-            mess = "Sửa thành công đợt giảm giá với ID: "+saleProductRequest.getId();
+            mess = "Sửa thành công đợt giảm giá với ID: " + saleProductRequest.getId();
             check = "1";
             return "redirect:/sale-product/list";
-        }else {
+        } else {
             model.addAttribute("title", "CẬP NHẬT ĐỢT GIẢM GIÁ VỚI ID: " + saleProductRequest.getId());
-            model.addAttribute("saleProductRequest",saleProductRequest);
-            model.addAttribute("message",thongBao.get("message"));
-            model.addAttribute("check","3");
+            model.addAttribute("saleProductRequest", saleProductRequest);
+            model.addAttribute("message", thongBao.get("message"));
+            model.addAttribute("check", "3");
             return "/sale_product/update";
         }
     }
@@ -408,45 +408,51 @@ public class SaleProductController extends BaseSaleProduct{
     }
 
     @GetMapping("/extend/{id}")
-    public String extendSaleproductExpired(@PathVariable("id") String id, RedirectAttributes redirectAttributes,HttpSession session) {
+    public String extendSaleproductExpired(@PathVariable("id") String id, RedirectAttributes redirectAttributes, HttpSession session) {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
-        if(staffLogin == null) {
+        if (staffLogin == null) {
             return "redirect:/login";
         }
-        if(staffLogin.getStatus() != 1) {
+        if (staffLogin.getStatus() != 1) {
             return "redirect:/home_manage";
         }
 
         try {
             Integer.parseInt(id);
-        }catch (NumberFormatException e) {
+        } catch (NumberFormatException e) {
             return "redirect:/404";
         }
 
-        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        Map<String, String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
         String messMap = checkLoginAndLogout.get("message");
-        if(!messMap.trim().equals("")) {
+        if (!messMap.trim().equals("")) {
             this.mess = messMap;
             this.check = "3";
             return "redirect:/sale-product/list";
         }
 
         SaleProduct saleProduct = saleProductService.getSaleProductByID(Integer.parseInt(id));
-        if(saleProduct == null) {
-            mess = "Đợt giảm giá có id: "+id+" không tồn tại!";
+        if (saleProduct == null) {
+            mess = "Đợt giảm giá có id: " + id + " không tồn tại!";
             check = "3";
             return "redirect:/sale-product/list";
         }
-        if(saleProduct.getId() == null) {
-            mess = "Đợt giảm giá có id: "+id+" không tồn tại!";
+        if (saleProduct.getId() == null) {
+            mess = "Đợt giảm giá có id: " + id + " không tồn tại!";
             check = "3";
             return "redirect:/sale-product/list";
         }
 
         saleProductService.updateSaleProductExpired(Integer.parseInt(id));
         redirectAttributes.addFlashAttribute("mes", "Gia hạn phiếu giảm giá thành công");
-        mess = "Gia hạn đợt giảm giá có id: "+id+" thành công!";
+        mess = "Gia hạn đợt giảm giá có id: " + id + " thành công!";
         check = "1";
         return "redirect:/sale-product/list";
     }
+
+//    @Scheduled(cron = "0 0 0 * * ?", zone = "Asia/Ho_Chi_Minh")
+//    public void updateExpireSaleProductsStatus() {
+//        System.out.println("Running scheduled task to update voucher status");
+//        saleProductService.updateSaleProductStatusForExpiredAuto();
+//    }
 }

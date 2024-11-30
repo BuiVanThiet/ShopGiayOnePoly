@@ -16,8 +16,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,7 +25,6 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/onepoly")
@@ -76,7 +73,6 @@ public class ClientController extends BaseBill {
 
     @Autowired
     OriginService originService;
-
 
 
     @GetMapping("/products")
@@ -157,6 +153,7 @@ public class ClientController extends BaseBill {
         List<ColorClientResponse> colors = clientService.findDistinctColorsByProductId(id);
         List<SizeClientResponse> sizes = clientService.findDistinctSizesByProductId(id);
         model.addAttribute("productDetail", productDetailClientRespones);
+        model.addAttribute("listImage", productService.findById(id));
         model.addAttribute("colors", colors);
         model.addAttribute("sizes", sizes);
         model.addAttribute("productID", id);
@@ -243,11 +240,10 @@ public class ClientController extends BaseBill {
         model.addAttribute("clientLogin", clientLoginResponse);
         model.addAttribute("cartItems", cartResponses);
         model.addAttribute("totalPrice", totalPriceCartItem);
-
-        // Lấy danh sách các voucher áp dụng cho giỏ hàng
+        System.out.println("Tổng tiền áp dụng vouchẻ điều kiện: " + totalPriceCartItem);
         List<Voucher> applicableVouchers = voucherService.findApplicableVouchers(totalPriceCartItem);
         model.addAttribute("applicableVouchers", applicableVouchers);
-
+        System.out.println("List size voucher: " + applicableVouchers.size());
         // Lấy voucher đã chọn từ session (nếu có)
         VoucherClientResponse selectedVoucher = (VoucherClientResponse) session.getAttribute("selectedVoucher");
         BigDecimal priceReduced = BigDecimal.ZERO;
@@ -584,7 +580,7 @@ public class ClientController extends BaseBill {
         if (billSearch != null) {
             String[] part = billSearch.getAddRess().split(",\\s*");
             String emailCheck = part[2];
-            if(!emailCheck.equals(emailBill)) {
+            if (!emailCheck.equals(emailBill)) {
                 model.addAttribute("error", "Không tìm thấy hóa đơn!");
                 return "client/searchBillNotLogin";
             }
