@@ -124,7 +124,7 @@ public interface VoucherRepository extends JpaRepository<Voucher, Integer> {
         AND (
             (:status = 1 AND status = 1 and (CONVERT(DATE, GETDATE()) <= CONVERT(DATE, end_date))) -- hoạt động
             OR (:status = 2 AND (status = 0 OR status = 2)) -- ngừng hoạt động
-            OR (:status = 3 AND CONVERT(DATE, GETDATE()) > CONVERT(DATE, end_date) and status = 1) -- hết hạn
+            OR (:status = 3 AND CONVERT(DATE, GETDATE()) > CONVERT(DATE, end_date)) -- hết hạn
         ) 
         ORDER BY update_date DESC;
 """,nativeQuery = true)
