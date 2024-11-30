@@ -73,8 +73,23 @@ public class chartRestController {
             @RequestParam("startDate") String startDate,
             @RequestParam("endDate") String endDate) {
             List<ProductInfoDto> topProducts = chartService.findTopProductsByDateRange(startDate, endDate);
-            System.out.println("Products: " + topProducts);
             return ResponseEntity.ok(topProducts);
+    }
+
+    @GetMapping("/topProductSalesExchangeRenge")
+    public ResponseEntity<?> getTopProductsExchangeByDateRange(
+            @RequestParam("startDate") String startDate,
+            @RequestParam("endDate") String endDate) {
+        List<ProductInfoDto> topProductsExchange = chartService.findTopProductsExchangeByDateRange(startDate, endDate);
+        return ResponseEntity.ok(topProductsExchange);
+    }
+
+    @GetMapping("/topProductSalesReturnRenge")
+    public ResponseEntity<?> getTopProductsReturnByDateRange(
+            @RequestParam("startDate") String startDate,
+            @RequestParam("endDate") String endDate) {
+        List<ProductInfoDto> topProductsReturn = chartService.findTopProductsReturnByDateRange(startDate, endDate);
+        return ResponseEntity.ok(topProductsReturn);
     }
 
     @GetMapping("/statusBillsMonth")

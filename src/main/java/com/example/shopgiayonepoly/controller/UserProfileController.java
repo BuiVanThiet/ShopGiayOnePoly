@@ -8,6 +8,7 @@ import com.example.shopgiayonepoly.entites.Customer;
 import com.example.shopgiayonepoly.entites.Staff;
 import com.example.shopgiayonepoly.repositores.CustomerRegisterRepository;
 import com.example.shopgiayonepoly.service.CustomerService;
+import com.example.shopgiayonepoly.service.StaffService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,12 @@ public class UserProfileController {
     CustomerRegisterRepository customerRegisterRepository;
     @Autowired
     CustomerService customerService;
+    @Autowired
+    StaffService staffService;
+
+    String mess ="";
+
+    String check ="";
 
     @GetMapping("/userProfile")
     public String formProfile(Model model, HttpSession session) {
@@ -53,17 +60,28 @@ public class UserProfileController {
         userProfile.setBirthDay(customer.getBirthDay());
         userProfile.setImageString(customer.getImage());
 
-        String[] part = customer.getAddRess().split(",\\s*");
-        userProfile.setProvince(part[2]);
-        userProfile.setDistrict(part[1]);
-        userProfile.setWard(part[0]);
-        userProfile.setAddRessDetail(String.join(", ", java.util.Arrays.copyOfRange(part, 3, part.length)));
+        String address = customer.getAddRess();
+        if (address != null && !address.isEmpty()) {
+            String[] part = address.split(",\\s*");
+            userProfile.setProvince(part.length > 2 ? part[2] : "");
+            userProfile.setDistrict(part.length > 1 ? part[1] : "");
+            userProfile.setWard(part.length > 0 ? part[0] : "");
+            userProfile.setAddRessDetail(part.length > 3 ? String.join(", ", java.util.Arrays.copyOfRange(part, 3, part.length)) : "");
+        } else {
+            userProfile.setProvince("");
+            userProfile.setDistrict("");
+            userProfile.setWard("");
+            userProfile.setAddRessDetail("");
+        }
 
         LocalDate birthDay = customer.getBirthDay();
         model.addAttribute("birthDayDay", birthDay != null ? birthDay.getDayOfMonth() : null);
         model.addAttribute("birthDayMonth", birthDay != null ? birthDay.getMonthValue() : null);
         model.addAttribute("birthDayYear", birthDay != null ? birthDay.getYear() : null);
-
+        model.addAttribute("check",check);
+        model.addAttribute("mess",mess);
+        mess ="";
+        check ="";
         model.addAttribute("userProfile", userProfile);
         model.addAttribute("clientLogin", clientLoginResponse);
 
@@ -95,8 +113,8 @@ public class UserProfileController {
         } else if (!userProfile.getFullName().matches("^[\\p{L}\\s]+$")) {
             bindingResult.rejectValue("fullName", "error.userProfile", "Họ và tên chỉ được nhập chữ cái");
 
-        } else if (userProfile.getFullName().length() < 5 || userProfile.getFullName().length() > 100) {
-            bindingResult.rejectValue("fullName", "error.userProfile", "Họ và tên phải có độ dài từ 5 đến 100 ký tự");
+        } else if (userProfile.getFullName().length() < 5 || userProfile.getFullName().length() > 255) {
+            bindingResult.rejectValue("fullName", "error.userProfile", "Họ và tên phải có độ dài từ 5 đến 255 ký tự");
 
         }
 
@@ -105,6 +123,10 @@ public class UserProfileController {
             bindingResult.rejectValue("email", "error.userProfile", "Email không được để trống");
         } else if (!userProfile.getEmail().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
             bindingResult.rejectValue("email", "error.userProfile", "Email không hợp lệ");
+        } else if (userProfile.getEmail().length() >100) {
+            bindingResult.rejectValue("email", "error.userProfile", "Email không vượt quá 100 ký tự");
+        } else if (staffService.existsByEmail(userProfile.getEmail()) != null || customerService.existsByEmail(userProfile.getEmail()) != null) {
+            bindingResult.rejectValue("email", "error.userProfile", "Email đã được sử dụng");
         }
 
         // Kiểm tra hợp lệ cho số điện thoại
@@ -112,6 +134,12 @@ public class UserProfileController {
             bindingResult.rejectValue("numberPhone", "error.userProfile", "Số điện thoại không được để trống");
         } else if (!userProfile.getNumberPhone().matches("^(0|\\+84)(\\d{9})$")) {
             bindingResult.rejectValue("numberPhone", "error.userProfile", "Số điện thoại không hợp lệ");
+        }
+
+        if (userProfile.getAddRessDetail() == null || userProfile.getAddRessDetail().trim().isEmpty()) {
+            bindingResult.rejectValue("addRessDetail", "error.staff", "Địa chỉ cụ thể không được để trống!");
+        } else if (userProfile.getAddRessDetail().length() > 260) {
+            bindingResult.rejectValue("addRessDetail", "error.staff", "Địa chỉ cụ thể không được vượt quá 260 ký tự!");
         }
 
         if (bindingResult.hasErrors()) {
@@ -142,7 +170,8 @@ public class UserProfileController {
             }
 
             customerRegisterRepository.save(customer);
-
+            mess ="Cập nhật thông tin thành công";
+            check ="1";
             model.addAttribute("clientLogin", clientLoginResponse);
             model.addAttribute("userProfile", userProfile);
             model.addAttribute("successMessage", "Cập nhật thông tin thành công.");
@@ -186,7 +215,8 @@ public class UserProfileController {
             // Cập nhật mật khẩu
             customer.setPassword(userProfile.getNewPassword()); // Lưu mật khẩu mới
             customerRegisterRepository.save(customer);
-
+            mess ="Cập nhật mật khẩu thành công";
+            check ="1";
             model.addAttribute("clientLogin", clientLoginResponse);
             model.addAttribute("userProfile", userProfile);
             model.addAttribute("successMessage", "Cập nhật mật khẩu thành công.");
@@ -216,11 +246,19 @@ public class UserProfileController {
                 userProfile.setStatus(customer.getStatus());
                 userProfile.setImageString(customer.getImage());
 
-                String[] part = customer.getAddRess().split(",\\s*");
-                userProfile.setProvince(part[2]);
-                userProfile.setDistrict(part[1]);
-                userProfile.setWard(part[0]);
-                userProfile.setAddRessDetail(String.join(", ", java.util.Arrays.copyOfRange(part, 3, part.length)));
+                String address = customer.getAddRess();
+                if (address != null && !address.isEmpty()) {
+                    String[] part = address.split(",\\s*");
+                    userProfile.setProvince(part.length > 2 ? part[2] : "");
+                    userProfile.setDistrict(part.length > 1 ? part[1] : "");
+                    userProfile.setWard(part.length > 0 ? part[0] : "");
+                    userProfile.setAddRessDetail(part.length > 3 ? String.join(", ", java.util.Arrays.copyOfRange(part, 3, part.length)) : "");
+                } else {
+                    userProfile.setProvince("");
+                    userProfile.setDistrict("");
+                    userProfile.setWard("");
+                    userProfile.setAddRessDetail("");
+                }
 
                 LocalDate birthDay = customer.getBirthDay();
                 model.addAttribute("birthDayDay", birthDay != null ? birthDay.getDayOfMonth() : null);
