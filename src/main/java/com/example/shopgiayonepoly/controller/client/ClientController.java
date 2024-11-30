@@ -632,7 +632,6 @@ public class ClientController extends BaseBill {
     @PostMapping("/register")
     public String register(@ModelAttribute("registerRequest") @Valid RegisterRequest registerRequest,
                            BindingResult bindingResult, Model model, HttpSession session) {
-
         session.setAttribute("acount", registerRequest.getAcount());
         session.setAttribute("email", registerRequest.getEmail());
 

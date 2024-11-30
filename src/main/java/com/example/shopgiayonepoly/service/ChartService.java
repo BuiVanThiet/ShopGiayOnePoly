@@ -53,4 +53,9 @@ public interface ChartService {
     Long returnFee(@Param("startDate") String startDate, @Param("endDate") String endDate);
 
     Long exchangeFee(@Param("startDate") String startDate, @Param("endDate") String endDate);
+
+    List<ProductInfoDto> findTopProductsExchangeByDateRange(@Param("startDate") String startDate, @Param("endDate") String endDate);
+
+    List<ProductInfoDto> findTopProductsReturnByDateRange(@Param("startDate") String startDate, @Param("endDate") String endDate);
+
 }
