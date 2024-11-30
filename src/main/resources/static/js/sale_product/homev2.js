@@ -77,11 +77,11 @@ function validateAllSaleProduct() {
     var startDateError = document.getElementById('startDateError');
     var endDateError = document.getElementById('endDateError');
 
-    var checkCodeSaleProduct = checkNullInputSaleProduct(codeSaleProduct.value.trim(), codeSaleProductError, 100, 'Mời nhập mã đợt giảm giá(tối đa 100 ký tự)');
+    var checkCodeSaleProduct = checkNullInputSaleProduct(codeSaleProduct.value.trim(), codeSaleProductError, 100, '*Mời nhập mã đợt giảm giá(tối đa 100 ký tự)');
     if (checkCodeSaleProduct) {
-        checkCodeSaleProduct = checkSame(codeSaleProduct.value.trim(), codeSaleProductError, 'Mã đợt giảm giá đã tồn tại!');
+        checkCodeSaleProduct = checkSame(codeSaleProduct.value.trim(), codeSaleProductError, '*Mã đợt giảm giá đã tồn tại!');
     }
-    var checkNameSaleProduct = checkNullInputSaleProduct(nameSaleProduct.value.trim(), nameSaleProductError, 255, 'Mời nhập tên đợt giảm giá(tối đa 255 ký tự)');
+    var checkNameSaleProduct = checkNullInputSaleProduct(nameSaleProduct.value.trim(), nameSaleProductError, 255, '*Mời nhập tên đợt giảm giá(tối đa 255 ký tự)');
 
     // Kiểm tra giá trị của discountType để xác định loại giảm giá và thực hiện validate tương ứng
     var checkValue = discountType.value === '2' ? checkNumberLimitInputSaleProductCash(removeThousandSeparator('value'), valueError) : checkNumberLimitInputSaleProductPercent(removeThousandSeparator('value'), valueError);
@@ -250,7 +250,7 @@ function checkNumberLimitInputSaleProductCash(inputValue, spanError) {
     console.log(inputValue)
     if(inputValue === '' || inputValue.length < 1) {
         spanError.style.display = 'block';
-        spanError.innerText = 'Giá trị không được để trống!';
+        spanError.innerText = '*Giá trị không được để trống!';
         return false;
     }else {
         var value = parseFloat(inputValue);
@@ -258,11 +258,11 @@ function checkNumberLimitInputSaleProductCash(inputValue, spanError) {
             // Kiểm tra giá trị nhập có hợp lệ hay không
             if (isNaN(value) || inputValue === '' || value < 10000) {
                 spanError.style.display = 'block';
-                spanError.innerText = 'Mời nhập giá trị hợp lệ!(it nhat la phải 10 nghìn)';
+                spanError.innerText = '*Mời nhập giá trị hợp lệ!(it nhat la phải 10 nghìn)';
                 return false;
             } else if (value > 10000000) {
                 spanError.style.display = 'block';
-                spanError.innerText = 'Giá trị không được vượt quá 10 triệu!';
+                spanError.innerText = '*Giá trị không được vượt quá 10 triệu!';
                 return false;
             } else {
                 spanError.style.display = 'none';
@@ -271,7 +271,7 @@ function checkNumberLimitInputSaleProductCash(inputValue, spanError) {
             }
         }else {
             spanError.style.display = 'block';
-            spanError.innerText = 'Giá trị giảm phải là số nguyên!';
+            spanError.innerText = '*Giá trị giảm phải là số nguyên!';
             return false;
         }
     }
@@ -281,14 +281,14 @@ function checkNumberLimitInputSaleProductCash(inputValue, spanError) {
 function checkNumberLimitInputSaleProductPercent(inputValue, spanError) {
     if(inputValue === '' || inputValue.length < 1) {
         spanError.style.display = 'block';
-        spanError.innerText = 'Giá trị không được để trống!';
+        spanError.innerText = '*Giá trị không được để trống!';
         return false;
     }else {
         var value = parseFloat(inputValue);
         if(isIntegerValue(value) == true) {
             if (isNaN(value) || inputValue === '' || value <= 0) {
                 spanError.style.display = 'block';
-                spanError.innerText = 'Mời nhập giá trị hợp lệ!(ít nhất phải 1%)';
+                spanError.innerText = '*Mời nhập giá trị hợp lệ!(ít nhất phải 1%)';
                 return false;
             } else if (value > 90) {
                 spanError.style.display = 'block';
@@ -301,7 +301,7 @@ function checkNumberLimitInputSaleProductPercent(inputValue, spanError) {
             }
         }else {
             spanError.style.display = 'block';
-            spanError.innerText = 'Giá trị giảm phải là số nguyên!';
+            spanError.innerText = '*Giá trị giảm phải là số nguyên!';
             return false;
         }
     }
@@ -315,7 +315,7 @@ function checkStartDateSaleProduct(inputDate,spanError) {
 
     if (dateValue < currentDate) {
         spanError.style.display = 'block';
-        spanError.innerText = 'Ngày bắt đầu phải là ngày hôm nay hoặc sau đó!';
+        spanError.innerText = '*Ngày bắt đầu phải là ngày hôm nay hoặc sau đó!';
         return false;
     } else {
         spanError.style.display = 'none';
@@ -333,7 +333,7 @@ function checkEndDateSaleProduct(inputDateEnd, inputDateStart, spanError) {
     // Kiểm tra nếu ngày kết thúc nhỏ hơn hoặc bằng ngày bắt đầu
     if (endDateValue <= startDateValue) {
         spanError.style.display = 'block';
-        spanError.innerText = 'Ngày kết thúc phải sau ngày bắt đầu!';
+        spanError.innerText = '*Ngày kết thúc phải sau ngày bắt đầu!';
         return false;
     } else {
         spanError.style.display = 'none';

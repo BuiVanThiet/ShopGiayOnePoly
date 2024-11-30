@@ -1,44 +1,43 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{Home/home_manege}">
+      layout:decorate="~{client/base}">
 <head>
-    <meta charset="UTF-8">
-    <meta name="description" content="Male_Fashion Template">
-    <meta name="keywords" content="Male_Fashion, unica, creative, html">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Shop Giày Onepoly</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dan sách hoa đơn</title>
+    <link rel="stylesheet" th:href="@{/pagination/stylePagination.css}" type="text/css">
+
 </head>
 <body>
-<main>
-    <div  layout:fragment="content">
+<div layout:fragment="content" style="margin-top: 100px; display: flex; justify-content: center; align-items: center; ">
+    <div style="width: 90%;">
         <div class="tab-pane fade show active" id="bill-tab-pane" role="tabpanel" aria-labelledby="bill-tab"
              tabindex="0">
             <div class="card mt-2">
                 <div class="card-body">
                     <form id="formSubmitFilterBill">
                         Tìm kiếm:
-                        <input type="text" class="form-control" id="keywordBillManage"
+                        <input type="text" class="form-control" id="keywordBillClient"
                                placeholder="tìm theo tên khách hàng, mã hóa đơn, số điện thoại...">
                         <span></span>
                         <div class="d-flex justify-content-center mt-2 mb-2">
                             <div class="row" style="width: 45%">
                                 <div class="col-6">
                                     Từ ngày:
-                                    <input type="date" class="form-control" id="startDate-bill-manage" onclick="clearToToday('startDate-bill-manage')">
+                                    <input type="date" class="form-control" id="startDate-bill-client" onclick="clearToToday('startDate-bill-client')">
                                 </div>
                                 <div class="col-6">
                                     Đến ngày:
-                                    <input type="date" class="form-control" id="endDate-bill-manage" onclick="clearToToday('endDate-bill-manage')">
+                                    <input type="date" class="form-control" id="endDate-bill-client" onclick="clearToToday('endDate-bill-client')">
                                 </div>
                             </div>
                         </div>
                         <div class="d-flex justify-content-center mt-3">
-                            <button type="submit" id="filterSubmitBillManage" class="btn btn-outline-warning mb-3 me-2">
+                            <button type="submit" id="filterSubmitBillClient" class="btn btn-outline-warning mb-3 me-2">
                                 <i class="bi bi-search"></i> Gửi
                             </button>
-                            <button class="btn btn-outline-primary mb-3" onclick="resetFillterBillManage()" id="resetFilterBillManage">
+                            <button class="btn btn-outline-primary mb-3" onclick="resetFillterBillClient()" id="resetFilterBillClient">
                                 <i class="bi bi-arrow-counterclockwise"></i> Làm mới
                             </button>
                         </div>
@@ -70,16 +69,9 @@
                 <li class="nav-item">
                     <button class="nav-link text-dark nav-link-custom" onclick="setActive(this,'8,9')">Đổi-Trả hàng</button>
                 </li>
-
-                <!--                        <li class="nav-item">-->
-                <!--                            <a class="nav-link text-dark" href="#" onclick="setActive(this)">Trả hàng</a>-->
-                <!--                        </li>-->
-                <!--                        <li class="nav-item">-->
-                <!--                            <a class="nav-link text-dark" href="#" onclick="setActive(this)">Đổi hàng</a>-->
-                <!--                        </li>-->
             </ul>
             <input type="hidden" id="statusSearch" value="">
-            <div id="nodataBillManage" style="display:none; text-align:center;">
+            <div id="nodataBillClient" style="display:none; text-align:center;">
 
             </div>
 
@@ -88,15 +80,11 @@
                 <tr>
                     <th scope="col">STT</th>
                     <th scope="col">Mã hóa đơn</th>
-                    <th scope="col">Khách hàng</th>
-                    <th scope="col">Số điện thoại</th>
-<!--                    <th scope="col">Tổng tiền</th>-->
-                    <th scope="col">Loại đơn hàng</th>
                     <th scope="col">Ngày tạo</th>
                     <th scope="col">hành động</th>
                 </tr>
                 </thead>
-                <tbody id="billManage">
+                <tbody id="billClient">
                 <tr>
                     <th scope="row">1</th>
                     <td>HD00001</td>
@@ -127,62 +115,75 @@
             <div class="pagination-section">
                 <!-- Phân trang 2 -->
                 <div class="pagination-custom d-flex justify-content-center">
-                    <ul id="billManagePageMax" class="pagination"></ul>
+                    <ul id="billClientPageMax" class="pagination"></ul>
                 </div>
             </div>
         </div>
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script th:src="@{/js/bill/variableBill.js}" type="text/javascript"></script>
-        <script src="/js/bill/previewImage.js"></script>
-        <!--cai nay de set moi khi chon thi duoc active-->
-        <script src="/js/bill/setActive.js"></script>
-        <script th:src="@{/pagination/actionPagination.js}" type="text/javascript"></script>
-        <script th:src="@{/ajax/bill/ajaxBillManageTable.js}" type="text/javascript"></script>
-
-        <input type="hidden" id="checkFormBill">
-        <script>
-            // Hàm để định dạng ngày theo chuẩn 'yyyy-mm-dd'
-            function formatDate(date) {
-                let d = new Date(date);
-                let month = '' + (d.getMonth() + 1);
-                let day = '' + d.getDate();
-                let year = d.getFullYear();
-
-                if (month.length < 2) month = '0' + month;
-                if (day.length < 2) day = '0' + day;
-
-                return [year, month, day].join('-');
-            }
-
-            function clearToToday(inputId) {
-                const inputField = document.getElementById(inputId);
-
-                // Lấy ngày hôm nay theo múi giờ Hà Nội (UTC+7)
-                const today = new Date();
-                today.setHours(0, 0, 0, 0); // Đặt lại giờ thành 00:00:00
-
-                // Lấy ngày theo định dạng yyyy-mm-dd mà không có giờ
-                const todayString = today.getFullYear() + '-'
-                    + String(today.getMonth() + 1).padStart(2, '0') + '-'
-                    + String(today.getDate()).padStart(2, '0');
-
-                // Nếu người dùng xóa ngày, đặt lại giá trị về ngày hôm nay
-                if (!inputField.value) {
-                    inputField.value = todayString;
-                }
-            }
-
-            // Lấy ngày hiện tại
-            let today = new Date();
-            document.getElementById('endDate-bill-manage').value = formatDate(today);
-
-            // Lấy ngày 7 ngày trước
-            let sevenDaysAgo = new Date();
-            sevenDaysAgo.setDate(today.getDate() - 7);
-            document.getElementById('startDate-bill-manage').value = formatDate(sevenDaysAgo);
-        </script>
     </div>
-</main>
-</body>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script th:src="@{/pagination/actionPagination.js}" type="text/javascript"></script>
+
+    <script th:src="@{/ajax/client/listBillClient.js}" type="text/javascript"></script>
+    <script>
+        function setActive(element, value) {
+            // Xóa lớp active khỏi tất cả các liên kết
+            var links = document.querySelectorAll('.nav-link-custom');
+            links.forEach(function(link) {
+                link.classList.remove('active');
+            });
+
+            // Thêm lớp active vào liên kết được nhấp vào
+            element.classList.add('active');
+            $('#statusSearch').val(value);
+            clickStatusBillClient();
+            // Xử lý giá trị được truyền vào (value)
+            console.log("Giá trị được truyền vào:", value);
+
+            // Bạn có thể làm gì đó với giá trị 'value' ở đây, ví dụ: gọi API hoặc thay đổi nội dung trang
+        }
+    </script>
+    <script>
+        // Hàm để định dạng ngày theo chuẩn 'yyyy-mm-dd'
+        function formatDate(date) {
+            let d = new Date(date);
+            let month = '' + (d.getMonth() + 1);
+            let day = '' + d.getDate();
+            let year = d.getFullYear();
+
+            if (month.length < 2) month = '0' + month;
+            if (day.length < 2) day = '0' + day;
+
+            return [year, month, day].join('-');
+        }
+
+        function clearToToday(inputId) {
+            const inputField = document.getElementById(inputId);
+
+            // Lấy ngày hôm nay theo múi giờ Hà Nội (UTC+7)
+            const today = new Date();
+            today.setHours(0, 0, 0, 0); // Đặt lại giờ thành 00:00:00
+
+            // Lấy ngày theo định dạng yyyy-mm-dd mà không có giờ
+            const todayString = today.getFullYear() + '-'
+                + String(today.getMonth() + 1).padStart(2, '0') + '-'
+                + String(today.getDate()).padStart(2, '0');
+
+            // Nếu người dùng xóa ngày, đặt lại giá trị về ngày hôm nay
+            if (!inputField.value) {
+                inputField.value = todayString;
+            }
+        }
+
+        // Lấy ngày hiện tại
+        let today = new Date();
+        document.getElementById('endDate-bill-client').value = formatDate(today);
+
+        // Lấy ngày 7 ngày trước
+        let sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(today.getDate() - 7);
+        document.getElementById('startDate-bill-client').value = formatDate(sevenDaysAgo);
+    </script>
+</div>
+</body>
 </html>

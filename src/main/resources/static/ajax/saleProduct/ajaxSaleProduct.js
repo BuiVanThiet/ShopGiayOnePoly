@@ -898,10 +898,8 @@ function addOrUpdateSaleProductInProduct() {
             filterProduct(2);
             localStorage.setItem('selectedProducts', JSON.stringify([]));
             selectedProductIds = [];
-            if(response.check == '1') {
                 document.getElementById('productNotIdSale').classList.remove('active');
                 document.getElementById('productYesSale').classList.add('active');
-            }
 
 
             var btn = `
@@ -933,11 +931,9 @@ function removeSaleProductInProduct() {
             filterProduct(1);
             localStorage.setItem('selectedProducts', JSON.stringify([]));
             selectedProductIds = [];
-            if(response.check == '1') {
                 document.getElementById('productNotIdSale').classList.add('active');
                 document.getElementById('productYesSale').classList.remove('active');
                 $('#methodAddAndRemoverSaleProduct').html(`<button type="button" class="btn btn-outline-success" onclick="addOrUpdateSaleProductInProduct()">Thêm-sửa đợt giảm giá</button>`)
-            }
             selectedProductIds = [];
             // resetDataSale();
         },

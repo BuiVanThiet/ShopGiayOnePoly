@@ -246,6 +246,21 @@ function paymentInformation() {
                 $('#discountContainer').hide();
                 $('#textVoucher').val('Không có');
             }
+            totalAmountBillCheck = response.finalAmount;
+
+            if(totalAmountBillCheck > 20000000) {
+                if (btnCreateBill) {
+                    document.getElementById('errorTotalAmount').style.display = 'block';
+                    btnCreateBill.disabled = true;
+                }
+            }else {
+                if (btnCreateBill) {
+                    document.getElementById('errorTotalAmount').style.display = 'none';
+                    btnCreateBill.disabled = false;
+                }
+            }
+
+
 
         },
         error: function(error) {

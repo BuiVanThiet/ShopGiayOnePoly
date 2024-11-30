@@ -155,6 +155,14 @@ public class VoucherController extends BaseVoucherProduct{
             return "redirect:/home_manage";
         }
 
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            this.mess = messMap;
+            this.check = "3";
+            return "redirect:/voucher/list";
+        }
+
         voucherService.deleteVoucher(id);
         mess = "Xóa phiếu giảm giá có id: "+id+" thành công!";
         check = "1";
@@ -170,6 +178,13 @@ public class VoucherController extends BaseVoucherProduct{
         }
         if(staffLogin.getStatus() != 1) {
             return "redirect:/home_manage";
+        }
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            this.mess = messMap;
+            this.check = "3";
+            return "redirect:/voucher/list";
         }
 
         voucherService.restoreStatusVoucher(id);
@@ -192,6 +207,7 @@ public class VoucherController extends BaseVoucherProduct{
         Voucher voucher = voucherService.getOne(id);
         VoucherRequest voucherRequest = new VoucherRequest();
         BeanUtils.copyProperties(voucher, voucherRequest);
+        System.out.println(voucherRequest.toString());
         model.addAttribute("voucher", voucherRequest);
         model.addAttribute("title", "UPDATE VOUCHER WITH ID: " + id);
         return "voucher/update";
@@ -215,7 +231,7 @@ public class VoucherController extends BaseVoucherProduct{
         if(!messMap.trim().equals("")) {
             this.mess = messMap;
             this.check = "3";
-            return "redirect:/sale-product/list";
+            return "redirect:/voucher/list";
         }
 
         if(thongBaoValidate.get("check").equals("1")) {
@@ -313,6 +329,14 @@ public class VoucherController extends BaseVoucherProduct{
             return "redirect:/home_manage";
         }
 
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            this.mess = messMap;
+            this.check = "3";
+            return "redirect:/voucher/list";
+        }
+
         voucherService.updateVoucherExpired(id);
         redirectAttributes.addFlashAttribute("mes", "Gia hạn phiếu giảm giá thành công");
         mess = "Gia hạn phiếu giảm giá có id: "+id+" thành công!";
@@ -367,6 +391,14 @@ public class VoucherController extends BaseVoucherProduct{
         }
         if(staffLogin.getStatus() != 1) {
             return "redirect:/home_manage";
+        }
+
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            this.mess = messMap;
+            this.check = "3";
+            return "redirect:/voucher/list";
         }
         
         voucherService.updateVoucherExpired(id);

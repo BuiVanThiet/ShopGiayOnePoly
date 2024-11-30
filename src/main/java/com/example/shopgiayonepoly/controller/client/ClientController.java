@@ -501,6 +501,13 @@ public class ClientController extends BaseBill {
 
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //danh sách hoa don da dat va da mua
+    @GetMapping("/listBillByClient/{id}")
+    public String getFormListBillByClient(HttpSession session) {
+        return "client/listBillByClient";
+    }
+
     //chinhh sach doi tra
     @GetMapping("/policy-exchange-return-bill")
     public String getFormPolicyExchangeReturnBill(Model model) {

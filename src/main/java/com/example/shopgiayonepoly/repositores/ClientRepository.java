@@ -1,11 +1,14 @@
 package com.example.shopgiayonepoly.repositores;
 
+import com.example.shopgiayonepoly.dto.response.bill.BillResponseManage;
 import com.example.shopgiayonepoly.dto.response.client.*;
 import com.example.shopgiayonepoly.entites.AddressShip;
 import com.example.shopgiayonepoly.entites.Bill;
 import com.example.shopgiayonepoly.entites.BillDetail;
 import com.example.shopgiayonepoly.entites.Cart;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -13,6 +16,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -204,5 +208,75 @@ public interface ClientRepository extends JpaRepository<Bill, Integer> {
 
     @Query("select addressShip from AddressShip addressShip where addressShip.status=1 order by addressShip.createDate asc")
     List<AddressShip> getListAddressShipByIDCustomer();
+
+    ////////////////////////////////////////////
+    @Query("""
+        select 
+        new com.example.shopgiayonepoly.dto.response.bill.BillResponseManage(
+            bill.id, 
+            bill.codeBill, 
+            bill.customer, 
+            bill.staff, 
+            bill.addRess, 
+            bill.voucher, 
+            bill.shippingPrice, 
+            bill.cash, 
+            bill.acountMoney, 
+            bill.note, 
+            bill.totalAmount - bill.priceDiscount, 
+            bill.paymentMethod, 
+            bill.billType, 
+            bill.paymentStatus, 
+            bill.surplusMoney, 
+            bill.createDate, 
+            bill.updateDate,
+            bill.status) 
+        from Bill bill 
+        left join ReturnBillExchangeBill rb on rb.bill.id = bill.id
+        LEFT JOIN bill.customer customer
+        LEFT JOIN bill.staff staff
+        LEFT JOIN bill.voucher voucher
+        where
+            bill.status <> 0 and
+            (concat(COALESCE(bill.codeBill, ''), COALESCE(bill.customer.fullName, ''), COALESCE(bill.customer.numberPhone, '')) like %:nameCheck%)
+            AND (:statusCheck IS NULL OR bill.status IN (:statusCheck))
+            AND (bill.updateDate between :startDate and :endDate)
+            and bill.customer.id = :idCustomer
+            order by bill.updateDate desc
+    """)
+    Page<BillResponseManage> getAllBillByStatusDiss0(
+            @Param("idCustomer") Integer idCustomer,
+            @Param("nameCheck") String nameCheck,
+            @Param("statusCheck") List<Integer> statusCheck,
+            @Param("startDate") Date startDate,
+            @Param("endDate") Date endDate,
+            Pageable pageable);
+
+    @Query("""
+            select 
+            new com.example.shopgiayonepoly.dto.response.bill.BillResponseManage(
+                bill.id, bill.codeBill, bill.customer, bill.staff, bill.addRess, bill.voucher, 
+                bill.shippingPrice, bill.cash, bill.acountMoney, bill.note, bill.totalAmount, 
+                bill.paymentMethod, bill.billType, bill.paymentStatus, bill.surplusMoney, 
+                bill.createDate, bill.updateDate, bill.status) 
+            from Bill bill 
+            LEFT JOIN bill.customer customer
+            LEFT JOIN bill.staff staff
+            LEFT JOIN bill.voucher voucher
+            where
+                bill.status <> 0 and
+                (concat(COALESCE(bill.codeBill, ''), COALESCE(bill.customer.fullName, ''), COALESCE(bill.customer.numberPhone, '')) like %:nameCheck%)
+                AND (:statusCheck IS NULL OR bill.status IN (:statusCheck))
+                AND (bill.updateDate between :startDate and :endDate)
+                and bill.customer.id = :idCustomer
+                order by bill.updateDate desc
+        """)
+    List<BillResponseManage> getAllBillByStatusDiss0(
+            @Param("idCustomer") Integer idCustomer,
+            @Param("nameCheck") String nameCheck,
+            @Param("statusCheck") List<Integer> statusCheck,
+            @Param("startDate") Date startDate,
+            @Param("endDate") Date endDate
+    );
 
 }

@@ -19,22 +19,22 @@ document.addEventListener('input', function(event) {
         // Kiểm tra nếu không nhập gì
         if (inputQuantity === '') {
             errorCardCheck.style.display = 'block';
-            errorElement.textContent = 'Mời nhập số lượng mua!';
+            errorElement.textContent = '*Mời nhập số lượng mua!';
             btnBuyQuantity.disabled = true;
         } else if (!isInteger(inputQuantity) || parseInt(inputQuantity) <= 0) {
             // Kiểm tra số lượng nhập có phải là số nguyên và hợp lệ không
             errorCardCheck.style.display = 'block';
-            errorElement.textContent = 'Số lượng phải là một số nguyên dương!';
+            errorElement.textContent = '*Số lượng phải là một số nguyên dương!';
             btnBuyQuantity.disabled = true;
         } else if (parseInt(inputQuantity) > parseInt(availableQuantity)) {
             // Kiểm tra số lượng mua vượt quá số lượng sản phẩm có sẵn
             errorCardCheck.style.display = 'block';
-            errorElement.textContent = 'Số lượng mua vượt quá số lượng sản phẩm có sẵn!';
+            errorElement.textContent = '*Số lượng mua vượt quá số lượng sản phẩm có sẵn!';
             btnBuyQuantity.disabled = true;
         } else if (parseInt(inputQuantity) > 10) {
             // Kiểm tra số lượng mua vượt quá gioi han la 10
             errorCardCheck.style.display = 'block';
-            errorElement.textContent = 'Số lượng mua cho mỗi đơn là 10/sản phẩm!';
+            errorElement.textContent = '*Số lượng mua cho mỗi đơn là 10/sản phẩm!';
             btnBuyQuantity.disabled = true;
         } else {
             // Xóa lỗi nếu không có
@@ -53,7 +53,7 @@ function isInteger(value) {
 function backToDefaultBuyProduct() {
     document.getElementById('quantity').value = '';
     document.getElementById('errorCard').style.display = 'block';
-    document.getElementById('erorrQuantity').textContent = 'Mời nhập số lượng mua!';
+    document.getElementById('erorrQuantity').textContent = '*Mời nhập số lượng mua!';
     document.getElementById('btnBuy').disabled = true;
 }
 // document.getElementById('comeBackProduct').addEventListener('click', function () {

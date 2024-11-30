@@ -551,12 +551,6 @@ public class BillRestController extends BaseBill {
             return null;
         }
 
-        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
-        String messMap = checkLoginAndLogout.get("message");
-        if(!messMap.trim().equals("")) {
-            return null;
-        }
-
         Integer idBill = (Integer) session.getAttribute("IdBill");
 
         String validateIdBill = validateInteger(idBill != null ? idBill.toString() : "");
@@ -573,7 +567,6 @@ public class BillRestController extends BaseBill {
         }
         bill.setPaymentMethod(payMethodRequest.getPayMethod());
         bill.setUpdateDate(new Date());
-        bill.setStaff(staffLogin);
         return this.billService.save(bill);
     }
 
@@ -1230,13 +1223,16 @@ public class BillRestController extends BaseBill {
             if(staffLogin != null){
                 String checkCashierInventory = getCheckStaffCashierInventory(staffLogin.getId());
                 BigDecimal totalReturn =
-                        (returnBillExchangeBill.getCustomerRefund().subtract(returnBillExchangeBill.getExchangeAndReturnFee()).add(returnBillExchangeBill.getDiscountedAmount())).subtract(returnBillExchangeBill.getCustomerPayment())
+//                        (returnBillExchangeBill.getCustomerRefund().subtract(returnBillExchangeBill.getExchangeAndReturnFee()).add(returnBillExchangeBill.getDiscountedAmount())).subtract(returnBillExchangeBill.getCustomerPayment())
+                        (returnBillExchangeBill.getCustomerRefund().subtract(returnBillExchangeBill.getExchangeAndReturnFee())).add(returnBillExchangeBill.getDiscountedAmount())
                         ;
                 if (totalReturn.compareTo(BigDecimal.ZERO) <= 0) {
                     totalReturn = BigDecimal.ZERO;
                 }
                 BigDecimal totalExchange =
-                        returnBillExchangeBill.getCustomerPayment().subtract(returnBillExchangeBill.getCustomerRefund().subtract(returnBillExchangeBill.getExchangeAndReturnFee()).add(returnBillExchangeBill.getDiscountedAmount()))
+//                        returnBillExchangeBill.getCustomerPayment().subtract(returnBillExchangeBill.getCustomerRefund().subtract(returnBillExchangeBill.getExchangeAndReturnFee()).add(returnBillExchangeBill.getDiscountedAmount()))
+                        returnBillExchangeBill.getCustomerPayment().add((returnBillExchangeBill.getExchangeAndReturnFee()).add(returnBillExchangeBill.getDiscountedAmount()))
+
                         ;
                 if (totalExchange.compareTo(BigDecimal.ZERO) <= 0) {
                     totalExchange = BigDecimal.ZERO;
