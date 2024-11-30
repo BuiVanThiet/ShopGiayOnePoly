@@ -84,33 +84,33 @@ public interface SaleProductRepository extends JpaRepository<SaleProduct, Intege
     public List<ProductDetail> getAllProductDetail();
 
     @Query(value = """
-                select
-                    id,
-                    code_sale,
-                    name_sale,
-                    discount_value,
-                    discount_type,
-                    start_date,
-                    end_date,
-                    CASE
-                        WHEN status = 1 and CONVERT(DATE, GETDATE()) > CONVERT(DATE, end_date) THEN 3
-                        ELSE status
-                    END AS status_desc
-                from sale_product 
-                where 
-                 -- 1. Lọc theo discountType, nếu null thì hiện tất cả
-                    (:typeCheck IS NULL OR discount_type = :typeCheck) 
-                    -- 2. Lọc gần đúng khi nhập ký tự của trường codeVoucher và nameVoucher
-                    AND CONCAT(name_sale, code_sale) LIKE CONCAT('%', :searchTerm, '%')
-                    -- 3. Lọc theo 3 trạng thái: hoạt động, ngừng hoạt động, hết hạn
-                    AND (
-                        (:status = 1 AND status = 1 and (CONVERT(DATE, GETDATE()) <= CONVERT(DATE, end_date))) -- hoạt động
-                        OR (:status = 2 AND (status = 0 OR status = 2)) -- ngừng hoạt động
-                        OR (:status = 3 AND CONVERT(DATE, GETDATE()) > CONVERT(DATE, end_date) and status = 1) -- hết hạn
-                    ) 
-                    ORDER BY update_date DESC;
-            """, nativeQuery = true)
-    public List<Object[]> getAllSaleProductByFilter(@Param("typeCheck") Integer typeCheck, @Param("searchTerm") String searchTerm, @Param("status") Integer status);
+    select
+        id,
+        code_sale,
+        name_sale,
+        discount_value,
+        discount_type,
+        start_date,
+        end_date,
+        CASE
+            WHEN status = 1 and CONVERT(DATE, GETDATE()) > CONVERT(DATE, end_date) THEN 3
+            ELSE status
+        END AS status_desc
+    from sale_product 
+    where 
+     -- 1. Lọc theo discountType, nếu null thì hiện tất cả
+        (:typeCheck IS NULL OR discount_type = :typeCheck) 
+        -- 2. Lọc gần đúng khi nhập ký tự của trường codeVoucher và nameVoucher
+        AND CONCAT(name_sale, code_sale) LIKE CONCAT('%', :searchTerm, '%')
+        -- 3. Lọc theo 3 trạng thái: hoạt động, ngừng hoạt động, hết hạn
+        AND (
+            (:status = 1 AND status = 1 and (CONVERT(DATE, GETDATE()) <= CONVERT(DATE, end_date))) -- hoạt động
+            OR (:status = 2 AND (status = 0 OR status = 2)) -- ngừng hoạt động
+            OR (:status = 3 AND CONVERT(DATE, GETDATE()) > CONVERT(DATE, end_date)) -- hết hạn
+        ) 
+        ORDER BY update_date DESC;
+""",nativeQuery = true)
+    public List<Object[]> getAllSaleProductByFilter(@Param("typeCheck") Integer typeCheck,@Param("searchTerm")String searchTerm,@Param("status")Integer status);
 
     @Query(value = """
             WITH CategoryCTE AS (
