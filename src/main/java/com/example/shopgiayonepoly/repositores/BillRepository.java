@@ -309,42 +309,110 @@ select case
 
     @Query(value = """
         (select
-        	b.id,
-        	b.update_date,
-        	(b.cash+b.surplus_money) AS so_tien,
-        	N'Tiền mặt'  payment_method,
+            b.id,
+            b.update_date,
+            (b.cash + b.surplus_money) AS so_tien,
+            N'Tiền mặt' AS payment_method,
             CASE
-            WHEN LEFT(invo.note, CHARINDEX(',', invo.note) - 1) = N'Không có' THEN N'Không có'
-            ELSE ISNULL(
-                (select s.code_staff + '-' + s.full_name
-                 from staff s
-                 where s.id = (SUBSTRING(invo.note, 1, CHARINDEX(',', invo.note) - 1))),
-                N'Không có'
-            )
-        END AS staff_info
+                WHEN LEFT(invo.note, CHARINDEX(',', invo.note) - 1) = N'Không có' THEN N'Không có'
+                ELSE ISNULL(
+                    (select s.code_staff + '-' + s.full_name
+                     from staff s
+                     where s.id = (SUBSTRING(invo.note, 1, CHARINDEX(',', invo.note) - 1))),
+                    N'Không có'
+                )
+            END AS staff_info
         from bill b
         join invoice_status invo
         on invo.id_bill = b.id
-        where b.id = :idCheck and invo.status = 101  AND b.cash > 0)
+        where b.id = :idCheck and invo.status = 101 AND b.cash > 0)
         UNION ALL
         (select
-        	b.id,
-        	b.update_date,
-        	b.acount_money AS so_tien,
+            b.id,
+            b.update_date,
+            b.acount_money AS so_tien,
             ISNULL(N'Tiền tài khoản' + N' - Mã giao dịch: ' + bank_tran_no, N'Tiền tài khoản - Không có') AS payment_method,
             CASE
-            WHEN LEFT(invo.note, CHARINDEX(',', invo.note) - 1) = N'Không có' THEN N'Không có'
-            ELSE ISNULL(
-                (select s.code_staff + '-' + s.full_name
-                 from staff s
-                 where s.id = (SUBSTRING(invo.note, 1, CHARINDEX(',', invo.note) - 1))),
-                N'Không có'
-            )
-        END AS staff_info
+                WHEN LEFT(invo.note, CHARINDEX(',', invo.note) - 1) = N'Không có' THEN N'Không có'
+                ELSE ISNULL(
+                    (select s.code_staff + '-' + s.full_name
+                     from staff s
+                     where s.id = (SUBSTRING(invo.note, 1, CHARINDEX(',', invo.note) - 1))),
+                    N'Không có'
+                )
+            END AS staff_info
         from bill b
         join invoice_status invo
         on invo.id_bill = b.id
         where b.id = :idCheck and invo.status = 101 AND b.acount_money > 0)
+        UNION ALL
+        (select
+            b.id,
+            b.update_date,
+            b.surplus_money AS so_tien,
+            N'Tiền thừa' AS payment_method,
+            CASE
+                WHEN LEFT(invo.note, CHARINDEX(',', invo.note) - 1) = N'Không có' THEN N'Không có'
+                ELSE ISNULL(
+                    (select s.code_staff + '-' + s.full_name
+                     from staff s
+                     where s.id = (SUBSTRING(invo.note, 1, CHARINDEX(',', invo.note) - 1))),
+                    N'Không có'
+                )
+            END AS staff_info
+        from bill b
+        join invoice_status invo
+        on invo.id_bill = b.id
+        where b.id = :idCheck and invo.status = 101 AND b.surplus_money > 0)
+        UNION ALL
+        (select
+            re.id AS id,
+            re.update_date,
+            pe.cash AS so_tien,
+            N'Tiền mặt (Đổi-Trả sản phẩm)' AS payment_method,
+            ISNULL(
+                (select s.code_staff + '-' + s.full_name
+                 from staff s
+                 where s.id = pe.id_staff),
+                N'Không có'
+            ) AS staff_info
+        from return_bill_exchange_bill re
+        join payment_exchange pe
+        on re.id = pe.id_exchange
+        where re.id_bill = :idCheck AND pe.cash > 0)
+        UNION ALL
+        (select
+            re.id AS id,
+            re.update_date,
+            pe.cash_acount AS so_tien,
+            ISNULL(N'Tiền tài khoản (Đổi-Trả sản phẩm)' + N' - Mã giao dịch: ' + pe.bank_tran_no, N'Tiền tài khoản (Đổi-Trả sản phẩm) - Không có') AS payment_method,
+            ISNULL(
+                (select s.code_staff + '-' + s.full_name
+                 from staff s
+                 where s.id = pe.id_staff),
+                N'Không có'
+            ) AS staff_info
+        from return_bill_exchange_bill re
+        join payment_exchange pe
+        on re.id = pe.id_exchange
+        where re.id_bill = 330 AND pe.cash_acount > 0)
+        UNION ALL
+        (select
+            re.id AS id,
+            re.update_date,
+            pe.surplus_money AS so_tien,
+            N'Tiền thừa (Đổi-Trả sản phẩm)' AS payment_method,
+            ISNULL(
+                (select s.code_staff + '-' + s.full_name
+                 from staff s
+                 where s.id = pe.id_staff),
+                N'Không có'
+            ) AS staff_info
+        from return_bill_exchange_bill re
+        join payment_exchange pe
+        on re.id = pe.id_exchange
+        where re.id_bill = :idCheck AND pe.surplus_money > 0);
+        
 """, nativeQuery = true)
     List<Object[]> getInfoPaymentByIdBill(@Param("idCheck") Integer idCheck);
 

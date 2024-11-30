@@ -155,6 +155,14 @@ public class SaleProductController extends BaseSaleProduct{
             return "redirect:/404";
         }
 
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            this.mess = messMap;
+            this.check = "3";
+            return "redirect:/sale-product/list";
+        }
+
         SaleProduct saleProduct = saleProductService.getSaleProductByID(Integer.parseInt(id));
         if(saleProduct == null) {
             mess = "Đợt giảm giá có id: "+id+" không tồn tại!";
@@ -196,6 +204,14 @@ public class SaleProductController extends BaseSaleProduct{
             Integer.parseInt(id);
         }catch (NumberFormatException e) {
             return "redirect:/404";
+        }
+
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            this.mess = messMap;
+            this.check = "3";
+            return "redirect:/sale-product/list";
         }
 
         SaleProduct saleProduct = saleProductService.getSaleProductByID(Integer.parseInt(id));
@@ -405,6 +421,14 @@ public class SaleProductController extends BaseSaleProduct{
             Integer.parseInt(id);
         }catch (NumberFormatException e) {
             return "redirect:/404";
+        }
+
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            this.mess = messMap;
+            this.check = "3";
+            return "redirect:/sale-product/list";
         }
 
         SaleProduct saleProduct = saleProductService.getSaleProductByID(Integer.parseInt(id));

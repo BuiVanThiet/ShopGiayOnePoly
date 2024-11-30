@@ -47,7 +47,7 @@ function handlePageClick(pageNumber, elementId, totalPages) {
     console.log(`Page clicked: ${pageNumber}`); // Hiển thị số trang được ấn
 
     // Gọi hàm để ẩn lớp phủ tải khi nhấn nút
-    hideLoadingOverlay(500);
+    // hideLoadingOverlay(500);
 
     if (elementId === 'productPageMax') {
         loadProduct(pageNumber); // Gọi hàm loadProduct nếu điều kiện đúng
@@ -116,6 +116,10 @@ function handlePageClick(pageNumber, elementId, totalPages) {
 
     if(elementId == 'maxPageTimKeepingByStaff-manage') {
         infoCheckInAndCheckOutByStaff(pageNumber);
+    }
+
+    if (elementId == 'billClientPageMax') {
+        getAllBillClientByStatus(pageNumber)
     }
 
     createPagination(elementId, totalPages, pageNumber); // Cập nhật phân trang

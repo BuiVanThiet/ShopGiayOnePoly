@@ -37,7 +37,7 @@ if(payMethodChecked === 1 || payMethodChecked === 3) {
 
 if (cashClient.value.trim() === "" && payMethodChecked === 1 || payMethodChecked === 3) {
     formErorrCash.style.display = 'block';
-    erorrCash.innerText = 'Mời nhập đủ giá!';
+    erorrCash.innerText = '*Mời nhập đủ giá!';
     btnCreateBill.disabled = true;
     surplusMoneySpan.style.display = 'none';
     surplusMoney.innerText = '';
@@ -52,7 +52,7 @@ function validate(cash) {
     // Nếu không nhập gì
     if (cashClientValue === "") {
         formErorrCash.style.display = 'block';
-        erorrCash.innerText = 'Mời nhập đủ giá!';
+        erorrCash.innerText = '*Mời nhập đủ giá!';
         btnCreateBill.disabled = true;
         surplusMoneySpan.style.display = 'none';
         surplusMoney.innerText = '';
@@ -66,7 +66,7 @@ function validate(cash) {
         // Kiểm tra nếu dữ liệu đầu vào không phải là số
         if (isNaN(cashClientValue)) {
             formErorrCash.style.display = 'block';
-            erorrCash.innerText = 'Đây không phải là số!';
+            erorrCash.innerText = '*Đây không phải là số!';
             btnCreateBill.disabled = true;
             surplusMoneySpan.style.display = 'none';
             surplusMoney.innerText = '';
@@ -97,7 +97,7 @@ function validate(cash) {
             // }
             if (cashClientNumber < totalAmountNumber && parseNumber(payMethod.value) === 1) {
                 formErorrCash.style.display = 'block';
-                erorrCash.innerText = 'Tiền nhập vào phải bằng với hóa đơn!';
+                erorrCash.innerText = '*Tiền nhập vào phải bằng với hóa đơn!';
                 btnCreateBill.disabled = true;
                 surplusMoneySpan.style.display = 'none';
                 surplusMoney.innerText = '';
@@ -118,7 +118,7 @@ function validate(cash) {
                 checkButonCreateBill = true;
             }else if (totalAmountNumber - cashClientNumber < 10000 && parseNumber(payMethod.value) === 3) {
                 formErorrCash.style.display = 'block';
-                erorrCash.innerText = 'Để tạo hóa đơn điện tử cần dư ra 10,000 VNĐ!';
+                erorrCash.innerText = '*Để tạo hóa đơn điện tử cần dư ra 10,000 VNĐ!';
                 btnCreateBill.disabled = true;
                 surplusMoneySpan.style.display = 'none';
                 surplusMoney.innerText = '';
@@ -143,13 +143,22 @@ function validate(cash) {
             if (cashClientNumber > 10000000000) {
                 console.log('da qua gioi han')
                 formErorrCash.style.display = 'block';
-                erorrCash.innerText = 'Đã vượt quá giới hạn(trên 10 tỷ VNĐ)!';
+                erorrCash.innerText = '*Đã vượt quá giới hạn(trên 10 tỷ VNĐ)!';
                 btnCreateBill.disabled = true;
                 surplusMoneySpan.style.display = 'none';
                 surplusMoney.innerText = '';
                 textSurplusMoney.value = '0';
                 cashClientText.value = cashClientValue;
                 checkButonCreateBill = false;
+            }
+            if(totalAmountBillCheck > 20000000) {
+                document.getElementById('errorTotalAmount').style.display = 'block';
+                checkButonCreateBill = false;
+                btnCreateBill.disabled = true;
+            }else {
+                document.getElementById('errorTotalAmount').style.display = 'none';
+                checkButonCreateBill = true;
+                btnCreateBill.disabled = false;
             }
         }
     }
@@ -181,7 +190,7 @@ function validateNodte(note,fromError,textError) {
     console.log(noteEvent.value);
     if(noteEvent.value.length > 500000) {
         document.getElementById(fromError).style.display = 'block';
-        document.getElementById(textError).innerText = 'Số lượng ký tự phải dưới 500 nghìn ký tự!';
+        document.getElementById(textError).innerText = '*Số lượng ký tự phải dưới 500 nghìn ký tự!';
         if(checkTypeBill == true) {
             validateAll();
         }

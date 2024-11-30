@@ -82,6 +82,9 @@
                         <button onclick="profile()" class="dropdown-button" th:if="${clientLogin != null}">Tài khoản của
                             tôi
                         </button>
+                        <a th:href="@{'/onepoly/listBillByClient/'+${clientLogin.id}}" class="dropdown-button btn" th:if="${clientLogin != null}">
+                            Danh sác hóa đơn
+                        </a>
                         <button onclick="register()" class="dropdown-button">Đăng ký</button>
                     </div>
                 </li>
