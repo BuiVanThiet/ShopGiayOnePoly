@@ -1,41 +1,55 @@
 .thumbnail-active {
-    border: 2px solid #007bff;
+    border: 3px solid #000000; /* Viền đen khi được chọn */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5); /* Hiệu ứng bóng đen */
+    transform: scale(1.05); /* Tăng kích thước nhẹ */
+    transition: all 0.3s ease;
 }
 
+/* Nút màu - đồng nhất với nút kích thước */
 .btn-color-circle {
     width: 60px;
     height: 60px;
     margin-right: 10px;
     background-color: #f8f9fa;
-    border: 2px solid #e0e0e0;
+    border: 1px solid #cccccc; /* Viền xám nhạt khi không chọn */
     border-radius: 30px;
     font-size: 12px;
     text-align: center;
-    line-height: 36px;
+    line-height: 56px;
     transition: all 0.3s ease;
 }
 
-.btn-color-circle:focus, .btn-color-square:active {
-    outline: none;
-    border: 2px solid black;
-}
-
+/* Nút kích thước - đồng nhất với nút màu */
 .btn-size-square {
     width: 100%;
     height: 50px;
     margin-right: 10px;
     background-color: #f8f9fa;
-    border: 1px solid #000000;
+    border: 1px solid #cccccc; /* Viền xám nhạt khi không chọn */
     font-size: 12px;
     text-align: center;
     line-height: 45px;
     transition: all 0.3s ease;
 }
 
-.btn-size-square:focus, .btn-size-square:active {
+/* Khi hover */
+.btn-color-circle:hover,
+.btn-size-square:hover {
     outline: none;
-    border: 3px solid #2222c4;
+    border: 2px solid #999999; /* Viền xám đậm hơn khi hover */
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.2); /* Hiệu ứng bóng mờ */
 }
+
+/* Khi focus */
+.btn-color-circle:focus,
+.btn-size-square:focus {
+    outline: none;
+    border: 2px solid #5d5b5b; /* Giống hover */
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+}
+
+
+/*Nút add và pay*/
 
 .add-cart {
     display: flex;
@@ -48,12 +62,13 @@
     height: 50px; /* Đảm bảo chiều cao giống nhau */
     line-height: 50px; /* Căn giữa chữ dọc */
     font-size: 15px; /* Kích thước chữ */
-    border: none; /* Đường viền */
+    border: 1px solid #343333;
     border-radius: 2px; /* Góc bo tròn */
     color: white; /* Màu chữ */
     font-weight: lighter; /* Độ đậm của chữ */
     background-color: #004698; /* Màu nền */
     cursor: pointer; /* Hiển thị con trỏ như nút bấm */
+
 }
 
 .btn-add-cart:hover, .btn-pay-now:hover {
@@ -67,9 +82,34 @@
 }
 
 .btn-pay-now:hover {
-    background-color: #3b3939; /* Màu nền khi hover cho nút "Mua ngay" */
+    background-color: #7e7c7c; /* Màu nền khi hover cho nút "Mua ngay" */
     color: white;
 }
+
+/* Khi nút bị vô hiệu hóa */
+.btn-add-cart:disabled, .btn-pay-now:disabled {
+    background-color: #f0f0f0; /* Màu nền xám khi vô hiệu hóa */
+    color: #cccccc; /* Màu chữ xám */
+    cursor: not-allowed; /* Con trỏ chuột khi di chuột qua bị vô hiệu hóa */
+    position: relative;
+}
+
+/* Hiệu ứng gạch ngang cho nút bị vô hiệu hóa khi hover */
+.btn-add-cart:disabled:hover, .btn-pay-now:disabled:hover {
+    border: 2px solid red; /* Viền đỏ khi hover */
+}
+
+.btn-add-cart:disabled:hover::after, .btn-pay-now:disabled:hover::after {
+    content: "❌"; /* Thêm icon "gạch giữa" */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: red; /* Màu đỏ */
+    font-size: 20px; /* Kích thước icon */
+    font-weight: bold;
+}
+
 
 /* Phong cách chung cho modal */
 .line-item-container {
@@ -93,6 +133,8 @@
     position: absolute;
     left: 220px;
 }
+
+/* Css modal*/
 .modal .modal-dialog {
     max-width: 700px;
     max-height: 900px;
@@ -155,11 +197,6 @@
     font-size: 14px; /* Giảm kích thước input */
 }
 
-.popup_action a {
-    font-size: 14px;
-    margin-top: 10px;
-    padding: 8px 12px;
-}
 
 .message-error {
     font-size: 12px; /* Kích thước chữ thông báo nhỏ hơn */
@@ -225,9 +262,9 @@
 }
 
 /* Phong cách cho các nút trong modal */
+
 .popup_action {
     margin-left: 30px;
-    margin-top: 20px;
     margin-bottom: 200px;
     display: flex;
     justify-content: flex-end;
@@ -237,6 +274,12 @@
 
 .popup_action > a {
     width: 200px;
+}
+
+.popup_action a {
+    font-size: 14px;
+    margin-top: 10px;
+    padding: 8px 12px;
 }
 
 .popup_action .btn {
@@ -292,21 +335,3 @@
     font-size: 15px; /* Kích thước chữ rất nhỏ */
     text-decoration: underline; /* Gạch chân */
 }
-/*Modal success*/
-/*.modal-fullscreen .modal-content {*/
-/*    height: 100vh;*/
-/*    width: 100%;*/
-/*    display: flex;*/
-/*    flex-direction: column;*/
-/*    justify-content: space-between;*/
-/*}*/
-
-/*.modal-body {*/
-/*    flex-grow: 1;*/
-/*    padding: 20px;*/
-/*}*/
-
-/*.modal-footer {*/
-/*    padding: 20px;*/
-/*    border-top: none;*/
-/*}*/

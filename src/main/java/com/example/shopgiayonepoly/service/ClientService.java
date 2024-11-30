@@ -38,5 +38,9 @@ public interface ClientService {
     List<BillDetail> getListBillDetailByID(@Param("idBill") Integer idBill);
 
     List<AddressShip> getListAddressShipByIDCustomer(@Param("idBill") Integer idBill);
+
     List<AddressShip> getListAddressShipByIDCustomer();
+
+    Integer getQuantityProductDetailByID(@Param("idProductDetail") Integer idProductDetail);
+
 }
