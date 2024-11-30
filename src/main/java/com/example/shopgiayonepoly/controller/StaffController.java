@@ -8,8 +8,10 @@ import com.example.shopgiayonepoly.entites.Role;
 import com.example.shopgiayonepoly.entites.Staff;
 import com.example.shopgiayonepoly.repositores.StaffRepository;
 import com.example.shopgiayonepoly.repositores.RoleReponsitory;
+import com.example.shopgiayonepoly.service.CashierInventoryService;
 import com.example.shopgiayonepoly.service.CustomerService;
 import com.example.shopgiayonepoly.service.StaffService;
+import com.example.shopgiayonepoly.service.TimekeepingService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +28,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/staff")
@@ -47,6 +51,12 @@ public class StaffController extends BaseEmail {
     String check = "";
 
     private final int pageSize = 5;
+
+    @Autowired
+    TimekeepingService timekeepingService;
+
+    @Autowired
+    CashierInventoryService cashierInventoryService;
 
 //    @GetMapping("/list")
 //    public String list(Model model) {
@@ -104,6 +114,13 @@ public class StaffController extends BaseEmail {
         }
         if(staffLogin.getStatus() != 1) {
             return "redirect:/home_manage";
+        }
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            mess = messMap;
+            check = "3";
+            return "redirect:/staff/list";
         }
         // Kiểm tra tên
         if (staffRequest.getFullName() == null || staffRequest.getFullName().trim().isEmpty()) {
@@ -252,6 +269,13 @@ public class StaffController extends BaseEmail {
         }
         if(staffLogin.getStatus() != 1) {
             return "redirect:/home_manage";
+        }
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            mess = messMap;
+            check = "3";
+            return "redirect:/staff/list";
         }
 //        // Kiểm tra tên
 //        if (staffRequest.getFullName() == null || staffRequest.getFullName().trim().isEmpty()) {
@@ -416,6 +440,13 @@ public class StaffController extends BaseEmail {
         if(staffLogin.getStatus() != 1) {
             return "redirect:/home_manage";
         }
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            mess = messMap;
+            check = "3";
+            return "redirect:/staff/list";
+        }
         staffService.deleteStaff(id);
 //        ra.addFlashAttribute("mes", "Xóa thành công nhan vien với ID là: " + id);
         mess = "Xoa nhan vien thanh cong";
@@ -436,6 +467,53 @@ public class StaffController extends BaseEmail {
             System.out.println("RoleL " + role.getCodeRole());
         }
         return roleReponsitory.getListRole();
+    }
+
+    protected String getCheckStaffAttendanceYetBill(
+//            @PathVariable("id") Integer idStaff,@PathVariable("type") Integer timekeepingTypeCheck
+            Integer idStaff, Integer timekeepingTypeCheck
+    ) {
+        List<Object[]> checkLoginLogOut = this.timekeepingService.getCheckStaffAttendanceYet(idStaff, timekeepingTypeCheck);
+
+        // Kiểm tra nếu danh sách không rỗng và có kết quả
+        if (!checkLoginLogOut.isEmpty() && checkLoginLogOut.get(0).length > 0) {
+            // Lấy giá trị đầu tiên từ kết quả
+            return checkLoginLogOut.get(0)[0].toString();
+        }
+        // Trường hợp không có dữ liệu
+        return "Không";
+    }
+
+    protected Map<String,String> checkLoginAndLogOutByStaff(Integer idStaff) {
+        Map<String,String> thongBao = new HashMap<>();
+        String checkLogin = getCheckStaffAttendanceYetBill(idStaff,1);
+        String checkLogOut = getCheckStaffAttendanceYetBill(idStaff,2);
+        System.out.println(checkLogin);
+        if(!checkLogin.equals("Có")) {
+            thongBao.put("message","Mời bạn điểm danh trước khi làm việc!");
+            return thongBao;
+        }
+
+        if(checkLogin.equals("Có") && checkLogOut.equals("Có")) {
+            thongBao.put("message","Bạn đã điểm danh vào và ra rồi, không thể làm việc được nữa!");
+            return thongBao;
+        }
+        thongBao.put("message","");
+        return thongBao;
+    }
+
+    protected String getCheckStaffCashierInventory(
+            Integer idStaff
+    ) {
+        List<Object[]> checkCashierInventory = this.cashierInventoryService.getCheckCashierInventoryStaff(idStaff);
+
+        // Kiểm tra nếu danh sách không rỗng và có kết quả
+        if (!checkCashierInventory.isEmpty() && checkCashierInventory.get(0).length > 0) {
+            // Lấy giá trị đầu tiên từ kết quả
+            return checkCashierInventory.get(0)[0].toString();
+        }
+        // Trường hợp không có dữ liệu
+        return "Không";
     }
 
 }
