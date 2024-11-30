@@ -81,16 +81,16 @@ function validateNameCustomerIsText(value, inputError) {
 
     if (nameCheck === '' || nameCheck.length < 1) {
         inputError.style.display = 'block';
-        inputError.innerText = 'Mời nhập tên khách hàng!';
+        inputError.innerText = '*Mời nhập tên khách hàng!';
         return false;
     } else if (!regex.test(nameCheck)) {
         // Biểu thức chính quy kiểm tra chỉ bao gồm chữ cái (có dấu hoặc không dấu) và khoảng trắng
         inputError.style.display = 'block';
-        inputError.innerText = 'Tên khách hàng không hợp lệ!';
+        inputError.innerText = '*Tên khách hàng không hợp lệ!';
         return false;
     }else if (nameCheck.length > 255) {
         inputError.style.display = 'block';
-        inputError.innerText = 'Tên khách hàng không được quá 255 ký tự!';
+        inputError.innerText = '*Tên khách hàng không được quá 255 ký tự!';
         return false;
     }else {
         inputError.style.display = 'none';
@@ -108,7 +108,7 @@ function isEmailUnique(emailInput,inputError) {
 
     if (exists) {
         inputError.style.display = 'block';
-        inputError.innerText = 'Email đã tồn tại, mời chọn email khác!';
+        inputError.innerText = '*Email đã tồn tại, mời chọn email khác!';
         return false; // Email đã tồn tại
     } else {
         inputError.style.display = 'none';

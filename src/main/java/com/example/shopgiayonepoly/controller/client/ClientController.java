@@ -493,6 +493,7 @@ public class ClientController extends BaseBill {
                         billDetail.setCreateDate(new Date());
                         billDetail.setUpdateDate(new Date());
                         billDetails.add(billDetail);
+                        System.out.println("Thong tin san pham: " + billDetail.toString());
                     }
                 }
                 // Cập nhật thông tin hóa đơn
@@ -555,6 +556,13 @@ public class ClientController extends BaseBill {
 
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //danh sách hoa don da dat va da mua
+    @GetMapping("/listBillByClient/{id}")
+    public String getFormListBillByClient(HttpSession session) {
+        return "client/listBillByClient";
+    }
+
     //chinhh sach doi tra
     @GetMapping("/policy-exchange-return-bill")
     public String getFormPolicyExchangeReturnBill(Model model) {
@@ -570,9 +578,16 @@ public class ClientController extends BaseBill {
     @PostMapping("/search-bill")
     public String getSearchBill(
             @RequestParam(name = "codeBill") String codeBill,
+            @RequestParam(name = "emailBill") String emailBill,
             Model model) {
         Bill billSearch = this.billRepository.getBillByCodeBill(codeBill);
         if (billSearch != null) {
+            String[] part = billSearch.getAddRess().split(",\\s*");
+            String emailCheck = part[2];
+            if(!emailCheck.equals(emailBill)) {
+                model.addAttribute("error", "Không tìm thấy hóa đơn!");
+                return "client/searchBillNotLogin";
+            }
             return "redirect:/onepoly/status-bill/" + billSearch.getId();
         } else {
             model.addAttribute("error", "Không tìm thấy hóa đơn!");
@@ -679,7 +694,6 @@ public class ClientController extends BaseBill {
     @PostMapping("/register")
     public String register(@ModelAttribute("registerRequest") @Valid RegisterRequest registerRequest,
                            BindingResult bindingResult, Model model, HttpSession session) {
-
         session.setAttribute("acount", registerRequest.getAcount());
         session.setAttribute("email", registerRequest.getEmail());
 

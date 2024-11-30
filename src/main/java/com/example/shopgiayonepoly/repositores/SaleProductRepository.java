@@ -103,7 +103,7 @@ public interface SaleProductRepository extends JpaRepository<SaleProduct, Intege
         AND CONCAT(name_sale, code_sale) LIKE CONCAT('%', :searchTerm, '%')
         -- 3. Lọc theo 3 trạng thái: hoạt động, ngừng hoạt động, hết hạn
         AND (
-            (:status = 1 AND status = 1 and (CONVERT(DATE, GETDATE()) BETWEEN CONVERT(DATE, start_date) AND CONVERT(DATE, end_date))) -- hoạt động
+            (:status = 1 AND status = 1 and (CONVERT(DATE, GETDATE()) <= CONVERT(DATE, end_date))) -- hoạt động
             OR (:status = 2 AND (status = 0 OR status = 2)) -- ngừng hoạt động
             OR (:status = 3 AND CONVERT(DATE, GETDATE()) > CONVERT(DATE, end_date) and status = 1) -- hết hạn
         ) 

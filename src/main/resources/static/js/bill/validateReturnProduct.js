@@ -17,11 +17,11 @@ $('#quantityReturnProduct').on('input', function () {
 
             if (inputElement < 1) {
                 cardError.css('display', 'block');
-                textError.text('Số lượng ít nhất phải là 1!');
+                textError.text('*Số lượng ít nhất phải là 1!');
                 btnReturn.attr('disabled', true);
             } else if (inputElement > quantityProductByBill) {
                 cardError.css('display', 'block');
-                textError.text('Số lượng không được quá số lượng mua!');
+                textError.text('*Số lượng không được quá số lượng mua!');
                 btnReturn.attr('disabled', true);
             } else {
                 cardError.css('display', 'none');
@@ -30,7 +30,7 @@ $('#quantityReturnProduct').on('input', function () {
             }
         } else {
             cardError.css('display', 'block');
-            textError.text('Vui lòng nhập số hợp lệ!');
+            textError.text('*Vui lòng nhập số hợp lệ!');
             btnReturn.attr('disabled', true);
         }
     }

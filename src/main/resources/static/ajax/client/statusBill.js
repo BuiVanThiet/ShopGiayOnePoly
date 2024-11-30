@@ -105,12 +105,12 @@ function loadProductBuy(page) {
                 var priceBuy = '';
                 if(billReturn[6] === billReturn[5]) {
                     priceBuy = `
-                        <span class="text-danger" style="font-size: 19px">${billReturn[6]}</span>
+                        <span class="text-danger" style="font-size: 19px">${Math.trunc(billReturn[6]).toLocaleString('en-US')} VNĐ</span>
                     `;
                 }else {
                     priceBuy = `
-                        <span class="text-decoration-line-through" style="font-size: 15px;color: #626262">${billReturn[5]}</span>
-                        <span class="text-danger" style="font-size: 19px">${billReturn[6]}</span>
+                        <span class="text-decoration-line-through" style="font-size: 15px;color: #626262">${Math.trunc(billReturn[5]).toLocaleString('en-US')}</span>
+                        <span class="text-danger" style="font-size: 19px">${Math.trunc(billReturn[6]).toLocaleString('en-US')}</span>
                     `;
                 }
                 tbody.append(`

@@ -1,3 +1,9 @@
+document.getElementById('confirmSaveButton').addEventListener('click', function () {
+    document.getElementById('passwordChangeForm').submit();
+});
+document.getElementById('confirmUpdateButton').addEventListener('click', function () {
+    document.getElementById('updateStaffProfileForm').submit();
+});
 
 document.getElementById('updateStaffProfileForm').addEventListener('submit', function (event) {
 

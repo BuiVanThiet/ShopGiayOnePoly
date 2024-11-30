@@ -240,6 +240,7 @@ public interface TimekeepingRepository extends JpaRepository<Timekeeping,Integer
              AND tk.create_date BETWEEN :startDate AND :endDate  -- Sửa định dạng ngày
             -- Lọc theo khoảng giờ
             AND CAST(tk.create_date AS TIME) BETWEEN CAST(:startTime AS TIME) AND CAST(:endTime AS TIME)
+            order by tk.create_date desc 
         ;
 """,nativeQuery = true)
     List<Object[]> getAllTimekeepingByIdStaff(

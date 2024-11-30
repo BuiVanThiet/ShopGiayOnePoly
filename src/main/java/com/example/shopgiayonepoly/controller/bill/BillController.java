@@ -507,6 +507,13 @@ public class BillController extends BaseBill {
                 if(bill.getNote().length() < 0 || bill.getNote() == null || bill.getNote().trim().equals("")) {
                     bill.setNote("Giao hàng!");
                 }
+                String getAddRessDetail = customerShip.trim();
+                String[] part = getAddRessDetail.split(",\\s*");
+
+                String ht = "http://localhost:8080/onepoly/status-bill/"+bill.getId();
+                System.out.println(ht);
+                String title = "Đơn hàng đã được xác nhận";
+                this.templateEmailConfigmBill(part[2],ht,bill.getCodeBill(),title);
             }else {
                 if (bill.getPaymentStatus() == 1) {
                     return "redirect:/404";

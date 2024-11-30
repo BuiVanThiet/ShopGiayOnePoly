@@ -360,6 +360,15 @@ function loadProduct(pageNumber) {
     });
 }
 
+function resetHidenProductSale() {
+    $('#quantity').val('');
+    $('#quantity').val('');
+    $('#quantityProduct').val('0');
+    $('#idProductDetail').val('0');
+    $('#priceProductSale').val('0');
+    $('#priceProductRoot').val('0');
+    backToDefaultBuyProduct();
+}
 function updateProductTable(response) {
     var tbody = $('#tableProductDetailSell');
     var noDataContainer = $('#noDataProductDetail');

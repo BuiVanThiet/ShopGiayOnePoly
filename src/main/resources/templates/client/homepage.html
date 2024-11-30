@@ -99,9 +99,7 @@
                                    th:text="${product.priceProduct}"></p>
                             </div>
                             <div class="product-icons">
-                                <a href="#" class="cart-icon"><i class="fas fa-shopping-cart"></i></a>
-                                <a th:href="@{/onepoly/product-detail/{id}(id=${product.id})}" class="view-icon"><i
-                                        class="fas fa-eye"></i></a>
+                                <a th:href="@{/onepoly/product-detail/{id}(id=${product.id})}" class="view-icon"> <i class="fas fa-shopping-cart"></i> </a>
                             </div>
                         </div>
                     </div>
@@ -232,9 +230,8 @@
                                    th:text="${product.priceProduct}"></p>
                             </div>
                             <div class="product-icons">
-                                <a href="#" class="cart-icon"><i class="fas fa-shopping-cart"></i></a>
-                                <a th:href="@{/onepoly/product-detail/{id}(id=${product.id})}" class="view-icon"><i
-                                        class="fas fa-eye"></i></a>
+<!--                                <a href="#" class="cart-icon"><i class="fas fa-shopping-cart"></i></a>-->
+                                <a th:href="@{/onepoly/product-detail/{id}(id=${product.id})}" class="view-icon"><i class="fas fa-shopping-cart"></i></a>
                             </div>
                         </div>
                     </div>

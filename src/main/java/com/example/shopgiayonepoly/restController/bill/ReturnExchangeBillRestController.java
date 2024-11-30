@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -903,16 +904,34 @@ public class ReturnExchangeBillRestController extends BaseBill {
         BigDecimal priceSaleCheck = new BigDecimal(0);
         BigDecimal priceRootCheck = productDetail.getPrice();
 
-        if(productDetail.getSaleProduct() != null) {
+        if (productDetail.getSaleProduct() != null) {
             SaleProduct saleProduct = productDetail.getSaleProduct();
-            if (saleProduct.getDiscountType() == 1) { // Phần trăm giảm giá
-                priceSaleCheck = productDetail.getPrice().subtract(productDetail.getPrice().multiply(saleProduct.getDiscountValue()).divide(BigDecimal.valueOf(100), 0, RoundingMode.HALF_UP));
-            } else { // Giảm giá theo số tiền
-                priceSaleCheck = productDetail.getPrice().subtract(saleProduct.getDiscountValue());
+
+            // Kiểm tra tính hợp lệ của ngày áp dụng khuyến mãi
+            if (saleProduct.getStartDate() != null && saleProduct.getEndDate() != null) {
+                LocalDate today = LocalDate.now();
+                boolean isApplicable = (today.isEqual(saleProduct.getStartDate()) || today.isAfter(saleProduct.getStartDate()))
+                        && (today.isEqual(saleProduct.getEndDate()) || today.isBefore(saleProduct.getEndDate()));
+
+                if (isApplicable) { // Nếu khuyến mãi còn hiệu lực
+                    if (saleProduct.getDiscountType() == 1) { // Phần trăm giảm giá
+                        priceSaleCheck = productDetail.getPrice()
+                                .subtract(productDetail.getPrice()
+                                        .multiply(saleProduct.getDiscountValue())
+                                        .divide(BigDecimal.valueOf(100), 0, RoundingMode.HALF_UP));
+                    } else { // Giảm giá theo số tiền
+                        priceSaleCheck = productDetail.getPrice().subtract(saleProduct.getDiscountValue());
+                    }
+                } else { // Nếu khuyến mãi hết hạn, giữ nguyên giá gốc
+                    priceSaleCheck = productDetail.getPrice();
+                }
+            } else { // Nếu ngày bắt đầu hoặc kết thúc khuyến mãi không hợp lệ
+                priceSaleCheck = productDetail.getPrice();
             }
-        }else {
+        } else { // Nếu không có khuyến mãi
             priceSaleCheck = productDetail.getPrice();
         }
+
 
         System.out.println("gia giam "+priceSaleCheck);
         System.out.println("gia goc "+priceRootCheck);

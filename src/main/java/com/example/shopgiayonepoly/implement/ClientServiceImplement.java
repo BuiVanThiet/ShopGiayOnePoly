@@ -1,5 +1,7 @@
 package com.example.shopgiayonepoly.implement;
 
+import com.example.shopgiayonepoly.dto.request.bill.SearchBillByStatusRequest;
+import com.example.shopgiayonepoly.dto.response.bill.BillResponseManage;
 import com.example.shopgiayonepoly.dto.response.client.*;
 import com.example.shopgiayonepoly.entites.AddressShip;
 import com.example.shopgiayonepoly.entites.BillDetail;
@@ -7,9 +9,12 @@ import com.example.shopgiayonepoly.entites.Cart;
 import com.example.shopgiayonepoly.repositores.ClientRepository;
 import com.example.shopgiayonepoly.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -115,8 +120,24 @@ public class ClientServiceImplement implements ClientService {
     }
 
     @Override
+    public Integer getQuantityProductDetailByID(Integer idProductDetail) {
+        return clientRepository.getQuantityProductDetailByID(idProductDetail);
+    }
+
+    @Override
     public List<AddressShip> getListAddressShipByIDCustomer() {
         return clientRepository.getListAddressShipByIDCustomer();
+    }
+
+    ////////////////////////////
+    @Override
+    public Page<BillResponseManage> getAllBillByStatusDiss0(Integer idCustomer, String nameCheck, SearchBillByStatusRequest searchBillByStatusRequest, Date start, Date end, Pageable pageable) {
+        return this.clientRepository.getAllBillByStatusDiss0(idCustomer,nameCheck,searchBillByStatusRequest.getStatusSearch(),start,end,pageable);
+    }
+
+    @Override
+    public List<BillResponseManage> getAllBillByStatusDiss0(Integer idCustomer, String nameCheck, SearchBillByStatusRequest searchBillByStatusRequest, Date start, Date end) {
+        return this.clientRepository.getAllBillByStatusDiss0(idCustomer,nameCheck,searchBillByStatusRequest.getStatusSearch(),start,end);
     }
 
 

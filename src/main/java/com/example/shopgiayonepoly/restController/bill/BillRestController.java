@@ -551,12 +551,6 @@ public class BillRestController extends BaseBill {
             return null;
         }
 
-        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
-        String messMap = checkLoginAndLogout.get("message");
-        if(!messMap.trim().equals("")) {
-            return null;
-        }
-
         Integer idBill = (Integer) session.getAttribute("IdBill");
 
         String validateIdBill = validateInteger(idBill != null ? idBill.toString() : "");
@@ -573,7 +567,6 @@ public class BillRestController extends BaseBill {
         }
         bill.setPaymentMethod(payMethodRequest.getPayMethod());
         bill.setUpdateDate(new Date());
-        bill.setStaff(staffLogin);
         return this.billService.save(bill);
     }
 
@@ -1128,15 +1121,15 @@ public class BillRestController extends BaseBill {
             if (billSave.getVoucher() != null) {
                 this.getSubtractVoucher(billSave.getVoucher(),-1);
             }
-
             String checkCashierInventory = getCheckStaffCashierInventory(staffLogin.getId());
-            if(!checkCashierInventory.trim().equals("Có")) {
-                cashierInventoryService.getInsertRevenue(billSave.getStaff().getId(),new BigDecimal(0),new BigDecimal(0),new BigDecimal(0));
-                cashierInventoryService.getUpdateRevenue(billSave.getStaff().getId(),new BigDecimal(0).subtract(bill.getTotalAmount().subtract(billSave.getPriceDiscount())),new BigDecimal(0),new BigDecimal(0));
-            }else {
-                cashierInventoryService.getUpdateRevenue(billSave.getStaff().getId(),new BigDecimal(0).subtract(bill.getTotalAmount().subtract(billSave.getPriceDiscount())),new BigDecimal(0),new BigDecimal(0));
+            if(billSave.getStaff() != null) {
+                if(!checkCashierInventory.trim().equals("Có")) {
+                    cashierInventoryService.getInsertRevenue(billSave.getStaff().getId(),new BigDecimal(0),new BigDecimal(0),new BigDecimal(0));
+                    cashierInventoryService.getUpdateRevenue(billSave.getStaff().getId(),new BigDecimal(0).subtract(bill.getTotalAmount().subtract(billSave.getPriceDiscount())),new BigDecimal(0),new BigDecimal(0));
+                }else {
+                    cashierInventoryService.getUpdateRevenue(billSave.getStaff().getId(),new BigDecimal(0).subtract(bill.getTotalAmount().subtract(billSave.getPriceDiscount())),new BigDecimal(0),new BigDecimal(0));
+                }
             }
-
             this.setBillStatus(bill.getId(),bill.getStatus(),session);
         }else if (content.equals("agree")) {
             if(bill.getStatus() == 4 && bill.getPaymentStatus() == 0) {
@@ -1230,13 +1223,16 @@ public class BillRestController extends BaseBill {
             if(staffLogin != null){
                 String checkCashierInventory = getCheckStaffCashierInventory(staffLogin.getId());
                 BigDecimal totalReturn =
-                        (returnBillExchangeBill.getCustomerRefund().subtract(returnBillExchangeBill.getExchangeAndReturnFee()).add(returnBillExchangeBill.getDiscountedAmount())).subtract(returnBillExchangeBill.getCustomerPayment())
+//                        (returnBillExchangeBill.getCustomerRefund().subtract(returnBillExchangeBill.getExchangeAndReturnFee()).add(returnBillExchangeBill.getDiscountedAmount())).subtract(returnBillExchangeBill.getCustomerPayment())
+                        (returnBillExchangeBill.getCustomerRefund().subtract(returnBillExchangeBill.getExchangeAndReturnFee())).add(returnBillExchangeBill.getDiscountedAmount())
                         ;
                 if (totalReturn.compareTo(BigDecimal.ZERO) <= 0) {
                     totalReturn = BigDecimal.ZERO;
                 }
                 BigDecimal totalExchange =
-                        returnBillExchangeBill.getCustomerPayment().subtract(returnBillExchangeBill.getCustomerRefund().subtract(returnBillExchangeBill.getExchangeAndReturnFee()).add(returnBillExchangeBill.getDiscountedAmount()))
+//                        returnBillExchangeBill.getCustomerPayment().subtract(returnBillExchangeBill.getCustomerRefund().subtract(returnBillExchangeBill.getExchangeAndReturnFee()).add(returnBillExchangeBill.getDiscountedAmount()))
+                        returnBillExchangeBill.getCustomerPayment().add((returnBillExchangeBill.getExchangeAndReturnFee()).add(returnBillExchangeBill.getDiscountedAmount()))
+
                         ;
                 if (totalExchange.compareTo(BigDecimal.ZERO) <= 0) {
                     totalExchange = BigDecimal.ZERO;

@@ -159,11 +159,13 @@
 
 
                                     <div class="mb-3" id="totalInfor">
-                                        <div class="mb-3 d-flex justify-content-between">
+                                        <div class="d-flex justify-content-between">
                                             <span>Tạm tính</span>
                                             <span id="subTotal">100,000 VNĐ</span>
                                         </div>
-
+                                        <div class="text-end" id="errorTotalAmount">
+                                            <span class="text-danger mb-3" >*Mỗi hóa đơn không quá 20 triệu!</span>
+                                        </div>
                                         <div id="discountContainer" class="mb-3" style="display: none;">
                                             <div class="card position-relative">
                                                 <button type="button" onclick="getRemoveVoucherInBill()"

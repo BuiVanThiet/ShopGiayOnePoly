@@ -24,18 +24,26 @@ function filterData(filterType) {
         MonthlyStatistics();
         filterDataPie('month-pieChart');
         filterTopProducts('month');
+        filterTopProductsExchange('month');
+        filterTopProductsReturn('month');
     } else if (filterType === 'today') {
         TodayStatistics();
         filterDataPie('today-pieChart');
         filterTopProducts('today');
+        filterTopProductsExchange('today')
+        filterTopProductsReturn('today');
     } else if (filterType === 'last7days') {
         Last7DaysStatistics();
         filterDataPie('last7days-pieChart');
         filterTopProducts('last7days');
+        filterTopProductsExchange('last7days')
+        filterTopProductsReturn('last7days');
     } else if (filterType === 'year') {
         AnnualStatistics();
         filterDataPie('year-pieChart');
         filterTopProducts('year');
+        filterTopProductsExchange('year')
+        filterTopProductsReturn('year');
     }
     const today = new Date(); // Ngày hiện tại
     let startDate, endDate;
@@ -354,7 +362,11 @@ document.getElementById("timeFilterForm").addEventListener("submit", function(ev
 
     // Hiển thị tiêu đề và fetch dữ liệu
     document.getElementById("topProductTitle").textContent = `Top 3 sản phẩm bán chạy ${title}`;
+    document.getElementById("topProductExchangeTitle").textContent = `Top 3 sản phẩm đã đổi ${title}`;
+    document.getElementById("topProductReturnTitle").textContent = `Top 3 sản phẩm đã trả ${title}`;
     fetchProductSalesInDateRange(startDate, endDate);
+    fetchProductSalesExchangeInDateRange(startDate, endDate);
+    fetchProductSalesReturnInDateRange(startDate, endDate);
     fetchDataForCharts(startDate, endDate, title);
 });
 
@@ -417,6 +429,117 @@ async function fetchProductSalesInDateRange(startDate, endDate) {
     }
 }
 
+async function fetchProductSalesExchangeInDateRange(startDate, endDate) {
+    try {
+
+        const currentScrollPosition = window.scrollY;
+        const response = await fetch(`/api/topProductSalesExchangeRenge?startDate=${startDate}&endDate=${endDate}`);
+
+        if (!response.ok) return console.error('Lỗi tải dữ liệu');
+
+        const products = await response.json();
+        const productExchangeTableBody = document.getElementById("productExchangeTableBody");
+
+        productExchangeTableBody.innerHTML = '';
+        console.log('dữ liệu exchange', JSON.stringify(products, null, 2));
+
+        // Nếu không có sản phẩm
+        if (!products.length) {
+            productExchangeTableBody.innerHTML = '<tr><td colspan="5">Không có sản phẩm</td></tr>';
+            return;
+        }
+
+        // Thêm dữ liệu vào bảng
+        products.forEach((item, index) => {
+            const row = `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td><img id="product-image-${index}" src="${item.imageUrls[0]}" width="100" height="100"></td>
+                    <td>
+                        <span>${item.productName}</span><br>
+                        <small>Màu: ${item.colorName} <br>
+                               Kích thước: ${item.sizeName}
+                         </small>
+                    </td>
+                    <td>${item.originalPrice === item.promotionalPrice
+                ? item.originalPrice
+                : `<span style="text-decoration: line-through;">${item.originalPrice}</span><br><span style="color: red;">${item.promotionalPrice}</span>`}
+                    </td>
+                    <td>${item.totalQuantity}</td>
+                </tr>
+            `;
+            productExchangeTableBody.insertAdjacentHTML('beforeend', row);
+
+            // Thay đổi ảnh mỗi 10 giây
+            let currentImageIndex = 0;
+            const imageElement = document.getElementById(`product-image-${index}`);
+            setInterval(() => {
+                imageElement.src = item.imageUrls[currentImageIndex];
+                currentImageIndex = (currentImageIndex + 1) % item.imageUrls.length;
+            }, 10000);
+        });
+
+        window.scrollTo(0, currentScrollPosition);
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+async function fetchProductSalesReturnInDateRange(startDate, endDate) {
+    try {
+
+        const currentScrollPosition = window.scrollY;
+        const response = await fetch(`/api/topProductSalesReturnRenge?startDate=${startDate}&endDate=${endDate}`);
+
+        if (!response.ok) return console.error('Lỗi tải dữ liệu');
+
+        const products = await response.json();
+        const productReturnTableBody = document.getElementById("productReturnTableBody");
+
+        productReturnTableBody.innerHTML = '';
+        console.log('dữ liệu exchange', JSON.stringify(products, null, 2));
+
+        // Nếu không có sản phẩm
+        if (!products.length) {
+            productReturnTableBody.innerHTML = '<tr><td colspan="5">Không có sản phẩm</td></tr>';
+            return;
+        }
+
+        // Thêm dữ liệu vào bảng
+        products.forEach((item, index) => {
+            const row = `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td><img id="product-image-${index}" src="${item.imageUrls[0]}" width="100" height="100"></td>
+                    <td>
+                        <span>${item.productName}</span><br>
+                        <small>Màu: ${item.colorName} <br>
+                               Kích thước: ${item.sizeName}
+                         </small>
+                    </td>
+                    <td>${item.originalPrice === item.promotionalPrice
+                ? item.originalPrice
+                : `<span style="text-decoration: line-through;">${item.originalPrice}</span><br><span style="color: red;">${item.promotionalPrice}</span>`}
+                    </td>
+                    <td>${item.totalQuantity}</td>
+                </tr>
+            `;
+            productReturnTableBody.insertAdjacentHTML('beforeend', row);
+
+            // Thay đổi ảnh mỗi 10 giây
+            let currentImageIndex = 0;
+            const imageElement = document.getElementById(`product-image-${index}`);
+            setInterval(() => {
+                imageElement.src = item.imageUrls[currentImageIndex];
+                currentImageIndex = (currentImageIndex + 1) % item.imageUrls.length;
+            }, 10000);
+        });
+
+        window.scrollTo(0, currentScrollPosition);
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
 function formatDateForAPI(date) {
     return new Date(date.getTime() - date.getTimezoneOffset() * 60000) // Bù trừ múi giờ
         .toISOString()
@@ -467,10 +590,101 @@ function filterTopProducts(filterType) {
         formatDateForAPI(startDate),
         formatDateForAPI(endDate)
     );
+}
+function filterTopProductsExchange(filterType) {
+    const today = new Date();
+    let startDate, endDate;
+    let title = "Top sản phẩm đã đổi"; // Tiêu đề mặc định
+
+    switch (filterType) {
+        case 'month': // Lọc tháng này
+            startDate = new Date(today.getFullYear(), today.getMonth(), 1); // Ngày đầu tháng
+            endDate = new Date(today); // Ngày hiện tại
+            endDate.setHours(23, 59, 59, 999); // Cuối ngày
+            title = `Top 3 sản phẩm đã đổi tháng này`;
+            break;
+
+        case 'last7days': // Lọc 7 ngày gần nhất
+            startDate = new Date(today);
+            startDate.setDate(today.getDate() - 7); // Lấy ngày cách đây 7 ngày
+            endDate = new Date(today); // Ngày hiện tại
+            endDate.setHours(23, 59, 59, 999); // Cuối ngày
+            title = `Top 3 sản phẩm đã đổi trong 7 ngày qua`;
+            break;
+
+        case 'year': // Lọc năm hiện tại
+            startDate = new Date(today.getFullYear(), 0, 1); // Ngày đầu năm
+            endDate = new Date(today); // Ngày hiện tại
+            endDate.setHours(23, 59, 59, 999); // Cuối ngày
+            title = `Top 3 sản phẩm đã đổi năm ${today.getFullYear()}`;
+            break;
+
+        default: // Lọc hôm nay
+            startDate = new Date(today);
+            endDate = new Date(today);
+            endDate.setHours(23, 59, 59, 999); // Cuối ngày
+            title = `Top 3 sản phẩm đã đổi hôm nay`;
+            break;
+    }
+
+    // Cập nhật tiêu đề hiển thị
+    document.getElementById('topProductExchangeTitle').innerText = title;
+
+    // Gọi API với startDate và endDate đã được định dạng
+    fetchProductSalesExchangeInDateRange(
+        formatDateForAPI(startDate),
+        formatDateForAPI(endDate)
+    );
 
     // Debug: log ra giá trị startDate và endDate
     console.log('Start Date:', formatDateForAPI(startDate));
     console.log('End Date:', formatDateForAPI(endDate));
+}
+
+function filterTopProductsReturn(filterType) {
+    const today = new Date();
+    let startDate, endDate;
+    let title = "Top 10 sản phẩm bán chạy"; // Tiêu đề mặc định
+
+    switch (filterType) {
+        case 'month': // Lọc tháng này
+            startDate = new Date(today.getFullYear(), today.getMonth(), 1); // Ngày đầu tháng
+            endDate = new Date(today); // Ngày hiện tại
+            endDate.setHours(23, 59, 59, 999); // Cuối ngày
+            title = `Top 3 sản phẩm đã trả tháng này`;
+            break;
+
+        case 'last7days': // Lọc 7 ngày gần nhất
+            startDate = new Date(today);
+            startDate.setDate(today.getDate() - 7); // Lấy ngày cách đây 7 ngày
+            endDate = new Date(today); // Ngày hiện tại
+            endDate.setHours(23, 59, 59, 999); // Cuối ngày
+            title = `Top 3 sản phẩm đã trả trong 7 ngày qua`;
+            break;
+
+        case 'year': // Lọc năm hiện tại
+            startDate = new Date(today.getFullYear(), 0, 1); // Ngày đầu năm
+            endDate = new Date(today); // Ngày hiện tại
+            endDate.setHours(23, 59, 59, 999); // Cuối ngày
+            title = `Top 3 sản phẩm đã trả năm ${today.getFullYear()}`;
+            break;
+
+        default: // Lọc hôm nay
+            startDate = new Date(today);
+            endDate = new Date(today);
+            endDate.setHours(23, 59, 59, 999); // Cuối ngày
+            title = `Top 3 sản phẩm đã trả hôm nay`;
+            break;
+    }
+
+    // Cập nhật tiêu đề hiển thị
+    document.getElementById('topProductReturnTitle').innerText = title;
+
+    // Gọi API với startDate và endDate đã được định dạng
+    fetchProductSalesReturnInDateRange(
+        formatDateForAPI(startDate),
+        formatDateForAPI(endDate)
+    );
 }
 
 function fetchDataForCharts(startDate, endDate, title) {

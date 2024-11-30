@@ -127,10 +127,32 @@
                     <div class="row mb-3">
                         <div class="col-md-8">
                             <label class="form-label">Địa chỉ chi tiết:</label>
-                            <textarea name="addRessDetail" class="form-control" rows="1" th:text="${staffProfile.addRessDetail}"></textarea>
+                            <textarea name="addRessDetail" class="form-control" rows="1" th:field="${staffProfile.addRessDetail}"></textarea>
+                            <div class="text-danger" th:errors="*{addRessDetail}"></div>
                         </div>
+
                         <div class="col-md-4 d-flex align-items-end">
-                            <button type="submit" class="btn btn-primary w-100">Cập nhật thông tin</button>
+                            <button type="button" class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#updateConfirmModal">
+                                Cập nhật thông tin
+                            </button>
+                        </div>
+
+                        <div class="modal fade" id="updateConfirmModal" tabindex="-1" aria-labelledby="updateConfirmModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="updateConfirmModalLabel">Xác nhận cập nhật thông tin</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Bạn có chắc chắn muốn cập nhật thông tin hồ sơ không?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                        <button type="button" class="btn btn-primary" id="confirmUpdateButton">Xác nhận</button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -360,9 +382,31 @@
                                 <div class="text-danger" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"></div>
                             </div>
                         </div>
+
                         <div class="form-submit">
-                            <button id="saveButton" type="submit" class="btn btn-primary">Lưu</button>
+                            <button id="openModalButton" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#confirmModal">
+                                Lưu
+                            </button>
                         </div>
+
+                        <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="confirmModalLabel">Xác nhận</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Bạn có chắc chắn muốn thay đổi mật khẩu không?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                        <button type="button" class="btn btn-primary" id="confirmSaveButton">Xác nhận</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </form>
                 </div>
             </article>
