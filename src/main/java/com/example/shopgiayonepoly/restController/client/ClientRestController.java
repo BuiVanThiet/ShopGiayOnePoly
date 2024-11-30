@@ -249,7 +249,7 @@ public class ClientRestController extends BaseEmail {
                     productDetail.getSize().getNameSize(),
                     cartItem.getQuantity(), // Số lượng
                     productDetail.getPrice(), // Giá gốc
-                    discountedPrice // Giá sau giảm
+                    discountedPrice
             );
         }).collect(Collectors.toList());
     }

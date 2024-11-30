@@ -95,18 +95,25 @@
                 <div id="voucher-list" style="display: none;">
                     <h3 class="voucher-title-voucher">Những voucher bạn có thể áp dụng</h3>
                     <ul class="voucher-list-voucher">
-                        <li th:each="voucher : ${applicableVouchers}">
+                        <li  th:each="voucher : ${applicableVouchers}">
                             <div class="cart-voucher-item">
                                 <img src="/img/client/category/voucher.png" alt=""
                                      style="width: 60px; height: 50px; object-fit: cover; border-radius: 5px;">
                                 <div>
+                                    <br>
                                     <span class="voucher-id" th:text="${voucher.id}" style="display: none;"></span>
+                                    <br>
                                     <span id="voucher-type" class="voucher-type" th:text="${voucher.discountType}"
                                           style="display: none;"></span>
+                                    <br>
+                                    <span class="voucher-code" th:text="${voucher.codeVoucher}"></span>
+                                    <br>
                                     <span class="voucher-name-voucher"
                                           th:text="${voucher.nameVoucher}">Voucher Name</span>
+                                    <br>
                                     <span id="price-reduced-voucher" class="voucher-discount-voucher"
                                           th:text="${voucher.priceReduced}">Discount Value</span>
+                                    <br>
                                     <span class="voucher-desc-voucher" th:text="${voucher.describe}">Description</span>
                                 </div>
                                 <input type="radio" class="cart-voucher-radio" name="radioVoucher">

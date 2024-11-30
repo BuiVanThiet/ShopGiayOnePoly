@@ -95,11 +95,8 @@
                 <!-- Nút áp dụng -->
                 <button onclick="collectFilters()" class="apply-btn">Áp dụng</button>
             </div>
-
             <!-- Overlay -->
             <div class="overlay" id="overlay"></div>
-
-
         </div>
         <div class="container-fluid">
             <div class="row justify-content-between" style="margin-left: 0; margin-right: 0;">
@@ -113,16 +110,16 @@
                             <p class="price-min fw-bold" style="margin-left: auto; color: #2f2a2a"
                                th:text="${product.priceProduct}"></p>
                         </div>
-                        <div class="product-icons">                         
-                    
-<!--                            <a href="#" class="cart-icon"><i class="fas fa-shopping-cart"></i></a>-->
-                            <a class="view-icon" th:href="@{/onepoly/product-detail/{id}(id=${product.id})}"><i class="fas fa-shopping-cart"></i></a>
+                        <div class="product-icons">
+                            <a class="view-icon" th:href="@{/onepoly/product-detail/{id}(id=${product.id})}"><i
+                                    class="fas fa-shopping-cart"></i></a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <script th:src="@{/ajax/client/product-detail.js}" type="text/javascript"></script>
+        <script th:src="@{/js/client/product.js}" type="text/javascript"></script>
     </section>
 
 </div>

@@ -15,15 +15,17 @@
                  style="padding-top: 100px;padding-left: 100px;padding-right: 100px;background-color:#faf5f5">
                 <div class="col-md-6">
                     <!-- Carousel -->
-                    <div id="carouselExample" class="carousel slide">
+                    <div id="carouselExample" class="carousel slide" style="margin-top: -350px">
                         <div class="carousel-inner">
                             <div class="carousel-item active">
-                                <img th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728725582/' + ${listImage.get().images.get(0).nameImage}" class="d-block w-100" alt="..."
+                                <img th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728725582/' + ${listImage.get().images.get(0).nameImage}"
+                                     class="d-block w-100" alt="..."
                                      height="600px">
                             </div>
                             <th:block th:each="image : ${listImage.get().images}">
                                 <div class="carousel-item">
-                                    <img th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728725582/' + ${image.nameImage}" alt="..."
+                                    <img th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728725582/' + ${image.nameImage}"
+                                         alt="..."
                                          height="600px">
                                 </div>
                             </th:block>
@@ -138,7 +140,7 @@
                             <button class="btn-pay-now" id="btn-pay-now" onclick="showPayNowModal()">Mua ngay</button>
                         </div>
                         <!-- Modal -->
-                            <div class="modal fade" id="addCartModal" tabindex="-1" aria-labelledby="addCartModalLabel"
+                        <div class="modal fade" id="addCartModal" tabindex="-1" aria-labelledby="addCartModalLabel"
                              aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered">
                                 <div class="modal-content add-product-modal">
@@ -158,7 +160,7 @@
                                             <div class="left">
                                                 <div class="item-img">
                                                     <a href="#">
-                                                        <img src="/img/client/product/SPCT_IMG_1.png"
+                                                        <img th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728725582/' + ${listImage.get().images.get(0).nameImage}"
                                                              alt="product image" style="width:220px;height:220px;">
                                                     </a>
                                                 </div>
@@ -274,7 +276,7 @@
                                             <div class="left">
                                                 <div class="item-img">
                                                     <a href="#">
-                                                        <img src="/img/client/product/SPCT_IMG_1.png"
+                                                        <img th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728725582/' + ${listImage.get().images.get(0).nameImage}"
                                                              alt="product image" style="width:220px;height:220px;">
                                                     </a>
                                                 </div>
