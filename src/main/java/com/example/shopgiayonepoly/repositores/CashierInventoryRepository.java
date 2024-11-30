@@ -127,6 +127,7 @@ public interface CashierInventoryRepository extends JpaRepository<CashierInvento
         and CONVERT(TIME, cain.create_date) BETWEEN :startTime AND :endTime
     and
         s.id = :idStaff
+        order by cain.create_date desc
  
 """,nativeQuery = true)
     List<Object[]> getAllCashierInventoryByIdStaff(

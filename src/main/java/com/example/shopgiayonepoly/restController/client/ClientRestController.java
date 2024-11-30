@@ -1,8 +1,10 @@
 package com.example.shopgiayonepoly.restController.client;
 
 import com.example.shopgiayonepoly.baseMethod.BaseEmail;
+import com.example.shopgiayonepoly.dto.request.bill.SearchBillByStatusRequest;
 import com.example.shopgiayonepoly.dto.request.client.AddressForCustomerRequest;
 import com.example.shopgiayonepoly.dto.response.ClientLoginResponse;
+import com.example.shopgiayonepoly.dto.response.bill.BillResponseManage;
 import com.example.shopgiayonepoly.dto.response.client.*;
 import com.example.shopgiayonepoly.entites.*;
 import com.example.shopgiayonepoly.implement.CustomerRegisterImplement;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -578,6 +581,87 @@ public class ClientRestController extends BaseEmail {
         return responseListAddress;
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // danh sach hoa don cua khach hang
+    protected SearchBillByStatusRequest searchBillByStatusRequest;
+    protected String keyBillmanage = "";
+    protected Date keyStartDate;
+    protected Date keyEndDate;
+    @GetMapping("/list-bill-client/{page}")
+    public List<BillResponseManage> getAllBillDistStatus0(@PathVariable("page") String page, HttpSession session) {
+        ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
+        Pageable pageable = PageRequest.of(Integer.parseInt(page)-1,5);
+        if(searchBillByStatusRequest == null) {
+            searchBillByStatusRequest = new SearchBillByStatusRequest(null);
+        }
+        System.out.println(searchBillByStatusRequest.getStatusSearch());
+        return this.clientService.getAllBillByStatusDiss0(clientLoginResponse.getId(),keyBillmanage,searchBillByStatusRequest,keyStartDate,keyEndDate,pageable).getContent();
+    }
+
+    @GetMapping("/list-bill-max-page")
+    public Integer getMaxPageBillManage(HttpSession session) {
+        ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
+        if(searchBillByStatusRequest == null) {
+            searchBillByStatusRequest = new SearchBillByStatusRequest();
+        }
+
+        Integer page = (int) Math.ceil((double) this.clientService.getAllBillByStatusDiss0(clientLoginResponse.getId(),keyBillmanage,searchBillByStatusRequest,keyStartDate,keyEndDate).size() / 5);
+        System.out.println("so trang toi da cua quan ly hoa don " + page);
+        return page;
+    }
+
+    @PostMapping("/status-bill-client")
+    public ResponseEntity<?> getClickStatusBill(@RequestBody SearchBillByStatusRequest status,HttpSession session) {
+        System.out.println(status.toString());
+        this.searchBillByStatusRequest = status;
+        return ResponseEntity.ok("done");
+    }
+
+    @PostMapping("/bill-client-search")
+    public ResponseEntity<?> getSearchBillManage(@RequestBody Map<String, String> billSearch,HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
+        String keyword = billSearch.get("keywordBill");
+        this.keyBillmanage = keyword;
+        String startDateStr = billSearch.get("startDate");
+        String endDateStr = billSearch.get("endDate");
+
+        System.out.println("du lieu loc vc " + keyword);
+        System.out.println("starDate-bill-manage: "+billSearch.get("startDate"));
+        System.out.println("endDate-bill-manage: "+billSearch.get("endDate"));
+        try {
+            // Định dạng để parse chuỗi thành đối tượng Date
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            Calendar calendar = Calendar.getInstance();
+
+            // Chuyển đổi chuỗi startDateStr thành Date và đặt thời gian bắt đầu của ngày
+            Date startDate = formatter.parse(startDateStr);
+            calendar.setTime(startDate);
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+            this.keyStartDate = calendar.getTime();
+
+            // Chuyển đổi chuỗi endDateStr thành Date và đặt thời gian kết thúc của ngày
+            Date endDate = formatter.parse(endDateStr);
+            calendar.setTime(endDate);
+            calendar.set(Calendar.HOUR_OF_DAY, 23);
+            calendar.set(Calendar.MINUTE, 59);
+            calendar.set(Calendar.SECOND, 59);
+            calendar.set(Calendar.MILLISECOND, 999);
+            this.keyEndDate = calendar.getTime();
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Invalid date format. Please use 'yyyy-MM-dd'.");
+        }
+        return ResponseEntity.ok("done");
+    }
 
     @GetMapping("/show-status-bill")
     public List<InvoiceStatus> getShowInvoiceStatus(HttpSession session) {

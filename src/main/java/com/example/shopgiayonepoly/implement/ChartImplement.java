@@ -211,6 +211,84 @@ public class ChartImplement implements ChartService {
     }
 
     @Override
+    public List<ProductInfoDto> findTopProductsExchangeByDateRange(String startDate, String endDate) {
+        List<Object[]> result = chartRepository.findTopProductsExchangeByDateRange(startDate,endDate);
+        List<ProductInfoDto> productSales = new ArrayList<>();
+
+        NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+
+        for (Object[] row : result) {
+            String productName = (String) row[0];
+            String colorName = (String) row[1];
+            String sizeName = (String) row[2];
+            BigDecimal OriginalPrice = (BigDecimal) row[3];
+            BigDecimal discountedPrice = (BigDecimal) row[4];
+            int totalQuantity = (int) row[5];
+            String imageNames = (String) row[6]; // Chuỗi chứa tên ảnh, phân cách bởi dấu phẩy
+
+            String originalPrice = currencyFormatter.format(OriginalPrice).replace("₫", "VND");
+            String promotionalPrice = currencyFormatter.format(discountedPrice).replace("₫", "VND");
+
+            // Tạo danh sách URL ảnh
+            List<String> imageUrls = new ArrayList<>();
+            if (imageNames != null && !imageNames.isEmpty()) {
+                String[] images = imageNames.split(", ");
+                for (String image : images) {
+                    // Kết hợp URL cố định của Cloudinary với tên ảnh
+                    imageUrls.add("https://res.cloudinary.com/dfy4umpja/image/upload/v1728721025/" + image);
+                }
+            }
+
+            // Tạo đối tượng ProductInfoDto và thêm vào danh sách
+            ProductInfoDto productInfoDto = new ProductInfoDto(
+                    productName, colorName, sizeName, originalPrice, promotionalPrice, totalQuantity, imageUrls);
+
+            productSales.add(productInfoDto); // Thêm đối tượng vào danh sách
+        }
+
+        return productSales;
+    }
+
+    @Override
+    public List<ProductInfoDto> findTopProductsReturnByDateRange(String startDate, String endDate) {
+        List<Object[]> result = chartRepository.findTopProductsReturnByDateRange(startDate,endDate);
+        List<ProductInfoDto> productSales = new ArrayList<>();
+
+        NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+
+        for (Object[] row : result) {
+            String productName = (String) row[0];
+            String colorName = (String) row[1];
+            String sizeName = (String) row[2];
+            BigDecimal OriginalPrice = (BigDecimal) row[3];
+            BigDecimal discountedPrice = (BigDecimal) row[4];
+            int totalQuantity = (int) row[5];
+            String imageNames = (String) row[6]; // Chuỗi chứa tên ảnh, phân cách bởi dấu phẩy
+
+            String originalPrice = currencyFormatter.format(OriginalPrice).replace("₫", "VND");
+            String promotionalPrice = currencyFormatter.format(discountedPrice).replace("₫", "VND");
+
+            // Tạo danh sách URL ảnh
+            List<String> imageUrls = new ArrayList<>();
+            if (imageNames != null && !imageNames.isEmpty()) {
+                String[] images = imageNames.split(", ");
+                for (String image : images) {
+                    // Kết hợp URL cố định của Cloudinary với tên ảnh
+                    imageUrls.add("https://res.cloudinary.com/dfy4umpja/image/upload/v1728721025/" + image);
+                }
+            }
+
+            // Tạo đối tượng ProductInfoDto và thêm vào danh sách
+            ProductInfoDto productInfoDto = new ProductInfoDto(
+                    productName, colorName, sizeName, originalPrice, promotionalPrice, totalQuantity, imageUrls);
+
+            productSales.add(productInfoDto); // Thêm đối tượng vào danh sách
+        }
+
+        return productSales;
+    }
+
+    @Override
     public List<StatusBill> findBillsWithStatusDescription() {
         // Lấy kết quả từ repository
         List<Object[]> results = chartRepository.findBillsWithStatusDescription();

@@ -126,13 +126,13 @@ public class ShiftRestController {
             return ResponseEntity.ok(thongBao);
         }
 
-        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
-        String messMap = checkLoginAndLogout.get("message");
-        if(!messMap.trim().equals("")) {
-            thongBao.put("message",messMap);
-            thongBao.put("check","3");
-            return ResponseEntity.ok(thongBao);
-        }
+//        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+//        String messMap = checkLoginAndLogout.get("message");
+//        if(!messMap.trim().equals("")) {
+//            thongBao.put("message",messMap);
+//            thongBao.put("check","3");
+//            return ResponseEntity.ok(thongBao);
+//        }
 
         Shift shift = this.shiftService.findById(Integer.parseInt(id)).orElse(null);
         if(shift == null) {
@@ -162,13 +162,13 @@ public class ShiftRestController {
             thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }
-        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
-        String messMap = checkLoginAndLogout.get("message");
-        if(!messMap.trim().equals("")) {
-            thongBao.put("message",messMap);
-            thongBao.put("check","3");
-            return ResponseEntity.ok(thongBao);
-        }
+//        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+//        String messMap = checkLoginAndLogout.get("message");
+//        if(!messMap.trim().equals("")) {
+//            thongBao.put("message",messMap);
+//            thongBao.put("check","3");
+//            return ResponseEntity.ok(thongBao);
+//        }
 
         Shift shift = null;
         if(shiftRequest.getId() == null) {
@@ -260,13 +260,13 @@ public class ShiftRestController {
             return ResponseEntity.ok(thongBao);
         }
 
-        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
-        String messMap = checkLoginAndLogout.get("message");
-        if(!messMap.trim().equals("")) {
-            thongBao.put("message",messMap);
-            thongBao.put("check","3");
-            return ResponseEntity.ok(thongBao);
-        }
+//        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+//        String messMap = checkLoginAndLogout.get("message");
+//        if(!messMap.trim().equals("")) {
+//            thongBao.put("message",messMap);
+//            thongBao.put("check","3");
+//            return ResponseEntity.ok(thongBao);
+//        }
 
         Shift shift = this.shiftService.findById(data.getIdShift()).orElse(null);
 
@@ -302,13 +302,13 @@ public class ShiftRestController {
             thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }
-        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
-        String messMap = checkLoginAndLogout.get("message");
-        if(!messMap.trim().equals("")) {
-            thongBao.put("message",messMap);
-            thongBao.put("check","3");
-            return ResponseEntity.ok(thongBao);
-        }
+//        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+//        String messMap = checkLoginAndLogout.get("message");
+//        if(!messMap.trim().equals("")) {
+//            thongBao.put("message",messMap);
+//            thongBao.put("check","3");
+//            return ResponseEntity.ok(thongBao);
+//        }
 
 
         for (Integer idSt: data.getStaffIds()) {

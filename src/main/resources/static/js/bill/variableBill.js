@@ -25,6 +25,8 @@ var totalBill = 0;
 var totalWeight = 0;
 var shipPrice = 0;
 
+var totalAmountBillCheck = 0;
+
 const shipSpan = document.getElementById('shipSpan'); // Xác định thẻ div cần ẩn/hiện
 
 if(shipSpan != null) {
@@ -127,15 +129,15 @@ function validateNameCustomer(value,inputError) {
     if(nameCheck === '' || nameCheck.length < 1){
         console.log('rong ne')
         inputError.style.display = 'block';
-        inputError.innerText = 'Mời nhập tên khách hàng!';
+        inputError.innerText = '*Mời nhập tên khách hàng!';
         return false;
     } else if (!isValidString(nameCheck)) {
         inputError.style.display = 'block';
-        inputError.innerText = 'Tên khách hàng không hợp lệ!';
+        inputError.innerText = '*Tên khách hàng không hợp lệ!';
         return false;
     }else if (nameCheck.length > 255) {
         inputError.style.display = 'block';
-        inputError.innerText = 'Tên khách hàng không được quá 255 ký tự!';
+        inputError.innerText = '*Tên khách hàng không được quá 255 ký tự!';
         return false;
     } else {
         inputError.style.display = 'none';
@@ -150,11 +152,11 @@ function validateNumberPhone(value,inputError) {
     if(numberPhoneCheck === '' || numberPhoneCheck.length < 1){
         console.log('rong ne')
         inputError.style.display = 'block';
-        inputError.innerText = 'Mời nhập SĐT khách hàng!';
+        inputError.innerText = '*Mời nhập SĐT khách hàng!';
         return false;
     } else if (!phoneRegex.test(numberPhoneCheck)) {
         inputError.style.display = 'block';
-        inputError.innerText = 'SĐT khách hàng không hợp lệ!';
+        inputError.innerText = '*SĐT khách hàng không hợp lệ!';
         return false;
     } else {
         inputError.style.display = 'none';
@@ -169,15 +171,15 @@ function validateEmail(value,inputError) {
     if(emailCheck === '' || emailCheck.length < 1){
         console.log('rong ne')
         inputError.style.display = 'block';
-        inputError.innerText = 'Mời nhập email khách hàng!';
+        inputError.innerText = '*Mời nhập email khách hàng!';
         return false;
     } else if (!emailRegex.test(emailCheck)) {
         inputError.style.display = 'block';
-        inputError.innerText = 'Email khách hàng không hợp lệ!';
+        inputError.innerText = '*Email khách hàng không hợp lệ!';
         return false;
     }else if (emailRegex.length > 100) {
         inputError.style.display = 'block';
-        inputError.innerText = 'Email khách hàng không được quá 100 ký tự!';
+        inputError.innerText = '*Email khách hàng không được quá 100 ký tự!';
         return false;
     } else {
         inputError.style.display = 'none';
@@ -192,11 +194,11 @@ function validateAddRessDetail(value,inputError) {
     if(addRessCheck === '' || addRessCheck.length < 1){
         console.log('rong ne')
         inputError.style.display = 'block';
-        inputError.innerText = 'Mời nhập địa chỉ chi tiết khách hàng!';
+        inputError.innerText = '*Mời nhập địa chỉ chi tiết khách hàng!';
         return false;
     }else if (addRessCheck.length > 260) {
         inputError.style.display = 'block';
-        inputError.innerText = 'Địa chỉ chi tiết khách hàng không được quá 260 ký tự!';
+        inputError.innerText = '*Địa chỉ chi tiết khách hàng không được quá 260 ký tự!';
         return false;
     } else {
         inputError.style.display = 'none';

@@ -29,19 +29,19 @@ $('#cashClient-billInfo-exchange').on('input', function() {
             // nếu giá thấp hơn giá trị bill
             if(priceNumber < priceBill && payMethod == 1) {
                 $('#formErorrCash-billInfo').css('display', 'block');
-                $('#erorrCash-billInfo').text('Giá tiền ít nhất phải bằng giá hóa đơn!');
+                $('#erorrCash-billInfo').text('*Giá tiền ít nhất phải bằng giá hóa đơn!');
                 $('#btnPaymentInBill').attr('disabled', true);
                 $('#surplusMoneySpan-billInfo').css('display', 'none');
                 $('#surplusMoney-billInfo').text('');
             }else if (priceNumber < 1000 && payMethod == 3) {
                 $('#formErorrCash-billInfo').css('display', 'block');
-                $('#erorrCash-billInfo').text('Giá tiền ít nhất phải 1,000 VNĐ!');
+                $('#erorrCash-billInfo').text('*Giá tiền ít nhất phải 1,000 VNĐ!');
                 $('#btnPaymentInBill').attr('disabled', true);
                 $('#surplusMoneySpan-billInfo').css('display', 'none');
                 $('#surplusMoney-billInfo').text('');
             } else if ((priceBill-priceNumber) < 10000 && payMethod == 3) {
                 $('#formErorrCash-billInfo').css('display', 'block');
-                $('#erorrCash-billInfo').text('Giá tiền ít nhất phải 10,000 VND mới có th!');
+                $('#erorrCash-billInfo').text('*Giá tiền ít nhất phải 10,000 VND mới có th!');
                 $('#btnPaymentInBill').attr('disabled', true);
                 $('#surplusMoneySpan-billInfo').css('display', 'none');
                 $('#surplusMoney-billInfo').text('');
@@ -66,9 +66,17 @@ $('#cashClient-billInfo-exchange').on('input', function() {
 
                 }
             }
+
+            if (priceNumber > 10000000000) {
+                $('#formErorrCash-billInfo').css('display', 'block');
+                $('#erorrCash-billInfo').text('**Đã vượt quá giới hạn(trên 10 tỷ VNĐ)!');
+                $('#btnPaymentInBill').attr('disabled', true);
+                $('#surplusMoneySpan-billInfo').css('display', 'none');
+                $('#surplusMoney-billInfo').text('');
+            }
         } else {
             $('#formErorrCash-billInfo').css('display', 'block');
-            $('#erorrCash-billInfo').text('Giá trị nhập vào phải là số!');
+            $('#erorrCash-billInfo').text('*Giá trị nhập vào phải là số!');
             $('#btnPaymentInBill').attr('disabled', true);
             $('#surplusMoneySpan-billInfo').css('display', 'none');
             $('#surplusMoney-billInfo').text('');
@@ -122,7 +130,7 @@ function setActivePayment(element,value) {
 function setUpPayment() {
     $('#btnPaymentInBill').attr('disabled', true);
     $('#formErorrCash-billInfo').css('display', 'block');
-    $('#erorrCash-billInfo').text('Mời nhập đủ giá!');
+    $('#erorrCash-billInfo').text('*Mời nhập đủ giá!');
     $('#btnPaymentInBill').attr('disabled', true);
     $('#surplusMoneySpan-billInfo').css('display', 'none');
     $('#surplusMoney-billInfo').text('');

@@ -1,11 +1,11 @@
 
-function getAllBilByStatus(value) {
+function getAllBillClientByStatus(value) {
     $.ajax({
         type: "GET",
-        url: "/bill-api/manage-bill/"+value,
+        url: "/api-client/list-bill-client/"+value,
         success: function (response) {
-            var tableBillManage = $('#billManage');
-            var nodataBillManage = $('#nodataBillManage');
+            var tableBillManage = $('#billClient');
+            var nodataBillManage = $('#nodataBillClient');
             tableBillManage.empty()
             if (response.length === 0) {
                 // Nếu không có dữ liệu, hiển thị ảnh
@@ -22,7 +22,6 @@ function getAllBilByStatus(value) {
                 response.forEach(function (bill,index) {
 
                     const formattedDateTime = formatDateTime(bill.updateDate);
-                    var btnDrop = '';
                     // Lấy ngày hiện tại
                     const currentDate = new Date();
                     // Lấy ngày tạo hóa đơn và chuyển đổi sang đối tượng Date
@@ -32,29 +31,6 @@ function getAllBilByStatus(value) {
                     const dayDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24)); // Chuyển đổi sang số ngày
 
                     // Kiểm tra điều kiện status
-                    if (bill.status == 5) {
-                        btnDrop = `
-                            <li><a href="/staff/bill/bill-status-index/${bill.id}" class="dropdown-item">Xem chi tiết</a></li>
-                            <li><button class="dropdown-item" onclick="createBillPDF(${bill.id});">Xuất hóa đơn</button></li>
-                        `;
-
-                        // Nếu hóa đơn được tạo trong vòng 3 ngày, hiển thị thêm 2 nút Đổi hàng và Trả hàng
-                        if (dayDiff <= 3) {
-                            btnDrop += `
-                            <li><a class="dropdown-item" href="/staff/return-bill/bill/${bill.id}">Đổi-Trả hàng</a></li>
-                        `;
-                        }
-                    } else if (bill.status == 6) {
-                        btnDrop = `
-                            <li><a href="/staff/bill/bill-status-index/${bill.id}" class="dropdown-item">Xem chi tiết</a></li>
-                            <li><a class="dropdown-item" href="#">Xuất hóa đơn</a></li>
-                        `;
-                    }else {
-                        btnDrop = `
-                            <li><a href="/staff/bill/bill-status-index/${bill.id}" class="dropdown-item">Xem chi tiết</a></li>
-                            <li><button class="dropdown-item" onclick="createBillPDF(${bill.id});">Xuất hóa đơn</button></li>
-                        `;
-                    }
                     var nameCustomer = '';
                     var numberPhone = '';
                     if(bill.addRess === 'Không có') {
@@ -69,20 +45,9 @@ function getAllBilByStatus(value) {
                      <tr>
                             <th scope="row">${index+1}</th>
                             <td>${bill.codeBill}</td>
-                            <td>${bill.customer == null && bill.addRess == 'Không có' ? 'Khách lẻ' : (bill.customer == null ? nameCustomer : bill.customer.fullName)}</td>
-                            <td>${bill.customer == null && bill.addRess == 'Không có' ? 'Không có' : (bill.customer == null ? numberPhone : bill.customer.numberPhone)}</td>
-<!--                            <td>${Math.trunc(bill.finalAmount).toLocaleString('en-US') + ' VNĐ'}</td>-->
-                            <td>${bill.billType == 1 ? 'Tại quầy' : 'Giao hàng'}</td>
                             <td>${formattedDateTime}</td>
                             <td>
-                               <div class="btn-group dropstart">
-                                  <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Chức năng
-                                  </button>
-                                  <ul class="dropdown-menu">
-                                        ${btnDrop}
-                                  </ul>
-                                </div>
+                                <a href="/onepoly/status-bill/${bill.id}" class="btn">Xem </a>
                             </td>
                         </tr>
                     `);
@@ -99,12 +64,13 @@ function getAllBilByStatus(value) {
     })
 }
 
-function getMaxPageBillManage() {
+function getMaxPageBillClient() {
     $.ajax({
         type: "GET",
-        url: "/bill-api/manage-bill-max-page",
+        url: "/api-client/list-bill-max-page",
         success: function (response) {
-            createPagination('billManagePageMax', response, 1); // Phân trang 1
+            console.log(response)
+            createPagination('billClientPageMax', response, 1); // Phân trang 1
         },
         error: function (xhr) {
             console.error('loi max page bill manage' + xhr.responseText)
@@ -116,7 +82,7 @@ function getMaxPageBillManage() {
     })
 }
 
-function clickStatusBillManager() {
+function clickStatusBillClient() {
     let statusSearchVal = $('#statusSearch').val();  // Lấy giá trị từ input
 
     // Kiểm tra nếu giá trị không rỗng và là chuỗi, sau đó xử lý
@@ -126,14 +92,14 @@ function clickStatusBillManager() {
 
     $.ajax({
         type: "POST",
-        url: "/bill-api/status-bill-manage",
+        url: "/api-client/status-bill-client",
         contentType: 'application/json',
         data: JSON.stringify({
             statusSearch: statusSearch
         }),
         success: function (response) {
-            getMaxPageBillManage();
-            getAllBilByStatus(1);
+            getMaxPageBillClient();
+            getAllBillClientByStatus(1);
         },
         error: function (xhr) {
             console.error('loi chon trang thai ' + xhr.responseText);
@@ -141,21 +107,21 @@ function clickStatusBillManager() {
     })
 }
 
-function searchBillManage() {
-    console.log('start: ' + $('#startDate-bill-manage').val())
-    console.log('end: ' + $('#endDate-bill-manage').val())
+function searchBillClient() {
+    console.log('start: ' + $('#startDate-bill-client').val())
+    console.log('end: ' + $('#endDate-bill-client').val())
     $.ajax({
         type: "POST",
-        url: "/bill-api/bill-manage-search",
+        url: "/api-client/bill-client-search",
         contentType: "application/json",
         data: JSON.stringify({
-            keywordBill: $('#keywordBillManage').val().trim(),
-            startDate: $('#startDate-bill-manage').val().trim(),
-            endDate: $('#endDate-bill-manage').val().trim()
+            keywordBill: $('#keywordBillClient').val().trim(),
+            startDate: $('#startDate-bill-client').val().trim(),
+            endDate: $('#endDate-bill-client').val().trim()
         }),  // Gửi dữ liệu dạng JSON
         success: function(response) {
-            getMaxPageBillManage();
-            getAllBilByStatus(1);
+            getMaxPageBillClient();
+            getAllBillClientByStatus(1);
             // clickStatusBillManager(999);
         },
         error: function(xhr) {
@@ -163,28 +129,42 @@ function searchBillManage() {
         }
     });
 }
-function resetFillterBillManage() {
-    document.getElementById('keywordBillManage').value='';
+function resetFillterBillClient() {
+    document.getElementById('keywordBillClient').value='';
     // Lấy ngày hiện tại
     let today = new Date();
-    document.getElementById('endDate-bill-manage').value = formatDate(today);
+    document.getElementById('endDate-bill-client').value = formatDate(today);
 
     // Lấy ngày 7 ngày trước
     let sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(today.getDate() - 7);
-    document.getElementById('startDate-bill-manage').value = formatDate(sevenDaysAgo);
-    searchBillManage()
+    document.getElementById('startDate-bill-client').value = formatDate(sevenDaysAgo);
+    searchBillClient()
 }
+
+function formatDateTime(dateString) {
+    const createDate = new Date(dateString);
+
+    // Định dạng ngày theo "dd/MM/yyyy"
+    const formattedDate = `${('0' + createDate.getDate()).slice(-2)}/${('0' + (createDate.getMonth() + 1)).slice(-2)}/${createDate.getFullYear()}`;
+
+    // Định dạng thời gian theo "HH:mm"
+    const formattedTime = `${('0' + createDate.getHours()).slice(-2)}:${('0' + createDate.getMinutes()).slice(-2)}`;
+
+    // Kết hợp cả thời gian và ngày tháng
+    return `${formattedTime} ${formattedDate}`;
+}
+
 $(document).ready(function () {
     $('#formSubmitFilterBill').submit(function (event) {
         event.preventDefault();
-        searchBillManage();
+        searchBillClient();
     })
 
-    resetFillterBillManage();
+    resetFillterBillClient();
 
-    clickStatusBillManager(999);
+    clickStatusBillClient(999);
     getAllBilByStatus(1);
-    getMaxPageBillManage();
+    getMaxPageBillClient();
 
 });

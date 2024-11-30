@@ -37,11 +37,11 @@ public class UserProfileUpdateRequest extends BaseDTO {
     private Integer gender;
 
     private LocalDate birthDay;
-
+    @NotBlank(message = "Vui lòng chọn thành phố!")
     private String province;
-
+    @NotBlank(message = "Vui lòng chọn huyện!")
     private String district;
-
+    @NotBlank(message = "Vui lòng chọn xã!")
     private String ward;
 
     private String addRessDetail;
