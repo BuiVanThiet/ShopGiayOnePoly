@@ -12,6 +12,17 @@ import java.util.List;
 public interface ClientService {
     public List<ProductIClientResponse> getAllProduct();
 
+    List<ProductIClientResponse> filterProducts(
+            @Param("categoryIds") List<Integer> categoryIds,
+            @Param("manufacturerIds") List<Integer> manufacturerIds,
+            @Param("materialIds") List<Integer> materialIds,
+            @Param("originIds") List<Integer> originIds,
+            @Param("minPrice") Integer minPrice,
+            @Param("maxPrice") Integer maxPrice,
+            @Param("priceSort") String priceSort);
+
+    List<ProductIClientResponse> searchProducts(@Param("keyword") String keyword);
+
     public List<ProductDetailClientRespone> findProductDetailByProductId(@Param("productId") Integer productId);
 
     public List<ProductIClientResponse> GetTop12ProductWithPriceHighest();

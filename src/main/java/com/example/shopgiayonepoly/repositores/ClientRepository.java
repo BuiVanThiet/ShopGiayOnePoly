@@ -25,9 +25,46 @@ public interface ClientRepository extends JpaRepository<Bill, Integer> {
                    FROM Product p
                    LEFT JOIN p.images i 
                    LEFT JOIN ProductDetail pd ON p.id = pd.product.id 
+                   WHERE p.status <> 0
                    GROUP BY p.id, p.nameProduct
             """)
     public List<ProductIClientResponse> getAllProduct();
+
+    @Query("SELECT new com.example.shopgiayonepoly.dto.response.client.ProductIClientResponse(" +
+            "p.id, p.nameProduct, MIN(i.nameImage), MIN(pd.price)) " +
+            "FROM Product p " +
+            "LEFT JOIN CategoryProduct cp ON p.id = cp.idProduct " +
+            "LEFT JOIN p.images i " +
+            "LEFT JOIN ProductDetail pd ON p.id = pd.product.id " +
+            "WHERE (:categoryIds IS NULL OR cp.idCategory IN :categoryIds) " +
+            "AND (:manufacturerIds IS NULL OR p.manufacturer.id IN :manufacturerIds) " +
+            "AND (:materialIds IS NULL OR p.material.id IN :materialIds) " +
+            "AND (:originIds IS NULL OR p.origin.id IN :originIds) " +
+            "AND (:minPrice IS NULL OR pd.price >= :minPrice) " +
+            "AND (:maxPrice IS NULL OR pd.price <= :maxPrice) " +
+            "and p.status <> 0 " +
+            "GROUP BY p.id, p.nameProduct " +
+            "ORDER BY CASE WHEN :priceSort = 'asc' THEN MIN(pd.price) END ASC, " +
+            "         CASE WHEN :priceSort = 'desc' THEN MIN(pd.price) END DESC")
+    List<ProductIClientResponse> filterProducts(
+            @Param("categoryIds") List<Integer> categoryIds,
+            @Param("manufacturerIds") List<Integer> manufacturerIds,
+            @Param("materialIds") List<Integer> materialIds,
+            @Param("originIds") List<Integer> originIds,
+            @Param("minPrice") Integer minPrice,
+            @Param("maxPrice") Integer maxPrice,
+            @Param("priceSort") String priceSort);
+
+    @Query("SELECT new com.example.shopgiayonepoly.dto.response.client.ProductIClientResponse(" +
+            "p.id, p.nameProduct, MIN(i.nameImage), MIN(pd.price)) " +
+            "FROM Product p " +
+            "LEFT JOIN p.images i " +
+            "LEFT JOIN ProductDetail pd ON p.id = pd.product.id " +
+            "WHERE (:keyword IS NULL OR LOWER(p.nameProduct) LIKE LOWER(CONCAT('%', :keyword, '%')))" +
+            "and  p.status <> 0 " +
+            "GROUP BY p.id, p.nameProduct " +
+            "ORDER BY p.nameProduct")
+    List<ProductIClientResponse> searchProducts(@Param("keyword") String keyword);
 
     @Query("""
                 select new com.example.shopgiayonepoly.dto.response.client.ProductIClientResponse(

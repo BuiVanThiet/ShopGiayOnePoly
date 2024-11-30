@@ -90,6 +90,25 @@
                 </div>
             </div>
         </div>
+        <div class="modal fade" id="confirm-restore-material-modal" tabindex="-1"
+             aria-labelledby="confirmRestoreMaterialModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="confirmRestoreMaterialModalLabel">
+                            Xác nhận khôi phục chất liệu
+                        </h1>
+                    </div>
+                    <div class="modal-body">
+                        Bạn muốn khôi phục chất liệu ?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button onclick="add()" type="submit" class="btn btn-success" data-bs-dismiss="modal" aria-label="Close">Khỗi phục</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     </article>
     <script th:src="@{/js/attribute/attribute.js}" type="text/javascript"></script>

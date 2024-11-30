@@ -2,6 +2,8 @@ package com.example.shopgiayonepoly.controller.attribute;
 
 import com.example.shopgiayonepoly.entites.Material;
 import com.example.shopgiayonepoly.entites.Staff;
+import com.example.shopgiayonepoly.service.CashierInventoryService;
+import com.example.shopgiayonepoly.service.TimekeepingService;
 import com.example.shopgiayonepoly.service.attribute.MaterialService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,11 @@ public class MaterialController {
 
     @Autowired
     MaterialService materialService;
+
+    @Autowired
+    TimekeepingService timekeepingService;
+    @Autowired
+    CashierInventoryService cashierInventoryService;
 
     @RequestMapping("/material")
     public String list(Model model, HttpSession session) {
@@ -110,6 +117,13 @@ public class MaterialController {
             thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            thongBao.put("message",messMap);
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
         boolean checkCode = true;
         boolean checkName = true;
         for (Material listMaterial : materialService.findAll()) {
@@ -184,6 +198,13 @@ public class MaterialController {
             thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            thongBao.put("message",messMap);
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
         try {
             int id;
             String codeMaterial;
@@ -253,6 +274,13 @@ public class MaterialController {
             thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            thongBao.put("message",messMap);
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
         try {
             int id;
             int status;
@@ -298,6 +326,38 @@ public class MaterialController {
         return staff;
     }
 
+    protected Map<String,String> checkLoginAndLogOutByStaff(Integer idStaff) {
+        Map<String,String> thongBao = new HashMap<>();
+        String checkLogin = getCheckStaffAttendanceYetBill(idStaff,1);
+        String checkLogOut = getCheckStaffAttendanceYetBill(idStaff,2);
+        System.out.println(checkLogin);
+        if(!checkLogin.equals("Có")) {
+            thongBao.put("message","Mời bạn điểm danh trước khi làm việc!");
+            return thongBao;
+        }
 
+        if(checkLogin.equals("Có") && checkLogOut.equals("Có")) {
+            thongBao.put("message","Bạn đã điểm danh vào và ra rồi, không thể làm việc được nữa!");
+            return thongBao;
+        }
+        thongBao.put("message","");
+        return thongBao;
+    }
+
+
+    protected String getCheckStaffAttendanceYetBill(
+//            @PathVariable("id") Integer idStaff,@PathVariable("type") Integer timekeepingTypeCheck
+            Integer idStaff, Integer timekeepingTypeCheck
+    ) {
+        List<Object[]> checkLoginLogOut = this.timekeepingService.getCheckStaffAttendanceYet(idStaff, timekeepingTypeCheck);
+
+        // Kiểm tra nếu danh sách không rỗng và có kết quả
+        if (!checkLoginLogOut.isEmpty() && checkLoginLogOut.get(0).length > 0) {
+            // Lấy giá trị đầu tiên từ kết quả
+            return checkLoginLogOut.get(0)[0].toString();
+        }
+        // Trường hợp không có dữ liệu
+        return "Không";
+    }
 
 }

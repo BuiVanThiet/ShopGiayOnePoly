@@ -24,6 +24,35 @@ public class ClientServiceImplement implements ClientService {
     }
 
     @Override
+    public List<ProductIClientResponse> filterProducts(List<Integer> categoryIds,
+                                                       List<Integer> manufacturerIds,
+                                                       List<Integer> materialIds,
+                                                       List<Integer> originIds,
+                                                       Integer minPrice,
+                                                       Integer maxPrice,
+                                                       String priceSort) {
+        if (categoryIds != null && categoryIds.isEmpty()) {
+            categoryIds = null;
+        }
+        if (manufacturerIds != null && manufacturerIds.isEmpty()) {
+            manufacturerIds = null;
+        }
+        if (materialIds != null && materialIds.isEmpty()) {
+            materialIds = null;
+        }
+        if (originIds != null && originIds.isEmpty()) {
+            originIds = null;
+        }
+
+        return clientRepository.filterProducts(categoryIds, manufacturerIds, materialIds, originIds, minPrice, maxPrice, priceSort);
+    }
+
+    @Override
+    public List<ProductIClientResponse> searchProducts(String keyword) {
+        return clientRepository.searchProducts(keyword);
+    }
+
+    @Override
     public List<ProductDetailClientRespone> findProductDetailByProductId(Integer productId) {
         return clientRepository.findProductDetailByProductId(productId);
     }

@@ -3,7 +3,9 @@ package com.example.shopgiayonepoly.baseMethod;
 import com.example.shopgiayonepoly.repositores.ImageRepository;
 import com.example.shopgiayonepoly.repositores.ProductDetailRepository;
 import com.example.shopgiayonepoly.repositores.ProductRepository;
+import com.example.shopgiayonepoly.service.CashierInventoryService;
 import com.example.shopgiayonepoly.service.ProductService;
+import com.example.shopgiayonepoly.service.TimekeepingService;
 import com.example.shopgiayonepoly.service.attribute.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -36,5 +38,7 @@ public abstract class BaseProduct {
 
     @Autowired
     protected ImageRepository imageRepository;
+
+
 
 }

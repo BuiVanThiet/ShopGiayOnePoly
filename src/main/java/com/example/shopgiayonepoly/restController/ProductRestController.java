@@ -3,7 +3,10 @@ package com.example.shopgiayonepoly.restController;
 import com.example.shopgiayonepoly.baseMethod.BaseProduct;
 import com.example.shopgiayonepoly.dto.request.AttributeRequet;
 import com.example.shopgiayonepoly.entites.*;
+import com.example.shopgiayonepoly.service.CashierInventoryService;
+import com.example.shopgiayonepoly.service.TimekeepingService;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,33 +20,73 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/product-api")
 public class ProductRestController extends BaseProduct {
+
+    @Autowired
+    TimekeepingService timekeepingService;
+    @Autowired
+    CashierInventoryService cashierInventoryService;
     @GetMapping("/search")
     @ResponseBody
-    public List<Product> searchProducts(Integer idCategory, String searchTerm) {
+    public List<Product> searchProducts(Integer idCategory, String searchTerm, HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
         return productService.findProducts(idCategory, searchTerm);
     }
 
     @GetMapping("/findProductDelete")
     @ResponseBody
-    public List<Product> findProductDelete(Integer idCategory, String searchTerm) {
+    public List<Product> findProductDelete(Integer idCategory, String searchTerm, HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
         return productService.findProductDelete(idCategory, searchTerm);
     }
 
     @GetMapping("/detail/search")
     @ResponseBody
-    public List<ProductDetail> searchProductDetail(String searchTerm, Integer idProduct) {
+    public List<ProductDetail> searchProductDetail(String searchTerm, Integer idProduct, HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
         return productService.searchProductDetailsByKeyword(searchTerm, idProduct);
     }
 
     @GetMapping("/productList")
     @ResponseBody
-    public List<Product> getProductList() {
+    public List<Product> getProductList(HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
         return productService.findAll(); // Trả về danh sách sản phẩm
     }
 
 
     @GetMapping("/get-one/{id}")
-    public ResponseEntity<Product> getOneByID(@PathVariable Integer id) {
+    public ResponseEntity<Product> getOneByID(@PathVariable Integer id, HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
         Optional<Product> product = productService.findById(id);
         if (product.isPresent()) {
             return ResponseEntity.ok(product.get());
@@ -53,13 +96,27 @@ public class ProductRestController extends BaseProduct {
     }
 
     @GetMapping("/getImage/{productId}")
-    public ResponseEntity<List<Image>> getImagesByProductId(@PathVariable Integer productId) {
+    public ResponseEntity<List<Image>> getImagesByProductId(@PathVariable Integer productId, HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
         List<Image> images = productService.findAllImagesByProductId(productId);
         return new ResponseEntity<>(images, HttpStatus.OK);
     }
 
     @GetMapping("/getCategory/{productId}")
-    public ResponseEntity<List<Integer>> getCategoriesByProductId(@PathVariable Integer productId) {
+    public ResponseEntity<List<Integer>> getCategoriesByProductId(@PathVariable Integer productId, HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
         List<CategoryProduct> categories = productService.findAllCategoryByProductId(productId);
         List<Integer> idCategories = categories.stream()
                 .map(CategoryProduct::getIdCategory)
@@ -69,7 +126,14 @@ public class ProductRestController extends BaseProduct {
 
 
     @GetMapping("/check-code/{codeProduct}")
-    public ResponseEntity<Product> checkProductCode(@PathVariable String codeProduct) {
+    public ResponseEntity<Product> checkProductCode(@PathVariable String codeProduct, HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
         Optional<Product> product = productService.getOneProductByCodeProduct(codeProduct);
 
         if (product.isPresent()) {
@@ -81,7 +145,14 @@ public class ProductRestController extends BaseProduct {
 
     @PostMapping("/delete")
     @ResponseBody
-    public ResponseEntity<Map<String, Object>> deleteProduct(@RequestBody Map<String, Object> payload) {
+    public ResponseEntity<Map<String, Object>> deleteProduct(@RequestBody Map<String, Object> payload, HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
         Map<String, Object> response = new HashMap<>();
         try {
             int id;
@@ -131,6 +202,13 @@ public class ProductRestController extends BaseProduct {
         if (staffLogin.getStatus() != 1) {
             thongBao.put("message", "Nhân viên đang bị ngừng hoạt động!");
             thongBao.put("check", "3");
+            return ResponseEntity.ok(thongBao);
+        }
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            thongBao.put("message",messMap);
+            thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }
         boolean checkCode = true;
@@ -315,7 +393,14 @@ public class ProductRestController extends BaseProduct {
     }
 
     @GetMapping("/attribute/list")
-    public ResponseEntity<?> getAttributeList(@RequestParam String type) {
+    public ResponseEntity<?> getAttributeList(@RequestParam String type, HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
         switch (type) {
             case "category":
                 List<Category> categories = categoryService.getCategoryNotStatus0();
@@ -345,17 +430,38 @@ public class ProductRestController extends BaseProduct {
 
 
     @GetMapping("/findAllCodeProduct")
-    public List<String> findAllCodeProduct() {
+    public List<String> findAllCodeProduct(HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
         return productService.findAllCodeProduct();
     }
 
     @PostMapping("/restore")
-    public void restoreProduct(Integer id, Integer status) {
+    public void restoreProduct(Integer id, Integer status, HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return ;
+        }
+        if(staffLogin.getStatus() != 1) {
+            return ;
+        }
         productService.updateStatus(id, status);
     }
 
     @PostMapping("/delete-multiple")
     public ResponseEntity<?> deleteMultipleProducts(@RequestBody List<Integer> ids, HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
         if (ids == null || ids.isEmpty()) {
             return ResponseEntity.badRequest().body("Danh sách sản phẩm không hợp lệ.");
         }
@@ -373,6 +479,13 @@ public class ProductRestController extends BaseProduct {
 
     @PostMapping("/restore-multiple")
     public ResponseEntity<?> restoreMultipleProducts(@RequestBody List<Integer> ids, HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
         if (ids == null || ids.isEmpty()) {
             return ResponseEntity.badRequest().body("Danh sách sản phẩm không hợp lệ.");
         }
@@ -389,8 +502,49 @@ public class ProductRestController extends BaseProduct {
     }
 
     @GetMapping("/find-quantity")
-    public Integer findAllQuantity(Integer id) {
+    public Integer findAllQuantity(Integer id, HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
         return productService.findQuantityByIDProduct(id);
+    }
+
+    protected Map<String,String> checkLoginAndLogOutByStaff(Integer idStaff) {
+        Map<String,String> thongBao = new HashMap<>();
+        String checkLogin = getCheckStaffAttendanceYetBill(idStaff,1);
+        String checkLogOut = getCheckStaffAttendanceYetBill(idStaff,2);
+        System.out.println(checkLogin);
+        if(!checkLogin.equals("Có")) {
+            thongBao.put("message","Mời bạn điểm danh trước khi làm việc!");
+            return thongBao;
+        }
+
+        if(checkLogin.equals("Có") && checkLogOut.equals("Có")) {
+            thongBao.put("message","Bạn đã điểm danh vào và ra rồi, không thể làm việc được nữa!");
+            return thongBao;
+        }
+        thongBao.put("message","");
+        return thongBao;
+    }
+
+
+    protected String getCheckStaffAttendanceYetBill(
+//            @PathVariable("id") Integer idStaff,@PathVariable("type") Integer timekeepingTypeCheck
+            Integer idStaff, Integer timekeepingTypeCheck
+    ) {
+        List<Object[]> checkLoginLogOut = this.timekeepingService.getCheckStaffAttendanceYet(idStaff, timekeepingTypeCheck);
+
+        // Kiểm tra nếu danh sách không rỗng và có kết quả
+        if (!checkLoginLogOut.isEmpty() && checkLoginLogOut.get(0).length > 0) {
+            // Lấy giá trị đầu tiên từ kết quả
+            return checkLoginLogOut.get(0)[0].toString();
+        }
+        // Trường hợp không có dữ liệu
+        return "Không";
     }
 
 }

@@ -20,131 +20,86 @@
 
         <!-- Nút bộ lọc -->
         <div class="container-fluid">
-            <div class="d-flex justify-content-start" style="margin-bottom: 20px; margin-left: 30px;">
-                <button class="btn btn-outline-dark" id="filterButton">
-                    <i class="fas fa-filter"></i> Bộ lọc
-                </button>
+            <!-- Nút mở bộ lọc -->
+            <button id="filterButton" class="filter-btn">
+                <i class="fas fa-filter"></i> Bộ Lọc
+            </button>
+
+            <!-- Sidebar bộ lọc -->
+            <div id="filterSidebar" class="filter-sidebar">
+                <div class="filter-header">
+                    <h3>Bộ Lọc</h3>
+                    <button id="closeFilter" class="close-btn">&times;</button>
+                </div>
+                <div class="filter-body">
+                    <div class="filter-section">
+                        <h4>Danh mục</h4>
+                        <div th:each="category : ${listCategory}">
+                            <label>
+                                <input type="checkbox" name="categories" th:value="${category.id}">
+                                <span th:text="${category.nameCategory}"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <!-- Lọc theo hãng -->
+                    <div class="filter-section">
+                        <h4>Hãng</h4>
+                        <div th:each="manufacturer : ${listManufacturer}">
+                            <label>
+                                <input type="checkbox" name="manufacturer" th:value="${manufacturer.id}">
+                                <span th:text="${manufacturer.nameManufacturer}"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Lọc theo chất liệu -->
+                    <div class="filter-section">
+                        <h4>Chất liệu</h4>
+                        <div th:each="material : ${listMaterial}">
+                            <label>
+                                <input type="checkbox" name="material" th:value="${material.id}">
+                                <span th:text="${material.nameMaterial}"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Lọc theo xuất xứ -->
+                    <div class="filter-section">
+                        <h4>Xuất xứ</h4>
+                        <div th:each="origin : ${listOrigin}">
+                            <label>
+                                <input type="checkbox" name="origin" th:value="${origin.id}">
+                                <span th:text="${origin.nameOrigin}"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Lọc theo khoảng giá -->
+                    <div class="filter-section">
+                        <h4>Khoảng giá</h4>
+                        <input type="number" placeholder="Giá thấp nhất" id="minPrice">
+                        <input type="number" placeholder="Giá cao nhất" id="maxPrice">
+                    </div>
+
+                    <!-- Sắp xếp theo giá -->
+                    <div class="filter-section">
+                        <h4>Sắp xếp giá</h4>
+                        <label>
+                            <input type="radio" name="priceSort" value="asc"> Giá từ thấp đến cao
+                        </label>
+                        <label>
+                            <input type="radio" name="priceSort" value="desc"> Giá từ cao đến thấp
+                        </label>
+                    </div>
+                </div>
+                <!-- Nút áp dụng -->
+                <button onclick="collectFilters()" class="apply-btn">Áp dụng</button>
             </div>
-            <div class="filter-menu" id="filterMenu">
-                <span class="close-btn" id="closeButton">&times;</span>
-                <h5>Bộ lọc sản phẩm</h5>
-                <hr>
 
-                <!-- Bộ lọc khoảng giá -->
-                <div class="form-group">
-                    <label for="priceFilter" id="priceLabel">Khoảng giá</label>
-                    <div id="priceFilter" class="filter-options">
-                        <div class="row d-flex align-items-center mb-2">
-                            <div class="col d-flex justify-content-start">
-                                <input type="text" id="minAmount" readonly style="border:0;" placeholder="Min">
-                            </div>
-                            <div class="col d-flex justify-content-end">
-                                <input type="text" id="maxAmount" readonly style="border:0;" placeholder="Max">
-                            </div>
-                        </div>
-                        <div style="margin-top: 20px" id="slider-range"></div>
-                    </div>
-                </div>
+            <!-- Overlay -->
+            <div class="overlay" id="overlay"></div>
 
-                <hr>
 
-                <!-- Bộ lọc thương hiệu -->
-                <div class="form-group mt-3">
-                    <label for="brandFilter" id="brandLabel">Thương hiệu</label>
-                    <div id="brandFilter" class="filter-options">
-                        <select class="form-select" id="brand">
-                            <option value="">Chọn thương hiệu</option>
-                            <option value="nike">Nike</option>
-                            <option value="adidas">Adidas</option>
-                            <option value="puma">Puma</option>
-                        </select>
-                    </div>
-                </div>
-                <hr>
-
-                <!-- Bộ lọc kích thước -->
-                <div class="form-group mt-3">
-                    <label for="sizeFilter" id="sizeLabel">Kích thước</label>
-                    <div id="sizeFilter" class="filter-options">
-                        <div class="row">
-                            <!-- Tạo các nút kích thước từ 35 đến 44 -->
-                            <div class="col-3 mb-2">
-                                <button class="btn btn-outline-dark w-100">35</button>
-                            </div>
-                            <div class="col-3 mb-2">
-                                <button class="btn btn-outline-dark w-100">36</button>
-                            </div>
-                            <div class="col-3 mb-2">
-                                <button class="btn btn-outline-dark w-100">37</button>
-                            </div>
-                            <div class="col-3 mb-2">
-                                <button class="btn btn-outline-dark w-100">38</button>
-                            </div>
-                            <div class="col-3 mb-2">
-                                <button class="btn btn-outline-dark w-100">39</button>
-                            </div>
-                            <div class="col-3 mb-2">
-                                <button class="btn btn-outline-dark w-100">40</button>
-                            </div>
-                            <div class="col-3 mb-2">
-                                <button class="btn btn-outline-dark w-100">41</button>
-                            </div>
-                            <div class="col-3 mb-2">
-                                <button class="btn btn-outline-dark w-100">42</button>
-                            </div>
-                            <div class="col-3 mb-2">
-                                <button class="btn btn-outline-dark w-100">43</button>
-                            </div>
-                            <div class="col-3 mb-2">
-                                <button class="btn btn-outline-dark w-100">44</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <hr>
-
-                <!-- Bộ lọc màu sắc -->
-                <div class="form-group mt-3">
-                    <label for="colorFilter" id="colorLabel">Màu sắc</label>
-                    <div id="colorFilter" class="filter-options">
-                        <div class="row">
-                            <!-- Tạo các nút màu sắc -->
-                            <div class="col-4 mb-2">
-                                <button class="btn w-100" style="background-color: red; color: white;">Đỏ</button>
-                            </div>
-                            <div class="col-4 mb-2">
-                                <button class="btn w-100" style="background-color: blue; color: white;">Xanh dương
-                                </button>
-                            </div>
-                            <div class="col-4 mb-2">
-                                <button class="btn w-100" style="background-color: green; color: white;">Xanh lá
-                                </button>
-                            </div>
-                            <div class="col-4 mb-2">
-                                <button class="btn w-100" style="background-color: yellow; color: black;">Vàng</button>
-                            </div>
-                            <div class="col-4 mb-2">
-                                <button class="btn w-100" style="background-color: black; color: white;">Đen</button>
-                            </div>
-                            <div class="col-4 mb-2">
-                                <button class="btn w-100" style="background-color: white; color: black;">Trắng</button>
-                            </div>
-                            <div class="col-4 mb-2">
-                                <button class="btn w-100" style="background-color: gray; color: white;">Xám</button>
-                            </div>
-                            <div class="col-4 mb-2">
-                                <button class="btn w-100" style="background-color: pink; color: black;">Hồng</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <hr>
-
-                <div class="btn-group w-100">
-                    <button class="btn btn-secondary mt-3" id="removeFilter">Xóa bộ lọc</button>
-                    <button class="btn btn-primary mt-3" id="applyFilter">Áp dụng</button>
-                </div>
-            </div>
         </div>
         <div class="container-fluid">
             <div class="row justify-content-between" style="margin-left: 0; margin-right: 0;">
