@@ -16,22 +16,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-
-import org.springframework.data.jpa.domain.AbstractPersistable_;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-
 import org.springframework.http.HttpStatus;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -110,6 +103,11 @@ public class ClientRestController extends BaseEmail {
         return selectedVoucher;
     }
 
+    @GetMapping("/quantity/{id}")
+    public ResponseEntity<Integer> getQuantity(@PathVariable("id") Integer idProductDetail) {
+        Integer quantity = clientService.getQuantityProductDetailByID(idProductDetail);
+        return ResponseEntity.ok(quantity);
+    }
 
     @PostMapping("/add-to-cart")
     public ResponseEntity<?> addToCart(@RequestBody Map<String, Integer> requestData, Model model, HttpSession session) {
@@ -118,12 +116,18 @@ public class ClientRestController extends BaseEmail {
         Integer quantity = requestData.get("quantity");
         Map<String, Object> response = new HashMap<>();
 
-        // Kiểm tra số lượng sản phẩm hợp lệ
         if (quantity == null || quantity <= 0) {
             response.put("success", false);
             response.put("message", "Số lượng sản phẩm không hợp lệ.");
             return ResponseEntity.badRequest().body(response);
         }
+        if (quantity != Math.floor(quantity)) {
+            response.put("success", false);
+            response.put("message", "Số lượng sản phẩm phải là số nguyên.");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        System.out.println("Số lượng mua: " + quantity);
 
         // Kiểm tra sản phẩm có tồn tại không
         ProductDetail productDetail = productDetailRepository.findById(productDetailId).orElse(null);
@@ -135,6 +139,13 @@ public class ClientRestController extends BaseEmail {
 
         BigDecimal discountedPrice = clientService.findDiscountedPriceByProductDetailId(productDetailId);
         BigDecimal originalPrice = productDetail.getPrice();
+
+        int availableQuantity = productDetail.getQuantity();
+        if (quantity > availableQuantity) {
+            response.put("success", false);
+            response.put("message", "Số lượng sản phẩm trong kho không đủ.");
+            return ResponseEntity.badRequest().body(response);
+        }
 
         if (clientLoginResponse != null) {
             // Xử lý giỏ hàng cho người dùng đã đăng nhập

@@ -43,9 +43,11 @@ public interface ClientService {
     List<BillDetail> getListBillDetailByID(@Param("idBill") Integer idBill);
 
     List<AddressShip> getListAddressShipByIDCustomer(@Param("idBill") Integer idBill);
+
     List<AddressShip> getListAddressShipByIDCustomer();
 
-    ////////////////////////////
+    Integer getQuantityProductDetailByID(@Param("idProductDetail") Integer idProductDetail);
+
     Page<BillResponseManage> getAllBillByStatusDiss0(Integer idCustomer, String nameCheck, SearchBillByStatusRequest searchBillByStatusRequest, Date start, Date end, Pageable pageable);
 
     List<BillResponseManage> getAllBillByStatusDiss0(Integer idCustomer, String nameCheck, SearchBillByStatusRequest searchBillByStatusRequest, Date start, Date end);

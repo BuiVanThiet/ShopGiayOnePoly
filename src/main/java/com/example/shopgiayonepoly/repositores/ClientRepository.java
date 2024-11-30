@@ -133,7 +133,10 @@ public interface ClientRepository extends JpaRepository<Bill, Integer> {
                     pd.describe,
                     c.nameColor,
                     s.nameSize,
-                    MIN(i.nameImage)
+                    MIN(i.nameImage),
+                    pd.product.material.nameMaterial,
+                    pd.product.manufacturer.nameManufacturer,
+                    pd.product.origin.nameOrigin
                 ) 
                 FROM ProductDetail pd
                 LEFT JOIN pd.size s
@@ -155,7 +158,11 @@ public interface ClientRepository extends JpaRepository<Bill, Integer> {
                          sp.discountType,
                          sp.discountValue,
                          pd.saleProduct.startDate,
-                         pd.saleProduct.endDate
+                         pd.saleProduct.endDate,
+                         pd.product.material.nameMaterial,
+                         pd.product.manufacturer.nameManufacturer,
+                         pd.product.origin.nameOrigin
+                        
             """)
     ProductDetailClientRespone findByProductDetailColorAndSizeAndProductId(
             @Param("colorId") Integer colorId,
@@ -209,7 +216,10 @@ public interface ClientRepository extends JpaRepository<Bill, Integer> {
     @Query("select addressShip from AddressShip addressShip where addressShip.status=1 order by addressShip.createDate asc")
     List<AddressShip> getListAddressShipByIDCustomer();
 
-    ////////////////////////////////////////////
+
+    @Query("select productDetail.quantity from ProductDetail productDetail where productDetail.id =: idProductDetail")
+    Integer getQuantityProductDetailByID(@Param("idProductDetail")Integer idProductDetail);
+
     @Query("""
         select 
         new com.example.shopgiayonepoly.dto.response.bill.BillResponseManage(
@@ -278,5 +288,6 @@ public interface ClientRepository extends JpaRepository<Bill, Integer> {
             @Param("startDate") Date startDate,
             @Param("endDate") Date endDate
     );
+
 
 }

@@ -22,6 +22,9 @@ public class ProductDetailClientRespone {
     private String sizeName;
     private String productImage;
     private Integer idSaleProduct;
+    private String materialName;
+    private String manufacturerName;
+    private String originName;
 
     public ProductDetailClientRespone(Integer productDetailId,
                                       Integer productId,
@@ -55,7 +58,10 @@ public class ProductDetailClientRespone {
             String productDetailDescription,
             String colorName,
             String sizeName,
-            String productImage) {
+            String productImage,
+            String materialName,
+            String manufacturerName,
+            String originName) {
         this.productDetailId = productDetailId;
         this.productId = productId;
         this.productName = productName;
@@ -66,8 +72,11 @@ public class ProductDetailClientRespone {
         this.colorName = colorName;
         this.sizeName = sizeName;
         this.productImage = productImage;
-    }
+        this.materialName = materialName;
+        this.manufacturerName = manufacturerName;
+        this.originName = originName;
 
+    }
 
 
     public ProductDetailClientRespone(Integer id, BigDecimal price, Integer quantity) {

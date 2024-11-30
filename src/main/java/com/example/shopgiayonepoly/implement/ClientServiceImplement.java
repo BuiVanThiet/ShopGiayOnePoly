@@ -91,6 +91,11 @@ public class ClientServiceImplement implements ClientService {
     }
 
     @Override
+    public Integer getQuantityProductDetailByID(Integer idProductDetail) {
+        return clientRepository.getQuantityProductDetailByID(idProductDetail);
+    }
+
+    @Override
     public List<AddressShip> getListAddressShipByIDCustomer() {
         return clientRepository.getListAddressShipByIDCustomer();
     }
