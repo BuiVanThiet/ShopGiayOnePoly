@@ -90,6 +90,25 @@
                 </div>
             </div>
         </div>
+        <div class="modal fade" id="confirm-restore-color-modal" tabindex="-1"
+             aria-labelledby="confirmRestoreColorModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="confirmRestoreColorModalLabel">
+                            Xác nhận khôi phục màu sắc
+                        </h1>
+                    </div>
+                    <div class="modal-body">
+                        Bạn muốn khôi phục màu sắc ?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button onclick="add()" type="submit" class="btn btn-success" data-bs-dismiss="modal" aria-label="Close">Khôi phục</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </article>
     <script th:src="@{/js/attribute/attribute.js}" type="text/javascript"></script>
     <script th:src="@{/ajax/attribute/colorAjax.js}" type="text/javascript"></script>

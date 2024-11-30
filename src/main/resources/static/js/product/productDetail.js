@@ -443,5 +443,9 @@ async function updateSelectedProductDetails() {
         },
         body: JSON.stringify(productDetailsToUpdate)
     });
+    if (response.ok) {
+        const result = await response.json();
+        createToast(result.check, result.message);
+    }
 
 }

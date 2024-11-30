@@ -8,6 +8,10 @@ import com.example.shopgiayonepoly.dto.response.client.*;
 import com.example.shopgiayonepoly.entites.*;
 import com.example.shopgiayonepoly.repositores.*;
 import com.example.shopgiayonepoly.service.*;
+import com.example.shopgiayonepoly.service.attribute.CategoryService;
+import com.example.shopgiayonepoly.service.attribute.ManufacturerService;
+import com.example.shopgiayonepoly.service.attribute.MaterialService;
+import com.example.shopgiayonepoly.service.attribute.OriginService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -58,6 +62,65 @@ public class ClientController extends BaseBill {
     @Autowired
     VoucherRepository voucherRepository;
 
+    @Autowired
+    ProductService productService;
+
+    @Autowired
+    CategoryService categoryService;
+
+    @Autowired
+    MaterialService materialService;
+
+    @Autowired
+    ManufacturerService manufacturerService;
+
+    @Autowired
+    OriginService originService;
+
+
+
+    @GetMapping("/products")
+    public String getFormProduct(HttpSession session, Model model) {
+        ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
+        model.addAttribute("loginInfoClient", clientLoginResponse);
+        model.addAttribute("listProduct", clientService.getAllProduct());
+        model.addAttribute("listCategory", categoryService.getCategoryNotStatus0());
+        model.addAttribute("listMaterial", materialService.getMaterialNotStatus0());
+        model.addAttribute("listManufacturer", manufacturerService.getManufacturerNotStatus0());
+        model.addAttribute("listOrigin", originService.getOriginNotStatus0());
+        return "client/product";
+    }
+
+    @PostMapping("/filter")
+    @ResponseBody
+    public List<ProductIClientResponse> filterProducts(@RequestBody FilterResponse filterRequest) {
+        List<ProductIClientResponse> products = clientService.filterProducts(
+                filterRequest.getCategories(),
+                filterRequest.getManufacturers(),
+                filterRequest.getMaterials(),
+                filterRequest.getOrigins(),
+                filterRequest.getMinPrice(),
+                filterRequest.getMaxPrice(),
+                filterRequest.getPriceSort()
+        );
+        return products; // Trả về danh sách sản phẩm dưới dạng JSON
+    }
+
+    @GetMapping("/search")
+    public String searchProducts(@RequestParam String keyword, HttpSession session, Model model) {
+        ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
+        model.addAttribute("loginInfoClient", clientLoginResponse);
+
+        // Tìm kiếm sản phẩm với từ khóa keyword
+        List<ProductIClientResponse> products = clientService.searchProducts(keyword);
+        model.addAttribute("listProduct", products); // Truyền sản phẩm vào model
+        model.addAttribute("listCategory", categoryService.getCategoryNotStatus0());
+        model.addAttribute("listMaterial", materialService.getMaterialNotStatus0());
+        model.addAttribute("listManufacturer", manufacturerService.getManufacturerNotStatus0());
+        model.addAttribute("listOrigin", originService.getOriginNotStatus0());
+        return "client/product";
+    }
+
     @GetMapping("/home")
     public String getFormHomeClient(HttpSession session, Model model) {
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
@@ -76,14 +139,6 @@ public class ClientController extends BaseBill {
         return "client/base";
     }
 
-    @GetMapping("/products")
-    public String getFormProduct(HttpSession session, Model model) {
-        ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
-        model.addAttribute("loginInfoClient", clientLoginResponse);
-        List<ProductIClientResponse> listProduct = clientService.getAllProduct();
-        model.addAttribute("listProduct", listProduct);
-        return "client/product";
-    }
 
     //    Test api address
     @GetMapping("/address")

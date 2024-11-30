@@ -90,6 +90,25 @@
                 </div>
             </div>
         </div>
+        <div class="modal fade" id="confirm-restore-category-modal" tabindex="-1"
+             aria-labelledby="confirmRestoreCategoryModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="confirmRestoreCategoryModalLabel">
+                            Xác nhận khôi phục danh mục
+                        </h1>
+                    </div>
+                    <div class="modal-body">
+                        Bạn muốn khôi phục danh mục ?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button onclick="restoreCategory(this)" type="submit" class="btn btn-success" data-bs-dismiss="modal" aria-label="Close">Khôi phục</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </article>
     <script th:src="@{/js/attribute/attribute.js}" type="text/javascript"></script>
     <script th:src="@{/ajax/attribute/categoryAjax.js}" type="text/javascript"></script>

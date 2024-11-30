@@ -1,121 +1,108 @@
-.filter-menu {
-    display: none;
-    position: fixed;
-    top: 50px;
-    left: 0;
-    margin-top: 25px;
-    background-color: white;
-    border: 1px solid #ddd;
-    padding: 15px;
-    z-index: 1000;
-    width: 400px;
-    height: 100%;
-}
 
-#filterButton {
-    z-index: 999;
-}
-
-.sale-badge {
-    position: absolute;
-    top: 10px;
-    left: 1px;
-    background-color: #ff0000;
-    color: #fff;
-    padding: 5px 10px;
-    font-size: 12px;
-    border-radius: 3px;
-    z-index: 999;
-}
-
-.filter-menu .close-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    cursor: pointer;
-    font-size: 24px;
-}
-
-#slider-range {
-    width: 100%;
-    margin: 20px 0;
-}
-
-.filter-options {
-    display: none;
-}
-
-.filter-options.show {
-    display: block;
-}
-
-#priceFilter, #brandFilter, #sizeFilter, #colorFilter {
-    margin-top: 10px;
-}
-
-#priceFilter .row {
+.filter-btn {
+    margin-left: 1%;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
     display: flex;
     align-items: center;
+    gap: 5px;
 }
 
-#priceFilter .col {
-    flex: 1;
+.filter-sidebar {
+    position: fixed;
+    top: 13%;
+    left: -300px; /* Ẩn ngoài màn hình */
+    width: 300px;
+    max-height: calc(100vh - 13%); /* Chiều cao tối đa là phần còn lại */
+    background-color: #ffffff;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    transition: left 0.3s ease;
+    z-index: 1000;
+    padding: 20px;
+    overflow-y: auto; /* Cho phép cuộn */
 }
 
-#priceFilter input {
-    width: 100%;
-    text-align: center;
-    box-sizing: border-box;
+
+.filter-sidebar.active {
+    left: 0; /* Hiển thị sidebar */
 }
 
-#slider-range {
-    margin-top: 10px;
+/* Header Bộ Lọc */
+.filter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
 }
 
-.ui-slider {
-    height: 8px;
-    background: #ddd;
-    border-radius: 5px;
+.filter-header h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #333;
 }
 
-.ui-slider .ui-slider-range {
-    background: #007bff;
-    border-radius: 5px;
-}
-
-.ui-slider .ui-slider-handle {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: #007bff;
-    border: 2px solid #fff;
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #333;
     cursor: pointer;
 }
 
-.ui-slider .ui-slider-handle:focus {
-    outline: none;
+/* Body Bộ Lọc */
+.filter-body {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
-.filter-options {
+.filter-section h4 {
+    margin-bottom: 10px;
+    font-size: 1rem;
+    color: #333;
+}
+
+.filter-section label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+    color: #555;
+    cursor: pointer;
+}
+
+.filter-section input {
+    margin-right: 5px;
+}
+
+/* Nút Áp Dụng */
+.apply-btn {
+    width: 100%;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
     margin-top: 20px;
 }
 
-.info-product {
+/* Overlay */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    z-index: 999;
 }
 
-.jus {
-    width: 95%;
-    transition: transform 0.3s ease;
+.overlay.active {
+    display: block;
 }
 
-.jus:hover {
-    transform: scale(1.02);
-}
-
-.custom-row {
-    row-gap: 20px;
-}
 
 /*/Hover ảnh/*/
 .product-item {
@@ -157,4 +144,15 @@
 .product-icons .cart-icon i,
 .product-icons .view-icon i {
     font-size: 18px;
+}
+.container-fluid .product-item img {
+    width: 100%; /* Đảm bảo ảnh chiếm hết chiều rộng */
+    height: auto; /* Tự động điều chỉnh chiều cao theo chiều rộng */
+    aspect-ratio: 1 / 1; /* Tạo tỷ lệ 1:1 để ảnh là hình vuông */
+    object-fit: cover; /* Cắt ảnh vừa khít hình vuông mà không méo */
+    border-radius: 5px; /* Tùy chọn: Bo góc ảnh nếu cần */
+}
+
+.container-fluid .col-3 {
+    padding: 15px; /* Khoảng cách giữa các sản phẩm */
 }

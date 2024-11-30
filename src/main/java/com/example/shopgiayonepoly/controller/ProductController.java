@@ -3,9 +3,12 @@ package com.example.shopgiayonepoly.controller;
 import com.cloudinary.Cloudinary;
 import com.example.shopgiayonepoly.baseMethod.BaseProduct;
 import com.example.shopgiayonepoly.entites.*;
+import com.example.shopgiayonepoly.service.CashierInventoryService;
+import com.example.shopgiayonepoly.service.TimekeepingService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -24,6 +27,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ProductController extends BaseProduct {
     private final Cloudinary cloudinary;
+
+    @Autowired
+    TimekeepingService timekeepingService;
+    @Autowired
+    CashierInventoryService cashierInventoryService;
 
     String message = "";
     String check = "";
@@ -89,6 +97,11 @@ public class ProductController extends BaseProduct {
             check = "3";
             message = "Nhân viên chưa đăng nhập";
             return ResponseEntity.ok("Nhân viên chưa đăng nhập");
+        }
+        if(staffLogin.getStatus() != 1) {
+            check = "3";
+            message = "Nhân viên đang bị ngừng hoạt động!";
+            return ResponseEntity.ok("Nhân viên đang bị ngừng hoạt động!");
         }
         // Khởi tạo danh sách chi tiết sản phẩm
         List<ProductDetail> productDetails = new ArrayList<>();
@@ -201,9 +214,15 @@ public class ProductController extends BaseProduct {
     }
 
     @PutMapping  ("/update-multiple/product-detail")
-    public ResponseEntity<?> updateMultipleProductDetails(@RequestBody List<ProductDetail> productDetails) {
-        try {
+    public ResponseEntity<String> updateMultipleProductDetails(@RequestBody List<ProductDetail> productDetails) {
             for (ProductDetail detail : productDetails) {
+                if (detail.getPrice().compareTo(BigDecimal.valueOf(1000)) < 0 ||
+                        detail.getImport_price().compareTo(BigDecimal.valueOf(1000)) < 0 ||
+                        detail.getQuantity() <= 0 || detail.getWeight() <= 0 || detail.getWeight() > 5000) {
+                    check = "3";
+                    message = "Lỗi khi thêm sản phẩm";
+                    return ResponseEntity.ok("Lỗi khi thêm sản phẩm");
+                }
                 // Tìm ProductDetail từ DB bằng ID
                 ProductDetail existingDetail = productDetailRepository.findById(detail.getId())
                         .orElseThrow(() -> new RuntimeException("ProductDetail không tồn tại với ID: " + detail.getId()));
@@ -217,12 +236,9 @@ public class ProductController extends BaseProduct {
                 // Lưu thay đổi vào DB
                 productDetailRepository.save(existingDetail);
             }
-
-            return ResponseEntity.ok("Cập nhật thành công");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Lỗi trong quá trình cập nhật: " + e.getMessage());
-        }
+            check = "1";
+            message = "Chỉnh sửa chi tiết sản phẩm thành công";
+            return ResponseEntity.ok("Chỉnh sửa thành công");
     }
 
 
@@ -390,5 +406,40 @@ public class ProductController extends BaseProduct {
     public Staff staff(HttpSession session) {
         Staff staff = (Staff) session.getAttribute("staffLogin");
         return staff;
+    }
+
+
+    protected Map<String,String> checkLoginAndLogOutByStaff(Integer idStaff) {
+        Map<String,String> thongBao = new HashMap<>();
+        String checkLogin = getCheckStaffAttendanceYetBill(idStaff,1);
+        String checkLogOut = getCheckStaffAttendanceYetBill(idStaff,2);
+        System.out.println(checkLogin);
+        if(!checkLogin.equals("Có")) {
+            thongBao.put("message","Mời bạn điểm danh trước khi làm việc!");
+            return thongBao;
+        }
+
+        if(checkLogin.equals("Có") && checkLogOut.equals("Có")) {
+            thongBao.put("message","Bạn đã điểm danh vào và ra rồi, không thể làm việc được nữa!");
+            return thongBao;
+        }
+        thongBao.put("message","");
+        return thongBao;
+    }
+
+
+    protected String getCheckStaffAttendanceYetBill(
+//            @PathVariable("id") Integer idStaff,@PathVariable("type") Integer timekeepingTypeCheck
+            Integer idStaff, Integer timekeepingTypeCheck
+    ) {
+        List<Object[]> checkLoginLogOut = this.timekeepingService.getCheckStaffAttendanceYet(idStaff, timekeepingTypeCheck);
+
+        // Kiểm tra nếu danh sách không rỗng và có kết quả
+        if (!checkLoginLogOut.isEmpty() && checkLoginLogOut.get(0).length > 0) {
+            // Lấy giá trị đầu tiên từ kết quả
+            return checkLoginLogOut.get(0)[0].toString();
+        }
+        // Trường hợp không có dữ liệu
+        return "Không";
     }
 }

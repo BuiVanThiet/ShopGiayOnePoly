@@ -84,7 +84,7 @@ function deleteByID(element) {
             status: 0  // Giả sử status 0 là trạng thái bị xóa
         }),
         success: function (response) {
-            $('#row-' + index).remove();  // Xóa hàng với id là row-index
+            fetchActiveCategories();
             createToast(response.check, response.message);
         },
         error: function (xhr, status, error) {
@@ -283,7 +283,7 @@ function restoreCategory(element) {
             status: 1
         }),
         success: function (response) {
-            $('#row-' + index).remove();
+            fetchDeletedCategorys();
             createToast(response.check, response.message)
         },
         error: function (xhr, status, error) {
