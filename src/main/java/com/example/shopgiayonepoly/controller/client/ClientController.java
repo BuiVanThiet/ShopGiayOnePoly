@@ -187,7 +187,7 @@ public class ClientController extends BaseBill {
                         productDetail.getProduct().getNameProduct(),
                         productDetail.getColor().getNameColor(),
                         productDetail.getSize().getNameSize(),
-                        cartItem.getQuantity(), // Số lượng sẽ được lấy từ CartItem
+                        cartItem.getQuantity(),
                         productDetail.getPrice(),
                         discountedPrice
                 );
@@ -226,7 +226,6 @@ public class ClientController extends BaseBill {
             }
         }
 
-        // Tính tổng giá trị giỏ hàng
         BigDecimal totalPriceCartItem = BigDecimal.ZERO;
         for (CartResponse item : cartResponses) {
             BigDecimal finalPrice = item.getDiscountedPrice();
@@ -234,7 +233,6 @@ public class ClientController extends BaseBill {
             totalPriceCartItem = totalPriceCartItem.add(itemTotalPrice);
         }
 
-        // Cập nhật session với tổng giá trị giỏ hàng và các sản phẩm trong giỏ hàng
         session.setAttribute("totalPrice", totalPriceCartItem);
         session.setAttribute("cartItems", cartResponses);
         model.addAttribute("clientLogin", clientLoginResponse);
@@ -244,7 +242,6 @@ public class ClientController extends BaseBill {
         List<Voucher> applicableVouchers = voucherService.findApplicableVouchers(totalPriceCartItem);
         model.addAttribute("applicableVouchers", applicableVouchers);
         System.out.println("List size voucher: " + applicableVouchers.size());
-        // Lấy voucher đã chọn từ session (nếu có)
         VoucherClientResponse selectedVoucher = (VoucherClientResponse) session.getAttribute("selectedVoucher");
         BigDecimal priceReduced = BigDecimal.ZERO;
 
@@ -261,11 +258,7 @@ public class ClientController extends BaseBill {
             } else if (voucherType == 2) {  // Giảm theo số tiền cố định
                 priceReduced = discountValue;
             }
-            // Cập nhật tổng giá trị giỏ hàng sau khi áp dụng giảm giá (voucher)
             BigDecimal finalPrice = totalPriceCartItem.subtract(priceReduced);
-
-// Lưu giá cuối cùng vào session
-//            session.setAttribute("finalPrice", finalPrice);
             model.addAttribute("finalPrice", finalPrice);
             session.setAttribute("priceReduced", priceReduced);
             model.addAttribute("priceReducedShow", priceReduced);
@@ -282,7 +275,6 @@ public class ClientController extends BaseBill {
 
     @GetMapping("/payment")
     public String getFormPayment(HttpSession session, Model model) {
-        // Lấy giỏ hàng từ session và ép kiểu thành List<CartResponse>
         List<CartResponse> cartItems = Optional.ofNullable((List<CartResponse>) session.getAttribute("cartItems")).orElseGet(ArrayList::new);
 
         Integer idVoucherApply = (Integer) session.getAttribute("idVoucherApply");
@@ -347,7 +339,6 @@ public class ClientController extends BaseBill {
                 String specificAddress = address.getSpecificAddress();
                 if (specificAddress != null) {
                     String[] parts = specificAddress.split(",");
-                    // Khai báo các thành phần địa chỉ
                     String shipProvince = "", shipDistrict = "", shipWard = "", detailedAddress = "";
                     String fullName = "", phoneNumber = "", mail = "";
                     if (parts.length >= 7) {
@@ -360,17 +351,14 @@ public class ClientController extends BaseBill {
                         shipWard = parts[5].trim();
                         detailedAddress = String.join(", ", Arrays.copyOfRange(parts, 6, parts.length)).trim();
                     } else {
-                        // Xử lý nếu không đủ định dạng
                         shipProvince = "UnknownProvince";
                         shipDistrict = "UnknownDistrict";
                         shipWard = "UnknownWard";
                         detailedAddress = specificAddress.trim();
                     }
-                    // Tạo chuỗi địa chỉ hoàn chỉnh
                     String nameAndPhoneNumber = fullName + ", " + phoneNumber.trim() + ", " + mail;
                     String formattedShipAddress = String.join(", ", shipProvince, shipDistrict, shipWard, detailedAddress).replaceAll(", $", "");
 
-                    // Đếm số dấu phẩy để kiểm tra
                     long commaCount = formattedShipAddress.chars().filter(ch -> ch == ',').count();
 
                     if (commaCount > 3) {
@@ -407,7 +395,6 @@ public class ClientController extends BaseBill {
             HttpSession session,
             @RequestBody PaymentBillRequest paymentRequest,
             HttpServletRequest request) {
-        // Lấy thông tin từ yêu cầu
         String address = paymentRequest.getAddressShip();
         BigDecimal shippingPrice = paymentRequest.getShippingPrice();
         BigDecimal totalAmountBill = paymentRequest.getTotalAmountBill();

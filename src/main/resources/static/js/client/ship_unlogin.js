@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const apiKey = '0fc88a8e-6633-11ef-8e53-0a00184fe694';
-    const shopId = '195165';
-    const fromDistrictId = 3440; // Mã huyện cố định của kho hàng
+    const apiKey = '4ad62142-6630-11ef-8e53-0a00184fe694';
+    const shopId = '194419';
+    const fromDistrictId = 3440;
     const weightText = document.getElementById("weightShip").value.trim();
     if (weightText === "") {
         alert("Không có thông tin về cân nặng.");
@@ -146,7 +146,6 @@ document.addEventListener("DOMContentLoaded", function () {
             .catch(error => console.error('Error:', error));
     }
 
-
     function getAvailableServices(toDistrictId, toWardCode) {
         if (!toDistrictId || !toWardCode) {
             console.error('Thiếu thông tin cần thiết để lấy dịch vụ');
@@ -214,7 +213,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // Tính tổng tiền
         const totalPriceBill = totalPriceCartItem - priceVoucher + shippingFee;
 
-        console.log("totalPriceBill: " + totalPriceBill); // In tổng tiền ra console
+        console.log("totalPriceBill: " + totalPriceBill);
 
         // Cập nhật giá trị tổng tiền vào phần tử hiển thị
         document.getElementById("spanTotalPriceBill").textContent = totalPriceBill.toFixed(2); // Định dạng thành 2 chữ số thập phân

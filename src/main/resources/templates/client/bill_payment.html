@@ -415,7 +415,7 @@
                                     </div>
                                 </div>
                                 <!-- Thông tin sản phẩm -->
-                                <div class="right flex-grow-1">
+                                <div class="flex-grow-1">
                                     <h5 class="mb-1 text-truncate" style="font-size: 1rem;"
                                         th:text="${item.productName}"></h5>
                                     <div class="item-price text-muted">
@@ -466,6 +466,7 @@
                                               name="spanTotalPriceBill"></span>
                                     </div>
                                 </div>
+                                <span class="text-danger" id="error-total-amount-bill"></span>
                             </div>
                         </div>
 
@@ -481,8 +482,8 @@
         </section>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/decimal.js/10.3.1/decimal.min.js"></script>
-        <script th:src="@{/ajax/client/bill.js}" type="text/javascript"></script>
-        <script th:src="@{/js/client/bill_payment.js}" type="text/javascript"></script>
+        <script th:src="@{/ajax/client/payment.js}" type="text/javascript"></script>
+        <script th:src="@{/js/client/ship_unlogin.js}" type="text/javascript"></script>
         <script th:src="@{/js/client/ship_login.js}" type="text/javascript"></script>
         <script th:src="@{/ajax/client/address_ship.js}" type="text/javascript"></script>
     </section>
