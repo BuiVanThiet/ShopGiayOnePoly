@@ -13,7 +13,7 @@
         <div class="cart-container" style="width: 100%; display: flex; gap: 20px; margin-top: 100px">
             <!-- Phần danh sách sản phẩm -->
             <div style="width: 55%; margin-left: 30px;">
-                <p>Hiện tại có 3 sản phẩm trong giỏ hàng</p>
+                <p>Hiện tại có <span id="cart-count" th:text="${cartItems.size()}"></span> sản phẩm trong giỏ hàng</p>
                 <hr style="width: 100%;">
                 <div th:each="item : ${cartItems}" class="cart-list cart-position-relative" id="cart-list"
                      style="margin-left: 30px;">
@@ -31,11 +31,12 @@
                                 <h3 th:text="${item.productName}"></h3>
                                 <div class="d-flex">
                                     <div class="cart-item-price" style="margin-right: 30px">
-                                        <span id="cart-spanPriceCartItem" th:text="${item.discountedPrice}"
+                                        <span id="cart-spanPriceCartItem" th:attr="data-price=${item.discountedPrice}"
                                               class="cart-price-item"></span>
                                     </div>
                                     <div class="cart-item-price-original">
-                                        <span id="cart-spanPriceCartItemOriginal" th:text="${item.originalPrice}"
+                                        <span id="cart-spanPriceCartItemOriginal"
+                                              th:attr="data-price=${item.originalPrice}"
                                               class="cart-price-item original-price"></span>
                                     </div>
                                 </div>
@@ -76,7 +77,6 @@
                             &times;
                         </button>
                     </div>
-                    <hr>
                 </div>
             </div>
 
@@ -100,21 +100,21 @@
                                 <img src="/img/client/category/voucher.png" alt=""
                                      style="width: 60px; height: 50px; object-fit: cover; border-radius: 5px;">
                                 <div>
-                                    <br>
-                                    <span class="voucher-id" th:text="${voucher.id}" style="display: none;"></span>
-                                    <br>
-                                    <span id="voucher-type" class="voucher-type" th:text="${voucher.discountType}"
-                                          style="display: none;"></span>
-                                    <br>
-                                    <span class="voucher-code" th:text="${voucher.codeVoucher}"></span>
+                                    <!--                                    <br>-->
+                                    <!--                                    <span class="voucher-id" th:text="${voucher.id}" style="display: none;"></span>-->
+                                    <!--                                    <br>-->
+                                    <!--                                    <span id="voucher-type" class="voucher-type" th:text="${voucher.discountType}"-->
+                                    <!--                                          ></span>-->
+<!--                                    <br>-->
+                                    <span class="voucher-code" th:text="'Mã voucher: '+${voucher.codeVoucher}"></span>
                                     <br>
                                     <span class="voucher-name-voucher"
-                                          th:text="${voucher.nameVoucher}">Voucher Name</span>
+                                          th:text="'Tên voucher: '+${voucher.nameVoucher}">Voucher Name</span>
                                     <br>
                                     <span id="price-reduced-voucher" class="voucher-discount-voucher"
-                                          th:text="${voucher.priceReduced}">Discount Value</span>
+                                          th:text="${voucher.discountType == 1 ? 'Giá trị giảm: ' + voucher.priceReduced + '%': 'Giá trị giảm: ' + voucher.priceReduced + 'đ' }">Discount Value</span>
                                     <br>
-                                    <span class="voucher-desc-voucher" th:text="${voucher.describe}">Description</span>
+                                    <span class="voucher-desc-voucher" th:text="'Ghi chú: ' + ${voucher.describe}">Description</span>
                                 </div>
                                 <input type="radio" class="cart-voucher-radio" name="radioVoucher">
                             </div>
@@ -148,19 +148,18 @@
                             <span class="cart-total-quantity">(tạm tính)</span><br>
                             <span style="font-size: 30px" id="cart-spanTotalPriceCart"
                                   class="cart-js-total-price cart-total-price" th:text="${finalPrice}">₫</span>
-
                         </span>
             </div>
             <div class="cart-actions__btn">
                 <button type="button" id="cart-continue-shopping" class="cart-btn-continue cart-u-btn">
-                    <a href="">
+                    <a href="/onepoly/products" style="text-decoration: none;">
                         <span>TIẾP TỤC MUA SẮM</span>
                     </a>
                 </button>
                 <button type="button" id="cart-checkout" class="cart-btn-checkout cart-u-btn cart-u-btn--primary"
                         name="checkout"
                         value="">
-                    <a href="/onepoly/payment"> THANH TOÁN</a>
+                    <a style="text-decoration: none;" href="/onepoly/payment"> THANH TOÁN</a>
                 </button>
             </div>
         </div>
