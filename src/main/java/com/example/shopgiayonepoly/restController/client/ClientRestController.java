@@ -90,16 +90,12 @@ public class ClientRestController extends BaseEmail {
     @ResponseBody
     public VoucherClientResponse VoucherResponseByID(@PathVariable("id") Integer idVoucher, HttpSession session) {
         VoucherClientResponse selectedVoucher = clientService.findVoucherApplyByID(idVoucher);
-
         if (selectedVoucher == null) {
             System.out.println("Voucher không tồn tại");
             return null;
         }
-
-        // Lưu voucher vào session
         session.setAttribute("selectedVoucher", selectedVoucher);
         System.out.println("Voucher đã chọn: " + selectedVoucher);
-
         return selectedVoucher;
     }
 
