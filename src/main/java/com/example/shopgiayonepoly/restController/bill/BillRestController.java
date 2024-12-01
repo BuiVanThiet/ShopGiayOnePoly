@@ -1165,6 +1165,13 @@ public class BillRestController extends BaseBill {
                             }
                         }
                     }
+
+                    if(bill.getTotalAmount().compareTo(new BigDecimal(20000000)) > 0) {
+                        thongBao.put("message","Số tiền sản phâ không được quá 20 triệu!!");
+                        thongBao.put("check","3");
+                        return ResponseEntity.ok(thongBao);
+                    }
+
                 }
                 String getAddRessDetail = bill.getAddRess();
                 String[] part = getAddRessDetail.split(",\\s*");

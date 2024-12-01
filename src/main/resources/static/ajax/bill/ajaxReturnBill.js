@@ -294,6 +294,9 @@ function ressetListReturnBill() {
         }
     })
 }
+var totalExchangeCheck = 0;
+var totalExchangeCheckDiscount = 0;
+var totalRefundCheck = 0;
 
 function loadInfomationReturnBill() {
     $('#span-exchangeAndReturnFee').remove();
@@ -322,6 +325,38 @@ function loadInfomationReturnBill() {
                 totalExchangeCustomer = response.totalExchange-(response.totalReturn-response.exchangeAndReturnFee+response.discountedAmount);
             }
             $('#total-exchange-customer').text(Math.trunc(totalExchangeCustomer).toLocaleString('en-US') + ' VNĐ')
+            totalExchangeCheck = totalExchangeCustomer;
+            totalExchangeCheckDiscount = response.totalExchange-(response.totalReturn-response.exchangeAndReturnFee);
+            totalRefundCheck = response.totalReturn;
+            validateSuccessReturnExchange();
+            // if(totalExchangeCheck > 20000000) {
+            //     document.getElementById('errorTotalAmount').style.display = 'block';
+            // }else {
+            //     document.getElementById('errorTotalAmount').style.display = 'none';
+            // }
+            // var noteReturn = document.getElementById('node-return');
+            //
+            // if(noteReturn.value.length >0) {
+            //     if(noteReturn.value.length > 500000) {
+            //         document.getElementById('errorReturn').innerText = 'Không được nhập quá 500 nghìn ký tự!';
+            //         document.getElementById('errorReturn').style.display = 'block';
+            //         document.getElementById('btnCreateReturnBill').style.display = 'none';
+            //     } else {
+            //         if(totalExchangeCheck > 20000000) {
+            //             document.getElementById('errorReturn').style.display = 'none';
+            //             document.getElementById('btnCreateReturnBill').style.display = 'none';
+            //         }else {
+            //             document.getElementById('errorReturn').style.display = 'none';
+            //             document.getElementById('btnCreateReturnBill').style.display = 'block';
+            //             console.log(this.value);
+            //         }
+            //     }
+            // }else {
+            //     document.getElementById('errorReturn').innerText = 'Mời nhập lí do!';
+            //     document.getElementById('errorReturn').style.display = 'block';
+            //     document.getElementById('btnCreateReturnBill').style.display = 'none';
+            // }
+
         },
         error: function (xhr) {
             console.error('loi ' + xhr.responseText);
@@ -403,6 +438,13 @@ function exchangeAndReturnFee(input) {
     if(value === '') {
         value = 0;
     }
+    validateSuccessReturnExchange();
+    // if(totalRefundCheck < value) {
+    //     value = 0;
+    //     document.getElementById('error-exchangeAndReturnFee').style.display = 'block';
+    // }else {
+    //     document.getElementById('error-exchangeAndReturnFee').style.display = 'none';
+    // }
     $.ajax({
         type: "GET",
         url: "/return-exchange-bill-api/exchangeAndReturnFee/"+value,
@@ -421,6 +463,15 @@ function discountedAmount(input) {
     if(value === '') {
         value = 0;
     }
+
+    // if(totalExchangeCheck < value) {
+    //     value = 0;
+    //     document.getElementById('error-discountedAmount').style.display = 'block';
+    // }else {
+    //     document.getElementById('error-discountedAmount').style.display = 'none';
+    // }
+    validateSuccessReturnExchange();
+
     $.ajax({
         type: "GET",
         url: "/return-exchange-bill-api/discountedAmount/"+value,
@@ -461,3 +512,83 @@ $(document).ready(function () {
 
     ressetListReturnBill();
 });
+
+
+//validate
+function validateSuccessReturnExchange() {
+    console.log('ddd')
+    var valueExchangeAndReturnFee = document.getElementById('valueExchangeAndReturnFee');
+    var valueDiscountedAmount = document.getElementById('valueDiscountedAmount');
+    var nodeReturn = document.getElementById('node-return');
+
+    var validateMoneyExchangeCheck = validateMoneyExchange(totalExchangeCheck);
+    var validateValueExchangeAndReturnFeeCheck = validateValueExchangeAndReturnFee(valueExchangeAndReturnFee.value);
+    var validateValueDiscountedAmountCheck = validateValueDiscountedAmount(valueDiscountedAmount.value);
+    var validateNodeReturnCheck = validateNodeReturn(nodeReturn);
+    if(validateMoneyExchangeCheck
+        && validateValueExchangeAndReturnFeeCheck
+        && validateValueDiscountedAmountCheck
+        && validateNodeReturnCheck
+    ) {
+        document.getElementById('btnCreateReturnBill').style.display = 'block';
+    }else {
+        document.getElementById('btnCreateReturnBill').style.display = 'none';
+    }
+}
+
+function validateMoneyExchange(totalExchangeCheck) {
+    if(totalExchangeCheck > 20000000) {
+        document.getElementById('errorTotalAmount').style.display = 'block';
+        return false;
+    }else {
+        document.getElementById('errorTotalAmount').style.display = 'none';
+        return true;
+    }
+}
+
+function validateValueExchangeAndReturnFee(valueExchangeAndReturnFee) {
+    let value = valueExchangeAndReturnFee.replace(/,/g, '').replace(/[^0-9]/g, '');
+
+    if(totalRefundCheck < value) {
+        document.getElementById('error-exchangeAndReturnFee').style.display = 'block';
+        return false;
+    }else {
+        document.getElementById('error-exchangeAndReturnFee').style.display = 'none';
+        return true;
+    }
+}
+
+function validateValueDiscountedAmount(valueDiscountedAmount) {
+    let value = valueDiscountedAmount.replace(/,/g, '').replace(/[^0-9]/g, '');
+    console.log(value)
+    console.log(totalExchangeCheckDiscount)
+    if(totalExchangeCheckDiscount <= 0) {
+        totalExchangeCheckDiscount = 0;
+    }
+    if(totalExchangeCheckDiscount < value) {
+        console.log('ko on')
+        document.getElementById('error-discountedAmount').style.display = 'block';
+        return false;
+    }else {
+        console.log('on')
+        document.getElementById('error-discountedAmount').style.display = 'none';
+        return true;
+    }
+}
+
+function validateNodeReturn(noteReturn) {
+    if(noteReturn.value.length > 0) {
+        if(noteReturn.value.length > 500000) {
+            document.getElementById('errorReturn').innerText = 'Không được nhập quá 500 nghìn ký tự!';
+            document.getElementById('errorReturn').style.display = 'block';
+            return false;
+        } else {
+            document.getElementById('errorReturn').style.display = 'none';
+            return true;
+        }
+    }else {
+        document.getElementById('errorReturn').innerText = 'Mời nhập lí do!';
+        document.getElementById('errorReturn').style.display = 'block';
+        return false;
+    }
+}

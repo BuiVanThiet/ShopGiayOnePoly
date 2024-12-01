@@ -344,6 +344,14 @@ function loadInformationBillByIdBill() {
                 $('#amount_payable').text(Math.trunc(response.totalPriceProduct+response.shipPrice-response.maximumReduction).toLocaleString('en-US') + ' VNĐ')
             }
 
+            if(response.totalPriceProduct > 20000000) {
+                $('#confirm-button').hide();
+                $('#btn-payment-confirm').hide();
+                document.getElementById('errorTotalAmount').style.display = 'block';
+            }else {
+                document.getElementById('errorTotalAmount').style.display = 'none';
+            }
+
             //phan nay de truyen du lieu con validate
 
             $('#cashBillPay').val((response.totalPriceProduct+response.shipPrice-response.maximumReduction))

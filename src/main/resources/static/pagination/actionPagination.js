@@ -122,5 +122,9 @@ function handlePageClick(pageNumber, elementId, totalPages) {
         getAllBillClientByStatus(pageNumber)
     }
 
+    if(elementId == 'transactionVNPayPageMax') {
+        loadAllTransactionVNPay(pageNumber);
+    }
+
     createPagination(elementId, totalPages, pageNumber); // Cập nhật phân trang
 }

@@ -434,6 +434,11 @@ public class BillController extends BaseBill {
         if (bill.getStatus() != 0) {
             return "redirect:/404";
         }
+        if(bill.getTotalAmount().compareTo(new BigDecimal(20000000)) > 0) {
+            this.mess = "Số tiền sản phẩm không được quá 20 triệu!";
+            this.colorMess = "3";
+            return "redirect:/staff/bill/bill-detail/"+bill.getId();
+        }
 
         if(customerShip.trim().equals("Không có")) {
             bill.setAddRess(customerShip.trim());

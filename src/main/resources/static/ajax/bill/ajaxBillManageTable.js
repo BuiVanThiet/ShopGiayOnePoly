@@ -55,6 +55,11 @@ function getAllBilByStatus(value) {
                             <li><button class="dropdown-item" onclick="createBillPDF(${bill.id});">Xuất hóa đơn</button></li>
                         `;
                     }
+                    if(bill.status == 6) {
+                        btnDrop = `
+                            <li><a href="/staff/bill/bill-status-index/${bill.id}" class="dropdown-item">Xem chi tiết</a></li>
+                        `;
+                    }
                     var nameCustomer = '';
                     var numberPhone = '';
                     if(bill.addRess === 'Không có') {

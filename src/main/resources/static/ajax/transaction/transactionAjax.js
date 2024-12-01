@@ -57,26 +57,27 @@ function loadBankVietNam() {
     });
 }
 
-function loadAllTransactionVNPay() {
+function loadAllTransactionVNPay(page) {
     $.ajax({
         type: "GET",
-        url: "/transactionVNPay-api/list",
+        url: "/transactionVNPay-api/list/"+page,
         // url: "/bill-api/filter-size",
         success: function (response) {
             var tableTransactionVNPay = $('#tableTransactionVNPay');
             var nodataTransactionVNPay = $('#nodataTransactionVNPay');
             var transactionVNPayPageMax = $('#transactionVNPayPageMax');
             var allTransaction = $('#allTransaction');
-            var moneyTransaction = $('#moneyTransaction');
+            // var moneyTransaction = $('#moneyTransaction');
             tableTransactionVNPay.empty();
+            sumTotal()
             if(response.length === 0) {
                 nodataTransactionVNPay.html(`
                         <img src="https://res.cloudinary.com/dfy4umpja/image/upload/v1725477250/jw3etgwdqqxtkevcxisq.png"
                              alt="Lỗi ảnh" style="width: auto; height: 100px;">
                              <p class="text-center">Không có hóa đơn thanh toán nào!</p>
                     `);
-                allTransaction.text('0')
-                moneyTransaction.text('0 VNĐ')
+                // allTransaction.text('0')
+                // moneyTransaction.text('0 VNĐ')
                 tableTransactionVNPay.closest('table').hide();
                 nodataTransactionVNPay.show();
                 transactionVNPayPageMax.hide();
@@ -84,10 +85,10 @@ function loadAllTransactionVNPay() {
                 tableTransactionVNPay.closest('table').show();
                 nodataTransactionVNPay.hide();
                 transactionVNPayPageMax.show();
-                allTransaction.text(response.length); // Gán số phần tử tối đa vào allTransaction
-                moneyTransaction.text('0 VNĐ')
+                // allTransaction.text(response.length); // Gán số phần tử tối đa vào allTransaction
+                // moneyTransaction.text('0 VNĐ')
                 let totalMoney = response.reduce((sum, transaction) => sum + Math.trunc(transaction[8]), 0);
-                moneyTransaction.text(totalMoney.toLocaleString('en-US') + ' VNĐ')
+                // moneyTransaction.text(totalMoney.toLocaleString('en-US') + ' VNĐ')
                 response.forEach(function (transaction,index) {
                     var dateCreate = formatDate(transaction[6]);
                     tableTransactionVNPay.append(`
@@ -113,6 +114,23 @@ function loadAllTransactionVNPay() {
         },
         error: function (xhr) {
             console.log('Lỗi: ' + xhr.responseText);
+        }
+    });
+}
+
+function sumTotal() {
+    $.ajax({
+        type: 'GET',
+        url: '/transactionVNPay-api/sum-total',  // Endpoint xử lý
+        success: function (response) {
+            var moneyTransaction = $('#moneyTransaction');
+            moneyTransaction.text(Math.trunc(response.total).toLocaleString('en-US') + ' VNĐ');
+            var allTransaction = $('#allTransaction');
+            allTransaction.text(Math.trunc(response.quantity).toLocaleString('en-US'));
+
+        },
+        error: function (xhr) {
+            console.log('Lỗi filter: ' + xhr.responseText);
         }
     });
 }
@@ -145,7 +163,7 @@ function filterTransactionVNPay() {
             notePay: $('#notePayFilter').val().trim()
         }),
         success: function (response) {
-            loadAllTransactionVNPay();
+            loadAllTransactionVNPay(1);
             maxPageTransaction();
             console.log('Dữ liệu truyền về là:', response);
         },
@@ -161,7 +179,7 @@ function resetFilterTransactionVNPay() {
         url: '/transactionVNPay-api/reset-search-transaction',  // Endpoint xử lý
         success: function (response) {
             loadBankVietNam();
-            loadAllTransactionVNPay();
+            loadAllTransactionVNPay(1);
             maxPageTransaction();
         },
         error: function (xhr) {

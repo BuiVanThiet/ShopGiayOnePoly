@@ -159,9 +159,14 @@
                                 <div id="input-exchangeAndReturnFee" class="input-group input-group-sm" style="width: 50%;">
                                     <input type="text"
                                            class="form-control"
-                                           oninput="exchangeAndReturnFee(this)">
+                                           oninput="exchangeAndReturnFee(this)"
+                                            id="valueExchangeAndReturnFee">
                                     <span class="input-group-text">VNĐ</span>
                                 </div>
+                            </div>
+                            <div class="text-end mb-3" id="error-exchangeAndReturnFee" style="display: none">
+                                <span class="text-danger">*Phí dịch vụ tạo phiếu quá lớn!</span>
+
                             </div>
                             <div  id="form-input-money-discount">
                                 <div class="d-flex justify-content-between" >
@@ -170,9 +175,13 @@
                                     <div id="input-discountedAmount" class="input-group input-group-sm" style="width: 50%;">
                                         <input type="text"
                                                class="form-control"
-                                               oninput="discountedAmount(this)">
+                                               oninput="discountedAmount(this)"
+                                                id="valueDiscountedAmount">
                                         <span class="input-group-text">VNĐ</span>
                                     </div>
+                                </div>
+                                <div class="text-end mb-3" id="error-discountedAmount" style="display: none">
+                                    <span class="text-danger">*Phí giảm thêm quá lớn!</span>
                                 </div>
                             </div>
                         </div>
@@ -189,6 +198,9 @@
                             <div class="d-flex justify-content-between">
                                 <span>Tổng tiền thu khách hàng: </span>
                                 <span id="total-exchange-customer">0 VNĐ</span>
+                            </div>
+                            <div class="text-end mb-3" id="errorTotalAmount" style="display: none">
+                                <span class="text-danger mb-3" >*Mỗi hóa đơn không quá 20 triệu!</span>
                             </div>
                         </div>
                     </div>
@@ -232,23 +244,29 @@
                     <script>
                         var noteReturn = document.getElementById('node-return');
                         noteReturn.addEventListener('input', function () {
-                            if(noteReturn.value.length >0) {
-                                if(noteReturn.value.length > 500000) {
-                                    document.getElementById('errorReturn').innerText = 'Không được nhập quá 500 nghìn ký tự!';
-                                    document.getElementById('errorReturn').style.display = 'block';
-                                    document.getElementById('btnCreateReturnBill').style.display = 'none';
-                                } else {
-                                    document.getElementById('errorReturn').style.display = 'none';
-                                    document.getElementById('btnCreateReturnBill').style.display = 'block';
-                                    console.log(this.value);
-                                }
-                            }else {
-                                document.getElementById('errorReturn').innerText = 'Mời nhập lí do!';
-                                document.getElementById('errorReturn').style.display = 'block';
-                                document.getElementById('btnCreateReturnBill').style.display = 'none';
-                            }
-                        });
+                            validateSuccessReturnExchange()
 
+                            // if(noteReturn.value.length >0) {
+                            //     if(noteReturn.value.length > 500000) {
+                            //         document.getElementById('errorReturn').innerText = 'Không được nhập quá 500 nghìn ký tự!';
+                            //         document.getElementById('errorReturn').style.display = 'block';
+                            //         document.getElementById('btnCreateReturnBill').style.display = 'none';
+                            //     } else {
+                            //         if(totalExchangeCheck > 20000000) {
+                            //             document.getElementById('errorReturn').style.display = 'none';
+                            //             document.getElementById('btnCreateReturnBill').style.display = 'none';
+                            //         }else {
+                            //             document.getElementById('errorReturn').style.display = 'none';
+                            //             document.getElementById('btnCreateReturnBill').style.display = 'block';
+                            //             console.log(this.value);
+                            //         }
+                            //     }
+                            // }else {
+                            //     document.getElementById('errorReturn').innerText = 'Mời nhập lí do!';
+                            //     document.getElementById('errorReturn').style.display = 'block';
+                            //     document.getElementById('btnCreateReturnBill').style.display = 'none';
+                            // }
+                        });
                         function setActiveReturnAndExchangeBill(element) {
                             // Xóa lớp active khỏi tất cả các liên kết
                             var links = document.querySelectorAll('.nav-link-custom');
