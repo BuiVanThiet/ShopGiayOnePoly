@@ -36,8 +36,8 @@
         <input type="text" class="search-input-productDetail" placeholder="Tìm kiếm">
       </div>
       <div class="update-productDetail">
-        <button id="btn-save-productDetail" class="btn-save-productDetail" style="display: none" onclick="updateSelectedProductDetails()">Lưu lại</button>
-        <button id="btn-saveQR-productDetail" class="btn-saveQR-productDetail" style="display: none" onclick="downloadAllQRCode()">Lưu QR</button>
+        <button id="btn-save-productDetail" class="btn-save-productDetail" style="display: none" data-bs-toggle="modal" data-bs-target="#confirm-update-productDetail-modal" >Lưu lại</button>
+        <button id="btn-saveQR-productDetail" class="btn-saveQR-productDetail" style="display: none" data-bs-toggle="modal" data-bs-target="#confirm-saveQR-modal" >Lưu QR</button>
         <button id="btn-cancel-productDetail" class="btn-cancel-productDetail" style="display: none" onclick="cancelButton()">Hủy bỏ</button>
       </div>
       <table class="table-productDetail">
@@ -65,7 +65,50 @@
       <div id="pagination-controls" class="pageable-productDetail">
         <ul id="pagination-productDetail" class="pagination-productDetail"></ul>
       </div>
-
+      <div class="modal fade" id="confirm-update-productDetail-modal" tabindex="-1"
+           aria-labelledby="confirmUpdateProductDetailModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="confirmUpdateProductDetailModalLabel">
+                Xác nhận chỉnh sửa chi tiết sản phẩm
+              </h1>
+            </div>
+            <div class="modal-body">
+              Chắc chắn muốn chỉnh sửa các hàng đã chọn ?
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+              <button onclick="updateSelectedProductDetails()" type="submit" class="btn btn-success"
+                      data-bs-dismiss="modal"
+                      aria-label="Close">Đồng ý
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal fade" id="confirm-saveQR-modal" tabindex="-1"
+           aria-labelledby="confirmSaveQRModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="confirmSaveQRModalLabel">
+                Xác nhận lưu QR chi tiết sản phẩm
+              </h1>
+            </div>
+            <div class="modal-body">
+              Chắc chắn muốn lưu QR các chi tiết sản phẩm đã chọn ?
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+              <button onclick="downloadAllQRCode()" type="submit" class="btn btn-success"
+                      data-bs-dismiss="modal"
+                      aria-label="Close">Đồng ý
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
       <a class="add-button-productDetail" style="text-decoration: none;" th:href="@{/staff/product/create/product-detail/{idProduct}(idProduct=${productDetailList.get(0).product.id})}" ><i
               class="fas fa-plus"></i> Thêm chi tiết </a>
       <script th:src="@{/js/product/productDetail.js}" type="text/javascript"></script>

@@ -446,6 +446,10 @@ async function updateSelectedProductDetails() {
     if (response.ok) {
         const result = await response.json();
         createToast(result.check, result.message);
+        fetchProductDetails('', idProduct);
+        document.getElementById('btn-save-productDetail').style.display = "none";
+        document.getElementById('btn-saveQR-productDetail').style.display = "none";
+        document.getElementById('btn-cancel-productDetail').style.display = "none";
     }
 
 }

@@ -344,11 +344,11 @@ public class VoucherController extends BaseVoucherProduct{
         return "redirect:/voucher/list";
     }
 
-    @Scheduled(cron = "0 0 0 * * ?", zone = "Asia/Ho_Chi_Minh")
-    public void updateExpiredVouchersStatus() {
-        System.out.println("Running scheduled task to update voucher status");
-        voucherService.updateVoucherStatusForExpired();
-    }
+//    @Scheduled(cron = "0 0 0 * * ?", zone = "Asia/Ho_Chi_Minh")
+//    public void updateExpiredVouchersStatus() {
+//        System.out.println("Running scheduled task to update voucher status");
+//        voucherService.updateVoucherStatusForExpired();
+//    }
 
     @ModelAttribute("staffInfo")
     public Staff staff(HttpSession session) {

@@ -52,5 +52,6 @@ public interface SaleProductService {
     List<Object[]> getAllProduct(ProductDetailCheckMark2Request productDetailCheckRequest);
 
     void updateSaleProductExpired(Integer id);
+    public void updateSaleProductStatusForExpiredAuto();
 }
 
