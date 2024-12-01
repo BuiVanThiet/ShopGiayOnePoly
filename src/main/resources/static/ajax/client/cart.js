@@ -111,15 +111,23 @@ function toggleVoucherList() {
 
 // Hàm xóa sản phẩm khỏi giỏ hàng
 function removeProductDetailFromCart(btn) {
-    const cartItem = btn.closest(".cart-item");
+    const cartItem = btn.closest(".cart-list");
     const productId = btn.getAttribute('field');
     console.log("Sản phẩm có id:", productId);
+
     $.ajax({
         url: '/api-client/remove-from-cart/' + productId,
         type: 'POST',
         success: function (response) {
             console.log(response);
+
+            // Xóa sản phẩm khỏi giao diện
             cartItem.remove();
+
+            // Cập nhật số lượng trong thẻ <p>
+            const cartCountElement = document.querySelector("#cart-count");
+            let currentCount = parseInt(cartCountElement.textContent, 10);
+            cartCountElement.textContent = currentCount - 1;
         },
         error: function (xhr, status, error) {
             alert('Có lỗi khi gửi yêu cầu');
@@ -266,3 +274,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     calculateTotalPrice();
 });
+document.querySelectorAll('.cart-price-item').forEach(el => {
+    const price = parseFloat(el.getAttribute('data-price'));
+    el.textContent = Math.floor(price).toLocaleString('vi-VN'); // Format loại bỏ phần thập phân
+});
+document.querySelectorAll('.original-price').forEach(el => {
+    const price = parseFloat(el.getAttribute('data-price'));
+    el.textContent = Math.floor(price).toLocaleString('vi-VN'); // Format loại bỏ phần thập phân
+});
+
+

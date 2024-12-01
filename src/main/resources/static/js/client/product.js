@@ -95,3 +95,7 @@ async function searchProduct() {
 }
 
 
+document.querySelectorAll('.price-min').forEach(el => {
+    const price = parseFloat(el.getAttribute('data-price'));
+    el.textContent = Math.floor(price).toLocaleString('vi-VN'); // Format loại bỏ phần thập phân
+});

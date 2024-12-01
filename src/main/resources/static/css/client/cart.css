@@ -8,7 +8,9 @@
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     position: relative;
 }
-
+.voucher-summary{
+    margin-left: 4.5%;
+}
 .cart-left img {
     width: 120px;
     border-radius: 8px;
