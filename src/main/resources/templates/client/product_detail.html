@@ -223,32 +223,46 @@
                                         </button>
                                     </div>
                                     <div class="modal-body">
-                                        <div class="d-flex">
-                                            <!-- Ảnh sản phẩm -->
-                                            <div class="item-img">
-                                                <img id="success-product-image" src="" alt="product image"
-                                                     style="width:100px;height:100px;">
+                                        <div class="row">
+                                            <div class="col-sm-8">
+                                                <div class="d-flex">
+                                                    <!-- Ảnh sản phẩm -->
+                                                    <div class="item-img">
+                                                        <img id="success-product-image" src="" alt="product image"
+                                                             style="width:130px;height:130px;">
+                                                    </div>
+                                                    <!-- Thông tin sản phẩm -->
+                                                    <div class="ms-3">
+                                                        <h5 id="success-product-name" class="mb-1">Tên sản phẩm</h5>
+                                                        <div class="text-muted" style="font-size: 18px;">
+                                                            <span style="color: red" id="success-price-modal">₫</span>
+                                                        </div>
+                                                        <div class="variant-option">
+                                                            <span>Màu sắc: </span><span
+                                                                id="success-color-modal">Color</span>
+                                                        </div>
+                                                        <div class="variant-option">
+                                                            <span>Kích thước: </span><span
+                                                                id="success-size-modal">Size</span>
+                                                        </div>
+                                                        <div class="item-quan">
+                                                            <span>Số lượng: </span><span
+                                                                id="success-quantity-modal"></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <!-- Thông tin sản phẩm -->
-                                            <div class="ms-3">
-                                                <h5 id="success-product-name" class="mb-1">Tên sản phẩm</h5>
-                                                <div class="text-muted" style="font-size: 18px;">
-                                                    <span style="color: red" id="success-price-modal">₫</span>
-                                                </div>
-                                                <div class="variant-option">
-                                                    <span>Màu sắc: </span><span id="success-color-modal">Color</span>
-                                                </div>
-                                                <div class="variant-option">
-                                                    <span>Kích thước: </span><span id="success-size-modal">Size</span>
-                                                </div>
-                                                <div class="item-quan">
-                                                    <span>Số lượng: </span><span id="success-quantity-modal"></span>
-                                                </div>
+                                            <div class="col-4">
+                                                <a href="/onepoly/cart" class="btn btn-primary mb-3" style="width: 100%;height: 43px; border-radius: 1px">Đi
+                                                    đến giỏ hàng</a>
+                                                <button class="btn btn-secondary" data-bs-dismiss="modal"
+                                                        style="width: 100%;height: 40px; border-radius: 1px">Tiếp tục mua
+                                                    sắm
+                                                </button>
                                             </div>
                                         </div>
-                                        <a href="/onepoly/cart" class="btn btn-primary">Đi đến giỏ hàng</a>
-                                        <button class="btn btn-secondary" data-bs-dismiss="modal">Tiếp tục mua sắm
-                                        </button>
+
+
                                     </div>
                                     <div class="modal-footer">
 
@@ -449,19 +463,23 @@
                                     <div class="row" style="margin-top: 30px">
                                         <p>
                                             <i class="fas fa-box" style="color: #007bff; margin-right: 8px;"></i>
-                                            Nguyên liệu: <span id="material-name" th:text="${productDetail[0].materialName}">Material Name</span>
+                                            Nguyên liệu: <span id="material-name"
+                                                               th:text="${productDetail[0].materialName}">Material Name</span>
                                         </p>
                                         <p>
                                             <i class="fas fa-industry" style="color: #28a745; margin-right: 8px;"></i>
-                                            Nhà sản xuất: <span id="manufacturer-name" th:text="${productDetail[0].manufacturerName}">Manufacturer Name</span>
+                                            Nhà sản xuất: <span id="manufacturer-name"
+                                                                th:text="${productDetail[0].manufacturerName}">Manufacturer Name</span>
                                         </p>
                                         <p>
                                             <i class="fas fa-globe" style="color: #ffc107; margin-right: 8px;"></i>
                                             Xuất xứ: <span id="origin-name" th:text="${productDetail[0].originName}">Origin Name</span>
                                         </p>
                                         <p>
-                                            <i class="fas fa-info-circle" style="color: #17a2b8; margin-right: 8px;"></i>
-                                            Mô tả sản phẩm: <span id="description-product" th:text="${productDetail[0].productDetailDescription}">Product Detail Description</span>
+                                            <i class="fas fa-info-circle"
+                                               style="color: #17a2b8; margin-right: 8px;"></i>
+                                            Mô tả sản phẩm: <span id="description-product"
+                                                                  th:text="${productDetail[0].productDetailDescription}">Product Detail Description</span>
                                         </p>
                                     </div>
                                 </div>
@@ -478,7 +496,8 @@
                                     <div class="row">
                                         <div class="col-12">
                                             <a href="/onepoly/policy-exchange-return-bill" class="btn-return-policy">
-                                                <i class="bi bi-book" style="margin-right: 19px"></i> Xem chính sách đổi trả
+                                                <i class="bi bi-book" style="margin-right: 19px"></i> Xem chính sách đổi
+                                                trả
                                             </a>
                                         </div>
                                     </div>
