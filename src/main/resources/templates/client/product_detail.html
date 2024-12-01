@@ -124,7 +124,7 @@
                             <label style="color: #f30909">Số lượng hiện tại: </label>
                             <p id="quantity-display" style="color: #f10c0c" th:text="0"></p>
                         </div>
-                        <h1 id="manufacturerName" th:text="${productDetail[0].manufacturerName}"></h1>
+                        <!--                        <h1 id="manufacturerName" th:text="${productDetail[0].manufacturerName}"></h1>-->
                         <div class="box-show-sale">
                             <ul class="list-show-sale">
                                 <li>Black Friday - Giảm 50% sản phẩm nguyên giá</li>
@@ -441,17 +441,28 @@
                         <div class="mt-3">
                             <hr>
                             <div class="form-group">
-                                <label id="describeProductDetailLabel">Mô tả chi tiết sản phẩm</label>
-                                <div id="describeProductDetailFilter" class="filter-options">
-                                    <div class="row">
-                                        <p>Pillow Walk
-
-                                            Công nghệ đệm lót độc quyền tại OnePoly được tích hợp lớp mút hoạt tính mềm
-                                            mại,
-                                            mềm êm như gối giúp giảm lực tác động lên đôi chân, giữ thăng bằng và mang
-                                            lại
-                                            cảm giác thoải mái, không đau mỏi khi đi giày cao gót trong thời gian
-                                            dài.</p>
+                                <label id="describeProductDetailLabel" class="toggle-content">
+                                    Mô tả chi tiết sản phẩm
+                                    <i class="fas fa-chevron-down toggle-icon"></i>
+                                </label>
+                                <div id="describeProductDetailFilter" class="filter-options content-hidden">
+                                    <div class="row" style="margin-top: 30px">
+                                        <p>
+                                            <i class="fas fa-box" style="color: #007bff; margin-right: 8px;"></i>
+                                            Nguyên liệu: <span id="material-name" th:text="${productDetail[0].materialName}">Material Name</span>
+                                        </p>
+                                        <p>
+                                            <i class="fas fa-industry" style="color: #28a745; margin-right: 8px;"></i>
+                                            Nhà sản xuất: <span id="manufacturer-name" th:text="${productDetail[0].manufacturerName}">Manufacturer Name</span>
+                                        </p>
+                                        <p>
+                                            <i class="fas fa-globe" style="color: #ffc107; margin-right: 8px;"></i>
+                                            Xuất xứ: <span id="origin-name" th:text="${productDetail[0].originName}">Origin Name</span>
+                                        </p>
+                                        <p>
+                                            <i class="fas fa-info-circle" style="color: #17a2b8; margin-right: 8px;"></i>
+                                            Mô tả sản phẩm: <span id="description-product" th:text="${productDetail[0].productDetailDescription}">Product Detail Description</span>
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -459,24 +470,17 @@
                         <hr>
                         <div class="mt-3">
                             <div class="form-group">
-                                <label id="returnPolicyLabel">Chính sách đổi trả</label>
-                                <div id="returnPolicyFilter" class="filter-options">
+                                <label id="returnPolicyLabel" class="toggle-content">
+                                    Chính sách đổi trả
+                                    <i class="fas fa-chevron-down toggle-icon"></i>
+                                </label>
+                                <div id="returnPolicyFilter" class="filter-options content-hidden">
                                     <div class="row">
-                                        <p>Văn học (Tiếng Anh: literature) theo cách nói chung nhất, là bất kỳ tác phẩm
-                                            nào
-                                            bằng văn bản. Hiểu theo nghĩa hẹp hơn, thì văn học là dạng văn bản được coi
-                                            là
-                                            một hình thức nghệ thuật, hoặc bất kỳ một bài viết nào được coi là có giá
-                                            trị
-                                            nghệ thuật hoặc trí tuệ, thường là do cách thức triển khai ngôn ngữ theo
-                                            những
-                                            cách khác với cách sử dụng bình thường. Trong các định nghĩa hiện đại hơn,
-                                            văn
-                                            học bao hàm cả các văn bản được nói ra hoặc được hát lên (văn học truyền
-                                            miệng).
-                                            Sự phát triển trong công nghệ in ấn đã cho phép phân phối và phát triển các
-                                            tác
-                                            phẩm chữ viết, và tạo ra loại văn học điện tử.</p>
+                                        <div class="col-12">
+                                            <a href="/onepoly/policy-exchange-return-bill" class="btn-return-policy">
+                                                <i class="bi bi-book" style="margin-right: 19px"></i> Xem chính sách đổi trả
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

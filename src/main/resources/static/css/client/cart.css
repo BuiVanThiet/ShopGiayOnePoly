@@ -79,12 +79,6 @@
     color: #e74c3c;
 }
 
-hr {
-    border: 0;
-    border-top: 1px solid #eee;
-    margin-top: 10px;
-}
-
 .cart-item {
     position: relative; /* Đảm bảo phần tử cha có vị trí tương đối */
     display: flex;
