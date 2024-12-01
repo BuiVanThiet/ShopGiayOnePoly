@@ -587,43 +587,44 @@ public class ClientRestController extends BaseEmail {
     protected String keyBillmanage = "";
     protected Date keyStartDate;
     protected Date keyEndDate;
+
     @GetMapping("/list-bill-client/{page}")
     public List<BillResponseManage> getAllBillDistStatus0(@PathVariable("page") String page, HttpSession session) {
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
-        Pageable pageable = PageRequest.of(Integer.parseInt(page)-1,5);
-        if(searchBillByStatusRequest == null) {
+        Pageable pageable = PageRequest.of(Integer.parseInt(page) - 1, 5);
+        if (searchBillByStatusRequest == null) {
             searchBillByStatusRequest = new SearchBillByStatusRequest(null);
         }
         System.out.println(searchBillByStatusRequest.getStatusSearch());
-        return this.clientService.getAllBillByStatusDiss0(clientLoginResponse.getId(),keyBillmanage,searchBillByStatusRequest,keyStartDate,keyEndDate,pageable).getContent();
+        return this.clientService.getAllBillByStatusDiss0(clientLoginResponse.getId(), keyBillmanage, searchBillByStatusRequest, keyStartDate, keyEndDate, pageable).getContent();
     }
 
     @GetMapping("/list-bill-max-page")
     public Integer getMaxPageBillManage(HttpSession session) {
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
-        if(searchBillByStatusRequest == null) {
+        if (searchBillByStatusRequest == null) {
             searchBillByStatusRequest = new SearchBillByStatusRequest();
         }
 
-        Integer page = (int) Math.ceil((double) this.clientService.getAllBillByStatusDiss0(clientLoginResponse.getId(),keyBillmanage,searchBillByStatusRequest,keyStartDate,keyEndDate).size() / 5);
+        Integer page = (int) Math.ceil((double) this.clientService.getAllBillByStatusDiss0(clientLoginResponse.getId(), keyBillmanage, searchBillByStatusRequest, keyStartDate, keyEndDate).size() / 5);
         System.out.println("so trang toi da cua quan ly hoa don " + page);
         return page;
     }
 
     @PostMapping("/status-bill-client")
-    public ResponseEntity<?> getClickStatusBill(@RequestBody SearchBillByStatusRequest status,HttpSession session) {
+    public ResponseEntity<?> getClickStatusBill(@RequestBody SearchBillByStatusRequest status, HttpSession session) {
         System.out.println(status.toString());
         this.searchBillByStatusRequest = status;
         return ResponseEntity.ok("done");
     }
 
     @PostMapping("/bill-client-search")
-    public ResponseEntity<?> getSearchBillManage(@RequestBody Map<String, String> billSearch,HttpSession session) {
+    public ResponseEntity<?> getSearchBillManage(@RequestBody Map<String, String> billSearch, HttpSession session) {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
-        if(staffLogin == null) {
+        if (staffLogin == null) {
             return null;
         }
-        if(staffLogin.getStatus() != 1) {
+        if (staffLogin.getStatus() != 1) {
             return null;
         }
         String keyword = billSearch.get("keywordBill");
@@ -632,8 +633,8 @@ public class ClientRestController extends BaseEmail {
         String endDateStr = billSearch.get("endDate");
 
         System.out.println("du lieu loc vc " + keyword);
-        System.out.println("starDate-bill-manage: "+billSearch.get("startDate"));
-        System.out.println("endDate-bill-manage: "+billSearch.get("endDate"));
+        System.out.println("starDate-bill-manage: " + billSearch.get("startDate"));
+        System.out.println("endDate-bill-manage: " + billSearch.get("endDate"));
         try {
             // Định dạng để parse chuỗi thành đối tượng Date
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");

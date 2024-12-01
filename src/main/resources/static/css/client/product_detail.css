@@ -335,3 +335,52 @@
     font-size: 15px; /* Kích thước chữ rất nhỏ */
     text-decoration: underline; /* Gạch chân */
 }
+/*Mô tả  và chín    h sách*/
+/* Ẩn nội dung */
+.content-hidden {
+    display: none;
+}
+
+.toggle-content {
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Hiệu ứng khi hiện/ẩn */
+.toggle-icon {
+    transition: transform 0.3s ease;
+}
+
+.toggle-icon.rotate {
+    transform: rotate(180deg);
+}
+
+/**/
+/* CSS cho nút "Đổi trả" */
+/* CSS cho nút "Đổi trả" */
+.btn-return-policy {
+    margin-top: 10px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%; /* Chiếm toàn bộ chiều rộng */
+    padding: 10px 20px; /* Padding nhỏ gọn */
+    /*font-size: 1.1rem; !* Kích thước chữ vừa phải *!*/
+    border-radius: 2px; /* Bo góc nhẹ */
+    background-color: #b2b2b2; /* Màu nền xám nhẹ */
+    color: #ffffff; /* Màu chữ xám đậm */
+    text-decoration: none; /* Xóa gạch chân */
+    border: 1px solid #a9a9a9; /* Viền xám nhạt */
+    transition: all 0.3s ease; /* Hiệu ứng hover */
+}
+
+/* Hiệu ứng hover */
+.btn-return-policy:hover {
+    background-color: #8a8989; /* Màu nền xám đậm hơn khi hover */
+    color: #fffdfd; /* Màu chữ xám đậm hơn khi hover */
+    border-color: #808080; /* Màu viền xám đậm khi hover */
+}
+
+

@@ -96,7 +96,6 @@ function getProductDetail(productId, colorId, sizeId) {
                 $('#price-apply-discount').text(data.priceDiscount.toLocaleString('en-US') + " ₫");
                 $('#price-modal').text(data.priceDiscount.toLocaleString('en-US') + " ₫");
                 $('#price-modal-pay-now').text(data.priceDiscount.toLocaleString('en-US') + " ₫");
-
                 $('#productDetailID-hidden').val(data.productDetailId);
                 $('#product-name-pay-now').text(data.productName);
                 $('#product-name').text(data.productName);
@@ -104,6 +103,11 @@ function getProductDetail(productId, colorId, sizeId) {
                 $('#color-modal-pay-now').text(data.colorName);
                 $('#size-modal').text(data.sizeName);
                 $('#size-modal-pay-now').text(data.sizeName);
+
+                $('#material-name').text(data.materialName);
+                $('#manufacturer-name').text(data.manufacturerName);
+                $('#origin-name').text(data.originName);
+                $('#description-product').text(data.productDetailDescription);
 
                 if (data.price === data.priceDiscount) {
                     $('#price-display').hide();
