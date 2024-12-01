@@ -450,6 +450,8 @@ function initializeLocationDropdowns(provinceSelectId, districtSelectId, wardSel
 
 function totalShip(province, district, ward) {
     console.log("district check " + district);
+    let retryCounter = 0; // Bộ đếm số lần thử
+
     $.ajax({
         type: "GET",
         url: "https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/available-services",
@@ -469,6 +471,12 @@ function totalShip(province, district, ward) {
                 let serviceId = service.service_id; // Lưu service_id
 
                 function calculateFee(serviceId) {
+                    // Kiểm tra số lần thử
+                    if (retryCounter >= 100) {
+                        console.log("Đã vượt quá số lần thử. Dừng việc gọi lại API.");
+                        return;
+                    }
+
                     $.ajax({
                         type: "GET",
                         url: "https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/fee",
@@ -491,30 +499,28 @@ function totalShip(province, district, ward) {
                         success: function (response) {
                             console.log(response.data);
                             $('#shipMoney').text(response.data.total.toLocaleString('en-US') + ' VNĐ');
-                            $('#moneyTransport').val(response.data.total)
-                            $('#moneyShipUpdate').val(response.data.total)
+                            $('#moneyTransport').val(response.data.total);
+                            $('#moneyShipUpdate').val(response.data.total);
                             shipPrice = response.data.total;
-                            // if(btnCreateBill != null) {
-                            //     btnCreateBill.disabled = false;
-                            // }
-                            console.log('can nang cua san pham la (ben call api)' + totalWeight)
-                            if(checkUpdateCustomer == true) {
-                                console.log('da xac nhan doi vi tri')
+                            if (checkUpdateCustomer == true) {
+                                console.log('da xac nhan doi vi tri');
                                 shipMoneyBillWait = response.data.total;
                                 checkUpdateCustomer = false;
                                 updateMoneyShipWait(shipMoneyBillWait);
                             }
-                            console.log('đay là số tiền ship: ' + response.data.total);
+                            console.log('đây là số tiền ship: ' + response.data.total);
                             var flexSwitchCheckDefaultCheck = document.getElementById('flexSwitchCheckDefault');
-                            if(flexSwitchCheckDefaultCheck) {
-                                setClientShip(nameCustomer,numberPhoneCustomer,emailCustomer,provinceTransport,districtTransport,wardTransport,addRessDetailCustomer)
+                            if (flexSwitchCheckDefaultCheck) {
+                                setClientShip(nameCustomer, numberPhoneCustomer, emailCustomer, provinceTransport, districtTransport, wardTransport, addRessDetailCustomer);
                             }
                             paymentInformation();
                         },
                         error: function (xhr) {
-                            console.log('Lỗi tính tiền ship: ' + xhr.responseText);
+                            retryCounter++; // Tăng bộ đếm mỗi khi có lỗi
+                            console.log('Lỗi tính tiền ship: ' + xhr.responseText + ' - Lần thử: ' + retryCounter);
+
                             // Giảm service_id và thực hiện lại yêu cầu nếu có lỗi
-                            if (serviceId > 1) { // Đảm bảo service_id không âm
+                            if (serviceId > 1) {
                                 calculateFee(serviceId - 1); // Gọi lại với service_id giảm 1
                             } else {
                                 console.log("Không còn dịch vụ nào để thử.");

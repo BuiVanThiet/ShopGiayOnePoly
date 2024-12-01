@@ -535,6 +535,12 @@ public class ReturnExchangeBillRestController extends BaseBill {
 
         returnBill.setExchangeAndReturnFee(exchangeAndReturnFee);
         returnBill.setDiscountedAmount(exchangeBillDetailResponses.size() > 0 ? discountedAmount : new BigDecimal(0));
+        BigDecimal totalExchange = returnBill.getCustomerPayment().subtract(returnBill.getCustomerRefund().subtract(returnBill.getExchangeAndReturnFee()).add(returnBill.getDiscountedAmount()));
+        if(totalExchange.compareTo(new BigDecimal(20000000)) > 0) {
+            thongBao.put("message", "Hóa đơn không hợp lệ do số tiền sản phâ đổi trên 20 triệu!");
+            thongBao.put("check", "1");
+            return ResponseEntity.ok(thongBao);
+        }
 
         returnBill.setReason("hi ae");
         returnBill.setStatus(0);

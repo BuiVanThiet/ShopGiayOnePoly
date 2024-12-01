@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -23,8 +24,8 @@ public class TransactionVNPayRestController {
     @Autowired
     TransactionVNPayService transactionVNPayService;
     TransactionCheckRequest transactionCheckRequest = null;
-    @GetMapping("/list")
-    public List<Object[]> getListTransaction(HttpSession session) {
+    @GetMapping("/list/{page}")
+    public List<Object[]> getListTransaction(@PathVariable("page") Integer page,HttpSession session) {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if(staffLogin == null) {
             return null;
@@ -45,9 +46,46 @@ public class TransactionVNPayRestController {
         List<Object[]> transactions = transactionVNPayService.getAllTransactionVNPay(transactionCheckRequest);
 
         // Phân trang
-        Pageable pageable = PageRequest.of(0, 5);
+        Pageable pageable = PageRequest.of(page-1, 5);
         return convertListToPage(transactions, pageable).getContent();
     }
+
+    @GetMapping("/sum-total")
+    public Map<String,BigDecimal> getSumTransaction(HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        Map<String,BigDecimal> data = new HashMap<>();
+        if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
+
+        // Nếu transactionCheckRequest là null, khởi tạo mặc định
+        if(transactionCheckRequest == null) {
+            String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date()); // Lấy ngày hiện tại dưới dạng chuỗi
+            String[] bankCodeList = null;
+            transactionCheckRequest = new TransactionCheckRequest(
+                    null, "", currentDate, currentDate, "", null, "");
+        }
+
+        // Gọi phương thức dịch vụ và truyền các tham số đúng
+        List<Object[]> transactions = transactionVNPayService.getAllTransactionVNPay(transactionCheckRequest);
+        // Tính tổng giá trị từ cột thứ 8 (giả sử là số dạng BigDecimal hoặc Double)
+        BigDecimal sum = BigDecimal.ZERO;
+        Integer sl = 0;
+        for (Object[] objects : transactions) {
+            System.out.println(objects[8]);
+            Integer total = Integer.parseInt((String) objects[8]);
+            sum = sum.add(BigDecimal.valueOf(total));
+            sl++;
+        }
+        data.put("total",sum);
+        data.put("quantity",new BigDecimal(sl));
+        // Trả về tổng dưới dạng chuỗi
+        return data;
+    }
+
     @PostMapping("/search-transaction")
     public String getSearchTransaction(@RequestBody TransactionCheckRequest transactionCheckRequest2, HttpSession session) {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
