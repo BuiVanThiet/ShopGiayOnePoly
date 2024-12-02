@@ -537,7 +537,7 @@ function validateSuccessReturnExchange() {
 }
 
 function validateMoneyExchange(totalExchangeCheck) {
-    if(totalExchangeCheck > 20000000) {
+    if(totalExchangeCheck > 100000000000) {
         document.getElementById('errorTotalAmount').style.display = 'block';
         return false;
     }else {

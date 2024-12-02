@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/shift-api")
@@ -140,6 +141,26 @@ public class ShiftRestController {
             thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }
+
+        LocalTime now = LocalTime.now();
+        // Kiểm tra nếu thời gian hiện tại nằm trong khoảng bắt đầu và kết thúc
+        if (!now.isBefore(shift.getStartTime()) && !now.isAfter(shift.getEndTime())) {
+            thongBao.put("message", "Ca làm đang  bắt đầu nên không sửa được");
+            thongBao.put("check", "3");
+            return ResponseEntity.ok(thongBao);
+        }
+
+        List<Object[]> list = this.shiftService.getCheckShiftStaffWorking(shift.getId());
+        if (!list.isEmpty() && list.get(0).length > 0) {
+            // Lấy giá trị đầu tiên từ kết quả
+            String mess = list.get(0)[0].toString();
+            if(mess.trim().equals("Vẫn còn người chưa điểm danh ra")) {
+                thongBao.put("message", "Ca làm vẫn còn người làm!");
+                thongBao.put("check", "3");
+                return ResponseEntity.ok(thongBao);
+            }
+        }
+
         shift.setStatus(0);
         shift.setUpdateDate(new Date());
         this.shiftService.save(shift);
@@ -169,6 +190,44 @@ public class ShiftRestController {
 //            thongBao.put("check","3");
 //            return ResponseEntity.ok(thongBao);
 //        }
+        if(shiftRequest.getStartTime() == null) {
+            thongBao.put("message","Chưa nhập thời gian bắt đầu!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+        if(shiftRequest.getEndTime() == null) {
+            thongBao.put("message","Chưa nhập thời gian kết thúc!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+        if(shiftRequest.getStatus() == null) {
+            thongBao.put("message","Chưa nhập trạng thái ca làm!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+        if (shiftRequest.getStartTime().isAfter(shiftRequest.getEndTime()) || shiftRequest.getStartTime().equals(shiftRequest.getEndTime())) {
+            thongBao.put("message", "Thời gian bắt đầu phải trước thời gian kết thúc!");
+            thongBao.put("check", "3");
+            return ResponseEntity.ok(thongBao);
+        }
+
+        List<Shift> shifts = this.shiftService.findAll();
+
+// Loại bỏ dữ liệu có cùng id với shiftRequest (nếu shiftRequest.getId() không null)
+        shifts = shifts.stream()
+                .filter(shift -> shiftRequest.getId() == null || !shift.getId().equals(shiftRequest.getId()))
+                .collect(Collectors.toList());
+
+// Kiểm tra nếu thời gian trùng nhau
+        boolean isDuplicate = shifts.stream()
+                .anyMatch(shift -> shiftRequest.getStartTime().equals(shift.getStartTime())
+                        && shiftRequest.getEndTime().equals(shift.getEndTime()));
+
+        if (isDuplicate) {
+            thongBao.put("message", "Thời gian bắt đầu và kết thúc trùng với ca làm việc khác!");
+            thongBao.put("check", "3");
+            return ResponseEntity.ok(thongBao);
+        }
 
         Shift shift = null;
         if(shiftRequest.getId() == null) {
@@ -186,6 +245,25 @@ public class ShiftRestController {
                 thongBao.put("check","3");
                 return ResponseEntity.ok(thongBao);
             }
+            LocalTime now = LocalTime.now();
+            // Kiểm tra nếu thời gian hiện tại nằm trong khoảng bắt đầu và kết thúc
+            if (!now.isBefore(shift.getStartTime()) && !now.isAfter(shift.getEndTime())) {
+                thongBao.put("message", "Ca làm đang  bắt đầu nên không sửa được");
+                thongBao.put("check", "3");
+                return ResponseEntity.ok(thongBao);
+            }
+
+            List<Object[]> list = this.shiftService.getCheckShiftStaffWorking(shift.getId());
+            if (!list.isEmpty() && list.get(0).length > 0) {
+                // Lấy giá trị đầu tiên từ kết quả
+                String mess = list.get(0)[0].toString();
+                if(mess.trim().equals("Vẫn còn người chưa điểm danh ra")) {
+                    thongBao.put("message", "Ca làm vẫn còn người làm!");
+                    thongBao.put("check", "3");
+                    return ResponseEntity.ok(thongBao);
+                }
+            }
+
             shift.setStartTime(shiftRequest.getStartTime());
             shift.setEndTime(shiftRequest.getEndTime());
             shift.setUpdateDate(new Date());

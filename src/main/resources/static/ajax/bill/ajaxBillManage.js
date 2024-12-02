@@ -344,12 +344,20 @@ function loadInformationBillByIdBill() {
                 $('#amount_payable').text(Math.trunc(response.totalPriceProduct+response.shipPrice-response.maximumReduction).toLocaleString('en-US') + ' VNĐ')
             }
 
-            if(response.totalPriceProduct > 20000000) {
+            if(totalBill > 100000000000) {
                 $('#confirm-button').hide();
                 $('#btn-payment-confirm').hide();
                 document.getElementById('errorTotalAmount').style.display = 'block';
             }else {
                 document.getElementById('errorTotalAmount').style.display = 'none';
+            }
+
+            if (totalBill >= 20000000) {
+                document.getElementById('accountMoney').disabled = true;
+                document.getElementById('accountMoneyAndCash').disabled = true;
+            } else {
+                document.getElementById('accountMoney').disabled = false;
+                document.getElementById('accountMoneyAndCash').disabled = false;
             }
 
             //phan nay de truyen du lieu con validate
