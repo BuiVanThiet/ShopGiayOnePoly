@@ -161,7 +161,11 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
         select 
         new com.example.shopgiayonepoly.dto.response.bill.BillResponseManage(
             bill.id, 
-            bill.codeBill, 
+            case
+                when bill.status between 0 and 6 then bill.codeBill
+                else rb.codeReturnBillExchangBill
+            end
+            , 
             bill.customer, 
             bill.staff, 
             bill.addRess, 
@@ -170,7 +174,11 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
             bill.cash, 
             bill.acountMoney, 
             bill.note, 
-            bill.totalAmount - bill.priceDiscount, 
+            case
+                when bill.status between 0 and 6 then bill.totalAmount - bill.priceDiscount + bill.shippingPrice
+                else 0-((rb.customerRefund - rb.exchangeAndReturnFee) - (rb.customerPayment - rb.discountedAmount))
+            end
+            , 
             bill.paymentMethod, 
             bill.billType, 
             bill.paymentStatus, 

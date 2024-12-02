@@ -67,9 +67,9 @@ $('#cashClient-billInfo-exchange').on('input', function() {
                 }
             }
 
-            if (priceNumber > 10000000000) {
+            if (priceNumber > 1000000000000) {
                 $('#formErorrCash-billInfo').css('display', 'block');
-                $('#erorrCash-billInfo').text('**Đã vượt quá giới hạn(trên 10 tỷ VNĐ)!');
+                $('#erorrCash-billInfo').text('**Đã vượt quá giới hạn(trên 1000 tỷ VNĐ)!');
                 $('#btnPaymentInBill').attr('disabled', true);
                 $('#surplusMoneySpan-billInfo').css('display', 'none');
                 $('#surplusMoney-billInfo').text('');

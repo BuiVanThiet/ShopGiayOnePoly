@@ -31,12 +31,14 @@ document.addEventListener('input', function(event) {
             errorCardCheck.style.display = 'block';
             errorElement.textContent = '*Số lượng mua vượt quá số lượng sản phẩm có sẵn!';
             btnBuyQuantity.disabled = true;
-        } else if (parseInt(inputQuantity) > 10) {
-            // Kiểm tra số lượng mua vượt quá gioi han la 10
-            errorCardCheck.style.display = 'block';
-            errorElement.textContent = '*Số lượng mua cho mỗi đơn là 10/sản phẩm!';
-            btnBuyQuantity.disabled = true;
-        } else {
+        }
+        // else if (parseInt(inputQuantity) > 10) {
+        //     // Kiểm tra số lượng mua vượt quá gioi han la 10
+        //     errorCardCheck.style.display = 'block';
+        //     errorElement.textContent = '*Số lượng mua cho mỗi đơn là 10/sản phẩm!';
+        //     btnBuyQuantity.disabled = true;
+        // }
+        else {
             // Xóa lỗi nếu không có
             errorCardCheck.style.display = 'none';
             errorElement.textContent = '';

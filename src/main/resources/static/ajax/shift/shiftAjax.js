@@ -55,23 +55,33 @@ function loadShift(page) {
 
                     if(shift[6] == 1) {
                         btn += `
-                        <button type="button" class="btn btn-outline-danger" onclick="deleteShift(${shift[0]})">Xóa</button>
                             <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#listStaffModal" 
                           onclick="setIdShift(${shift[0]},'${shift[1]}','${shift[2]}',${shift[6]},${shift[3]})"
                         >Thêm nhân viên</button>
                         `;
                     }
 
-                    tbody.append(`
-                    <tr>
-                        <th scope="row">${shift[0]}</th>
-                        <td>${shift[1]}</td>
-                        <td>${shift[2]}</td>
-                        <td>${status_shift}</td>
-                        <td>${status}</td>
-                        <td>${btn}</td>
-                    </tr>
-                    `)
+                    checkShiftStaffWorking(shift[0])
+                        .then((isShiftClear) => {
+                            console.log('davao day: ' + isShiftClear)
+                            if (isShiftClear == true && shift[6] == 1 && shift[3] != 2) {
+                                btn += `<button type="button" class="btn btn-outline-danger" onclick="deleteShift(${shift[0]})">Xóa</button>`;
+                            }
+                            tbody.append(`
+                                <tr>
+                                    <th scope="row">${shift[0]}</th>
+                                    <td>${shift[1]}</td>
+                                    <td>${shift[2]}</td>
+                                    <td>${status_shift}</td>
+                                    <td>${status}</td>
+                                    <td>${btn}</td>
+                                </tr>
+                               `)
+                        })
+                        .catch((error) => {
+                            console.error("Error checking shift status: ", error);
+                        });
+
                 })
 
             }

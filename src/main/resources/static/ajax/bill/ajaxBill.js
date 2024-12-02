@@ -155,7 +155,7 @@ function loadBillDetail(page)  {
                                    ${priceSaleAndRoot}
                             </td>
                             <td class="text-center align-middle">
-                                <div class="pagination mb-3 custom-number-input" style="width: 130px;" data-id="${billDetail.id}">
+                                <div class="pagination mb-3 custom-number-input" style="width: 100%;" data-id="${billDetail.id}">
                                     ${btnBuyProduct}
                                </div>
                             </td>
@@ -248,7 +248,7 @@ function paymentInformation() {
             }
             totalAmountBillCheck = response.finalAmount;
 
-            if(totalAmountBillCheck > 20000000) {
+            if(totalAmountBillCheck > 100000000000) {
                 if (btnCreateBill) {
                     document.getElementById('errorTotalAmount').style.display = 'block';
                     btnCreateBill.disabled = true;
@@ -258,6 +258,14 @@ function paymentInformation() {
                     document.getElementById('errorTotalAmount').style.display = 'none';
                     btnCreateBill.disabled = false;
                 }
+            }
+
+            if (totalAmountBillCheck >= 20000000) {
+                document.getElementById('accountMoney').disabled = true;
+                document.getElementById('accountMoneyAndCash').disabled = true;
+            } else {
+                document.getElementById('accountMoney').disabled = false;
+                document.getElementById('accountMoneyAndCash').disabled = false;
             }
 
 
@@ -1413,7 +1421,7 @@ $(document).ready(function () {
     // Xử lý sự kiện tăng/giảm số lượng
     $(document).on('click', '.btn-increment', function () {
         var $numberDiv = $(this).siblings('.number');
-        var value = parseInt($numberDiv.text(), 10);
+        var value = parseInt($numberDiv.text());
         $numberDiv.text(value + 1);
         // Cập nhật giá trị mới trên server
         updateQuantity($(this).closest('.custom-number-input').data('id'), $numberDiv.text(),'cong');
@@ -1421,7 +1429,7 @@ $(document).ready(function () {
 
     $(document).on('click', '.btn-decrement', function () {
         var $numberDiv = $(this).siblings('.number');
-        var value = parseInt($numberDiv.text(), 10);
+        var value = parseInt($numberDiv.text());
         if (value > 0) {
             $numberDiv.text(value - 1);
             // Cập nhật giá trị mới trên server
