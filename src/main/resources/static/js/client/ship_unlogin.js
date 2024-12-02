@@ -215,17 +215,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
         console.log("totalPriceBill: " + totalPriceBill);
 
-        // Cập nhật giá trị tổng tiền vào phần tử hiển thị
-        document.getElementById("spanTotalPriceBill").textContent = totalPriceBill.toFixed(2); // Định dạng thành 2 chữ số thập phân
+        document.getElementById("spanTotalPriceBill").textContent = totalPriceBill.toFixed(2);
     }
-
     document.getElementById("FullName").addEventListener("input", updateAddress);
     document.getElementById("Phone").addEventListener("input", updateAddress);
     document.getElementById("Mail").addEventListener("input", updateAddress);
     document.getElementById("province").addEventListener("change", function () {
         const provinceId = this.value;
         if (provinceId) fetchDistricts(provinceId);
-        updateAddress(); // Gọi hàm cập nhật địa chỉ khi chọn tỉnh
+        updateAddress();
     });
 
     document.getElementById("district").addEventListener("change", function () {
