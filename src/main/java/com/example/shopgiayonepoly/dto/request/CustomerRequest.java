@@ -31,7 +31,6 @@ public class CustomerRequest extends BaseDTO {
     private String district;
     @NotBlank(message = "Vui lòng chọn xã!")
     private String ward;
-    @NotBlank(message = "Địa chỉ cụ thể không được để trống!")
     private String addRessDetail;
 
     public CustomerRequest(Integer id, Date createDate, Date updateDate, @NotNull(message = "Mời bạn chọn trạng thái!") Integer status, @NotBlank(message = "") MultipartFile nameImage, @NotBlank(message = "Tên khách hàng không được để trống!") String fullName, @NotNull(message = "Giới tính không được để trống") Integer gender, LocalDate birthDay, @NotBlank(message = "Số điện thoại không được để trống!") String numberPhone, @NotBlank(message = "Email không được để trống") String email, @NotBlank(message = "Thanh pho không được để trống") String province, @NotBlank(message = "Huyen không được để trống") String district, @NotBlank(message = "Xa không được để trống") String ward, @NotNull(message = "Địa chỉ không được để trống") String addRessDetail) {
