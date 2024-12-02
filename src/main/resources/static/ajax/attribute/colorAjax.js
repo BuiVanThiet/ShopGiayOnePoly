@@ -247,7 +247,7 @@ function fetchActiveColors() {
 }
 
 async function add() {
-    if (await validateColor()) {
+
         const formElement = document.getElementById('createAttribute');
         const formData = new FormData(formElement);
         const response = await fetch('/attribute/color/add', {
@@ -263,9 +263,7 @@ async function add() {
             createToast(result.check, result.message);
             fetchActiveColors();
         }
-    } else {
-        createToast('2', 'Dữ liệu không hợp lệ');
-    }
+
 
 }
 
@@ -292,57 +290,57 @@ function restoreColor(element) {
     });
 
 }
-
-let codeColorInput = document.getElementById("codeColorInput");
-let nameColorInput = document.getElementById("nameColorInput");
-let colorError = document.getElementById("colorError");
-codeColorInput.addEventListener('input', function () {
-    validateColor();
-});
-nameColorInput.addEventListener('input', function () {
-    validateColor();
-});
-
-let arrayCodeColor = [];
-let arrayNameColor = [];
-
-
-async function validateColor() {
-    let codeColor = await fetch('/attribute/color/get-code');
-    if (codeColor.ok) {
-        arrayCodeColor = await codeColor.json(); // Đảm bảo đây là một mảng
-    }
-    let nameColor = await fetch('/attribute/color/get-name');
-    if (nameColor.ok) {
-        arrayNameColor = await nameColor.json(); // Đảm bảo đây là một mảng
-    }
-    if (codeColorInput.value.trim() === "" && nameColorInput.value.trim() === "") {
-        colorError.textContent = "* Mã và tên không được để trống";
-        return false;
-    } else if (codeColorInput.value.length > 10 && nameColorInput.value.length > 50) {
-        colorError.textContent = "* Mã <= 10 kí tự, Tên <= 50 kí tự";
-        return false;
-    } else if (arrayCodeColor.some(code => code.toLowerCase() === codeColorInput.value.trim().toLowerCase())) {
-        colorError.textContent = "* Mã màu sắc đã tồn tại";
-        return false;
-    } else if (arrayNameColor.some(name => name.toLowerCase() === nameColorInput.value.trim().toLowerCase())) {
-        colorError.textContent = "* Tên màu sắc đã tồn tại";
-        return false;
-    } else if (codeColorInput.value.trim() === "") {
-        colorError.textContent = "* Mã không được để trống";
-        return false;
-    } else if (nameColorInput.value.trim() === "") {
-        colorError.textContent = "* Tên không được để trống";
-        return false;
-    } else if (codeColorInput.value.length > 10) {
-        colorError.textContent = "* Mã <= 10 kí tự";
-        return false;
-    } else if (nameColorInput.value.length > 50) {
-        colorError.textContent = "* Tên <= 50 kí tự";
-        return false;
-    } else {
-        colorError.textContent = "";
-        return true;
-    }
-}
-
+//
+// let codeColorInput = document.getElementById("codeColorInput");
+// let nameColorInput = document.getElementById("nameColorInput");
+// let colorError = document.getElementById("colorError");
+// codeColorInput.addEventListener('input', function () {
+//     validateColor();
+// });
+// nameColorInput.addEventListener('input', function () {
+//     validateColor();
+// });
+//
+// let arrayCodeColor = [];
+// let arrayNameColor = [];
+//
+//
+// async function validateColor() {
+//     let codeColor = await fetch('/attribute/color/get-code');
+//     if (codeColor.ok) {
+//         arrayCodeColor = await codeColor.json(); // Đảm bảo đây là một mảng
+//     }
+//     let nameColor = await fetch('/attribute/color/get-name');
+//     if (nameColor.ok) {
+//         arrayNameColor = await nameColor.json(); // Đảm bảo đây là một mảng
+//     }
+//     if (codeColorInput.value.trim() === "" && nameColorInput.value.trim() === "") {
+//         colorError.textContent = "* Mã và tên không được để trống";
+//         return false;
+//     } else if (codeColorInput.value.length > 10 && nameColorInput.value.length > 50) {
+//         colorError.textContent = "* Mã <= 10 kí tự, Tên <= 50 kí tự";
+//         return false;
+//     } else if (arrayCodeColor.some(code => code.toLowerCase() === codeColorInput.value.trim().toLowerCase())) {
+//         colorError.textContent = "* Mã màu sắc đã tồn tại";
+//         return false;
+//     } else if (arrayNameColor.some(name => name.toLowerCase() === nameColorInput.value.trim().toLowerCase())) {
+//         colorError.textContent = "* Tên màu sắc đã tồn tại";
+//         return false;
+//     } else if (codeColorInput.value.trim() === "") {
+//         colorError.textContent = "* Mã không được để trống";
+//         return false;
+//     } else if (nameColorInput.value.trim() === "") {
+//         colorError.textContent = "* Tên không được để trống";
+//         return false;
+//     } else if (codeColorInput.value.length > 10) {
+//         colorError.textContent = "* Mã <= 10 kí tự";
+//         return false;
+//     } else if (nameColorInput.value.length > 50) {
+//         colorError.textContent = "* Tên <= 50 kí tự";
+//         return false;
+//     } else {
+//         colorError.textContent = "";
+//         return true;
+//     }
+// }
+//

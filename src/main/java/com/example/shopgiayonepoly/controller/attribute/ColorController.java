@@ -136,8 +136,23 @@ public class ColorController {
                 checkName = false;
             }
         }
-        if (!checkCode || !checkName || color.getCodeColor().isEmpty() || color.getNameColor().isEmpty() || color.getCodeColor().length() > 10 || color.getNameColor().length() > 50) {
-            thongBao.put("message", "Dữ liệu không hợp lệ");
+        if (!checkCode) {
+            thongBao.put("message", "Mã màu sắc đã tồn tại");
+            thongBao.put("check", "2");
+        } else if (!checkName) {
+            thongBao.put("message", "Tên màu đã tồn tại");
+            thongBao.put("check", "2");
+        } else if (color.getCodeColor().isEmpty()) {
+            thongBao.put("message", "Mã màu không được để trống");
+            thongBao.put("check", "2");
+        } else if (color.getNameColor().isEmpty()) {
+            thongBao.put("message", "Tên màu không được để trống");
+            thongBao.put("check", "2");
+        } else if (color.getCodeColor().length() > 10) {
+            thongBao.put("message", "Mã màu không được dài quá 10 ký tự");
+            thongBao.put("check", "2");
+        } else if (color.getNameColor().length() > 50) {
+            thongBao.put("message", "Tên màu không được dài quá 50 ký tự");
             thongBao.put("check", "2");
         } else {
             color.setStatus(1);
@@ -145,6 +160,7 @@ public class ColorController {
             thongBao.put("message", "Thêm màu sắc thành công");
             thongBao.put("check", "1");
         }
+
         return ResponseEntity.ok(thongBao);
     }
 
