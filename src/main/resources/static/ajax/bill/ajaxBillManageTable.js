@@ -76,7 +76,7 @@ function getAllBilByStatus(value) {
                             <td>${bill.codeBill}</td>
                             <td>${bill.customer == null && bill.addRess == 'Không có' ? 'Khách lẻ' : (bill.customer == null ? nameCustomer : bill.customer.fullName)}</td>
                             <td>${bill.customer == null && bill.addRess == 'Không có' ? 'Không có' : (bill.customer == null ? numberPhone : bill.customer.numberPhone)}</td>
-<!--                            <td>${Math.trunc(bill.finalAmount).toLocaleString('en-US') + ' VNĐ'}</td>-->
+                            <td>${Math.trunc(bill.finalAmount).toLocaleString('en-US') + ' VNĐ'}</td>
                             <td>${bill.billType == 1 ? 'Tại quầy' : 'Giao hàng'}</td>
                             <td>${formattedDateTime}</td>
                             <td>

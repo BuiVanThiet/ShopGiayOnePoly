@@ -145,8 +145,8 @@ public class ForgotPasswordController extends BaseEmail {
                             modelMap.addAttribute("messPassWord2","");
                             return "client/exchangePassword";
                         }else {
-                            if(passwordOrder1.trim().equals("")) {
-                                modelMap.addAttribute("messPassWord1","Mời nhập mật khẩu cần đổi!");
+                            if(passwordOrder1.trim().equals("") || (passwordOrder1.trim().length() < 1 && passwordOrder1.trim().length() > 255)) {
+                                modelMap.addAttribute("messPassWord1","Mật khẩu phải từ 1 đến 255 ký tự!");
                                 modelMap.addAttribute("messPassWord2","");
                                 return "client/exchangePassword";
                             }else {
@@ -187,8 +187,8 @@ public class ForgotPasswordController extends BaseEmail {
                             modelMap.addAttribute("messPassWord2","");
                             return "Home/exhcnagePassWordStaff";
                         }else {
-                            if(passwordOrder1.trim().equals("")) {
-                                modelMap.addAttribute("messPassWord1","Mời nhập mật khẩu cần đổi!");
+                            if(passwordOrder1.trim().equals("") || (passwordOrder1.trim().length() < 1 && passwordOrder1.trim().length() > 255)) {
+                                modelMap.addAttribute("messPassWord1","Mật khẩu phải từ 1 đến 255 ký tự!");
                                 modelMap.addAttribute("messPassWord2","");
                                 return "Home/exhcnagePassWordStaff";
                             }else {

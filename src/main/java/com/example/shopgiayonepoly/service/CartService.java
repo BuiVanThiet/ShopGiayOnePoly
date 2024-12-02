@@ -10,4 +10,6 @@ public interface CartService {
     Cart findByCustomerIDAndProductDetail(Integer customerID, Integer productDetailID);
 
     List<Cart> getCartItemsForCustomer(@Param("customerId") Integer customerId);
+
+    void deleteCartByCustomerID(Integer customerId);
 }

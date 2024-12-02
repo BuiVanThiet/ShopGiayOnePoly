@@ -140,10 +140,10 @@ function validate(cash) {
                 }
             }
 
-            if (cashClientNumber > 10000000000) {
+            if (cashClientNumber > 1000000000000) {
                 console.log('da qua gioi han')
                 formErorrCash.style.display = 'block';
-                erorrCash.innerText = '*Đã vượt quá giới hạn(trên 10 tỷ VNĐ)!';
+                erorrCash.innerText = '*Đã vượt quá giới hạn(trên 1000 tỷ VNĐ)!';
                 btnCreateBill.disabled = true;
                 surplusMoneySpan.style.display = 'none';
                 surplusMoney.innerText = '';
@@ -151,14 +151,12 @@ function validate(cash) {
                 cashClientText.value = cashClientValue;
                 checkButonCreateBill = false;
             }
-            if(totalAmountBillCheck > 20000000) {
-                document.getElementById('errorTotalAmount').style.display = 'block';
-                checkButonCreateBill = false;
-                btnCreateBill.disabled = true;
-            }else {
-                document.getElementById('errorTotalAmount').style.display = 'none';
-                checkButonCreateBill = true;
-                btnCreateBill.disabled = false;
+            if (totalAmountBillCheck > 20000000) {
+                document.getElementById('accountMoney').disabled = true;
+                document.getElementById('accountMoneyAndCash').disabled = true;
+            } else {
+                document.getElementById('accountMoney').disabled = false;
+                document.getElementById('accountMoneyAndCash').disabled = false;
             }
         }
     }

@@ -28,7 +28,6 @@ public class StaffRequest extends BaseDTO {
     private String district;
     @NotBlank(message = "Vui lòng chọn xã!")
     private String ward;
-    @NotBlank(message = "Địa chỉ cụ thể không được để trống!")
     private String addRessDetail;
     @NotNull(message = "Vui lòng chọn giới tính!")
     private Integer gender;
