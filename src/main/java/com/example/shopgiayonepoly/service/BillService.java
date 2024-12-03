@@ -64,4 +64,6 @@ public interface BillService {
     List<Object[]> getListProductReturn(Integer idCheck);
 
     List<Object[]> getListProductExchange(Integer idCheck);
+
+    void deleteBillById(Integer idBillCheck);
 }

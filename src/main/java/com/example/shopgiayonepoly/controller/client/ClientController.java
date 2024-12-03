@@ -258,6 +258,7 @@ public class ClientController extends BaseBill {
             model.addAttribute("finalPrice", finalPrice);
             session.setAttribute("priceReduced", priceReduced);
             model.addAttribute("priceReducedShow", priceReduced);
+            model.addAttribute("typeVoucherApply",selectedVoucher.getVoucherType());
             session.setAttribute("idVoucherApply", idVoucherApply);
             session.setAttribute("selectedVoucher", selectedVoucher);
             System.out.println("Session priceReduced :" + priceReduced);
