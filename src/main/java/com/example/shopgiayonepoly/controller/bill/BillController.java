@@ -934,6 +934,52 @@ public class BillController extends BaseBill {
         return ResponseEntity.ok(thongBao);
     }
 
+    // xoa hoa don
+    @GetMapping("/delete-bill/{idBill}")
+    public String getDeleteBillByIdBill(@PathVariable("idBill") Integer idBill,HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return "redirect:/login";
+        }
+        if(staffLogin.getStatus() != 1) {
+            return "redirect:/home_manage";
+        }
+
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            this.mess = messMap;
+            this.colorMess = "3";
+            return "redirect:/staff/bill/home";
+        }
+
+        Bill bill = this.billService.findById(idBill).orElse(null);
+        if(bill == null) {
+            this.mess = "Hóa đơn không tồn tại!";
+            this.colorMess = "3";
+            return "redirect:/staff/bill/home";
+        }
+        if(bill.getStatus() != 0) {
+            this.mess = "Hóa đơn phải là hóa đơn chờ!";
+            this.colorMess = "3";
+            return "redirect:/staff/bill/home";
+        }
+        List<BillDetail> billDetailList = this.billDetailService.getBillDetailByIdBill(idBill);
+        for (BillDetail billDetail: billDetailList) {
+            this.getUpdateQuantityProduct(billDetail.getProductDetail().getId(),-billDetail.getQuantity());
+        }
+
+        if(bill.getVoucher() != null) {
+            getSubtractVoucher(bill.getVoucher(),-1);
+        }
+
+        this.billService.deleteBillById(idBill);
+
+        this.mess = "Xóa hóa đơn chờ thành công";
+        this.colorMess = "1";
+        return "redirect:/staff/bill/home";
+    }
+
     @PostMapping("/buy-product-detail")
     @ResponseBody
     public ResponseEntity<Map<String,String>> getBuyProduct(

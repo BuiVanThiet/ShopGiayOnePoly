@@ -379,7 +379,7 @@ function loadBillNew() {
 
                     ul.append(
                         '<li class="nav-item">' +
-                        '<a class="nav-link text-dark ' + isActive + '" href="' + '/staff/bill/bill-detail/' + url.id + '">' + url.codeBill + '</a>' +
+                            '<span class="nav-link text-dark ' + isActive + '">' + '<a class="' + 'btn " '+ ' href="' + '/staff/bill/bill-detail/' + url.id + '">' + url.codeBill + '</a>'  + `<a class="btn-close" href="/staff/bill/delete-bill/${url.id}"></a>` + '</span>' +
                         '</li>'
                     );
                 });

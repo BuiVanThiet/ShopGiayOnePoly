@@ -2,9 +2,11 @@ package com.example.shopgiayonepoly.repositores;
 
 import com.example.shopgiayonepoly.dto.response.bill.*;
 import com.example.shopgiayonepoly.entites.*;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -713,4 +715,21 @@ select case
     Bill getBillByCodeBill(
             @Param("codeBillCheck") String codeBillCheck
     );
+
+    //xoa bill dang cho
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM bill_detail WHERE id_bill = :idBillCheck", nativeQuery = true)
+    void deleteBillDetailsByIdBill(@Param("idBillCheck") Integer idBillCheck);
+
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM invoice_status WHERE id_bill = :idBillCheck", nativeQuery = true)
+    void deleteInvoiceStatusByIdBill(@Param("idBillCheck") Integer idBillCheck);
+
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM bill WHERE id = :idBillCheck", nativeQuery = true)
+    void deleteBillById(@Param("idBillCheck") Integer idBillCheck);
+
 }
