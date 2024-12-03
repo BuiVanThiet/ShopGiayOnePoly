@@ -135,6 +135,8 @@ public class StaffController extends BaseEmail {
             result.rejectValue("codeStaff", "error.staff", "Mã không được để trống!"); // Thông báo nếu mã rỗng hoặc chỉ chứa khoảng trắng
         } else if (staffRequest.getCodeStaff().length() < 3 || staffRequest.getCodeStaff().length() > 10) {
             result.rejectValue("codeStaff", "error.staff", "Mã phải có độ dài từ 3 đến 10 ký tự!");
+        } else if (!staffRequest.getCodeStaff().matches("^[a-zA-Z0-9]*$")) {
+            result.rejectValue("codeStaff", "error.staff", "Mã không được chứa ký tự đặc biệt!"); // Thông báo nếu chứa ký tự đặc biệt
         } else if (staffService.existsByCodeStaff(staffRequest.getCodeStaff())) {
             result.rejectValue("codeStaff", "error.staff", "Mã đã tồn tại!"); // Thông báo nếu mã đã tồn tại
         }

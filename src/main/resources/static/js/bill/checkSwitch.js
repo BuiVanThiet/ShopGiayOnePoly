@@ -192,7 +192,7 @@ function validateInformationShip() {
         validateDistrictCheckSwitch(selectCheckDistrict) == true &&
         validateWardCheckSwitch(selectCheckWard) == true
     ) {
-        if(totalAmountBillCheck > 20000000) {
+        if(totalAmountBillCheck > 100000000000) {
             if (btnCreateBill) {
                 document.getElementById('errorTotalAmount').style.display = 'block';
                 btnCreateBill.disabled = true;

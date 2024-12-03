@@ -108,7 +108,7 @@
                         <div class="info-product mt-2 d-flex justify-content-between">
                             <p th:text="${product.nameProduct}"></p>
                             <p class="price-min fw-bold" style="margin-left: auto; color: #2f2a2a"
-                               th:text="${product.priceProduct}"></p>
+                               th:attr="data-price=${product.priceProduct}"></p>
                         </div>
                         <div class="product-icons">
                             <a class="view-icon" th:href="@{/onepoly/product-detail/{id}(id=${product.id})}"><i

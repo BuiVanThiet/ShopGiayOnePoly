@@ -18,7 +18,7 @@
                     thiết kế tuyệt vời với giày thể thao trong bộ sưu tập ONE POLY "Nhịp bước bản thân".</p>
             </div>
         </div>
-
+        <input type="hidden" id="account-login" th:value="${accountLogin}">
         <section class="cart-page">
             <div class="container">
                 <div style="margin-left: 30px;">
@@ -88,6 +88,10 @@
                                                       placeholder="Địa chỉ nhận hàng mong muốn" required></textarea>
                                         </div>
                                         <span class="text-danger" id="error-address-specific"></span>
+                                        <div th:if="${errorAddress!=null}">
+                                            <span id="errorAddressFromControllerUnLogin"
+                                                  class="text-danger" th:text="${errorAddress}"></span>
+                                        </div>
                                     </div>
 
                                 </div>
@@ -130,6 +134,10 @@
                                         </label>
                                     </div>
                                     <div id="error-payment-method" class="text-danger"></div>
+                                    <div th:if="${errorPayMethod!=null}">
+                                            <span id="errorPayMethodFromController"
+                                                  class="text-danger" th:text="${errorPayMethod}"></span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -141,7 +149,7 @@
                                 <div class="col-8">
                                     <p id="infoCustomer" th:text="${infoCustomer}+'.'"></p>
                                     <p id="original-address" th:text="${originalAddress}+'.'"></p>
-                                    <input type="hidden" id="">
+                                    <span class="text-danger" id="error-address-for-bill"></span>
                                 </div>
                                 <div class="col-4">
                                     <div class="button-container">
@@ -152,6 +160,10 @@
                                         </button>
                                     </div>
                                 </div>
+                            </div>
+                            <div th:if="${errorAddress!=null}">
+                                <span id="errorAddressFromControllerLogin" class="text-danger"
+                                      th:text="${errorAddress}"></span>
                             </div>
                         </div>
                     </div>
@@ -178,45 +190,46 @@
                                     <!-- Modal Body -->
                                     <div class="modal-body">
 
-                                        <div id="noData-info-address-for-customer" style="display:none; text-align:center;">
+                                        <div id="noData-info-address-for-customer"
+                                             style="display:none; text-align:center;">
                                             <!-- Ảnh sẽ được hiển thị ở đây nếu không có dữ liệu -->
                                         </div>
 
                                         <div id="info-address-for-customer">
                                             <!-- Danh sách địa chỉ -->
-<!--                                            <div class="list-address-customer" th:each="address : ${listAddress}">-->
-<!--                                                <div class="info-address-shipping d-flex align-items-center border rounded p-2 mb-2 position-relative">-->
-<!--                                                    &lt;!&ndash; Radio button &ndash;&gt;-->
-<!--                                                    <input class="form-check-input me-3" type="radio"-->
-<!--                                                           name="selectedAddress"/>-->
-<!--                                                    &lt;!&ndash; Thông tin địa chỉ &ndash;&gt;-->
-<!--                                                    <div class="address-info flex-grow-1">-->
-<!--                                                        <p class="name-phoneNumber mb-1"-->
-<!--                                                           th:text="${address.nameAndPhoneNumber}"></p>-->
-<!--                                                        <p class="short-address mb-0 text-muted"-->
-<!--                                                           th:text="${address.shortAddress}"></p>-->
-<!--                                                        <input type="hidden" class="id-address"-->
-<!--                                                               th:value="${address.id}"/>-->
-<!--                                                        <input type="hidden" class="original-address"-->
-<!--                                                               th:value="${address.originalAddress}"/>-->
-<!--                                                        <input type="hidden" id="fullAddressInput" class="full-address"-->
-<!--                                                               th:value="${address.fullAddress}"/>-->
-<!--                                                    </div>-->
-<!--                                                    &lt;!&ndash; Nút hành động &ndash;&gt;-->
-<!--                                                    <div class="button-container d-flex gap-1">-->
-<!--                                                        <button class="btn-update-address btn btn-sm btn-outline-primary"-->
-<!--                                                                type="button" data-bs-toggle="modal"-->
-<!--                                                                data-bs-target="#updateAddressModal"-->
-<!--                                                                onclick="getAddressDetails(this)">-->
-<!--                                                            <i class="fas fa-sync-alt"></i>-->
-<!--                                                        </button>-->
-<!--                                                        <button class="btn-delete-address btn btn-sm btn-outline-danger"-->
-<!--                                                                type="button" onclick="deleteAddressForCustomer(7)">-->
-<!--                                                            <i class="fas fa-trash-alt"></i>-->
-<!--                                                        </button>-->
-<!--                                                    </div>-->
-<!--                                                </div>-->
-<!--                                            </div>-->
+                                            <!--                                            <div class="list-address-customer" th:each="address : ${listAddress}">-->
+                                            <!--                                                <div class="info-address-shipping d-flex align-items-center border rounded p-2 mb-2 position-relative">-->
+                                            <!--                                                    &lt;!&ndash; Radio button &ndash;&gt;-->
+                                            <!--                                                    <input class="form-check-input me-3" type="radio"-->
+                                            <!--                                                           name="selectedAddress"/>-->
+                                            <!--                                                    &lt;!&ndash; Thông tin địa chỉ &ndash;&gt;-->
+                                            <!--                                                    <div class="address-info flex-grow-1">-->
+                                            <!--                                                        <p class="name-phoneNumber mb-1"-->
+                                            <!--                                                           th:text="${address.nameAndPhoneNumber}"></p>-->
+                                            <!--                                                        <p class="short-address mb-0 text-muted"-->
+                                            <!--                                                           th:text="${address.shortAddress}"></p>-->
+                                            <!--                                                        <input type="hidden" class="id-address"-->
+                                            <!--                                                               th:value="${address.id}"/>-->
+                                            <!--                                                        <input type="hidden" class="original-address"-->
+                                            <!--                                                               th:value="${address.originalAddress}"/>-->
+                                            <!--                                                        <input type="hidden" id="fullAddressInput" class="full-address"-->
+                                            <!--                                                               th:value="${address.fullAddress}"/>-->
+                                            <!--                                                    </div>-->
+                                            <!--                                                    &lt;!&ndash; Nút hành động &ndash;&gt;-->
+                                            <!--                                                    <div class="button-container d-flex gap-1">-->
+                                            <!--                                                        <button class="btn-update-address btn btn-sm btn-outline-primary"-->
+                                            <!--                                                                type="button" data-bs-toggle="modal"-->
+                                            <!--                                                                data-bs-target="#updateAddressModal"-->
+                                            <!--                                                                 onclick="getAddressDetails(this)">-->
+                                            <!--                                                            <i class="fas fa-sync-alt"></i>-->
+                                            <!--                                                        </button>-->
+                                            <!--                                                        <button class="btn-delete-address btn btn-sm btn-outline-danger"-->
+                                            <!--                                                                type="button" onclick="deleteAddressForCustomer(7)">-->
+                                            <!--                                                            <i class="fas fa-trash-alt"></i>-->
+                                            <!--                                                        </button>-->
+                                            <!--                                                    </div>-->
+                                            <!--                                                </div>-->
+                                            <!--                                            </div>-->
                                         </div>
                                         <!-- Nút Thêm Địa Chỉ Mới -->
                                         <div class="add-new-address mt-3 text-center">
@@ -415,7 +428,7 @@
                                     </div>
                                 </div>
                                 <!-- Thông tin sản phẩm -->
-                                <div class="right flex-grow-1">
+                                <div class="flex-grow-1">
                                     <h5 class="mb-1 text-truncate" style="font-size: 1rem;"
                                         th:text="${item.productName}"></h5>
                                     <div class="item-price text-muted">
@@ -466,6 +479,11 @@
                                               name="spanTotalPriceBill"></span>
                                     </div>
                                 </div>
+                                <span class="text-danger" id="error-total-amount-bill"></span>
+                                <div th:if="${errorTotalAmountBill!=null}">
+                                            <span id="errorTotalAmountBillFromController"
+                                                  class="text-danger" th:text="${errorTotalAmountBill}"></span>
+                                </div>
                             </div>
                         </div>
 
@@ -474,15 +492,14 @@
                                 <span>Đặt hàng</span>
                             </button>
                         </div>
-
                     </div>
                 </div>
             </div>
         </section>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/decimal.js/10.3.1/decimal.min.js"></script>
-        <script th:src="@{/ajax/client/bill.js}" type="text/javascript"></script>
-        <script th:src="@{/js/client/bill_payment.js}" type="text/javascript"></script>
+        <script th:src="@{/ajax/client/payment.js}" type="text/javascript"></script>
+        <script th:src="@{/js/client/ship_unlogin.js}" type="text/javascript"></script>
         <script th:src="@{/js/client/ship_login.js}" type="text/javascript"></script>
         <script th:src="@{/ajax/client/address_ship.js}" type="text/javascript"></script>
     </section>

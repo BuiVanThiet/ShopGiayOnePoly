@@ -185,8 +185,8 @@
                         <span>Tổng tiền sản phẩm: </span>
                         <span id="informationPriceProductBill"></span>
                     </div>
-                    <div class="text-end mb-3" id="errorTotalAmount">
-                        <span class="text-danger mb-3" >*Mỗi hóa đơn không quá 20 triệu!</span>
+                    <div class="text-end" id="errorTotalAmount">
+                        <span class="text-danger mb-3" >*Tối đa 1 đơn chỉ được dưới 100 tỷ. Đây là giới hạn được áp dụng để đảm bảo tính ổn định và khả năng xử lý hệ thống!</span>
                     </div>
                     <div class="mb-3 d-flex justify-content-between col-6">
                         <span>Loại đơn: </span>
@@ -467,13 +467,13 @@
                                 </button>
                             </div>
                             <div class="col-6 mb-3">
-                                <button onclick="setActivePayment(this,2)" class="btn btn-outline-primary col-12" style="display: flex; align-items: center; justify-content: center;">
+                                <button onclick="setActivePayment(this,2)" class="btn btn-outline-primary col-12" id="accountMoney" style="display: flex; align-items: center; justify-content: center;">
                                     <i class="bi bi-credit-card" style="font-size: 30px; margin-right: 10px;"></i>
                                     Chuyển khoản
                                 </button>
                             </div>
                             <div class="col-12 mb-3">
-                                <button onclick="setActivePayment(this,3)" class="btn btn-outline-primary col-12" style="display: flex; align-items: center; justify-content: center;">
+                                <button onclick="setActivePayment(this,3)" class="btn btn-outline-primary col-12" id="accountMoneyAndCash" style="display: flex; align-items: center; justify-content: center;">
                                     <i class="bi bi-cash" style="font-size: 30px;"></i>
                                     <i class="bi bi-input-cursor"></i>
                                     <i class="bi bi-credit-card" style="font-size: 30px; margin-right: 10px;"></i>

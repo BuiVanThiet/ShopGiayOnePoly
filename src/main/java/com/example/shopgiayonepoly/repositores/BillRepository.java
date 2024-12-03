@@ -2,9 +2,11 @@ package com.example.shopgiayonepoly.repositores;
 
 import com.example.shopgiayonepoly.dto.response.bill.*;
 import com.example.shopgiayonepoly.entites.*;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -161,7 +163,11 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
         select 
         new com.example.shopgiayonepoly.dto.response.bill.BillResponseManage(
             bill.id, 
-            bill.codeBill, 
+            case
+                when bill.status between 0 and 6 then bill.codeBill
+                else rb.codeReturnBillExchangBill
+            end
+            , 
             bill.customer, 
             bill.staff, 
             bill.addRess, 
@@ -170,7 +176,11 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
             bill.cash, 
             bill.acountMoney, 
             bill.note, 
-            bill.totalAmount - bill.priceDiscount, 
+            case
+                when bill.status between 0 and 6 then bill.totalAmount - bill.priceDiscount + bill.shippingPrice
+                else 0-((rb.customerRefund - rb.exchangeAndReturnFee) - (rb.customerPayment - rb.discountedAmount))
+            end
+            , 
             bill.paymentMethod, 
             bill.billType, 
             bill.paymentStatus, 
@@ -705,4 +715,21 @@ select case
     Bill getBillByCodeBill(
             @Param("codeBillCheck") String codeBillCheck
     );
+
+    //xoa bill dang cho
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM bill_detail WHERE id_bill = :idBillCheck", nativeQuery = true)
+    void deleteBillDetailsByIdBill(@Param("idBillCheck") Integer idBillCheck);
+
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM invoice_status WHERE id_bill = :idBillCheck", nativeQuery = true)
+    void deleteInvoiceStatusByIdBill(@Param("idBillCheck") Integer idBillCheck);
+
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM bill WHERE id = :idBillCheck", nativeQuery = true)
+    void deleteBillById(@Param("idBillCheck") Integer idBillCheck);
+
 }

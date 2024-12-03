@@ -1,10 +1,7 @@
 package com.example.shopgiayonepoly.dto.response.client;
-
-import jakarta.persistence.Column;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
 @Getter
 @Setter

@@ -157,4 +157,16 @@ public class BillImplement implements BillService {
         return this.billRepository.getListProductExchange(idCheck);
     }
 
+    @Override
+    public void deleteBillById(Integer idBillCheck) {
+        // Xóa các chi tiết hóa đơn trước
+        billRepository.deleteBillDetailsByIdBill(idBillCheck);
+
+        // Xóa trạng thái hóa đơn
+        billRepository.deleteInvoiceStatusByIdBill(idBillCheck);
+
+        // Xóa hóa đơn
+        billRepository.deleteBillById(idBillCheck);
+    }
+
 }

@@ -434,11 +434,11 @@ public class BillController extends BaseBill {
         if (bill.getStatus() != 0) {
             return "redirect:/404";
         }
-        if(bill.getTotalAmount().compareTo(new BigDecimal(20000000)) > 0) {
-            this.mess = "Số tiền sản phẩm không được quá 20 triệu!";
-            this.colorMess = "3";
-            return "redirect:/staff/bill/bill-detail/"+bill.getId();
-        }
+//        if(bill.getTotalAmount().compareTo(new BigDecimal(20000000)) > 0) {
+//            this.mess = "Số tiền sản phẩm không được quá 20 triệu!";
+//            this.colorMess = "3";
+//            return "redirect:/staff/bill/bill-detail/"+bill.getId();
+//        }
 
         if(customerShip.trim().equals("Không có")) {
             bill.setAddRess(customerShip.trim());
@@ -934,6 +934,52 @@ public class BillController extends BaseBill {
         return ResponseEntity.ok(thongBao);
     }
 
+    // xoa hoa don
+    @GetMapping("/delete-bill/{idBill}")
+    public String getDeleteBillByIdBill(@PathVariable("idBill") Integer idBill,HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return "redirect:/login";
+        }
+        if(staffLogin.getStatus() != 1) {
+            return "redirect:/home_manage";
+        }
+
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            this.mess = messMap;
+            this.colorMess = "3";
+            return "redirect:/staff/bill/home";
+        }
+
+        Bill bill = this.billService.findById(idBill).orElse(null);
+        if(bill == null) {
+            this.mess = "Hóa đơn không tồn tại!";
+            this.colorMess = "3";
+            return "redirect:/staff/bill/home";
+        }
+        if(bill.getStatus() != 0) {
+            this.mess = "Hóa đơn phải là hóa đơn chờ!";
+            this.colorMess = "3";
+            return "redirect:/staff/bill/home";
+        }
+        List<BillDetail> billDetailList = this.billDetailService.getBillDetailByIdBill(idBill);
+        for (BillDetail billDetail: billDetailList) {
+            this.getUpdateQuantityProduct(billDetail.getProductDetail().getId(),-billDetail.getQuantity());
+        }
+
+        if(bill.getVoucher() != null) {
+            getSubtractVoucher(bill.getVoucher(),-1);
+        }
+
+        this.billService.deleteBillById(idBill);
+
+        this.mess = "Xóa hóa đơn chờ thành công";
+        this.colorMess = "1";
+        return "redirect:/staff/bill/home";
+    }
+
     @PostMapping("/buy-product-detail")
     @ResponseBody
     public ResponseEntity<Map<String,String>> getBuyProduct(
@@ -994,11 +1040,11 @@ public class BillController extends BaseBill {
         }
 
         BillDetail billDetailSave = getBuyProduct(billById,productDetail,Integer.parseInt(quantity));
-        if (billDetailSave.getQuantity() > 10) {
-            thongBao.put("message","Số lượng mua sản phẩm này không được quá 10 số lượng!");
-            thongBao.put("check","3");
-            return ResponseEntity.ok(thongBao);
-        }
+//        if (billDetailSave.getQuantity() > 10) {
+//            thongBao.put("message","Số lượng mua sản phẩm này không được quá 10 số lượng!");
+//            thongBao.put("check","3");
+//            return ResponseEntity.ok(thongBao);
+//        }
 
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if(staffLogin == null) {
@@ -1317,7 +1363,7 @@ public class BillController extends BaseBill {
             return "redirect:/404";
         }
 
-        String regexEmail = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+        String regexEmail = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,}$";
         if(!customerShortRequest.getEmail().trim().matches(regexEmail)) {
             return "redirect:/404";
         }

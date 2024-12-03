@@ -24,4 +24,9 @@ public class CartServiceImplement implements CartService {
     public List<Cart> getCartItemsForCustomer(Integer customerId) {
         return cartRepository.getCartItemsForCustomer(customerId);
     }
+
+    @Override
+    public void deleteCartByCustomerID(Integer customerId) {
+        cartRepository.deleteCartByCustomerID(customerId);
+    }
 }

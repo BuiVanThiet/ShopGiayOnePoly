@@ -788,7 +788,7 @@ $(document).ready(function () {
     })
     $(document).on('click', '.btn-increment-exchange', function () {
         var $numberDiv = $(this).siblings('.number');
-        var value = parseInt($numberDiv.text(), 10);
+        var value = parseInt($numberDiv.text());
         $numberDiv.text(value + 1);
         // Cập nhật giá trị mới trên server
         updateQuantityExchange($(this).closest('.custom-number-input').data('id'), $numberDiv.text(),'cong');
@@ -796,7 +796,7 @@ $(document).ready(function () {
 
     $(document).on('click', '.btn-decrement-exchange', function () {
         var $numberDiv = $(this).siblings('.number');
-        var value = parseInt($numberDiv.text(), 10);
+        var value = parseInt($numberDiv.text());
         if (value > 0) {
             $numberDiv.text(value - 1);
             // Cập nhật giá trị mới trên server

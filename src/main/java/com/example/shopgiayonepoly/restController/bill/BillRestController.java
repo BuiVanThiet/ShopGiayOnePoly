@@ -179,12 +179,12 @@ public class BillRestController extends BaseBill {
             thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }
-        if(billDetailAjax.getQuantity() > 10 && billDetailAjax.getMethod().equals("cong")) {
-            System.out.println("Hiện tại cửa hàng chỉ bán mỗi sản phẩm số lượng không quá 10!");
-            thongBao.put("message","Số lượng mua mỗi món không được quá 10!");
-            thongBao.put("check","3");
-            return ResponseEntity.ok(thongBao);
-        }
+//        if(billDetailAjax.getQuantity() > 10 && billDetailAjax.getMethod().equals("cong")) {
+//            System.out.println("Hiện tại cửa hàng chỉ bán mỗi sản phẩm số lượng không quá 10!");
+//            thongBao.put("message","Số lượng mua mỗi món không được quá 10!");
+//            thongBao.put("check","3");
+//            return ResponseEntity.ok(thongBao);
+//        }
         if(productDetail.getStatus() == 0 || productDetail.getStatus() == 2 || productDetail.getProduct().getStatus() == 0 || productDetail.getProduct().getStatus() == 2) {
             thongBao.put("message","Sản phẩm đã bị xóa hoặc ngừng bán trên hệ thống!");
             thongBao.put("check","3");
@@ -563,6 +563,9 @@ public class BillRestController extends BaseBill {
             return null;
         }
         if(payMethodRequest.getPayMethod() > 3) {
+            return null;
+        }
+        if(bill.getTotalAmount().compareTo(new BigDecimal(20000000)) > 0) {
             return null;
         }
         bill.setPaymentMethod(payMethodRequest.getPayMethod());
@@ -1166,11 +1169,11 @@ public class BillRestController extends BaseBill {
                         }
                     }
 
-                    if(bill.getTotalAmount().compareTo(new BigDecimal(20000000)) > 0) {
-                        thongBao.put("message","Số tiền sản phâ không được quá 20 triệu!!");
-                        thongBao.put("check","3");
-                        return ResponseEntity.ok(thongBao);
-                    }
+//                    if(bill.getTotalAmount().compareTo(new BigDecimal(20000000)) > 0) {
+//                        thongBao.put("message","Số tiền sản phâ không được quá 20 triệu!!");
+//                        thongBao.put("check","3");
+//                        return ResponseEntity.ok(thongBao);
+//                    }
 
                 }
                 String getAddRessDetail = bill.getAddRess();
@@ -1315,7 +1318,7 @@ public class BillRestController extends BaseBill {
         }
 
         String cashPay = paymentData.get("cashPay");
-        String cashAcountPay = paymentData.get("cashAcountPay");
+        String cashAcountPay = paymentData.get("cashAcountPay").replace(".00", "");
         String cashBillPay = paymentData.get("cashBillPay");
         String notePay = paymentData.get("notePay");
         String payStatus = paymentData.get("payStatus");
@@ -1323,6 +1326,12 @@ public class BillRestController extends BaseBill {
         String payMethod = paymentData.get("payMethod");
         System.out.println("Du lieu khi thnah toan ");
         String billPay = paymentData.get("billPay");
+
+        if(Integer.parseInt(cashAcountPay) > (20000000)) {
+            thongBao.put("message","Phương thức thanh toán này không áp dụng cho hóa đơn có số tiền sản phẩm trên 20 triệu!");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
 
         System.out.println("cashPay: " + cashPay);
         System.out.println("cashAcountPay: " + cashAcountPay);
@@ -1501,7 +1510,6 @@ public class BillRestController extends BaseBill {
             }
         }else {
             Bill billPayment = this.billService.findById(idBill).orElse(null);
-
             if (billPay.equals("billShip")) {
                 if (billPayment == null) {
                     thongBao.put("message","Hóa đơn không tồn tại!");
