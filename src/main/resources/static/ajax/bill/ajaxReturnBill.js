@@ -193,15 +193,13 @@ function loadReturnBill(page) {
                             </td>
 
                             <td class="text-center align-middle">
-                                <span class="d-inline-block" tabindex="0" 
-                                data-bs-toggle="popover" 
-                                data-bs-trigger="hover focus" 
-                                data-bs-content="${billReturn.priceDiscount.toLocaleString('en-US') + ' VNĐ'}">
-                                    ${Math.trunc(billReturn.priceBuy).toLocaleString('en-US') + ' VNĐ'}
-                                </span>
+                                 ${Math.trunc(billReturn.priceBuy).toLocaleString('en-US') + ' VNĐ'}
+                            </td>
+                             <td class="text-center align-middle">
+                                ${billReturn.priceDiscount.toLocaleString('en-US') + ' VNĐ'}
                             </td>
                             <td class="text-center align-middle">
-                                 <div class="pagination mb-3 custom-number-input" style="width: 130px;" data-id="${billReturn.productDetail.id}">
+                                 <div class="pagination mb-3 custom-number-input" style="width: 100%;" data-id="${billReturn.productDetail.id}">
                                         <button class="button btn-decrement">-</button>
                                     <div class="number" id="pageNumber"> ${billReturn.quantityReturn}</div>
                                     <button class="button btn-increment">+</button>

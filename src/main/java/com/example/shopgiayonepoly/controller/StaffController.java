@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/staff")
+@RequestMapping("/staff-manage")
 public class StaffController extends BaseEmail {
     @Autowired
     StaffService staffService;
