@@ -12,6 +12,6 @@ public interface RoleReponsitory extends JpaRepository<Role, Integer> {
     @Query("select r from Role r where r.nameRole = :namerole")
     Role findByNameRole(String namerole);
 
-    @Query("select r from Role r")
+    @Query("select r from Role r where r.status = 1")
     List<Role> getListRole();
 }

@@ -443,121 +443,10 @@ function updateProductTable(response) {
         response.forEach(function(productDetail, index) {
             var imagesHtml = '';
 
-            // productDetail.product.images.forEach(function(image, imgIndex) {
-            //     imagesHtml += `
-            //         <div class="carousel-item ${imgIndex === 0 ? 'active' : ''}" style="width: auto; height: 100px;">
-            //             <img src="https://res.cloudinary.com/dfy4umpja/image/upload/f_auto,q_auto/${image.nameImage}" class="d-block w-100" alt="Lỗi ảnh" style="width: auto; height: 100px;">
-            //         </div>`;
-            // });
-            // var priceSale ;
-            // var priceRoot = productDetail.price;
-
-            // if(productDetail.saleProduct == null) {
-            //     priceSale =  productDetail.price;
-            //     priceRoot = productDetail.price;
-            // }else {
-            //     if(productDetail.saleProduct.discountType == 1) {
-            //         priceRoot =  productDetail.price;
-            //         priceSale = productDetail.price - (productDetail.price * (productDetail.saleProduct.discountValue/100));
-            //     }else {
-            //         priceSale =  productDetail.price - productDetail.saleProduct.discountValue;
-            //         priceRoot = productDetail.price;
-            //     }
-            // }
-
             var btn = '';
-            // if (productDetail.status === 2 || productDetail.product.status === 2) {
-            //     btn = `<span class="text-danger">Mặt hàng đã ngừng bán</span>`;
-            // } else if (productDetail.quantity <= 0) {
-            //     btn = `<span class="text-danger">Hết hàng</span>`;
-            // } else {
-            //     btn = `
-            //             <button class="btn btn-outline-success"
-            //                 data-bs-target="#exampleQuantity"
-            //                 data-bs-toggle="modal"
-            //                 data-name="${productDetail.product.nameProduct}"
-            //                 data-id="${productDetail.id}"
-            //                 data-quantity="${productDetail.quantity}"
-            //                 data-price-sale="${priceSale}"
-            //                 data-price-root="${priceRoot}"
-            //                 >
-            //                <i class="bi bi-cart-plus"></i> Mua
-            //             </button>`;
-            // }
 
             var quantityProduct = '';
-            // if (productDetail.status === 2 || productDetail.product.status === 2) {
-            //     quantityProduct = ``;
-            // } else {
-            //     quantityProduct = `${productDetail.quantity}`;
-            // }
-
             var priceSaleAndRoot = '';
-
-            // Kiểm tra xem có chương trình giảm giá không
-            // if (productDetail.saleProduct != null) {
-            //     // Lấy giá gốc
-            //     var originalPrice = productDetail.price;
-            //
-            //     // Khởi tạo biến để lưu giá đã giảm
-            //     var salePrice;
-            //
-            //     // Kiểm tra loại giảm giá
-            //     if (productDetail.saleProduct.discountType === 1) {
-            //         // Giảm theo phần trăm
-            //         var discountAmount = originalPrice * (productDetail.saleProduct.discountValue / 100);
-            //         salePrice = originalPrice - discountAmount;
-            //     } else if (productDetail.saleProduct.discountType === 2) {
-            //         // Giảm theo số tiền cố định
-            //         salePrice = originalPrice - productDetail.saleProduct.discountValue;
-            //     }
-            //
-            //     // Gán giá đã giảm và giá gốc vào biến priceSaleAndRoot
-            //     priceSaleAndRoot = `
-            //     <div>
-            //         <span class="text-decoration-line-through">${originalPrice.toLocaleString('en-US')} VNĐ</span>
-            //         <br>
-            //         <span class="text-danger fs-5">${salePrice.toLocaleString('en-US')} VNĐ</span>
-            //     </div>`;
-            // } else {
-            //     // Nếu không có chương trình giảm giá, chỉ hiển thị giá gốc
-            //     priceSaleAndRoot = `
-            //     <div>
-            //         <span>${productDetail.price.toLocaleString('en-US')} VNĐ</span>
-            //     </div>`;
-            // }
-
-            // tbody.append(`
-            //             <tr>
-            //     <th scope="row" class="text-center align-middle">${index + 1}</th>
-            //     <td class="text-center align-middle">
-            //         <div id="carouselExampleAutoplaying${index}" class="carousel slide" data-bs-ride="carousel">
-            //             <div class="carousel-inner" style="width: auto; height: 100px;">
-            //                 ${imagesHtml}
-            //             </div>
-            //         </div>
-            //     </td>
-            //     <td class="">
-            //         <div class="fs-4">
-            //             ${productDetail.product.nameProduct}
-            //         </div>
-            //         <div class="fs-6">
-            //             Tên màu: ${productDetail.color.nameColor}
-            //             <br>
-            //             Tên size: ${productDetail.size.nameSize}
-            //         </div>
-            //     </td>
-            //     <td class="text-center align-middle">
-            //         ${quantityProduct}
-            //     </td>
-            //     <td class="text-center align-middle">
-            //        ${priceSaleAndRoot}
-            //     </td>
-            //     <td class="text-center align-middle">
-            //         ${btn}
-            //     </td>
-            // </tr>
-            // `);
 
             // kiem tra giam gia
             if (productDetail[15] != 'Không giảm') {
@@ -601,10 +490,18 @@ function updateProductTable(response) {
             nameImage.forEach(function (imageProduct,indexImage) {
                 imagesHtml += `
                       <div  data-bs-interval="10000" class="carousel-item ${indexImage === 0 ? 'active' : ''}">
-                        <img src="https://res.cloudinary.com/dfy4umpja/image/upload/v1724519685/${imageProduct.trim()}" class="d-block w-100" alt="Product Image 1">
+                        <img src="https://res.cloudinary.com/dfy4umpja/image/upload/v1724519685/${imageProduct.trim()}" class="d-block w-100" alt="https://res.cloudinary.com/dfy4umpja/image/upload/v1730455426/b53dc602-1738-4e7a-9bdf-8520aacdd03d.png">
                       </div>
                      `;
             })
+            console.log(nameImage)
+            if(nameImage.length === 0) {
+                imagesHtml = `
+                      <div  data-bs-interval="10000" class="carousel-item active}">
+                        <img src="https://res.cloudinary.com/dfy4umpja/image/upload/v1724519685/b4591560-a308-460f-9340-d31ed2f50308" class="d-block w-100" alt="Không có">
+                      </div>
+                     `;
+            }
             var saleBadge = '';
             if(productDetail[15] != 'Không giảm') {
                 saleBadge = `<div class="bill-label-sale">${productDetail[15]}</div>`;
