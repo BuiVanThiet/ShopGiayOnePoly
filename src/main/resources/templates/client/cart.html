@@ -106,8 +106,8 @@
                                         <div>
                                             <span class="voucher-id" th:text="${voucher.id}"
                                                   style="display: none;"></span>
-<!--                                            <span id="voucher-type" class="voucher-type"-->
-<!--                                                  th:text="${voucher.discountType}"></span>-->
+                                            <!--                                            <span id="voucher-type" class="voucher-type"-->
+                                            <!--                                                  th:text="${voucher.discountType}"></span>-->
                                             <span class="voucher-code"
                                                   th:text="'Mã voucher: '+${voucher.codeVoucher}"></span>
                                             <br>
@@ -135,40 +135,38 @@
                 </div>
 
                 <!-- Tổng giá và các nút hành động -->
-                <div class="cart-actions__checkout cart-mt-4 cart-d-flex cart-justify-content-between cart-align-items-center" style="margin-top: 100px">
-                    <div class="voucher-summary-item mb-3">
-                        <label>Tổng tiền: </label>
-                        <span id="totalPriceCartItem" th:text="${totalPrice}">Tổng tiền</span>
-                    </div>
-                    <div class="voucher-summary-item mb-3">
-                        <label>Giảm được: </label>
-                        <span id="priceVoucherReduced" th:text="${priceReducedShow}">0 đ</span>
-                    </div>
-                    <div class="voucher-summary-item mb-3">
-                        <label>Giá cuối cùng: </label>
-                        <span id="price-Calculator" th:text="${finalPrice}">0 ₫</span>
-                    </div>
+                <div class="cart-actions__checkout cart-mt-4" style="margin-top: 100px">
+                    <!-- Tổng tiền, giảm giá và thành tiền -->
                     <div class="cart-actions__total cart-summary-total">
-                        <span class="cart-title"><strong>TỔNG TIỀN</strong>
-                            <span class="cart-total-quantity">(tạm tính)</span><br>
-                            <span style="font-size: 30px" id="cart-spanTotalPriceCart"
-                                  class="cart-js-total-price cart-total-price" th:text="${finalPrice}">₫</span>
-                        </span>
+                        <div class="cart-row d-flex justify-content-between">
+                            <label>Tổng tiền:</label>
+                            <span id="totalPriceCartItem" th:text="${totalPrice}">Tổng tiền</span>
+                        </div>
+                        <div class="cart-row d-flex justify-content-between">
+                            <label>Giảm được:</label>
+                            <span id="priceVoucherReduced" th:text="${priceReducedShow}">0 đ</span>
+                        </div>
+                        <div class="cart-row d-flex justify-content-between cart-total">
+                            <strong>THÀNH TIỀN:</strong>
+                            <span id="cart-spanTotalPriceCart" class="cart-js-total-price" th:text="${finalPrice}">₫</span>
+                        </div>
                     </div>
-                    <div class="cart-actions__btn">
+
+                    <!-- Nút hành động -->
+                    <div class="cart-actions__btn cart-d-flex cart-align-items-center" style="margin-top: 20px;">
                         <button type="button" id="cart-continue-shopping" class="cart-btn-continue cart-u-btn">
                             <a href="/onepoly/products" style="text-decoration: none;">
                                 <span>TIẾP TỤC MUA SẮM</span>
                             </a>
                         </button>
-                        <button type="button" id="cart-checkout"
-                                class="cart-btn-checkout cart-u-btn cart-u-btn--primary"
-                                name="checkout"
-                                value="">
+                        <button type="button" id="cart-checkout" class="cart-btn-checkout cart-u-btn cart-u-btn--primary">
                             <a style="text-decoration: none;" href="/onepoly/payment"> THANH TOÁN</a>
                         </button>
                     </div>
                 </div>
+
+
+
             </div>
             <div th:if="${cartItems.size() <= 0}"
                  style="text-align: center; margin-top: 100px; border: 1px solid grey; border-radius: 8px; padding: 20px; background-color: #f9f9f9;">

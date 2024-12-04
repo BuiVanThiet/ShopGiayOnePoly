@@ -124,26 +124,46 @@
     width: 100%;
     margin-left: auto;
 }
-
 .cart-actions__total {
     display: flex;
     flex-direction: column;
-    font-size: 20px;
+    gap: 10px; /* Khoảng cách giữa các dòng */
+    width: 100%; /* Đảm bảo chiếm toàn bộ chiều rộng */
+    max-width: 300px; /* Đặt chiều rộng cố định nếu cần */
+    font-size: 16px;
     color: #333;
 }
 
-.cart-actions__total .cart-title {
+.cart-row {
+    display: flex;
+    justify-content: space-between; /* Đẩy nhãn và giá trị ra hai bên */
+    align-items: center;
+    border-bottom: 1px solid #ddd; /* Tùy chọn: Thêm gạch chân để phân biệt các dòng */
+    padding: 5px 0;
+}
+
+.cart-row:last-child {
+    border-bottom: none; /* Xóa gạch chân cho dòng cuối */
+}
+
+.cart-total strong {
+    font-size: 18px;
+    color: #2a2727;
+}
+
+.cart-js-total-price {
+    font-size: 24px;
+    font-weight: bold;
     color: #333030;
 }
 
-.cart-actions__total .cart-js-total-price {
-    color: #333030;
-    font-size: 30px;
-}
+
 
 .cart-actions__btn {
     display: flex;
-    gap: 15px;
+    flex-direction: column; /* Chuyển các nút sang sắp xếp theo cột */
+    gap: 15px; /* Khoảng cách giữa các nút */
+    align-items: center; /* Căn giữa nội dung trong cột */
 }
 
 .cart-btn-continue,
@@ -164,7 +184,7 @@
 }
 
 .cart-btn-continue:hover {
-    background-color: #efefef;
+    background-color: #ffffff;
 }
 
 .cart-btn-checkout {
@@ -174,6 +194,7 @@
 
 .cart-btn-checkout:hover {
     background-color: #3e3ed4;
+    color: white;
 }
 
 .cart-u-btn--primary {
@@ -185,7 +206,7 @@
 .cart-voucher-voucher {
     margin-top: 40px;
     width: 38%;
-    height: 283px;
+    /*height: 283px;*/
     padding: 15px;
     background-color: #f8f6f6;
     border: 1px solid #eae4e4;

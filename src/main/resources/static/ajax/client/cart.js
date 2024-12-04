@@ -74,7 +74,7 @@ function calculateDiscount(totalPrice, discountType, discountValue) {
 function updateCartDisplay(priceReduced, finalPrice) {
     document.getElementById('priceVoucherReduced').textContent = priceReduced.toLocaleString('en-US') + ' ₫';
     document.getElementById('cart-spanTotalPriceCart').textContent = finalPrice.toLocaleString('en-US') + ' ₫';
-    document.getElementById('price-Calculator').textContent = finalPrice.toLocaleString('en-US') + ' ₫';
+    // document.getElementById('price-Calculator').textContent = finalPrice.toLocaleString('en-US') + ' ₫';
 }
 
 // Hàm parse giá trị tiền tệ
@@ -220,7 +220,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // Cập nhật giá trị trên giao diện
         document.getElementById("totalPriceCartItem").innerText = totalPrice.toLocaleString('en-US') + " ₫";
         document.getElementById("priceVoucherReduced").innerText = priceVoucherReduced.toLocaleString('en-US') + " ₫";
-        document.getElementById("price-Calculator").innerText = finalPrice.toLocaleString('en-US') + " ₫";
+        // document.getElementById("price-Calculator").innerText = finalPrice.toLocaleString('en-US') + " ₫";
         document.getElementById("cart-spanTotalPriceCart").innerText = finalPrice.toLocaleString('en-US') + " ₫";
     }
 
