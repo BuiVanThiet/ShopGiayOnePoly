@@ -331,7 +331,7 @@ function insertTableProductDetail() {
 
     // Lắng nghe sự kiện thay đổi trên các ô có thể chỉnh sửa
     document.querySelectorAll('.editable-cell').forEach(cell => {
-        cell.addEventListener('input', function (event) {
+        cell.addEventListener('input', function () {
             // Chỉ xử lý nếu hàng đang được chỉnh sửa có checkbox được chọn
             const row = cell.closest('tr');
             const checkbox = row.querySelector('.row-selector');
@@ -566,9 +566,10 @@ function toggleSelectAllproductDetail(selectAllCheckbox) {
 
 document.querySelectorAll('.row-selector').forEach((checkbox) => {
     checkbox.addEventListener('change', function () {
-        const allChecked = document.querySelectorAll('.row-selector:checked').length === document.querySelectorAll('.row-selector').length;
-        document.getElementById('select-all-productDetail').checked = allChecked;
+        document.getElementById('select-all-productDetail').checked =
+            document.querySelectorAll('.row-selector:checked').length === document.querySelectorAll('.row-selector').length;
     });
 });
+
 
 

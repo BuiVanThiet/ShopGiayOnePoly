@@ -1,6 +1,7 @@
 package com.example.shopgiayonepoly.controller.attribute;
 
 import com.example.shopgiayonepoly.entites.Category;
+import com.example.shopgiayonepoly.entites.Category;
 import com.example.shopgiayonepoly.entites.Staff;
 import com.example.shopgiayonepoly.service.CashierInventoryService;
 import com.example.shopgiayonepoly.service.TimekeepingService;
@@ -126,17 +127,34 @@ public class CategoryController {
         boolean checkCode = true;
         boolean checkName = true;
         for (Category listCategory : categoryService.findAll()) {
-            if (category.getCodeCategory().trim().toLowerCase().equals(listCategory.getCodeCategory().trim().toLowerCase())) {
+            if (category.getCodeCategory().trim().equalsIgnoreCase(listCategory.getCodeCategory().trim())) {
                 checkCode = false;
+                break;
             }
         }
         for (Category listCategory : categoryService.findAll()) {
-            if (category.getNameCategory().trim().toLowerCase().equals(listCategory.getNameCategory().trim().toLowerCase())) {
+            if (category.getNameCategory().trim().equalsIgnoreCase(listCategory.getNameCategory().trim())) {
                 checkName = false;
+                break;
             }
         }
-        if (!checkCode || !checkName || category.getCodeCategory().isEmpty() || category.getNameCategory().isEmpty() || category.getCodeCategory().length() > 10 || category.getNameCategory().length() > 50) {
-            thongBao.put("message", "Dữ liệu không hợp lệ");
+        if (!checkCode) {
+            thongBao.put("message", "Mã danh mục đã tồn tại");
+            thongBao.put("check", "2");
+        } else if (!checkName) {
+            thongBao.put("message", "Tên danh mục đã tồn tại");
+            thongBao.put("check", "2");
+        } else if (category.getCodeCategory().isEmpty()) {
+            thongBao.put("message", "Mã danh mục không được để trống");
+            thongBao.put("check", "2");
+        } else if (category.getNameCategory().isEmpty()) {
+            thongBao.put("message", "Tên danh mục không được để trống");
+            thongBao.put("check", "2");
+        } else if (category.getCodeCategory().length() > 10) {
+            thongBao.put("message", "Mã danh mục không được dài quá 10 ký tự");
+            thongBao.put("check", "2");
+        } else if (category.getNameCategory().length() > 50) {
+            thongBao.put("message", "Tên danh mục không được dài quá 50 ký tự");
             thongBao.put("check", "2");
         } else {
             category.setStatus(1);
@@ -144,42 +162,8 @@ public class CategoryController {
             thongBao.put("message", "Thêm danh mục thành công");
             thongBao.put("check", "1");
         }
+
         return ResponseEntity.ok(thongBao);
-    }
-
-    @PostMapping("/category/update-status")
-    @ResponseBody
-    public ResponseEntity<String> updateStatus(@RequestBody Map<String, Object> payload, HttpSession session) {
-        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
-        if (staffLogin == null) {
-            return null;
-        }
-        if(staffLogin.getStatus() != 1) {
-            return null;
-        }
-        try {
-            int id;
-            int status;
-            // Lấy id và status từ payload, kiểm tra kiểu dữ liệu
-            if (payload.get("id") instanceof Integer) {
-                id = (Integer) payload.get("id");
-            } else {
-                id = Integer.parseInt((String) payload.get("id"));
-            }
-
-            if (payload.get("status") instanceof Integer) {
-                status = (Integer) payload.get("status");
-            } else {
-                status = Integer.parseInt((String) payload.get("status"));
-            }
-
-            // Gọi service để cập nhật trạng thái trong cơ sở dữ liệu
-            categoryService.updateStatus(id, status);
-
-            return ResponseEntity.ok("Cập nhật trạng thái thành công");
-        } catch (NumberFormatException e) {
-            return ResponseEntity.badRequest().body("Có lỗi xảy ra khi cập nhật trạng thái");
-        }
     }
 
     @PostMapping("/update-category")
@@ -190,7 +174,7 @@ public class CategoryController {
         if (staffLogin == null) {
             thongBao.put("message", "Nhân viên chưa đăng nhập");
             thongBao.put("check", "3");
-            return ResponseEntity.ok(thongBao);
+            return null;
         }
         if(staffLogin.getStatus() != 1) {
             thongBao.put("message","Nhân viên đang bị ngừng hoạt động!");
@@ -220,30 +204,36 @@ public class CategoryController {
             nameCategory = (String) payload.get("nameCategory");
             boolean checkCode = true;
             for (Category listCategory : categoryService.findAll()) {
-                if (codeCategory.trim().equalsIgnoreCase(listCategory.getCodeCategory().trim().toLowerCase()) && id != listCategory.getId()) {
+                if (codeCategory.trim().equalsIgnoreCase(listCategory.getCodeCategory().trim()) && id != listCategory.getId()) {
                     checkCode = false;
                     break;
                 }
             }
             boolean checkName = true;
             for (Category listCategory : categoryService.findAll()) {
-                if (nameCategory.trim().equalsIgnoreCase(listCategory.getNameCategory().trim().toLowerCase()) && id != listCategory.getId()) {
+                if (nameCategory.trim().equalsIgnoreCase(listCategory.getNameCategory().trim()) && id != listCategory.getId()) {
                     checkName = false;
                     break;
                 }
             }
-            // Gọi service để cập nhật dữ liệu danh mục trong cơ sở dữ liệu
-            if (codeCategory.isEmpty() || codeCategory.length() > 10) {
-                thongBao.put("message", "Mã danh mục không được trống và lớn hơn 10 kí tự");
-                thongBao.put("check", "2");
-            } else if (!checkCode) {
+            // Gọi service để cập nhật dữ liệu danh mục sắc trong cơ sở dữ liệu
+            if (!checkCode) {
                 thongBao.put("message", "Mã danh mục đã tồn tại");
                 thongBao.put("check", "2");
             } else if (!checkName) {
                 thongBao.put("message", "Tên danh mục đã tồn tại");
                 thongBao.put("check", "2");
-            } else if (nameCategory.isEmpty() || nameCategory.length() > 50) {
-                thongBao.put("message", "Tên danh mục không được trống và lớn hơn 50 kí tự");
+            } else if (codeCategory.isEmpty()) {
+                thongBao.put("message", "Mã danh mục không được để trống");
+                thongBao.put("check", "2");
+            } else if (nameCategory.isEmpty()) {
+                thongBao.put("message", "Tên danh mục không được để trống");
+                thongBao.put("check", "2");
+            } else if (codeCategory.length() > 10) {
+                thongBao.put("message", "Mã danh mục không được dài quá 10 ký tự");
+                thongBao.put("check", "2");
+            } else if (nameCategory.length() > 50) {
+                thongBao.put("message", "Tên danh mục không được dài quá 50 ký tự");
                 thongBao.put("check", "2");
             } else {
                 categoryService.updateCategory(id, codeCategory, nameCategory);

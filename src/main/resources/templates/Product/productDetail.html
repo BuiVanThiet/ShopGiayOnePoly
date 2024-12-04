@@ -38,6 +38,7 @@
       <div class="update-productDetail">
         <button id="btn-save-productDetail" class="btn-save-productDetail" style="display: none" data-bs-toggle="modal" data-bs-target="#confirm-update-productDetail-modal" >Lưu lại</button>
         <button id="btn-saveQR-productDetail" class="btn-saveQR-productDetail" style="display: none" data-bs-toggle="modal" data-bs-target="#confirm-saveQR-modal" >Lưu QR</button>
+        <button id="btn-export-productDetail" class="btn-export-productDetail" style="display: none" data-bs-toggle="modal" data-bs-target="#confirm-export-productDetail-modal" >Xuất excel</button>
         <button id="btn-cancel-productDetail" class="btn-cancel-productDetail" style="display: none" onclick="cancelButton()">Hủy bỏ</button>
       </div>
       <table class="table-productDetail">
@@ -102,6 +103,28 @@
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
               <button onclick="downloadAllQRCode()" type="submit" class="btn btn-success"
+                      data-bs-dismiss="modal"
+                      aria-label="Close">Đồng ý
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal fade" id="confirm-export-productDetail-modal" tabindex="-1"
+           aria-labelledby="confirmExportModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="confirmExportModalLabel">
+                Xác nhận xuất Excel chi tiết sản phẩm
+              </h1>
+            </div>
+            <div class="modal-body">
+              Chắc chắn muốn xuất Excel các hàng đã chọn ?
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+              <button onclick="exportExcelProductDetail()" type="submit" class="btn btn-success"
                       data-bs-dismiss="modal"
                       aria-label="Close">Đồng ý
               </button>

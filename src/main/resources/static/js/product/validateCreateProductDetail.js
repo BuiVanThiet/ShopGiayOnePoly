@@ -55,7 +55,7 @@ function validateAndFormatCells() {
     // Hiển thị hoặc ẩn thông báo lỗi
     if (hasError) {
         errorText.style.visibility = 'visible';
-        errorText.innerText = "Giá bán, Giá nhập > 1.000. Trọng lượng <= 5.000";
+        errorText.innerText = "Giá bán, Giá nhập > 1.000, Trọng lượng <= 5.000";
         return false;
     } else {
         errorText.style.visibility = 'hidden';
