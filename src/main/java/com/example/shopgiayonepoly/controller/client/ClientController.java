@@ -657,7 +657,6 @@ public class ClientController extends BaseBill {
         model.addAttribute("errorMessage", "");
 //        return "login/loginClient";
         return "client/homepage";
-//        return "redirect:/onepoly/home";  để khi đăng xuất thì hiển thị đăng nhập
     }
 
     @PostMapping("/login")
