@@ -28,4 +28,17 @@ public class ReturnBillDetailResponse implements Serializable {
     private LocalDateTime createDate;
     private LocalDateTime updateDate;
     private Integer status;
+    private Integer quantityInStock;
+    public ReturnBillDetailResponse(Integer id, ReturnBillExchangeBill returnBill, ProductDetail productDetail, Integer quantityReturn, BigDecimal priceBuy, BigDecimal priceDiscount, BigDecimal totalReturn, LocalDateTime createDate, LocalDateTime updateDate, Integer status) {
+        this.id = id;
+        this.returnBill = returnBill;
+        this.productDetail = productDetail;
+        this.quantityReturn = quantityReturn;
+        this.priceBuy = priceBuy;
+        this.priceDiscount = priceDiscount;
+        this.totalReturn = totalReturn;
+        this.createDate = createDate;
+        this.updateDate = updateDate;
+        this.status = status;
+    }
 }

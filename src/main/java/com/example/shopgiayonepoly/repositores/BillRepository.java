@@ -104,7 +104,7 @@ public interface BillRepository extends JpaRepository<Bill,Integer> {
         FROM voucher v 
         left JOIN bill b ON b.id = :idBillCheck 
         WHERE v.status <> 0
-        AND GETDATE() BETWEEN v.start_date AND v.end_date
+        AND CAST(GETDATE() AS DATE) BETWEEN CAST(v.start_date AS DATE) AND CAST(v.end_date AS DATE)
         and (v.id <> b.id_voucher or b.id_voucher is null )
         AND v.prices_apply <= b.total_amount
         and concat(v.name_voucher,v.code_voucher) like %:keyword% 
