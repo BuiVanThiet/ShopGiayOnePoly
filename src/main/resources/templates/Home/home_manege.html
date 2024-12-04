@@ -308,71 +308,73 @@
                     Quản lý hóa đơn
                 </a>
             </li>
-            <h4>
-                <div class="menu-separator"></div>
-            </h4>
-            <li>
-                <a href="/staff/product"><span class="material-symbols-outlined"> steps </span>Sản phẩm</a>
-            </li>
-            <h4>
-                <div class="menu-separator"></div>
-            </h4>
-            <li>
-                <a href="#" onclick="toggleSubmenu(event)">
-                    <span class="material-symbols-outlined"> view_cozy </span>Thuộc tính sản phẩm
-                </a>
-                <!-- Danh sách con ẩn/hiện -->
-                <ul class="submenu">
-                    <li><a href="/attribute/color">Màu sắc</a></li>
-                    <li><a href="/attribute/size">Kích cỡ</a></li>
-                    <li><a href="/attribute/origin">Xuất sứ</a></li>
-                    <li><a href="/attribute/manufacturer">Nhà sản xuất</a></li>
-                    <li><a href="/attribute/material">Chất liệu</a></li>
-                    <li><a href="/attribute/sole">Loại đế</a></li>
-                    <li><a href="/attribute/category">Danh mục</a></li>
-                </ul>
-            </li>
-            <h4>
-                <div class="menu-separator"></div>
-            </h4>
-            <li>
-                <a href="/staff/list"><span class="material-symbols-outlined"> badge </span>Nhân viên</a>
-            </li>
-            <h4>
-                <div class="menu-separator"></div>
-            </h4>
-            <li>
-                <a href="/customer/list"><span class="material-symbols-outlined"> person </span>Khách hàng</a>
-            </li>
+            <div th:if="${staffInfo.role.id == 1}">
+                <h4>
+                    <div class="menu-separator"></div>
+                </h4>
+                <li>
+                    <a href="/staff/product"><span class="material-symbols-outlined"> steps </span>Quản lý Sản phẩm</a>
+                </li>
+                <h4>
+                    <div class="menu-separator"></div>
+                </h4>
+                <li>
+                    <a href="#" onclick="toggleSubmenu(event)">
+                        <span class="material-symbols-outlined"> view_cozy </span>Quản lý thuộc tính sản phẩm
+                    </a>
+                    <!-- Danh sách con ẩn/hiện -->
+                    <ul class="submenu">
+                        <li><a href="/attribute/color">Màu sắc</a></li>
+                        <li><a href="/attribute/size">Kích cỡ</a></li>
+                        <li><a href="/attribute/origin">Xuất sứ</a></li>
+                        <li><a href="/attribute/manufacturer">Nhà sản xuất</a></li>
+                        <li><a href="/attribute/material">Chất liệu</a></li>
+                        <li><a href="/attribute/sole">Loại đế</a></li>
+                        <li><a href="/attribute/category">Danh mục</a></li>
+                    </ul>
+                </li>
+                <h4>
+                    <div class="menu-separator"></div>
+                </h4>
+                <li>
+                    <a href="/staff-manage/list"><span class="material-symbols-outlined"> badge </span>Quản lý nhân viên</a>
+                </li>
+                <h4>
+                    <div class="menu-separator"></div>
+                </h4>
+                <li>
+                    <a href="/customer/list"><span class="material-symbols-outlined"> person </span>Quản lý khách hàng</a>
+                </li>
 
 
-            <h4>
-                <div class="menu-separator"></div>
-            </h4>
-            <li>
-                <a href="/voucher/list"><span class="material-symbols-outlined"> local_offer </span>Phiếu giảm giá</a>
-            </li>
-            <h4>
-                <div class="menu-separator"></div>
-            </h4>
-            <li>
-                <a href="/sale-product/list"><span class="material-symbols-outlined"> percent </span>Đợt giảm giá</a>
-            </li>
-            <h4>
-                <div class="menu-separator"></div>
-            </h4>
-            <h4>
-                <span></span>
-                <div class="menu-separator"></div>
-            </h4>
-            <li>
-                <a href="/staff/shift/home">
+                <h4>
+                    <div class="menu-separator"></div>
+                </h4>
+                <li>
+                    <a href="/voucher/list"><span class="material-symbols-outlined"> local_offer </span>Quản lý phiếu giảm giá</a>
+                </li>
+                <h4>
+                    <div class="menu-separator"></div>
+                </h4>
+                <li>
+                    <a href="/sale-product/list"><span class="material-symbols-outlined"> percent </span>Quản lý đợt giảm giá</a>
+                </li>
+                <h4>
+                    <div class="menu-separator"></div>
+                </h4>
+                <h4>
+                    <span></span>
+                    <div class="menu-separator"></div>
+                </h4>
+                <li>
+                    <a href="/staff/shift/home">
                 <span class="material-symbols-outlined">
                     calendar_month
                 </span>
-                    Quản lý ca làm
-                </a>
-            </li>
+                        Quản lý ca làm
+                    </a>
+                </li>
+            </div>
             <h4>
                 <div class="menu-separator"></div>
             </h4>

@@ -647,8 +647,25 @@ public class ReturnExchangeBillRestController extends BaseBill {
         if (!validatePage.trim().equals("")) {
             return null;
         }
-
         Pageable pageable = PageRequest.of(Integer.parseInt(page)-1,2);
+
+        List<ReturnBillDetailResponse> returnBillDetailResponses1 = new ArrayList<>();
+
+        for (ReturnBillDetail rbd: this.returnBillDetailService.getReturnBillDetailByIdReturnBill(idReturnBill,pageable).getContent()) {
+            BigDecimal priceDiscount = BigDecimal.ZERO;
+            Bill bill = this.billService.findById(rbd.getReturnBill().getBill().getId()).orElse(null);
+
+
+            ReturnBillDetailResponse rbdr = new ReturnBillDetailResponse();
+            rbdr.setId(rbd.getId());
+            rbdr.setReturnBill(rbd.getReturnBill());
+            rbdr.setProductDetail(rbd.getProductDetail());
+            rbdr.setQuantityReturn(rbd.getQuantityReturn());
+            rbdr.setPriceBuy(rbd.getPriceBuy());
+            rbdr.setTotalReturn(rbd.getTotalReturn());
+            returnBillDetailResponses1.add(rbdr);
+        }
+
         System.out.println(session.getAttribute("IdReturnBill"));
         return this.returnBillDetailService.getReturnBillDetailByIdReturnBill(idReturnBill,pageable).getContent();
     }
