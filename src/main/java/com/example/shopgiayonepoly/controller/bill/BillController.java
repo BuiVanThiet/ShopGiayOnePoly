@@ -833,7 +833,6 @@ public class BillController extends BaseBill {
                 this.setBillStatus(payBillOrder.getId(),101,session);
                 this.billService.save(payBillOrder);
                 String host = "http://localhost:8080/onepoly/status-bill/" + payBillOrder.getId();
-
                 String getAddRessDetail = payBillOrder.getAddRess().trim();
                 String[] part = getAddRessDetail.split(",\\s*");
                 String email = part[2];
