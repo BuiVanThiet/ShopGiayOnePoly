@@ -28,4 +28,6 @@ public class ReturnBillDetail extends Base {
     private BigDecimal priceBuy;
     @Column(name = "total_return")
     private BigDecimal totalReturn;
+    @Column(name = "quantity_in_stock")
+    private Integer quantityInStock;
 }

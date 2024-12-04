@@ -3,6 +3,7 @@ package com.example.shopgiayonepoly.restController.bill;
 import com.example.shopgiayonepoly.baseMethod.BaseBill;
 import com.example.shopgiayonepoly.dto.request.bill.BillDetailAjax;
 import com.example.shopgiayonepoly.dto.request.bill.ProductDetailCheckMark2Request;
+import com.example.shopgiayonepoly.dto.request.bill.ProductUpdateRequest;
 import com.example.shopgiayonepoly.dto.request.bill.ReturnBillDetailRequest;
 import com.example.shopgiayonepoly.dto.response.bill.ExchangeBillDetailResponse;
 import com.example.shopgiayonepoly.dto.response.bill.InfomationReturnBillResponse;
@@ -20,6 +21,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -114,6 +116,10 @@ public class ReturnExchangeBillRestController extends BaseBill {
 
             session.setAttribute("exchangeBillDetailResponses", null);
         }
+
+        for (ReturnBillDetailResponse returnBillDetailResponse:returnBillDetailResponses) {
+            System.out.println(returnBillDetailResponse.toString());
+        }
         Pageable pageable = PageRequest.of(Integer.parseInt(pageNumber)-1,2);
         return getConvertListToPageReturnBill(returnBillDetailResponses,pageable).getContent();
     }
@@ -191,6 +197,14 @@ public class ReturnExchangeBillRestController extends BaseBill {
                         .multiply(BigDecimal.valueOf(500));
                 System.out.println("gia sau khi giam " + roundedPrice);
                 // Set giá trị đã làm tròn vào đối tượng response
+                BigDecimal priceDiscountRoot = roundedPrice;
+                roundedPrice = roundedPrice.setScale(0, RoundingMode.DOWN); // Lấy phần nguyên
+
+                if (priceDiscountRoot.compareTo(roundedPrice) > 0) {
+                    // Nếu có phần dư thì +1
+                    roundedPrice = roundedPrice.add(BigDecimal.ONE);
+                }
+
                 newReturnBillDetailResponse.setPriceBuy(roundedPrice);
                 System.out.println("gia giam cho moi san pham la " + request.getPriceBuy() + "-" + roundedPrice + "=" + request.getPriceBuy().subtract(roundedPrice));
                 newReturnBillDetailResponse.setPriceDiscount(request.getPriceBuy().subtract(roundedPrice));
@@ -628,7 +642,7 @@ public class ReturnExchangeBillRestController extends BaseBill {
         return response;
     }
     @GetMapping("/infomation-return-bill-detail-from-bill-manage/{page}")
-    public List<ReturnBillDetail> getReturnBillDetailByIdReturnBill(@PathVariable("page") String page,HttpSession session) {
+    public List<ReturnBillDetailResponse> getReturnBillDetailByIdReturnBill(@PathVariable("page") String page,HttpSession session) {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if(staffLogin == null) {
             return null;
@@ -651,10 +665,38 @@ public class ReturnExchangeBillRestController extends BaseBill {
 
         List<ReturnBillDetailResponse> returnBillDetailResponses1 = new ArrayList<>();
 
-        for (ReturnBillDetail rbd: this.returnBillDetailService.getReturnBillDetailByIdReturnBill(idReturnBill,pageable).getContent()) {
+        List<Object[]> objects = this.billService.getInfomationBillReturn((Integer) session.getAttribute("IdBill"));
+        BigDecimal discountRatio = BigDecimal.ZERO;
+        for (int i = 0; i<1;i++) {
+            Object[] objectSave = objects.get(i);
+            discountRatio = new BigDecimal(String.valueOf(objectSave[4])).divide(BigDecimal.valueOf(100));
+        }
+
+        for (ReturnBillDetail rbd: this.returnBillDetailService.getReturnBillDetailByIdReturnBill(idReturnBill)) {
             BigDecimal priceDiscount = BigDecimal.ZERO;
             Bill bill = this.billService.findById(rbd.getReturnBill().getBill().getId()).orElse(null);
+            List<BillDetail> billDetails = this.billDetailService.getBillDetailByIdBill(bill.getId());
 
+            System.out.println("-tong hoa don:" + bill.getTotalAmount());
+            System.out.println("-gia cua voucher:" + bill.getPriceDiscount());
+            System.out.println("-gia duoc giam cho moi san pham: " + discountRatio);
+
+            for (BillDetail billDetail: billDetails) {
+                if(rbd.getProductDetail().getId() == billDetail.getProductDetail().getId()) {
+                    priceDiscount = billDetail.getPrice().multiply(BigDecimal.valueOf(1).subtract(discountRatio));
+                    System.out.println("-gia sau khi giam 2 " +billDetail.getPrice().subtract(priceDiscount));
+                    priceDiscount = billDetail.getPrice().subtract(priceDiscount);
+                }
+            }
+
+            BigDecimal priceDiscountRoot = priceDiscount;
+            priceDiscount = priceDiscount.setScale(0, RoundingMode.DOWN); // Lấy phần nguyên
+
+            if (priceDiscountRoot.compareTo(priceDiscount) > 0) {
+                // Nếu có phần dư thì +1
+                priceDiscount = priceDiscount.add(BigDecimal.ONE);
+            }
+            System.out.println("-gia sau khi giam 3 " +priceDiscount);
 
             ReturnBillDetailResponse rbdr = new ReturnBillDetailResponse();
             rbdr.setId(rbd.getId());
@@ -662,12 +704,24 @@ public class ReturnExchangeBillRestController extends BaseBill {
             rbdr.setProductDetail(rbd.getProductDetail());
             rbdr.setQuantityReturn(rbd.getQuantityReturn());
             rbdr.setPriceBuy(rbd.getPriceBuy());
+            rbdr.setPriceDiscount(priceDiscount.setScale(3, RoundingMode.HALF_UP));
             rbdr.setTotalReturn(rbd.getTotalReturn());
+            LocalDateTime localDateTime = rbd.getCreateDate().toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDateTime();
+            rbdr.setCreateDate(localDateTime);
+            rbdr.setQuantityInStock(rbd.getQuantityInStock());
             returnBillDetailResponses1.add(rbdr);
         }
 
+        for (ReturnBillDetailResponse returnBillDetailResponse:returnBillDetailResponses1) {
+            System.out.println(returnBillDetailResponse.toString());
+        }
+
+
         System.out.println(session.getAttribute("IdReturnBill"));
-        return this.returnBillDetailService.getReturnBillDetailByIdReturnBill(idReturnBill,pageable).getContent();
+//        return this.returnBillDetailService.getReturnBillDetailByIdReturnBill(idReturnBill,pageable).getContent();
+        return getConvertListToPageReturnBill(returnBillDetailResponses1,pageable).getContent();
     }
 
     @GetMapping("/max-page-return-bill-detail-from-bill-manage")
@@ -1246,6 +1300,69 @@ public class ReturnExchangeBillRestController extends BaseBill {
 
         this.discountedAmount = new BigDecimal(money);
         return ResponseEntity.ok("done");
+    }
+
+    //update so luong ve kho
+    @PostMapping("/update-quantity-product")
+    public ResponseEntity<String> updateQuantityProduct(@RequestBody Map<String, Map<String, String>> request,HttpSession session) {
+        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
+        if(staffLogin == null) {
+            return null;
+        }
+        if(staffLogin.getStatus() != 1) {
+            return null;
+        }
+
+        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staffLogin.getId());
+        String messMap = checkLoginAndLogout.get("message");
+        if(!messMap.trim().equals("")) {
+            return null;
+        }
+
+        Map<String, String> data = request.get("data");  // Lấy dữ liệu từ key "data"
+
+        Integer idBill = (Integer) session.getAttribute("IdBill");
+        String validateIdBill = validateInteger(idBill != null ? idBill.toString() : "");
+        if (!validateIdBill.trim().equals("")) {
+            return null;
+        }
+
+        Bill bill = this.billService.findById(idBill).orElse(null);
+        if(bill == null) {
+            return null;
+        }
+
+        if (bill.getStatus() == 0 ) {
+            return null;
+        }
+
+
+        // Tách dữ liệu và chuyển đổi thành danh sách các đối tượng
+        ReturnBillExchangeBill returnBillExchangeBill = this.returnBillService.getReturnBillByIdBill(bill.getId());
+
+        if(returnBillExchangeBill.getStatus() != 1) {
+            return null;
+        }
+
+        List<ReturnBillDetail> returnBillDetails = this.returnBillDetailService.getReturnBillDetailByIdReturnBill(returnBillExchangeBill.getId());
+        System.out.println("vao luong tra kho");
+        for (ReturnBillDetail returnBillDetail:returnBillDetails) {
+            for (Map.Entry<String, String> entry : data.entrySet()) {
+                Integer id = Integer.parseInt(entry.getKey());
+                Integer quantity = Integer.parseInt(entry.getValue());
+                this.getUpdateQuantityProduct(id,-quantity);
+                if(returnBillDetail.getProductDetail().getId() == id) {
+                    returnBillDetail.setQuantityInStock(quantity);
+                    returnBillDetail.setUpdateDate(new Date());
+                    System.out.println("id san pham: " + returnBillDetail.getProductDetail().getId());
+                    System.out.println("so luong san pham ve kho: " + quantity);
+
+                    this.returnBillDetailService.save(returnBillDetail);
+                }
+            }
+        }
+
+        return ResponseEntity.ok("Cập nhật thành công!");
     }
 
     private void getReduceProductDetail(Integer id, Integer quantityExchange) {

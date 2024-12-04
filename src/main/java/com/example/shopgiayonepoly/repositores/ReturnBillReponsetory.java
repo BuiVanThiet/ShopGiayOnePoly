@@ -13,7 +13,7 @@ public interface ReturnBillReponsetory extends JpaRepository<ReturnBillExchangeB
     @Query("""
             select
                            case
-                               when (rb.customerRefund - rb.exchangeAndReturnFee + rb.discountedAmount) - rb.customerPayment < 0
+                               when (rb.customerRefund - rb.exchangeAndReturnFee + rb.discountedAmount) - rb.customerPayment < -1
                                then 'PhaiTraTien'
                                else 'KhongPhaiTraTien'
                            end
