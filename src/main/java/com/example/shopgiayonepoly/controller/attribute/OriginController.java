@@ -1,6 +1,7 @@
 package com.example.shopgiayonepoly.controller.attribute;
 
 import com.example.shopgiayonepoly.entites.Origin;
+import com.example.shopgiayonepoly.entites.Origin;
 import com.example.shopgiayonepoly.entites.Staff;
 import com.example.shopgiayonepoly.service.CashierInventoryService;
 import com.example.shopgiayonepoly.service.TimekeepingService;
@@ -127,17 +128,34 @@ public class OriginController {
         boolean checkCode = true;
         boolean checkName = true;
         for (Origin listOrigin : originService.findAll()) {
-            if (origin.getCodeOrigin().trim().toLowerCase().equals(listOrigin.getCodeOrigin().trim().toLowerCase())) {
+            if (origin.getCodeOrigin().trim().equalsIgnoreCase(listOrigin.getCodeOrigin().trim())) {
                 checkCode = false;
+                break;
             }
         }
         for (Origin listOrigin : originService.findAll()) {
-            if (origin.getNameOrigin().trim().toLowerCase().equals(listOrigin.getNameOrigin().trim().toLowerCase())) {
+            if (origin.getNameOrigin().trim().equalsIgnoreCase(listOrigin.getNameOrigin().trim())) {
                 checkName = false;
+                break;
             }
         }
-        if (!checkCode || !checkName || origin.getCodeOrigin().isEmpty() || origin.getNameOrigin().isEmpty() || origin.getCodeOrigin().length() > 10 || origin.getNameOrigin().length() > 50) {
-            thongBao.put("message", "Dữ liệu không hợp lệ");
+        if (!checkCode) {
+            thongBao.put("message", "Mã xuất xứ đã tồn tại");
+            thongBao.put("check", "2");
+        } else if (!checkName) {
+            thongBao.put("message", "Tên xuất xứ đã tồn tại");
+            thongBao.put("check", "2");
+        } else if (origin.getCodeOrigin().isEmpty()) {
+            thongBao.put("message", "Mã xuất xứ không được để trống");
+            thongBao.put("check", "2");
+        } else if (origin.getNameOrigin().isEmpty()) {
+            thongBao.put("message", "Tên xuất xứ không được để trống");
+            thongBao.put("check", "2");
+        } else if (origin.getCodeOrigin().length() > 10) {
+            thongBao.put("message", "Mã xuất xứ không được dài quá 10 ký tự");
+            thongBao.put("check", "2");
+        } else if (origin.getNameOrigin().length() > 50) {
+            thongBao.put("message", "Tên xuất xứ không được dài quá 50 ký tự");
             thongBao.put("check", "2");
         } else {
             origin.setStatus(1);
@@ -145,42 +163,8 @@ public class OriginController {
             thongBao.put("message", "Thêm xuất xứ thành công");
             thongBao.put("check", "1");
         }
+
         return ResponseEntity.ok(thongBao);
-    }
-
-    @PostMapping("/origin/update-status")
-    @ResponseBody
-    public ResponseEntity<String> updateStatus(@RequestBody Map<String, Object> payload, HttpSession session) {
-        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
-        if (staffLogin == null) {
-            return null;
-        }
-        if(staffLogin.getStatus() != 1) {
-            return null;
-        }
-        try {
-            int id;
-            int status;
-            // Lấy id và status từ payload, kiểm tra kiểu dữ liệu
-            if (payload.get("id") instanceof Integer) {
-                id = (Integer) payload.get("id");
-            } else {
-                id = Integer.parseInt((String) payload.get("id"));
-            }
-
-            if (payload.get("status") instanceof Integer) {
-                status = (Integer) payload.get("status");
-            } else {
-                status = Integer.parseInt((String) payload.get("status"));
-            }
-
-            // Gọi service để cập nhật trạng thái trong cơ sở dữ liệu
-            originService.updateStatus(id, status);
-
-            return ResponseEntity.ok("Cập nhật trạng thái thành công");
-        } catch (NumberFormatException e) {
-            return ResponseEntity.badRequest().body("Có lỗi xảy ra khi cập nhật trạng thái");
-        }
     }
 
     @PostMapping("/update-origin")
@@ -191,7 +175,7 @@ public class OriginController {
         if (staffLogin == null) {
             thongBao.put("message", "Nhân viên chưa đăng nhập");
             thongBao.put("check", "3");
-            return ResponseEntity.ok(thongBao);
+            return null;
         }
         if(staffLogin.getStatus() != 1) {
             thongBao.put("message","Nhân viên đang bị ngừng hoạt động!");
@@ -221,30 +205,36 @@ public class OriginController {
             nameOrigin = (String) payload.get("nameOrigin");
             boolean checkCode = true;
             for (Origin listOrigin : originService.findAll()) {
-                if (codeOrigin.trim().toLowerCase().equals(listOrigin.getCodeOrigin().trim().toLowerCase()) && id != listOrigin.getId()) {
+                if (codeOrigin.trim().equalsIgnoreCase(listOrigin.getCodeOrigin().trim()) && id != listOrigin.getId()) {
                     checkCode = false;
                     break;
                 }
             }
             boolean checkName = true;
             for (Origin listOrigin : originService.findAll()) {
-                if (nameOrigin.trim().toLowerCase().equals(listOrigin.getNameOrigin().trim().toLowerCase()) && id != listOrigin.getId()) {
+                if (nameOrigin.trim().equalsIgnoreCase(listOrigin.getNameOrigin().trim()) && id != listOrigin.getId()) {
                     checkName = false;
                     break;
                 }
             }
             // Gọi service để cập nhật dữ liệu xuất xứ trong cơ sở dữ liệu
-            if (codeOrigin.isEmpty() || codeOrigin.length() > 10) {
-                thongBao.put("message", "Mã xuất xứ không được trống và lớn hơn 10 kí tự");
-                thongBao.put("check", "2");
-            } else if (!checkCode) {
+            if (!checkCode) {
                 thongBao.put("message", "Mã xuất xứ đã tồn tại");
                 thongBao.put("check", "2");
             } else if (!checkName) {
                 thongBao.put("message", "Tên xuất xứ đã tồn tại");
                 thongBao.put("check", "2");
-            } else if (nameOrigin.isEmpty() || nameOrigin.length() > 50) {
-                thongBao.put("message", "Tên xuất xứ không được trống và lớn hơn 50 kí tự");
+            } else if (codeOrigin.isEmpty()) {
+                thongBao.put("message", "Mã xuất xứ không được để trống");
+                thongBao.put("check", "2");
+            } else if (nameOrigin.isEmpty()) {
+                thongBao.put("message", "Tên xuất xứ không được để trống");
+                thongBao.put("check", "2");
+            } else if (codeOrigin.length() > 10) {
+                thongBao.put("message", "Mã xuất xứ không được dài quá 10 ký tự");
+                thongBao.put("check", "2");
+            } else if (nameOrigin.length() > 50) {
+                thongBao.put("message", "Tên xuất xứ không được dài quá 50 ký tự");
                 thongBao.put("check", "2");
             } else {
                 originService.updateOrigin(id, codeOrigin, nameOrigin);
@@ -258,7 +248,6 @@ public class OriginController {
             return ResponseEntity.ok(thongBao);
         }
     }
-
     @PostMapping("/delete-origin")
     @ResponseBody
     public ResponseEntity<Map<String, String>> deleteOrigin(@RequestBody Map<String, Object> payload, HttpSession session) {

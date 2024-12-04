@@ -306,7 +306,8 @@ function loadInfomationReturnBill() {
             $('#code-bill').text(response.codeBill)
             $('#customer-buy-product').text(response.nameCustomer)
             $('#discount-voucher').text(Math.trunc(response.discount).toLocaleString('en-US') + ' VNĐ')
-            $('#divide-equally-product').text(Math.trunc(response.discountRatioPercentage)+ ' %')
+            let roundedValue = Math.round(response.discountRatioPercentage * 1000) / 1000;
+            $('#divide-equally-product').text(roundedValue + ' %');
             $('#total-return').text(Math.trunc(response.totalReturn).toLocaleString('en-US') + ' VNĐ')
             $('#total-exchange').text(Math.trunc(response.totalExchange).toLocaleString('en-US') + ' VNĐ')
             var totalReturnCustomer = 0;

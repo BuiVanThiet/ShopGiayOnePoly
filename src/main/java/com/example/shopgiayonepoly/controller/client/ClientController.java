@@ -258,7 +258,7 @@ public class ClientController extends BaseBill {
             model.addAttribute("finalPrice", finalPrice);
             session.setAttribute("priceReduced", priceReduced);
             model.addAttribute("priceReducedShow", priceReduced);
-            model.addAttribute("typeVoucherApply",selectedVoucher.getVoucherType());
+            model.addAttribute("typeVoucherApply", selectedVoucher.getVoucherType());
             session.setAttribute("idVoucherApply", idVoucherApply);
             session.setAttribute("selectedVoucher", selectedVoucher);
             System.out.println("Session priceReduced :" + priceReduced);
@@ -449,7 +449,10 @@ public class ClientController extends BaseBill {
         }
         List<CartResponse> cartItems = (List<CartResponse>) session.getAttribute("cartItems");
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
-        Integer customerId = clientLoginResponse.getId();
+        Integer customerId = null;
+        if (clientLoginResponse != null) {
+            customerId = clientLoginResponse.getId();
+        }
         Bill bill = new Bill();
         List<BillDetail> billDetails = new ArrayList<>();
         if (clientLoginResponse != null) {
@@ -483,7 +486,7 @@ public class ClientController extends BaseBill {
             bill.setNote(noteBill);
             bill.setVoucher(voucher);
             bill.setPriceDiscount(priceReduced);
-            bill.setStatus(1); // Trạng thái hóa đơn là 1
+            bill.setStatus(1);
             bill.setCreateDate(new Date());
             bill.setUpdateDate(new Date());
         } else {
@@ -536,6 +539,7 @@ public class ClientController extends BaseBill {
         System.out.println("Weight: " + totalAmountBill);
 
         // Lưu hóa đơn
+        bill.setStatus(1);
         billRepository.save(bill);
         bill.setCodeBill("HD" + bill.getId());
         billRepository.save(bill);
@@ -567,14 +571,23 @@ public class ClientController extends BaseBill {
         this.setBillStatus(bill.getId(), 0, session);
         this.setBillStatus(bill.getId(), bill.getStatus(), session);
         this.templateCreateBillClient(mailSend, host, bill.getCodeBill());
-
+        session.setAttribute("codeOrder", bill.getCodeBill());
+        session.setAttribute("hostSuccess", host);
         return "/onepoly/order-success";
     }
 
     @GetMapping("/order-success")
-    public String getFormOderSuccess(HttpSession session) {
+    public String getFormOderSuccess(HttpSession session, Model model) {
+        String codeOrder = (String) session.getAttribute("codeOrder");
+        String hostSuccess = (String) session.getAttribute("hostSuccess");
+        model.addAttribute("codeOrder", codeOrder);
+        model.addAttribute("hostSuccess", hostSuccess);
         session.removeAttribute("cartItems");
         session.removeAttribute("sessionCart");
+        session.removeAttribute("idVoucherApply");
+        session.removeAttribute("selectedVoucher");
+        session.removeAttribute("priceReduced");
+        session.removeAttribute("totalPrice");
         return "client/order-success";
     }
 

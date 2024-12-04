@@ -8,30 +8,215 @@
 <div th:fragment="listReturnBill">
     <div class="card mb-2">
         <div class="card-body">
-            <ul class="nav nav-underline">
-                <li class="nav-item">
-                    <button class="nav-link text-dark nav-link-custom active"
-                            id="return-tab"
-                            data-bs-toggle="tab"
-                            data-bs-target="#return-tab-pane"
-                            type="button"
-                            role="tab"
-                            aria-controls="return-tab-pane"
-                            aria-selected="true"
-                            onclick="setActiveReturnAndExchangeBill(this)"> Danh sách sản phẩm muốn trả</button>
-                </li>
-                <li class="nav-item">
-                    <button class="nav-link text-dark nav-link-custom"
-                            id="exchange-tab"
-                            data-bs-toggle="tab"
-                            data-bs-target="#exchange-tab-pane"
-                            type="button"
-                            role="tab"
-                            aria-controls="exchange-tab-pane"
-                            aria-selected="false"
-                            onclick="setActiveReturnAndExchangeBill(this)">Danh sách sản phẩm muốn đổi</button>
-                </li>
-            </ul>
+
+            <div class="d-flex justify-content-between">
+                <ul class="nav nav-underline">
+                    <li class="nav-item">
+                        <button class="nav-link text-dark nav-link-custom active"
+                                id="return-tab"
+                                data-bs-toggle="tab"
+                                data-bs-target="#return-tab-pane"
+                                type="button"
+                                role="tab"
+                                aria-controls="return-tab-pane"
+                                aria-selected="true"
+                                onclick="setActiveReturnAndExchangeBill(this)"> Danh sách sản phẩm muốn trả</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link text-dark nav-link-custom"
+                                id="exchange-tab"
+                                data-bs-toggle="tab"
+                                data-bs-target="#exchange-tab-pane"
+                                type="button"
+                                role="tab"
+                                aria-controls="exchange-tab-pane"
+                                aria-selected="false"
+                                onclick="setActiveReturnAndExchangeBill(this)">Danh sách sản phẩm muốn đổi</button>
+                    </li>
+                </ul>
+                <div>
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#conditionQuantityInStockModal">
+                        Điều kiện và chính sách cửa hàng
+                    </button>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="conditionQuantityInStockModal" tabindex="-1" aria-labelledby="conditionQuantityInStockModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-xl">
+                            <div class="modal-content ">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="conditionQuantityInStockModalLabel">Điều kiện và chính sách cửa hàng</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <h1 class="d-block text-center">Điều kiện hoàn sản phẩm vào kho để bán tiếp</h1>
+
+                                    1- Sản phẩm phải còn nguyên vẹn (ít nhất 97%).
+                                    <br>
+                                    2- Sản phẩm phải còn tag kể từ lúc khách hàng mua.
+                                    <br>
+                                    3- Trên hộp phải còn tem của cửa hàng dán lên.
+                                    <br>
+                                    <hr>
+                                    <br>
+                                    <h1 class="d-block text-center">CHÍNH SÁCH TRẢ HÀNG VÀ HOÀN TIỀN</h1>
+                                    <h6>
+                                        1. PHẠM VI VÀ ĐỐI TƯỢNG ÁP DỤNG
+                                        <br>
+                                        a. Đối tượng áp dụng
+                                    </h6>
+                                    <p>
+                                        -Chính Sách Trả hàng và đổi hàng này áp dụng đối với Người Mua.
+                                        <br>
+                                        -Khái niệm Người Mua sẽ được dùng để chỉ Người Mua hoặc Người Nhận Hàng trong từng trường hợp.
+                                        <br>
+                                        -Khái niệm Người Bán sẽ được dùng để chỉ Người Bán hoặc Người Gửi Hàng trong từng trường hợp.
+                                        <br>
+                                        -One poly bảo lưu quyền sửa đổi Chính sách trả hàng và đổi hàng này vào bất cứ thời điểm nào.
+                                    </p>
+                                    <h6>
+                                        b. Phạm vi áp dụng
+                                    </h6>
+                                    <p>
+                                        -Chính Sách trả hàng và đổi hàng này quy định về quyền và nghĩa vụ của Người Mua được yêu cầu trả hàng, đổi hàng cũng như quyền và nghĩa vụ của One poly, Người Bán, đơn vị vận chuyển và/hoặc các bên có liên quan trong quá trình giải quyết yêu cầu của Người Mua.
+                                    </p>
+                                    <h6>
+                                        2. ĐIỀU KIỆN ÁP DỤNG
+                                    </h6>
+                                    <p>
+                                        -Áp dụng cho tất cả hóa đơn đã Trả tiền và đơn hàng ở trạng thái Hoàn thành.
+                                        <br>
+                                        -Trong khoảng thời gian 3 ngày, việc Trả hàng và đổi hàng sẽ được áp dụng.
+                                        <br>
+                                        -Còn lại tất cả hóa đơn mà không đáp ứng đươ điều kiện trên sẽ không được sử dụng dịch vụ này.
+                                    </p>
+                                    <h6>
+                                        3. ĐIỀU KIỆN YÊU CẦU TRẢ HÀNG/ĐỔI HÀNG
+                                    </h6>
+                                    <P>
+                                        -Người Mua đã thanh toán bằng cách phương thức thanh toán hợp lệ nhưng không nhận được Sản Phẩm, hoặc  không nhận được toàn bộ các Sản Phẩm đã đặt, hoặc nhận được Sản Phẩm là hàng giả, hàng nhái.
+                                        <br>
+                                        -Sản Phẩm bị lỗi hoặc bị hư hại trong quá trình vận chuyển.
+                                        <br>
+                                        -Sản Phẩm mà Người Mua nhận được khác biệt một cách rõ rệt so với thông tin mà Người Bán cung cấp trong mục mô tả sản phẩm.
+                                        <br>
+                                        -Người Bán giao sai Sản Phẩm cho Người Mua (ví dụ: sai kích cỡ, sai màu sắc, v.vv...).
+                                        <br>
+                                        -Người Bán đã tự thỏa thuận và đồng ý cho Người Mua trả hàng (tuy nhiên sẽ cần Người Bán xác nhận lại những thỏa thuận này).
+                                        <br>
+                                        -Tất cả các yêu cầu trả hàng và đổi hàng phải được thực hiện tại quầy(chưa phát triển chức năng trực tuyến).
+                                    </P>
+                                    <h6>
+                                        4. QUY TRÌNH TRẢ SẢN PHẨM VÀ ĐỔI SẢN PHẨM
+                                        <br>
+                                        <br>
+                                        <div class="text-danger fs-6">
+                                            *Phải có hóa đơn khi mua sản phẩm.
+                                        </div>
+                                        <br>
+                                        <div class="text-danger fs-6">
+                                            *Trong trường hợp làm mất hóa đơn, cần khai báo 1 vài thông tin cơ bản của hóa đơn để người bán kiểm tra trong hệ thống có hay không.
+                                        </div>
+                                        <br>
+                                    </h6>
+                                    <h6>
+                                        a. Đối với trả hàng
+                                    </h6>
+                                    <p>
+                                        -Người mua hàng sẽ đem sản phẩm muốn trả đến cửa hàng để nhân viên kiểm tra xem có thể tạo phiếu trả hàng không.
+                                        <br>
+                                        -Khi áp dụng đủ điều kiện, người mua có trách nhiệm khai báo thông tin sản phẩm muốn trả và nêu lên lý do.
+                                        <br>
+                                        -Người bán sẽ có trách nhiệm phân tích yêu cầu của người mua xem yêu cầu có hợp lý trong chính sách của cửa hàng không.
+                                        <br>
+                                        -Nếu đủ điều kiện, thì sẽ tạo phiếu trả sản phẩm.
+                                        <br>
+                                        -Mỗi lần tạo phiếu, sẽ phải mất phí dịch vụ (tùy theo cửa hàng đề ra trong các trường hợp của hóa đơn).
+                                        <br>
+                                        -Tạo phiếu gửi lên hệ thống để xác nhận.
+                                        <br>
+                                        -Nếu đúng thì sẽ trả lại người mua tiền và thu hồi sản phẩm lại.
+                                    </p>
+                                    <h6>
+                                        a. Đối với đổi hàng
+                                    </h6>
+                                    <p>
+                                        -Người mua hàng sẽ đem sản phẩm muốn đổi đến cửa hàng để nhân viên kiểm tra xem có thể tạo phiếu đổi hàng không.
+                                        <br>
+                                        -Khi áp dụng đủ điều kiện, người mua có trách nhiệm khai báo thông tin sản phẩm muốn đổi và nêu lên lý do.
+                                        <br>
+                                        -Người bán sẽ có trách nhiệm phân tích yêu cầu của người mua xem yêu cầu có hợp lý trong chính sách của cửa hàng không.
+                                        <br>
+                                        -Nếu đủ điều kiện, thì sẽ tạo phiếu đổi sản phẩm.
+                                        <br>
+                                        -Mỗi lần tạo phiếu, sẽ phải mất phí dịch vụ (tùy theo cửa hàng đề ra trong các trường hợp của hóa đơn).
+                                        <br>
+                                        -Tạo phiếu gửi lên hệ thống để xác nhận.
+                                        <br>
+                                        -Trong quá trình đổi hàng, nếu mà TỔNG SỐ TIỀN ĐỔI mà lớn hơn TỔNG SỐ TIỀN TRẢ thì phải trả thêm phí thì mới có thể sử dụng dịch vụ đổi hàng.
+                                        <br>
+                                        -Trong quá trình đổi hàng, nếu mà TỔNG SỐ TIỀN ĐỔI mà nhỏ hơn TỔNG SỐ TIỀN TRẢ thì phải trả lại khách hàng tiền.
+                                        <br>
+                                        -Nếu đúng thì sẽ trả lại người mua tiền và thu hồi sản phẩm lại.
+                                    </p>
+                                    <p class="text-danger fs-6">
+                                        LƯU Ý: Dưới đây sẽ là trường hợp giả tưởng
+                                    </p>
+                                    <p>
+                                        trong hóa đơn có mã là 'HD***' có các sản phẩm đã mua sau<br>
+                                        -sản phẩm A: 3 món, mỗi món 200.000 vnd<br>
+                                        -sản phẩm B: 1 món, giá 500.000 vnd<br>
+                                        -sản phẩm C: 1 món, giá 500.000 vnd<br>
+                                        áp mã giảm giá 150.000 vnd<br>
+                                        tiền gốc 1.600.000 vnd<br>
+                                        tiền bill là 1.450.000 vnd (đã thanh toán)<br>
+                                        giờ khách hàng muốn hoàn lại shop 1 món sản phẩm A thì cần trả lại số tiền<br>
+                                        <br>
+                                        -bước 1: tính tỉ lệ  giảm giá:<br>
+                                        Công thức:<br>
+                                        số tiền giảm theo voucher / số tiền gốc(ko tính tiền vouvher) = trung bình mỗi món được giảm số phần trăm<br>
+                                        <br>
+                                        150.000/1.600.00 = 0,09375 (khoảng 9,375% / 1 món)<br>
+                                        <br>
+                                        -bước 2: tính lại gái trị thực của mỗi sản phẩm sau khi giảm giá:<br>
+                                        +Sản phẩm A(mỗi 1 món): 200.000 x (1-0,09375) = 181,250 vnd<br>
+                                        +Sản phẩm B           : 500.000 x (1-0,09375) = 453125 vnd<br>
+                                        +Sản phẩm C           : 500.000 x (1-0,09375) = 453125 vnd<br>
+                                    <p class="text-danger">
+                                        Đối với chỉ trả hàng:
+                                    </p>
+                                    -cuối cùng: trả lại khách số tiền là 181.000 vnd (Số tiền này sẽ do hệ thống tính toán làm tròn)<br>
+                                    <br>
+                                    <p class="text-danger">
+                                        Đối với đổi hàng:
+                                    </p>
+                                    -bước 3: chọn sản phẩm muốn được đổi sang:<br>
+                                    -sản phẩm D: 200.000 vnd<br>
+                                    -sản phẩm E: 500.000 vnd<br>
+                                    -sản phẩm F: 500.000 vnd<br>
+                                    <br>
+                                    giờ khách hàng muốn lấy 'sản phẩm E'
+                                    <br>
+                                    Bước 4: Hệ thống tính toán sẽ tính toán lại TỔNG TIỀN TRẢ VÀ ĐỔI
+                                    <br>
+                                    -cuối cùng: <br>
+                                    +Trả lại khách số tiền là 0 vnd.<br>
+                                    +Khách phải trả thêm là 319.00 vnd.<br>
+                                    <br>
+                                    (Số tiền này sẽ do hệ thống tính toán làm tròn)<br>
+                                    </p>
+                                    <p class="text-danger fs-5">
+                                        *Trường hợp trên chưa tính thêm phí tạo phiếu, phí này sẽ được bên người bán và người mua cùng nhau quyết định.
+                                    </p>
+                                    <p class="text-danger fs-5">
+                                        *Trong 1 vài trường hợp thì khách hàng sẽ được đổi 1 - 1 và không mất thêm phụ phí gì.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <div class="tab-content" id="myTabContent">
                 <div class="tab-pane fade show active" id="return-tab-pane" role="tabpanel" aria-labelledby="return-tab" tabindex="0">

@@ -1,65 +1,44 @@
-function saveRow(index, event) { // hàm edit dữ liệu trên table
+let currentRowIndex = null; // Biến lưu chỉ số hàng hiện tại
+
+function saveRow(index, event) {
     event.preventDefault();
-    let updatedData = {
-        codeSize: document.getElementById('code-input-' + index).value,
-        nameSize: document.getElementById('name-input-' + index).value,
-        id: document.getElementById('row-' + index).getAttribute('data-id')  // Lấy ID của đối tượng từ hàng
-    };
+    currentRowIndex = index; // Lưu index vào biến toàn cục
 
-    // Thực hiện AJAX để cập nhật dữ liệu trong cơ sở dữ liệu
-    $.ajax({
-        url: '/attribute/update-size',  // Thay bằng URL API của bạn
-        method: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify(updatedData),  // Gửi dữ liệu JSON
-        success: function (response) {
-            fetchActiveSizes();
-            createToast(response.check, response.message);
-        },
-        error: function (xhr, status, error) {
-            console.error('Có lỗi xảy ra khi cập nhật dữ liệu:', error);
-            // Xử lý lỗi nếu cần thiết
-        }
-    });
+    // Hiển thị modal xác nhận
+    const modal = new bootstrap.Modal(document.getElementById('confirm-save-modal'));
+    modal.show();
 }
+function confirmSave() {
+    if (currentRowIndex !== null) {
+        let updatedData = {
+            codeSize: document.getElementById('code-input-' + currentRowIndex).value,
+            nameSize: document.getElementById('name-input-' + currentRowIndex).value,
+            id: document.getElementById('row-' + currentRowIndex).getAttribute('data-id')
+        };
 
-function toggleStatus(element) { // hàm thay đổi trạng thái bằng button
-    let index = element.getAttribute('data-index');  // Lấy index
-    let status = element.getAttribute('data-status') === '1' ? 2 : 1;  // Lấy trạng thái mới
+        // AJAX để cập nhật dữ liệu
+        $.ajax({
+            url: '/attribute/update-size',  // Thay bằng URL API của bạn
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(updatedData),
+            success: function (response) {
+                fetchActiveSizes();
+                createToast(response.check, response.message);
+                // Đóng modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('confirm-save-modal'));
+                modal.hide();
+            },
+            error: function (xhr, status, error) {
+                console.error('Có lỗi xảy ra khi cập nhật dữ liệu:', error);
+            }
+        });
 
-    // Thay đổi biểu tượng toggle
-    if (status === 1) {
-        element.classList.remove('fa-toggle-off');
-        element.classList.add('fa-toggle-on');
-    } else {
-        element.classList.remove('fa-toggle-on');
-        element.classList.add('fa-toggle-off');
+        // Reset giá trị index
+        currentRowIndex = null;
     }
-
-    // Cập nhật trạng thái trong data attribute
-    element.setAttribute('data-status', status);
-
-    // Lấy ID thực tế của đối tượng thay vì index
-    let id = $('#row-' + index).data('id');  // Giả định bạn có thuộc tính id trong hàng
-
-    // Thực hiện Ajax request để cập nhật trạng thái trong database
-    $.ajax({
-        url: '/attribute/size/update-status',  // Đường dẫn API
-        method: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify({
-            id: id,
-            status: status
-        }),
-        success: function (response) {
-            console.log('Trạng thái đã được cập nhật thành công');
-        },
-        error: function (xhr, status, error) {
-            console.error('Có lỗi xảy ra khi cập nhật trạng thái:', error);
-            // Xử lý lỗi nếu cần
-        }
-    });
 }
+
 document.addEventListener('show.bs.modal', function (event) {
     let button = event.relatedTarget;  // Lấy nút kích hoạt modal
     let index = button.getAttribute('data-index');  // Lấy index từ nút kích hoạt
@@ -72,7 +51,6 @@ document.addEventListener('show.bs.modal', function (event) {
 });
 
 function deleteByID(element) {
-    let index = element.getAttribute('data-index');  // Lấy index từ nút "Xóa" trong modal
     let id = element.getAttribute('data-id');  // Lấy id từ nút "Xóa" trong modal
 
     $.ajax({
@@ -92,7 +70,36 @@ function deleteByID(element) {
         }
     });
 }
+document.addEventListener('show.bs.modal', function (event) {
+    let button = event.relatedTarget;  // Lấy nút kích hoạt modal
+    let index = button.getAttribute('data-index');  // Lấy index từ nút kích hoạt
+    let id = button.getAttribute('data-id');  // Lấy id từ nút kích hoạt
 
+    // Gán index và id vào nút "Xóa" trong modal
+    let deleteButton = document.querySelector('#confirm-restore-size-modal .btn-success');
+    deleteButton.setAttribute('data-index', index);
+    deleteButton.setAttribute('data-id', id);
+});
+function restoreSize(element) {
+    let id = element.getAttribute('data-id');  // Lấy id từ nút "Xóa" trong modal
+
+    $.ajax({
+        url: '/attribute/delete-size',  // Đường dẫn API để xóa
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            id: id,
+            status: 1  // Giả sử status 0 là trạng thái bị xóa
+        }),
+        success: function (response) {
+            fetchActiveSizes();  // Xóa hàng với id là row-index
+            createToast(response.check, response.message);
+        },
+        error: function (xhr, status, error) {
+            console.error('Có lỗi xảy ra khi xóa:', error);
+        }
+    });
+}
 
 document.querySelector('.attribute-btn-listDelete').addEventListener('click', function () {
     fetch('/attribute/size/delete')
@@ -103,7 +110,7 @@ document.querySelector('.attribute-btn-listDelete').addEventListener('click', fu
                 this.style.display = 'none';
                 document.querySelector('.attribute-btn-listActive').style.display = 'inline-block';
             } else {
-                createToast('1','Không có màu nào bị xóa')
+                createToast('1','Không có kích cỡ nào bị xóa')
             }
         });
 });
@@ -115,7 +122,7 @@ document.querySelector('.attribute-btn-listActive').addEventListener('click', fu
 });
 
 function fetchDeletedSizes() {
-    // Thay URL dưới đây bằng endpoint của bạn để lấy danh sách màu đã xóa
+    // Thay URL dưới đây bằng endpoint của bạn để lấy danh sách kích cỡ đã xóa
     fetch('/attribute/size/delete')
         .then(response => response.json())
         .then(data => {
@@ -124,7 +131,7 @@ function fetchDeletedSizes() {
                 const tbody = document.querySelector('#sizeTable tbody');
                 tbody.innerHTML = '';
 
-                // Lặp qua các màu đang hoạt động và thêm các hàng vào bảng
+                // Lặp qua các kích cỡ đang hoạt động và thêm các hàng vào bảng
                 data.forEach((size, index) => {
                     const createDate = new Date(size.createDate).toLocaleString('vi-VN', {
                         day: '2-digit',
@@ -163,7 +170,8 @@ function fetchDeletedSizes() {
                                title="Toggle Status"></i>
                         </td>
                         <td>
-                                <a data-index="${index}" data-id="${size.id}"  onclick="restoreSize(this)">
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#confirm-restore-size-modal"
+                               data-index="${index}" data-id="${size.id}">
                                     <i class="attribute-icon-restore fas fa-undo" title="Khôi phục"></i>
                                 </a>
                         </td>
@@ -171,14 +179,13 @@ function fetchDeletedSizes() {
                     tbody.appendChild(row);
                 });
             } else {
-                createToast('1','Không có màu nào bị xóa')
+                createToast('1','Không có kích cỡ nào bị xóa')
             }
         })
         .catch(error => {
             console.error('Error fetching active sizes:', error);
         });
 }
-
 
 function fetchActiveSizes() {
     fetch('/attribute/size/active')
@@ -242,107 +249,29 @@ function fetchActiveSizes() {
             });
         })
         .catch(error => {
-            console.error("Có lỗi xảy ra khi lấy danh sách màu:", error);
+            console.error("Có lỗi xảy ra khi lấy danh sách kích cỡ:", error);
         });
 }
 
 async function add() {
-    if (await validateSize()) {
-        const formElement = document.getElementById('createAttribute');
-        const formData = new FormData(formElement);
-        const response = await fetch('/attribute/size/add', {
-            method: 'POST',
-            body: formData
-        });
-        if (response.ok) {
-            const result = await response.json();
-            codeSizeInput.value = '';
-            nameSizeInput.value = '';
-            document.querySelector('.attribute-btn-listActive').style.display = 'none';
-            document.querySelector('.attribute-btn-listDelete').style.display = 'inline-block';
-            createToast(result.check, result.message);
-            fetchActiveSizes();
-        }
-    } else {
-        createToast('2', 'Dữ liệu không hợp lệ');
+
+    const formElement = document.getElementById('createAttribute');
+    const formData = new FormData(formElement);
+    const response = await fetch('/attribute/size/add', {
+        method: 'POST',
+        body: formData
+    });
+    if (response.ok) {
+        const result = await response.json();
+        codeSizeInput.value = '';
+        nameSizeInput.value = '';
+        document.querySelector('.attribute-btn-listActive').style.display = 'none';
+        document.querySelector('.attribute-btn-listDelete').style.display = 'inline-block';
+        createToast(result.check, result.message);
+        fetchActiveSizes();
     }
+
 
 }
 
 fetchActiveSizes();
-
-function restoreSize(element) {
-    let index = element.getAttribute('data-index');
-    let id = element.getAttribute('data-id');
-    $.ajax({
-        url: '/attribute/delete-size',
-        method: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify({
-            id: id,
-            status: 1
-        }),
-        success: function (response) {
-            fetchDeletedSizes();
-            createToast(response.check, response.message)
-        },
-        error: function (xhr, status, error) {
-            createToast('2', 'Khôi phục kích cỡ thất bại')
-        }
-    });
-
-}
-
-let codeSizeInput = document.getElementById("codeSizeInput");
-let nameSizeInput = document.getElementById("nameSizeInput");
-let sizeError = document.getElementById("sizeError");
-codeSizeInput.addEventListener('input', function () {
-    validateSize();
-});
-nameSizeInput.addEventListener('input', function () {
-    validateSize();
-});
-
-let arrayCodeSize = [];
-let arrayNameSize = [];
-
-
-async function validateSize() {
-    let codeSize = await fetch('/attribute/size/get-code');
-    if (codeSize.ok) {
-        arrayCodeSize = await codeSize.json(); // Đảm bảo đây là một mảng
-    }
-    let nameSize = await fetch('/attribute/size/get-name');
-    if (nameSize.ok) {
-        arrayNameSize = await nameSize.json(); // Đảm bảo đây là một mảng
-    }
-    if (codeSizeInput.value.trim() === "" && nameSizeInput.value.trim() === "") {
-        sizeError.textContent = "* Mã và tên không được để trống";
-        return false;
-    } else if (codeSizeInput.value.length > 10 && nameSizeInput.value.length > 50) {
-        sizeError.textContent = "* Mã <= 10 kí tự, Tên <= 50 kí tự";
-        return false;
-    } else if (arrayCodeSize.some(code => code.toLowerCase() === codeSizeInput.value.trim().toLowerCase())) {
-        sizeError.textContent = "* Mã kích cỡ đã tồn tại";
-        return false;
-    } else if (arrayNameSize.some(name => name.toLowerCase() === nameSizeInput.value.trim().toLowerCase())) {
-        sizeError.textContent = "* Tên kích cỡ đã tồn tại";
-        return false;
-    } else if (codeSizeInput.value.trim() === "") {
-        sizeError.textContent = "* Mã không được để trống";
-        return false;
-    } else if (nameSizeInput.value.trim() === "") {
-        sizeError.textContent = "* Tên không được để trống";
-        return false;
-    } else if (codeSizeInput.value.length > 10) {
-        sizeError.textContent = "* Mã <= 10 kí tự";
-        return false;
-    } else if (nameSizeInput.value.length > 50) {
-        sizeError.textContent = "* Tên <= 50 kí tự";
-        return false;
-    } else {
-        sizeError.textContent = "";
-        return true;
-    }
-}
-

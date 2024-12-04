@@ -554,6 +554,9 @@ function confirmBill(content,checkConfirm) {
         type: "GET",
         url: "/bill-api/confirm-bill/"+content+"/"+reasonConfirm,
         success: function (response) {
+            if(content == 'agreeReturnBill') {
+                updateQuantityReturn()
+            }
             // showToast(response.message,response.check);
             createToast(response.check, response.message);
             loadInformationBillByIdBill();
@@ -807,7 +810,9 @@ function loadInfomationReturnBillFromBillManage() {
             $('#code-bill').text(response.codeBill)
             $('#customer-buy-product').text(response.nameCustomer)
             $('#discount-voucher').text(Math.trunc(response.discount).toLocaleString('en-US') + ' VNĐ')
-            $('#divide-equally-product').text(Math.trunc(response.discountRatioPercentage)+ ' %')
+            let roundedValue = Math.round(response.discountRatioPercentage* 1000) / 1000;
+            $('#divide-equally-product').text(roundedValue + ' %');
+            // $('#divide-equally-product').text(Math.trunc(response.discountRatioPercentage)+ ' %')
             $('#total-return').text(Math.trunc(Math.trunc(response.totalReturn)).toLocaleString('en-US') + ' VNĐ')
             $('#node-return').val(response.noteReturn);
             $('#node-return').attr('disabled', true);
@@ -840,7 +845,7 @@ function loadInfomationReturnBillFromBillManage() {
 
             console.log('Kết quả:', checkbtnPaymentExchange);
 
-            if((response.totalExchange-(response.totalReturn-response.exchangeAndReturnFee+response.discountedAmount)) <= 0) {
+            if((response.totalExchange-(response.totalReturn-response.exchangeAndReturnFee+response.discountedAmount)) < 1) {
                 totalExchangeCustomer = 0;
                 buttonsPay = ``;
                 $('#payExchange').hide();
@@ -871,9 +876,9 @@ function loadInfomationReturnBillFromBillManage() {
                 $('#span-discountedAmount').text(Math.trunc(response.discountedAmount).toLocaleString('en-US') + ' VNĐ');
                 $('#btn-pay-exchange').html(buttonsPay);
 
-                loadReturnBillFromBillManage(1);
+                loadReturnBill(1)
                 maxPageReturnBillFromBillManage();
-                loadExchangeBillFromBillManage(1);
+                loadExchangeBill(1);
                 maxPageExchangeBillFromBillManage();
             }).catch(() => {
                 console.log('Đã xảy ra lỗi trong quá trình kiểm tra.');
@@ -884,10 +889,10 @@ function loadInfomationReturnBillFromBillManage() {
         }
     })
 }
-function loadReturnBillFromBillManage(page) {
+function loadReturnBill(page) {
     $.ajax({
         type: "GET",
-        url: "/return-exchange-bill-api/infomation-return-bill-detail-from-bill-manage/"+page,
+        url: "/return-exchange-bill-api/infomation-return-bill-detail-from-bill-manage/" + page,
         success: function (response) {
             var tbody = $('#tableReturnBill');
             var noDataContainer = $('#noDataReturnBill');
@@ -896,32 +901,43 @@ function loadReturnBillFromBillManage(page) {
             $('#createReturnBillModal').remove();
             $('#table-returnBill th:last-child, #table-returnBill td:last-child').hide();
 
-            if(response.length === 0) {
-                console.log('khong co san pham tra')
+            if (response.length === 0) {
+                console.log('khong co san pham tra');
                 noDataContainer.html(`
-                        <img src="https://res.cloudinary.com/dfy4umpja/image/upload/v1725477250/jw3etgwdqqxtkevcxisq.png"
-                             alt="Lỗi ảnh" style="width: auto; height: 100px;">
-                             <p class="text-center">Không có sản phẩm nào!</p>
-                    `);
-
+                    <img src="https://res.cloudinary.com/dfy4umpja/image/upload/v1725477250/jw3etgwdqqxtkevcxisq.png"
+                        alt="Lỗi ảnh" style="width: auto; height: 100px;">
+                    <p class="text-center">Không có sản phẩm nào!</p>
+                `);
                 noDataContainer.show();
-                tbody.closest('table').hide(); // Ẩn table nếu không có dữ liệu
-            }else {
+                tbody.closest('table').hide();
+            } else {
                 document.getElementById('errorReturn').style.display = 'none';
-                console.log('co san pham tra')
+                console.log('co san pham tra');
                 noDataContainer.hide();
-                tbody.closest('table').show(); // Ẩn table nếu không có dữ liệu
-                response.forEach(function(billReturn, index) {
+                tbody.closest('table').show();
+
+                let isColumnAdded = false;
+                $('#table-returnBill thead tr').append('<th scope="col" style="width: 10%">Số lượng về kho</th>');
+
+                response.forEach(function (billReturn, index) {
                     var imagesHtml = '';
 
-                    billReturn.productDetail.product.images.forEach(function(image, imgIndex) {
+                    billReturn.productDetail.product.images.forEach(function (image, imgIndex) {
                         imagesHtml += `
                             <div class="carousel-item ${imgIndex === 0 ? 'active' : ''}" data-bs-interval="10000">
                                 <img style="height: auto; width: 100px;" src="https://res.cloudinary.com/dfy4umpja/image/upload/f_auto,q_auto/${image.nameImage}" class="d-block w-100" alt="Lỗi ảnh">
-                            </div>`;
+                            </div>
+                        `;
                     });
+
+                    // // Thêm tiêu đề cột mới nếu trạng thái là 0 và tiêu đề chưa được thêm
+                    // if (billReturn.returnBill.status == 0 && !isColumnAdded) {
+                    //     $('#table-returnBill thead tr').append('<th scope="col" style="width: 10%">Số lượng về kho</th>');
+                    //     isColumnAdded = true;
+                    // }
+
                     tbody.append(`
-                        <tr>
+                        <tr data-id="${billReturn.productDetail.id}">
                             <th scope="row" class="text-center align-middle">${index + 1}</th>
                             <td class="text-center align-middle">
                                 <div class="carousel slide d-flex justify-content-center align-items-center" data-bs-ride="carousel">
@@ -940,20 +956,39 @@ function loadReturnBillFromBillManage(page) {
                                     Tên size: ${billReturn.productDetail.size.nameSize}
                                 </div>
                             </td>
-
                             <td class="text-center align-middle">
                                 ${Math.trunc(billReturn.priceBuy).toLocaleString('en-US') + ' VNĐ'}
                             </td>
                             <td class="text-center align-middle">
-                                 ${billReturn.quantityReturn}
+                                ${billReturn.priceDiscount.toLocaleString('en-US') + ' VNĐ'}
+                            </td>
+                            <td class="text-center align-middle">
+                                ${billReturn.quantityReturn}
                             </td>
                             <td class="text-center align-middle">
                                 ${Math.trunc(billReturn.totalReturn).toLocaleString('en-US') + ' VNĐ'}
                             </td>
-                        </tr>`);
+                            ${billReturn.returnBill.status == 0 ? `
+                                <td class="text-center align-middle">
+                                    <input type="text" class="form-control quantity-input" 
+                                        data-max="${billReturn.quantityReturn}" 
+                                        value="${getSavedQuantity(billReturn.productDetail.id)}" 
+                                        placeholder="Nhập số lượng về kho">
+                                    <span class="error-message text-danger" style="display: none; font-size: 0.9em;">*Số lượng nhập không hợp lệ</span>
+                                </td>` : `
+                                <td class="text-center align-middle">
+                                   ${billReturn.quantityInStock == null ? 0 : billReturn.quantityInStock}
+                                </td>
+                                `}
+                        </tr>
+                    `);
+
+                    // Xử lý lưu giá trị và kiểm tra lỗi nhập liệu cho mỗi ô input
+                    handleQuantityInput();
                 });
+
                 // Khởi tạo lại tất cả các carousel sau khi cập nhật DOM
-                $('.carousel').each(function() {
+                $('.carousel').each(function () {
                     $(this).carousel(); // Khởi tạo carousel cho từng phần tử
                 });
             }
@@ -961,8 +996,121 @@ function loadReturnBillFromBillManage(page) {
         error: function (xhr) {
             console.error('loi' + xhr.responseText);
         }
-    })
+    });
 }
+
+// Hàm lưu giá trị và kiểm tra lỗi nhập liệu
+function handleQuantityInput() {
+    // Lưu dữ liệu khi nhập vào
+    $('#table-returnBill').on('input', '.quantity-input', function () {
+        const input = $(this);
+        const rowId = input.closest('tr').data('id'); // Lấy ID của hàng
+        const value = input.val(); // Lấy giá trị người dùng nhập
+
+        // Kiểm tra lỗi khi nhập liệu
+        const maxQuantity = parseInt(input.data('max'), 10);
+        const errorMessage = input.next('.error-message');
+
+        // Kiểm tra điều kiện lỗi
+        if (isNaN(value) || value < 0 || value > maxQuantity) {
+            errorMessage.show(); // Hiển thị lỗi nếu nhập không hợp lệ
+            //
+            // // Xóa dữ liệu khỏi localStorage khi nhập sai
+            // let inputData = JSON.parse(localStorage.getItem('inputData')) || {};
+            // delete inputData[rowId]; // Xóa dữ liệu của rowId trong localStorage
+            // localStorage.setItem('inputData', JSON.stringify(inputData));
+        } else {
+            errorMessage.hide(); // Ẩn lỗi nếu nhập hợp lệ
+            // Lưu vào localStorage khi nhập hợp lệ
+            let inputData = JSON.parse(localStorage.getItem('inputData')) || {};
+            inputData[rowId] = value;
+            localStorage.setItem('inputData', JSON.stringify(inputData));
+        }
+
+        const inputs = $('.quantity-input');
+        let allValid = true; // Biến kiểm tra tất cả các input có hợp lệ không
+
+        // Duyệt qua tất cả các input và kiểm tra điều kiện
+        inputs.each(function () {
+            const input = $(this);
+            const rowId = input.closest('tr').data('id'); // Lấy ID của hàng
+            const value = input.val(); // Lấy giá trị người dùng nhập
+            const quantityReturn = input.data('quantityreturn'); // Lấy quantityReturn từ data attribute
+
+            // Kiểm tra lỗi khi nhập liệu
+            const maxQuantity = parseInt(input.data('max'), 10);
+            const errorMessage = input.next('.error-message');
+
+            // Nếu có bất kỳ điều kiện nào không hợp lệ thì gán allValid = false
+            if (isNaN(value) || value < 0 || value > maxQuantity || value > quantityReturn) {
+                errorMessage.show(); // Hiển thị lỗi nếu nhập không hợp lệ
+                allValid = false; // Đánh dấu rằng không hợp lệ
+            } else {
+                errorMessage.hide(); // Ẩn lỗi nếu nhập hợp lệ
+            }
+        });
+
+        // Tạo nút xác nhận
+        const buttons = `
+        <button class="btn btn-outline-danger me-2"
+            type="button" id="cancel-button-return-bill"
+            data-action="cancel-return-bill"
+            data-bs-target="#infoBill"
+            data-bs-toggle="modal">
+            <i class="bi bi-bag-x"></i> Hủy đơn
+        </button>
+        <button class="btn btn-outline-success"
+                type="button" id="confirm-button-return-bill"
+                data-action="confirm-return-bill"
+                data-bs-target="#infoBill"
+                data-bs-toggle="modal">
+            <i class="bi bi-bag-check"></i> Xác nhận
+        </button>`;
+
+        // Kiểm tra tất cả input có hợp lệ không
+        if (allValid) {
+            $('#block-confirm').html(buttons); // Hiển thị nút xác nhận nếu tất cả hợp lệ
+            actionModal();
+
+        } else {
+            $('#block-confirm').html(''); // Xóa nút nếu có lỗi
+        }
+
+
+        console.log('Sau khi lưu:', localStorage.getItem('inputData'));
+
+
+    });
+}
+
+function updateQuantityReturn() {
+    let inputData = JSON.parse(localStorage.getItem('inputData')) || {};
+
+    // Gửi dữ liệu dưới dạng chuỗi JSON
+    $.ajax({
+        type: "POST",
+        url: "/return-exchange-bill-api/update-quantity-product",  // Địa chỉ endpoint của bạn
+        contentType: "application/json",  // Đảm bảo dữ liệu được gửi dưới dạng JSON
+        data: JSON.stringify({data: inputData}),  // Gửi dữ liệu dưới dạng đối tượng chứa key "data"
+        success: function(response) {
+            console.log("Dữ liệu đã được gửi thành công:", response);
+            loadInfomationReturnBillFromBillManage()
+        },
+        error: function(xhr, status, error) {
+            console.error("Lỗi khi gửi dữ liệu:", error);
+        }
+    });
+}
+
+// Hàm lấy giá trị đã lưu từ localStorage
+function getSavedQuantity(rowId) {
+    let inputData = JSON.parse(localStorage.getItem('inputData')) || {};
+    return inputData[rowId] || ''; // Trả về giá trị đã lưu hoặc chuỗi rỗng
+}
+
+// Reset localStorage nếu cần
+localStorage.removeItem('inputData');
+
 
 function maxPageReturnBillFromBillManage() {
     $.ajax({
@@ -978,7 +1126,7 @@ function maxPageReturnBillFromBillManage() {
     })
 }
 
-function loadExchangeBillFromBillManage(page) {
+function loadExchangeBill(page) {
     $.ajax({
         type: "GET",
         url: "/return-exchange-bill-api/infomation-exchange-bill-detail-from-bill-manage/"+page,
