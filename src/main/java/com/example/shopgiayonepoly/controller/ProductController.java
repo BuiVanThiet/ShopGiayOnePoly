@@ -217,25 +217,35 @@ public class ProductController extends BaseProduct {
     public ResponseEntity<Map<String, String>> updateMultipleProductDetails(@RequestBody List<ProductDetail> productDetails) {
         Map<String, String> response = new HashMap<>();
         for (ProductDetail detail : productDetails) {
-            if (detail.getPrice().compareTo(BigDecimal.valueOf(1000)) < 0 ||
-                    detail.getImport_price().compareTo(BigDecimal.valueOf(1000)) < 0 ||
-                    detail.getQuantity() <= 0 || detail.getWeight() <= 0 || detail.getWeight() > 5000) {
-                response.put("check", "3");
-                response.put("message", "Lỗi khi thêm sản phẩm");
-                return ResponseEntity.ok(response);
-            }
-            // Tìm ProductDetail từ DB bằng ID
-            ProductDetail existingDetail = productDetailRepository.findById(detail.getId())
-                    .orElseThrow(() -> new RuntimeException("ProductDetail không tồn tại với ID: " + detail.getId()));
+            if (detail.getPrice().compareTo(BigDecimal.valueOf(1000)) < 0) {
+                response.put("check", "2");
+                response.put("message", "Giá sản phẩm phải lớn hơn hoặc bằng 1000.");
+            } else if (detail.getImport_price().compareTo(BigDecimal.valueOf(1000)) < 0) {
+                response.put("check", "2");
+                response.put("message", "Giá nhập sản phẩm phải lớn hơn hoặc bằng 1000.");
+            } else if (detail.getQuantity() <= 0) {
+                response.put("check", "2");
+                response.put("message", "Số lượng sản phẩm phải lớn hơn 0.");
+            } else if (detail.getWeight() <= 0) {
+                response.put("check", "2");
+                response.put("message", "Trọng lượng sản phẩm phải lớn hơn 0.");
+            } else if (detail.getWeight() > 5000) {
+                response.put("check", "2");
+                response.put("message", "Trọng lượng sản phẩm không được vượt quá 5000.");
+            } else {
+                // Tìm ProductDetail từ DB bằng ID
+                ProductDetail existingDetail = productDetailRepository.findById(detail.getId())
+                        .orElseThrow(() -> new RuntimeException("ProductDetail không tồn tại với ID: " + detail.getId()));
 
-            // Cập nhật các trường
-            existingDetail.setPrice(detail.getPrice());
-            existingDetail.setImport_price(detail.getImport_price());
-            existingDetail.setQuantity(detail.getQuantity());
-            existingDetail.setWeight(detail.getWeight());
-            existingDetail.setDescribe(detail.getDescribe());
-            // Lưu thay đổi vào DB
-            productDetailRepository.save(existingDetail);
+                // Cập nhật các trường
+                existingDetail.setPrice(detail.getPrice());
+                existingDetail.setImport_price(detail.getImport_price());
+                existingDetail.setQuantity(detail.getQuantity());
+                existingDetail.setWeight(detail.getWeight());
+                existingDetail.setDescribe(detail.getDescribe());
+                // Lưu thay đổi vào DB
+                productDetailRepository.save(existingDetail);
+            }
         }
         response.put("check", "1");
         response.put("message", "Chỉnh sửa chi tiết sản phẩm thành công");

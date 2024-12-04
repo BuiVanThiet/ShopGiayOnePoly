@@ -1,6 +1,7 @@
 package com.example.shopgiayonepoly.controller.attribute;
 
 import com.example.shopgiayonepoly.entites.Sole;
+import com.example.shopgiayonepoly.entites.Sole;
 import com.example.shopgiayonepoly.entites.Staff;
 import com.example.shopgiayonepoly.service.CashierInventoryService;
 import com.example.shopgiayonepoly.service.TimekeepingService;
@@ -127,17 +128,34 @@ public class SoleController {
         boolean checkCode = true;
         boolean checkName = true;
         for (Sole listSole : soleService.findAll()) {
-            if (sole.getCodeSole().trim().toLowerCase().equals(listSole.getCodeSole().trim().toLowerCase())) {
+            if (sole.getCodeSole().trim().equalsIgnoreCase(listSole.getCodeSole().trim())) {
                 checkCode = false;
+                break;
             }
         }
         for (Sole listSole : soleService.findAll()) {
-            if (sole.getNameSole().trim().toLowerCase().equals(listSole.getNameSole().trim().toLowerCase())) {
+            if (sole.getNameSole().trim().equalsIgnoreCase(listSole.getNameSole().trim())) {
                 checkName = false;
+                break;
             }
         }
-        if (!checkCode || !checkName || sole.getCodeSole().isEmpty() || sole.getNameSole().isEmpty() || sole.getCodeSole().length() > 10 || sole.getNameSole().length() > 50) {
-            thongBao.put("message", "Dữ liệu không hợp lệ");
+        if (!checkCode) {
+            thongBao.put("message", "Mã đế giày đã tồn tại");
+            thongBao.put("check", "2");
+        } else if (!checkName) {
+            thongBao.put("message", "Tên đế giày đã tồn tại");
+            thongBao.put("check", "2");
+        } else if (sole.getCodeSole().isEmpty()) {
+            thongBao.put("message", "Mã đế giày không được để trống");
+            thongBao.put("check", "2");
+        } else if (sole.getNameSole().isEmpty()) {
+            thongBao.put("message", "Tên đế giày không được để trống");
+            thongBao.put("check", "2");
+        } else if (sole.getCodeSole().length() > 10) {
+            thongBao.put("message", "Mã đế giày không được dài quá 10 ký tự");
+            thongBao.put("check", "2");
+        } else if (sole.getNameSole().length() > 50) {
+            thongBao.put("message", "Tên đế giày không được dài quá 50 ký tự");
             thongBao.put("check", "2");
         } else {
             sole.setStatus(1);
@@ -145,42 +163,8 @@ public class SoleController {
             thongBao.put("message", "Thêm đế giày thành công");
             thongBao.put("check", "1");
         }
+
         return ResponseEntity.ok(thongBao);
-    }
-
-    @PostMapping("/sole/update-status")
-    @ResponseBody
-    public ResponseEntity<String> updateStatus(@RequestBody Map<String, Object> payload, HttpSession session) {
-        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
-        if (staffLogin == null) {
-            return null;
-        }
-        if(staffLogin.getStatus() != 1) {
-            return null;
-        }
-        try {
-            int id;
-            int status;
-            // Lấy id và status từ payload, kiểm tra kiểu dữ liệu
-            if (payload.get("id") instanceof Integer) {
-                id = (Integer) payload.get("id");
-            } else {
-                id = Integer.parseInt((String) payload.get("id"));
-            }
-
-            if (payload.get("status") instanceof Integer) {
-                status = (Integer) payload.get("status");
-            } else {
-                status = Integer.parseInt((String) payload.get("status"));
-            }
-
-            // Gọi service để cập nhật trạng thái trong cơ sở dữ liệu
-            soleService.updateStatus(id, status);
-
-            return ResponseEntity.ok("Cập nhật trạng thái thành công");
-        } catch (NumberFormatException e) {
-            return ResponseEntity.badRequest().body("Có lỗi xảy ra khi cập nhật trạng thái");
-        }
     }
 
     @PostMapping("/update-sole")
@@ -191,7 +175,7 @@ public class SoleController {
         if (staffLogin == null) {
             thongBao.put("message", "Nhân viên chưa đăng nhập");
             thongBao.put("check", "3");
-            return ResponseEntity.ok(thongBao);
+            return null;
         }
         if(staffLogin.getStatus() != 1) {
             thongBao.put("message","Nhân viên đang bị ngừng hoạt động!");
@@ -221,30 +205,36 @@ public class SoleController {
             nameSole = (String) payload.get("nameSole");
             boolean checkCode = true;
             for (Sole listSole : soleService.findAll()) {
-                if (codeSole.trim().toLowerCase().equals(listSole.getCodeSole().trim().toLowerCase()) && id != listSole.getId()) {
+                if (codeSole.trim().equalsIgnoreCase(listSole.getCodeSole().trim()) && id != listSole.getId()) {
                     checkCode = false;
                     break;
                 }
             }
             boolean checkName = true;
             for (Sole listSole : soleService.findAll()) {
-                if (nameSole.trim().toLowerCase().equals(listSole.getNameSole().trim().toLowerCase()) && id != listSole.getId()) {
+                if (nameSole.trim().equalsIgnoreCase(listSole.getNameSole().trim()) && id != listSole.getId()) {
                     checkName = false;
                     break;
                 }
             }
             // Gọi service để cập nhật dữ liệu đế giày trong cơ sở dữ liệu
-            if (codeSole.isEmpty() || codeSole.length() > 10) {
-                thongBao.put("message", "Mã đế giày không được trống và lớn hơn 10 kí tự");
-                thongBao.put("check", "2");
-            } else if (!checkCode) {
+            if (!checkCode) {
                 thongBao.put("message", "Mã đế giày đã tồn tại");
                 thongBao.put("check", "2");
             } else if (!checkName) {
                 thongBao.put("message", "Tên đế giày đã tồn tại");
                 thongBao.put("check", "2");
-            } else if (nameSole.isEmpty() || nameSole.length() > 50) {
-                thongBao.put("message", "Tên đế giày không được trống và lớn hơn 50 kí tự");
+            } else if (codeSole.isEmpty()) {
+                thongBao.put("message", "Mã đế giày không được để trống");
+                thongBao.put("check", "2");
+            } else if (nameSole.isEmpty()) {
+                thongBao.put("message", "Tên đế giày không được để trống");
+                thongBao.put("check", "2");
+            } else if (codeSole.length() > 10) {
+                thongBao.put("message", "Mã đế giày không được dài quá 10 ký tự");
+                thongBao.put("check", "2");
+            } else if (nameSole.length() > 50) {
+                thongBao.put("message", "Tên đế giày không được dài quá 50 ký tự");
                 thongBao.put("check", "2");
             } else {
                 soleService.updateSole(id, codeSole, nameSole);
@@ -258,7 +248,6 @@ public class SoleController {
             return ResponseEntity.ok(thongBao);
         }
     }
-
     @PostMapping("/delete-sole")
     @ResponseBody
     public ResponseEntity<Map<String, String>> deleteSole(@RequestBody Map<String, Object> payload, HttpSession session) {

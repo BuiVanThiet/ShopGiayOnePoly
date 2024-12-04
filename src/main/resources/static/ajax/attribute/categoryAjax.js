@@ -1,65 +1,44 @@
-function saveRow(index, event) { // hàm edit dữ liệu trên table
+let currentRowIndex = null; // Biến lưu chỉ số hàng hiện tại
+
+function saveRow(index, event) {
     event.preventDefault();
-    let updatedData = {
-        codeCategory: document.getElementById('code-input-' + index).value,
-        nameCategory: document.getElementById('name-input-' + index).value,
-        id: document.getElementById('row-' + index).getAttribute('data-id')  // Lấy ID của đối tượng từ hàng
-    };
+    currentRowIndex = index; // Lưu index vào biến toàn cục
 
-    // Thực hiện AJAX để cập nhật dữ liệu trong cơ sở dữ liệu
-    $.ajax({
-        url: '/attribute/update-category',  // Thay bằng URL API của bạn
-        method: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify(updatedData),  // Gửi dữ liệu JSON
-        success: function (response) {
-            fetchActiveCategories();
-            createToast(response.check, response.message);
-        },
-        error: function (xhr, status, error) {
-            console.error('Có lỗi xảy ra khi cập nhật dữ liệu:', error);
-            // Xử lý lỗi nếu cần thiết
-        }
-    });
+    // Hiển thị modal xác nhận
+    const modal = new bootstrap.Modal(document.getElementById('confirm-save-modal'));
+    modal.show();
 }
+function confirmSave() {
+    if (currentRowIndex !== null) {
+        let updatedData = {
+            codeCategory: document.getElementById('code-input-' + currentRowIndex).value,
+            nameCategory: document.getElementById('name-input-' + currentRowIndex).value,
+            id: document.getElementById('row-' + currentRowIndex).getAttribute('data-id')
+        };
 
-function toggleStatus(element) { // hàm thay đổi trạng thái bằng button
-    let index = element.getAttribute('data-index');  // Lấy index
-    let status = element.getAttribute('data-status') === '1' ? 2 : 1;  // Lấy trạng thái mới
+        // AJAX để cập nhật dữ liệu
+        $.ajax({
+            url: '/attribute/update-category',  // Thay bằng URL API của bạn
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(updatedData),
+            success: function (response) {
+                fetchActiveCategorys();
+                createToast(response.check, response.message);
+                // Đóng modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('confirm-save-modal'));
+                modal.hide();
+            },
+            error: function (xhr, status, error) {
+                console.error('Có lỗi xảy ra khi cập nhật dữ liệu:', error);
+            }
+        });
 
-    // Thay đổi biểu tượng toggle
-    if (status === 1) {
-        element.classList.remove('fa-toggle-off');
-        element.classList.add('fa-toggle-on');
-    } else {
-        element.classList.remove('fa-toggle-on');
-        element.classList.add('fa-toggle-off');
+        // Reset giá trị index
+        currentRowIndex = null;
     }
-
-    // Cập nhật trạng thái trong data attribute
-    element.setAttribute('data-status', status);
-
-    // Lấy ID thực tế của đối tượng thay vì index
-    let id = $('#row-' + index).data('id');  // Giả định bạn có thuộc tính id trong hàng
-
-    // Thực hiện Ajax request để cập nhật trạng thái trong database
-    $.ajax({
-        url: '/attribute/category/update-status',  // Đường dẫn API
-        method: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify({
-            id: id,
-            status: status
-        }),
-        success: function (response) {
-            console.log('Trạng thái đã được cập nhật thành công');
-        },
-        error: function (xhr, status, error) {
-            console.error('Có lỗi xảy ra khi cập nhật trạng thái:', error);
-            // Xử lý lỗi nếu cần
-        }
-    });
 }
+
 document.addEventListener('show.bs.modal', function (event) {
     let button = event.relatedTarget;  // Lấy nút kích hoạt modal
     let index = button.getAttribute('data-index');  // Lấy index từ nút kích hoạt
@@ -72,7 +51,6 @@ document.addEventListener('show.bs.modal', function (event) {
 });
 
 function deleteByID(element) {
-    let index = element.getAttribute('data-index');  // Lấy index từ nút "Xóa" trong modal
     let id = element.getAttribute('data-id');  // Lấy id từ nút "Xóa" trong modal
 
     $.ajax({
@@ -84,7 +62,7 @@ function deleteByID(element) {
             status: 0  // Giả sử status 0 là trạng thái bị xóa
         }),
         success: function (response) {
-            fetchActiveCategories();
+            fetchActiveCategorys();  // Xóa hàng với id là row-index
             createToast(response.check, response.message);
         },
         error: function (xhr, status, error) {
@@ -92,7 +70,36 @@ function deleteByID(element) {
         }
     });
 }
+document.addEventListener('show.bs.modal', function (event) {
+    let button = event.relatedTarget;  // Lấy nút kích hoạt modal
+    let index = button.getAttribute('data-index');  // Lấy index từ nút kích hoạt
+    let id = button.getAttribute('data-id');  // Lấy id từ nút kích hoạt
 
+    // Gán index và id vào nút "Xóa" trong modal
+    let deleteButton = document.querySelector('#confirm-restore-category-modal .btn-success');
+    deleteButton.setAttribute('data-index', index);
+    deleteButton.setAttribute('data-id', id);
+});
+function restoreCategory(element) {
+    let id = element.getAttribute('data-id');  // Lấy id từ nút "Xóa" trong modal
+
+    $.ajax({
+        url: '/attribute/delete-category',  // Đường dẫn API để xóa
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            id: id,
+            status: 1  // Giả sử status 0 là trạng thái bị xóa
+        }),
+        success: function (response) {
+            fetchActiveCategorys();  // Xóa hàng với id là row-index
+            createToast(response.check, response.message);
+        },
+        error: function (xhr, status, error) {
+            console.error('Có lỗi xảy ra khi xóa:', error);
+        }
+    });
+}
 
 document.querySelector('.attribute-btn-listDelete').addEventListener('click', function () {
     fetch('/attribute/category/delete')
@@ -103,19 +110,19 @@ document.querySelector('.attribute-btn-listDelete').addEventListener('click', fu
                 this.style.display = 'none';
                 document.querySelector('.attribute-btn-listActive').style.display = 'inline-block';
             } else {
-                createToast('1','Không có màu nào bị xóa')
+                createToast('1','Không có danh mục nào bị xóa')
             }
         });
 });
 
 document.querySelector('.attribute-btn-listActive').addEventListener('click', function () {
-    fetchActiveCategories();
+    fetchActiveCategorys();
     this.style.display = 'none';
     document.querySelector('.attribute-btn-listDelete').style.display = 'inline-block';
 });
 
 function fetchDeletedCategorys() {
-    // Thay URL dưới đây bằng endpoint của bạn để lấy danh sách màu đã xóa
+    // Thay URL dưới đây bằng endpoint của bạn để lấy danh sách danh mục đã xóa
     fetch('/attribute/category/delete')
         .then(response => response.json())
         .then(data => {
@@ -124,7 +131,7 @@ function fetchDeletedCategorys() {
                 const tbody = document.querySelector('#categoryTable tbody');
                 tbody.innerHTML = '';
 
-                // Lặp qua các màu đang hoạt động và thêm các hàng vào bảng
+                // Lặp qua các danh mục đang hoạt động và thêm các hàng vào bảng
                 data.forEach((category, index) => {
                     const createDate = new Date(category.createDate).toLocaleString('vi-VN', {
                         day: '2-digit',
@@ -163,7 +170,8 @@ function fetchDeletedCategorys() {
                                title="Toggle Status"></i>
                         </td>
                         <td>
-                                <a data-index="${index}" data-id="${category.id}"  onclick="restoreCategory(this)">
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#confirm-restore-category-modal"
+                               data-index="${index}" data-id="${category.id}">
                                     <i class="attribute-icon-restore fas fa-undo" title="Khôi phục"></i>
                                 </a>
                         </td>
@@ -171,7 +179,7 @@ function fetchDeletedCategorys() {
                     tbody.appendChild(row);
                 });
             } else {
-                createToast('1','Không có màu nào bị xóa')
+                createToast('1','Không có danh mục nào bị xóa')
             }
         })
         .catch(error => {
@@ -179,8 +187,7 @@ function fetchDeletedCategorys() {
         });
 }
 
-
-function fetchActiveCategories() {
+function fetchActiveCategorys() {
     fetch('/attribute/category/active')
         .then(response => response.json())
         .then(data => {
@@ -242,107 +249,29 @@ function fetchActiveCategories() {
             });
         })
         .catch(error => {
-            console.error("Có lỗi xảy ra khi lấy danh sách màu:", error);
+            console.error("Có lỗi xảy ra khi lấy danh sách danh mục:", error);
         });
 }
 
 async function add() {
-    if (await validateCategory()) {
-        const formElement = document.getElementById('createAttribute');
-        const formData = new FormData(formElement);
-        const response = await fetch('/attribute/category/add', {
-            method: 'POST',
-            body: formData
-        });
-        if (response.ok) {
-            const result = await response.json();
-            codeCategoryInput.value = '';
-            nameCategoryInput.value = '';
-            document.querySelector('.attribute-btn-listActive').style.display = 'none';
-            document.querySelector('.attribute-btn-listDelete').style.display = 'inline-block';
-            createToast(result.check, result.message);
-            fetchActiveCategories();
-        }
-    } else {
-        createToast('2', 'Dữ liệu không hợp lệ');
-    }
 
-}
-
-fetchActiveCategories();
-
-function restoreCategory(element) {
-    let index = element.getAttribute('data-index');
-    let id = element.getAttribute('data-id');
-    $.ajax({
-        url: '/attribute/delete-category',
+    const formElement = document.getElementById('createAttribute');
+    const formData = new FormData(formElement);
+    const response = await fetch('/attribute/category/add', {
         method: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify({
-            id: id,
-            status: 1
-        }),
-        success: function (response) {
-            fetchDeletedCategorys();
-            createToast(response.check, response.message)
-        },
-        error: function (xhr, status, error) {
-            createToast('2', 'Khôi phục danh mục thất bại')
-        }
+        body: formData
     });
+    if (response.ok) {
+        const result = await response.json();
+        codeCategoryInput.value = '';
+        nameCategoryInput.value = '';
+        document.querySelector('.attribute-btn-listActive').style.display = 'none';
+        document.querySelector('.attribute-btn-listDelete').style.display = 'inline-block';
+        createToast(result.check, result.message);
+        fetchActiveCategorys();
+    }
+
 
 }
 
-let codeCategoryInput = document.getElementById("codeCategoryInput");
-let nameCategoryInput = document.getElementById("nameCategoryInput");
-let categoryError = document.getElementById("categoryError");
-codeCategoryInput.addEventListener('input',async function () {
-    await validateCategory();
-});
-nameCategoryInput.addEventListener('input', async function () {
-   await validateCategory();
-});
-
-let arrayCodeCategory = [];
-let arrayNameCategory = [];
-
-
-async function validateCategory() {
-    let codeCategory = await fetch('/attribute/category/get-code');
-    if (codeCategory.ok) {
-        arrayCodeCategory = await codeCategory.json(); // Đảm bảo đây là một mảng
-    }
-    let nameCategory = await fetch('/attribute/category/get-name');
-    if (nameCategory.ok) {
-        arrayNameCategory = await nameCategory.json(); // Đảm bảo đây là một mảng
-    }
-    if (codeCategoryInput.value.trim() === "" && nameCategoryInput.value.trim() === "") {
-        categoryError.textContent = "* Mã và tên không được để trống";
-        return false;
-    } else if (codeCategoryInput.value.length > 10 && nameCategoryInput.value.length > 50) {
-        categoryError.textContent = "* Mã <= 10 kí tự, Tên <= 50 kí tự";
-        return false;
-    } else if (arrayCodeCategory.some(code => code.toLowerCase() === codeCategoryInput.value.trim().toLowerCase())) {
-        categoryError.textContent = "* Mã danh mục đã tồn tại";
-        return false;
-    } else if (arrayNameCategory.some(name => name.toLowerCase() === nameCategoryInput.value.trim().toLowerCase())) {
-        categoryError.textContent = "* Tên danh mục đã tồn tại";
-        return false;
-    } else if (codeCategoryInput.value.trim() === "") {
-        categoryError.textContent = "* Mã không được để trống";
-        return false;
-    } else if (nameCategoryInput.value.trim() === "") {
-        categoryError.textContent = "* Tên không được để trống";
-        return false;
-    } else if (codeCategoryInput.value.length > 10) {
-        categoryError.textContent = "* Mã <= 10 kí tự";
-        return false;
-    } else if (nameCategoryInput.value.length > 50) {
-        categoryError.textContent = "* Tên <= 50 kí tự";
-        return false;
-    } else {
-        categoryError.textContent = "";
-        return true;
-    }
-}
-
+fetchActiveCategorys();

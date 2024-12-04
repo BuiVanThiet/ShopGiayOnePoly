@@ -26,7 +26,6 @@
                             <input id="nameSoleInput" th:field="*{nameSole}" type="text" placeholder="Tên đế giày" required/>
                             <button type="button" data-bs-toggle="modal" data-bs-target="#confirm-create-sole-modal" class="attribute-btn-add btn-add">Thêm đế giày</button>
                         </div>
-                        <p id="soleError" style="color: red;; margin-left: 400px">* Mã và tên không được để trống</p>
                     </div>
                 </form>
             </div>
@@ -104,7 +103,26 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                        <button onclick="add()" type="submit" class="btn btn-success" data-bs-dismiss="modal" aria-label="Close">Khôi phục</button>
+                        <button onclick="add()" type="submit" class="btn btn-success" data-bs-dismiss="modal"
+                                aria-label="Close">Khôi phục
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="confirm-save-modal" tabindex="-1" aria-labelledby="confirmSaveModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="confirmSaveModalLabel">Xác nhận lưu thay đổi</h1>
+                    </div>
+                    <div class="modal-body">
+                        Bạn có chắc chắn muốn lưu thay đổi này?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button type="button" class="btn btn-success" onclick="confirmSave()">Đồng ý</button>
                     </div>
                 </div>
             </div>

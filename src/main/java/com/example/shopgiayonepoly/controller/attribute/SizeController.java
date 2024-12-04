@@ -1,6 +1,7 @@
 package com.example.shopgiayonepoly.controller.attribute;
 
 import com.example.shopgiayonepoly.entites.Size;
+import com.example.shopgiayonepoly.entites.Size;
 import com.example.shopgiayonepoly.entites.Staff;
 import com.example.shopgiayonepoly.service.CashierInventoryService;
 import com.example.shopgiayonepoly.service.TimekeepingService;
@@ -127,17 +128,34 @@ public class SizeController {
         boolean checkCode = true;
         boolean checkName = true;
         for (Size listSize : sizeService.findAll()) {
-            if (size.getCodeSize().trim().toLowerCase().equals(listSize.getCodeSize().trim().toLowerCase())) {
+            if (size.getCodeSize().trim().equalsIgnoreCase(listSize.getCodeSize().trim())) {
                 checkCode = false;
+                break;
             }
         }
         for (Size listSize : sizeService.findAll()) {
-            if (size.getNameSize().trim().toLowerCase().equals(listSize.getNameSize().trim().toLowerCase())) {
+            if (size.getNameSize().trim().equalsIgnoreCase(listSize.getNameSize().trim())) {
                 checkName = false;
+                break;
             }
         }
-        if (!checkCode || !checkName || size.getCodeSize().isEmpty() || size.getNameSize().isEmpty() || size.getCodeSize().length() > 10 || size.getNameSize().length() > 50) {
-            thongBao.put("message", "Dữ liệu không hợp lệ");
+        if (!checkCode) {
+            thongBao.put("message", "Mã kích cỡ đã tồn tại");
+            thongBao.put("check", "2");
+        } else if (!checkName) {
+            thongBao.put("message", "Tên kích cỡ đã tồn tại");
+            thongBao.put("check", "2");
+        } else if (size.getCodeSize().isEmpty()) {
+            thongBao.put("message", "Mã kích cỡ không được để trống");
+            thongBao.put("check", "2");
+        } else if (size.getNameSize().isEmpty()) {
+            thongBao.put("message", "Tên kích cỡ không được để trống");
+            thongBao.put("check", "2");
+        } else if (size.getCodeSize().length() > 10) {
+            thongBao.put("message", "Mã kích cỡ không được dài quá 10 ký tự");
+            thongBao.put("check", "2");
+        } else if (size.getNameSize().length() > 50) {
+            thongBao.put("message", "Tên kích cỡ không được dài quá 50 ký tự");
             thongBao.put("check", "2");
         } else {
             size.setStatus(1);
@@ -145,42 +163,8 @@ public class SizeController {
             thongBao.put("message", "Thêm kích cỡ thành công");
             thongBao.put("check", "1");
         }
+
         return ResponseEntity.ok(thongBao);
-    }
-
-    @PostMapping("/size/update-status")
-    @ResponseBody
-    public ResponseEntity<String> updateStatus(@RequestBody Map<String, Object> payload, HttpSession session) {
-        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
-        if (staffLogin == null) {
-            return null;
-        }
-        if(staffLogin.getStatus() != 1) {
-            return null;
-        }
-        try {
-            int id;
-            int status;
-            // Lấy id và status từ payload, kiểm tra kiểu dữ liệu
-            if (payload.get("id") instanceof Integer) {
-                id = (Integer) payload.get("id");
-            } else {
-                id = Integer.parseInt((String) payload.get("id"));
-            }
-
-            if (payload.get("status") instanceof Integer) {
-                status = (Integer) payload.get("status");
-            } else {
-                status = Integer.parseInt((String) payload.get("status"));
-            }
-
-            // Gọi service để cập nhật trạng thái trong cơ sở dữ liệu
-            sizeService.updateStatus(id, status);
-
-            return ResponseEntity.ok("Cập nhật trạng thái thành công");
-        } catch (NumberFormatException e) {
-            return ResponseEntity.badRequest().body("Có lỗi xảy ra khi cập nhật trạng thái");
-        }
     }
 
     @PostMapping("/update-size")
@@ -191,7 +175,7 @@ public class SizeController {
         if (staffLogin == null) {
             thongBao.put("message", "Nhân viên chưa đăng nhập");
             thongBao.put("check", "3");
-            return ResponseEntity.ok(thongBao);
+            return null;
         }
         if(staffLogin.getStatus() != 1) {
             thongBao.put("message","Nhân viên đang bị ngừng hoạt động!");
@@ -221,30 +205,36 @@ public class SizeController {
             nameSize = (String) payload.get("nameSize");
             boolean checkCode = true;
             for (Size listSize : sizeService.findAll()) {
-                if (codeSize.trim().toLowerCase().equals(listSize.getCodeSize().trim().toLowerCase()) && id != listSize.getId()) {
+                if (codeSize.trim().equalsIgnoreCase(listSize.getCodeSize().trim()) && id != listSize.getId()) {
                     checkCode = false;
                     break;
                 }
             }
             boolean checkName = true;
             for (Size listSize : sizeService.findAll()) {
-                if (nameSize.trim().toLowerCase().equals(listSize.getNameSize().trim().toLowerCase()) && id != listSize.getId()) {
+                if (nameSize.trim().equalsIgnoreCase(listSize.getNameSize().trim()) && id != listSize.getId()) {
                     checkName = false;
                     break;
                 }
             }
             // Gọi service để cập nhật dữ liệu kích cỡ trong cơ sở dữ liệu
-            if (codeSize.isEmpty() || codeSize.length() > 10) {
-                thongBao.put("message", "Mã kích cỡ không được trống và lớn hơn 10 kí tự");
-                thongBao.put("check", "2");
-            } else if (!checkCode) {
+            if (!checkCode) {
                 thongBao.put("message", "Mã kích cỡ đã tồn tại");
                 thongBao.put("check", "2");
             } else if (!checkName) {
                 thongBao.put("message", "Tên kích cỡ đã tồn tại");
                 thongBao.put("check", "2");
-            } else if (nameSize.isEmpty() || nameSize.length() > 50) {
-                thongBao.put("message", "Tên kích cỡ không được trống và lớn hơn 50 kí tự");
+            } else if (codeSize.isEmpty()) {
+                thongBao.put("message", "Mã kích cỡ không được để trống");
+                thongBao.put("check", "2");
+            } else if (nameSize.isEmpty()) {
+                thongBao.put("message", "Tên kích cỡ không được để trống");
+                thongBao.put("check", "2");
+            } else if (codeSize.length() > 10) {
+                thongBao.put("message", "Mã kích cỡ không được dài quá 10 ký tự");
+                thongBao.put("check", "2");
+            } else if (nameSize.length() > 50) {
+                thongBao.put("message", "Tên kích cỡ không được dài quá 50 ký tự");
                 thongBao.put("check", "2");
             } else {
                 sizeService.updateSize(id, codeSize, nameSize);
@@ -258,7 +248,6 @@ public class SizeController {
             return ResponseEntity.ok(thongBao);
         }
     }
-
     @PostMapping("/delete-size")
     @ResponseBody
     public ResponseEntity<Map<String, String>> deleteSize(@RequestBody Map<String, Object> payload, HttpSession session) {

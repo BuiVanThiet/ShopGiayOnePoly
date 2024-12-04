@@ -1,6 +1,7 @@
 package com.example.shopgiayonepoly.controller.attribute;
 
 import com.example.shopgiayonepoly.entites.Material;
+import com.example.shopgiayonepoly.entites.Material;
 import com.example.shopgiayonepoly.entites.Staff;
 import com.example.shopgiayonepoly.service.CashierInventoryService;
 import com.example.shopgiayonepoly.service.TimekeepingService;
@@ -127,17 +128,34 @@ public class MaterialController {
         boolean checkCode = true;
         boolean checkName = true;
         for (Material listMaterial : materialService.findAll()) {
-            if (material.getCodeMaterial().trim().toLowerCase().equals(listMaterial.getCodeMaterial().trim().toLowerCase())) {
+            if (material.getCodeMaterial().trim().equalsIgnoreCase(listMaterial.getCodeMaterial().trim())) {
                 checkCode = false;
+                break;
             }
         }
         for (Material listMaterial : materialService.findAll()) {
-            if (material.getNameMaterial().trim().toLowerCase().equals(listMaterial.getNameMaterial().trim().toLowerCase())) {
+            if (material.getNameMaterial().trim().equalsIgnoreCase(listMaterial.getNameMaterial().trim())) {
                 checkName = false;
+                break;
             }
         }
-        if (!checkCode || !checkName || material.getCodeMaterial().isEmpty() || material.getNameMaterial().isEmpty() || material.getCodeMaterial().length() > 10 || material.getNameMaterial().length() > 50) {
-            thongBao.put("message", "Dữ liệu không hợp lệ");
+        if (!checkCode) {
+            thongBao.put("message", "Mã chất liệu đã tồn tại");
+            thongBao.put("check", "2");
+        } else if (!checkName) {
+            thongBao.put("message", "Tên chất liệu đã tồn tại");
+            thongBao.put("check", "2");
+        } else if (material.getCodeMaterial().isEmpty()) {
+            thongBao.put("message", "Mã chất liệu không được để trống");
+            thongBao.put("check", "2");
+        } else if (material.getNameMaterial().isEmpty()) {
+            thongBao.put("message", "Tên chất liệu không được để trống");
+            thongBao.put("check", "2");
+        } else if (material.getCodeMaterial().length() > 10) {
+            thongBao.put("message", "Mã chất liệu không được dài quá 10 ký tự");
+            thongBao.put("check", "2");
+        } else if (material.getNameMaterial().length() > 50) {
+            thongBao.put("message", "Tên chất liệu không được dài quá 50 ký tự");
             thongBao.put("check", "2");
         } else {
             material.setStatus(1);
@@ -145,42 +163,8 @@ public class MaterialController {
             thongBao.put("message", "Thêm chất liệu thành công");
             thongBao.put("check", "1");
         }
+
         return ResponseEntity.ok(thongBao);
-    }
-
-    @PostMapping("/material/update-status")
-    @ResponseBody
-    public ResponseEntity<String> updateStatus(@RequestBody Map<String, Object> payload, HttpSession session) {
-        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
-        if (staffLogin == null) {
-            return null;
-        }
-        if(staffLogin.getStatus() != 1) {
-            return null;
-        }
-        try {
-            int id;
-            int status;
-            // Lấy id và status từ payload, kiểm tra kiểu dữ liệu
-            if (payload.get("id") instanceof Integer) {
-                id = (Integer) payload.get("id");
-            } else {
-                id = Integer.parseInt((String) payload.get("id"));
-            }
-
-            if (payload.get("status") instanceof Integer) {
-                status = (Integer) payload.get("status");
-            } else {
-                status = Integer.parseInt((String) payload.get("status"));
-            }
-
-            // Gọi service để cập nhật trạng thái trong cơ sở dữ liệu
-            materialService.updateStatus(id, status);
-
-            return ResponseEntity.ok("Cập nhật trạng thái thành công");
-        } catch (NumberFormatException e) {
-            return ResponseEntity.badRequest().body("Có lỗi xảy ra khi cập nhật trạng thái");
-        }
     }
 
     @PostMapping("/update-material")
@@ -191,7 +175,7 @@ public class MaterialController {
         if (staffLogin == null) {
             thongBao.put("message", "Nhân viên chưa đăng nhập");
             thongBao.put("check", "3");
-            return ResponseEntity.ok(thongBao);
+            return null;
         }
         if(staffLogin.getStatus() != 1) {
             thongBao.put("message","Nhân viên đang bị ngừng hoạt động!");
@@ -221,30 +205,36 @@ public class MaterialController {
             nameMaterial = (String) payload.get("nameMaterial");
             boolean checkCode = true;
             for (Material listMaterial : materialService.findAll()) {
-                if (codeMaterial.trim().toLowerCase().equals(listMaterial.getCodeMaterial().trim().toLowerCase()) && id != listMaterial.getId()) {
+                if (codeMaterial.trim().equalsIgnoreCase(listMaterial.getCodeMaterial().trim()) && id != listMaterial.getId()) {
                     checkCode = false;
                     break;
                 }
             }
             boolean checkName = true;
             for (Material listMaterial : materialService.findAll()) {
-                if (nameMaterial.trim().toLowerCase().equals(listMaterial.getNameMaterial().trim().toLowerCase()) && id != listMaterial.getId()) {
+                if (nameMaterial.trim().equalsIgnoreCase(listMaterial.getNameMaterial().trim()) && id != listMaterial.getId()) {
                     checkName = false;
                     break;
                 }
             }
             // Gọi service để cập nhật dữ liệu chất liệu trong cơ sở dữ liệu
-            if (codeMaterial.isEmpty() || codeMaterial.length() > 10) {
-                thongBao.put("message", "Mã chất liệu không được trống và lớn hơn 10 kí tự");
-                thongBao.put("check", "2");
-            } else if (!checkCode) {
+            if (!checkCode) {
                 thongBao.put("message", "Mã chất liệu đã tồn tại");
                 thongBao.put("check", "2");
             } else if (!checkName) {
                 thongBao.put("message", "Tên chất liệu đã tồn tại");
                 thongBao.put("check", "2");
-            } else if (nameMaterial.isEmpty() || nameMaterial.length() > 50) {
-                thongBao.put("message", "Tên chất liệu không được trống và lớn hơn 50 kí tự");
+            } else if (codeMaterial.isEmpty()) {
+                thongBao.put("message", "Mã chất liệu không được để trống");
+                thongBao.put("check", "2");
+            } else if (nameMaterial.isEmpty()) {
+                thongBao.put("message", "Tên chất liệu không được để trống");
+                thongBao.put("check", "2");
+            } else if (codeMaterial.length() > 10) {
+                thongBao.put("message", "Mã chất liệu không được dài quá 10 ký tự");
+                thongBao.put("check", "2");
+            } else if (nameMaterial.length() > 50) {
+                thongBao.put("message", "Tên chất liệu không được dài quá 50 ký tự");
                 thongBao.put("check", "2");
             } else {
                 materialService.updateMaterial(id, codeMaterial, nameMaterial);
@@ -258,7 +248,6 @@ public class MaterialController {
             return ResponseEntity.ok(thongBao);
         }
     }
-
     @PostMapping("/delete-material")
     @ResponseBody
     public ResponseEntity<Map<String, String>> deleteMaterial(@RequestBody Map<String, Object> payload, HttpSession session) {

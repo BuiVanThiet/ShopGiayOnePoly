@@ -7,7 +7,6 @@ function toggleDropdownProduct(event, icon) {
     // Ngăn chặn sự kiện click lan ra ngoài
     event.stopPropagation();
 }
-
 // Đóng menu khi hover ra khỏi khu vực
 document.querySelectorAll('.dropdown-product').forEach(function(dropdown) {
     dropdown.addEventListener('mouseleave', function() {
@@ -17,7 +16,6 @@ document.querySelectorAll('.dropdown-product').forEach(function(dropdown) {
         }
     });
 });
-
 // Đóng menu khi click ra ngoài khu vực menu
 window.onclick = function(event) {
     if (!event.target.matches('.fa-ellipsis-v-product')) {
@@ -30,7 +28,6 @@ window.onclick = function(event) {
         }
     }
 }
-
 // Hàm chọn tất cả checkbox
 function toggleSelectAllProduct(selectAllCheckbox) {
     // Chọn tất cả các checkbox trong phần tbody của bảng sản phẩm
@@ -43,18 +40,14 @@ function toggleSelectAllProduct(selectAllCheckbox) {
     toggleSaveButton(); // Cập nhật nút lưu nếu cần thiết
 
 }
-
-
-
 // Thêm sự kiện 'change' cho tất cả các checkbox có class 'select-row-product'
 document.querySelectorAll('.select-row-product').forEach((checkbox) => {
     checkbox.addEventListener('change', function() {
-        const allChecked = document.querySelectorAll('.select-row-product:checked').length === document.querySelectorAll('.select-row-product').length;
-        document.getElementById('select-all-product').checked = allChecked;
+        document.getElementById('select-all-product').checked =
+            document.querySelectorAll('.select-row-product:checked').length === document.querySelectorAll('.select-row-product').length;
         toggleSaveButton();
     });
 });
-
 // Hàm cập nhật hiển thị các nút dựa vào checkbox được chọn
 function toggleSaveButton() {
     const anyChecked = document.querySelectorAll('.select-row-product:checked').length > 0;
@@ -69,8 +62,6 @@ function toggleSaveButton() {
     }
 
 }
-
-
 function initImageSlidersGridView() {
     // Tìm tất cả các phần tử có class 'form-control-product'
     const productControls = document.querySelectorAll('.form-control-product');
@@ -87,7 +78,6 @@ function initImageSlidersGridView() {
     });
 } // hàm chuyển ảnh grid view
 initImageSlidersGridView();
-
 function initImageSlidersTable() {
     // Chọn tất cả các image-slider trong bảng
     const sliders = document.querySelectorAll('.image-slider');
@@ -104,23 +94,19 @@ function initImageSlidersTable() {
         }, 5000); // Thay đổi sau mỗi 7 giây
     });
 }
-
 initImageSlidersTable();
-
 // Sự kiện khi người dùng thay đổi danh mục
 document.querySelector('#search-select-product').addEventListener('change', async function () {
     const idCategory = this.value;
     const searchTerm = document.querySelector('.search-input-product').value;
     await fetchProductsByCategoryAndSearch(idCategory, searchTerm);
 });
-
 // Sự kiện khi người dùng nhập vào ô tìm kiếm
 document.querySelector('.search-input-product').addEventListener('input', async function () {
     const searchTerm = this.value;
     const idCategory = document.querySelector('#search-select-product').value;
     await fetchProductsByCategoryAndSearch(idCategory, searchTerm);
 });
-
 // Hàm tìm kiếm sản phẩm theo danh mục và ô input
 async function fetchProductsByCategoryAndSearch(idCategory, searchTerm, url = `/product-api/search`) {
     document.getElementById('select-all-product').checked
@@ -157,8 +143,6 @@ async function fetchProductsByCategoryAndSearch(idCategory, searchTerm, url = `/
         })
         .catch(error => console.error('Error:', error));
 }
-
-
 // Chuyển đổi giữa chế độ xem lưới và danh sách
 function showGridViewProduct() {
     document.querySelector('.form-group-product').style.display = 'flex';
@@ -170,7 +154,6 @@ function showGridViewProduct() {
     currentPage = 1;
     displayPage(currentPage); // Hiển thị lại trang hiện tại với chế độ grid
 }
-
 function showListViewProduct() {
     document.querySelector('.form-group-product').style.display = 'none';
     document.querySelector('.table-product').style.display = 'table';
@@ -181,16 +164,12 @@ function showListViewProduct() {
     currentPage = 1;
     displayPage(currentPage); // Hiển thị lại trang hiện tại với chế độ list
 }
-
-
 // Hàm cập nhật các nút điều khiển phân trang
 let nextButton = document.createElement('button');
 let prevButton = document.createElement('button');
-
 function updatePaginationControls(totalPages, page) {
     const pagination = document.getElementById('pagination-product');
     pagination.innerHTML = '';
-    const itemsPerPage = isGridView ? itemsPerPageGrid : itemsPerPageList;
     prevButton.innerHTML = '<i class="fas fa-angle-left"></i>';
     prevButton.onclick = () => changePage(page - 1);
     prevButton.style.display = page === 1 ? 'none' : 'inline-block';
@@ -253,7 +232,6 @@ function updatePaginationControls(totalPages, page) {
         prevButton.style.display = 'none';
     }
 }
-
 let itemsPerPageList = 10; // Chế độ danh sách: 5 sản phẩm mỗi trang
 let itemsPerPageGrid = 12; // Chế độ lưới: 12 sản phẩm mỗi trang
 let currentPage = 1;
@@ -377,7 +355,7 @@ function displayPage(page) {
                 <td>
                     ${product.status === 0 ? `
                         <!-- Icon Khôi phục khi status = 0 -->
-                        <i id="restore-product" class="fa fa-undo fa-restore-icon" aria-hidden="true" onclick="updateStatus(${product.id}, 1)" title="Khôi phục"></i>
+                        <i onclick="getIdProductRestore(this)" id="restore-product" class="fa fa-undo fa-restore-icon" aria-hidden="true" data-bs-toggle="modal" data-bs-target="#confirm-restoreOne-product-modal" data-product-id="${product.id}" title="Khôi phục"></i>
                     ` : `
                         <!-- Dropdown menu khi status khác 0 -->
                         <div class="dropdown-product">
@@ -385,7 +363,7 @@ function displayPage(page) {
                             <div class="dropdown-menu-product">
                                 <a href="/staff/product/detail/${product.id}">Xem chi tiết</a>
                                 <a href="/staff/product/view-update/${product.id}" >Chỉnh sửa</a>
-                                <a onclick="getIdProduct(this)" class="delete-product" data-bs-toggle="modal" data-bs-target="#confirm-create-bill-modal" data-product-id="${product.id}">Xóa</a>
+                                <a onclick="getIdProductDelete(this)" class="delete-product" data-bs-toggle="modal" data-bs-target="#confirm-create-bill-modal" data-product-id="${product.id}">Xóa</a>
                             </div>
                         </div>
                     `}
@@ -398,47 +376,45 @@ function displayPage(page) {
                 // Thiết lập sự kiện cho checkbox
                 const checkbox = row.querySelector('.select-row-product');
                 checkbox.addEventListener('change', function () {
-                    const allChecked = document.querySelectorAll('.select-row-product:checked').length === document.querySelectorAll('.select-row-product').length;
-                    document.getElementById('select-all-product').checked = allChecked;
+                    document.getElementById('select-all-product').checked =
+                        document.querySelectorAll('.select-row-product:checked').length === document.querySelectorAll('.select-row-product').length;
                 });
             });
         }
     }
     document.querySelectorAll('.select-row-product').forEach((checkbox) => {
         checkbox.addEventListener('change', function() {
-            const allChecked = document.querySelectorAll('.select-row-product:checked').length === document.querySelectorAll('.select-row-product').length;
-            document.getElementById('select-all-product').checked = allChecked;
+            document.getElementById('select-all-product').checked =
+                document.querySelectorAll('.select-row-product:checked').length === document.querySelectorAll('.select-row-product').length;
             toggleSaveButton();
         });
     });
+
     initImageSlidersTable();
     initImageSlidersGridView();
     updatePaginationControls(totalPages, page);
 }
-
 // Khởi động hiển thị trang đầu tiên
 fetchProductsByCategoryAndSearch(0, '');
-
 function viewProductDetail(idProduct){
     window.location.href = "/staff/product/detail/" + idProduct
 }
-
-
-
-
-function getIdProduct(element) {
+function getIdProductDelete(element) {
     const productId = element.getAttribute('data-product-id');
-    console.log(productId); // Kiểm tra ID có được lấy chính xác không
-
     const modal = document.getElementById('confirm-create-bill-modal');
     modal.setAttribute('data-product-id', productId);
 }
-
-
-
+function getIdProductRestore(element) {
+    const productId = element.getAttribute('data-product-id');
+    const modal = document.getElementById('confirm-restoreOne-product-modal');
+    modal.setAttribute('data-product-id', productId);
+}
 async function updateStatus(id, status) {
     if (id === null){
         let modal = document.getElementById('confirm-create-bill-modal');
+        id = modal.getAttribute('data-product-id');
+    } else {
+        let modal = document.getElementById('confirm-restoreOne-product-modal');
         id = modal.getAttribute('data-product-id');
     }
 
@@ -456,8 +432,6 @@ async function updateStatus(id, status) {
         await fetchProductsByCategoryAndSearch(0, '', `/product-api/findProductDelete?idCategory=${0}&searchTerm=${''}`);
     }
 }
-
-
 async function deleteMultipleProduct() {
     // Lấy các checkbox được chọn
     const selectedRows = document.querySelectorAll('.select-row-product:checked');
@@ -469,17 +443,13 @@ async function deleteMultipleProduct() {
     if (productIds.length > 0) {
         try {
             // Gửi yêu cầu xóa sản phẩm
-            const response = await fetch('/product-api/delete-multiple', {
+            await fetch('/product-api/delete-multiple', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(productIds),
             });
-
-            if (!response.ok) {
-                throw new Error('Xóa sản phẩm thất bại.');
-            }
 
             // Tải lại danh sách sản phẩm sau khi xóa
             await fetchProductsByCategoryAndSearch(0, '');
@@ -495,7 +465,6 @@ async function deleteMultipleProduct() {
         createToast('2', 'Vui lòng chọn ít nhất một sản phẩm để xóa.');
     }
 }
-
 async function restoreMultipleProduct() {
     // Lấy các checkbox được chọn
     const selectedRows = document.querySelectorAll('.select-row-product:checked');
@@ -507,17 +476,13 @@ async function restoreMultipleProduct() {
     if (productIds.length > 0) {
         try {
             // Gửi yêu cầu xóa sản phẩm
-            const response = await fetch('/product-api/restore-multiple', {
+            await fetch('/product-api/restore-multiple', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(productIds),
             });
-
-            if (!response.ok) {
-                throw new Error('Xóa sản phẩm thất bại.');
-            }
 
             // Tải lại danh sách sản phẩm sau khi xóa
             await fetchProductsByCategoryAndSearch(0, '');
@@ -532,7 +497,6 @@ async function restoreMultipleProduct() {
         createToast('2', 'Vui lòng chọn ít nhất một sản phẩm để khôi phục.');
     }
 }
-
 function cancelButton(){
     const selectedRows = document.querySelectorAll('.select-row-product:checked');
     selectedRows.forEach(row => {
@@ -544,6 +508,7 @@ function cancelButton(){
     document.getElementById('btn-cancel-product').style.display = "none";
     document.getElementById('btn-restore-product').style.display = "none";
 }
+
 function exportExcelProduct() {
     // Lấy các checkbox được chọn
     const selectedRows = document.querySelectorAll('.select-row-product:checked');

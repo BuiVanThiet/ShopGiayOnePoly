@@ -190,6 +190,29 @@
                 </div>
             </div>
         </div>
+        <div class="modal fade" id="confirm-restoreOne-product-modal" tabindex="-1"
+             aria-labelledby="confirmRestoreOneProductModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="confirmRestoreOneProductModalLabel">
+                            Xác nhận khôi phục sản phẩm
+                        </h1>
+                    </div>
+                    <div class="modal-body">
+                        Bạn muốn khôi phục sản phẩm ?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button onclick="updateStatus(1, 1)" type="submit" class="btn btn-success"
+                                data-bs-dismiss="modal"
+                                aria-label="Close">Đồng ý
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <input type="hidden" id="toastMessage" th:value="${message}">
         <input type="hidden" id="toastCheck" th:value="${check}">
     </article>
