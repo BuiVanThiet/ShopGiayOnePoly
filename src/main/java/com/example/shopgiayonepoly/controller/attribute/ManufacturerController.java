@@ -1,6 +1,7 @@
 package com.example.shopgiayonepoly.controller.attribute;
 
 import com.example.shopgiayonepoly.entites.Manufacturer;
+import com.example.shopgiayonepoly.entites.Manufacturer;
 import com.example.shopgiayonepoly.entites.Staff;
 import com.example.shopgiayonepoly.service.CashierInventoryService;
 import com.example.shopgiayonepoly.service.TimekeepingService;
@@ -127,17 +128,34 @@ public class ManufacturerController {
         boolean checkCode = true;
         boolean checkName = true;
         for (Manufacturer listManufacturer : manufacturerService.findAll()) {
-            if (manufacturer.getCodeManufacturer().trim().toLowerCase().equals(listManufacturer.getCodeManufacturer().trim().toLowerCase())) {
+            if (manufacturer.getCodeManufacturer().trim().equalsIgnoreCase(listManufacturer.getCodeManufacturer().trim())) {
                 checkCode = false;
+                break;
             }
         }
         for (Manufacturer listManufacturer : manufacturerService.findAll()) {
-            if (manufacturer.getNameManufacturer().trim().toLowerCase().equals(listManufacturer.getNameManufacturer().trim().toLowerCase())) {
+            if (manufacturer.getNameManufacturer().trim().equalsIgnoreCase(listManufacturer.getNameManufacturer().trim())) {
                 checkName = false;
+                break;
             }
         }
-        if (!checkCode || !checkName || manufacturer.getCodeManufacturer().isEmpty() || manufacturer.getNameManufacturer().isEmpty() || manufacturer.getCodeManufacturer().length() > 10 || manufacturer.getNameManufacturer().length() > 50) {
-            thongBao.put("message", "Dữ liệu không hợp lệ");
+        if (!checkCode) {
+            thongBao.put("message", "Mã nhà sản xuất đã tồn tại");
+            thongBao.put("check", "2");
+        } else if (!checkName) {
+            thongBao.put("message", "Tên nhà sản xuất đã tồn tại");
+            thongBao.put("check", "2");
+        } else if (manufacturer.getCodeManufacturer().isEmpty()) {
+            thongBao.put("message", "Mã nhà sản xuất không được để trống");
+            thongBao.put("check", "2");
+        } else if (manufacturer.getNameManufacturer().isEmpty()) {
+            thongBao.put("message", "Tên nhà sản xuất không được để trống");
+            thongBao.put("check", "2");
+        } else if (manufacturer.getCodeManufacturer().length() > 10) {
+            thongBao.put("message", "Mã nhà sản xuất không được dài quá 10 ký tự");
+            thongBao.put("check", "2");
+        } else if (manufacturer.getNameManufacturer().length() > 50) {
+            thongBao.put("message", "Tên nhà sản xuất không được dài quá 50 ký tự");
             thongBao.put("check", "2");
         } else {
             manufacturer.setStatus(1);
@@ -145,42 +163,8 @@ public class ManufacturerController {
             thongBao.put("message", "Thêm nhà sản xuất thành công");
             thongBao.put("check", "1");
         }
+
         return ResponseEntity.ok(thongBao);
-    }
-
-    @PostMapping("/manufacturer/update-status")
-    @ResponseBody
-    public ResponseEntity<String> updateStatus(@RequestBody Map<String, Object> payload, HttpSession session) {
-        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
-        if (staffLogin == null) {
-            return null;
-        }
-        if(staffLogin.getStatus() != 1) {
-            return null;
-        }
-        try {
-            int id;
-            int status;
-            // Lấy id và status từ payload, kiểm tra kiểu dữ liệu
-            if (payload.get("id") instanceof Integer) {
-                id = (Integer) payload.get("id");
-            } else {
-                id = Integer.parseInt((String) payload.get("id"));
-            }
-
-            if (payload.get("status") instanceof Integer) {
-                status = (Integer) payload.get("status");
-            } else {
-                status = Integer.parseInt((String) payload.get("status"));
-            }
-
-            // Gọi service để cập nhật trạng thái trong cơ sở dữ liệu
-            manufacturerService.updateStatus(id, status);
-
-            return ResponseEntity.ok("Cập nhật trạng thái thành công");
-        } catch (NumberFormatException e) {
-            return ResponseEntity.badRequest().body("Có lỗi xảy ra khi cập nhật trạng thái");
-        }
     }
 
     @PostMapping("/update-manufacturer")
@@ -191,7 +175,7 @@ public class ManufacturerController {
         if (staffLogin == null) {
             thongBao.put("message", "Nhân viên chưa đăng nhập");
             thongBao.put("check", "3");
-            return ResponseEntity.ok(thongBao);
+            return null;
         }
         if(staffLogin.getStatus() != 1) {
             thongBao.put("message","Nhân viên đang bị ngừng hoạt động!");
@@ -221,30 +205,36 @@ public class ManufacturerController {
             nameManufacturer = (String) payload.get("nameManufacturer");
             boolean checkCode = true;
             for (Manufacturer listManufacturer : manufacturerService.findAll()) {
-                if (codeManufacturer.trim().toLowerCase().equals(listManufacturer.getCodeManufacturer().trim().toLowerCase()) && id != listManufacturer.getId()) {
+                if (codeManufacturer.trim().equalsIgnoreCase(listManufacturer.getCodeManufacturer().trim()) && id != listManufacturer.getId()) {
                     checkCode = false;
                     break;
                 }
             }
             boolean checkName = true;
             for (Manufacturer listManufacturer : manufacturerService.findAll()) {
-                if (nameManufacturer.trim().toLowerCase().equals(listManufacturer.getNameManufacturer().trim().toLowerCase()) && id != listManufacturer.getId()) {
+                if (nameManufacturer.trim().equalsIgnoreCase(listManufacturer.getNameManufacturer().trim()) && id != listManufacturer.getId()) {
                     checkName = false;
                     break;
                 }
             }
             // Gọi service để cập nhật dữ liệu nhà sản xuất trong cơ sở dữ liệu
-            if (codeManufacturer.isEmpty() || codeManufacturer.length() > 10) {
-                thongBao.put("message", "Mã nhà sản xuất không được trống và lớn hơn 10 kí tự");
-                thongBao.put("check", "2");
-            } else if (!checkCode) {
+            if (!checkCode) {
                 thongBao.put("message", "Mã nhà sản xuất đã tồn tại");
                 thongBao.put("check", "2");
             } else if (!checkName) {
                 thongBao.put("message", "Tên nhà sản xuất đã tồn tại");
                 thongBao.put("check", "2");
-            } else if (nameManufacturer.isEmpty() || nameManufacturer.length() > 50) {
-                thongBao.put("message", "Tên nhà sản xuất không được trống và lớn hơn 50 kí tự");
+            } else if (codeManufacturer.isEmpty()) {
+                thongBao.put("message", "Mã nhà sản xuất không được để trống");
+                thongBao.put("check", "2");
+            } else if (nameManufacturer.isEmpty()) {
+                thongBao.put("message", "Tên nhà sản xuất không được để trống");
+                thongBao.put("check", "2");
+            } else if (codeManufacturer.length() > 10) {
+                thongBao.put("message", "Mã nhà sản xuất không được dài quá 10 ký tự");
+                thongBao.put("check", "2");
+            } else if (nameManufacturer.length() > 50) {
+                thongBao.put("message", "Tên nhà sản xuất không được dài quá 50 ký tự");
                 thongBao.put("check", "2");
             } else {
                 manufacturerService.updateManufacturer(id, codeManufacturer, nameManufacturer);
@@ -258,7 +248,6 @@ public class ManufacturerController {
             return ResponseEntity.ok(thongBao);
         }
     }
-
     @PostMapping("/delete-manufacturer")
     @ResponseBody
     public ResponseEntity<Map<String, String>> deleteManufacturer(@RequestBody Map<String, Object> payload, HttpSession session) {

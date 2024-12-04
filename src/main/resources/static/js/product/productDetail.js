@@ -11,12 +11,10 @@ function toggleDropdownproductDetail(event, icon) {
     event.stopPropagation();
 }
 function cancelButton(){
-    const selectedRows = document.querySelectorAll('.select-row-productDetail:checked');
-    selectedRows.forEach(row => {
-        row.checked = false;
-    });
+    fetchProductDetails('', idProduct);
     document.getElementById('select-all-productDetail').checked = false;
     document.getElementById('btn-save-productDetail').style.display = "none";
+    document.getElementById('btn-export-productDetail').style.display = "none";
     document.getElementById('btn-saveQR-productDetail').style.display = "none";
     document.getElementById('btn-cancel-productDetail').style.display = "none";
 }
@@ -59,8 +57,8 @@ function toggleSelectAllproductDetail(selectAllCheckbox) {
 
 document.querySelectorAll('.select-row-productDetail').forEach((checkbox) => {
     checkbox.addEventListener('change', function () {
-        const allChecked = document.querySelectorAll('.select-row-productDetail:checked').length === document.querySelectorAll('.select-row-productDetail').length;
-        document.getElementById('select-all-productDetail').checked = allChecked;
+        document.getElementById('select-all-productDetail').checked =
+            document.querySelectorAll('.select-row-productDetail:checked').length === document.querySelectorAll('.select-row-productDetail').length;
         toggleEditableRow(checkbox);
         toggleSaveButton();
     });
@@ -96,6 +94,7 @@ function toggleEditableRow(checkbox) {
 function toggleSaveButton() {
     const anyChecked = document.querySelectorAll('.select-row-productDetail:checked').length > 0;
     document.getElementById('btn-save-productDetail').style.display = anyChecked ? "block" : "none";
+    document.getElementById('btn-export-productDetail').style.display = anyChecked ? "block" : "none";
     document.getElementById('btn-saveQR-productDetail').style.display = anyChecked ? "block" : "none";
     document.getElementById('btn-cancel-productDetail').style.display = anyChecked ? "block" : "none";
 }
@@ -130,9 +129,6 @@ let idProduct = pElement.getAttribute('data-value');
 
 document.querySelector('.search-input-productDetail').addEventListener('input', function () {
     const searchTerm = this.value;
-    console.log('Search Term:', searchTerm); // Ghi lại từ khóa tìm kiếm
-    console.log('ID Product:', idProduct); // Ghi lại ID sản phẩm
-
     fetchProductDetails(searchTerm, idProduct);
 });
 
@@ -153,8 +149,15 @@ function fetchProductDetails(searchTerm, idProduct) {
         })
         .catch(error => console.error('Error:', error));
 }
+function formatPrice(price) {
+    // Đảm bảo giá là một số, nếu không trả về 0
+    const parsedPrice = parseFloat(price);
+    if (isNaN(parsedPrice)) return '0đ';
 
-// Function: Display the current page
+    // Định dạng giá theo kiểu tiền tệ Việt Nam
+    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(parsedPrice).replace('₫', 'đ');
+}
+
 function displayPage(page) {
     const totalPages = Math.ceil(productDetails.length / itemsPerPage);
     const start = (page - 1) * itemsPerPage;
@@ -169,6 +172,8 @@ function displayPage(page) {
             const row = document.createElement('tr');
             row.id = `row-product-${productDetail.id}`;
             row.dataset.id = productDetail.id;
+            row.dataset.nameColor = productDetail.color.nameColor;
+            row.dataset.nameSize = productDetail.size.nameSize;
 
             row.innerHTML = `
                 <td>
@@ -176,8 +181,8 @@ function displayPage(page) {
                 </td>
                 <td data-column="color">${productDetail.color.nameColor}</td>
                 <td data-column="size">${productDetail.size.nameSize}</td>
-                <td data-column="price">${productDetail.price + 'đ'}</td>
-                <td data-column="importPrice">${productDetail.import_price + 'đ'}</td>
+                <td data-column="price">${formatPrice(productDetail.price)}</td>
+                <td data-column="importPrice">${formatPrice(productDetail.import_price)}</td>
                 <td data-column="quantity">${productDetail.quantity}</td>
                 <td data-column="weight">${productDetail.weight + 'g'}</td>
                 <td data-column="describe">${productDetail.describe}</td>
@@ -187,8 +192,7 @@ function displayPage(page) {
                         <i class="fa fa-ellipsis-v fa-ellipsis-v-productDetail" aria-hidden="true" onclick="toggleDropdownproductDetail(event, this)"></i>
                         <div class="dropdown-menu-productDetail">
                             <a href="#">Xóa</a>
-                            <a href="#" onclick="generateQRCode(${productDetail.id})">Tạo QR</a>
-                            <a href="#" onclick="downloadQRCode(${productDetail.id})">Lưu QR</a>
+                            <a href="#" onclick="downloadQRCode(${productDetail.id}, '${productDetail.color.nameColor}', '${productDetail.size.nameSize}')">Lưu QR</a>
                         </div>
                     </div>
                 </td>
@@ -200,9 +204,10 @@ function displayPage(page) {
             const checkbox = row.querySelector('.select-row-productDetail');
             checkbox.addEventListener('change', function() {
                 toggleEditableRow(checkbox);
-                const allChecked = document.querySelectorAll('.select-row-productDetail:checked').length === document.querySelectorAll('.select-row-productDetail').length;
-                document.getElementById('select-all-productDetail').checked = allChecked;
+                document.getElementById('select-all-productDetail').checked =
+                    document.querySelectorAll('.select-row-productDetail:checked').length === document.querySelectorAll('.select-row-productDetail').length;
             });
+
         });
     } else {
         // Handle case when no product details are available
@@ -211,9 +216,9 @@ function displayPage(page) {
     document.querySelectorAll('.select-row-productDetail').forEach((checkbox) => {
         checkbox.addEventListener('change', function() {
             toggleEditableRow(checkbox);
-            const allChecked = document.querySelectorAll('.select-row-productDetail:checked').length === document.querySelectorAll('.select-row-productDetail').length;
-            document.getElementById('select-all-productDetail').checked = allChecked;
             toggleSaveButton();
+            document.getElementById('select-all-productDetail').checked =
+                document.querySelectorAll('.select-row-productDetail:checked').length === document.querySelectorAll('.select-row-productDetail').length;
         });
     });
     updatePaginationControls(totalPages, page);
@@ -223,7 +228,6 @@ function displayPage(page) {
 function updatePaginationControls(totalPages, page) {
     const pagination = document.getElementById('pagination-productDetail');
     pagination.innerHTML = '';
-    const itemsPerPage =10;
     // Các nút phân trang tiếp tục như trong code gốc
     // Tạo nút "Trang trước"
     const prevButton = document.createElement('button');
@@ -309,60 +313,9 @@ function changePage(newPage) {
 
 // Initialize display on page load
 fetchProductDetails('', idProduct);
-function generateQRCode(productDetailId) {
-    // Kiểm tra nếu ID không hợp lệ
-    if (!productDetailId || (typeof productDetailId !== 'number' && typeof productDetailId !== 'string')) {
-        console.error('Invalid product detail ID:', productDetailId);
-        return;
-    }
 
-    // Xóa QR container cũ nếu tồn tại
-    const existingQrContainer = document.getElementById('qr-container');
-    if (existingQrContainer) {
-        existingQrContainer.remove();
-    }
 
-    const qrContainer = document.createElement('div'); // tạo một container cho mã QR
-    qrContainer.id = "qr-container";
-
-    // Thêm lớp CSS để căn giữa
-    qrContainer.style.position = "fixed";
-    qrContainer.style.top = "50%";
-    qrContainer.style.left = "50%";
-    qrContainer.style.transform = "translate(-50%, -50%)"; // Căn giữa theo cả chiều ngang và dọc
-    qrContainer.style.zIndex = "9999"; // Đảm bảo QR luôn hiển thị trên các phần tử khác
-    qrContainer.style.backgroundColor = "rgba(0, 0, 0, 0.7)"; // Nền mờ cho QR
-    qrContainer.style.padding = "20px";
-    qrContainer.style.borderRadius = "10px"; // Thêm viền bo tròn nếu muốn
-
-    // Đảm bảo ID là chuỗi
-    const dataToEncode = String(productDetailId);
-
-    // Tạo mã QR
-    QRCode.toDataURL(`{"id":"${dataToEncode}"}`, { width: 400, height: 400 }, function (err, url) {
-        if (err) {
-            console.error('Error generating QR code:', err);
-            return;
-        }
-
-        qrContainer.innerHTML = `
-            <img src="${url}" alt="QR Code" style="max-width: 100%; max-height: 100%;"/>
-            <br>
-            <button id="closeQRCodeButton">Đóng</button>
-        `;
-
-        // Thêm mã QR vào DOM
-        document.body.appendChild(qrContainer);
-
-        // Thêm sự kiện click vào nút "Đóng" để xóa QR
-        const closeButton = document.getElementById('closeQRCodeButton');
-        closeButton.addEventListener('click', function() {
-            qrContainer.remove();  // Xóa hoàn toàn mã QR khỏi DOM
-        });
-    });
-}
-
-function downloadQRCode(productDetailId) {
+function downloadQRCode(productDetailId, nameColor, nameSize) {
     // Kiểm tra nếu ID không hợp lệ
     if (!productDetailId || typeof productDetailId !== 'number' && typeof productDetailId !== 'string') {
         console.error('Invalid product detail ID:', productDetailId);
@@ -382,7 +335,7 @@ function downloadQRCode(productDetailId) {
         // Tạo liên kết để tải mã QR
         const a = document.createElement('a');
         a.href = url;
-        a.download = `QRCode_${productDetailId}.png`;  // Đặt tên cho file tải về
+        a.download = `QRCode_${nameColor}_${nameSize}.png`;  // Đặt tên cho file tải về
         document.body.appendChild(a);
         a.click();  // Tự động nhấn vào liên kết để tải ảnh xuống
         document.body.removeChild(a);  // Xóa liên kết sau khi tải về
@@ -399,10 +352,18 @@ function downloadAllQRCode() {
         if (!parentRow) return;
 
         // Lấy ID sản phẩm chi tiết từ data attribute hoặc một cột ẩn
-        const productDetailId = parentRow.dataset.id ;
+        const productDetailId = parentRow.dataset.id;
+        const nameColor = parentRow.dataset.nameColor;
+        const nameSize = parentRow.dataset.nameSize;
         if (productDetailId) {
             // Gọi hàm tải mã QR cho từng sản phẩm
-            downloadQRCode(productDetailId);
+            downloadQRCode(productDetailId, nameColor, nameSize);
+            fetchProductDetails('', idProduct);
+            document.getElementById('btn-save-productDetail').style.display = "none";
+            document.getElementById('btn-export-productDetail').style.display = "none";
+            document.getElementById('btn-saveQR-productDetail').style.display = "none";
+            document.getElementById('btn-cancel-productDetail').style.display = "none";
+            document.getElementById('select-all-productDetail').checked = false;
         } else {
             console.error('Không tìm thấy ID sản phẩm chi tiết cho dòng:', parentRow);
         }
@@ -425,8 +386,8 @@ async function updateSelectedProductDetails() {
         // Lấy dữ liệu từ các cột (nếu cần tùy chỉnh thêm, sửa lại phần này)
         const productDetail = {
             id: parseInt(parentRow.dataset.id, 10), // Đảm bảo id là kiểu số (Long)
-            price: parseFloat(parentRow.querySelector('[data-column="price"]').textContent.trim().replace('đ', '')),
-            import_price: parseFloat(parentRow.querySelector('[data-column="importPrice"]').textContent.trim().replace('đ', '')),
+            price: parseFloat(parentRow.querySelector('[data-column="price"]').textContent.trim().replace('đ', '').replaceAll('.', '')),
+            import_price: parseFloat(parentRow.querySelector('[data-column="importPrice"]').textContent.trim().replace('đ', '').replaceAll('.', '')),
             quantity: parseInt(parentRow.querySelector('[data-column="quantity"]').textContent.trim(), 10),
             weight: parseFloat(parentRow.querySelector('[data-column="weight"]').textContent.trim().replace('g', '')),
             describe: parentRow.querySelector('[data-column="describe"]').textContent.trim(),
@@ -448,8 +409,45 @@ async function updateSelectedProductDetails() {
         createToast(result.check, result.message);
         fetchProductDetails('', idProduct);
         document.getElementById('btn-save-productDetail').style.display = "none";
+        document.getElementById('btn-export-productDetail').style.display = "none";
         document.getElementById('btn-saveQR-productDetail').style.display = "none";
         document.getElementById('btn-cancel-productDetail').style.display = "none";
+        document.getElementById('select-all-productDetail').checked = false;
     }
 
+}
+
+function exportExcelProductDetail() {
+    // Lấy các checkbox được chọn
+    const selectedRows = document.querySelectorAll('.select-row-productDetail:checked');
+    const data = [];
+
+    selectedRows.forEach(row => {
+        const tr = row.closest('tr');
+        const rowData = {
+            "Màu sắc": tr.querySelector('[data-column="color"]').textContent,
+            "Kích cỡ": tr.querySelector('[data-column="size"]').textContent,
+            "Giá bán": tr.querySelector('[data-column="price"]').textContent,
+            "Giá nhập": tr.querySelector('[data-column="importPrice"]').textContent,
+            "Số lượng": tr.querySelector('[data-column="quantity"]').textContent,
+            "Trọng lượng": tr.querySelector('[data-column="weight"]').textContent,
+            "Mô tả": tr.querySelector('[data-column="describe"]').textContent
+        };
+        data.push(rowData);
+    });
+
+    if (data.length > 0) {
+        // Tạo bảng Excel từ dữ liệu
+        const ws = XLSX.utils.json_to_sheet(data);
+
+        // Tạo workbook
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Sản phẩm chi tiết');
+
+        // Xuất file Excel
+        XLSX.writeFile(wb, `Chi tiết ${productDetails[0].product.nameProduct}.xlsx`);
+        createToast('1', 'Xuất dữ liệu đã chọn ra Excel thành công');
+    } else {
+        createToast('2', 'Vui lòng chọn ít nhất một sản phẩm để xuất Excel.');
+    }
 }

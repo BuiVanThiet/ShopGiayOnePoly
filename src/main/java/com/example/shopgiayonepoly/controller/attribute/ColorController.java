@@ -127,17 +127,34 @@ public class ColorController {
         boolean checkCode = true;
         boolean checkName = true;
         for (Color listColor : colorService.findAll()) {
-            if (color.getCodeColor().trim().toLowerCase().equals(listColor.getCodeColor().trim().toLowerCase())) {
+            if (color.getCodeColor().trim().equalsIgnoreCase(listColor.getCodeColor().trim())) {
                 checkCode = false;
+                break;
             }
         }
         for (Color listColor : colorService.findAll()) {
-            if (color.getNameColor().trim().toLowerCase().equals(listColor.getNameColor().trim().toLowerCase())) {
+            if (color.getNameColor().trim().equalsIgnoreCase(listColor.getNameColor().trim())) {
                 checkName = false;
+                break;
             }
         }
-        if (!checkCode || !checkName || color.getCodeColor().isEmpty() || color.getNameColor().isEmpty() || color.getCodeColor().length() > 10 || color.getNameColor().length() > 50) {
-            thongBao.put("message", "Dữ liệu không hợp lệ");
+        if (!checkCode) {
+            thongBao.put("message", "Mã màu sắc đã tồn tại");
+            thongBao.put("check", "2");
+        } else if (!checkName) {
+            thongBao.put("message", "Tên màu đã tồn tại");
+            thongBao.put("check", "2");
+        } else if (color.getCodeColor().isEmpty()) {
+            thongBao.put("message", "Mã màu không được để trống");
+            thongBao.put("check", "2");
+        } else if (color.getNameColor().isEmpty()) {
+            thongBao.put("message", "Tên màu không được để trống");
+            thongBao.put("check", "2");
+        } else if (color.getCodeColor().length() > 10) {
+            thongBao.put("message", "Mã màu không được dài quá 10 ký tự");
+            thongBao.put("check", "2");
+        } else if (color.getNameColor().length() > 50) {
+            thongBao.put("message", "Tên màu không được dài quá 50 ký tự");
             thongBao.put("check", "2");
         } else {
             color.setStatus(1);
@@ -145,42 +162,8 @@ public class ColorController {
             thongBao.put("message", "Thêm màu sắc thành công");
             thongBao.put("check", "1");
         }
+
         return ResponseEntity.ok(thongBao);
-    }
-
-    @PostMapping("/color/update-status")
-    @ResponseBody
-    public ResponseEntity<String> updateStatus(@RequestBody Map<String, Object> payload, HttpSession session) {
-        Staff staffLogin = (Staff) session.getAttribute("staffLogin");
-        if (staffLogin == null) {
-            return null;
-        }
-        if(staffLogin.getStatus() != 1) {
-            return null;
-        }
-        try {
-            int id;
-            int status;
-            // Lấy id và status từ payload, kiểm tra kiểu dữ liệu
-            if (payload.get("id") instanceof Integer) {
-                id = (Integer) payload.get("id");
-            } else {
-                id = Integer.parseInt((String) payload.get("id"));
-            }
-
-            if (payload.get("status") instanceof Integer) {
-                status = (Integer) payload.get("status");
-            } else {
-                status = Integer.parseInt((String) payload.get("status"));
-            }
-
-            // Gọi service để cập nhật trạng thái trong cơ sở dữ liệu
-            colorService.updateStatus(id, status);
-
-            return ResponseEntity.ok("Cập nhật trạng thái thành công");
-        } catch (NumberFormatException e) {
-            return ResponseEntity.badRequest().body("Có lỗi xảy ra khi cập nhật trạng thái");
-        }
     }
 
     @PostMapping("/update-color")
@@ -221,30 +204,36 @@ public class ColorController {
             nameColor = (String) payload.get("nameColor");
             boolean checkCode = true;
             for (Color listColor : colorService.findAll()) {
-                if (codeColor.trim().toLowerCase().equals(listColor.getCodeColor().trim().toLowerCase()) && id != listColor.getId()) {
+                if (codeColor.trim().equalsIgnoreCase(listColor.getCodeColor().trim()) && id != listColor.getId()) {
                     checkCode = false;
                     break;
                 }
             }
             boolean checkName = true;
             for (Color listColor : colorService.findAll()) {
-                if (nameColor.trim().toLowerCase().equals(listColor.getNameColor().trim().toLowerCase()) && id != listColor.getId()) {
+                if (nameColor.trim().equalsIgnoreCase(listColor.getNameColor().trim()) && id != listColor.getId()) {
                     checkName = false;
                     break; 
                 }
             }
             // Gọi service để cập nhật dữ liệu màu sắc trong cơ sở dữ liệu
-            if (codeColor.isEmpty() || codeColor.length() > 10) {
-                thongBao.put("message", "Mã màu sắc không được trống và lớn hơn 10 kí tự");
-                thongBao.put("check", "2");
-            } else if (!checkCode) {
+            if (!checkCode) {
                 thongBao.put("message", "Mã màu sắc đã tồn tại");
                 thongBao.put("check", "2");
             } else if (!checkName) {
-                thongBao.put("message", "Tên màu sắc đã tồn tại");
+                thongBao.put("message", "Tên màu đã tồn tại");
                 thongBao.put("check", "2");
-            } else if (nameColor.isEmpty() || nameColor.length() > 50) {
-                thongBao.put("message", "Tên màu sắc không được trống và lớn hơn 50 kí tự");
+            } else if (codeColor.isEmpty()) {
+                thongBao.put("message", "Mã màu không được để trống");
+                thongBao.put("check", "2");
+            } else if (nameColor.isEmpty()) {
+                thongBao.put("message", "Tên màu không được để trống");
+                thongBao.put("check", "2");
+            } else if (codeColor.length() > 10) {
+                thongBao.put("message", "Mã màu không được dài quá 10 ký tự");
+                thongBao.put("check", "2");
+            } else if (nameColor.length() > 50) {
+                thongBao.put("message", "Tên màu không được dài quá 50 ký tự");
                 thongBao.put("check", "2");
             } else {
                 colorService.updateColor(id, codeColor, nameColor);

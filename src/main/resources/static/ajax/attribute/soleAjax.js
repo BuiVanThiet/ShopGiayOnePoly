@@ -1,65 +1,44 @@
-function saveRow(index, event) { // hàm edit dữ liệu trên table
+let currentRowIndex = null; // Biến lưu chỉ số hàng hiện tại
+
+function saveRow(index, event) {
     event.preventDefault();
-    let updatedData = {
-        codeSole: document.getElementById('code-input-' + index).value,
-        nameSole: document.getElementById('name-input-' + index).value,
-        id: document.getElementById('row-' + index).getAttribute('data-id')  // Lấy ID của đối tượng từ hàng
-    };
+    currentRowIndex = index; // Lưu index vào biến toàn cục
 
-    // Thực hiện AJAX để cập nhật dữ liệu trong cơ sở dữ liệu
-    $.ajax({
-        url: '/attribute/update-sole',  // Thay bằng URL API của bạn
-        method: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify(updatedData),  // Gửi dữ liệu JSON
-        success: function (response) {
-            fetchActiveSoles();
-            createToast(response.check, response.message);
-        },
-        error: function (xhr, status, error) {
-            console.error('Có lỗi xảy ra khi cập nhật dữ liệu:', error);
-            // Xử lý lỗi nếu cần thiết
-        }
-    });
+    // Hiển thị modal xác nhận
+    const modal = new bootstrap.Modal(document.getElementById('confirm-save-modal'));
+    modal.show();
 }
+function confirmSave() {
+    if (currentRowIndex !== null) {
+        let updatedData = {
+            codeSole: document.getElementById('code-input-' + currentRowIndex).value,
+            nameSole: document.getElementById('name-input-' + currentRowIndex).value,
+            id: document.getElementById('row-' + currentRowIndex).getAttribute('data-id')
+        };
 
-function toggleStatus(element) { // hàm thay đổi trạng thái bằng button
-    let index = element.getAttribute('data-index');  // Lấy index
-    let status = element.getAttribute('data-status') === '1' ? 2 : 1;  // Lấy trạng thái mới
+        // AJAX để cập nhật dữ liệu
+        $.ajax({
+            url: '/attribute/update-sole',  // Thay bằng URL API của bạn
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(updatedData),
+            success: function (response) {
+                fetchActiveSoles();
+                createToast(response.check, response.message);
+                // Đóng modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('confirm-save-modal'));
+                modal.hide();
+            },
+            error: function (xhr, status, error) {
+                console.error('Có lỗi xảy ra khi cập nhật dữ liệu:', error);
+            }
+        });
 
-    // Thay đổi biểu tượng toggle
-    if (status === 1) {
-        element.classList.remove('fa-toggle-off');
-        element.classList.add('fa-toggle-on');
-    } else {
-        element.classList.remove('fa-toggle-on');
-        element.classList.add('fa-toggle-off');
+        // Reset giá trị index
+        currentRowIndex = null;
     }
-
-    // Cập nhật trạng thái trong data attribute
-    element.setAttribute('data-status', status);
-
-    // Lấy ID thực tế của đối tượng thay vì index
-    let id = $('#row-' + index).data('id');  // Giả định bạn có thuộc tính id trong hàng
-
-    // Thực hiện Ajax request để cập nhật trạng thái trong database
-    $.ajax({
-        url: '/attribute/sole/update-status',  // Đường dẫn API
-        method: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify({
-            id: id,
-            status: status
-        }),
-        success: function (response) {
-            console.log('Trạng thái đã được cập nhật thành công');
-        },
-        error: function (xhr, status, error) {
-            console.error('Có lỗi xảy ra khi cập nhật trạng thái:', error);
-            // Xử lý lỗi nếu cần
-        }
-    });
 }
+
 document.addEventListener('show.bs.modal', function (event) {
     let button = event.relatedTarget;  // Lấy nút kích hoạt modal
     let index = button.getAttribute('data-index');  // Lấy index từ nút kích hoạt
@@ -72,7 +51,6 @@ document.addEventListener('show.bs.modal', function (event) {
 });
 
 function deleteByID(element) {
-    let index = element.getAttribute('data-index');  // Lấy index từ nút "Xóa" trong modal
     let id = element.getAttribute('data-id');  // Lấy id từ nút "Xóa" trong modal
 
     $.ajax({
@@ -92,7 +70,36 @@ function deleteByID(element) {
         }
     });
 }
+document.addEventListener('show.bs.modal', function (event) {
+    let button = event.relatedTarget;  // Lấy nút kích hoạt modal
+    let index = button.getAttribute('data-index');  // Lấy index từ nút kích hoạt
+    let id = button.getAttribute('data-id');  // Lấy id từ nút kích hoạt
 
+    // Gán index và id vào nút "Xóa" trong modal
+    let deleteButton = document.querySelector('#confirm-restore-sole-modal .btn-success');
+    deleteButton.setAttribute('data-index', index);
+    deleteButton.setAttribute('data-id', id);
+});
+function restoreSole(element) {
+    let id = element.getAttribute('data-id');  // Lấy id từ nút "Xóa" trong modal
+
+    $.ajax({
+        url: '/attribute/delete-sole',  // Đường dẫn API để xóa
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            id: id,
+            status: 1  // Giả sử status 0 là trạng thái bị xóa
+        }),
+        success: function (response) {
+            fetchActiveSoles();  // Xóa hàng với id là row-index
+            createToast(response.check, response.message);
+        },
+        error: function (xhr, status, error) {
+            console.error('Có lỗi xảy ra khi xóa:', error);
+        }
+    });
+}
 
 document.querySelector('.attribute-btn-listDelete').addEventListener('click', function () {
     fetch('/attribute/sole/delete')
@@ -103,7 +110,7 @@ document.querySelector('.attribute-btn-listDelete').addEventListener('click', fu
                 this.style.display = 'none';
                 document.querySelector('.attribute-btn-listActive').style.display = 'inline-block';
             } else {
-                createToast('1','Không có màu nào bị xóa')
+                createToast('1','Không có đế giày nào bị xóa')
             }
         });
 });
@@ -115,7 +122,7 @@ document.querySelector('.attribute-btn-listActive').addEventListener('click', fu
 });
 
 function fetchDeletedSoles() {
-    // Thay URL dưới đây bằng endpoint của bạn để lấy danh sách màu đã xóa
+    // Thay URL dưới đây bằng endpoint của bạn để lấy danh sách đế giày đã xóa
     fetch('/attribute/sole/delete')
         .then(response => response.json())
         .then(data => {
@@ -124,7 +131,7 @@ function fetchDeletedSoles() {
                 const tbody = document.querySelector('#soleTable tbody');
                 tbody.innerHTML = '';
 
-                // Lặp qua các màu đang hoạt động và thêm các hàng vào bảng
+                // Lặp qua các đế giày đang hoạt động và thêm các hàng vào bảng
                 data.forEach((sole, index) => {
                     const createDate = new Date(sole.createDate).toLocaleString('vi-VN', {
                         day: '2-digit',
@@ -163,7 +170,8 @@ function fetchDeletedSoles() {
                                title="Toggle Status"></i>
                         </td>
                         <td>
-                                <a data-index="${index}" data-id="${sole.id}"  onclick="restoreSole(this)">
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#confirm-restore-sole-modal"
+                               data-index="${index}" data-id="${sole.id}">
                                     <i class="attribute-icon-restore fas fa-undo" title="Khôi phục"></i>
                                 </a>
                         </td>
@@ -171,14 +179,13 @@ function fetchDeletedSoles() {
                     tbody.appendChild(row);
                 });
             } else {
-                createToast('1','Không có màu nào bị xóa')
+                createToast('1','Không có đế giày nào bị xóa')
             }
         })
         .catch(error => {
             console.error('Error fetching active soles:', error);
         });
 }
-
 
 function fetchActiveSoles() {
     fetch('/attribute/sole/active')
@@ -242,107 +249,29 @@ function fetchActiveSoles() {
             });
         })
         .catch(error => {
-            console.error("Có lỗi xảy ra khi lấy danh sách màu:", error);
+            console.error("Có lỗi xảy ra khi lấy danh sách đế giày:", error);
         });
 }
 
 async function add() {
-    if (await validateSole()) {
-        const formElement = document.getElementById('createAttribute');
-        const formData = new FormData(formElement);
-        const response = await fetch('/attribute/sole/add', {
-            method: 'POST',
-            body: formData
-        });
-        if (response.ok) {
-            const result = await response.json();
-            codeSoleInput.value = '';
-            nameSoleInput.value = '';
-            document.querySelector('.attribute-btn-listActive').style.display = 'none';
-            document.querySelector('.attribute-btn-listDelete').style.display = 'inline-block';
-            createToast(result.check, result.message);
-            fetchActiveSoles();
-        }
-    } else {
-        createToast('2', 'Dữ liệu không hợp lệ');
+
+    const formElement = document.getElementById('createAttribute');
+    const formData = new FormData(formElement);
+    const response = await fetch('/attribute/sole/add', {
+        method: 'POST',
+        body: formData
+    });
+    if (response.ok) {
+        const result = await response.json();
+        codeSoleInput.value = '';
+        nameSoleInput.value = '';
+        document.querySelector('.attribute-btn-listActive').style.display = 'none';
+        document.querySelector('.attribute-btn-listDelete').style.display = 'inline-block';
+        createToast(result.check, result.message);
+        fetchActiveSoles();
     }
+
 
 }
 
 fetchActiveSoles();
-
-function restoreSole(element) {
-    let index = element.getAttribute('data-index');
-    let id = element.getAttribute('data-id');
-    $.ajax({
-        url: '/attribute/delete-sole',
-        method: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify({
-            id: id,
-            status: 1
-        }),
-        success: function (response) {
-            fetchDeletedSoles();
-            createToast(response.check, response.message)
-        },
-        error: function (xhr, status, error) {
-            createToast('2', 'Khôi phục đế giày thất bại')
-        }
-    });
-
-}
-
-let codeSoleInput = document.getElementById("codeSoleInput");
-let nameSoleInput = document.getElementById("nameSoleInput");
-let soleError = document.getElementById("soleError");
-codeSoleInput.addEventListener('input', function () {
-    validateSole();
-});
-nameSoleInput.addEventListener('input', function () {
-    validateSole();
-});
-
-let arrayCodeSole = [];
-let arrayNameSole = [];
-
-
-async function validateSole() {
-    let codeSole = await fetch('/attribute/sole/get-code');
-    if (codeSole.ok) {
-        arrayCodeSole = await codeSole.json(); // Đảm bảo đây là một mảng
-    }
-    let nameSole = await fetch('/attribute/sole/get-name');
-    if (nameSole.ok) {
-        arrayNameSole = await nameSole.json(); // Đảm bảo đây là một mảng
-    }
-    if (codeSoleInput.value.trim() === "" && nameSoleInput.value.trim() === "") {
-        soleError.textContent = "* Mã và tên không được để trống";
-        return false;
-    } else if (codeSoleInput.value.length > 10 && nameSoleInput.value.length > 50) {
-        soleError.textContent = "* Mã <= 10 kí tự, Tên <= 50 kí tự";
-        return false;
-    } else if (arrayCodeSole.some(code => code.toLowerCase() === codeSoleInput.value.trim().toLowerCase())) {
-        soleError.textContent = "* Mã đế giày đã tồn tại";
-        return false;
-    } else if (arrayNameSole.some(name => name.toLowerCase() === nameSoleInput.value.trim().toLowerCase())) {
-        soleError.textContent = "* Tên đế giày đã tồn tại";
-        return false;
-    } else if (codeSoleInput.value.trim() === "") {
-        soleError.textContent = "* Mã không được để trống";
-        return false;
-    } else if (nameSoleInput.value.trim() === "") {
-        soleError.textContent = "* Tên không được để trống";
-        return false;
-    } else if (codeSoleInput.value.length > 10) {
-        soleError.textContent = "* Mã <= 10 kí tự";
-        return false;
-    } else if (nameSoleInput.value.length > 50) {
-        soleError.textContent = "* Tên <= 50 kí tự";
-        return false;
-    } else {
-        soleError.textContent = "";
-        return true;
-    }
-}
-
