@@ -7,34 +7,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Order Status</title>
     <style>
-        /* CSS cho thông báo thành công */
         .success-message {
             max-width: 600px;
             margin: 100px auto;
-            padding: 20px;
-            background-color: #e6f7e6;
-            border: 2px solid #4CAF50;
-            border-radius: 10px;
+            padding: 30px;
+            background-color: #f0fff0; /* Nhẹ nhàng hơn cho nền */
+            border: 3px solid #4CAF50;
+            border-radius: 15px;
             text-align: center;
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             color: #2d862d;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
         }
 
         .success-message h1 {
-            font-size: 24px;
-            margin-bottom: 10px;
+            font-size: 28px;
+            font-weight: bold;
+            color: #2d862d;
+            margin-bottom: 15px;
         }
 
         .success-message p {
             font-size: 18px;
-            margin: 0;
+            margin-bottom: 20px;
+            color: #3d8b3d;
         }
 
         .success-message .icon {
-            font-size: 40px;
+            font-size: 50px;
+            font-weight: bold;
             color: #4CAF50;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .success-message .check-order-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #ffffff;
+            background-color: #4CAF50;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .success-message .check-order-link:hover {
+            background-color: #45a049;
         }
     </style>
 </head>
@@ -44,9 +63,16 @@
         <div class="success-message">
             <div class="icon">✔</div>
             <h1>Đặt hàng thành công!</h1>
-            <p>Bạn đã đặt hàng thành công. Cảm ơn bạn đã mua sắm tại cửa hàng của chúng tôi!</p>
+            <p>
+                Bạn đã đặt hàng thành công với mã đơn hàng
+                <span th:text="${codeOrder}">[Mã đơn hàng]</span>.
+                Cảm ơn bạn đã mua sắm tại cửa hàng của chúng tôi!
+            </p>
+            <a th:href="${hostSuccess}" class="check-order-link">Kiểm tra đơn hàng</a>
         </div>
     </section>
+
+
 </div>
 </body>
 </html>

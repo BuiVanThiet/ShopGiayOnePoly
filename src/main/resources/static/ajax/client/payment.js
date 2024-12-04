@@ -190,7 +190,7 @@ function payBill() {
             if (radio.checked) isPaymentMethodSelected = true;
         });
         if (!isPaymentMethodSelected) {
-                document.getElementById("error-payment-method").textContent = "* Bạn cần chọn một phương thức thanh toán.";
+            document.getElementById("error-payment-method").textContent = "* Bạn cần chọn một phương thức thanh toán.";
             isValid = false;
         } else {
             document.getElementById("error-payment-method").textContent = "";
@@ -245,56 +245,68 @@ function payBill() {
     }
 
 
-    const addressShip = document.getElementById("addressShip").value;
-    const shippingPriceText = $('#spanShippingFee').text().trim();
-    const voucherPriceText = $('#spanPriceVoucher').text().trim();
-    const totalAmountBillText = $('#spanTotalPriceCartItem').text().trim();
-    const noteBill = $('#noteBill').val();
-    const selectedRadioPaymentMethod = document.querySelector('input[name="payment_method_id"]:checked');
-    let shippingPrice = parseFloat(shippingPriceText.replace(/[^0-9.-]+/g, ''));
-    let priceVoucher = parseFloat(voucherPriceText.replace(/[^0-9.-]+/g, ''));
-    let totalAmountBill = parseFloat(totalAmountBillText.replace(/[^0-9.-]+/g, ''));
+    Swal.fire({
+        title: 'Bạn có chắc chắn muốn đặt hàng với đơn hàng này?',
+        text: "Sau khi xác nhận, bạn sẽ không thể thay đổi đơn hàng.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Đồng ý',
+        cancelButtonText: 'Hủy'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const addressShip = document.getElementById("addressShip").value;
+            const shippingPriceText = $('#spanShippingFee').text().trim();
+            const voucherPriceText = $('#spanPriceVoucher').text().trim();
+            const totalAmountBillText = $('#spanTotalPriceCartItem').text().trim();
+            const noteBill = $('#noteBill').val();
+            const selectedRadioPaymentMethod = document.querySelector('input[name="payment_method_id"]:checked');
+            let shippingPrice = parseFloat(shippingPriceText.replace(/[^0-9.-]+/g, ''));
+            let priceVoucher = parseFloat(voucherPriceText.replace(/[^0-9.-]+/g, ''));
+            let totalAmountBill = parseFloat(totalAmountBillText.replace(/[^0-9.-]+/g, ''));
 
-    shippingPrice = isNaN(shippingPrice) ? 0 : shippingPrice;
-    priceVoucher = isNaN(priceVoucher) ? 0 : priceVoucher;
-    totalAmountBill = isNaN(totalAmountBill) ? 0 : totalAmountBill;
+            shippingPrice = isNaN(shippingPrice) ? 0 : shippingPrice;
+            priceVoucher = isNaN(priceVoucher) ? 0 : priceVoucher;
+            totalAmountBill = isNaN(totalAmountBill) ? 0 : totalAmountBill;
 
-    let payMethod = selectedRadioPaymentMethod.value;
-    console.log("Pay method value: " + payMethod);
+            let payMethod = selectedRadioPaymentMethod.value;
+            console.log("Pay method value: " + payMethod);
 
-    const errorElement = document.getElementById("error-total-amount-bill");
+            const errorElement = document.getElementById("error-total-amount-bill");
 
-    // Kiểm tra phương thức thanh toán và các giới hạn tiền
-    if (parseInt(payMethod) === 1) {
-        if (totalAmountBill > 100000000) {
-            errorElement.textContent = "Tổng tiền phải nhỏ hơn 100 triệu cho phương thức COD.";
-            return false;
-        } else {
-            errorElement.textContent = "";
-        }
-    } else if (parseInt(payMethod) === 2) {
-        if (totalAmountBill > 20000000) {
-            errorElement.textContent = "Tổng tiền phải nhỏ hơn 20 triệu cho phương thức VNPAY.";
-            return false;
-        } else {
-            errorElement.textContent = "";
-        }
-    }
+            if (parseInt(payMethod) === 1) {
+                if (totalAmountBill > 100000000) {
+                    errorElement.textContent = "Tổng tiền phải nhỏ hơn 100 triệu cho phương thức COD.";
+                    return false;
+                } else {
+                    errorElement.textContent = "";
+                }
+            } else if (parseInt(payMethod) === 2) {
+                if (totalAmountBill > 20000000) {
+                    errorElement.textContent = "Tổng tiền phải nhỏ hơn 20 triệu cho phương thức VNPAY.";
+                    return false;
+                } else {
+                    errorElement.textContent = "";
+                }
+            }
 
-    // Gửi yêu cầu AJAX nếu không có lỗi
-    $.ajax({
-        url: '/onepoly/payment', type: 'POST', contentType: 'application/json', data: JSON.stringify({
-            addressShip: addressShip,
-            priceVoucher: priceVoucher,
-            shippingPrice: shippingPrice,
-            totalAmountBill: totalAmountBill,
-            noteBill: noteBill,
-            payMethod: payMethod
-        }), success: function (response) {
-            window.location.href = response;
-        }, error: function (error) {
-            alert("Thanh toán thất bại. Vui lòng thử lại.");
-            console.error(error);
+            $.ajax({
+                url: '/onepoly/payment', type: 'POST', contentType: 'application/json',
+                data: JSON.stringify({
+                    addressShip: addressShip,
+                    shippingPrice: shippingPrice,
+                    voucherPrice: priceVoucher,
+                    totalAmountBill: totalAmountBill,
+                    noteBill: noteBill,
+                    payMethod: payMethod
+                }),
+                success: function (response) {
+                    console.log(response);
+                    window.location.href = response;
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
         }
     });
 }
