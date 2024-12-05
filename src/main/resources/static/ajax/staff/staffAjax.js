@@ -18,15 +18,15 @@ function loadTableStaff(page) {
                     <td>${staff.address}</td>
                     <td>${staff.status == 1 ? 'Hoạt động' : 'Ngưng hoạt động'}</td>
                     <td>
-                        <a href="/staff/exchange-pass-word/${staff.id}"
+                        <a href="/staff-manage/exchange-pass-word/${staff.id}"
                            class="btn btn-sm btn-outline-danger btn-outline-danger-staff me-1">
                             <i class="bi bi-pass" title="Đổi mật khẩu"></i>
                         </a>
-                        <a href="/staff/edit/${staff.id}"
+                        <a href="/staff-manage/edit/${staff.id}"
                            class="btn btn-sm btn-outline-primary btn-outline-primary-staff me-1">
                             <i class="fas fa-edit" title="Sửa"></i>
                         </a>
-                        <a href="/staff/detail/${staff.id}"
+                        <a href="/staff-manage/detail/${staff.id}"
                            class="btn btn-sm btn-outline-info btn-outline-info-staff me-1">
                             <i class="fas fa-info-circle" title="Chi tiết"></i>
                         </a>
