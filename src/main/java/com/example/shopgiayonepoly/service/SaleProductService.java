@@ -53,5 +53,6 @@ public interface SaleProductService {
 
     void updateSaleProductExpired(Integer id);
     public void updateSaleProductStatusForExpiredAuto();
+    public SaleProduct getSaleProductNew();
 }
 

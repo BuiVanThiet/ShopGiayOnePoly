@@ -1,4 +1,59 @@
+
+// document.getElementById("FullName").addEventListener("blur", function () {
+//     const fullName = this.value.trim();
+//     const errorFullName = document.getElementById("error-fullname");
+//     if (fullName === "") {
+//         errorFullName.textContent = "Họ tên không được để trống.";
+//     } else {
+//         errorFullName.textContent = "";
+//     }
+// });
+//
+// document.getElementById("Mail").addEventListener("blur", function () {
+//     const email = this.value.trim();
+//     const errorEmail = document.getElementById("error-email");
+//     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+//     if (email === "") {
+//         errorEmail.textContent = "Email không được để trống.";
+//     } else if (!emailRegex.test(email)) {
+//         errorEmail.textContent = "Email không hợp lệ.";
+//     } else {
+//         errorEmail.textContent = "";
+//     }
+// });
+//
+// document.getElementById("Phone").addEventListener("blur", function () {
+//     const phone = this.value.trim();
+//     const errorPhone = document.getElementById("error-phone");
+//     const phoneRegex = /^[0-9]{10,11}$/;
+//     if (phone === "") {
+//         errorPhone.textContent = "Số điện thoại không được để trống.";
+//     } else if (!phoneRegex.test(phone)) {
+//         errorPhone.textContent = "Số điện thoại không hợp lệ.";
+//     } else {
+//         errorPhone.textContent = "";
+//     }
+// });
+//
+// document.getElementById("noteBill").addEventListener("blur", function () {
+//     const note = this.value.trim();
+//     const errorNote = document.getElementById("error-notebill");
+//     if (note === "") {
+//         errorNote.textContent = "Ghi chú không được để trống.";
+//     } else {
+//         errorNote.textContent = "";
+//     }
+// });
 document.addEventListener("DOMContentLoaded", function () {
+    const quantityCart = parseInt(document.getElementById("totalQuantity").innerText);
+    const btnDatHang = document.getElementById("btnDatHang");
+
+    if (isNaN(quantityCart) || quantityCart <= 0) {
+        btnDatHang.disabled = true; // Vô hiệu hóa nút thanh toán
+    } else {
+        btnDatHang.disabled = false; // Kích hoạt nút thanh toán
+    }
+
     const accountLogin = document.getElementById("account-login").value;
     console.log("Account login: " + accountLogin);
 
@@ -105,8 +160,6 @@ document.addEventListener("DOMContentLoaded", function () {
 function payBill() {
     const accountLogin = document.getElementById("account-login").value;
     console.log("Account login: " + accountLogin);
-
-    // Nếu không có accountLogin, thực hiện validate
     if (!accountLogin) {
         let isValid = true;
 

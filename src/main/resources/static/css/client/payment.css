@@ -541,15 +541,15 @@ button.btn-secondary:hover {
 .btn-dat-hang {
     background-color: #ee4d2d; /* Màu cam đặc trưng của các sàn TMĐT */
     color: #fff; /* Chữ trắng để nổi bật */
-    /*font-size: 1.2rem; !* Kích thước chữ vừa phải *!*/
-    font-weight: bold; /*    Chữ đậm */
-    padding: 0.75rem 1.5rem; /* Khoảng cách bên trong */
+    /*font-weight: bold; !*    Chữ đậm *!*/
+        padding: 0.75rem 1.5rem; /* Khoảng cách bên trong */
     border: none; /* Loại bỏ đường viền */
-    border-radius: 3px; /* Bo góc mềm mại */
+    /*border-radius: px; !* Bo góc mềm mại *!*/
     transition: background-color 0.3s, transform 0.2s; /* Hiệu ứng hover */
     cursor: pointer; /* Thêm hiệu ứng con trỏ */
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Đổ bóng nhẹ */
-    width: 50%;
+    width: 49%;
+    margin-left: 2%;
 }
 
 /* Hiệu ứng hover */
@@ -561,6 +561,33 @@ button.btn-secondary:hover {
 
 /* Hiệu ứng khi nhấn */
 .btn-dat-hang:active {
+    transform: scale(0.98); /* Giảm nhẹ kích thước */
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Đổ bóng nhỏ hơn */
+}
+
+/* Nút "Quay lại giỏ hàng" */
+.btn-return-cart {
+    background-color: #a0a0a1; /* Màu xám */
+    color: #fff; /* Chữ trắng để nổi bật */
+    /*font-weight: bold; !* Chữ đậm *!*/
+    padding: 0.75rem 1.5rem; /* Khoảng cách bên trong */
+    border: none; /* Loại bỏ đường viền */
+    border-radius: 5px; /* Bo góc mềm mại */
+    transition: background-color 0.3s, transform 0.2s; /* Hiệu ứng hover */
+    cursor: pointer; /* Thêm hiệu ứng con trỏ */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Đổ bóng nhẹ */
+    width: 49%; /* Đảm bảo kích thước tương tự */
+}
+
+/* Hiệu ứng hover */
+.btn-return-cart:hover {
+    background-color: #5a6268; /* Màu xám đậm hơn khi hover */
+    transform: scale(1.05); /* Tăng nhẹ kích thước */
+    box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.15); /* Đổ bóng mạnh hơn */
+}
+
+/* Hiệu ứng khi nhấn */
+.btn-return-cart:active {
     transform: scale(0.98); /* Giảm nhẹ kích thước */
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Đổ bóng nhỏ hơn */
 }

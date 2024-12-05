@@ -211,7 +211,8 @@ public class ClientRestController extends BaseEmail {
                                     productDetail.getSize().getNameSize(),
                                     entry.getValue(),
                                     originalPrice,
-                                    discountedPrice
+                                    discountedPrice,
+                                    productDetail.getProduct().getImages()
                             );
                         }
                         return null;
@@ -245,7 +246,8 @@ public class ClientRestController extends BaseEmail {
                     productDetail.getSize().getNameSize(),
                     cartItem.getQuantity(), // Số lượng
                     productDetail.getPrice(), // Giá gốc
-                    discountedPrice
+                    discountedPrice,
+                    productDetail.getProduct().getImages()
             );
         }).collect(Collectors.toList());
     }
@@ -267,7 +269,8 @@ public class ClientRestController extends BaseEmail {
                     productDetail.getSize().getNameSize(),
                     cart.getQuantity(),
                     productDetail.getPrice(),
-                    discountedPrice
+                    discountedPrice,
+                    productDetail.getProduct().getImages()
             );
             responses.add(response);
         }

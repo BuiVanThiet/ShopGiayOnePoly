@@ -203,12 +203,11 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function calculateTotalPrice() {
-        // Lấy giá trị từ các phần tử
         const totalPriceCartItem = parseFloat(document.getElementById("spanTotalPriceCartItem").textContent.replace(/[^0-9.]/g, '').replace(',', '.')) || 0; // Thay dấu phẩy bằng dấu chấm
         const priceVoucher = parseFloat(document.getElementById("spanPriceVoucher").textContent.replace(/[^0-9.]/g, '').replace(',', '.')) || 0; // Thay dấu phẩy bằng dấu chấm
         const shippingFee = parseFloat(document.getElementById("spanShippingFee").textContent.replace(/[^0-9.]/g, '').replace(',', '.')) || 0; // Thay dấu phẩy bằng dấu chấm
 
-        console.log("Ship: " + shippingFee); // In phí vận chuyển ra console
+        console.log("Ship: " + shippingFee);
 
         // Tính tổng tiền
         const totalPriceBill = totalPriceCartItem - priceVoucher + shippingFee;
@@ -229,7 +228,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("district").addEventListener("change", function () {
         const districtId = this.value;
         if (districtId) fetchWards(districtId);
-        updateAddress(); // Gọi hàm cập nhật địa chỉ khi chọn huyện
+        updateAddress();
         calculateTotalPrice();
     });
 
@@ -243,12 +242,10 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("specificAddressNolog").addEventListener("input", updateAddress);
 
     fetchProvinces();
-
-
 });
 
+
 window.addEventListener('load', function () {
-// Lấy giá trị từ spanPriceVoucher (nếu cần)
     const spanPriceVoucher = document.getElementById("spanPriceVoucher");
     if (spanPriceVoucher) {
         const voucherPriceText = spanPriceVoucher.textContent.trim();
@@ -258,6 +255,7 @@ window.addEventListener('load', function () {
             spanPriceVoucher.textContent = "-";
         }
     }
+    calculateTotalPrice();
 
 });
 

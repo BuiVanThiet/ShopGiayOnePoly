@@ -54,7 +54,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     document.getElementById("spanShippingFee").textContent = `${shippingFee} VND`;
                     console.log("Gia ship: " + shippingFee)
 
-                    // Tính lại tổng tiền sau khi cập nhật phí vận chuyển
                     calculateTotalPrice();
                 } else {
                     console.error('Lỗi tính phí ship:', data.message);
@@ -121,6 +120,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 // Channge address
 document.addEventListener("DOMContentLoaded", function () {
+    calculateTotalPrice();
     const spanPriceVoucher = document.getElementById("spanPriceVoucher");
     const shipAddress = document.getElementById("addressShip");
     const fullAddressCustomerLogin = document.getElementById("fullAddressCustomerLogin").value;
@@ -296,7 +296,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-
     document.addEventListener('click', function (event) {
         if (event.target.closest('.change-address')) {
             // Lấy radio button được chọn
@@ -347,7 +346,6 @@ document.addEventListener("DOMContentLoaded", function () {
             console.log("Cập nhật thành công: ", {nameAndPhoneNumber, shortAddress});
         }
     });
-// Thêm địa chỉ mới
 });
 document.addEventListener("DOMContentLoaded", function () {
     const apiKey = '0fc88a8e-6633-11ef-8e53-0a00184fe694';

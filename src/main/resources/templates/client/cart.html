@@ -24,7 +24,8 @@
                                  style="display: flex; flex-direction: row; margin-bottom: 20px;">
                                 <div class="cart-left">
                                     <div class="cart-item-img">
-                                        <img src="/img/client/product/SPCT_IMG_1.png" alt=""
+                                        <img th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728725582/' + ${item.imageName.get(0).nameImage}"
+                                             alt=""
                                              style="width: 150px; height: auto;">
                                     </div>
                                 </div>
@@ -148,7 +149,8 @@
                         </div>
                         <div class="cart-row d-flex justify-content-between cart-total">
                             <strong>THÀNH TIỀN:</strong>
-                            <span id="cart-spanTotalPriceCart" class="cart-js-total-price" th:text="${finalPrice}">₫</span>
+                            <span id="cart-spanTotalPriceCart" class="cart-js-total-price"
+                                  th:text="${finalPrice}">₫</span>
                         </div>
                     </div>
 
@@ -159,13 +161,12 @@
                                 <span>TIẾP TỤC MUA SẮM</span>
                             </a>
                         </button>
-                        <button type="button" id="cart-checkout" class="cart-btn-checkout cart-u-btn cart-u-btn--primary">
-                            <a style="text-decoration: none;" href="/onepoly/payment"> THANH TOÁN</a>
-                        </button>
+                            <button type="button" id="cart-checkout"
+                                    class="cart-btn-checkout cart-u-btn cart-u-btn--primary">
+                                <a style="text-decoration: none;" href="/onepoly/payment"> THANH TOÁN</a>
+                            </button>
                     </div>
                 </div>
-
-
 
             </div>
             <div th:if="${cartItems.size() <= 0}"
