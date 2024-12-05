@@ -1,11 +1,13 @@
 package com.example.shopgiayonepoly.dto.response.client;
 
+import com.example.shopgiayonepoly.entites.Image;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Getter
 @Setter
@@ -22,4 +24,5 @@ public class CartResponse {
     private Integer quantity;
     private BigDecimal originalPrice;
     private BigDecimal discountedPrice;
+    private List<Image> imageName;
 }

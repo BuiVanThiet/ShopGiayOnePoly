@@ -124,13 +124,25 @@
                             <label style="color: #f30909">Số lượng hiện tại: </label>
                             <p id="quantity-display" style="color: #f10c0c" th:text="0"></p>
                         </div>
-                        <!--                        <h1 id="manufacturerName" th:text="${productDetail[0].manufacturerName}"></h1>-->
                         <div class="box-show-sale">
                             <ul class="list-show-sale">
-                                <li>Black Friday - Giảm 50% sản phẩm nguyên giá</li>
-                                <li>Thời gian: 27/11/2024 - 02/12/2024.</li>
-                                <li>Áp dụng tại cửa hàng và Website</li>
-                                <li>Không áp dụng đồng thời với chương trình khuyến mãi khác.</li>
+                                <li>
+                                    <span th:text="${saleProductNew.nameSale}"></span>
+                                    <span>-</span>
+                                    <span id="voucher-value-new" th:text="${saleProductNew.discountValue}"></span>
+                                    <span id="value-type"></span>
+                                    <input type="hidden" id="discount-type-new"
+                                           th:text="${saleProductNew.discountType}">
+                                </li>
+                                <li>Thời gian:
+                                    <span th:text="${saleProductNew.startDate}"></span>
+                                    <span>đến ngày</span>
+                                    <span th:text="${saleProductNew.endDate}"></span>
+                                </li>
+                                <li>Áp dụng tại cửa hàng và Website.</li>
+                                <li>Hãy tìm kiếm những sản phẩm đang áp dụng đợt giảm giá này để trải nghiệm ưu đãi
+                                    nhé!
+                                </li>
                             </ul>
                         </div>
 
@@ -253,10 +265,12 @@
                                                 </div>
                                             </div>
                                             <div class="col-4">
-                                                <a href="/onepoly/cart" class="btn btn-primary mb-3" style="width: 100%;height: 43px; border-radius: 1px">Đi
+                                                <a href="/onepoly/cart" class="btn btn-primary mb-3"
+                                                   style="width: 100%;height: 43px; border-radius: 1px">Đi
                                                     đến giỏ hàng</a>
                                                 <button class="btn btn-secondary" data-bs-dismiss="modal"
-                                                        style="width: 100%;height: 40px; border-radius: 1px">Tiếp tục mua
+                                                        style="width: 100%;height: 40px; border-radius: 1px">Tiếp tục
+                                                    mua
                                                     sắm
                                                 </button>
                                             </div>

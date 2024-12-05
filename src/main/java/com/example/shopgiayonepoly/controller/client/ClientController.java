@@ -108,8 +108,6 @@ public class ClientController extends BaseBill {
     public String searchProducts(@RequestParam String keyword, HttpSession session, Model model) {
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
         model.addAttribute("loginInfoClient", clientLoginResponse);
-
-        // Tìm kiếm sản phẩm với từ khóa keyword
         List<ProductIClientResponse> products = clientService.searchProducts(keyword);
         model.addAttribute("listProduct", products); // Truyền sản phẩm vào model
         model.addAttribute("listCategory", categoryService.getCategoryNotStatus0());
@@ -154,12 +152,14 @@ public class ClientController extends BaseBill {
         List<ProductDetailClientRespone> productDetailClientRespones = clientService.findProductDetailByProductId(id);
         List<ColorClientResponse> colors = clientService.findDistinctColorsByProductId(id);
         List<SizeClientResponse> sizes = clientService.findDistinctSizesByProductId(id);
+        SaleProduct saleProductNew = saleProductService.getSaleProductNew();
         model.addAttribute("productDetail", productDetailClientRespones);
         model.addAttribute("listImage", productService.findById(id));
         model.addAttribute("colors", colors);
         model.addAttribute("sizes", sizes);
         model.addAttribute("productID", id);
         model.addAttribute("clientLogin", clientLoginResponse);
+        model.addAttribute("saleProductNew", saleProductNew);
         return "client/product_detail";
     }
 
@@ -189,8 +189,10 @@ public class ClientController extends BaseBill {
                         productDetail.getSize().getNameSize(),
                         cartItem.getQuantity(),
                         productDetail.getPrice(),
-                        discountedPrice
+                        discountedPrice,
+                        productDetail.getProduct().getImages()
                 );
+                System.out.println("Name anh: " + productDetail.getProduct().getImages());
                 cartResponses.add(cartResponse);
             }
         } else {
@@ -215,8 +217,10 @@ public class ClientController extends BaseBill {
                                 productDetail.getSize().getNameSize(),
                                 quantity,
                                 productDetail.getPrice(),
-                                discountedPrice
+                                discountedPrice,
+                                productDetail.getProduct().getImages()
                         );
+                        System.out.println("Namư  " + productDetail.getProduct().getImages().get(0));
                         cartResponses.add(cartResponse);
                     }
                 }
@@ -369,7 +373,7 @@ public class ClientController extends BaseBill {
         // Cập nhật lại giỏ hàng và các thuộc tính vào model và session
         model.addAttribute("cartItems", cartItems);
         model.addAttribute("weight", weight);
-        model.addAttribute("totalPrice", totalPrice);
+        model.addAttribute("totalPrice", calculatedTotalPrice);
         model.addAttribute("priceReducedShow", priceReduced);
         session.setAttribute("idVoucherApply", idVoucherApply);
         session.setAttribute("priceReduced", priceReduced);

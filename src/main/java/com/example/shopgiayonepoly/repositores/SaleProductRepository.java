@@ -263,4 +263,7 @@ public interface SaleProductRepository extends JpaRepository<SaleProduct, Intege
     @Transactional
     @Query("update SaleProduct v set v.status = 2, v.updateDate = CURRENT_TIMESTAMP where v.endDate < CURRENT_TIMESTAMP and v.status <> 2")
     public void updateSaleProductStatusForExpiredAuto();
+
+    @Query(value = "SELECT top 1 * FROM sale_product sp ORDER BY sp.create_date DESC",nativeQuery = true)
+    public SaleProduct getSaleProductNew();
 }

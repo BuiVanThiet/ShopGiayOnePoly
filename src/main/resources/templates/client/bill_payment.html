@@ -14,8 +14,9 @@
         <input type="hidden" id="account-login" th:value="${accountLogin}">
         <section class="cart-page">
             <div class="container">
+<!--                <input type="hidden" th:value="${cartItems.size()}" >-->
                 <div style="margin-left: 30px;">
-                    <p>Hiện tại có <span th:text="${cartItems.size()}"></span> sản phẩm trong giỏ hàng</p>
+                    <p>Hiện tại có <span id="totalQuantity" th:text="${cartItems.size()}"></span> sản phẩm trong giỏ hàng</p>
                     <hr style="width: 48%;">
                 </div>
                 <div class="cart-container d-flex" style="gap: 10px;">
@@ -26,34 +27,35 @@
                                 <div class="row g-3 mt-3">
                                     <!-- Header for customer information section -->
                                     <div class="infor-enter-customer">
-                                        <h5 style="color: #727272" class="section-header">Thông tin khách hàng</h5>
-                                        <div class="col-md-12">
-                                            <input type="text" class="form-control" id="FullName" placeholder="Họ tên"
-                                                   required>
-                                            <span class="text-danger" id="error-fullname"></span>
-                                            <!-- Thông báo lỗi sẽ hiển thị ở đây -->
+                                        <h5 class="section-header text-secondary">Thông tin khách hàng</h5>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <input type="text" class="form-control" id="FullName" placeholder="Họ tên" required>
+                                                <span class="text-danger" id="error-fullname"></span>
+                                                <!-- Thông báo lỗi sẽ hiển thị ở đây -->
+                                            </div>
                                         </div>
-                                        <div class="d-flex">
+                                        <div class="row mb-3">
                                             <div class="col-md-6">
-                                                <input type="email" class="form-control" id="Mail" placeholder="Mail"
-                                                       required>
+                                                <input type="email" class="form-control" id="Mail" placeholder="Mail" required>
                                                 <span class="text-danger" id="error-email"></span>
                                                 <!-- Thông báo lỗi email -->
                                             </div>
                                             <div class="col-md-6">
-                                                <input type="text" class="form-control" id="Phone" placeholder="SĐT"
-                                                       required>
+                                                <input type="text" class="form-control" id="Phone" placeholder="SĐT" required>
                                                 <span class="text-danger" id="error-phone"></span>
                                                 <!-- Thông báo lỗi số điện thoại -->
                                             </div>
                                         </div>
-                                        <div class="col-md-12">
-                                            <textarea type="text" class="form-control" name="noteBill" id="noteBill"
-                                                      placeholder="Ghi chú cho cửa hàng" required></textarea>
-                                            <span class="text-danger" id="error-notebill"></span>
-                                            <!-- Thông báo lỗi ghi chú -->
+                                        <div class="row mb-3">
+                                            <div class="col-md-12">
+                                                <textarea class="form-control" id="noteBill" placeholder="Ghi chú cho cửa hàng" rows="3" required></textarea>
+                                                <span class="text-danger" id="error-notebill"></span>
+                                                <!-- Thông báo lỗi ghi chú -->
+                                            </div>
                                         </div>
                                     </div>
+
                                     <div class="info-shipping">
                                         <h5 style="color: #727272" class="section-header">Thông tin giao hàng</h5>
                                         <div class="col-4">
@@ -120,9 +122,8 @@
                                                        class="value-payment-method" name="payment_method_id" value="2">
                                             </div>
                                             <div class="radio-content-input">
-                                                <img class="main-img" src="data:image/png;base64,..."
-                                                     alt="VNPAY Payment Method">
-                                                <span class="radio-label-primary">VNPAY</span>
+                                                <img class="main-img" src="/img/homeManage/vnpay-logo-vinadesign-25-12-59-16.jpg" width="50px" height="50px">
+                                                <span class="radio-label-primary">Thanh toán bằng VNPAY</span>
                                             </div>
                                         </label>
                                     </div>
@@ -413,7 +414,7 @@
                                 <!-- Hình ảnh và số lượng -->
                                 <div class="left position-relative me-3">
                                     <div class="item-img">
-                                        <img src="/img/client/product/SPCT_IMG_1.png" alt=""
+                                        <img th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728725582/' + ${item.imageName.get(0).nameImage}" alt=""
                                              style="width: 100px; height: auto; border-radius: 8px;">
                                         <p class="tc line-item-qty text-center bg-light rounded-circle fw-bold position-absolute"
                                            style="width: 30px; height: 30px; top: -5px; right: -5px; font-size: 0.8rem; line-height: 30px; border: 1px solid #ddd;"
@@ -480,11 +481,15 @@
                             </div>
                         </div>
 
-                        <div class="d-flex flex-row justify-content-end mt-3">
+                        <div class="d-flex flex-row justify-content-between mt-3">
+                            <a href="/onepoly/cart" id="btnQuayLai" class="btn btn-return-cart">
+                                <span>Quay lại giỏ hàng</span>
+                            </a>
                             <button id="btnDatHang" onclick="payBill()" class="btn btn-dat-hang">
                                 <span>Đặt hàng</span>
                             </button>
                         </div>
+
                     </div>
                 </div>
             </div>

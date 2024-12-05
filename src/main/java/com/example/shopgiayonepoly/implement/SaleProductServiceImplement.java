@@ -135,7 +135,7 @@ public class SaleProductServiceImplement implements SaleProductService {
     }
 
     @Override
-    public List<ProductDetail>findProducDetailByIDDiscout(Integer id) {
+    public List<ProductDetail> findProducDetailByIDDiscout(Integer id) {
         return saleProductRepository.findProducDetailByIDDiscout(id);
     }
 
@@ -145,7 +145,7 @@ public class SaleProductServiceImplement implements SaleProductService {
 
     @Override
     public List<Object[]> getAllSaleProductByFilter(Integer typeCheck, String searchTerm, Integer status) {
-        return this.saleProductRepository.getAllSaleProductByFilter(typeCheck,searchTerm,status);
+        return this.saleProductRepository.getAllSaleProductByFilter(typeCheck, searchTerm, status);
     }
 
     @Override
@@ -163,6 +163,7 @@ public class SaleProductServiceImplement implements SaleProductService {
                 productDetailCheckRequest.getIdSaleProductCheck()
         );
     }
+
     @Override
     public void updateSaleProductExpired(Integer id) {
         this.saleProductRepository.updateSaleProductExpired(id);
@@ -171,6 +172,11 @@ public class SaleProductServiceImplement implements SaleProductService {
     @Override
     public void updateSaleProductStatusForExpiredAuto() {
         saleProductRepository.updateSaleProductStatusForExpiredAuto();
+    }
+
+    @Override
+    public SaleProduct getSaleProductNew() {
+        return saleProductRepository.getSaleProductNew();
     }
 
 
