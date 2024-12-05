@@ -14,4 +14,6 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     });
+    const voucherValue= document.getElementById("voucher-value-new");
+    voucherValue.innerText =
 });
