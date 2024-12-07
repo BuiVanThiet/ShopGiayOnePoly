@@ -27,22 +27,32 @@ $('#cashClient-billInfo-exchange').on('input', function() {
             inputElement.val(formattedValue); // Hiển thị giá trị với dấu phẩy
             var priceNumber = Number(rawValue);
             // nếu giá thấp hơn giá trị bill
-            if(priceNumber < priceBill && payMethod == 1) {
+            if(priceNumber < 0) {
+                $('#formErorrCash-billInfo').css('display', 'block');
+                $('#erorrCash-billInfo').text('*Giá tiền nhập vào không được âm!');
+                $('#btnPaymentInBill').attr('disabled', true);
+                $('#btnPaymentInBillExchange').attr('disabled', true);
+                $('#surplusMoneySpan-billInfo').css('display', 'none');
+                $('#surplusMoney-billInfo').text('');
+            }else if(priceNumber < priceBill && payMethod == 1) {
                 $('#formErorrCash-billInfo').css('display', 'block');
                 $('#erorrCash-billInfo').text('*Giá tiền ít nhất phải bằng giá hóa đơn!');
                 $('#btnPaymentInBill').attr('disabled', true);
+                $('#btnPaymentInBillExchange').attr('disabled', true);
                 $('#surplusMoneySpan-billInfo').css('display', 'none');
                 $('#surplusMoney-billInfo').text('');
             }else if (priceNumber < 1000 && payMethod == 3) {
                 $('#formErorrCash-billInfo').css('display', 'block');
                 $('#erorrCash-billInfo').text('*Giá tiền ít nhất phải 1,000 VNĐ!');
                 $('#btnPaymentInBill').attr('disabled', true);
+                $('#btnPaymentInBillExchange').attr('disabled', true);
                 $('#surplusMoneySpan-billInfo').css('display', 'none');
                 $('#surplusMoney-billInfo').text('');
             } else if ((priceBill-priceNumber) < 10000 && payMethod == 3) {
                 $('#formErorrCash-billInfo').css('display', 'block');
-                $('#erorrCash-billInfo').text('*Giá tiền ít nhất phải 10,000 VND mới có th!');
+                $('#erorrCash-billInfo').text('*Giá tiền ít nhất phải 10,000 VND mới có thể tạo hóa đơn điện tử!');
                 $('#btnPaymentInBill').attr('disabled', true);
+                $('#btnPaymentInBillExchange').attr('disabled', true);
                 $('#surplusMoneySpan-billInfo').css('display', 'none');
                 $('#surplusMoney-billInfo').text('');
             }else {
@@ -50,6 +60,7 @@ $('#cashClient-billInfo-exchange').on('input', function() {
                 $('#formErorrCash-billInfo').css('display', 'none');
                 $('#erorrCash-billInfo').text('');
                 $('#btnPaymentInBill').attr('disabled', false);
+                $('#btnPaymentInBillExchange').attr('disabled', false);
                 console.log("Dữ liệu nhập vào là số: " + rawValue); // Giá trị thực không có dấu phẩy
                 if(rawValue > priceBill && payMethod == 1) {
                     $('#surplusMoneySpan-billInfo').css('display', 'block');
@@ -71,6 +82,7 @@ $('#cashClient-billInfo-exchange').on('input', function() {
                 $('#formErorrCash-billInfo').css('display', 'block');
                 $('#erorrCash-billInfo').text('**Đã vượt quá giới hạn(trên 1000 tỷ VNĐ)!');
                 $('#btnPaymentInBill').attr('disabled', true);
+                $('#btnPaymentInBillExchange').attr('disabled', true);
                 $('#surplusMoneySpan-billInfo').css('display', 'none');
                 $('#surplusMoney-billInfo').text('');
             }
@@ -78,6 +90,7 @@ $('#cashClient-billInfo-exchange').on('input', function() {
             $('#formErorrCash-billInfo').css('display', 'block');
             $('#erorrCash-billInfo').text('*Giá trị nhập vào phải là số!');
             $('#btnPaymentInBill').attr('disabled', true);
+            $('#btnPaymentInBillExchange').attr('disabled', true);
             $('#surplusMoneySpan-billInfo').css('display', 'none');
             $('#surplusMoney-billInfo').text('');
             console.log("Dữ liệu nhập vào không phải là số");
@@ -102,6 +115,7 @@ function setActivePayment(element,value) {
         $('#formMoney-billInfo').css('display', 'block');
         $('#formErorrCash-billInfo').css('display', 'block');
         $('#btnPaymentInBill').attr('disabled', true);
+        $('#btnPaymentInBillExchange').attr('disabled', true);
         $('#cashAcountPay').val('0.00')
         $('#cashAcountPayExchange').val('0.00')
         setUpPayment();
@@ -109,6 +123,7 @@ function setActivePayment(element,value) {
         $('#formMoney-billInfo').css('display', 'block');
         $('#formErorrCash-billInfo').css('display', 'block');
         $('#btnPaymentInBill').attr('disabled', true);
+        $('#btnPaymentInBillExchange').attr('disabled', true);
         $('#cashAcountPay').val('0.00')
         $('#cashAcountPayExchange').val('0.00')
         setUpPayment();
@@ -117,6 +132,7 @@ function setActivePayment(element,value) {
         $('#formMoney-billInfo').css('display', 'none');
         $('#formErorrCash-billInfo').css('display', 'none');
         $('#btnPaymentInBill').attr('disabled', false);
+        $('#btnPaymentInBillExchange').attr('disabled', false);
         $('#surplusMoneySpan-billInfo').css('display', 'none');
         $('#cashClient-billInfo').val('');
         $('#cashClient-billInfo-exchange').val('');
@@ -129,9 +145,11 @@ function setActivePayment(element,value) {
 
 function setUpPayment() {
     $('#btnPaymentInBill').attr('disabled', true);
+    $('#btnPaymentInBillExchange').attr('disabled', true);
     $('#formErorrCash-billInfo').css('display', 'block');
     $('#erorrCash-billInfo').text('*Mời nhập đủ giá!');
     $('#btnPaymentInBill').attr('disabled', true);
+    $('#btnPaymentInBillExchange').attr('disabled', true);
     $('#surplusMoneySpan-billInfo').css('display', 'none');
     $('#surplusMoney-billInfo').text('');
     // du lieu

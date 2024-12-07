@@ -260,7 +260,7 @@ function paymentInformation() {
                 }
             }
 
-            if (totalAmountBillCheck >= 20000000) {
+            if (totalAmountBillCheck >= 20000000 || totalAmountBillCheck < 10000) {
                 document.getElementById('accountMoney').disabled = true;
                 document.getElementById('accountMoneyAndCash').disabled = true;
             } else {
