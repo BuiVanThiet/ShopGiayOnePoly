@@ -434,6 +434,11 @@ public class BillController extends BaseBill {
         if (bill.getStatus() != 0) {
             return "redirect:/404";
         }
+
+        if (cashNumber.compareTo(BigDecimal.ZERO) < 0 && bill.getPaymentMethod() == 3) { // cashNumber < 0
+            return "redirect:/404";
+        }
+
 //        if(bill.getTotalAmount().compareTo(new BigDecimal(20000000)) > 0) {
 //            this.mess = "Số tiền sản phẩm không được quá 20 triệu!";
 //            this.colorMess = "3";

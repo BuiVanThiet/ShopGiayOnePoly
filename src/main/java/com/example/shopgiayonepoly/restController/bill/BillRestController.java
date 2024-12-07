@@ -1333,6 +1333,12 @@ public class BillRestController extends BaseBill {
             return ResponseEntity.ok(thongBao);
         }
 
+        if(Integer.parseInt(cashPay) < 0) {
+            thongBao.put("message","Tiền nhập vào không được âm");
+            thongBao.put("check","3");
+            return ResponseEntity.ok(thongBao);
+        }
+
         System.out.println("cashPay: " + cashPay);
         System.out.println("cashAcountPay: " + cashAcountPay);
         System.out.println("cashBillPay: " + cashBillPay);
