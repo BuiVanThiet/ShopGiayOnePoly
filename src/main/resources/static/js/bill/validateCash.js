@@ -85,17 +85,16 @@ function validate(cash) {
             //     btnCreateBill.disabled = true;
             // }
             // Kiểm tra nếu số tiền nhập vào lớn hơn hoặc nhỏ hơn tổng tiền
-            // if(cashClientNumber < 1000) {
-            //     formErorrCash.style.display = 'block';
-            //     erorrCash.innerText = 'Tiền nhập vào không được thấp hơn 1,000 VNĐ!';
-            //     btnCreateBill.disabled = true;
-            //     surplusMoneySpan.style.display = 'none';
-            //     surplusMoney.innerText = '';
-            //     textSurplusMoney.value = '0';
-            //     cashClientText.value = cashClientValue;
-            //     checkButonCreateBill = false;
-            // }
-            if (cashClientNumber < totalAmountNumber && parseNumber(payMethod.value) === 1) {
+            if(cashClientNumber < 0) {
+                formErorrCash.style.display = 'block';
+                erorrCash.innerText = '*Tiền nhập vào không được âm!';
+                btnCreateBill.disabled = true;
+                surplusMoneySpan.style.display = 'none';
+                surplusMoney.innerText = '';
+                textSurplusMoney.value = '0';
+                cashClientText.value = cashClientValue;
+                checkButonCreateBill = false;
+            } else if (cashClientNumber < totalAmountNumber && parseNumber(payMethod.value) === 1) {
                 formErorrCash.style.display = 'block';
                 erorrCash.innerText = '*Tiền nhập vào phải bằng với hóa đơn!';
                 btnCreateBill.disabled = true;
@@ -151,7 +150,7 @@ function validate(cash) {
                 cashClientText.value = cashClientValue;
                 checkButonCreateBill = false;
             }
-            if (totalAmountBillCheck > 20000000) {
+            if (totalAmountBillCheck > 20000000 || totalAmountBillCheck < 10000) {
                 document.getElementById('accountMoney').disabled = true;
                 document.getElementById('accountMoneyAndCash').disabled = true;
             } else {

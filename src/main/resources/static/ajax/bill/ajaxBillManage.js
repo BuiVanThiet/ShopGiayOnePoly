@@ -352,7 +352,7 @@ function loadInformationBillByIdBill() {
                 document.getElementById('errorTotalAmount').style.display = 'none';
             }
 
-            if (totalBill >= 20000000) {
+            if (totalBill >= 20000000 || totalBill < 10000) {
                 document.getElementById('accountMoney').disabled = true;
                 document.getElementById('accountMoneyAndCash').disabled = true;
             } else {
@@ -875,6 +875,14 @@ function loadInfomationReturnBillFromBillManage() {
                 $('#span-exchangeAndReturnFee').text(Math.trunc(response.exchangeAndReturnFee).toLocaleString('en-US') + ' VNĐ');
                 $('#span-discountedAmount').text(Math.trunc(response.discountedAmount).toLocaleString('en-US') + ' VNĐ');
                 $('#btn-pay-exchange').html(buttonsPay);
+
+                if (totalExchangeCustomer >= 20000000 || totalExchangeCustomer < 10000) {
+                    document.getElementById('accountMoney').disabled = true;
+                    document.getElementById('accountMoneyAndCash').disabled = true;
+                } else {
+                    document.getElementById('accountMoney').disabled = false;
+                    document.getElementById('accountMoneyAndCash').disabled = false;
+                }
 
                 loadReturnBill(1)
                 maxPageReturnBillFromBillManage();
