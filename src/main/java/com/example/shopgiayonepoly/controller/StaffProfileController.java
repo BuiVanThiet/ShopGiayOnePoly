@@ -107,13 +107,6 @@ public class StaffProfileController {
             return "redirect:/home_manage";
         }
 
-        Map<String,String> checkLoginAndLogout = checkLoginAndLogOutByStaff(staff.getId());
-        String messMap = checkLoginAndLogout.get("message");
-        if(!messMap.trim().equals("")) {
-            mess = (messMap);
-            check = "3";
-            return "redirect:/profile/staffProfile";
-        }
         System.out.println("Staff từ model: " + staff);
         staffProfile.setImageStaffString(staff.getImage());
 
@@ -132,12 +125,17 @@ public class StaffProfileController {
         // Kiểm tra hợp lệ cho email
         if (staffProfile.getEmail() == null || staffProfile.getEmail().isEmpty()) {
             bindingResult.rejectValue("email", "error.staffProfile", "Email không được để trống");
-        } else if (staffProfile.getEmail().length() >100) {
-            bindingResult.rejectValue("email", "error.staffProfile", "Email không được lớn hơn 100 ký tự");
-        } else if (!staffProfile.getEmail().matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$")) {
+        } else if (!staffProfile.getEmail().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
             bindingResult.rejectValue("email", "error.staffProfile", "Email không hợp lệ");
-        } else if (staffService.existsByEmail(staffProfile.getEmail()) !=null || customerService.existsByEmail(staffProfile.getEmail()) !=null) {
-            bindingResult.rejectValue("email", "error.staffProfile", "Email đã tồn tại");
+        } else if (staffProfile.getEmail().length() > 100) {
+            bindingResult.rejectValue("email", "error.staffProfile", "Email không vượt quá 100 ký tự");
+        } else {
+            // Kiểm tra trùng lặp email trong bảng Staff và Customer, ngoại trừ email hiện tại
+            boolean emailExistsInStaff = staffService.existsByEmail(staffProfile.getEmail()) != null;
+            boolean emailExistsInCustomer = customerService.existsByEmail(staffProfile.getEmail()) != null;
+            if (!staffProfile.getEmail().equals(staff.getEmail()) && (emailExistsInStaff || emailExistsInCustomer)) {
+                bindingResult.rejectValue("email", "error.staffProfile", "Email đã được sử dụng");
+            }
         }
 
         // Kiểm tra hợp lệ cho số điện thoại
@@ -290,51 +288,6 @@ public class StaffProfileController {
             // Gán các trường khác cần thiết từ staff vào staffProfile
         }
         return staffProfile;
-    }
-    protected Map<String,String> checkLoginAndLogOutByStaff(Integer idStaff) {
-        Map<String,String> thongBao = new HashMap<>();
-        String checkLogin = getCheckStaffAttendanceYetBill(idStaff,1);
-        String checkLogOut = getCheckStaffAttendanceYetBill(idStaff,2);
-        System.out.println(checkLogin);
-        if(!checkLogin.equals("Có")) {
-            thongBao.put("message","Mời bạn điểm danh trước khi làm việc!");
-            return thongBao;
-        }
-
-        if(checkLogin.equals("Có") && checkLogOut.equals("Có")) {
-            thongBao.put("message","Bạn đã điểm danh vào và ra rồi, không thể làm việc được nữa!");
-            return thongBao;
-        }
-        thongBao.put("message","");
-        return thongBao;
-    }
-
-    protected String getCheckStaffCashierInventory(
-            Integer idStaff
-    ) {
-        List<Object[]> checkCashierInventory = this.cashierInventoryService.getCheckCashierInventoryStaff(idStaff);
-
-        // Kiểm tra nếu danh sách không rỗng và có kết quả
-        if (!checkCashierInventory.isEmpty() && checkCashierInventory.get(0).length > 0) {
-            // Lấy giá trị đầu tiên từ kết quả
-            return checkCashierInventory.get(0)[0].toString();
-        }
-        // Trường hợp không có dữ liệu
-        return "Không";
-    }
-    protected String getCheckStaffAttendanceYetBill(
-//            @PathVariable("id") Integer idStaff,@PathVariable("type") Integer timekeepingTypeCheck
-            Integer idStaff, Integer timekeepingTypeCheck
-    ) {
-        List<Object[]> checkLoginLogOut = this.timekeepingService.getCheckStaffAttendanceYet(idStaff, timekeepingTypeCheck);
-
-        // Kiểm tra nếu danh sách không rỗng và có kết quả
-        if (!checkLoginLogOut.isEmpty() && checkLoginLogOut.get(0).length > 0) {
-            // Lấy giá trị đầu tiên từ kết quả
-            return checkLoginLogOut.get(0)[0].toString();
-        }
-        // Trường hợp không có dữ liệu
-        return "Không";
     }
     @ModelAttribute("staffInfo")
     public Staff staff(HttpSession session){

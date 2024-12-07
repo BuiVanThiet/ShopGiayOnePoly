@@ -123,11 +123,17 @@ public class UserProfileController {
             bindingResult.rejectValue("email", "error.userProfile", "Email không được để trống");
         } else if (!userProfile.getEmail().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
             bindingResult.rejectValue("email", "error.userProfile", "Email không hợp lệ");
-        } else if (userProfile.getEmail().length() >100) {
+        } else if (userProfile.getEmail().length() > 100) {
             bindingResult.rejectValue("email", "error.userProfile", "Email không vượt quá 100 ký tự");
-        } else if (staffService.existsByEmail(userProfile.getEmail()) != null || customerService.existsByEmail(userProfile.getEmail()) != null) {
-            bindingResult.rejectValue("email", "error.userProfile", "Email đã được sử dụng");
+        } else {
+            // Kiểm tra trùng lặp email trong bảng Staff và Customer, ngoại trừ email hiện tại
+            boolean emailExistsInStaff = staffService.existsByEmail(userProfile.getEmail()) != null;
+            boolean emailExistsInCustomer = customerService.existsByEmail(userProfile.getEmail()) != null;
+            if (!userProfile.getEmail().equals(customer.getEmail()) && (emailExistsInStaff || emailExistsInCustomer)) {
+                bindingResult.rejectValue("email", "error.userProfile", "Email đã được sử dụng");
+            }
         }
+
 
         // Kiểm tra hợp lệ cho số điện thoại
         if (userProfile.getNumberPhone() == null || userProfile.getNumberPhone().isEmpty()) {
