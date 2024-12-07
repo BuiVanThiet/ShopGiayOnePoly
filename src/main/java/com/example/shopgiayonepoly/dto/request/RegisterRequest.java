@@ -22,7 +22,7 @@ public class RegisterRequest {
     private String acount;
 
     @NotBlank(message = "Mật khẩu không được để trống")
-    @Size(min = 6, max = 20, message = "Mật khẩu phải từ 6 đến 20 ký tự")
+    @Size(min = 1, max = 255, message = "Mật khẩu phải từ 1 đến 255 ký tự")
     private String password;
 
     @NotBlank(message = "Xác nhận mật khẩu không được trống")
