@@ -14,10 +14,11 @@
         <input type="hidden" id="account-login" th:value="${accountLogin}">
         <section class="cart-page">
             <div class="container">
-<!--                <input type="hidden" th:value="${cartItems.size()}" >-->
-                <div style="margin-left: 30px;">
-                    <p>Hiện tại có <span id="totalQuantity" th:text="${cartItems.size()}"></span> sản phẩm trong giỏ hàng</p>
-                    <hr style="width: 48%;">
+                <!--                <input type="hidden" th:value="${cartItems.size()}" >-->
+                <div style="margin-left: 54%;">
+                    <p>Hiện tại có <span id="totalQuantity" th:text="${cartItems.size()}"></span> sản phẩm trong giỏ
+                        hàng</p>
+                    <hr style="width: 100%;">
                 </div>
                 <div class="cart-container d-flex" style="gap: 10px;">
                     <!-- Phần thông tin vận chuyển -->
@@ -30,26 +31,31 @@
                                         <h5 class="section-header text-secondary">Thông tin khách hàng</h5>
                                         <div class="row">
                                             <div class="col-md-12">
-                                                <input type="text" class="form-control" id="FullName" placeholder="Họ tên" required>
+                                                <input type="text" class="form-control" id="FullName"
+                                                       placeholder="Họ tên" required>
                                                 <span class="text-danger" id="error-fullname"></span>
                                                 <!-- Thông báo lỗi sẽ hiển thị ở đây -->
                                             </div>
                                         </div>
                                         <div class="row mb-3">
                                             <div class="col-md-6">
-                                                <input type="email" class="form-control" id="Mail" placeholder="Mail" required>
+                                                <input type="email" class="form-control" id="Mail" placeholder="Mail"
+                                                       required>
                                                 <span class="text-danger" id="error-email"></span>
                                                 <!-- Thông báo lỗi email -->
                                             </div>
                                             <div class="col-md-6">
-                                                <input type="text" class="form-control" id="Phone" placeholder="SĐT" required>
+                                                <input type="text" class="form-control" id="Phone" placeholder="SĐT"
+                                                       required>
                                                 <span class="text-danger" id="error-phone"></span>
                                                 <!-- Thông báo lỗi số điện thoại -->
                                             </div>
                                         </div>
                                         <div class="row mb-3">
                                             <div class="col-md-12">
-                                                <textarea class="form-control" id="noteBill" placeholder="Ghi chú cho cửa hàng" rows="3" required></textarea>
+                                                <textarea class="form-control" id="noteBill"
+                                                          placeholder="Ghi chú cho cửa hàng" rows="3"
+                                                          required></textarea>
                                                 <span class="text-danger" id="error-notebill"></span>
                                                 <!-- Thông báo lỗi ghi chú -->
                                             </div>
@@ -108,9 +114,8 @@
                                                        checked>
                                             </div>
                                             <div class="radio-content-input">
-                                                <img class="main-img"
-                                                     src="https://hstatic.net/0/0/global/design/seller/image/payment/cod.svg?v=6"
-                                                     alt="COD Payment Method">
+                                                <img class="main-img" src="/img/homeManage/ship_code.jpg" width="50px"
+                                                     height="50px">
                                                 <span class="radio-label-primary">Thanh toán khi giao hàng (COD)</span>
                                             </div>
                                         </label>
@@ -122,7 +127,9 @@
                                                        class="value-payment-method" name="payment_method_id" value="2">
                                             </div>
                                             <div class="radio-content-input">
-                                                <img class="main-img" src="/img/homeManage/vnpay-logo-vinadesign-25-12-59-16.jpg" width="50px" height="50px">
+                                                <img class="main-img"
+                                                     src="/img/homeManage/vnpay-logo-vinadesign-25-12-59-16.jpg"
+                                                     width="50px" height="50px">
                                                 <span class="radio-label-primary">Thanh toán bằng VNPAY</span>
                                             </div>
                                         </label>
@@ -188,42 +195,7 @@
                                              style="display:none; text-align:center;">
                                             <!-- Ảnh sẽ được hiển thị ở đây nếu không có dữ liệu -->
                                         </div>
-
                                         <div id="info-address-for-customer">
-                                            <!-- Danh sách địa chỉ -->
-                                            <!--                                            <div class="list-address-customer" th:each="address : ${listAddress}">-->
-                                            <!--                                                <div class="info-address-shipping d-flex align-items-center border rounded p-2 mb-2 position-relative">-->
-                                            <!--                                                    &lt;!&ndash; Radio button &ndash;&gt;-->
-                                            <!--                                                    <input class="form-check-input me-3" type="radio"-->
-                                            <!--                                                           name="selectedAddress"/>-->
-                                            <!--                                                    &lt;!&ndash; Thông tin địa chỉ &ndash;&gt;-->
-                                            <!--                                                    <div class="address-info flex-grow-1">-->
-                                            <!--                                                        <p class="name-phoneNumber mb-1"-->
-                                            <!--                                                           th:text="${address.nameAndPhoneNumber}"></p>-->
-                                            <!--                                                        <p class="short-address mb-0 text-muted"-->
-                                            <!--                                                           th:text="${address.shortAddress}"></p>-->
-                                            <!--                                                        <input type="hidden" class="id-address"-->
-                                            <!--                                                               th:value="${address.id}"/>-->
-                                            <!--                                                        <input type="hidden" class="original-address"-->
-                                            <!--                                                               th:value="${address.originalAddress}"/>-->
-                                            <!--                                                        <input type="hidden" id="fullAddressInput" class="full-address"-->
-                                            <!--                                                               th:value="${address.fullAddress}"/>-->
-                                            <!--                                                    </div>-->
-                                            <!--                                                    &lt;!&ndash; Nút hành động &ndash;&gt;-->
-                                            <!--                                                    <div class="button-container d-flex gap-1">-->
-                                            <!--                                                        <button class="btn-update-address btn btn-sm btn-outline-primary"-->
-                                            <!--                                                                type="button" data-bs-toggle="modal"-->
-                                            <!--                                                                data-bs-target="#updateAddressModal"-->
-                                            <!--                                                                 onclick="getAddressDetails(this)">-->
-                                            <!--                                                            <i class="fas fa-sync-alt"></i>-->
-                                            <!--                                                        </button>-->
-                                            <!--                                                        <button class="btn-delete-address btn btn-sm btn-outline-danger"-->
-                                            <!--                                                                type="button" onclick="deleteAddressForCustomer(7)">-->
-                                            <!--                                                            <i class="fas fa-trash-alt"></i>-->
-                                            <!--                                                        </button>-->
-                                            <!--                                                    </div>-->
-                                            <!--                                                </div>-->
-                                            <!--                                            </div>-->
                                         </div>
                                         <!-- Nút Thêm Địa Chỉ Mới -->
                                         <div class="add-new-address mt-3 text-center">
@@ -340,12 +312,12 @@
                          aria-labelledby="updateAddressModalLabel" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-scrollable">
                             <div class="modal-content shadow-lg">
-                                <div class="modal-header bg-light text-dark">
+                                <div class="modal-header bg-primary text-white">
                                     <h5 class="modal-title d-flex align-items-center" id="updateAddressModalLabel">
                                         <i class="fas fa-map-marker-alt me-2"></i>
                                         Cập nhật địa chỉ
                                     </h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    <button type="button" class="btn-close" style="color: #2d3748" data-bs-dismiss="modal"
                                             aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body bg-light">
@@ -414,7 +386,8 @@
                                 <!-- Hình ảnh và số lượng -->
                                 <div class="left position-relative me-3">
                                     <div class="item-img">
-                                        <img th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728725582/' + ${item.imageName.get(0).nameImage}" alt=""
+                                        <img th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728725582/' + ${item.imageName.get(0).nameImage}"
+                                             alt=""
                                              style="width: 100px; height: auto; border-radius: 8px;">
                                         <p class="tc line-item-qty text-center bg-light rounded-circle fw-bold position-absolute"
                                            style="width: 30px; height: 30px; top: -5px; right: -5px; font-size: 0.8rem; line-height: 30px; border: 1px solid #ddd;"
@@ -439,7 +412,7 @@
                                 <!-- Nút xóa -->
                                 <button type="button" class="btn-close ms-3" aria-label="Close"></button>
                             </div>
-                            <hr class="my-2">
+                                    <hr class="my-2">
                         </div>
                         <div>
                             <input type="hidden" id="weightShip" th:value="${weight}"/>

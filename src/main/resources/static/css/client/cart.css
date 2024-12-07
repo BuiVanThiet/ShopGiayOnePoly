@@ -339,3 +339,78 @@
     color: #131313; /* Thêm màu xám nếu muốn */
 }
 
+/*Voucher apply*/
+.voucher-apply {
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.voucher-apply:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.voucher-apply img {
+    width: 60px;
+    height: 50px;
+    margin-right: 15px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.voucher-apply .voucher-code-apply {
+    margin-bottom: 5px;
+}
+
+.voucher-apply .voucher-name-voucher-apply {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.voucher-apply .voucher-discount-voucher-apply {
+    font-size: 14px;
+    color: #ff5722;
+    font-weight: 600;
+}
+/* Nút Hủy mặc định */
+/* Nút Hủy mặc định */
+.btn-un-apply-voucher {
+    color: #fff; /* Màu chữ trắng */
+    border: none;
+    border-radius: 5px; /* Bo góc nhẹ */
+    padding: 10px; /* Khoảng cách bên trong */
+    font-size: 0; /* Ẩn chữ */
+    cursor: pointer; /* Con trỏ chuột */
+    position: relative; /* Để hỗ trợ ::before */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Hiệu ứng */
+}
+
+/* Hiệu ứng hover */
+.btn-un-apply-voucher:hover {
+    /*background-color: #cc0000; !* Màu đỏ đậm hơn khi hover *!*/
+    transform: scale(1.05); /* Phóng to nút khi hover */
+}
+
+/* Thêm biểu tượng bằng ::before */
+.btn-un-apply-voucher::before {
+    content: '✖'; /* Biểu tượng dấu X */
+    font-size: 30px; /* Kích thước icon */
+    color: #fff; /* Màu icon */
+    position: absolute; /* Đặt vị trí icon */
+    left: 50%; /* Canh giữa theo chiều ngang */
+    top: 50%; /* Canh giữa theo chiều dọc */
+    transform: translate(-50%, -50%); /* Canh giữa hoàn hảo */
+    transition: transform 0.3s ease; /* Hiệu ứng khi hover */
+}
+
+/* Hiện icon khi hover */
+.btn-un-apply-voucher:hover::before {
+    transform: translate(-50%, -50%) scale(1.2); /* Phóng to icon khi hover */
+}

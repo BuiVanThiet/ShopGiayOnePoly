@@ -98,7 +98,35 @@
 
                         <!-- Danh sách voucher (ban đầu ẩn) -->
                         <div id="voucher-list" style="display: none;">
-                            <h3 class="voucher-title-voucher">Những voucher bạn có thể áp dụng</h3>
+                            <h4 class="voucher-title-voucher">Voucher đang áp dụng</h4>
+                            <div th:if="${selectedVoucher != null}" class="voucher-apply">
+                                <div class="row">
+                                    <div class="col-sm-10" style=" display: flex;">
+                                        <img src="/img/client/category/voucher.png" alt="Voucher Image"
+                                             style="margin-top: 10px">
+                                        <div>
+                                            <span class="voucher-code-apply"
+                                                  th:text="'Mã: ' + ${selectedVoucher.codeVoucher}">Voucher Code</span>
+                                            <br>
+                                            <span class="voucher-name-voucher-apply"
+                                                  th:text="'Tên: ' + ${selectedVoucher.nameVoucher}">Voucher Name</span>
+                                            <br>
+                                            <span id="price-reduced-voucher-apply"
+                                                  class="voucher-discount-voucher-apply"
+                                                  th:text="${selectedVoucher.voucherType == 1 ? 'Giảm: ' + selectedVoucher.priceReduced + '%' : 'Giảm: ' + selectedVoucher.priceReduced + 'đ'}">
+                                                Discount Value
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <button class="btn-un-apply-voucher" onclick="UnApplyVoucherForCart()"></button>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <hr>
+                            <h4 class="voucher-title-voucher">Những voucher bạn có thể áp dụng</h4>
                             <ul class="voucher-list-voucher">
                                 <li th:each="voucher : ${applicableVouchers}">
                                     <div class="cart-voucher-item">
@@ -161,10 +189,10 @@
                                 <span>TIẾP TỤC MUA SẮM</span>
                             </a>
                         </button>
-                            <button type="button" id="cart-checkout"
-                                    class="cart-btn-checkout cart-u-btn cart-u-btn--primary">
-                                <a style="text-decoration: none;" href="/onepoly/payment"> THANH TOÁN</a>
-                            </button>
+                        <button type="button" id="cart-checkout"
+                                class="cart-btn-checkout cart-u-btn cart-u-btn--primary">
+                            <a style="text-decoration: none;" href="/onepoly/payment"> THANH TOÁN</a>
+                        </button>
                     </div>
                 </div>
 
@@ -183,6 +211,7 @@
         <!-- Các script của bạn -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/decimal.js/10.3.1/decimal.min.js"></script>
         <script th:src="@{/ajax/client/cart.js}" type="text/javascript"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     </section>
 </div>
 </body>

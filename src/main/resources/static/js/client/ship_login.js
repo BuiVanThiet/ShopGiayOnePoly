@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
     console.log("Weight ship: " + weight)
-    console.log("Total amount ship: " + totalPriceCartItem)
+    console.log("Total amount: " + totalPriceCartItem)
 
     function calculateShippingFee(serviceId, toDistrictId, toWardCode) {
         // Kiểm tra các thông tin cần thiết
@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (data.code === 200) {
                     // Cập nhật phí vận chuyển
                     const shippingFee = data.data.total;
-                    document.getElementById("spanShippingFee").textContent = `${shippingFee} VND`;
+                    document.getElementById("spanShippingFee").textContent = shippingFee.toLocaleString('en-US') + ' đ';
                     console.log("Gia ship: " + shippingFee)
 
                     calculateTotalPrice();
@@ -105,20 +105,27 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function calculateTotalPrice() {
-        const totalPriceCartItem = parseFloat(document.getElementById("spanTotalPriceCartItem").textContent.replace(/[^0-9.]/g, '').replace(',', '.')) || 0;
-        const priceVoucher = parseFloat(document.getElementById("spanPriceVoucher").textContent.replace(/[^0-9.]/g, '').replace(',', '.')) || 0;
-        const shippingFee = parseFloat(document.getElementById("spanShippingFee").textContent.replace(/[^0-9.]/g, '').replace(',', '.')) || 0;
+        const totalPriceCartItemElement = document.getElementById("spanTotalPriceCartItem");
+        const priceVoucherElement = document.getElementById("spanPriceVoucher");
+        const shippingFeeElement = document.getElementById("spanShippingFee");
+        const totalPriceBillElement = document.getElementById("spanTotalPriceBill");
 
-        console.log("Ship: " + shippingFee);
+        let totalPriceCartItem = parseFloat(totalPriceCartItemElement.textContent.replace(/[^\d.-]/g, '')) || 0;
+        let priceVoucher = parseFloat(priceVoucherElement.textContent.replace(/[^\d.-]/g, '')) || 0;
+        let shippingFee = parseFloat(shippingFeeElement.textContent.replace(/[^\d.-]/g, '')) || 0;
+
+        // Tính tổng tiền
         const totalPriceBill = totalPriceCartItem - priceVoucher + shippingFee;
-        console.log("totalPriceBill: " + totalPriceBill);
 
-        document.getElementById("spanTotalPriceBill").textContent = totalPriceBill.toFixed(2);
+        // Định dạng lại các giá trị và hiển thị
+        totalPriceCartItemElement.textContent = totalPriceCartItem.toLocaleString('en-US') + ' đ';
+        priceVoucherElement.textContent = priceVoucher.toLocaleString('en-US') + ' đ';
+        shippingFeeElement.textContent = shippingFee.toLocaleString('en-US') + ' đ';
+        totalPriceBillElement.textContent = totalPriceBill.toLocaleString('en-US') + ' đ';
     }
 
     autoCalculateShippingFee();
 });
-// Channge address
 document.addEventListener("DOMContentLoaded", function () {
     calculateTotalPrice();
     const spanPriceVoucher = document.getElementById("spanPriceVoucher");
@@ -192,7 +199,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(data => {
                 if (data.code === 200) {
                     const shippingFee = data.data.total;
-                    document.getElementById("spanShippingFee").textContent = `${shippingFee} VND`;
+                    document.getElementById("spanShippingFee").textContent = `${shippingFee} ₫`;
                     calculateTotalPrice();
                     console.log("Phi ship sau khi doi: " + shippingFee)
                     shippingFeeCalculated = true;
@@ -272,12 +279,27 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function calculateTotalPrice() {
-        const totalPriceCartItem = parseFloat(document.getElementById("spanTotalPriceCartItem").textContent.replace(/[^0-9.]/g, '').replace(',', '.')) || 0;
-        const priceVoucher = parseFloat(document.getElementById("spanPriceVoucher").textContent.replace(/[^0-9.]/g, '').replace(',', '.')) || 0;
-        const shippingFee = parseFloat(document.getElementById("spanShippingFee").textContent.replace(/[^0-9.]/g, '').replace(',', '.')) || 0;
+        // Lấy giá trị từ textContent, loại bỏ ký tự không phải số
+        const totalPriceCartItemElement = document.getElementById("spanTotalPriceCartItem");
+        const priceVoucherElement = document.getElementById("spanPriceVoucher");
+        const shippingFeeElement = document.getElementById("spanShippingFee");
+
+        let totalPriceCartItem = parseFloat(totalPriceCartItemElement.textContent.replace(/[^\d.-]/g, '')) || 0;
+        let priceVoucher = parseFloat(priceVoucherElement.textContent.replace(/[^\d.-]/g, '')) || 0;
+        let shippingFee = parseFloat(shippingFeeElement.textContent.replace(/[^\d.-]/g, '')) || 0;
+
+        // Định dạng lại các trường với toLocaleString và thêm ' đ'
+        totalPriceCartItemElement.textContent = totalPriceCartItem.toLocaleString('en-US') + ' đ';
+        priceVoucherElement.textContent = priceVoucher.toLocaleString('en-US') + ' đ';
+        shippingFeeElement.textContent = shippingFee.toLocaleString('en-US') + ' đ';
+
+        // Tính tổng tiền
         const totalPriceBill = totalPriceCartItem - priceVoucher + shippingFee;
-        document.getElementById("spanTotalPriceBill").textContent = totalPriceBill.toFixed(2);
+
+        // Hiển thị kết quả với định dạng số
+        document.getElementById("spanTotalPriceBill").textContent = totalPriceBill.toLocaleString('en-US') + ' đ';
     }
+
 
     function extractAddressParts(fullAddress) {
         if (!fullAddress) {
@@ -394,7 +416,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         option.textContent = district.DistrictName;
                         districtSelect.appendChild(option);
                     });
-                    wardSelect.innerHTML = '<option value="">Chọn Xã, Phường</option>'; // Xóa danh sách xã khi chọn huyện mới
+                    wardSelect.innerHTML = '<option value="">Chọn Xã, Phường</option>';
                 } else {
                     console.error('Lỗi lấy danh sách huyện:', data.message);
                 }
@@ -452,41 +474,56 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function createNewAddress() {
-    // Lấy giá trị từ các trường nhập
-    const fullName = document.getElementById("FullNameCreate").value;
-    const phone = document.getElementById("PhoneCreate").value;
-    const mail = document.getElementById("MailCreate").value;
+    Swal.fire({
+        title: 'Bạn có chắc chắn muốn thêm địa chỉ này hay không này?',
+        text: "Sau khi xác nhận, sẽ thêm mới địa chỉ này.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Xác nhận',
+        cancelButtonText: 'Hủy',
+        customClass: {
+            popup: 'swal-popup'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const fullName = document.getElementById("FullNameCreate").value;
+            const phone = document.getElementById("PhoneCreate").value;
+            const mail = document.getElementById("MailCreate").value;
 
-    // Lấy giá trị từ các select box
-    const provinceId = document.getElementById("province-create").value;
-    const districtId = document.getElementById("district-create").value;
-    const wardCode = document.getElementById("ward-create").value;
+            // Lấy giá trị từ các select box
+            const provinceId = document.getElementById("province-create").value;
+            const districtId = document.getElementById("district-create").value;
+            const wardCode = document.getElementById("ward-create").value;
 
-    // Lấy tên hiển thị của tỉnh, huyện, xã
-    const province = document.getElementById("province-create").options[document.getElementById("province-create").selectedIndex].text;
-    const district = document.getElementById("district-create").options[document.getElementById("district-create").selectedIndex].text;
-    const ward = document.getElementById("ward-create").options[document.getElementById("ward-create").selectedIndex].text;
+            // Lấy tên hiển thị của tỉnh, huyện, xã
+            const province = document.getElementById("province-create").options[document.getElementById("province-create").selectedIndex].text;
+            const district = document.getElementById("district-create").options[document.getElementById("district-create").selectedIndex].text;
+            const ward = document.getElementById("ward-create").options[document.getElementById("ward-create").selectedIndex].text;
 
-    // Lấy địa chỉ cụ thể
-    const specificAddress = document.getElementById("specificAddressCreate").value;
+            // Lấy địa chỉ cụ thể
+            const specificAddress = document.getElementById("specificAddressCreate").value;
 
-    // Ghép địa chỉ đầy đủ
-    const fullAddressText = `${specificAddress},${ward},${district},${province}`;
-    const addressForCustomerText = `${fullName},${phone},${mail},${provinceId},${districtId},${wardCode},${fullAddressText}`
+            // Ghép địa chỉ đầy đủ
+            const fullAddressText = `${specificAddress},${ward},${district},${province}`;
+            const addressForCustomerText = `${fullName},${phone},${mail},${provinceId},${districtId},${wardCode},${fullAddressText}`
 
 
-    // Gửi yêu cầu AJAX
-    $.ajax({
-        url: "/api-client/new-address-customer",
-        type: "POST",
-        contentType: "application/json",
-        data: JSON.stringify(addressForCustomerText),
-        success: function (response) {
-            alert(response);
-            $("#addNewAddressModal").modal("hide");
-        },
-        error: function (xhr) {
-            alert("Có lỗi xảy ra khi thêm địa chỉ: " + xhr.responseText);
+            // Gửi yêu cầu AJAX
+            $.ajax({
+                url: "/api-client/new-address-customer",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(addressForCustomerText),
+                success: function (response) {
+                    createToast(response.check, response.message);
+                    listAddressForCustomer();
+                    $("#addNewAddressModal").modal("hide");
+                    $("#changeAddressModal").modal("show");
+                },
+                error: function (xhr) {
+                    alert("Có lỗi xảy ra khi thêm địa chỉ: " + xhr.responseText);
+                }
+            });
         }
     });
 }
@@ -600,6 +637,18 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 let selectedAddressId = null;
+$(document).on('click', '.btn-update-address', function () {
+    // Lấy phần tử cha gần nhất có class "info-address-shipping"
+    const parentElement = $(this).closest('.info-address-shipping');
+    if (parentElement.length) {
+        // Gán giá trị ID vào biến toàn cục `selectedAddressId`
+        selectedAddressId = parentElement.find('.id-address').val();
+        console.log("ID địa chỉ được chọn:", selectedAddressId);
+    } else {
+        console.error("Không tìm thấy phần tử cha với class .info-address-shipping");
+    }
+});
+
 
 function getAddressDetails(buttonElement) {
     // Lấy giá trị original address từ input hidden
@@ -671,61 +720,132 @@ function getAddressDetails(buttonElement) {
     }
 }
 
-document.querySelectorAll('.btn-update-address').forEach(button => {
-    button.addEventListener('click', function () {
-        // Lấy ID của địa chỉ từ hidden input trong phần tử cha
-        selectedAddressId = this.closest('.info-address-shipping').querySelector('.id-address').value;
-        console.log("ID địa chỉ được chọn:", selectedAddressId);
-    });
-});
 
 // Hàm cập nhật địa chỉ khi ấn nút "Cập nhật"
 function updateAddress() {
-    // Lấy thông tin từ các trường nhập liệu
-    const fullName = document.getElementById("FullNameUpdate").value;
-    const phone = document.getElementById("PhoneUpdate").value;
-    const mail = document.getElementById("MailUpdate").value;
-    const provinceId = document.getElementById("province-update").value;
-    const districtId = document.getElementById("district-update").value;
-    const wardCode = document.getElementById("ward-update").value;
 
-    // Lấy tên tỉnh, huyện, xã
-    const province = document.getElementById("province-update").options[document.getElementById("province-update").selectedIndex].text;
-    const district = document.getElementById("district-update").options[document.getElementById("district-update").selectedIndex].text;
-    const ward = document.getElementById("ward-update").options[document.getElementById("ward-update").selectedIndex].text;
+    Swal.fire({
+        title: 'Bạn có chắc chắn muốn cập nhật địa chỉ này hay không?',
+        text: "Sau khi xác nhận, địa chỉ của bạn sẽ được cập nhật.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Xác nhận',
+        cancelButtonText: 'Hủy',
+        customClass: {
+            popup: 'swal-popup'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const fullName = document.getElementById("FullNameUpdate").value;
+            const phone = document.getElementById("PhoneUpdate").value;
+            const mail = document.getElementById("MailUpdate").value;
+            const provinceId = document.getElementById("province-update").value;
+            const districtId = document.getElementById("district-update").value;
+            const wardCode = document.getElementById("ward-update").value;
 
-    const specificAddress = document.getElementById("specificAddressUpdate").value;
+            const province = document.getElementById("province-update").options[document.getElementById("province-update").selectedIndex].text;
+            const district = document.getElementById("district-update").options[document.getElementById("district-update").selectedIndex].text;
+            const ward = document.getElementById("ward-update").options[document.getElementById("ward-update").selectedIndex].text;
 
-    // Ghép thành địa chỉ đầy đủ
-    const fullAddressText = `${specificAddress}, ${ward}, ${district}, ${province}`;
-    const addressForCustomerText = `${fullName},${phone},${mail},${provinceId},${districtId},${wardCode},${fullAddressText}`;
+            const specificAddress = document.getElementById("specificAddressUpdate").value;
 
-    if (!selectedAddressId) {
-        alert("Bạn chưa chọn địa chỉ để cập nhật!");
-        return;
-    }
+            const fullAddressText = `${specificAddress}, ${ward}, ${district}, ${province}`;
+            const addressForCustomerText = `${fullName},${phone},${mail},${provinceId},${districtId},${wardCode},${fullAddressText}`;
+            console.log("ID dia chi khi update: " + selectedAddressId);
+            if (!selectedAddressId) {
+                alert("Bạn chưa chọn địa chỉ để cập nhật!");
+                return;
+            }
 
-    // Chuẩn bị dữ liệu gửi đến server
-    const addressForCustomerRequest = {
-        addressCustomer: addressForCustomerText
-    };
+            // Chuẩn bị dữ liệu gửi đến server
+            const addressForCustomerRequest = {
+                addressCustomer: addressForCustomerText
+            };
 
-    // Gửi request AJAX
-    $.ajax({
-        url: '/api-client/update-address-customer/' + selectedAddressId,
-        type: "POST",
-        contentType: "application/json",
-        data: JSON.stringify(addressForCustomerRequest),
-        success: function (response) {
-            console.log("Response từ server:", response);
-            alert("Cập nhật thành công!");
-            $("#updateAddressModal").modal("hide");
-        },
-        error: function (xhr) {
-            console.error("Error status:", xhr.status);
-            console.error("Error response:", xhr.responseText);
-            alert("Có lỗi xảy ra khi cập nhật địa chỉ: " + xhr.responseText);
+            // Gửi request AJAX
+            $.ajax({
+                url: '/api-client/update-address-customer/' + selectedAddressId,
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(addressForCustomerRequest),
+                success: function (response) {
+                    createToast(response.check, response.message);
+                    listAddressForCustomer();
+                    $("#updateAddressModal").modal("hide");
+                    $("#changeAddressModal").modal("show");
+                },
+                error: function (xhr) {
+                    console.error("Error status:", xhr.status);
+                    console.error("Error response:", xhr.responseText);
+                    alert("Có lỗi xảy ra khi cập nhật địa chỉ: " + xhr.responseText);
+                }
+            });
         }
     });
 }
 
+
+// AJAX để lấy danh sách địa chỉ
+function listAddressForCustomer() {
+    $.ajax({
+        type: 'GET',
+        url: '/api-client/list-address-for-customer',
+        success: function (response) {
+            var div = $('#info-address-for-customer');
+            var noData = $('#noData-info-address-for-customer');
+            div.empty();
+
+            if (response.length === 0) {
+                noData.html(`
+                        <img src="https://res.cloudinary.com/dfy4umpja/image/upload/v1725477250/jw3etgwdqqxtkevcxisq.png"
+                             alt="Lỗi ảnh" style="width: auto; height: 100px;">
+                             <p class="text-center">Không có địa chỉ nào!</p>
+                    `);
+                noData.show();
+                div.hide();
+            } else {
+                noData.hide(); // Ẩn phần chứa ảnh nếu có dữ liệu
+                div.show(); // Hiển thị lại table nếu có dữ liệu
+
+                response.forEach(function (listAddress, index) {
+                    div.append(`
+                    <div class="list-address-customer">
+                        <div class="info-address-shipping d-flex align-items-center border rounded p-2 mb-2 position-relative">
+                            <!-- Radio button -->
+                            <input class="form-check-input me-3" type="radio" name="selectedAddress"/>
+                            <!-- Thông tin địa chỉ -->
+                            <div class="address-info flex-grow-1">
+                                <input type="hidden" class="id-address" value="${listAddress.id}"/>
+                                <p class="name-phoneNumber mb-1">${listAddress.nameAndPhoneNumber}</p>
+                                <p class="short-address mb-0 text-muted">${listAddress.shortAddress}</p>
+                                <input type="hidden" class="original-address" value="${listAddress.originalAddress}"/>
+                                <input type="hidden" id="fullAddressInput" value="${listAddress.fullAddress}" class="full-address"/>
+                            </div>
+                            <!-- Nút hành động -->
+                            <div class="button-container d-flex gap-1">
+                                <button class="btn-update-address btn btn-sm btn-outline-primary"
+                                        type="button" data-bs-toggle="modal"
+                                        data-bs-target="#updateAddressModal">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                                <button class="btn-delete-address btn btn-sm btn-outline-danger"
+                                        type="button" onclick="deleteAddressForCustomer(${listAddress.id})">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `);
+                });
+            }
+        },
+        error: function (xhr) {
+            console.error('Lỗi: ' + xhr.responseText);
+        }
+    });
+}
+
+// Khi trang đã sẵn sàng
+$(document).ready(function () {
+    listAddressForCustomer();
+});

@@ -203,19 +203,31 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function calculateTotalPrice() {
-        const totalPriceCartItem = parseFloat(document.getElementById("spanTotalPriceCartItem").textContent.replace(/[^0-9.]/g, '').replace(',', '.')) || 0; // Thay dấu phẩy bằng dấu chấm
-        const priceVoucher = parseFloat(document.getElementById("spanPriceVoucher").textContent.replace(/[^0-9.]/g, '').replace(',', '.')) || 0; // Thay dấu phẩy bằng dấu chấm
-        const shippingFee = parseFloat(document.getElementById("spanShippingFee").textContent.replace(/[^0-9.]/g, '').replace(',', '.')) || 0; // Thay dấu phẩy bằng dấu chấm
+        // Lấy các phần tử DOM
+        const totalPriceCartItemElement = document.getElementById("spanTotalPriceCartItem");
+        const priceVoucherElement = document.getElementById("spanPriceVoucher");
+        const shippingFeeElement = document.getElementById("spanShippingFee");
+        const totalPriceBillElement = document.getElementById("spanTotalPriceBill");
 
-        console.log("Ship: " + shippingFee);
+        // Chuyển đổi giá trị textContent sang số, xử lý các ký tự không hợp lệ
+        let totalPriceCartItem = parseFloat(totalPriceCartItemElement.textContent.replace(/[^\d.-]/g, '')) || 0;
+        let priceVoucher = parseFloat(priceVoucherElement.textContent.replace(/[^\d.-]/g, '')) || 0;
+        let shippingFee = parseFloat(shippingFeeElement.textContent.replace(/[^\d.-]/g, '')) || 0;
 
         // Tính tổng tiền
         const totalPriceBill = totalPriceCartItem - priceVoucher + shippingFee;
 
-        console.log("totalPriceBill: " + totalPriceBill);
+        // Định dạng lại các giá trị và hiển thị
+        totalPriceCartItemElement.textContent = totalPriceCartItem.toLocaleString('en-US')+ ' đ';
+        priceVoucherElement.textContent = priceVoucher.toLocaleString('en-US') + ' đ';
+        shippingFeeElement.textContent = shippingFee.toLocaleString('en-US') + ' đ';
+        totalPriceBillElement.textContent = totalPriceBill.toLocaleString('en-US') + ' đ';
 
-        document.getElementById("spanTotalPriceBill").textContent = totalPriceBill.toFixed(2);
+        // Debug (nếu cần)
+        console.log("Shipping Fee:", shippingFee);
+        console.log("Total Price Bill:", totalPriceBill);
     }
+
     document.getElementById("FullName").addEventListener("input", updateAddress);
     document.getElementById("Phone").addEventListener("input", updateAddress);
     document.getElementById("Mail").addEventListener("input", updateAddress);

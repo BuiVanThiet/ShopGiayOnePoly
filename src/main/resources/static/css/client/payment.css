@@ -567,9 +567,8 @@ button.btn-secondary:hover {
 
 /* Nút "Quay lại giỏ hàng" */
 .btn-return-cart {
-    background-color: #a0a0a1; /* Màu xám */
+    background-color: #818181; /* Màu xám */
     color: #fff; /* Chữ trắng để nổi bật */
-    /*font-weight: bold; !* Chữ đậm *!*/
     padding: 0.75rem 1.5rem; /* Khoảng cách bên trong */
     border: none; /* Loại bỏ đường viền */
     border-radius: 5px; /* Bo góc mềm mại */
@@ -581,7 +580,7 @@ button.btn-secondary:hover {
 
 /* Hiệu ứng hover */
 .btn-return-cart:hover {
-    background-color: #5a6268; /* Màu xám đậm hơn khi hover */
+    background-color: #7b7b7c; /* Màu xám đậm hơn khi hover */
     transform: scale(1.05); /* Tăng nhẹ kích thước */
     box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.15); /* Đổ bóng mạnh hơn */
 }
@@ -590,4 +589,12 @@ button.btn-secondary:hover {
 .btn-return-cart:active {
     transform: scale(0.98); /* Giảm nhẹ kích thước */
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Đổ bóng nhỏ hơn */
+}
+
+
+/*Custom giao diện         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> */
+.swal-popup {
+    max-width: 500px; /* Kích thước nhỏ hơn */
+    padding: 15px;    /* Thu nhỏ khoảng cách bên trong */
+    font-size: 12px;  /* Thu nhỏ kích thước chữ */
 }
