@@ -244,7 +244,6 @@ public class ClientController extends BaseBill {
         System.out.println("List size voucher: " + applicableVouchers.size());
         VoucherClientResponse selectedVoucher = (VoucherClientResponse) session.getAttribute("selectedVoucher");
         BigDecimal priceReduced = BigDecimal.ZERO;
-
         if (selectedVoucher != null) {
             model.addAttribute("selectedVoucher", selectedVoucher);
             System.out.println("ID Voucher selected: " + selectedVoucher.getId());
@@ -265,8 +264,10 @@ public class ClientController extends BaseBill {
             model.addAttribute("typeVoucherApply", selectedVoucher.getVoucherType());
             session.setAttribute("idVoucherApply", idVoucherApply);
             session.setAttribute("selectedVoucher", selectedVoucher);
+            model.addAttribute("selectedVoucher", selectedVoucher);
             System.out.println("Session priceReduced :" + priceReduced);
             System.out.println("Session idVoucherApply :" + idVoucherApply);
+            model.addAttribute("selectedVoucher", selectedVoucher);
         } else {
             System.out.println("Không có voucher selected.");
         }

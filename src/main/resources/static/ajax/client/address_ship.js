@@ -1,16 +1,29 @@
-
 function deleteAddressForCustomer(idAddress) {
-    $.ajax({
-        url: '/api-client/delete/address-customer/' + idAddress,
-        type: 'GET',
-        success: function (response) {
-            createToast(response.check, response.message);
-            listAddressForCustomer()
-        },
-        error: function (error) {
-            console.log("Xóa thất bại: " + error.text());
+    Swal.fire({
+        title: 'Bạn có chắc chắn muốn xóa địa chỉ này hay không này?',
+        text: "Sau khi xác nhận, địa chỉ này sẽ bị xóa và không thể khôi phục.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Xác nhận',
+        cancelButtonText: 'Hủy',
+        customClass: {
+            popup: 'swal-popup'
         }
-    })
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: '/api-client/delete/address-customer/' + idAddress,
+                type: 'GET',
+                success: function (response) {
+                    createToast(response.check, response.message);
+                    listAddressForCustomer()
+                },
+                error: function (error) {
+                    console.log("Xóa thất bại: " + error.text());
+                }
+            })
+        }
+    });
 }
 
 function listAddressForCustomer() {
@@ -22,7 +35,7 @@ function listAddressForCustomer() {
             var noData = $('#noData-info-address-for-customer');
             div.empty();
 
-            if(response.length === 0) {
+            if (response.length === 0) {
                 noData.html(`
                         <img src="https://res.cloudinary.com/dfy4umpja/image/upload/v1725477250/jw3etgwdqqxtkevcxisq.png"
                              alt="Lỗi ảnh" style="width: auto; height: 100px;">
@@ -30,11 +43,11 @@ function listAddressForCustomer() {
                     `);
                 noData.show();
                 div.hide();
-            }else {
+            } else {
                 noData.hide(); // Ẩn phần chứa ảnh nếu có dữ liệu
                 div.show(); // Hiển thị lại table nếu có dữ liệu
 
-                response.forEach(function(listAddress, index) {
+                response.forEach(function (listAddress, index) {
                     div.append(`
                     <div class="list-address-customer">
                         <div class="info-address-shipping d-flex align-items-center border rounded p-2 mb-2 position-relative">
@@ -68,7 +81,7 @@ function listAddressForCustomer() {
             }
         },
         error: function (xhr) {
-            console.error('loi '+xhr.responseText)
+            console.error('loi ' + xhr.responseText)
         }
     })
 }

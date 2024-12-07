@@ -1,59 +1,71 @@
 // Hàm áp dụng voucher và cập nhật giá trị giỏ hàng
 function applyVoucher() {
-    const selectedRadio = document.querySelector('input[name="radioVoucher"]:checked');
-    if (selectedRadio) {
-        const voucherId = selectedRadio.closest('.cart-voucher-item').querySelector('.voucher-id').textContent.trim();
-        console.log("ID Voucher: " + voucherId);
-        const totalPrice = parseFloat(document.getElementById('totalPriceCartItem').textContent.trim().replace(/₫|,/g, '')) || 0;
-        console.log("Tổng tiền: " + totalPrice);
+    Swal.fire({
+        title: 'Bạn có chắc chắn muốn áp dụng phiếu giảm giá này không?',
+        text: "Sau khi xác nhận, bạn sẽ áp dụng đợt giảm giá cho đơn hàng của bạn.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Xác nhận',
+        cancelButtonText: 'Hủy'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const selectedRadio = document.querySelector('input[name="radioVoucher"]:checked');
+            if (selectedRadio) {
+                const voucherId = selectedRadio.closest('.cart-voucher-item').querySelector('.voucher-id').textContent.trim();
+                console.log("ID Voucher: " + voucherId);
+                const totalPrice = parseFloat(document.getElementById('totalPriceCartItem').textContent.trim().replace(/₫|,/g, '')) || 0;
+                console.log("Tổng tiền: " + totalPrice);
+                $.ajax({
+                    url: `/api-client/selected-voucher/${voucherId}`,
+                    method: 'GET',
+                    success: function (data) {
+                        if (data.check === '1') {
+                            createToast(data.check, data.message);
+                            const discountType = data.voucherType; // Lấy kiểu giảm giá
+                            const discountValue = parseFloat(data.priceReduced) || 0; // Lấy giá trị giảm giá
 
-        $.ajax({
-            url: `/api-client/selected-voucher/${voucherId}`,
-            method: 'GET',
-            success: function (data) {
-                if (data) {
-                    alert('Voucher đã được chọn thành công!');
-                    const discountType = data.voucherType;
-                    const discountValue = parseFloat(data.priceReduced) || 0;
+                            // Kiểm tra giá trị hợp lệ của voucherType và priceReduced
+                            if (isNaN(discountType) || isNaN(discountValue)) {
+                                alert("Dữ liệu giảm giá không hợp lệ.");
+                                return;
+                            }
 
-                    // Kiểm tra giá trị hợp lệ của voucherType và priceReduced
-                    if (isNaN(discountType) || isNaN(discountValue)) {
-                        alert("Dữ liệu giảm giá không hợp lệ.");
-                        return;
+                            const voucherTypeElem = document.getElementById('type-voucher-apply');
+                            if (voucherTypeElem) {
+                                voucherTypeElem.innerText = discountType === 1 ? 'Giảm theo phần trăm' : 'Giảm theo giá trị';
+                            }
+
+                            console.log("Voucher Type: " + discountType);
+
+                            // Tính toán giá giảm
+                            let priceReduced = calculateDiscount(totalPrice, discountType, discountValue);
+                            if (isNaN(priceReduced)) {
+                                console.warn("Giá giảm tính toán không hợp lệ.");
+                                priceReduced = 0;
+                            }
+
+                            const finalPrice = Math.max(0, totalPrice - priceReduced);
+                            updateCartDisplay(priceReduced, finalPrice);
+
+                            // Lưu trữ thông tin giảm giá vào sessionStorage
+                            sessionStorage.setItem('priceVoucherReduced', priceReduced.toLocaleString('en-US') + ' ₫');
+                            setTimeout(function () {
+                                sessionStorage.setItem('finalPrice', finalPrice.toLocaleString('en-US') + ' ₫');
+                                sessionStorage.setItem('priceReduced', priceReduced.toLocaleString('en-US') + ' ₫');
+                                window.location.reload(); // reload trang sau khi cập nhật giá trị
+                            }, 3500); // Đợi một chút để cập nhật sessionStorage trước khi reload
+                        } else {
+                            alert('Voucher không tồn tại hoặc đã hết hạn.');
+                        }
+                    },
+                    error: function (error) {
+                        console.error('Lỗi:', error);
+                        alert('Có lỗi xảy ra khi chọn voucher.');
                     }
-                    const voucherTypeElem = document.getElementById('type-voucher-apply');
-                    if (voucherTypeElem) {
-                        voucherTypeElem.innerText = discountType;
-                    }
-                    console.log("Voucer Type: " + discountType)
-                    // Tính toán giá giảm
-                    let priceReduced = calculateDiscount(totalPrice, discountType, discountValue);
-                    if (isNaN(priceReduced)) {
-                        console.warn("Giá giảm tính toán không hợp lệ.");
-                        priceReduced = 0;
-                    }
-
-                    const finalPrice = Math.max(0, totalPrice - priceReduced);
-
-                    updateCartDisplay(priceReduced, finalPrice);
-
-                    // Lưu trữ thông tin giảm giá vào sessionStorage
-                    sessionStorage.setItem('priceVoucherReduced', priceReduced.toLocaleString('en-US') + ' ₫');
-                    setTimeout(function () {
-                        sessionStorage.setItem('finalPrice', finalPrice.toLocaleString('en-US') + ' ₫');
-                        sessionStorage.setItem('priceReduced', priceReduced.toLocaleString('en-US') + ' ₫');
-                        window.location.reload();
-                    }, 300);
-                } else {
-                    alert('Voucher không tồn tại hoặc đã hết hạn.');
-                }
-            },
-            error: function (error) {
-                console.error('Lỗi:', error);
-                alert('Có lỗi xảy ra khi chọn voucher.');
+                });
             }
-        });
-    }
+        }
+    });
 }
 
 
@@ -276,8 +288,6 @@ document.addEventListener("DOMContentLoaded", function () {
         totalPrice = Math.max(0, totalPrice);  // Đảm bảo tổng tiền không âm
         document.getElementById("totalPriceCartItem").innerText = totalPrice.toLocaleString('en-US') + " ₫";
 
-        // Lấy thông tin giảm giá
-        const voucherTypeElem = document.getElementById("type-voucher-apply").value;
         const priceReducedElem = document.getElementById("priceVoucherReduced");
 
 
@@ -308,6 +318,38 @@ document.addEventListener("DOMContentLoaded", function () {
     });
     calculateTotalPrice();
 });
+
+function UnApplyVoucherForCart() {
+    Swal.fire({
+        title: 'Bạn có chắc chắn muốn hủy áp dụng phiếu giảm giá này không?',
+        text: "Sau khi xác nhận, bạn sẽ hủy áp dụng.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Xác nhận',
+        cancelButtonText: 'Hủy'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: '/api-client/un-apply-voucher',
+                type: 'GET',
+                success: function (response) {
+                    createToast(response.check, response.message);
+                    if (response.check === '1') {
+                        setTimeout(function () {
+                            location.reload();
+                        }, 3500);
+                        createToast(response.check, response.message);
+                    }
+                },
+                error: function (error) {
+                    console.log("Xóa thất bại: " + error.responseText);
+                }
+            })
+        }
+    });
+}
+
+
 document.querySelectorAll('.cart-price-item').forEach(el => {
     const price = parseFloat(el.getAttribute('data-price'));
     el.textContent = Math.floor(price).toLocaleString('en-US') + " ₫";

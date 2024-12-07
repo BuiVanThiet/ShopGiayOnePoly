@@ -60,6 +60,9 @@ public class ClientRestController extends BaseEmail {
     BillService billService;
 
     @Autowired
+    VoucherService voucherService;
+
+    @Autowired
     AddressShipRepository addressShipRepository;
     @Autowired
     protected PdfTemplateService pdfTemplateService;
@@ -88,15 +91,50 @@ public class ClientRestController extends BaseEmail {
 
     @GetMapping("/selected-voucher/{id}")
     @ResponseBody
-    public VoucherClientResponse VoucherResponseByID(@PathVariable("id") Integer idVoucher, HttpSession session) {
+    public ResponseEntity<Map<String, Object>> VoucherResponseByID(@PathVariable("id") Integer idVoucher, HttpSession session) {
+        Map<String, Object> messages = new HashMap<>();
         VoucherClientResponse selectedVoucher = clientService.findVoucherApplyByID(idVoucher);
+
         if (selectedVoucher == null) {
             System.out.println("Voucher không tồn tại");
-            return null;
+            messages.put("message", "Voucher không tồn tại hoặc đã hết hạn.");
+            messages.put("check", "0");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(messages);
         }
+
+        // Lưu voucher vào session
         session.setAttribute("selectedVoucher", selectedVoucher);
         System.out.println("Voucher đã chọn: " + selectedVoucher);
-        return selectedVoucher;
+
+        // Trả về thông tin voucher cùng với check và message
+        messages.put("message", "Áp dụng voucher thành công!");
+        messages.put("check", "1");
+        messages.put("voucherType", selectedVoucher.getVoucherType());
+        messages.put("priceReduced", selectedVoucher.getPriceReduced());
+
+        return ResponseEntity.ok(messages);
+    }
+
+
+    @GetMapping("un-apply-voucher")
+    public ResponseEntity<Map<String, String>> unApplyVoucherForCart(Model model, HttpSession session) {
+        Map<String, String> messages = new HashMap<>();
+
+        session.removeAttribute("idVoucherApply");
+        session.removeAttribute("selectedVoucher");
+        session.removeAttribute("priceReduced");
+
+        model.addAttribute("typeVoucherApply", null);
+        model.addAttribute("priceReducedShow", null);
+        model.addAttribute("priceReduced", null);
+        model.addAttribute("finalPrice", null);
+        model.addAttribute("selectedVoucher", null);
+
+
+        messages.put("message", "Hủy áp dụng voucher thành công!");
+        messages.put("check", "1");
+
+        return ResponseEntity.ok(messages);
     }
 
     @GetMapping("/quantity/{id}")
@@ -226,7 +264,6 @@ public class ClientRestController extends BaseEmail {
         model.addAttribute("clientLogin", clientLoginResponse);
         response.put("success", true);
         response.put("message", "Thêm sản phẩm vào giỏ hàng thành công.");
-
         return ResponseEntity.ok(response);
     }
 
@@ -238,14 +275,14 @@ public class ClientRestController extends BaseEmail {
             ProductDetail productDetail = cartItem.getProductDetail();
             BigDecimal discountedPrice = clientService.findDiscountedPriceByProductDetailId(productDetail.getId());
             return new CartResponse(
-                    cartItem.getId(), // ID của mục giỏ hàng
-                    cartItem.getCustomer().getId(), // ID khách hàng
-                    productDetail.getId(), // ID sản phẩm chi tiết
-                    productDetail.getProduct().getNameProduct(), // Tên sản phẩm
+                    cartItem.getId(),
+                    cartItem.getCustomer().getId(),
+                    productDetail.getId(),
+                    productDetail.getProduct().getNameProduct(),
                     productDetail.getColor().getNameColor(),
                     productDetail.getSize().getNameSize(),
-                    cartItem.getQuantity(), // Số lượng
-                    productDetail.getPrice(), // Giá gốc
+                    cartItem.getQuantity(),
+                    productDetail.getPrice(),
                     discountedPrice,
                     productDetail.getProduct().getImages()
             );
@@ -297,11 +334,7 @@ public class ClientRestController extends BaseEmail {
                 messages.put("messages", "Khách hàng chưa đăng nhập");
                 return ResponseEntity.ok(messages);
             }
-
-            // Lấy giỏ hàng từ cơ sở dữ liệu
             List<Cart> cartItems = clientService.findListCartByIdCustomer(customerID);
-
-            // Duyệt qua từng sản phẩm trong giỏ hàng và cập nhật
             for (Cart cart : cartItems) {
                 if (cart.getProductDetail().getId().equals(idProductDetailFromCart)) {
                     if (quantityItem <= 0) {
@@ -338,7 +371,6 @@ public class ClientRestController extends BaseEmail {
                 messages.put("messages", "Sản phẩm không được tìm thấy trong giỏ hàng.");
             }
         } else {
-            // Logic khi chưa đăng nhập (dùng sessionCart)
             if (sessionCart.containsKey(idProductDetailFromCart)) {
                 if (quantityItem <= 0) {
                     messages.put("messages", "Số lượng sản phẩm phải lớn hơn 0");
@@ -388,7 +420,6 @@ public class ClientRestController extends BaseEmail {
         Map<String, Object> response = new HashMap<>();
 
         if (clientLoginResponse != null) {
-            // Người dùng đã đăng nhập
             Integer customerId = clientLoginResponse.getId();
             Customer customer = customerRepository.findById(customerId).orElse(null);
             if (customer == null) {
@@ -454,10 +485,10 @@ public class ClientRestController extends BaseEmail {
     }
 
     @PostMapping("/new-address-customer")
-    public ResponseEntity<String> createNewAddressForCustomer(HttpSession session,
-                                                              @RequestBody AddressForCustomerRequest addressForCustomerRequest) {
+    public ResponseEntity<Map<String, String>> createNewAddressForCustomer(HttpSession session,
+                                                                           @RequestBody AddressForCustomerRequest addressForCustomerRequest) {
         String addressForCustomer = String.valueOf(addressForCustomerRequest.getAddressCustomer());
-
+        Map<String, String> response = new HashMap<>();
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
         Integer idCustomerLogin = clientLoginResponse.getId();
         if (idCustomerLogin != null) {
@@ -469,24 +500,29 @@ public class ClientRestController extends BaseEmail {
             addressShip.setUpdateDate(new Date());
             addressShip.setStatus(1);
             addressShipRepository.save(addressShip);
-            return ResponseEntity.ok("Thêm địa chỉ mới thành công");
+            response.put("message", "Thêm địa chỉ mới thành công");
+            response.put("check", "1");
+            return ResponseEntity.ok(response);
         }
-        return ResponseEntity.ok("Thêm địa chỉ mới thất bại");
+        response.put("message", "Thêm địa chỉ mới thất bại");
+        response.put("check", "3");
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/edit-address-customer/{idAddress}")
     public ResponseEntity<AddressShip> getAddressDetails(@PathVariable("idAddress") Integer idAddress) {
         AddressShip addressShip = addressShipRepository.findById(idAddress).orElse(null);
         if (addressShip == null) {
-            return ResponseEntity.notFound().build();  // Trả về mã 404 nếu không tìm thấy địa chỉ
+            return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(addressShip);
     }
 
     @PostMapping("/update-address-customer/{idAddress}")
-    public ResponseEntity<String> updateAddressForCustomer(HttpSession session,
-                                                           @PathVariable("idAddress") Integer idAddress,
-                                                           @RequestBody AddressForCustomerRequest addressForCustomerRequest) {
+    public ResponseEntity<Map<String, String>> updateAddressForCustomer(HttpSession session,
+                                                                        @PathVariable("idAddress") Integer idAddress,
+                                                                        @RequestBody AddressForCustomerRequest addressForCustomerRequest) {
+        Map<String, String> response = new HashMap<>();
         String addressForCustomer = String.valueOf(addressForCustomerRequest.getAddressCustomer());
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
         Integer idCustomerLogin = clientLoginResponse.getId();
@@ -494,13 +530,17 @@ public class ClientRestController extends BaseEmail {
             AddressShip addressShip = addressShipRepository.findById(idAddress).orElse(null);
 
             if (addressShip == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Địa chỉ không tồn tại");
+                response.put("message", "Địa chỉ không được để trống");
+                response.put("check", "2");
+                return ResponseEntity.ok(response);
             }
 
             Customer customer = customerService.getCustomerByID(idCustomerLogin);
 
             if (customer == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Khách hàng không tồn tại");
+                response.put("message", "Khách hàng không tồn tại");
+                response.put("check", "2");
+                return ResponseEntity.ok(response);
             }
             addressShip.setCustomer(customer);
             addressShip.setSpecificAddress(addressForCustomer);
@@ -510,12 +550,16 @@ public class ClientRestController extends BaseEmail {
 
             addressShipRepository.save(addressShip);
             System.out.println("Cập nhật địa chỉ thành công");
-            return ResponseEntity.ok("Cập nhật địa chỉ thành công");
+            response.put("message", "Cập nhật địa chỉ thành công");
+            response.put("check", "1");
+            return ResponseEntity.ok(response);
         }
         System.out.println("Cập nhật địa chỉ thất bại");
-        // Trả về phản hồi lỗi nếu khách hàng chưa đăng nhập
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Bạn cần đăng nhập để cập nhật địa chỉ");
+        response.put("message", "Bạn cần đăng nhập để cập nhật địa chỉ");
+        response.put("check", "2");
+        return ResponseEntity.ok(response);
     }
+
 
     @GetMapping("/delete/address-customer/{idAddress}")
     public ResponseEntity<Map<String, String>> deleteAddressForCustomer(@PathVariable("idAddress") Integer idAddress) {

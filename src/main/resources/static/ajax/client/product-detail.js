@@ -157,6 +157,21 @@ function checkQuantity() {
 }
 
 $(document).ready(function () {
+    const discountType = document.getElementById("discount-type-new").value;
+    const discountValue = document.getElementById("voucher-value-new").innerText;
+    const valueTypeSpan = document.getElementById("value-type");
+    const voucherValueSpan = document.getElementById("voucher-value-new");
+    console.log("Type vouccher: " + discountType)
+    if (discountType === "1") {
+        // Nếu discountType = 1 (giảm theo %)
+        valueTypeSpan.innerText = "%";
+        voucherValueSpan.innerText = Math.round(discountValue.toLocaleString("en-US"));
+    } else if (discountType === "2") {
+        // Nếu discountType = 2 (giảm theo VND)
+        valueTypeSpan.innerText = "₫";
+        voucherValueSpan.innerText = parseFloat(discountValue).toLocaleString('en-US');
+    }
+
     checkQuantity();
 });
 

@@ -4,7 +4,6 @@ document.addEventListener("DOMContentLoaded", function () {
         toggle.addEventListener("click", function () {
             const content = this.nextElementSibling;
             const icon = this.querySelector(".toggle-icon");
-
             if (content.classList.contains("content-hidden")) {
                 content.classList.remove("content-hidden");
                 icon.classList.add("rotate");
@@ -14,6 +13,6 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     });
-    const voucherValue= document.getElementById("voucher-value-new");
-    voucherValue.innerText =
+
+
 });

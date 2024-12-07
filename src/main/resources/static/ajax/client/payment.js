@@ -1,49 +1,3 @@
-
-// document.getElementById("FullName").addEventListener("blur", function () {
-//     const fullName = this.value.trim();
-//     const errorFullName = document.getElementById("error-fullname");
-//     if (fullName === "") {
-//         errorFullName.textContent = "Họ tên không được để trống.";
-//     } else {
-//         errorFullName.textContent = "";
-//     }
-// });
-//
-// document.getElementById("Mail").addEventListener("blur", function () {
-//     const email = this.value.trim();
-//     const errorEmail = document.getElementById("error-email");
-//     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-//     if (email === "") {
-//         errorEmail.textContent = "Email không được để trống.";
-//     } else if (!emailRegex.test(email)) {
-//         errorEmail.textContent = "Email không hợp lệ.";
-//     } else {
-//         errorEmail.textContent = "";
-//     }
-// });
-//
-// document.getElementById("Phone").addEventListener("blur", function () {
-//     const phone = this.value.trim();
-//     const errorPhone = document.getElementById("error-phone");
-//     const phoneRegex = /^[0-9]{10,11}$/;
-//     if (phone === "") {
-//         errorPhone.textContent = "Số điện thoại không được để trống.";
-//     } else if (!phoneRegex.test(phone)) {
-//         errorPhone.textContent = "Số điện thoại không hợp lệ.";
-//     } else {
-//         errorPhone.textContent = "";
-//     }
-// });
-//
-// document.getElementById("noteBill").addEventListener("blur", function () {
-//     const note = this.value.trim();
-//     const errorNote = document.getElementById("error-notebill");
-//     if (note === "") {
-//         errorNote.textContent = "Ghi chú không được để trống.";
-//     } else {
-//         errorNote.textContent = "";
-//     }
-// });
 document.addEventListener("DOMContentLoaded", function () {
     const quantityCart = parseInt(document.getElementById("totalQuantity").innerText);
     const btnDatHang = document.getElementById("btnDatHang");
@@ -57,12 +11,20 @@ document.addEventListener("DOMContentLoaded", function () {
     const accountLogin = document.getElementById("account-login").value;
     console.log("Account login: " + accountLogin);
 
-    // Nếu không có tài khoản đăng nhập
-    if (accountLogin == null) {
+    if (!accountLogin) {
         const fullNameInput = document.getElementById("FullName");
         const emailInput = document.getElementById("Mail");
         const phoneInput = document.getElementById("Phone");
         const specificAddressInput = document.getElementById("specificAddressNolog");
+        const provinceSelect = document.getElementById("province");
+        const districtSelect = document.getElementById("district");
+        const wardSelect = document.getElementById("ward");
+        if (!fullNameInput || !emailInput || !phoneInput || !specificAddressInput) {
+            console.error("One or more input elements not found");
+            return;
+        }
+
+        console.log("Validate Unlogin");
 
         // Loại bỏ dấu phẩy khi nhập
         [fullNameInput, emailInput, phoneInput, specificAddressInput].forEach((input) => {
@@ -71,91 +33,83 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         });
 
-        // Hàm validate
-        window.validateFullName = function () {
+        // Hàm validate Full Name
+        function validateFullName() {
             const fullName = fullNameInput.value.trim();
-            const errorElement = document.getElementById("error-fullname");
+            const errorFullName = document.getElementById("error-fullname");
             if (fullName === "") {
-                errorElement.textContent = "* Họ tên không được để trống";
-                return false;
+                errorFullName.textContent = "* Họ tên không được để trống.";
+            } else if (fullName.length > 255) {
+                errorFullName.textContent = "* Họ tên không được vượt quá 255 ký tự.";
+            } else {
+                errorFullName.textContent = "";
             }
-            if (fullName.includes(",")) {
-                errorElement.textContent = "* Họ tên không được chứa dấu phẩy (,)";
-                return false;
-            }
-            if (fullName.length > 255) {
-                errorElement.textContent = "* Họ tên không được vượt quá 255 ký tự";
-                return false;
-            }
-            errorElement.textContent = "";
-            return true;
-        };
+        }
 
-        window.validateEmail = function () {
+        // Hàm validate Email
+        function validateEmail() {
             const email = emailInput.value.trim();
+            const errorEmail = document.getElementById("error-email");
             const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-            const errorElement = document.getElementById("error-email");
             if (email === "") {
-                errorElement.textContent = "* Email không được để trống";
-                return false;
+                errorEmail.textContent = "* Email không được để trống.";
+            } else if (!emailPattern.test(email)) {
+                errorEmail.textContent = "* Email không hợp lệ.";
+            } else if (email.length > 100) {
+                errorEmail.textContent = "* Email không được vượt quá 100 ký tự.";
+            } else {
+                errorEmail.textContent = ""; // Không có lỗi
             }
-            if (!emailPattern.test(email)) {
-                errorElement.textContent = "* Email không hợp lệ";
-                return false;
-            }
-            if (email.includes(",")) {
-                errorElement.textContent = "* Email không được chứa dấu phẩy (,)";
-                return false;
-            }
-            if (email.length > 100) {
-                errorElement.textContent = "* Email không được vượt quá 100 ký tự";
-                return false;
-            }
-            errorElement.textContent = "";
-            return true;
-        };
+        }
 
-        window.validatePhone = function () {
+        // Hàm validate Phone
+        function validatePhone() {
             const phone = phoneInput.value.trim();
-            const phonePattern = /^[0-9]{10,11}$/;
-            const errorElement = document.getElementById("error-phone");
+            const errorPhone = document.getElementById("error-phone");
+            const phonePattern = /^[0-9]{10,11}$/; // Chỉ chấp nhận số có 10-11 chữ số
             if (phone === "") {
-                errorElement.textContent = "* Số điện thoại không được để trống";
-                return false;
+                errorPhone.textContent = "* Số điện thoại không được để trống.";
+            } else if (!phonePattern.test(phone)) {
+                errorPhone.textContent = "* Số điện thoại không hợp lệ.";
+            } else {
+                errorPhone.textContent = ""; // Không có lỗi
             }
-            if (!phonePattern.test(phone)) {
-                errorElement.textContent = "* Số điện thoại không hợp lệ";
-                return false;
-            }
-            if (phone.includes(",")) {
-                errorElement.textContent = "* Số điện thoại không được chứa dấu phẩy (,)";
-                return false;
-            }
-            errorElement.textContent = "";
-            return true;
-        };
+        }
 
-        window.validateSpecificAddress = function () {
+        function validateAddressSelection() {
+            const province = provinceSelect.value;
+            const district = districtSelect.value;
+            const ward = wardSelect.value;
+            const errorSelectAddress = document.getElementById("error-select-address");
+            if (!province || !district || !ward) {
+                errorSelectAddress.textContent = "* Bạn cần chọn đầy đủ Tỉnh, Huyện, và Xã/Phường";
+            } else {
+                errorSelectAddress.textContent = "";
+            }
+        }
+
+        // Hàm validate Specific Address
+        function validateSpecificAddress() {
             const specificAddress = specificAddressInput.value.trim();
-            const errorElement = document.getElementById("error-address-specific");
+            const errorAddress = document.getElementById("error-address-specific");
             if (specificAddress === "") {
-                errorElement.textContent = "* Vui lòng nhập địa chỉ nhận hàng cụ thể.";
-                return false;
+                errorAddress.textContent = "* Địa chỉ cụ thể không được để trống.";
+            } else if (specificAddress.length > 260) {
+                errorAddress.textContent = "* Địa chỉ cụ thể không được vượt quá 260 ký tự.";
+            } else {
+                errorAddress.textContent = "";
             }
-            if (specificAddress.includes(",")) {
-                errorElement.textContent = "* Địa chỉ không được chứa dấu phẩy (,)";
-                return false;
-            }
-            if (specificAddress.length > 260) {
-                errorElement.textContent = "* Địa chỉ cụ thể không được vượt quá 260 ký tự";
-                return false;
-            }
-            errorElement.textContent = "";
-            return true;
-        };
+        }
+
+        fullNameInput.addEventListener("input", validateFullName);
+        emailInput.addEventListener("input", validateEmail);
+        phoneInput.addEventListener("input", validatePhone);
+        specificAddressInput.addEventListener("input", validateSpecificAddress);
+        provinceSelect.addEventListener("change", validateAddressSelection);
+        districtSelect.addEventListener("change", validateAddressSelection);
+        wardSelect.addEventListener("change", validateAddressSelection);
     }
 });
-
 
 function payBill() {
     const accountLogin = document.getElementById("account-login").value;
@@ -296,15 +250,16 @@ function payBill() {
             return;
         }
     }
-
-
     Swal.fire({
         title: 'Bạn có chắc chắn muốn đặt hàng với đơn hàng này?',
         text: "Sau khi xác nhận, bạn sẽ không thể thay đổi đơn hàng.",
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonText: 'Đồng ý',
-        cancelButtonText: 'Hủy'
+        confirmButtonText: 'Xác nhận',
+        cancelButtonText: 'Hủy',
+        customClass: {
+            popup: 'swal-popup'
+        }
     }).then((result) => {
         if (result.isConfirmed) {
             const addressShip = document.getElementById("addressShip").value;
@@ -343,20 +298,17 @@ function payBill() {
             }
 
             $.ajax({
-                url: '/onepoly/payment', type: 'POST', contentType: 'application/json',
-                data: JSON.stringify({
+                url: '/onepoly/payment', type: 'POST', contentType: 'application/json', data: JSON.stringify({
                     addressShip: addressShip,
                     shippingPrice: shippingPrice,
                     voucherPrice: priceVoucher,
                     totalAmountBill: totalAmountBill,
                     noteBill: noteBill,
                     payMethod: payMethod
-                }),
-                success: function (response) {
+                }), success: function (response) {
                     console.log(response);
                     window.location.href = response;
-                },
-                error: function (error) {
+                }, error: function (error) {
                     console.log(error);
                 }
             });
