@@ -102,6 +102,24 @@ function showAllProductsByTextLowest() {
         buttonText.innerHTML = 'Xem Tất Cả <i class="fas fa-chevron-right"></i>';
     }
 }
+document.querySelectorAll('.price-min').forEach(el => {
+    // Lấy giá trị từ thuộc tính data-price
+    const price = parseFloat(el.getAttribute('data-price'));
+    if (!isNaN(price)) {
+        // Định dạng giá theo VNĐ
+        el.textContent = Math.floor(price).toLocaleString('vi-VN') + " ₫";
+    }
+});
+
+document.querySelectorAll('.price-min').forEach(el => {
+    // Lấy giá trị từ thuộc tính data-price
+    const price = parseFloat(el.getAttribute('data-price'));
+    if (!isNaN(price)) {
+        // Định dạng giá theo VNĐ
+        el.textContent = Math.floor(price).toLocaleString('vi-VN') + " ₫";
+    }
+});
+
 
 
 

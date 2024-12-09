@@ -94,8 +94,7 @@ async function searchProduct() {
     window.location.href = `/onepoly/search?keyword=${encodeURIComponent(keyword)}`;
 }
 
-
 document.querySelectorAll('.price-min').forEach(el => {
     const price = parseFloat(el.getAttribute('data-price'));
-    el.textContent = Math.floor(price).toLocaleString('vi-VN'); // Format loại bỏ phần thập phân
+    el.textContent = Math.floor(price).toLocaleString('en-US') + ' đ';
 });

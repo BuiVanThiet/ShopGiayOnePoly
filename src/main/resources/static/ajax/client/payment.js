@@ -10,105 +10,103 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const accountLogin = document.getElementById("account-login").value;
     console.log("Account login: " + accountLogin);
-
-    if (!accountLogin) {
-        const fullNameInput = document.getElementById("FullName");
-        const emailInput = document.getElementById("Mail");
-        const phoneInput = document.getElementById("Phone");
-        const specificAddressInput = document.getElementById("specificAddressNolog");
-        const provinceSelect = document.getElementById("province");
-        const districtSelect = document.getElementById("district");
-        const wardSelect = document.getElementById("ward");
-        if (!fullNameInput || !emailInput || !phoneInput || !specificAddressInput) {
-            console.error("One or more input elements not found");
-            return;
-        }
-
-        console.log("Validate Unlogin");
-
-        // Loại bỏ dấu phẩy khi nhập
-        [fullNameInput, emailInput, phoneInput, specificAddressInput].forEach((input) => {
-            input.addEventListener("input", function () {
-                input.value = input.value.replace(/,/g, ""); // Loại bỏ dấu phẩy
-            });
-        });
-
-        // Hàm validate Full Name
-        function validateFullName() {
-            const fullName = fullNameInput.value.trim();
-            const errorFullName = document.getElementById("error-fullname");
-            if (fullName === "") {
-                errorFullName.textContent = "* Họ tên không được để trống.";
-            } else if (fullName.length > 255) {
-                errorFullName.textContent = "* Họ tên không được vượt quá 255 ký tự.";
-            } else {
-                errorFullName.textContent = "";
-            }
-        }
-
-        // Hàm validate Email
-        function validateEmail() {
-            const email = emailInput.value.trim();
-            const errorEmail = document.getElementById("error-email");
-            const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-            if (email === "") {
-                errorEmail.textContent = "* Email không được để trống.";
-            } else if (!emailPattern.test(email)) {
-                errorEmail.textContent = "* Email không hợp lệ.";
-            } else if (email.length > 100) {
-                errorEmail.textContent = "* Email không được vượt quá 100 ký tự.";
-            } else {
-                errorEmail.textContent = ""; // Không có lỗi
-            }
-        }
-
-        // Hàm validate Phone
-        function validatePhone() {
-            const phone = phoneInput.value.trim();
-            const errorPhone = document.getElementById("error-phone");
-            const phonePattern = /^[0-9]{10,11}$/; // Chỉ chấp nhận số có 10-11 chữ số
-            if (phone === "") {
-                errorPhone.textContent = "* Số điện thoại không được để trống.";
-            } else if (!phonePattern.test(phone)) {
-                errorPhone.textContent = "* Số điện thoại không hợp lệ.";
-            } else {
-                errorPhone.textContent = ""; // Không có lỗi
-            }
-        }
-
-        function validateAddressSelection() {
-            const province = provinceSelect.value;
-            const district = districtSelect.value;
-            const ward = wardSelect.value;
-            const errorSelectAddress = document.getElementById("error-select-address");
-            if (!province || !district || !ward) {
-                errorSelectAddress.textContent = "* Bạn cần chọn đầy đủ Tỉnh, Huyện, và Xã/Phường";
-            } else {
-                errorSelectAddress.textContent = "";
-            }
-        }
-
-        // Hàm validate Specific Address
-        function validateSpecificAddress() {
-            const specificAddress = specificAddressInput.value.trim();
-            const errorAddress = document.getElementById("error-address-specific");
-            if (specificAddress === "") {
-                errorAddress.textContent = "* Địa chỉ cụ thể không được để trống.";
-            } else if (specificAddress.length > 260) {
-                errorAddress.textContent = "* Địa chỉ cụ thể không được vượt quá 260 ký tự.";
-            } else {
-                errorAddress.textContent = "";
-            }
-        }
-
-        fullNameInput.addEventListener("input", validateFullName);
-        emailInput.addEventListener("input", validateEmail);
-        phoneInput.addEventListener("input", validatePhone);
-        specificAddressInput.addEventListener("input", validateSpecificAddress);
-        provinceSelect.addEventListener("change", validateAddressSelection);
-        districtSelect.addEventListener("change", validateAddressSelection);
-        wardSelect.addEventListener("change", validateAddressSelection);
+    const fullNameInput = document.getElementById("FullName");
+    const emailInput = document.getElementById("Mail");
+    const phoneInput = document.getElementById("Phone");
+    const specificAddressInput = document.getElementById("specificAddressNolog");
+    const provinceSelect = document.getElementById("province");
+    const districtSelect = document.getElementById("district");
+    const wardSelect = document.getElementById("ward");
+    if (!fullNameInput || !emailInput || !phoneInput || !specificAddressInput) {
+        console.error("One or more input elements not found");
+        return;
     }
+
+    console.log("Validate Unlogin");
+
+    // Loại bỏ dấu phẩy khi nhập
+    [fullNameInput, emailInput, phoneInput, specificAddressInput].forEach((input) => {
+        input.addEventListener("input", function () {
+            input.value = input.value.replace(/,/g, ""); // Loại bỏ dấu phẩy
+        });
+    });
+
+    // Hàm validate Full Name
+    function validateFullName() {
+        const fullName = fullNameInput.value.trim();
+        const errorFullName = document.getElementById("full-name-create-err");
+        if (fullName === "") {
+            errorFullName.textContent = "* Họ tên không được để trống.";
+        } else if (fullName.length > 255) {
+            errorFullName.textContent = "* Họ tên không được vượt quá 255 ký tự.";
+        } else {
+            errorFullName.textContent = "";
+        }
+    }
+
+    // Hàm validate Email
+    function validateEmail() {
+        const email = emailInput.value.trim();
+        const errorEmail = document.getElementById("mail-create-err");
+        const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (email === "") {
+            errorEmail.textContent = "* Email không được để trống.";
+        } else if (!emailPattern.test(email)) {
+            errorEmail.textContent = "* Email không hợp lệ.";
+        } else if (email.length > 100) {
+            errorEmail.textContent = "* Email không được vượt quá 100 ký tự.";
+        } else {
+            errorEmail.textContent = ""; // Không có lỗi
+        }
+    }
+
+    // Hàm validate Phone
+    function validatePhone() {
+        const phone = phoneInput.value.trim();
+        const errorPhone = document.getElementById("phone-create-err");
+        const phonePattern = /^[0-9]{10,11}$/; // Chỉ chấp nhận số có 10-11 chữ số
+        if (phone === "") {
+            errorPhone.textContent = "* Số điện thoại không được để trống.";
+        } else if (!phonePattern.test(phone)) {
+            errorPhone.textContent = "* Số điện thoại không hợp lệ.";
+        } else {
+            errorPhone.textContent = ""; // Không có lỗi
+        }
+    }
+
+    // Hàm validate Specific Address
+    function validateSpecificAddress() {
+        const specificAddress = specificAddressInput.value.trim();
+        const errorAddress = document.getElementById("specific-address-create-err");
+        if (specificAddress === "") {
+            errorAddress.textContent = "* Địa chỉ cụ thể không được để trống.";
+        } else if (specificAddress.length > 260) {
+            errorAddress.textContent = "* Địa chỉ cụ thể không được vượt quá 260 ký tự.";
+        } else {
+            errorAddress.textContent = "";
+        }
+    }
+
+    function validateAddressSelection() {
+        const province = provinceSelect.value;
+        const district = districtSelect.value;
+        const ward = wardSelect.value;
+        const errorSelectAddress = document.getElementById("selected-address-create-err");
+        if (!province || !district || !ward) {
+            errorSelectAddress.textContent = "* Bạn cần chọn đầy đủ Tỉnh, Huyện, và Xã/Phường";
+        } else {
+            errorSelectAddress.textContent = "";
+        }
+    }
+
+    fullNameInput.addEventListener("input", validateFullName);
+    emailInput.addEventListener("input", validateEmail);
+    phoneInput.addEventListener("input", validatePhone);
+    specificAddressInput.addEventListener("input", validateSpecificAddress);
+    provinceSelect.addEventListener("change", validateAddressSelection);
+    districtSelect.addEventListener("change", validateAddressSelection);
+    wardSelect.addEventListener("change", validateAddressSelection);
+
 });
 
 function payBill() {

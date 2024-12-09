@@ -14,18 +14,18 @@
         <input type="hidden" id="account-login" th:value="${accountLogin}">
         <section class="cart-page">
             <div class="container">
-                <!--                <input type="hidden" th:value="${cartItems.size()}" >-->
-                <div style="margin-left: 54%;">
+                <p class="fw-light mb-0" style="margin-left: 5px">Giỏ hàng > Thông tin thanh toán</p>
+                <div style="margin-left: 55%;">
                     <p>Hiện tại có <span id="totalQuantity" th:text="${cartItems.size()}"></span> sản phẩm trong giỏ
                         hàng</p>
-                    <hr style="width: 100%;">
+                    <hr>
                 </div>
                 <div class="cart-container d-flex" style="gap: 10px;">
                     <!-- Phần thông tin vận chuyển -->
-                    <div class="info-pay" style="flex: 0 0 50%;">
+                    <div class="info-pay" style="flex: 0 0 50%;margin-top: -20px">
                         <div th:if="${clientLogin == null}">
                             <div class="info-transport" id="info-input">
-                                <div class="row g-3 mt-3">
+                                <div class="row g-3">
                                     <!-- Header for customer information section -->
                                     <div class="infor-enter-customer">
                                         <h5 class="section-header text-secondary">Thông tin khách hàng</h5>
@@ -100,56 +100,62 @@
                         </div>
 
                         <div id="section-payment-method" class="section-loaded"
-                             style="padding: 10px;border: 1px solid #cecece;border-radius: 5px">
+                             style="padding: 5px 10px; border: 1px solid #cecece; border-radius: 5px; height: auto; line-height: 1.2;">
                             <div class="section-content">
                                 <div class="content-box">
                                     <div class="section-header">
-                                        <h5 style="color: #727272" class="section-title">Phương thức thanh toán</h5>
+                                        <h5 style="color: #727272; margin: 5px 0; font-size: 14px;"
+                                            class="section-title">Phương thức thanh toán</h5>
                                     </div>
-                                    <div class="radio-wrapper content-box-row">
+                                    <div class="radio-wrapper content-box-row" style="margin: 5px 0;">
                                         <label class="radio-label" for="payment_method_code">
-                                            <div class="radio-input payment-method-checkbox">
+                                            <div class="radio-input payment-method-checkbox" style="margin-right: 5px;">
                                                 <input type="radio" class="value-payment-method"
                                                        id="payment_method_code" name="payment_method_id" value="1"
                                                        checked>
                                             </div>
-                                            <div class="radio-content-input">
-                                                <img class="main-img" src="/img/homeManage/ship_code.jpg" width="50px"
-                                                     height="50px">
+                                            <div class="radio-content-input"
+                                                 style="display: flex; align-items: center; gap: 10px;">
+                                                <img class="main-img" src="/img/homeManage/ship_code.jpg" width="40px"
+                                                     height="40px">
                                                 <span class="radio-label-primary">Thanh toán khi giao hàng (COD)</span>
                                             </div>
                                         </label>
                                     </div>
-                                    <div class="radio-wrapper content-box-row">
+                                    <div class="radio-wrapper content-box-row" style="margin: 5px 0;">
                                         <label class="radio-label" for="payment_method_vnpay">
-                                            <div class="radio-input payment-method-checkbox">
+                                            <div class="radio-input payment-method-checkbox" style="margin-right: 5px;">
                                                 <input type="radio" id="payment_method_vnpay"
                                                        class="value-payment-method" name="payment_method_id" value="2">
                                             </div>
-                                            <div class="radio-content-input">
+                                            <div class="radio-content-input"
+                                                 style="display: flex; align-items: center; gap: 10px;">
                                                 <img class="main-img"
                                                      src="/img/homeManage/vnpay-logo-vinadesign-25-12-59-16.jpg"
-                                                     width="50px" height="50px">
+                                                     width="40px" height="40px">
                                                 <span class="radio-label-primary">Thanh toán bằng VNPAY</span>
                                             </div>
                                         </label>
                                     </div>
-                                    <div id="error-payment-method" class="text-danger"></div>
+                                    <div id="error-payment-method" class="text-danger"
+                                         style="font-size: 12px; margin-top: 5px;"></div>
                                     <div th:if="${errorPayMethod!=null}">
-                                            <span id="errorPayMethodFromController"
-                                                  class="text-danger" th:text="${errorPayMethod}"></span>
+                                        <span id="errorPayMethodFromController" class="text-danger"
+                                              th:text="${errorPayMethod}" style="font-size: 12px;"></span>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
                         <div th:if="${clientLogin !=null}" class="info-address">
                             <div class="section-header">
                                 <h5 style="color: #727272" class="section-title">Địa chỉ nhận hàng</h5>
                             </div>
                             <div class="row">
                                 <div class="col-8">
-                                    <p id="infoCustomer" th:text="${infoCustomer}+'.'"></p>
-                                    <p id="original-address" th:text="${originalAddress}+'.'"></p>
+                                    <p style="font-size: 14px" id="infoCustomer" th:text="${infoCustomer}+'.'"></p>
+                                    <p style="font-size: 14px" id="original-address"
+                                       th:text="${originalAddress}+'.'"></p>
                                     <span class="text-danger" id="error-address-for-bill"></span>
                                 </div>
                                 <div class="col-4">
@@ -248,16 +254,23 @@
                                                 <label for="FullNameCreate" class="form-label">Họ và tên</label>
                                                 <input type="text" class="form-control" id="FullNameCreate"
                                                        name="FullNameCreate" placeholder="Nhập họ và tên" required>
+                                                <div>
+                                                    <span id="full-name-create-err" class="text-danger"></span>
+                                                </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <label for="PhoneCreate" class="form-label">Số điện thoại</label>
                                                 <input type="text" class="form-control" id="PhoneCreate"
                                                        name="PhoneCreate" placeholder="Nhập số điện thoại" required>
+                                                <span id="phone-create-err" class="text-danger"></span>
                                             </div>
                                             <div class="col-md-6">
                                                 <label for="MailCreate" class="form-label">Email</label>
                                                 <input type="email" class="form-control" id="MailCreate"
                                                        name="MailCreate" placeholder="Nhập email" required>
+                                                <div>
+                                                    <span id="mail-create-err" class="text-danger"></span>
+                                                </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <label for="specificAddressCreate" class="form-label">Địa chỉ cụ
@@ -265,10 +278,15 @@
                                                 <input type="text" class="form-control" id="specificAddressCreate"
                                                        name="specificAddressCreate" placeholder="Nhập địa chỉ cụ thể"
                                                        required>
+                                                <div>
+                                                    <span id="specific-address-create-err" class="text-danger"></span>
+                                                </div>
                                             </div>
                                             <div class="col-md-4">
-                                                <label for="province-create" class="form-label">Tỉnh/Thành phố</label>
-                                                <select class="form-control" id="province-create" name="province-create"
+                                                <label for="province-create" class="form-label">Tỉnh/Thành
+                                                    phố</label>
+                                                <select class="form-control" id="province-create"
+                                                        name="province-create"
                                                         required>
                                                     <option selected disabled>Chọn tỉnh/thành</option>
                                                     <!-- Các option tỉnh thành -->
@@ -276,7 +294,8 @@
                                             </div>
                                             <div class="col-md-4">
                                                 <label for="district-create" class="form-label">Quận/Huyện</label>
-                                                <select class="form-control" id="district-create" name="district-create"
+                                                <select class="form-control" id="district-create"
+                                                        name="district-create"
                                                         required>
                                                     <option selected disabled>Chọn quận/huyện</option>
                                                     <!-- Các option quận huyện -->
@@ -289,6 +308,9 @@
                                                     <option selected disabled>Chọn phường/xã</option>
                                                     <!-- Các option phường xã -->
                                                 </select>
+                                            </div>
+                                            <div>
+                                                <span id="selected-address-create-err" class="text-danger"></span>
                                             </div>
                                         </div>
                                     </form>
@@ -317,7 +339,8 @@
                                         <i class="fas fa-map-marker-alt me-2"></i>
                                         Cập nhật địa chỉ
                                     </h5>
-                                    <button type="button" class="btn-close" style="color: #2d3748" data-bs-dismiss="modal"
+                                    <button type="button" class="btn-close" style="color: #2d3748"
+                                            data-bs-dismiss="modal"
                                             aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body bg-light">
@@ -399,9 +422,12 @@
                                     <h5 class="mb-1 text-truncate" style="font-size: 1rem;"
                                         th:text="${item.productName}"></h5>
                                     <div class="item-price text-muted">
-                                        <span id="spanPriceCartItem" th:text="${item.discountedPrice}" class="fw-bold"
+                                        <span id="spanPriceCartItem" th:attr="data-price=${item.discountedPrice}"
+                                              th:text="${item.discountedPrice}"
+                                              class="fw-bold"
                                               style="font-size: 0.9rem;"></span>
                                     </div>
+
                                     <div class="item-desc d-flex gap-2 mt-1" style="font-size: 0.8rem;">
                                         <span class="variant-option text-muted">Màu sắc: <span
                                                 th:text="${item.colorName}" class="fw-normal"></span></span>
@@ -412,7 +438,7 @@
                                 <!-- Nút xóa -->
                                 <button type="button" class="btn-close ms-3" aria-label="Close"></button>
                             </div>
-                                    <hr class="my-2">
+                            <hr class="my-2">
                         </div>
                         <div>
                             <input type="hidden" id="weightShip" th:value="${weight}"/>
@@ -455,13 +481,16 @@
                         </div>
 
                         <div class="d-flex flex-row justify-content-between mt-3">
-                            <a href="/onepoly/cart" id="btnQuayLai" class="btn btn-return-cart">
+                            <a href="/onepoly/cart" id="btnQuayLai" class="btn btn-return-cart"
+                               style="padding: 5px 10px; font-size: 14px;height: 40px; line-height: 30px; text-align: center;">
                                 <span>Quay lại giỏ hàng</span>
                             </a>
-                            <button id="btnDatHang" onclick="payBill()" class="btn btn-dat-hang">
+                            <button id="btnDatHang" onclick="payBill()" class="btn btn-dat-hang"
+                                    style="padding: 5px 10px; font-size: 14px;  height: 40px; line-height: 30px; text-align: center;">
                                 <span>Đặt hàng</span>
                             </button>
                         </div>
+
 
                     </div>
                 </div>

@@ -10,7 +10,10 @@
 <body>
 <div layout:fragment="content">
     <section>
-        <div id="cart-total-container" style="margin-top: 150px">
+        <div id="cart-total-container" style="margin-top: 100px">
+          <div style="margin-bottom: 10px">
+              <p class="fw-light mb-0" style="margin-left: 180px;font-size: 14px">Trang chủ / giỏ hàng </p>
+          </div>
             <div th:if="${cartItems.size()>0}">
                 <div class="cart-container" style="width: 80%; display: flex; gap: 20px;margin: auto">
                     <!-- Phần danh sách sản phẩm -->
