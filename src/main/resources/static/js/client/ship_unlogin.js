@@ -271,4 +271,11 @@ window.addEventListener('load', function () {
 
 });
 
+document.querySelectorAll('.item-price span').forEach(el => {
+    // Lấy giá trị từ data-price
+    const price = parseFloat(el.getAttribute('data-price'));
+    if (!isNaN(price)) {
+        el.textContent = price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+    }
+});
 

@@ -178,6 +178,12 @@
 }
 
 
+.scrolling-text {
+    white-space: nowrap;
+    overflow: hidden;
+    width: 100%; /* Đảm bảo chiều rộng không vượt quá container */
+    max-width: 100%;
+}
 
 
 

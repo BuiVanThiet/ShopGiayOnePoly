@@ -9,11 +9,11 @@
 .btn-color-circle {
     width: 60px;
     height: 60px;
-    margin-right: 10px;
+    /*margin-right: 10px;*/
     background-color: #f8f9fa;
     border: 1px solid #cccccc; /* Viền xám nhạt khi không chọn */
     border-radius: 30px;
-    font-size: 12px;
+    font-size: 10px;
     text-align: center;
     line-height: 56px;
     transition: all 0.3s ease;
@@ -307,7 +307,7 @@
     color: #3415aa; /* Màu chữ */
     background-color: rgba(52, 21, 170, 0.1); /* Màu nền nhẹ nhàng */
     border: 1px solid rgba(52, 21, 170, 0.1); /* Đường viền nhẹ */
-    border-radius: 8px; /* Bo góc mềm mại */
+    /*border-radius: 8px; !* Bo góc mềm mại *!*/
     font-weight: 500;
     font-size: 14px; /* Tăng kích thước chữ một chút */
     line-height: 1.6;

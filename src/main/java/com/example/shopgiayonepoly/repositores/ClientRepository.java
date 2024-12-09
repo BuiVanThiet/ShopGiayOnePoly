@@ -29,7 +29,7 @@ public interface ClientRepository extends JpaRepository<Bill, Integer> {
                    FROM Product p
                    LEFT JOIN p.images i 
                    LEFT JOIN ProductDetail pd ON p.id = pd.product.id 
-                   WHERE p.status <> 0
+                   WHERE p.status = 1 AND pd.status = 1
                    GROUP BY p.id, p.nameProduct
             """)
     public List<ProductIClientResponse> getAllProduct();
@@ -79,8 +79,10 @@ public interface ClientRepository extends JpaRepository<Bill, Integer> {
                 FROM Product p
                 left join p.images i
                 left join ProductDetail pd on p.id = pd.product.id
+                WHERE p.status = 1 AND pd.status = 1
                 group by p.id, p.nameProduct
                 order by MIN(pd.price) desc
+                      
             """)
     public List<ProductIClientResponse> GetTop12ProductWithPriceHighest();
 
@@ -93,6 +95,7 @@ public interface ClientRepository extends JpaRepository<Bill, Integer> {
                 FROM Product p
                 left join p.images i
                 left join ProductDetail pd on p.id = pd.product.id
+                WHERE p.status = 1 AND pd.status = 1
                 group by p.id, p.nameProduct
                 order by MIN(pd.price) asc
             """)

@@ -356,11 +356,9 @@ public class ClientRestController extends BaseEmail {
             }
 
             if (isUpdated) {
-                // Cập nhật lại giỏ hàng trong session
                 cartItemResponse = convertToCartResponseList(cartItems);
                 session.setAttribute("cartItems", cartItemResponse);
 
-                // Cập nhật lại tổng giá trị giỏ hàng
                 BigDecimal totalPriceCartItem = calculateTotalPrice(cartItemResponse);
                 session.setAttribute("totalPrice", totalPriceCartItem);
 
@@ -474,8 +472,8 @@ public class ClientRestController extends BaseEmail {
         BigDecimal totalPrice = BigDecimal.ZERO;
 
         for (CartResponse item : cartItems) {
-            BigDecimal itemPrice = item.getDiscountedPrice(); // Giá của sản phẩm
-            BigDecimal itemQuantity = BigDecimal.valueOf(item.getQuantity()); // Số lượng sản phẩm
+            BigDecimal itemPrice = item.getDiscountedPrice();
+            BigDecimal itemQuantity = BigDecimal.valueOf(item.getQuantity());
             BigDecimal itemTotal = itemPrice.multiply(itemQuantity);
 
             totalPrice = totalPrice.add(itemTotal);
@@ -494,6 +492,16 @@ public class ClientRestController extends BaseEmail {
         if (idCustomerLogin != null) {
             AddressShip addressShip = new AddressShip();
             Customer customer = customerService.getCustomerByID(idCustomerLogin);
+            if(customer==null){
+                response.put("message", "Khách hàng không tồn tại");
+                response.put("check", "3");
+                return ResponseEntity.ok(response);
+            }
+            if(addressShip.getSpecificAddress()==null||addressShip.getSpecificAddress().isEmpty()){
+                response.put("message", "Địa chỉ chi tiết đang trống");
+                response.put("check", "3");
+                return ResponseEntity.ok(response);
+            }
             addressShip.setCustomer(customer);
             addressShip.setSpecificAddress(addressForCustomer);
             addressShip.setCreateDate(new Date());

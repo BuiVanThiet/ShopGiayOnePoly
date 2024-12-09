@@ -76,7 +76,6 @@ public class ClientController extends BaseBill {
     @Autowired
     OriginService originService;
 
-
     @GetMapping("/products")
     public String getFormProduct(HttpSession session, Model model) {
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
@@ -220,7 +219,6 @@ public class ClientController extends BaseBill {
                                 discountedPrice,
                                 productDetail.getProduct().getImages()
                         );
-                        System.out.println("Namư  " + productDetail.getProduct().getImages().get(0));
                         cartResponses.add(cartResponse);
                     }
                 }
@@ -311,8 +309,6 @@ public class ClientController extends BaseBill {
 
         if (clientLoginResponse != null) {
             model.addAttribute("clientLogin", clientLoginResponse);
-
-            // Lấy và chuẩn hóa địa chỉ của khách hàng
             String addressCustomerLogin = clientLoginResponse.getAddRess();
             String[] addressParts = addressCustomerLogin.split(",", 4);
 
@@ -583,8 +579,10 @@ public class ClientController extends BaseBill {
 
     @GetMapping("/order-success")
     public String getFormOderSuccess(HttpSession session, Model model) {
+        ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
         String codeOrder = (String) session.getAttribute("codeOrder");
         String hostSuccess = (String) session.getAttribute("hostSuccess");
+        model.addAttribute("loginInfoClient", clientLoginResponse);
         model.addAttribute("codeOrder", codeOrder);
         model.addAttribute("hostSuccess", hostSuccess);
         session.removeAttribute("cartItems");
