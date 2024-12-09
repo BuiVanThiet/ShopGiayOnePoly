@@ -120,7 +120,7 @@ public class StaffController extends BaseEmail {
         if(!messMap.trim().equals("")) {
             mess = messMap;
             check = "3";
-            return "redirect:/staff/list";
+            return "redirect:/staff-manage/list";
         }
         // Kiểm tra tên
         if (staffRequest.getFullName() == null || staffRequest.getFullName().trim().isEmpty()) {
@@ -223,7 +223,7 @@ public class StaffController extends BaseEmail {
         mess = "Thêm nhân viên thành công";
         check = "1";
 //        staffService.uploadFile(staffRequest.getNameImage(),staffSave.getId());
-        return "redirect:/staff/list";
+        return "redirect:/staff-manage/list";
     }
 
     @ModelAttribute("staffInfo")
@@ -277,7 +277,7 @@ public class StaffController extends BaseEmail {
         if(!messMap.trim().equals("")) {
             mess = messMap;
             check = "3";
-            return "redirect:/staff/list";
+            return "redirect:/staff-manage/list";
         }
 //        // Kiểm tra tên
 //        if (staffRequest.getFullName() == null || staffRequest.getFullName().trim().isEmpty()) {
@@ -399,7 +399,7 @@ public class StaffController extends BaseEmail {
         }
         mess = "Sửa nhân viên thành công";
         check = "1";
-        return "redirect:/staff/list";
+        return "redirect:/staff-manage/list";
     }
 
     @GetMapping("/detail/{id}")
@@ -447,20 +447,20 @@ public class StaffController extends BaseEmail {
         if(!messMap.trim().equals("")) {
             mess = messMap;
             check = "3";
-            return "redirect:/staff/list";
+            return "redirect:/staff-manage/list";
         }
         staffService.deleteStaff(id);
 //        ra.addFlashAttribute("mes", "Xóa thành công nhan vien với ID là: " + id);
         mess = "Xoa nhan vien thanh cong";
         check = "1";
-        return "redirect:/staff/list";
+        return "redirect:/staff-manage/list";
     }
 
     @GetMapping("/exchange-pass-word/{id}")
     public String getExchangePassWord(@PathVariable("id") String id) {
         Staff staff = this.staffService.getStaffByID(Integer.parseInt(id));
         setUpToken(Integer.parseInt(id),"staff",staff.getEmail());
-        return "redirect:/staff/list";
+        return "redirect:/staff-manage/list";
     }
 
     @ModelAttribute("listRole")
