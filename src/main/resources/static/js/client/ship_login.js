@@ -317,7 +317,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     document.addEventListener('click', function (event) {
         if (event.target.closest('.change-address')) {
-            // Lấy radio button được chọn
+            // Các xử lý tương tự như bạn đã làm
             const selectedAddressElement = document.querySelector('.info-address-shipping input[type="radio"]:checked');
 
             if (!selectedAddressElement) {
@@ -325,14 +325,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
-            // Lấy phần tử cha chứa thông tin địa chỉ
             const parentElement = selectedAddressElement.closest('.info-address-shipping');
             if (!parentElement) {
                 console.error("Không tìm thấy phần tử cha chứa địa chỉ.");
                 return;
             }
 
-            // Truy xuất dữ liệu từ các trường
             const nameAndPhoneNumber = parentElement.querySelector('.name-phoneNumber')?.textContent?.trim();
             const shortAddress = parentElement.querySelector('.short-address')?.textContent?.trim();
 
@@ -341,8 +339,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
-            document.getElementById('infoCustomer').textContent = nameAndPhoneNumber + '.';
-            document.getElementById('original-address').textContent = shortAddress + '.';
+            document.getElementById('infoCustomer').textContent = 'Thông tin: ' + nameAndPhoneNumber + '.';
+            document.getElementById('original-address').textContent = 'Địa chỉ: ' + shortAddress + '.';
 
             const addressFull = document.getElementById('fullAddressInput');
             if (addressFull) {
@@ -351,7 +349,7 @@ document.addEventListener("DOMContentLoaded", function () {
             } else {
                 console.error('Không tìm thấy input chứa địa chỉ đầy đủ!');
             }
-            // Đóng modal
+
             const modalElement = document.getElementById('changeAddressModal');
             if (modalElement) {
                 modalElement.classList.remove('show');
@@ -361,10 +359,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 const backdrop = document.querySelector('.modal-backdrop');
                 if (backdrop) backdrop.remove();
             }
-            autoCalculateShippingFee()
+            autoCalculateShippingFee();
             console.log("Cập nhật thành công: ", {nameAndPhoneNumber, shortAddress});
+            createToast("1", "Cập nhật địa chỉ thành công");
         }
     });
+
 });
 document.addEventListener("DOMContentLoaded", function () {
     const apiKey = '0fc88a8e-6633-11ef-8e53-0a00184fe694';
@@ -470,20 +470,11 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 document.addEventListener("DOMContentLoaded", function () {
-    const quantityCart = parseInt(document.getElementById("totalQuantity").innerText);
-    const btnDatHang = document.getElementById("btnDatHang");
-
-    if (isNaN(quantityCart) || quantityCart <= 0) {
-        btnDatHang.disabled = true; // Vô hiệu hóa nút thanh toán
-        // btnDatHang.style.background = ; // Vô hiệu hóa nút thanh toán
-    } else {
-        btnDatHang.disabled = false; // Kích hoạt nút thanh toán
-    }
-
     const accountLogin = document.getElementById("account-login").value;
     console.log("Account login: " + accountLogin);
 
     if (!accountLogin) {
+        // Thêm
         const fullNameInput = document.getElementById("FullNameCreate");
         const emailInput = document.getElementById("MailCreate");
         const phoneInput = document.getElementById("PhoneCreate");
@@ -491,10 +482,14 @@ document.addEventListener("DOMContentLoaded", function () {
         const provinceSelect = document.getElementById("province-create");
         const districtSelect = document.getElementById("district-create");
         const wardSelect = document.getElementById("ward-create");
-        if (!fullNameInput || !emailInput || !phoneInput || !specificAddressInput) {
-            console.error("One or more input elements not found");
-            return;
-        }
+        // Sửa
+        const fullNameInputUpdate = document.getElementById("FullNameUpdate");
+        const emailInputUpdate = document.getElementById("MailUpdate");
+        const phoneInputUpdate = document.getElementById("PhoneUpdate");
+        const specificAddressInputUpdate = document.getElementById("specificAddressUpdate");
+        const provinceSelectUpdate = document.getElementById("province-update");
+        const districtSelectUpdate = document.getElementById("district-update");
+        const wardSelectUpdate = document.getElementById("ward-update");
 
         [fullNameInput, emailInput, phoneInput, specificAddressInput].forEach((input) => {
             input.addEventListener("input", function () {
@@ -502,15 +497,14 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         });
 
-        // Loại bỏ dấu phẩy khi nhập
-        [fullNameInput, emailInput, phoneInput, specificAddressInput].forEach((input) => {
+        [fullNameInputUpdate, emailInputUpdate, phoneInputUpdate, specificAddressInputUpdate].forEach((input) => {
             input.addEventListener("input", function () {
-                input.value = input.value.replace(/,/g, ""); // Loại bỏ dấu phẩy
+                input.value = input.value.replace(/,/g, "");
             });
         });
 
         // Hàm validate Full Name
-        function validateFullName() {
+        function validateFullNameCreate() {
             const fullName = fullNameInput.value.trim();
             const errorFullName = document.getElementById("full-name-create-err");
             if (fullName === "") {
@@ -523,7 +517,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         // Hàm validate Email
-        function validateEmail() {
+        function validateEmailCreate() {
             const email = emailInput.value.trim();
             const errorEmail = document.getElementById("mail-create-err");
             const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -539,7 +533,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         // Hàm validate Phone
-        function validatePhone() {
+        function validatePhoneCreate() {
             const phone = phoneInput.value.trim();
             const errorPhone = document.getElementById("phone-create-err");
             const phonePattern = /^[0-9]{10,11}$/; // Chỉ chấp nhận số có 10-11 chữ số
@@ -548,12 +542,12 @@ document.addEventListener("DOMContentLoaded", function () {
             } else if (!phonePattern.test(phone)) {
                 errorPhone.textContent = "* Số điện thoại không hợp lệ.";
             } else {
-                errorPhone.textContent = ""; // Không có lỗi
+                errorPhone.textContent = "";
             }
         }
 
         // Hàm validate Specific Address
-        function validateSpecificAddress() {
+        function validateSpecificAddressCreate() {
             const specificAddress = specificAddressInput.value.trim();
             const errorAddress = document.getElementById("specific-address-create-err");
             if (specificAddress === "") {
@@ -564,7 +558,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 errorAddress.textContent = "";
             }
         }
-        function validateAddressSelection() {
+
+        function validateAddressSelectionCreate() {
             const province = provinceSelect.value;
             const district = districtSelect.value;
             const ward = wardSelect.value;
@@ -576,13 +571,88 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
 
-        fullNameInput.addEventListener("input", validateFullName);
-        emailInput.addEventListener("input", validateEmail);
-        phoneInput.addEventListener("input", validatePhone);
-        specificAddressInput.addEventListener("input", validateSpecificAddress);
-        provinceSelect.addEventListener("change", validateAddressSelection);
-        districtSelect.addEventListener("change", validateAddressSelection);
-        wardSelect.addEventListener("change", validateAddressSelection);
+        // Sửa
+        // Hàm validate từng trường
+        function validateFullNameUpdate() {
+            const fullName = fullNameInputUpdate.value.trim();
+            const errorFullName = document.getElementById("full-name-update-err");
+            if (fullName === "") {
+                errorFullName.textContent = "* Họ tên không được để trống.";
+            } else if (fullName.length > 255) {
+                errorFullName.textContent = "* Họ tên không được vượt quá 255 ký tự.";
+            } else {
+                errorFullName.textContent = "";
+            }
+        }
+
+        function validateEmailUpdate() {
+            const email = emailInputUpdate.value.trim();
+            const errorEmail = document.getElementById("mail-update-err");
+            const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (email === "") {
+                errorEmail.textContent = "* Email không được để trống.";
+            } else if (!emailPattern.test(email)) {
+                errorEmail.textContent = "* Email không hợp lệ.";
+            } else if (email.length > 100) {
+                errorEmail.textContent = "* Email không được vượt quá 100 ký tự.";
+            } else {
+                errorEmail.textContent = "";
+            }
+        }
+
+        function validatePhoneUpdate() {
+            const phone = phoneInputUpdate.value.trim();
+            const errorPhone = document.getElementById("phone-update-err");
+            const phonePattern = /^[0-9]{10,11}$/;
+            if (phone === "") {
+                errorPhone.textContent = "* Số điện thoại không được để trống.";
+            } else if (!phonePattern.test(phone)) {
+                errorPhone.textContent = "* Số điện thoại không hợp lệ.";
+            } else {
+                errorPhone.textContent = "";
+            }
+        }
+
+        function validateSpecificAddressUpdate() {
+            const specificAddress = specificAddressInputUpdate.value.trim();
+            const errorAddress = document.getElementById("specific-address-update-err");
+            if (specificAddress === "") {
+                errorAddress.textContent = "* Địa chỉ cụ thể không được để trống.";
+            } else if (specificAddress.length > 260) {
+                errorAddress.textContent = "* Địa chỉ cụ thể không được vượt quá 260 ký tự.";
+            } else {
+                errorAddress.textContent = "";
+            }
+        }
+
+        function validateAddressSelectionUpdate() {
+            const province = provinceSelectUpdate.value;
+            const district = districtSelectUpdate.value;
+            const ward = wardSelectUpdate.value;
+            const errorSelectAddress = document.getElementById("selected-address-update-err");
+            if (!province || !district || !ward) {
+                errorSelectAddress.textContent = "* Bạn cần chọn đầy đủ Tỉnh, Huyện, và Xã/Phường.";
+            } else {
+                errorSelectAddress.textContent = "";
+            }
+        }
+
+// Thêm sự kiện validate vào các trường
+        fullNameInput.addEventListener("input", validateFullNameCreate);
+        emailInput.addEventListener("input", validateEmailCreate);
+        phoneInput.addEventListener("input", validatePhoneCreate);
+        specificAddressInput.addEventListener("input", validateSpecificAddressCreate);
+        provinceSelect.addEventListener("change", validateAddressSelectionCreate);
+        districtSelect.addEventListener("change", validateAddressSelectionCreate);
+        wardSelect.addEventListener("change", validateAddressSelectionCreate);
+
+        fullNameInputUpdate.addEventListener("input", validateFullNameUpdate);
+        emailInputUpdate.addEventListener("input", validateEmailUpdate);
+        phoneInputUpdate.addEventListener("input", validatePhoneUpdate);
+        specificAddressInputUpdate.addEventListener("input", validateSpecificAddressUpdate);
+        provinceSelectUpdate.addEventListener("change", validateAddressSelectionUpdate);
+        districtSelectUpdate.addEventListener("change", validateAddressSelectionUpdate);
+        wardSelectUpdate.addEventListener("change", validateAddressSelectionUpdate);
     }
 });
 
@@ -659,7 +729,9 @@ function createNewAddress() {
     } else {
         document.getElementById("selected-address-create-err").textContent = "";
     }
-
+    if (!isValid) {
+        return;
+    }
     Swal.fire({
         title: 'Bạn có chắc chắn muốn thêm địa chỉ này hay không này?',
         text: "Sau khi xác nhận, sẽ thêm mới địa chỉ này.",
@@ -837,7 +909,6 @@ $(document).on('click', '.btn-update-address', function () {
 
 
 function getAddressDetails(buttonElement) {
-    // Lấy giá trị original address từ input hidden
     var originalAddress = $(buttonElement).closest('.info-address-shipping').find('.full-address').val();
     console.log("Original Address: " + originalAddress);
 
@@ -909,6 +980,87 @@ function getAddressDetails(buttonElement) {
 
 // Hàm cập nhật địa chỉ khi ấn nút "Cập nhật"
 function updateAddress() {
+    let isValid = true;
+
+// Validate họ tên
+    const fullNameInputUpdate = document.getElementById("FullNameUpdate");
+    const fullNameUpdate = fullNameInputUpdate.value.trim();
+    if (fullNameUpdate === "") {
+        document.getElementById("full-name-update-err").textContent = "* Họ tên không được để trống";
+        isValid = false;
+    } else if (fullNameUpdate.includes(",")) {
+        document.getElementById("full-name-update-err").textContent = "* Họ tên không được chứa dấu phẩy (,)";
+        isValid = false;
+    } else if (fullNameUpdate.length > 250) {
+        document.getElementById("full-name-update-err").textContent = "* Họ tên không được quá 250 ký tự";
+        isValid = false;
+    } else {
+        document.getElementById("full-name-update-err").textContent = "";
+    }
+
+// Validate email
+    const emailInputUpdate = document.getElementById("MailUpdate");
+    const emailUpdate = emailInputUpdate.value.trim();
+    const emailPatternUpdate = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (emailUpdate === "") {
+        document.getElementById("mail-update-err").textContent = "* Email không được để trống";
+        isValid = false;
+    } else if (!emailPatternUpdate.test(emailUpdate)) {
+        document.getElementById("mail-update-err").textContent = "* Email không hợp lệ";
+        isValid = false;
+    } else if (emailUpdate.includes(",")) {
+        document.getElementById("mail-update-err").textContent = "* Email không được chứa dấu phẩy (,)";
+        isValid = false;
+    } else {
+        document.getElementById("mail-update-err").textContent = "";
+    }
+
+// Validate số điện thoại
+    const phoneInputUpdate = document.getElementById("PhoneUpdate");
+    const phoneUpdate = phoneInputUpdate.value.trim();
+    const phonePatternUpdate = /^(0[3|5|7|8|9])+([0-9]{8})$/;
+    if (phoneUpdate === "") {
+        document.getElementById("phone-update-err").textContent = "* Số điện thoại không được để trống";
+        isValid = false;
+    } else if (!phonePatternUpdate.test(phoneUpdate)) {
+        document.getElementById("phone-update-err").textContent = "* Số điện thoại không hợp lệ";
+        isValid = false;
+    } else if (phoneUpdate.includes(",")) {
+        document.getElementById("phone-update-err").textContent = "* Số điện thoại không được chứa dấu phẩy (,)";
+        isValid = false;
+    } else {
+        document.getElementById("phone-update-err").textContent = "";
+    }
+
+// Validate địa chỉ cụ thể
+    const specificAddressInputUpdate = document.getElementById("specificAddressUpdate");
+    const specificAddressUpdate = specificAddressInputUpdate.value.trim();
+    if (specificAddressUpdate === "") {
+        document.getElementById("specific-address-update-err").textContent = "* Vui lòng nhập địa chỉ nhận hàng cụ thể.";
+        isValid = false;
+    } else if (specificAddressUpdate.includes(",")) {
+        document.getElementById("specific-address-update-err").textContent = "* Địa chỉ không được chứa dấu phẩy (,)";
+        isValid = false;
+    } else {
+        document.getElementById("specific-address-update-err").textContent = "";
+    }
+
+// Validate dropdown địa chỉ
+    const provinceSelectUpdate = document.getElementById("province-update");
+    const districtSelectUpdate = document.getElementById("district-update");
+    const wardSelectUpdate = document.getElementById("ward-update");
+    if (!provinceSelectUpdate.value || !districtSelectUpdate.value || !wardSelectUpdate.value) {
+        document.getElementById("selected-address-update-err").textContent = "* Bạn cần chọn đầy đủ Tỉnh, Huyện, và Xã/Phường.";
+        isValid = false;
+    } else {
+        document.getElementById("selected-address-update-err").textContent = "";
+    }
+
+    if (!isValid) {
+        return;
+    }
+
+// Logic xử lý tiếp theo nếu tất cả validate đều hợp lệ
 
     Swal.fire({
         title: 'Bạn có chắc chắn muốn cập nhật địa chỉ này hay không?',
@@ -974,9 +1126,7 @@ function updateAddress() {
 // AJAX để lấy danh sách địa chỉ
 function listAddressForCustomer() {
     $.ajax({
-        type: 'GET',
-        url: '/api-client/list-address-for-customer',
-        success: function (response) {
+        type: 'GET', url: '/api-client/list-address-for-customer', success: function (response) {
             var div = $('#info-address-for-customer');
             var noData = $('#noData-info-address-for-customer');
             div.empty();
@@ -1024,8 +1174,7 @@ function listAddressForCustomer() {
                 `);
                 });
             }
-        },
-        error: function (xhr) {
+        }, error: function (xhr) {
             console.error('Lỗi: ' + xhr.responseText);
         }
     });
