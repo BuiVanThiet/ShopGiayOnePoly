@@ -117,15 +117,15 @@
 }
 
 .item-img {
-    flex: 0 0 35%; /* 35% chiều rộng cho hình ảnh */
-    display: flex; /* Để căn giữa ảnh nếu cần */
-    align-items: center; /* Căn giữa theo chiều dọc */
-    justify-content: center; /* Căn giữa theo chiều ngang */
+    flex: 0 0 35%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .item-info {
-    flex: 0 0 65%; /* 65% chiều rộng cho thông tin sản phẩm */
-    padding-left: 30px; /* Thêm khoảng cách giữa ảnh và thông tin */
+    flex: 0 0 65%;
+    padding-left: 30px;
 }
 
 .right {
@@ -154,15 +154,10 @@
 }
 
 .modal .modal-title {
-    font-size: 18px; /* Kích thước chữ nhỏ gọn hơn */
+    font-size: 18px;
     color: white;
     font-weight: bold;
     text-align: center;
-}
-
-.modal .btn-close {
-    color: black;
-    font-size: 1.2rem;
 }
 
 .modal .modal-body {

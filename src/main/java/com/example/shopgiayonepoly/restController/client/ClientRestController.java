@@ -492,14 +492,14 @@ public class ClientRestController extends BaseEmail {
         if (idCustomerLogin != null) {
             AddressShip addressShip = new AddressShip();
             Customer customer = customerService.getCustomerByID(idCustomerLogin);
-            if(customer==null){
+            if (customer == null) {
                 response.put("message", "Khách hàng không tồn tại");
-                response.put("check", "3");
+                response.put("check", "2");
                 return ResponseEntity.ok(response);
             }
-            if(addressShip.getSpecificAddress()==null||addressShip.getSpecificAddress().isEmpty()){
+            if (addressForCustomer == null || addressForCustomer.isEmpty()) {
                 response.put("message", "Địa chỉ chi tiết đang trống");
-                response.put("check", "3");
+                response.put("check", "2");
                 return ResponseEntity.ok(response);
             }
             addressShip.setCustomer(customer);
@@ -537,7 +537,7 @@ public class ClientRestController extends BaseEmail {
         if (idCustomerLogin != null) {
             AddressShip addressShip = addressShipRepository.findById(idAddress).orElse(null);
 
-            if (addressShip == null) {
+            if (addressForCustomer == null) {
                 response.put("message", "Địa chỉ không được để trống");
                 response.put("check", "2");
                 return ResponseEntity.ok(response);
@@ -572,6 +572,11 @@ public class ClientRestController extends BaseEmail {
     @GetMapping("/delete/address-customer/{idAddress}")
     public ResponseEntity<Map<String, String>> deleteAddressForCustomer(@PathVariable("idAddress") Integer idAddress) {
         Map<String, String> messages = new HashMap<>();
+        if (idAddress == null) {
+            messages.put("message", "Xóa địa chỉ giao hàng thất bại!");
+            messages.put("check", "3");
+            return ResponseEntity.ok(messages);
+        }
         addressShipRepository.deleteById(idAddress);
         messages.put("message", "Xóa địa chỉ giao hàng thành công!");
         messages.put("check", "1");

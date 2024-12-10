@@ -1,15 +1,12 @@
 .cart-item {
     display: flex;
-    padding: 10px;
-    margin-bottom: 10px;
-    background: #f9f9f9;
-    border-radius: 2px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     position: relative;
 }
-.voucher-summary{
+
+.voucher-summary {
     margin-left: 4.5%;
 }
+
 .cart-left img {
     width: 120px;
     border-radius: 2px;
@@ -46,23 +43,29 @@
 
 .cart-qtyminus,
 .cart-qtyplus {
-    padding: 5px 8px;
-    border: 1px solid #ddd;
+    /*padding: 5px 8px;*/
+    border: 1px solid #b0a8a8;
     background: #f8f8f8;
     cursor: pointer;
-    font-size: 1em;
+    font-size: 13px;
+    font-weight: bold;
+    width: 13px;
+
 }
 
 .cart-qtyminus:hover,
 .cart-qtyplus:hover {
-    background-color: #e7e7e7;
+    background-color: #f8f8f8;
+    color: black;
 }
 
 .cart-tc {
-    width: 50px;
+    width: 20px;
     text-align: center;
     font-size: 1em;
     color: #333;
+    height: 40px;
+    border-radius: 0px;
 }
 
 .cart-btn-close {
@@ -85,14 +88,15 @@
     display: flex;
     padding: 10px;
     margin-bottom: 10px;
-    background: #f9f9f9;
-    border-radius: 2px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    /*background: #ffffff;*/
+    /*border-radius: 2px;*/
+    /*box-shadow: 0 2px 5px rgba(255, 255, 255, 0.1);*/
 }
+
 .cart-btn-close {
     position: absolute;
-    /*top: 0px; !* Điều chỉnh khoảng cách từ trên cùng *!*/
     right: 10px; /* Điều chỉnh khoảng cách từ bên phải */
+    top: 0px;
     background: none;
     border: none;
     font-size: 2em; /* Tăng kích thước chữ */
@@ -124,6 +128,7 @@
     width: 100%;
     margin-left: auto;
 }
+
 .cart-actions__total {
     display: flex;
     flex-direction: column;
@@ -142,9 +147,9 @@
     padding: 5px 0;
 }
 
-.cart-row:last-child {
-    border-bottom: none; /* Xóa gạch chân cho dòng cuối */
-}
+/*.cart-row:last-child {*/
+/*    border-bottom: none; !* Xóa gạch chân cho dòng cuối *!*/
+/*}*/
 
 .cart-total strong {
     font-size: 18px;
@@ -156,7 +161,6 @@
     font-weight: bold;
     color: #333030;
 }
-
 
 
 .cart-actions__btn {
@@ -201,28 +205,24 @@
     text-transform: uppercase;
 }
 
-
-/*Cart voucher*/
-.cart-voucher-voucher {
+/*--- Cart Voucher ---*/
+.cart-voucher {
     margin-top: 40px;
     width: 38%;
-    /*height: 283px;*/
     padding: 15px;
     background-color: #f8f6f6;
     border: 1px solid #eae4e4;
     border-radius: 3px;
-
-    /*box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);*/
     transition: all 0.3s ease;
 }
 
-.cart-voucher-voucher:hover {
+.cart-voucher:hover {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
 .btn-toggle-voucher {
     background-color: #a6a3a3;
-    color: white;
+    color: #fff;
     border: none;
     padding: 10px 15px;
     font-size: 16px;
@@ -238,25 +238,57 @@
 }
 
 #voucher-list {
-    display: none;
     margin-top: 15px;
     padding-top: 10px;
 }
 
-.voucher-title-voucher {
+/* ==== Cart Voucher Section ==== */
+.cart-voucher {
+    margin-top: 40px;
+    padding: 15px;
+    background-color: #f8f6f6;
+    border: 1px solid #eae4e4;
+    border-radius: 8px;
+    transition: box-shadow 0.3s ease;
+}
+
+.cart-voucher:hover {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* ==== Button for Toggling Voucher List ==== */
+.btn-toggle-voucher {
+    display: block;
+    width: 100%;
+    background-color: #a6a3a3;
+    color: white;
+    border: none;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.3s ease;
+}
+
+.btn-toggle-voucher:hover {
+    background-color: #03cc0c;
+}
+
+#voucher-list {
+    margin-top: 15px;
+    padding-top: 10px;
+}
+
+.voucher-title {
     font-size: 18px;
     font-weight: bold;
     margin-bottom: 10px;
     color: #333;
 }
 
-.voucher-list-voucher {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.cart-voucher-item {
+/* ==== Voucher Item ==== */
+.voucher-item {
     display: flex;
     align-items: center;
     margin-bottom: 10px;
@@ -267,45 +299,50 @@
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.cart-voucher-item:hover {
+.voucher-item:hover {
     transform: translateY(-5px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.cart-voucher-item img {
-    width: 100px;
-    height: 100px;
+.voucher-item img {
+    width: 80px;
+    height: 80px;
     margin-right: 15px;
     object-fit: cover;
     border-radius: 5px;
 }
 
-.cart-voucher-item .voucher-name-voucher {
+.voucher-item .voucher-details {
+    flex-grow: 1;
+}
+
+.voucher-item .voucher-name {
     font-size: 16px;
     font-weight: bold;
     color: #333;
     margin-bottom: 5px;
 }
 
-.cart-voucher-item .voucher-discount-voucher {
+.voucher-item .voucher-discount {
     font-size: 14px;
     color: #ff5722;
     font-weight: 600;
     margin-bottom: 5px;
 }
 
-.cart-voucher-item .voucher-desc-voucher {
+.voucher-item .voucher-desc {
     font-size: 12px;
     color: #757575;
-    margin-bottom: 5px;
 }
 
-.cart-voucher-item input[type="radio"] {
+/* ==== Radio Button for Selecting Voucher ==== */
+.voucher-item input[type="radio"] {
     margin-left: auto;
     transform: scale(1.2);
     cursor: pointer;
 }
 
+/* ==== Apply Voucher Button ==== */
 .btn-apply-voucher {
     background-color: #014b86;
     color: white;
@@ -322,95 +359,37 @@
 .btn-apply-voucher:hover {
     background-color: #1976D2;
 }
-#voucher-list {
-    display: none;
+
+/* ==== Unapply Voucher Button ==== */
+.btn-unapply-voucher {
+    background-color: #cc0000;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    cursor: pointer;
+    transition: transform 0.2s ease, background-color 0.3s ease;
+    position: relative;
+    font-size: 0;
 }
 
-/* Ẩn ảnh và nút khi danh sách voucher được hiển thị */
-#voucher-button-img {
-    display: inline-block;
+.btn-unapply-voucher::before {
+    content: '✖';
+    font-size: 20px;
+    color: white;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
-#voucher-button-text {
-    display: inline;
+.btn-unapply-voucher:hover {
+    background-color: #990000;
+    transform: scale(1.05);
 }
+
+/* ==== Original Price Styling ==== */
 .original-price {
     text-decoration: line-through;
-    color: #131313; /* Thêm màu xám nếu muốn */
-}
-
-/*Voucher apply*/
-.voucher-apply {
-    align-items: center;
-    margin-bottom: 10px;
-    padding: 10px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.voucher-apply:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.voucher-apply img {
-    width: 60px;
-    height: 50px;
-    margin-right: 15px;
-    object-fit: cover;
-    border-radius: 5px;
-}
-
-.voucher-apply .voucher-code-apply {
-    margin-bottom: 5px;
-}
-
-.voucher-apply .voucher-name-voucher-apply {
-    font-size: 16px;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 5px;
-}
-
-.voucher-apply .voucher-discount-voucher-apply {
-    font-size: 14px;
-    color: #ff5722;
-    font-weight: 600;
-}
-/* Nút Hủy mặc định */
-/* Nút Hủy mặc định */
-.btn-un-apply-voucher {
-    color: #fff; /* Màu chữ trắng */
-    border: none;
-    border-radius: 5px; /* Bo góc nhẹ */
-    padding: 10px; /* Khoảng cách bên trong */
-    font-size: 0; /* Ẩn chữ */
-    cursor: pointer; /* Con trỏ chuột */
-    position: relative; /* Để hỗ trợ ::before */
-    transition: background-color 0.3s ease, transform 0.2s ease; /* Hiệu ứng */
-}
-
-/* Hiệu ứng hover */
-.btn-un-apply-voucher:hover {
-    /*background-color: #cc0000; !* Màu đỏ đậm hơn khi hover *!*/
-    transform: scale(1.05); /* Phóng to nút khi hover */
-}
-
-/* Thêm biểu tượng bằng ::before */
-.btn-un-apply-voucher::before {
-    content: '✖'; /* Biểu tượng dấu X */
-    font-size: 30px; /* Kích thước icon */
-    color: #fff; /* Màu icon */
-    position: absolute; /* Đặt vị trí icon */
-    left: 50%; /* Canh giữa theo chiều ngang */
-    top: 50%; /* Canh giữa theo chiều dọc */
-    transform: translate(-50%, -50%); /* Canh giữa hoàn hảo */
-    transition: transform 0.3s ease; /* Hiệu ứng khi hover */
-}
-
-/* Hiện icon khi hover */
-.btn-un-apply-voucher:hover::before {
-    transform: translate(-50%, -50%) scale(1.2); /* Phóng to icon khi hover */
+    color: #757575;
 }
