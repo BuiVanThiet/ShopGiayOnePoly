@@ -408,38 +408,33 @@ h1.center {
     background-color: #89a3b2;
 }
 
-/* Table Styles */
 .table-staff {
-    background-color: #ffffff;
-    border: 1px solid #dee2e6;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.05); /* Softer shadow */
+    width: 100%;
+    border-collapse: collapse;
 }
 
-.table-staff-hover tbody tr:hover {
-    background-color: #e0f7fa; /* Light pastel cyan on hover */
-}
-
-.table-staff-striped tbody tr:nth-of-type(odd) {
-    background-color: #f2f2f2; /* Soft grey stripes */
-}
-
-.table-staff-dark {
-    background-color: #c3d9df; /* Light pastel grey */
-    color: #4f6d7a; /* Darker blue-grey */
-}
-
-.table-staff-dark th {
-    border-color: #b3cde0; /* Border to match the pastel theme */
-}
-
-/* Table Cells */
-
-.table-staff td {
+.table-staff th, .table-staff td {
+    padding: 10px;
+    text-align: center;
     vertical-align: middle;
-    font-size: 14px;
+    word-wrap: break-word;
+    word-break: break-word;
+    white-space: normal;
 }
-
-
+.table-staff th {
+    background-color: #c0c0c0;
+}
+.table-staff tr {
+    border-bottom: 1px solid #ddd;
+}
+.table-staff td {
+    background-color: white;
+}
+.table-staff img {
+    width: 100%;
+    height: 100%;
+    border-radius: 5px;
+}
 /* Pagination */
 .pagination .page-link {
     color: #aec6cf;

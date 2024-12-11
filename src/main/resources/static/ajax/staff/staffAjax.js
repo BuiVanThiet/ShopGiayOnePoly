@@ -11,7 +11,7 @@ function loadTableStaff(page) {
                 <tr>
                     <td>
                         <img src="https://res.cloudinary.com/dfy4umpja/image/upload/v1728721025/${staff.nameImage}"
-                             style="height: 50px" alt="Ảnh nhân viên" />
+                              alt="Ảnh nhân viên" />
                     </td>
                     <td>${staff.codeStaff}</td>
                     <td>${staff.fullName}</td>

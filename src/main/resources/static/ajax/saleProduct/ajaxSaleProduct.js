@@ -48,7 +48,7 @@ function loadSaleProduct(page) {
                                 <button type="button" 
                                 class="btn btn-sm btn-outline-success " 
                                 data-bs-toggle="modal" data-bs-target="#listProductModal" 
-                                onclick="resetFilterProductSale(${saleProduct[0]})">Thêm vào sản phẩm</button>
+                                onclick="resetFilterProductSale(${saleProduct[0]})">Áp dụng</button>
                             </td>
                     `;
                     }else if (saleProduct[7] === 2 || saleProduct[7] === 0) {

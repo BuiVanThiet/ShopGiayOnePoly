@@ -147,3 +147,6 @@
 .mult-select-tag .rounded {
     border-radius: .375rem;
 }
+thead{
+    background-color: #c0c0c0;
+}

@@ -63,3 +63,31 @@
     color: #333;
     font-size: 0.95rem;
 }
+
+.table-voucher {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-voucher th, .table-voucher td {
+    padding: 10px;
+    text-align: center;
+    vertical-align: middle;
+    word-wrap: break-word;
+    word-break: break-word;
+    white-space: normal;
+}
+.table-voucher th {
+    background-color: #c0c0c0;
+}
+.table-voucher tr {
+    border-bottom: 1px solid #ddd;
+}
+.table-voucher td {
+    background-color: white;
+}
+.table-voucher img {
+    width: 100px;
+    height: 100px;
+    border-radius: 5px;
+}
