@@ -23,7 +23,7 @@
 .btn-size-square {
     width: 100%;
     height: 50px;
-    margin-right: 10px;
+    /*margin-right: 10px;*/
     background-color: #f8f9fa;
     border: 1px solid #cccccc; /* Viền xám nhạt khi không chọn */
     font-size: 12px;
@@ -113,7 +113,7 @@
 /* Phong cách chung cho modal */
 .line-item-container {
     display: flex;
-    justify-content: space-between; /* Giữ khoảng cách giữa các phần tử */
+    justify-content: space-between;
 }
 
 .item-img {

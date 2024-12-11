@@ -6,6 +6,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const firstColorButton = document.querySelector('.color-btn');
     const firstSizeButton = document.querySelector('.size-btn');
 
+// Kiểm tra giá trị:
+    console.log("First Color Button:", firstColorButton.textContent);
+    console.log("First Size Button:", firstSizeButton.textContent);
+
     // Kiểm tra nếu có màu và kích thước
     if (firstColorButton && firstSizeButton) {
         const firstColor = firstColorButton.innerText.trim();
@@ -115,7 +119,6 @@ function getProductDetail(productId, colorId, sizeId) {
                     $('#price-display').show();
                 }
 
-                // Cập nhật trạng thái nút mua hàng
                 if (quantity > 0) {
                     $('#btn-add-cart').prop('disabled', false);
                     $('#btn-pay-now').prop('disabled', false);
@@ -123,16 +126,6 @@ function getProductDetail(productId, colorId, sizeId) {
                     $('#btn-add-cart').prop('disabled', true);
                     $('#btn-pay-now').prop('disabled', true);
                 }
-            } else {
-                // Nếu không có dữ liệu, đặt giá về 0 và disable các nút
-                // $('#quantity-display').text(0);
-                // $('#price-display').text("0 ₫");
-                // $('#price-apply-discount').text("0 ₫");
-                // $('#price-modal').text("0 ₫");
-                // $('#price-modal-pay-now').text("0 ₫");
-
-                $('#btn-add-cart').prop('disabled', true);
-                $('#btn-pay-now').prop('disabled', true);
             }
         },
         error: function (xhr) {
@@ -402,7 +395,6 @@ function buyNow() {
             productDetailId: productDetailId, quantity: quantityBuy
         }), success: function (data) {
             if (data && data.success) {
-                console.log("Mua ngay thành công");
                 window.location.href = '/onepoly/cart';
             } else {
                 messageErrorPayNow.text(data.message || 'Có lỗi xảy ra khi thêm vào giỏ hàng.'); // Hiển thị thông báo lỗi

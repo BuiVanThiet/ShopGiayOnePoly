@@ -156,3 +156,22 @@
 .container-fluid .col-3 {
     padding: 15px; /* Khoảng cách giữa các sản phẩm */
 }
+
+.view-icon {
+    display: inline-block;
+    text-decoration: none;
+    color: #555; /* Màu mặc định */
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.view-icon i {
+    width: 30px;
+    height: 15px;
+    display: inline-block;
+    text-align: center;
+}
+
+.view-icon:hover {
+    color: #007bff; /* Màu xanh khi hover */
+    transform: scale(1.1); /* Hiệu ứng phóng to nhẹ */
+}

@@ -109,8 +109,10 @@
                                th:attr="data-price=${product.priceProduct}"></p>
                         </div>
                         <div class="product-icons">
-                            <a class="view-icon" th:href="@{/onepoly/product-detail/{id}(id=${product.id})}"><i
-                                    class="fas fa-shopping-cart"></i></a>
+                            <a class="view-icon" th:href="@{/onepoly/product-detail/{id}(id=${product.id})}">
+                                <i class="fas fa-eye"></i>
+                            </a>
+
                         </div>
                     </div>
                 </div>
