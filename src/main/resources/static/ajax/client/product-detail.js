@@ -2,27 +2,25 @@ let selectedColorId;
 let selectedSizeId;
 const productId = document.getElementById("product-id").value;
 document.addEventListener("DOMContentLoaded", function () {
-    // Lấy màu và kích thước đầu tiên (nếu có)
     const firstColorButton = document.querySelector('.color-btn');
     const firstSizeButton = document.querySelector('.size-btn');
 
-// Kiểm tra giá trị:
     console.log("First Color Button:", firstColorButton.textContent);
     console.log("First Size Button:", firstSizeButton.textContent);
 
-    // Kiểm tra nếu có màu và kích thước
     if (firstColorButton && firstSizeButton) {
         const firstColor = firstColorButton.innerText.trim();
         const firstColorId = firstColorButton.getAttribute('data-color-id');
 
         const firstSize = firstSizeButton.innerText.trim();
         const firstSizeId = firstSizeButton.getAttribute('data-size-id');
-
+        console.log("Color ID: " + firstColorId)
+        console.log("Size ID: " + firstSizeId)
+        console.log("Product ID: " + productId)
         // Cập nhật màu và kích thước đầu tiên
         setTemporaryColor(firstColor, firstColorId);
         setTemporarySize(firstSize, firstSizeId);
 
-        // Gọi API lấy chi tiết sản phẩm cho màu và kích thước đầu tiên
         getProductDetail(productId, firstColorId, firstSizeId);
     } else {
         // Nếu không tìm thấy màu hoặc kích thước đầu tiên, vẫn gọi API với các giá trị mặc định (nếu có)
