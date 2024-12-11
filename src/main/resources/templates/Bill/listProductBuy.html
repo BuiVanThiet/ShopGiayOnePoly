@@ -4,6 +4,30 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <style>
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+            vertical-align: middle;
+            word-wrap: break-word;
+            word-break: break-word;
+            white-space: normal;
+        }
+
+        tr {
+            border-bottom: 1px solid #ddd;
+        }
+        td {
+            background-color: white;
+        }
+
+    </style>
 </head>
 <body>
 <div th:fragment="listProductBuy">
@@ -14,13 +38,13 @@
     <table id="table-product-buy" class="table mt-2" style="display:none;">
         <thead>
         <tr class="text-center">
-            <th scope="col" style="width: 1%">STT</th>
-            <th scope="col" style="width: 15%">Ảnh</th>
-            <th scope="col" style="width: 20%">Sản phẩm</th>
-            <th scope="col" style="width: 8%">Giá</th>
-            <th scope="col" style="width: 14%">Số lượng</th>
-            <th scope="col" style="width: 5%">Tổng tiền</th>
-            <th scope="col" style="width: 5%">Hành động</th>
+            <th scope="col" style="width: 1%;  background-color: #c0c0c0;">STT</th>
+            <th scope="col" style="width: 15%;  background-color: #c0c0c0;">Ảnh</th>
+            <th scope="col" style="width: 20%;  background-color: #c0c0c0;">Sản phẩm</th>
+            <th scope="col" style="width: 8%;  background-color: #c0c0c0;">Giá</th>
+            <th scope="col" style="width: 14%;  background-color: #c0c0c0;">Số lượng</th>
+            <th scope="col" style="width: 5%;  background-color: #c0c0c0;">Tổng tiền</th>
+            <th scope="col" style="width: 5%;  background-color: #c0c0c0;">Hành động</th>
         </tr>
         </thead>
         <tbody id="tableBillDetail">

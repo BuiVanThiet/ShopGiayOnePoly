@@ -12,17 +12,6 @@
     <link rel="stylesheet" href="/css/Chart/chart.css">
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <title>Thống kê</title>
-    <style>
-        #chart_div {
-            width: 100%;
-            height: 500px;
-        }
-
-        th, td {
-            text-align: center; /* Căn giữa nội dung */
-            vertical-align: middle; /* Căn giữa theo chiều dọc */
-        }
-    </style>
 </head>
 
 <body>
@@ -120,8 +109,8 @@
             <div class="col-md-7 product-table" style="height: 566px;">
                 <h4 id="topProductTitle" class="text-center">Top sản phẩm bán chạy</h4>
                 <div class="table-responsive" id="productTableContainer">
-                    <table class="table table-hover">
-                        <thead class="thead-dark">
+                    <table class="table-chart">
+                        <thead>
                         <tr>
                             <th>STT</th>
                             <th>Ảnh</th>
@@ -175,14 +164,14 @@
             <div class="col-md-6 product-table" style="height: 566px;">
                 <h4 id="topProductExchangeTitle" class="text-center">Top sản phẩm đã đổi</h4>
                 <div class="table-responsive" id="productExchangeTableContainer">
-                    <table class="table table-hover">
-                        <thead class="thead-dark">
+                    <table class="table-chart">
+                        <thead >
                         <tr>
-                            <th>STT</th>
+                            <th style="width: 55px">STT</th>
                             <th>Ảnh</th>
                             <th>Tên sản phẩm</th>
                             <th>Giá bán</th>
-                            <th>Tổng số lượng</th>
+                            <th>Số lượng</th>
                         </tr>
                         </thead>
                         <tbody id="productExchangeTableBody">
@@ -193,14 +182,14 @@
             <div class="col-md-6 product-table" style="height: 566px;">
                 <h4 id="topProductReturnTitle" class="text-center">Top sản phẩm đã trả</h4>
                 <div class="table-responsive" id="productReturnTableContainer">
-                    <table class="table table-hover">
-                        <thead class="thead-dark">
+                    <table class="table-chart">
+                        <thead>
                         <tr>
-                            <th>STT</th>
+                            <th style="width: 55px">STT</th>
                             <th>Ảnh</th>
                             <th>Tên sản phẩm</th>
                             <th>Giá bán</th>
-                            <th>Tổng số lượng</th>
+                            <th>Số lượng</th>
                         </tr>
                         </thead>
                         <tbody id="productReturnTableBody">

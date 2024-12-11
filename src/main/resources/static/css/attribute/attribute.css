@@ -85,29 +85,32 @@
 }
 
 .attribute-table {
-    background-color: #fff;
-    border-radius: 15px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
     width: 100%;
+    border-collapse: collapse;
 }
 
-.attribute-table th {
-    background-color: #007bff;
-    color: #ffffff;
-    text-align: center;
-    font-weight: 600;
-}
-
-.attribute-table td {
+.attribute-table th, .attribute-table td {
+    padding: 10px;
     text-align: center;
     vertical-align: middle;
-    padding: 15px;
     word-wrap: break-word;
     word-break: break-word;
     white-space: normal;
 }
-
+.attribute-table th {
+    background-color: #c0c0c0;
+}
+.attribute-table tr {
+    border-bottom: 1px solid #ddd;
+}
+.attribute-table td {
+    background-color: white;
+}
+.attribute-table img {
+    width: 100px;
+    height: 100px;
+    border-radius: 5px;
+}
 .attribute-table td:nth-child(1) {
     width: 150px; /* Cột 1 chiếm 30% */
 }
@@ -131,10 +134,7 @@
     background-color: #f8f9fa;
 }
 
-.attribute-table tbody tr:hover {
-    background-color: #e2e6ea;
-    transition: background-color 0.3s ease;
-}
+
 
 .attribute-icon-edit, .attribute-icon-delete, .attribute-icon-save {
     cursor: pointer;
