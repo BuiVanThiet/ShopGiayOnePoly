@@ -11,7 +11,7 @@ function loadTableCustomer(page) {
                 <tr>
                     <td>
                         <img src="https://res.cloudinary.com/dfy4umpja/image/upload/v1728721025/${customer.nameImage}"
-                             style="height: 50px" alt="Ảnh khách hàng" />
+                             alt="Ảnh khách hàng" />
                     </td>
                     <td>${customer.fullName}</td>
                     <td>${customer.gender == 1 ? 'Nam' : 'Nữ'}</td>

@@ -1,10 +1,14 @@
 /* Cấu trúc của .row để đảm bảo chiếm toàn bộ chiều rộng mà không có vấn đề cuộn ngang */
+
 .row {
     max-width: 100%;
     margin-right: auto;
     padding: 0; /* Đảm bảo không có padding dư thừa ảnh hưởng đến cuộn trang */
 }
-
+#chart_div {
+    width: 100%;
+    height: 500px;
+}
 /* Điều chỉnh để .fixed-container có thể cuộn nội dung nhưng không cuộn toàn bộ trang */
 .fixed-container {
     width: 100%;
@@ -114,4 +118,32 @@
 body {
     padding-top: 10px; /* Đảm bảo có khoảng cách cho phần đầu trang */
     margin-bottom: 0; /* Loại bỏ margin dưới cùng gây cuộn */
+}
+
+.table-chart {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-chart th, .table-chart td {
+    padding: 10px;
+    text-align: center;
+    vertical-align: middle;
+    word-wrap: break-word;
+    word-break: break-word;
+    white-space: normal;
+}
+.table-chart th {
+    background-color: #c0c0c0;
+}
+.table-chart tr {
+    border-bottom: 1px solid #ddd;
+}
+.table-chart td {
+    background-color: white;
+}
+.table-chart img {
+    width: 100px;
+    height: 100px;
+    border-radius: 5px;
 }
