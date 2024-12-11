@@ -104,17 +104,17 @@ body{
 
 .remember-forgot a {
     color: #162938;
-    text-decoration: none;
-}
-
-.remember-forgot a:hover {
     text-decoration: underline;
 }
+
+/*.remember-forgot a:hover {*/
+/*    text-decoration: underline;*/
+/*}*/
 
 .btn-login {
     width: 100%;
     height: 45px;
-    background: #162938;
+    background: #001aa2;
     border: none;
     outline: none;
     border-radius: 6px;
@@ -122,6 +122,14 @@ body{
     font-size: 1em;
     color: #fff;
     font-weight: 500;
+}
+.login-register {
+    margin-top: 15px
+}
+
+.login-register a {
+    color: #162938;
+    text-decoration: underline;
 }
 
 .error-message {
