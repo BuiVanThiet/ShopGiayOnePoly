@@ -19,7 +19,7 @@
 /* Định dạng chung cho toàn bộ thông tin */
 .info-transport {
     background-color: #ffffff; /* Nền màu sáng */
-    padding: 20px;
+    padding: 10px;
 }
 
 /* Định dạng cho các trường nhập liệu */
@@ -40,7 +40,7 @@
 .form-control, .form-select, textarea {
     background-color: #ffffff; /* Màu nền trắng */
     border: 1px solid #ccc; /* Đường viền nhẹ cho các trường nhập liệu */
-    border-radius: 4px; /* Bo góc cho các trường nhập liệu */
+    border-radius: 2px; /* Bo góc cho các trường nhập liệu */
     padding: 10px; /* Khoảng cách giữa nội dung và viền */
     font-size: 16px;
     width: 100%;
@@ -324,7 +324,7 @@ button.btn-secondary:hover {
     padding: 15px;
     margin-left: 30px;
     border: 1px solid #bebdbd; /* Đường viền bên trái */
-}
+    }
 
 /* Tạo kiểu cho mỗi sản phẩm trong giỏ hàng */
 .cart-list .item {
@@ -516,6 +516,7 @@ button.btn-secondary:hover {
 .form-check-input {
     margin-right: 10px; /* Tạo khoảng cách cho radio */
 }
+
 /* Tổng quan */
 .summary {
     padding: 1rem; /* Khoảng cách bên trong */
@@ -542,7 +543,7 @@ button.btn-secondary:hover {
     background-color: #ee4d2d; /* Màu cam đặc trưng của các sàn TMĐT */
     color: #fff; /* Chữ trắng để nổi bật */
     /*font-weight: bold; !*    Chữ đậm *!*/
-        padding: 0.75rem 1.5rem; /* Khoảng cách bên trong */
+    padding: 0.75rem 1.5rem; /* Khoảng cách bên trong */
     border: none; /* Loại bỏ đường viền */
     /*border-radius: px; !* Bo góc mềm mại *!*/
     transition: background-color 0.3s, transform 0.2s; /* Hiệu ứng hover */
@@ -595,6 +596,6 @@ button.btn-secondary:hover {
 /*Custom giao diện         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> */
 .swal-popup {
     max-width: 500px; /* Kích thước nhỏ hơn */
-    padding: 15px;    /* Thu nhỏ khoảng cách bên trong */
-    font-size: 12px;  /* Thu nhỏ kích thước chữ */
+    padding: 15px; /* Thu nhỏ khoảng cách bên trong */
+    font-size: 12px; /* Thu nhỏ kích thước chữ */
 }

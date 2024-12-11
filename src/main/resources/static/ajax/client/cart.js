@@ -20,13 +20,11 @@ function applyVoucher() {
                     method: 'GET',
                     success: function (data) {
                         if (data.check === '1') {
-                            createToast(data.check, data.message);
-                            const discountType = data.voucherType; // Lấy kiểu giảm giá
-                            const discountValue = parseFloat(data.priceReduced) || 0; // Lấy giá trị giảm giá
+                            const discountType = data.voucherType;
+                            const discountValue = parseFloat(data.priceReduced) || 0;
 
-                            // Kiểm tra giá trị hợp lệ của voucherType và priceReduced
                             if (isNaN(discountType) || isNaN(discountValue)) {
-                                alert("Dữ liệu giảm giá không hợp lệ.");
+                                createToast("2", "Dữ liệu giảm giá không hợp lệ.");
                                 return;
                             }
 
@@ -49,11 +47,12 @@ function applyVoucher() {
 
                             // Lưu trữ thông tin giảm giá vào sessionStorage
                             sessionStorage.setItem('priceVoucherReduced', priceReduced.toLocaleString('en-US') + ' ₫');
-                            setTimeout(function () {
-                                sessionStorage.setItem('finalPrice', finalPrice.toLocaleString('en-US') + ' ₫');
-                                sessionStorage.setItem('priceReduced', priceReduced.toLocaleString('en-US') + ' ₫');
-                                window.location.reload(); // reload trang sau khi cập nhật giá trị
-                            }, 3500); // Đợi một chút để cập nhật sessionStorage trước khi reload
+                            sessionStorage.setItem('finalPrice', finalPrice.toLocaleString('en-US') + ' ₫');
+                            sessionStorage.setItem('priceReduced', priceReduced.toLocaleString('en-US') + ' ₫');
+                            sessionStorage.setItem('toastCheck', data.check);  // Lưu thông báo vào sessionStorage
+                            sessionStorage.setItem('toastMessage', data.message);  // Lưu thông báo vào sessionStorage
+
+                            window.location.reload();
                         } else {
                             alert('Voucher không tồn tại hoặc đã hết hạn.');
                         }
@@ -64,6 +63,33 @@ function applyVoucher() {
                     }
                 });
             }
+        }
+    });
+}
+
+
+function UnApplyVoucherForCart() {
+    Swal.fire({
+        title: 'Bạn có chắc chắn muốn hủy áp dụng phiếu giảm giá này không?',
+        text: "Sau khi xác nhận, bạn sẽ hủy áp dụng.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Xác nhận',
+        cancelButtonText: 'Hủy'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: '/api-client/un-apply-voucher',
+                type: 'GET',
+                success: function (response) {
+                    sessionStorage.setItem('toastCheckUnApplyVoucher', response.check);
+                    sessionStorage.setItem('toastMessageUnApplyVoucher', response.message);
+                    window.location.reload();
+                },
+                error: function (error) {
+                    createToast("3", "Xóa thất bại");
+                }
+            })
         }
     });
 }
@@ -95,8 +121,6 @@ function parseCurrency(value) {
     return parseFloat(value.replace(/₫|,/g, "").trim());
 }
 
-
-// Khi trang tải xong
 window.addEventListener('load', function () {
     const totalPriceElem = document.getElementById('totalPriceCartItem');
     const totalPrice = parseCurrency(totalPriceElem.textContent);
@@ -107,27 +131,29 @@ window.addEventListener('load', function () {
         updateCartDisplay(priceVoucherReduced, finalPrice);
     }
 
+    // Hiển thị lại toast nếu có thông báo lưu trong sessionStorage
+    const toastCheck = sessionStorage.getItem('toastCheck');
+    const toastMessage = sessionStorage.getItem('toastMessage');
+
+    if (toastCheck && toastMessage) {
+        createToast(toastCheck, toastMessage);
+        // Xóa thông báo khỏi sessionStorage sau khi hiển thị
+        sessionStorage.removeItem('toastCheck');
+        sessionStorage.removeItem('toastMessage');
+    }
+
+    const toastCheckUnApplyVoucher = sessionStorage.getItem('toastCheckUnApplyVoucher');
+    const toastMessageUnApplyVoucher = sessionStorage.getItem('toastMessageUnApplyVoucher');
+    if (toastCheckUnApplyVoucher && toastMessageUnApplyVoucher) {
+        createToast(toastCheckUnApplyVoucher, toastMessageUnApplyVoucher);
+        sessionStorage.removeItem('toastCheckUnApplyVoucher');
+        sessionStorage.removeItem('toastMessageUnApplyVoucher');
+    }
+
     setTimeout(function () {
         sessionStorage.removeItem('priceVoucherReduced');
     }, 2000);
 });
-
-// Hàm toggle hiển thị danh sách voucher
-function toggleVoucherList() {
-    const voucherList = document.getElementById('voucher-list');
-    const voucherButtonText = document.getElementById('voucher-button-text');
-    const voucherButtonImg = document.getElementById('voucher-button-img');
-
-    if (voucherList.style.display === 'none') {
-        voucherList.style.display = 'block';
-        voucherButtonImg.style.display = 'none';
-        voucherButtonText.textContent = "Đóng danh sách";
-    } else {
-        voucherList.style.display = 'none';
-        voucherButtonImg.style.display = 'inline-block';
-        voucherButtonText.textContent = "Áp dụng voucher";
-    }
-}
 
 function calculateTotalPrice() {
     let totalPrice = 0;
@@ -318,37 +344,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
     calculateTotalPrice();
 });
-
-function UnApplyVoucherForCart() {
-    Swal.fire({
-        title: 'Bạn có chắc chắn muốn hủy áp dụng phiếu giảm giá này không?',
-        text: "Sau khi xác nhận, bạn sẽ hủy áp dụng.",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Xác nhận',
-        cancelButtonText: 'Hủy'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-                url: '/api-client/un-apply-voucher',
-                type: 'GET',
-                success: function (response) {
-                    createToast(response.check, response.message);
-                    if (response.check === '1') {
-                        setTimeout(function () {
-                            location.reload();
-                        }, 3500);
-                        createToast(response.check, response.message);
-                    }
-                },
-                error: function (error) {
-                    console.log("Xóa thất bại: " + error.responseText);
-                }
-            })
-        }
-    });
-}
-
 
 document.querySelectorAll('.cart-price-item').forEach(el => {
     const price = parseFloat(el.getAttribute('data-price'));

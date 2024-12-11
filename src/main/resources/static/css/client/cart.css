@@ -3,10 +3,6 @@
     position: relative;
 }
 
-.voucher-summary {
-    margin-left: 4.5%;
-}
-
 .cart-left img {
     width: 120px;
     border-radius: 2px;
@@ -192,7 +188,7 @@
 }
 
 .cart-btn-checkout {
-    background-color: #092e80;
+    background-color: #093493;
     color: #fff;
 }
 
@@ -226,7 +222,6 @@
     border: none;
     padding: 10px 15px;
     font-size: 16px;
-    border-radius: 1px;
     cursor: pointer;
     width: 100%;
     text-align: center;
@@ -272,7 +267,7 @@
 }
 
 .btn-toggle-voucher:hover {
-    background-color: #03cc0c;
+    background-color: #363638;
 }
 
 #voucher-list {
@@ -393,3 +388,24 @@
     text-decoration: line-through;
     color: #757575;
 }
+
+
+/* Nút với icon */
+.btn-icon-remove {
+    background: transparent;
+    border: none;
+    color: #ff4d4f; /* Màu đỏ nổi bật */
+    font-size: 2.5rem; /* Kích thước icon */
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.btn-icon-remove:hover {
+    color: #ff7875; /* Màu đỏ nhạt hơn khi hover */
+}
+
+.btn-icon-remove i {
+    pointer-events: none; /* Đảm bảo chỉ nút bấm được click, không phải icon */
+}
+
+

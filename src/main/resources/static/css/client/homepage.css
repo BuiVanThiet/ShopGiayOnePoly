@@ -185,5 +185,34 @@
     max-width: 100%;
 }
 
+/*Icon mắt*/
 
+/* Bao bọc toàn bộ biểu tượng */
+.product-icons {
+    display: inline-block;
+    padding: 5px;
+}
 
+/* Định dạng liên kết biểu tượng */
+.view-icon {
+    display: inline-block;
+    text-decoration: none;
+    color: #555; /* Màu xám nhẹ */
+    font-size: 18px; /* Kích thước biểu tượng */
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+/* Biểu tượng icon */
+.view-icon i {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Hiệu ứng hover */
+.view-icon:hover {
+    color: #007bff; /* Màu xanh khi hover */
+    transform: scale(1.1); /* Phóng to nhẹ khi hover */
+}
