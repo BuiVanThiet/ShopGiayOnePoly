@@ -263,11 +263,14 @@ async function add() {
     });
     if (response.ok) {
         const result = await response.json();
-        codeManufacturerInput.value = '';
-        nameManufacturerInput.value = '';
+
         document.querySelector('.attribute-btn-listActive').style.display = 'none';
         document.querySelector('.attribute-btn-listDelete').style.display = 'inline-block';
         createToast(result.check, result.message);
+        if (result.check === '1'){
+            codeManufacturerInput.value = '';
+            nameManufacturerInput.value = '';
+        }
         fetchActiveManufacturers();
     }
 
