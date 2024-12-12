@@ -1,65 +1,58 @@
 let selectedColorId;
 let selectedSizeId;
 const productId = document.getElementById("product-id").value;
+
 document.addEventListener("DOMContentLoaded", function () {
-    // Lấy màu và kích thước đầu tiên (nếu có)
     const firstColorButton = document.querySelector('.color-btn');
     const firstSizeButton = document.querySelector('.size-btn');
 
-// Kiểm tra giá trị:
-    console.log("First Color Button:", firstColorButton.textContent);
-    console.log("First Size Button:", firstSizeButton.textContent);
-
-    // Kiểm tra nếu có màu và kích thước
+    // Kiểm tra và xử lý nút màu và kích thước đầu tiên
     if (firstColorButton && firstSizeButton) {
         const firstColor = firstColorButton.innerText.trim();
-        const firstColorId = firstColorButton.getAttribute('data-color-id');
+        selectedColorId = firstColorButton.getAttribute('data-color-id');
 
         const firstSize = firstSizeButton.innerText.trim();
-        const firstSizeId = firstSizeButton.getAttribute('data-size-id');
+        selectedSizeId = firstSizeButton.getAttribute('data-size-id');
 
-        // Cập nhật màu và kích thước đầu tiên
-        setTemporaryColor(firstColor, firstColorId);
-        setTemporarySize(firstSize, firstSizeId);
+        console.log("Color ID:", selectedColorId);
+        console.log("Size ID:", selectedSizeId);
+        console.log("Product ID:", productId);
 
-        // Gọi API lấy chi tiết sản phẩm cho màu và kích thước đầu tiên
-        getProductDetail(productId, firstColorId, firstSizeId);
-    } else {
-        // Nếu không tìm thấy màu hoặc kích thước đầu tiên, vẫn gọi API với các giá trị mặc định (nếu có)
+        setTemporaryColor(firstColor, selectedColorId);
+        setTemporarySize(firstSize, selectedSizeId);
+
         getProductDetail(productId, selectedColorId, selectedSizeId);
+    } else {
+        console.warn("Không tìm thấy màu hoặc kích thước đầu tiên.");
     }
 
-    // Đính kèm sự kiện click vào các nút màu và kích thước
-    attachClickEvent('.color-btn', setTemporaryColor);
-    attachClickEvent('.size-btn', setTemporarySize);
+    // Đính kèm sự kiện click
+    attachClickEvent('.color-btn', setTemporaryColor, 'data-color-id');
+    attachClickEvent('.size-btn', setTemporarySize, 'data-size-id');
 });
 
-function showCartModal() {
-    $('#addCartModal').modal('show');
-}
-
-function showPayNowModal() {
-    $('#payNowModal').modal('show');
-}
-
-function attachClickEvent(selector, handler) {
+function attachClickEvent(selector, handler, dataAttr) {
     const buttons = document.querySelectorAll(selector);
     buttons.forEach(function (button) {
         button.addEventListener("click", function () {
             const value = button.innerText.trim();
-            const id = button.getAttribute('data-color-id') || button.getAttribute('data-size-id');
-            handler(value, id);
+            const id = button.getAttribute(dataAttr);
+            if (id) {
+                handler(value, id);
+            } else {
+                console.warn(`Không tìm thấy giá trị ${dataAttr} trên nút.`);
+            }
         });
     });
 }
 
 function setTemporaryColor(color, colorId) {
     selectedColorId = colorId;
-    document.querySelectorAll('.temporary-color').forEach(function (element) {
-        element.innerText = color;
-    });
-    document.getElementById("selected-color").innerText = color;
-    document.getElementById("color-modal").innerText = color;
+
+    // Cập nhật giao diện
+    updateUI('.temporary-color', color);
+    updateTextById("selected-color", color);
+    updateTextById("color-modal", color);
 
     // Gọi API nếu đã chọn kích thước
     if (selectedSizeId) {
@@ -69,16 +62,40 @@ function setTemporaryColor(color, colorId) {
 
 function setTemporarySize(size, sizeId) {
     selectedSizeId = sizeId;
-    document.querySelectorAll('.temporary-size').forEach(function (element) {
-        element.innerText = size;
-    });
-    document.getElementById("selected-size").innerText = size;
-    document.getElementById("size-modal").innerText = size;
+
+    // Cập nhật giao diện
+    updateUI('.temporary-size', size);
+    updateTextById("selected-size", size);
+    updateTextById("size-modal", size);
 
     // Gọi API nếu đã chọn màu
     if (selectedColorId) {
         getProductDetail(productId, selectedColorId, selectedSizeId);
     }
+}
+
+function updateUI(selector, text) {
+    const elements = document.querySelectorAll(selector);
+    elements.forEach(function (element) {
+        element.innerText = text;
+    });
+}
+
+function updateTextById(id, text) {
+    const element = document.getElementById(id);
+    if (element) {
+        element.innerText = text;
+    } else {
+        console.warn(`Không tìm thấy phần tử với ID: ${id}`);
+    }
+}
+
+function showCartModal() {
+    $('#addCartModal').modal('show');
+}
+
+function showPayNowModal() {
+    $('#payNowModal').modal('show');
 }
 
 

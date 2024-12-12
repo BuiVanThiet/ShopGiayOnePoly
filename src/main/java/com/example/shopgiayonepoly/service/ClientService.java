@@ -34,11 +34,11 @@ public interface ClientService {
 
     public List<ProductIClientResponse> GetTop12ProductWithPriceLowest();
 
-    public List<ColorClientResponse> findDistinctColorsByProductId(@Param("productId") Integer productId);
+    public List<ColorClientResponse> findDistinctColorsByProductDetailId(@Param("productId") Integer productDetailId);
 
-    public List<SizeClientResponse> findDistinctSizesByProductId(@Param("productId") Integer productId);
+    public List<SizeClientResponse> findDistinctSizesByProductDetailId(@Param("productId") Integer productDetailId);
 
-    ProductDetailClientRespone findByProductDetailColorAndSizeAndProductId(
+    List<ProductDetailClientRespone> findByProductDetailColorAndSizeAndProductId(
             @Param("colorId") Integer colorId,
             @Param("sizeId") Integer sizeId,
             @Param("productId") Integer productId);
