@@ -263,12 +263,15 @@ async function add() {
         });
         if (response.ok) {
             const result = await response.json();
-            codeColorInput.value = '';
-            nameColorInput.value = '';
+
             document.querySelector('.attribute-btn-listActive').style.display = 'none';
             document.querySelector('.attribute-btn-listDelete').style.display = 'inline-block';
             createToast(result.check, result.message);
             fetchActiveColors();
+            if (result.check === '1'){
+                codeColorInput.value = '';
+                nameColorInput.value = '';
+            }
         }
 
 
