@@ -86,7 +86,6 @@ public class ClientRestController extends BaseEmail {
                                                        @RequestParam Integer sizeId) {
         List<ProductDetailClientRespone> productDetails = (List<ProductDetailClientRespone>) clientService.findByProductDetailColorAndSizeAndProductId(colorId, sizeId, productId);
         if (productDetails != null && !productDetails.isEmpty()) {
-            // Nếu có nhiều kết quả, chỉ trả về kết quả đầu tiên
             return productDetails.get(0);
         }
         return null;
