@@ -513,6 +513,23 @@ public class ProductRestController extends BaseProduct {
         return productService.findQuantityByIDProduct(id);
     }
 
+    @PostMapping("/update-product-detail-status/{id}")
+    public ResponseEntity<Map<String, Object>> updateProductDetailStatus(@PathVariable("id") Integer id) {
+        ProductDetail productDetail = productDetailRepository.findById(id).orElse(null);
+        Map<String, Object> response = new HashMap<>();
+
+        if (productDetail != null) {
+            // Cập nhật trạng thái của sản phẩm chi tiết
+            productDetail.setStatus(productDetail.getStatus() == 1 ? 2 : 1); // Chuyển trạng thái (1 <-> 2)
+            productDetailRepository.save(productDetail);
+            response.put("success", true);
+            return ResponseEntity.ok(response);
+        }
+
+        response.put("success", false);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
     protected Map<String,String> checkLoginAndLogOutByStaff(Integer idStaff) {
         Map<String,String> thongBao = new HashMap<>();
         String checkLogin = getCheckStaffAttendanceYetBill(idStaff,1);

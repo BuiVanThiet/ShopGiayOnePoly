@@ -189,19 +189,26 @@ public class ProductController extends BaseProduct {
         Product product = productRepository.findById(id).orElse(null);
         if (product != null && productDetails.size() > 0) {
             for (ProductDetail productDetail : productDetails) {
+                for (ProductDetail detail : productDetailRepository.findAll()
+                ) {
+                    if (productDetail.getColor().getId().equals(detail.getColor().getId()) &&
+                            productDetail.getSize().getId().equals(detail.getSize().getId())){
+                        return ResponseEntity.ok("Màu " + detail.getColor().getNameColor() + " và kích cỡ " + detail.getSize().getNameSize() + " đã tồn tại");
+                    }
+                }
                 if (productDetail.getPrice().compareTo(BigDecimal.valueOf(1000)) < 0 ||
                         productDetail.getImport_price().compareTo(BigDecimal.valueOf(1000)) < 0 ||
                         productDetail.getQuantity() <= 0 || productDetail.getWeight() <= 0 || productDetail.getWeight() > 5000) {
-                    check = "3";
-                    message = "Lỗi khi thêm sản phẩm";
                     return ResponseEntity.ok("Lỗi khi thêm sản phẩm");
                 }
+
             }
             productDetails.forEach(detail -> detail.setProduct(product));
             productDetailRepository.saveAll(productDetails);
             check = "1";
             message = "Thêm chi tiết sản phẩm thành công";
             return ResponseEntity.ok("Thêm chi tiết sản phẩm thành công");
+
         } else {
             check = "3";
             message = "Có lỗi khi thêm chi tiết sản phẩm";
@@ -410,6 +417,7 @@ public class ProductController extends BaseProduct {
         // Trả về tên view tương ứng (template Thymeleaf)
         return "/Product/updateProduct";
     }
+
 
 
 
