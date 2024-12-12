@@ -81,10 +81,13 @@ public class ClientRestController extends BaseEmail {
     }
 
     @GetMapping("/products/product-detail")
-    public ProductDetailClientRespone getProductDetail(@RequestParam Integer productId, @RequestParam Integer colorId, @RequestParam Integer sizeId) {
-        ProductDetailClientRespone productDetail = clientService.findByProductDetailColorAndSizeAndProductId(colorId, sizeId, productId);
-        if (productDetail != null) {
-            return productDetail;
+    public ProductDetailClientRespone getProductDetail(@RequestParam Integer productId,
+                                                       @RequestParam Integer colorId,
+                                                       @RequestParam Integer sizeId) {
+        List<ProductDetailClientRespone> productDetails = (List<ProductDetailClientRespone>) clientService.findByProductDetailColorAndSizeAndProductId(colorId, sizeId, productId);
+        if (productDetails != null && !productDetails.isEmpty()) {
+            // Nếu có nhiều kết quả, chỉ trả về kết quả đầu tiên
+            return productDetails.get(0);
         }
         return null;
     }
@@ -114,7 +117,6 @@ public class ClientRestController extends BaseEmail {
 
         return ResponseEntity.ok(messages);
     }
-
 
     @GetMapping("un-apply-voucher")
     public ResponseEntity<Map<String, String>> unApplyVoucherForCart(Model model, HttpSession session) {
