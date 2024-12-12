@@ -131,85 +131,83 @@ public interface ClientRepository extends JpaRepository<Bill, Integer> {
 
 
     @Query(value = """
-            select DISTINCT new com.example.shopgiayonepoly.dto.response.client.ColorClientResponse(
-            c.id,
-            c.nameColor
-            )
-            FROM ProductDetail pd
-            JOIN pd.color c
-            WHERE pd.product.id = :productId
-            AND c.nameColor IS NOT NULL
-            """)
-    public List<ColorClientResponse> findDistinctColorsByProductId(@Param("productId") Integer productId);
+    SELECT DISTINCT new com.example.shopgiayonepoly.dto.response.client.ColorClientResponse(
+        c.id,
+        c.nameColor
+    )
+    FROM ProductDetail pd
+    JOIN pd.color c
+    WHERE pd.id = :productDetailId
+    AND c.nameColor IS NOT NULL
+""")
+    List<ColorClientResponse> findDistinctColorsByProductDetailId(@Param("productDetailId") Integer productDetailId);
+
 
     @Query(value = """
-            select DISTINCT new com.example.shopgiayonepoly.dto.response.client.SizeClientResponse(
-            s.id,
-            s.nameSize
-            )
-            FROM ProductDetail pd
-            JOIN pd.size s
-            WHERE pd.product.id = :productId
-            AND s.nameSize IS NOT NULL
-            """)
-    public List<SizeClientResponse> findDistinctSizesByProductId(@Param("productId") Integer productId);
+        select DISTINCT new com.example.shopgiayonepoly.dto.response.client.SizeClientResponse(
+        s.id,
+        s.nameSize
+        )
+        FROM ProductDetail pd
+        JOIN pd.size s
+        WHERE pd.id = :productDetailId
+        AND s.nameSize IS NOT NULL
+        """)
+    public List<SizeClientResponse> findDistinctSizesByProductDetailId(@Param("productDetailId") Integer productDetailId);
 
     @Query("""
-                SELECT new com.example.shopgiayonepoly.dto.response.client.ProductDetailClientRespone(
-                    pd.id,
-                    pd.product.id,
-                    pd.product.nameProduct,
-                    pd.price,
-                     CASE
-                          WHEN pd.saleProduct IS NOT NULL AND (CURRENT_DATE BETWEEN pd.saleProduct.startDate AND pd.saleProduct.endDate)
-                               AND pd.saleProduct.discountType = 1
-                              THEN pd.price - (pd.price * (CAST(pd.saleProduct.discountValue AS double) / 100))
-                          WHEN pd.saleProduct IS NOT NULL AND (CURRENT_DATE BETWEEN pd.saleProduct.startDate AND pd.saleProduct.endDate)
-                               AND pd.saleProduct.discountType = 2
-                              THEN pd.price - CAST(pd.saleProduct.discountValue AS double)
-                          ELSE pd.price
-                      END as priceDiscount,
-                    pd.quantity,
-                    pd.describe,
-                    c.nameColor,
-                    s.nameSize,
-                    MIN(i.nameImage),
-                    pd.product.material.nameMaterial,
-                    pd.product.manufacturer.nameManufacturer,
-                    pd.product.origin.nameOrigin
-                ) 
-                FROM ProductDetail pd
-                LEFT JOIN pd.size s
-                LEFT JOIN pd.color c 
-                LEFT JOIN pd.saleProduct sp
-                LEFT JOIN pd.product.images i 
-                WHERE pd.color.id = :colorId 
-                  AND pd.size.id = :sizeId
-                  AND pd.product.id = :productId
-                GROUP BY pd.id,
-                         pd.product.id,
-                         pd.product.nameProduct,
-                         pd.price,
-                         pd.quantity,
-                         pd.describe,
-                         c.nameColor,
-                         s.nameSize,
-                         pd.saleProduct,
-                         sp.discountType,
-                         sp.discountValue,
-                         pd.saleProduct.startDate,
-                         pd.saleProduct.endDate,
-                         pd.product.material.nameMaterial,
-                         pd.product.manufacturer.nameManufacturer,
-                         pd.product.origin.nameOrigin
-                        
-            """)
-    ProductDetailClientRespone findByProductDetailColorAndSizeAndProductId(
+    SELECT DISTINCT new com.example.shopgiayonepoly.dto.response.client.ProductDetailClientRespone(
+        pd.id,
+        pd.product.id,
+        pd.product.nameProduct,
+        pd.price,
+        CASE
+            WHEN pd.saleProduct IS NOT NULL AND (CURRENT_DATE BETWEEN pd.saleProduct.startDate AND pd.saleProduct.endDate)
+                 AND pd.saleProduct.discountType = 1
+                THEN pd.price - (pd.price * (CAST(pd.saleProduct.discountValue AS double) / 100))
+            WHEN pd.saleProduct IS NOT NULL AND (CURRENT_DATE BETWEEN pd.saleProduct.startDate AND pd.saleProduct.endDate)
+                 AND pd.saleProduct.discountType = 2
+                THEN pd.price - CAST(pd.saleProduct.discountValue AS double)
+            ELSE pd.price
+        END as priceDiscount,
+        pd.quantity,
+        pd.describe,
+        c.nameColor,
+        s.nameSize,
+        MIN(i.nameImage),
+        pd.product.material.nameMaterial,
+        pd.product.manufacturer.nameManufacturer,
+        pd.product.origin.nameOrigin
+    ) 
+    FROM ProductDetail pd
+    LEFT JOIN pd.size s
+    LEFT JOIN pd.color c 
+    LEFT JOIN pd.saleProduct sp
+    LEFT JOIN pd.product.images i 
+    WHERE pd.color.id = :colorId 
+      AND pd.size.id = :sizeId
+      AND pd.product.id = :productId
+    GROUP BY pd.id,
+             pd.product.id,
+             pd.product.nameProduct,
+             pd.price,
+             pd.quantity,
+             pd.describe,
+             c.nameColor,
+             s.nameSize,
+             pd.saleProduct,
+             sp.discountType,
+             sp.discountValue,
+             pd.saleProduct.startDate,
+             pd.saleProduct.endDate,
+             pd.product.material.nameMaterial,
+             pd.product.manufacturer.nameManufacturer,
+             pd.product.origin.nameOrigin
+""")
+    List<ProductDetailClientRespone> findByProductDetailColorAndSizeAndProductId(
             @Param("colorId") Integer colorId,
             @Param("sizeId") Integer sizeId,
             @Param("productId") Integer productId);
-
-
 
     @Query("SELECT CASE " +
             "WHEN pd.saleProduct IS NOT NULL AND " +

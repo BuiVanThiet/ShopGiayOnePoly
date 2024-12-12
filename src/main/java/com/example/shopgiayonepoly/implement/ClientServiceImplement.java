@@ -75,17 +75,17 @@ public class ClientServiceImplement implements ClientService {
     }
 
     @Override
-    public List<ColorClientResponse> findDistinctColorsByProductId(Integer productId) {
-        return clientRepository.findDistinctColorsByProductId(productId);
+    public List<ColorClientResponse> findDistinctColorsByProductDetailId(Integer productDetailId) {
+        return clientRepository.findDistinctColorsByProductDetailId(productDetailId);
     }
 
     @Override
-    public List<SizeClientResponse> findDistinctSizesByProductId(Integer productId) {
-        return clientRepository.findDistinctSizesByProductId(productId);
+    public List<SizeClientResponse> findDistinctSizesByProductDetailId(Integer productDetailId) {
+        return clientRepository.findDistinctSizesByProductDetailId(productDetailId);
     }
 
     @Override
-    public ProductDetailClientRespone findByProductDetailColorAndSizeAndProductId(Integer colorId, Integer sizeId, Integer productId) {
+    public List<ProductDetailClientRespone> findByProductDetailColorAndSizeAndProductId(Integer colorId, Integer sizeId, Integer productId) {
         return clientRepository.findByProductDetailColorAndSizeAndProductId(colorId, sizeId, productId);
     }
 
@@ -132,12 +132,12 @@ public class ClientServiceImplement implements ClientService {
     ////////////////////////////
     @Override
     public Page<BillResponseManage> getAllBillByStatusDiss0(Integer idCustomer, String nameCheck, SearchBillByStatusRequest searchBillByStatusRequest, Date start, Date end, Pageable pageable) {
-        return this.clientRepository.getAllBillByStatusDiss0(idCustomer,nameCheck,searchBillByStatusRequest.getStatusSearch(),start,end,pageable);
+        return this.clientRepository.getAllBillByStatusDiss0(idCustomer, nameCheck, searchBillByStatusRequest.getStatusSearch(), start, end, pageable);
     }
 
     @Override
     public List<BillResponseManage> getAllBillByStatusDiss0(Integer idCustomer, String nameCheck, SearchBillByStatusRequest searchBillByStatusRequest, Date start, Date end) {
-        return this.clientRepository.getAllBillByStatusDiss0(idCustomer,nameCheck,searchBillByStatusRequest.getStatusSearch(),start,end);
+        return this.clientRepository.getAllBillByStatusDiss0(idCustomer, nameCheck, searchBillByStatusRequest.getStatusSearch(), start, end);
     }
 
 

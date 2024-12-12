@@ -100,7 +100,7 @@ public class ClientController extends BaseBill {
                 filterRequest.getMaxPrice(),
                 filterRequest.getPriceSort()
         );
-        return products; // Trả về danh sách sản phẩm dưới dạng JSON
+        return products;
     }
 
     @GetMapping("/search")
@@ -144,23 +144,36 @@ public class ClientController extends BaseBill {
     }
 
     @GetMapping("/product-detail/{productID}")
-    public String getFormProductDetail(@PathVariable("productID") Integer id,
+    public String getFormProductDetail(@PathVariable("productID") Integer productId,
                                        HttpSession session,
                                        Model model) {
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
-        List<ProductDetailClientRespone> productDetailClientRespones = clientService.findProductDetailByProductId(id);
-        List<ColorClientResponse> colors = clientService.findDistinctColorsByProductId(id);
-        List<SizeClientResponse> sizes = clientService.findDistinctSizesByProductId(id);
+        List<ProductDetailClientRespone> productDetailClientRespones = clientService.findProductDetailByProductId(productId);
+
+        Set<ColorClientResponse> uniqueColors = new HashSet<>();
+        Set<SizeClientResponse> uniqueSizes = new HashSet<>();
+
+        for (ProductDetailClientRespone detail : productDetailClientRespones) {
+            uniqueColors.addAll(clientService.findDistinctColorsByProductDetailId(detail.getProductDetailId()));
+            uniqueSizes.addAll(clientService.findDistinctSizesByProductDetailId(detail.getProductDetailId()));
+        }
+
+        // Lấy thông tin về đợt giảm giá mới
         SaleProduct saleProductNew = saleProductService.getSaleProductNew();
+
+        // Thêm dữ liệu vào model để gửi sang view
         model.addAttribute("productDetail", productDetailClientRespones);
-        model.addAttribute("listImage", productService.findById(id));
-        model.addAttribute("colors", colors);
-        model.addAttribute("sizes", sizes);
-        model.addAttribute("productID", id);
+        model.addAttribute("listImage", productService.findById(productId));
+        model.addAttribute("colors", new ArrayList<>(uniqueColors)); // Chuyển Set sang List
+        model.addAttribute("sizes", new ArrayList<>(uniqueSizes));   // Chuyển Set sang List
+        model.addAttribute("productID", productId);
         model.addAttribute("clientLogin", clientLoginResponse);
         model.addAttribute("saleProductNew", saleProductNew);
+
+        // Trả về tên view
         return "client/product_detail";
     }
+
 
     @GetMapping("/cart")
     public String getFromCart(HttpSession session, Model model) {
