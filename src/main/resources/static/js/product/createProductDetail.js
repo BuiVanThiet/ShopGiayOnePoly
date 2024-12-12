@@ -409,11 +409,15 @@ async function addProductDetail(idProduct) {
             },
             body: JSON.stringify(productDetails)
         })
+        const responseText = await response.text();
 
-        if (await response.text() === 'Thêm chi tiết sản phẩm thành công') {
+        // Kiểm tra các điều kiện dựa trên responseText
+        if (responseText === 'Thêm chi tiết sản phẩm thành công') {
             window.location.href = `/staff/product/detail/${idProduct}`;
+        } else if (responseText === 'Lỗi khi thêm sản phẩm') {
+            createToast('2', 'Dữ liệu không hợp lệ');
         } else {
-            createToast('2', 'Dữ liệu không hợp lệ')
+            createToast('2', responseText);
         }
     }  else {
         createToast('2', 'Dữ liệu không hợp lệ')

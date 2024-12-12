@@ -14,4 +14,5 @@ public interface ProductDetailRepository extends JpaRepository<ProductDetail, In
 
     @Query("select product_detail from ProductDetail product_detail where product_detail.status = 0")
     List<ProductDetail> getProductDetailDelete();
+
 }

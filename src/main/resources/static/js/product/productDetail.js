@@ -186,7 +186,10 @@ function displayPage(page) {
                 <td data-column="quantity">${productDetail.quantity}</td>
                 <td data-column="weight">${productDetail.weight + 'g'}</td>
                 <td data-column="describe">${productDetail.describe}</td>
-                <td data-column="status">${productDetail.status == 1 ? 'Đang bán' : (productDetail.status == 2 ? 'Ngừng bán' : '')}</td>
+                <td data-column="status">
+                    <i class="attribute-status-icon status-icon fas ${productDetail.status == 1 ? 'fa-toggle-on' : 'fa-toggle-off'}"
+                        data-id-productDetail="${productDetail.id}" title="Trạng thái" onclick="showConfirmModal(this)"></i>
+                </td>
                 <td>
                     <div class="dropdown-productDetail">
                         <i class="fa fa-ellipsis-v fa-ellipsis-v-productDetail" aria-hidden="true" onclick="toggleDropdownproductDetail(event, this)"></i>
@@ -449,5 +452,53 @@ function exportExcelProductDetail() {
         createToast('1', 'Xuất dữ liệu đã chọn ra Excel thành công');
     } else {
         createToast('2', 'Vui lòng chọn ít nhất một sản phẩm để xuất Excel.');
+    }
+}
+let selectedProductDetailId = null; // Biến lưu trữ ID của sản phẩm chi tiết đang được xử lý
+
+// Hàm hiển thị modal xác nhận
+function showConfirmModal(iconElement) {
+    // Lấy ID của sản phẩm chi tiết
+    selectedProductDetailId = iconElement.getAttribute('data-id-productDetail');
+
+    // Mở modal xác nhận
+    const modal = new bootstrap.Modal(document.getElementById('confirm-update-status-modal'));
+    modal.show();
+}
+
+// Hàm cập nhật trạng thái khi người dùng đồng ý
+async function updateStatus() {
+    // Gửi yêu cầu cập nhật trạng thái qua API
+    try {
+        const response = await fetch(`/product-api/update-product-detail-status/${selectedProductDetailId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ id: selectedProductDetailId })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            // Thực hiện cập nhật giao diện (ví dụ: thay đổi icon trạng thái)
+            const iconElement = document.querySelector(`i[data-id-productDetail="${selectedProductDetailId}"]`);
+            if (iconElement) {
+                const currentStatus = iconElement.classList.contains('fa-toggle-on') ? 1 : 2;
+                if (currentStatus === 1) {
+                    iconElement.classList.replace('fa-toggle-on', 'fa-toggle-off');
+                    createToast('1', 'Đã ngừng bán sản phẩm');
+                } else {
+                    iconElement.classList.replace('fa-toggle-off', 'fa-toggle-on');
+                    createToast('1', 'Sản phẩm được tiếp tục bán');
+                }
+            }
+        } else {
+            // Nếu có lỗi khi cập nhật
+            alert('Cập nhật trạng thái thất bại!');
+        }
+    } catch (error) {
+        console.error('Lỗi khi cập nhật trạng thái:', error);
+        alert('Đã có lỗi xảy ra. Vui lòng thử lại!');
     }
 }
