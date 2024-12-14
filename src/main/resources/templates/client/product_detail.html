@@ -104,9 +104,9 @@
                         <div class="d-flex mt-2">
                             <p class="fs-10 fw-light" style="margin-right: 5px">Kích thước /</p>
                             <p class="fs-10" style="margin-left: 5px" id="selected-size">Chọn kích thước</p>
-                            <a href="#" class=" modal-title-chose-size fs-10" style="margin-left: auto;"
+                            <a href="#" class=" modal-title-chose-size fs-10" style="margin-left: auto;text-decoration: none;color: #09269a"
                                data-bs-toggle="modal"
-                               data-bs-target="#sizeGuideModal">Hướng dẫn chọn size</a>
+                               data-bs-target="#sizeGuideModal" >Hướng dẫn chọn size</a>
                             <hr>
                         </div>
 
@@ -166,7 +166,7 @@
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 aria-label="Close">
                                             <span class="material-icons"
-                                                  style="color: white; font-size: 24px;">close</span>
+                                                  style="font-size: 24px;">close</span>
                                         </button>
                                     </div>
                                     <div class="modal-body">
@@ -197,21 +197,20 @@
                                                             <span id="size-modal">Size</span>
                                                         </div>
                                                     </div>
-                                                    <div class="item-quan">
-                                                        <button id="qtyminus" class="btn btn-outline-secondary">-
-                                                        </button>
-                                                        <input style="width: 60px;height: 35px" type="text" readonly
-                                                               value="1" name="quantity-add-to-cart"
-                                                               class="item-quantity form-control text-center">
-                                                        <button id="qtyplus" class="btn btn-outline-secondary">+
-                                                        </button>
-                                                    </div>
+                                                        <div class="item-quan">
+                                                            <button id="qtyminus" class="quantity-btn">-
+                                                            </button>
+                                                            <input style="width: 60px;height: 35px" type="text" readonly
+                                                                   value="1" name="quantity-add-to-cart"
+                                                                   class="item-quantity form-control text-center">
+                                                            <button id="qtyplus" class="quantity-btn">+
+                                                            </button>
+                                                        </div>
                                                 </div>
                                                 <div id="container-message-add-to-cart"
-                                                     style="height: 20px; margin-left: 35px; margin-top: 10px;">
+                                                     style="margin-left: 35px; margin-top: 10px;">
                                                     <span class="message-error-add-to-cart text-danger"></span>
                                                 </div>
-
                                                 <div class="popup_action">
                                                     <a href="/onepoly/cart" id="go_cart1" class="btn">Đi đến giỏ
                                                         hàng</a>
@@ -279,11 +278,8 @@
                                                 </button>
                                             </div>
                                         </div>
-
-
                                     </div>
                                     <div class="modal-footer">
-
                                     </div>
                                 </div>
                             </div>
@@ -330,20 +326,20 @@
                                                         </div>
                                                     </div>
                                                     <div class="item-quan">
-                                                        <button id="qtyminus-pay-now" class="btn btn-outline-secondary">
+                                                        <button id="qtyminus-pay-now" class="quantity-btn">
                                                             -
                                                         </button>
                                                         <input style="width: 60px;height: 35px" type="text" readonly
                                                                value="1" name="quantity-pay-now"
                                                                class="item-quantity form-control text-center"
                                                                id="quantity-pay-now">
-                                                        <button id="qtyplus-pay-now" class="btn btn-outline-secondary">
+                                                        <button id="qtyplus-pay-now" class="quantity-btn">
                                                             +
                                                         </button>
                                                     </div>
                                                 </div>
                                                 <div id="container-message-pay-now"
-                                                     style="height: 20px;margin-left: 35px;margin-top: 10px">
+                                                     style="margin-left: 35px;margin-top: 10px">
                                                     <span class="message-error text-danger"
                                                           id="message-error-pay-now"></span>
                                                 </div>

@@ -62,4 +62,6 @@ public interface ClientService {
     Page<BillResponseManage> getAllBillByStatusDiss0(Integer idCustomer, String nameCheck, SearchBillByStatusRequest searchBillByStatusRequest, Date start, Date end, Pageable pageable);
 
     List<BillResponseManage> getAllBillByStatusDiss0(Integer idCustomer, String nameCheck, SearchBillByStatusRequest searchBillByStatusRequest, Date start, Date end);
+
+    Integer getAvailableStockFromProductDetail(Integer productDetailId);
 }

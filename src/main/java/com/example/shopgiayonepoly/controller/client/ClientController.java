@@ -79,12 +79,15 @@ public class ClientController extends BaseBill {
     @GetMapping("/products")
     public String getFormProduct(HttpSession session, Model model) {
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
+        List<CartResponse> cartItems = (List<CartResponse>) session.getAttribute("cartItems");
+        model.addAttribute("cartItems", cartItems);
         model.addAttribute("loginInfoClient", clientLoginResponse);
         model.addAttribute("listProduct", clientService.getAllProduct());
         model.addAttribute("listCategory", categoryService.getCategoryNotStatus0());
         model.addAttribute("listMaterial", materialService.getMaterialNotStatus0());
         model.addAttribute("listManufacturer", manufacturerService.getManufacturerNotStatus0());
         model.addAttribute("listOrigin", originService.getOriginNotStatus0());
+
         return "client/product";
     }
 
@@ -113,6 +116,8 @@ public class ClientController extends BaseBill {
         model.addAttribute("listMaterial", materialService.getMaterialNotStatus0());
         model.addAttribute("listManufacturer", manufacturerService.getManufacturerNotStatus0());
         model.addAttribute("listOrigin", originService.getOriginNotStatus0());
+        List<CartResponse> cartItems = (List<CartResponse>) session.getAttribute("cartItems");
+        model.addAttribute("cartItems", cartItems);
         return "client/product";
     }
 
@@ -124,6 +129,8 @@ public class ClientController extends BaseBill {
         model.addAttribute("listProductHighest", listProductHighest);
         model.addAttribute("listProductLowest", listProductLowest);
         model.addAttribute("clientLogin", clientLoginResponse);
+        List<CartResponse> cartItems = (List<CartResponse>) session.getAttribute("cartItems");
+        model.addAttribute("cartItems", cartItems);
         return "client/homepage";
     }
 
@@ -131,6 +138,8 @@ public class ClientController extends BaseBill {
     public String getFormBaseClient(HttpSession session, Model model) {
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
         model.addAttribute("clientLogin", clientLoginResponse);
+        List<CartResponse> cartItems = (List<CartResponse>) session.getAttribute("cartItems");
+        model.addAttribute("cartItems", cartItems);
         return "client/base";
     }
 
@@ -169,6 +178,8 @@ public class ClientController extends BaseBill {
         model.addAttribute("productID", productId);
         model.addAttribute("clientLogin", clientLoginResponse);
         model.addAttribute("saleProductNew", saleProductNew);
+        List<CartResponse> cartItems = (List<CartResponse>) session.getAttribute("cartItems");
+        model.addAttribute("cartItems", cartItems);
 
         // Trả về tên view
         return "client/product_detail";
@@ -611,7 +622,6 @@ public class ClientController extends BaseBill {
         session.removeAttribute("totalPrice");
         return "client/order-success";
     }
-
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

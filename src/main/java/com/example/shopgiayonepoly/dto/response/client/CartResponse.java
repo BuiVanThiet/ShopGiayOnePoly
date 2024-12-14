@@ -13,7 +13,6 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-
 public class CartResponse {
     private Integer cartId;
     private Integer customerId;
@@ -25,4 +24,12 @@ public class CartResponse {
     private BigDecimal originalPrice;
     private BigDecimal discountedPrice;
     private List<Image> imageName;
+
+    // Thêm phương thức validate số lượng với số lượng tồn kho
+    public boolean validateQuantity(Integer availableStock) {
+        if (this.quantity > availableStock) {
+            return false; // Số lượng yêu cầu vượt quá số lượng tồn kho
+        }
+        return true; // Số lượng hợp lệ
+    }
 }

@@ -120,7 +120,8 @@
                                 <div class="modal-body">
                                     <!-- Danh sách voucher -->
                                     <div id="voucher-list">
-                                        <div th:if="${selectedVoucher != null}" class="voucher-apply" style="margin-bottom: 30px">
+                                        <div th:if="${selectedVoucher != null}" class="voucher-apply"
+                                             style="margin-bottom: 30px">
                                             <p class="voucher-title-voucher" style="color: #232222">Voucher đang áp
                                                 dụng</p>
                                             <hr>
@@ -137,7 +138,7 @@
                                                         <br>
                                                         <span id="price-reduced-voucher-apply"
                                                               class="voucher-discount-voucher-apply"
-                                                              th:text="${selectedVoucher.voucherType == 1 ? 'Giảm: ' + selectedVoucher.priceReduced + '%' : 'Giảm: ' + selectedVoucher.priceReduced + 'đ'}">
+                                                              th:attr="data-price=${selectedVoucher.priceReduced}">
                                                             Discount Value
                                                         </span>
                                                     </div>
@@ -163,7 +164,8 @@
                                                         <input type="radio" class="cart-voucher-radio"
                                                                name="radioVoucher"
                                                                style="transform: scale(1.2); cursor: pointer;">
-                                                    </div>                                                    <!-- Hình ảnh -->
+                                                    </div>
+                                                    <!-- Hình ảnh -->
                                                     <img src="/img/client/category/2.png" alt="Voucher Image"
                                                          style="width: 80px; height: 80px; object-fit: cover; border-radius: 5px; margin-right: 15px;">
 
@@ -191,8 +193,10 @@
                                             </li>
 
                                         </ul>
-                                        <button class="btn-apply-voucher" onclick="applyVoucher()">Áp dụng</button>
                                     </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="btn-apply-voucher" onclick="applyVoucher()">Áp dụng</button>
                                 </div>
                             </div>
                         </div>
@@ -220,20 +224,21 @@
 
                     <!-- Nút hành động -->
                     <div class="cart-actions__btn cart-d-flex cart-align-items-center" style="margin-top: 20px;">
-                        <button type="button" id="cart-continue-shopping" class="cart-btn-continue cart-u-btn">
-                            <a href="/onepoly/products" style="text-decoration: none;">
-                                <span>TIẾP TỤC MUA SẮM</span>
-                            </a>
+                        <!-- Nút Tiếp tục mua sắm -->
+                        <button type="button" id="cart-continue-shopping" class="cart-btn-continue cart-u-btn" onclick="window.location.href='/onepoly/products'">
+                            <span>TIẾP TỤC MUA SẮM</span>
                         </button>
-                        <button type="button" id="cart-checkout"
-                                class="cart-btn-checkout cart-u-btn cart-u-btn--primary">
-                            <a style="text-decoration: none;" href="/onepoly/payment"> THANH TOÁN</a>
+
+                        <!-- Nút Thanh toán -->
+                        <button type="button" id="cart-checkout" class="cart-btn-checkout cart-u-btn cart-u-btn--primary" onclick="window.location.href='/onepoly/payment'">
+                            <span>THANH TOÁN</span>
                         </button>
                     </div>
+
                 </div>
             </div>
             <div class="empty-cart-container" th:if="${cartItems.size() <= 0}">
-                <img src="/img/client/category/null-cart.png" alt="Giỏ hàng trống" class="empty-cart-image" />
+                <img src="/img/client/category/null-cart.png" alt="Giỏ hàng trống" class="empty-cart-image"/>
                 <p class="empty-cart-text">Không có sản phẩm nào trong giỏ hàng của bạn!</p>
                 <a href="/onepoly/home" class="btn-go-home">Tiếp tục mua sắm</a>
             </div>

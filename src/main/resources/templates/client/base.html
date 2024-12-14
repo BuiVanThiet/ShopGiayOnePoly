@@ -70,11 +70,14 @@
                     <span class="hover-text">Tra cứu thông tin đơn hàng</span>
                 </li>
 
-                <li class="nav-item" style="margin-top: 8px">
-                    <a class="navbar-brand" href="/onepoly/cart" style="color: black; margin-right: 30px"><i
-                            class="bi bi-cart4 fs-4"></i></a>
-                    <!--                    <p th:text="${cartItems.size()}"></p>-->
+                <li class="nav-item" style="margin-top: 8px; position: relative;">
+                    <a class="navbar-brand" href="/onepoly/cart" style="color: black; margin-right: 30px">
+                        <i class="bi bi-cart4 fs-4"></i>
+                    </a>
+                    <!-- Cart count with rounded border -->
+                    <span id="cart-count" class="cart-count">0</span>
                 </li>
+
                 <li class="nav-item" onmouseover="showDropdown()" onmouseout="hideDropdown()" style="margin-top: 3px">
                     <a class="nav-link account-container" href="#" style="color: black;">
                         <i class="bi bi-person-circle ts-5 fs-4"></i>
@@ -102,26 +105,6 @@
         </div>
     </div>
 </nav>
-<!-- End navbar -->
-
-<!-- Modal for Login/Register -->
-<!--<div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">-->
-<!--    <div class="modal-dialog modal-dialog-centered">-->
-<!--        <div class="modal-content">-->
-<!--            <div class="modal-header">-->
-<!--                <h5 class="modal-title" id="authModalLabel" >Tài khoản</h5>-->
-<!--                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
-<!--            </div>-->
-<!--            <div class="modal-body">-->
-<!--                <div class="d-grid gap-2">-->
-<!--                    <a href="/onepoly/login" class="btn btn-primary">Đăng nhập</a>-->
-<!--                    <a href="/register" class="btn btn-secondary">Đăng ký</a>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</div>-->
-
 <div layout:fragment="content">
 </div>
 

@@ -24,3 +24,15 @@ function profile() {
     window.location.href = '/profile/userProfile';
 }
 
+function updateCartQuantity() {
+    fetch('/api-client/quantity-product-from-cart')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("cart-count").textContent = data;
+        })
+        .catch(error => console.error('Error fetching cart quantity:', error));
+}
+
+// Gọi hàm để cập nhật giỏ hàng khi trang tải
+updateCartQuantity();
+

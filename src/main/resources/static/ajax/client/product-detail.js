@@ -116,7 +116,6 @@ function getProductDetail(productId, colorId, sizeId) {
         },
         success: function (data) {
             if (data && data.quantity !== undefined && data.price !== undefined) {
-                // Cập nhật giao diện với thông tin sản phẩm chi tiết
                 const quantity = data.quantity || 0;
                 $('#quantity-display').text(quantity);
                 $('#price-display').text(data.price.toLocaleString('en-US') + " ₫");
@@ -130,7 +129,6 @@ function getProductDetail(productId, colorId, sizeId) {
                 $('#color-modal-pay-now').text(data.colorName);
                 $('#size-modal').text(data.sizeName);
                 $('#size-modal-pay-now').text(data.sizeName);
-
                 $('#material-name').text(data.materialName);
                 $('#manufacturer-name').text(data.manufacturerName);
                 $('#origin-name').text(data.originName);

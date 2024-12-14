@@ -30,7 +30,8 @@ public interface ClientRepository extends JpaRepository<Bill, Integer> {
                    LEFT JOIN p.images i 
                    LEFT JOIN ProductDetail pd ON p.id = pd.product.id 
                    WHERE p.status = 1 AND pd.status = 1
-                   GROUP BY p.id, p.nameProduct
+                   GROUP BY p.id, p.nameProduct, p.createDate
+                   order by p.createDate desc 
             """)
     public List<ProductIClientResponse> getAllProduct();
 
