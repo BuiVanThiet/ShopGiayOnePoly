@@ -484,22 +484,28 @@ public interface ChartRepository extends JpaRepository<Bill, Integer> {
                       ELSE pd.price
                   END AS originalPrice,
                   CASE
-                      WHEN sp.discount_type = 1 AND pd.id_sale_product IS NOT NULL THEN
-                          CASE
-                              WHEN pd.price * (1 - sp.discount_value / 100.0) < 0 THEN 0
-                              ELSE pd.price * (1 - sp.discount_value / 100.0)
-                          END
-                      WHEN sp.discount_type = 2 AND pd.id_sale_product IS NOT NULL THEN
-                          CASE
-                              WHEN (pd.price - sp.discount_value) < 0 THEN 0
-                              ELSE (pd.price - sp.discount_value)
-                          END
-                      ELSE
-                          CASE
-                              WHEN pd.price < 0 THEN 0
-                              ELSE pd.price
-                          END
-                  END AS discountedPrice,
+                 WHEN sp.discount_type = 1 AND pd.id_sale_product IS NOT NULL\s
+                      AND sp.start_date <= CAST(GETDATE() AS DATE)\s
+                      AND sp.end_date >= CAST(GETDATE() AS DATE)\s
+                      AND sp.status = 1 THEN
+                     CASE
+                         WHEN pd.price * (1 - sp.discount_value / 100.0) < 0 THEN 0
+                         ELSE pd.price * (1 - sp.discount_value / 100.0)
+                     END
+                 WHEN sp.discount_type = 2 AND pd.id_sale_product IS NOT NULL\s
+                      AND sp.start_date <= CAST(GETDATE() AS DATE)\s
+                      AND sp.end_date >= CAST(GETDATE() AS DATE)\s
+                      AND sp.status = 1 THEN
+                     CASE
+                         WHEN (pd.price - sp.discount_value) < 0 THEN 0
+                         ELSE (pd.price - sp.discount_value)
+                     END
+                 ELSE
+                     CASE
+                         WHEN pd.price < 0 THEN 0
+                         ELSE pd.price
+                     END
+             END AS discountedPrice,
                   ISNULL((SELECT SUM(bd.quantity)
                           FROM dbo.bill_detail bd
                           JOIN dbo.bill b ON bd.id_bill = b.id
@@ -777,21 +783,27 @@ public interface ChartRepository extends JpaRepository<Bill, Integer> {
                               ELSE pd.price
                           END AS originalPrice,
                           CASE
-                              WHEN sp.discount_type = 1 AND pd.id_sale_product IS NOT NULL THEN
-                                  CASE
-                                      WHEN pd.price * (1 - sp.discount_value / 100.0) < 0 THEN 0
-                                      ELSE pd.price * (1 - sp.discount_value / 100.0)
-                                  END
-                              WHEN sp.discount_type = 2 AND pd.id_sale_product IS NOT NULL THEN
-                                  CASE
-                                      WHEN (pd.price - sp.discount_value) < 0 THEN 0
-                                      ELSE (pd.price - sp.discount_value)
-                                  END
-                              ELSE
-                                  CASE
-                                      WHEN pd.price < 0 THEN 0
-                                      ELSE pd.price
-                                  END
+                             WHEN sp.discount_type = 1 AND pd.id_sale_product IS NOT NULL\s
+                                  AND sp.start_date <= CAST(GETDATE() AS DATE)\s
+                                  AND sp.end_date >= CAST(GETDATE() AS DATE)\s
+                                  AND sp.status = 1 THEN
+                                 CASE
+                                     WHEN pd.price * (1 - sp.discount_value / 100.0) < 0 THEN 0
+                                     ELSE pd.price * (1 - sp.discount_value / 100.0)
+                                 END
+                             WHEN sp.discount_type = 2 AND pd.id_sale_product IS NOT NULL\s
+                                  AND sp.start_date <= CAST(GETDATE() AS DATE)\s
+                                  AND sp.end_date >= CAST(GETDATE() AS DATE)\s
+                                  AND sp.status = 1 THEN
+                                 CASE
+                                     WHEN (pd.price - sp.discount_value) < 0 THEN 0
+                                     ELSE (pd.price - sp.discount_value)
+                                 END
+                             ELSE
+                                 CASE
+                                     WHEN pd.price < 0 THEN 0
+                                     ELSE pd.price
+                                 END
                           END AS discountedPrice,
                           ISNULL((SELECT SUM(ebd.quantity_exchange)
                                   FROM dbo.exchange_bill_detail ebd
@@ -832,64 +844,68 @@ public interface ChartRepository extends JpaRepository<Bill, Integer> {
 
     @Query(value = """
         SELECT TOP 3
-                                  p.name_product AS productName,
-                                  c.name_color AS colorName,
-                                  s.name_size AS sizeName,
-                                  CASE
-                                      WHEN pd.price < 0 THEN 0
-                                      ELSE pd.price
-                                  END AS originalPrice,
-                                  CASE
-                                      WHEN sp.discount_type = 1 AND pd.id_sale_product IS NOT NULL THEN
-                                          CASE
-                                              WHEN pd.price * (1 - sp.discount_value / 100.0) < 0 THEN 0
-                                              ELSE pd.price * (1 - sp.discount_value / 100.0)
-                                          END
-                                      WHEN sp.discount_type = 2 AND pd.id_sale_product IS NOT NULL THEN
-                                          CASE
-                                              WHEN (pd.price - sp.discount_value) < 0 THEN 0
-                                              ELSE (pd.price - sp.discount_value)
-                                          END
-                                      ELSE
-                                          CASE
-                                              WHEN pd.price < 0 THEN 0
-                                              ELSE pd.price
-                                          END
-                                  END AS discountedPrice,
-        							  ISNULL((SELECT SUM(rb.quantity_return)
-        							  FROM dbo.return_bill_detail rb
-        							  LEFT JOIN dbo.return_bill_exchange_bill rbe_return ON rb.id_return_bill = rbe_return.id
-        							  WHERE rb.id_product_detail = pd.id
-        								AND rbe_return.status = 1
-        								AND CAST(rb.create_date AS DATE) BETWEEN :startDate AND :endDate), 0) AS finalQuantity,
-                                  ISNULL(STUFF((SELECT DISTINCT ', ' + i.name_image
-                                                FROM dbo.image i
-                                                WHERE i.id_product = p.id
-                                                FOR XML PATH('')), 1, 2, ''), 'Không có ảnh') AS imageNames
-                           FROM
-                                  dbo.product_detail pd
-                           LEFT JOIN
-                                  dbo.product p ON pd.id_product = p.id
-                           LEFT JOIN
-                                  dbo.color c ON pd.id_color = c.id
-                           LEFT JOIN
-                                  dbo.size s ON pd.id_size = s.id
-                           LEFT JOIN
-                                  dbo.sale_product sp ON pd.id_sale_product = sp.id
-                           WHERE
-                                  pd.id IS NOT NULL
-                                  AND (
-                                       EXISTS (
-                                  SELECT 1
-                                  FROM dbo.return_bill_detail rb
-                                  LEFT JOIN dbo.return_bill_exchange_bill rbe_return ON rb.id_return_bill = rbe_return.id
-                                  WHERE rb.id_product_detail = pd.id
-                                    AND rbe_return.status = 1
-                                    AND CAST(rb.create_date AS DATE) BETWEEN :startDate AND :endDate
-                              )
-                                  )
-                           ORDER BY
-                                  finalQuantity DESC;
+             p.name_product AS productName,
+             c.name_color AS colorName,
+             s.name_size AS sizeName,
+             CASE
+                 WHEN pd.price < 0 THEN 0
+                 ELSE pd.price
+             END AS originalPrice,
+             CASE
+                 WHEN sp.discount_type = 1 AND pd.id_sale_product IS NOT NULL\s
+                      AND sp.start_date <= CAST(GETDATE() AS DATE)\s
+                      AND sp.end_date >= CAST(GETDATE() AS DATE)\s
+                      AND sp.status = 1 THEN
+                     CASE
+                         WHEN pd.price * (1 - sp.discount_value / 100.0) < 0 THEN 0
+                         ELSE pd.price * (1 - sp.discount_value / 100.0)
+                     END
+                 WHEN sp.discount_type = 2 AND pd.id_sale_product IS NOT NULL\s
+                      AND sp.start_date <= CAST(GETDATE() AS DATE)\s
+                      AND sp.end_date >= CAST(GETDATE() AS DATE)\s
+                      AND sp.status = 1 THEN
+                     CASE
+                         WHEN (pd.price - sp.discount_value) < 0 THEN 0
+                         ELSE (pd.price - sp.discount_value)
+                     END
+                 ELSE
+                     CASE
+                         WHEN pd.price < 0 THEN 0
+                         ELSE pd.price
+                     END
+             END AS discountedPrice,
+             ISNULL((SELECT SUM(rb.quantity_return)
+                     FROM dbo.return_bill_detail rb
+                     LEFT JOIN dbo.return_bill_exchange_bill rbe_return ON rb.id_return_bill = rbe_return.id
+                     WHERE rb.id_product_detail = pd.id
+                       AND rbe_return.status = 1
+                       AND CAST(rb.create_date AS DATE) BETWEEN :startDate AND :endDate), 0) AS finalQuantity,
+             ISNULL(STUFF((SELECT DISTINCT ', ' + i.name_image
+                           FROM dbo.image i
+                           WHERE i.id_product = p.id
+                           FOR XML PATH('')), 1, 2, ''), 'Không có ảnh') AS imageNames
+         FROM
+             dbo.product_detail pd
+         LEFT JOIN
+             dbo.product p ON pd.id_product = p.id
+         LEFT JOIN
+             dbo.color c ON pd.id_color = c.id
+         LEFT JOIN
+             dbo.size s ON pd.id_size = s.id
+         LEFT JOIN
+             dbo.sale_product sp ON pd.id_sale_product = sp.id
+         WHERE
+             pd.id IS NOT NULL
+             AND EXISTS (
+                 SELECT 1
+                 FROM dbo.return_bill_detail rb
+                 LEFT JOIN dbo.return_bill_exchange_bill rbe_return ON rb.id_return_bill = rbe_return.id
+                 WHERE rb.id_product_detail = pd.id
+                   AND rbe_return.status = 1
+                   AND CAST(rb.create_date AS DATE) BETWEEN :startDate AND :endDate
+             )
+         ORDER BY
+             finalQuantity DESC;
         """,nativeQuery = true)
         List<Object[]> findTopProductsReturnByDateRange(@Param("startDate") String startDate, @Param("endDate") String endDate);
 

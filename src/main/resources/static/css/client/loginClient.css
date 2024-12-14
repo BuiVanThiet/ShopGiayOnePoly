@@ -134,7 +134,7 @@ body{
 
 .error-message {
     color: red; /* Màu chữ đỏ */
-    font-size: 14px; /* Kích thước chữ */
+    font-size: 12px; /* Kích thước chữ */
     margin-top: 5px; /* Khoảng cách từ trường nhập đến thông báo */
     display: block; /* Hiển thị thông báo */
 }

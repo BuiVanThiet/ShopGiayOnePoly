@@ -694,11 +694,11 @@ public class ClientController extends BaseBill {
                                @RequestParam String password,
                                HttpSession session, Model model) {
         if (username == null || username.trim().isEmpty()) {
-            model.addAttribute("usernameError", "Tên tài khoản không được để trống");
+            model.addAttribute("usernameError", "*Tên tài khoản không được để trống");
         }
 
         if (password == null || password.trim().isEmpty()) {
-            model.addAttribute("passwordError", "Mật khẩu không được để trống");
+            model.addAttribute("passwordError", "*Mật khẩu không được để trống");
         }
 
         // Nếu có lỗi, trả về trang đăng nhập với các thông báo lỗi
@@ -715,7 +715,7 @@ public class ClientController extends BaseBill {
             return "redirect:/onepoly/home";
         } else {
             model.addAttribute("usernameLogin", username);
-            model.addAttribute("errorMessage", "Sai tên tài khoản hoặc mật khẩu");
+            model.addAttribute("errorMessage", "*Sai tên tài khoản hoặc mật khẩu");
             return "login/loginClient";
         }
     }
@@ -750,29 +750,55 @@ public class ClientController extends BaseBill {
         session.setAttribute("acount", registerRequest.getAcount());
         session.setAttribute("email", registerRequest.getEmail());
 
-        if (customerRegisterService.existsByAcount(registerRequest.getAcount())) {
-            model.addAttribute("errorMessage", "Tên đăng nhập  đã tồn tại.");
-            return "client/register";
+//        if (customerRegisterService.existsByAcount(registerRequest.getAcount())) {
+//            model.addAttribute("errorMessage", "Tên đăng nhập  đã tồn tại.");
+//            return "client/register";
+//        }
+//
+//        if (staffRegisterService.existsByAcount(registerRequest.getAcount())) {
+//            model.addAttribute("errorMessage", "Tên đăng nhập đã tồn tại.");
+//            return "client/register";
+//        }
+//
+//        if (customerRegisterService.existsByEmail(registerRequest.getEmail())) {
+//            model.addAttribute("errorMessage", "Email đã tồn tại.");
+//            return "client/register";
+//        }
+//
+//        if (staffRegisterService.existsByEmail(registerRequest.getEmail())) {
+//            model.addAttribute("errorMessage", "Email đã tồn tại.");
+//            return "client/register";
+//        }
+//
+//        if (!registerRequest.getPassword().equals(registerRequest.getConfirmPassword())) {
+//            model.addAttribute("errorMessage", "Mật khẩu và xác nhận mật khẩu không trùng khớp.");
+//            return "client/register";
+//        }
+
+        if (registerRequest.getEmail() == null || registerRequest.getEmail().trim().isEmpty()) {
+            bindingResult.rejectValue("email", "error.registerRequest", "*Email không được để trống");
+        } else if (!registerRequest.getEmail().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
+            bindingResult.rejectValue("email", "error.registerRequest", "*Email không hợp lệ");
+        } else if (registerRequest.getEmail().length() > 100) {
+            bindingResult.rejectValue("email", "error.registerRequest", "*Email không vượt quá 100 ký tự");
         }
 
-        if (staffRegisterService.existsByAcount(registerRequest.getAcount())) {
-            model.addAttribute("errorMessage", "Tên đăng nhập đã tồn tại.");
-            return "client/register";
+        if (registerRequest.getAcount() == null || registerRequest.getAcount().trim().isEmpty()) {
+            bindingResult.rejectValue("acount", "error.registerRequest", "*Tên tài khoản không được để trống");
+        } else if (registerRequest.getAcount().length() > 100) {
+            bindingResult.rejectValue("acount", "error.registerRequest", "*Tên tài khoản không vượt quá 100 ký tự");
         }
 
-        if (customerRegisterService.existsByEmail(registerRequest.getEmail())) {
-            model.addAttribute("errorMessage", "Email đã tồn tại.");
-            return "client/register";
+        if (registerRequest.getPassword() == null || registerRequest.getPassword().trim().isEmpty()) {
+            bindingResult.rejectValue("password", "error.registerRequest", "*Mật khẩu không được để trống");
+        } else if (registerRequest.getPassword().length() > 100) {
+            bindingResult.rejectValue("password", "error.registerRequest", "*Mật khẩu không vượt quá 100 ký tự");
         }
 
-        if (staffRegisterService.existsByEmail(registerRequest.getEmail())) {
-            model.addAttribute("errorMessage", "Email đã tồn tại.");
-            return "client/register";
-        }
-
-        if (!registerRequest.getPassword().equals(registerRequest.getConfirmPassword())) {
-            model.addAttribute("errorMessage", "Mật khẩu và xác nhận mật khẩu không trùng khớp.");
-            return "client/register";
+        if (registerRequest.getConfirmPassword() == null || registerRequest.getConfirmPassword().trim().isEmpty()) {
+            bindingResult.rejectValue("confirmPassword", "error.registerRequest", "*Xác nhận mật khẩu không được để trống");
+        } else if (!registerRequest.getConfirmPassword().equals(registerRequest.getPassword())) {
+            bindingResult.rejectValue("confirmPassword", "error.registerRequest", "*Xác nhận mật khẩu không khớp với mật khẩu");
         }
 
         if (bindingResult.hasErrors()) {
