@@ -350,6 +350,11 @@ public class BillRestController extends BaseBill {
         System.out.println("Số lượng 1 trang la " + productDetails.size());
         return convertListToPage(productDetails,pageable).getContent();
     }
+    @GetMapping("/resetfilter-product")
+    public String getResetFilterProduct() {
+        this.productDetailCheckMark2Request = null;
+        return "done";
+    }
     @GetMapping("/image-product/{idProduct}")
     public List<ImageProductResponse> getImageByProduct(@PathVariable("idProduct") Integer idProduct,HttpSession session) {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
