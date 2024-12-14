@@ -68,8 +68,8 @@ body-product {
     white-space: normal;
 }
 .table-product th {
-    background-color: #00bfff;
-}
+    background-color: #172a9f;
+    color: white;}
 .table-product tr {
     border-bottom: 1px solid #ddd;
 }

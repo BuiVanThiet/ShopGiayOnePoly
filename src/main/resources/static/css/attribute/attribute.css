@@ -98,8 +98,8 @@
     white-space: normal;
 }
 .attribute-table th {
-    background-color: #00bfff;
-}
+    background-color: #172a9f;
+    color: white;}
 .attribute-table tr {
     border-bottom: 1px solid #ddd;
 }

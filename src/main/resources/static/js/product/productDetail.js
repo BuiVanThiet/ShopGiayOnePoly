@@ -155,7 +155,7 @@ function formatPrice(price) {
     if (isNaN(parsedPrice)) return '0đ';
 
     // Định dạng giá theo kiểu tiền tệ Việt Nam
-    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(parsedPrice).replace('₫', 'đ');
+    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(parsedPrice).replace('₫', 'VNĐ');
 }
 
 function displayPage(page) {

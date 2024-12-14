@@ -313,8 +313,8 @@
 
 }
 .table-createProduct th {
-    background-color: #00bfff;
-}
+    background-color: #172a9f;
+    color: white;}
 .table-createProduct tr {
     border-bottom: 1px solid #ddd;
 }
