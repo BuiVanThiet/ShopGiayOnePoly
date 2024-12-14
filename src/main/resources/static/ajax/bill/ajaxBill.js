@@ -419,6 +419,18 @@ function loadProduct(pageNumber) {
         // }
     });
 }
+function resetFillterProduct(pageNumber) {
+    $.ajax({
+        type: "GET",
+        url: "/bill-api/resetfilter-product",
+        success: function(response) {
+
+        },
+        error: function(xhr) {
+            console.error("Lỗi khi hiển thị chi tiết hóa đơn: " + xhr.responseText);
+        }
+    });
+}
 //cap nhat thong tin san pham
 function updateProductTable(response) {
     var tbody = $('#tableProductDetailSell');
@@ -1333,7 +1345,7 @@ $(document).ready(function () {
             updateQuantity($(this).closest('.custom-number-input').data('id'), $numberDiv.text(),'tru');
         }
     });
-
+    resetFillterProduct();
     // Hàm cập nhật số lượng lên server
     // Gọi các hàm tải dữ liệu ban đầu
     loadBillNew();

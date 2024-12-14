@@ -236,14 +236,14 @@ function getPriceAfterDiscount(productDetail) {
         // endDate.setHours(0, 0, 0, 0);
         // today.setHours(0, 0, 0, 0);
 
-        console.log('Ngày bắt đầu:', startDate);
-        console.log('Ngày kết thúc:', endDate);
-        console.log('Ngày hiện tại:', today);
+        console.log('Ngày bắt đầu:', formatDateCompare(startDate));
+        console.log('Ngày kết thúc:', formatDateCompare(endDate));
+        console.log('Ngày hiện tại:', formatDateCompare(endDate));
 
         if (productDetail.saleProduct.status === 1) {
             console.log('dot giam gia dang con on');
             // Kiểm tra nếu ngày hiện tại nằm trong khoảng startDate và endDate
-            if (today >= startDate && today <= endDate) {
+            if (formatDateCompare(today) >= formatDateCompare(startDate) && formatDateCompare(today) <= formatDateCompare(endDate)) {
                 console.log('dot giam gia dang con thoi gian');
 
                 const discountValue = productDetail.saleProduct.discountValue;
@@ -279,11 +279,8 @@ function formatDateCompare(date) {
     const day = ("0" + date.getDate()).slice(-2); // Lấy ngày (2 chữ số)
     const month = ("0" + (date.getMonth() + 1)).slice(-2); // Lấy tháng (2 chữ số)
     const year = date.getFullYear(); // Lấy năm
-    const hours = ("0" + date.getHours()).slice(-2); // Lấy giờ (2 chữ số)
-    const minutes = ("0" + date.getMinutes()).slice(-2); // Lấy phút (2 chữ số)
-    const seconds = ("0" + date.getSeconds()).slice(-2); // Lấy giây (2 chữ số)
 
-    return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
+    return `${day}-${month}-${year}`;
 }
 
 
