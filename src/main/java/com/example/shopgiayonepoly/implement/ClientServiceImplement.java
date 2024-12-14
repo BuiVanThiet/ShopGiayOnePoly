@@ -6,7 +6,9 @@ import com.example.shopgiayonepoly.dto.response.client.*;
 import com.example.shopgiayonepoly.entites.AddressShip;
 import com.example.shopgiayonepoly.entites.BillDetail;
 import com.example.shopgiayonepoly.entites.Cart;
+import com.example.shopgiayonepoly.entites.ProductDetail;
 import com.example.shopgiayonepoly.repositores.ClientRepository;
+import com.example.shopgiayonepoly.repositores.ProductDetailRepository;
 import com.example.shopgiayonepoly.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,6 +24,9 @@ import java.util.stream.Collectors;
 public class ClientServiceImplement implements ClientService {
     @Autowired
     private ClientRepository clientRepository;
+
+    @Autowired
+    private ProductDetailRepository productDetailRepository;
 
     @Override
     public List<ProductIClientResponse> getAllProduct() {
@@ -138,6 +143,16 @@ public class ClientServiceImplement implements ClientService {
     @Override
     public List<BillResponseManage> getAllBillByStatusDiss0(Integer idCustomer, String nameCheck, SearchBillByStatusRequest searchBillByStatusRequest, Date start, Date end) {
         return this.clientRepository.getAllBillByStatusDiss0(idCustomer, nameCheck, searchBillByStatusRequest.getStatusSearch(), start, end);
+    }
+
+    @Override
+    public Integer getAvailableStockFromProductDetail(Integer productDetailId) {
+        // Giả sử ProductDetail có trường quantity để lưu số lượng tồn kho
+        ProductDetail productDetail = productDetailRepository.findById(productDetailId).orElse(null);
+        if (productDetail != null) {
+            return productDetail.getQuantity();
+        }
+        return 0;
     }
 
 

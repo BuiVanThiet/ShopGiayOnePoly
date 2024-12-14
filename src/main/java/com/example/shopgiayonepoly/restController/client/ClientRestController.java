@@ -64,6 +64,7 @@ public class ClientRestController extends BaseEmail {
 
     @Autowired
     AddressShipRepository addressShipRepository;
+
     @Autowired
     protected PdfTemplateService pdfTemplateService;
 
@@ -84,13 +85,28 @@ public class ClientRestController extends BaseEmail {
     public ProductDetailClientRespone getProductDetail(@RequestParam Integer productId,
                                                        @RequestParam Integer colorId,
                                                        @RequestParam Integer sizeId) {
-        List<ProductDetailClientRespone> productDetails = (List<ProductDetailClientRespone>) clientService.findByProductDetailColorAndSizeAndProductId(colorId, sizeId, productId);
-        if (productDetails != null && !productDetails.isEmpty()) {
-            // Nếu có nhiều kết quả, chỉ trả về kết quả đầu tiên
-            return productDetails.get(0);
+        List<ProductDetailClientRespone> productDetails = clientService.findByProductDetailColorAndSizeAndProductId(colorId, sizeId, productId);
+
+        if (productDetails != null) {
+            // Lọc bỏ các phần tử null và các đối tượng có thuộc tính cần thiết bị null
+            productDetails = productDetails.stream()
+                    .filter(product -> product != null &&
+                                       product.getProductDetailId() != null &&
+                                       product.getProductImage() != null &&
+                                       product.getProductName() != null &&
+                                       product.getPrice() != null)
+                    .collect(Collectors.toList());
+
+            // Kiểm tra nếu danh sách không rỗng sau khi lọc
+            if (!productDetails.isEmpty()) {
+                return productDetails.get(0); // Lấy phần tử đầu tiên an toàn
+            }
         }
+
+        // Nếu không tìm thấy sản phẩm phù hợp, trả về null hoặc thông báo lỗi
         return null;
     }
+
 
     @GetMapping("/selected-voucher/{id}")
     @ResponseBody
@@ -151,75 +167,74 @@ public class ClientRestController extends BaseEmail {
         Integer productDetailId = requestData.get("productDetailId");
         Integer quantity = requestData.get("quantity");
         Map<String, Object> response = new HashMap<>();
+        StringBuilder errorMessages = new StringBuilder();
 
         if (quantity == null || quantity <= 0) {
-            response.put("success", false);
-            response.put("message", "Số lượng sản phẩm không hợp lệ.");
-            return ResponseEntity.badRequest().body(response);
+            errorMessages.append("Số lượng sản phẩm không hợp lệ.\n");
+        } else if (quantity != Math.floor(quantity)) {
+            errorMessages.append("Số lượng sản phẩm phải là số nguyên.\n");
         }
-        if (quantity != Math.floor(quantity)) {
+
+        if (errorMessages.length() > 0) {
             response.put("success", false);
-            response.put("message", "Số lượng sản phẩm phải là số nguyên.");
+            response.put("message", errorMessages.toString().trim());
+            model.addAttribute("errorMessages", errorMessages.toString().trim());
             return ResponseEntity.badRequest().body(response);
         }
 
-        System.out.println("Số lượng mua: " + quantity);
-
-        // Kiểm tra sản phẩm có tồn tại không
         ProductDetail productDetail = productDetailRepository.findById(productDetailId).orElse(null);
         if (productDetail == null) {
-            response.put("success", false);
-            response.put("message", "Sản phẩm không tồn tại.");
-            return ResponseEntity.badRequest().body(response);
+            errorMessages.append("Sản phẩm không tồn tại.\n");
+        } else {
+            BigDecimal discountedPrice = clientService.findDiscountedPriceByProductDetailId(productDetailId);
+            BigDecimal originalPrice = productDetail.getPrice();
+            int availableQuantity = productDetail.getQuantity();
+
+            if (quantity > availableQuantity) {
+                errorMessages.append("Số lượng sản phẩm trong kho không đủ.\n");
+            }
         }
 
-        BigDecimal discountedPrice = clientService.findDiscountedPriceByProductDetailId(productDetailId);
-        BigDecimal originalPrice = productDetail.getPrice();
-
-        int availableQuantity = productDetail.getQuantity();
-        if (quantity > availableQuantity) {
+        if (errorMessages.length() > 0) {
             response.put("success", false);
-            response.put("message", "Số lượng sản phẩm trong kho không đủ.");
+            response.put("message", errorMessages.toString().trim());
+            model.addAttribute("errorMessages", errorMessages.toString().trim());
             return ResponseEntity.badRequest().body(response);
         }
 
         if (clientLoginResponse != null) {
-            // Xử lý giỏ hàng cho người dùng đã đăng nhập
             Integer customerId = clientLoginResponse.getId();
             Customer customer = customerRepository.findById(customerId).orElse(null);
 
             if (customer == null) {
-                response.put("success", false);
-                response.put("message", "Khách hàng không tồn tại.");
-                return ResponseEntity.badRequest().body(response);
-            }
-
-            Cart existingCartItem = cartService.findByCustomerIDAndProductDetail(customerId, productDetailId);
-            int currentQuantity = (existingCartItem != null) ? existingCartItem.getQuantity() : 0;
-            int newTotalQuantity = currentQuantity + quantity;
-
-            if (newTotalQuantity > 10) {
-                response.put("success", false);
-                response.put("message", "Không thể thêm quá 10 sản phẩm cùng loại vào giỏ hàng.");
-                return ResponseEntity.badRequest().body(response);
-            }
-
-            if (existingCartItem != null) {
-                existingCartItem.setQuantity(newTotalQuantity);
-                existingCartItem.setUpdateDate(new Date());
-                cartRepository.save(existingCartItem);
+                errorMessages.append("Khách hàng không tồn tại.\n");
             } else {
-                Cart newCartItem = new Cart();
-                newCartItem.setCustomer(customer);
-                newCartItem.setProductDetail(productDetail);
-                newCartItem.setQuantity(quantity);
-                newCartItem.setStatus(1);
-                newCartItem.setCreateDate(new Date());
-                cartRepository.save(newCartItem);
+                Cart existingCartItem = cartService.findByCustomerIDAndProductDetail(customerId, productDetailId);
+                int currentQuantity = (existingCartItem != null) ? existingCartItem.getQuantity() : 0;
+                int newTotalQuantity = currentQuantity + quantity;
+
+                if (newTotalQuantity > 10) {
+                    errorMessages.append("Không thể thêm quá 10 sản phẩm cùng loại vào giỏ hàng.\n");
+                } else if (newTotalQuantity > productDetail.getQuantity()) {
+                    errorMessages.append("Số lượng sản phẩm trong kho không đủ.\n");
+                } else {
+                    if (existingCartItem != null) {
+                        existingCartItem.setQuantity(newTotalQuantity);
+                        existingCartItem.setUpdateDate(new Date());
+                        cartRepository.save(existingCartItem);
+                    } else {
+                        Cart newCartItem = new Cart();
+                        newCartItem.setCustomer(customer);
+                        newCartItem.setProductDetail(productDetail);
+                        newCartItem.setQuantity(quantity);
+                        newCartItem.setStatus(1);
+                        newCartItem.setCreateDate(new Date());
+                        cartRepository.save(newCartItem);
+                    }
+                    session.setAttribute("cartItems", getCartResponsesForCustomer(customerId));
+                }
             }
-            session.setAttribute("cartItems", getCartResponsesForCustomer(customerId));
         } else {
-            // Xử lý giỏ hàng cho người dùng chưa đăng nhập
             Map<Integer, Integer> sessionCart = (Map<Integer, Integer>) session.getAttribute("sessionCart");
             if (sessionCart == null) {
                 sessionCart = new HashMap<>();
@@ -229,38 +244,45 @@ public class ClientRestController extends BaseEmail {
             int newTotalQuantity = currentQuantity + quantity;
 
             if (newTotalQuantity > 10) {
-                response.put("success", false);
-                response.put("message", "Không thể thêm quá 10 sản phẩm cùng loại vào giỏ hàng.");
-                return ResponseEntity.badRequest().body(response);
+                errorMessages.append("Không thể thêm quá 10 sản phẩm cùng loại vào giỏ hàng.\n");
+            } else if (newTotalQuantity > productDetail.getQuantity()) {
+                errorMessages.append("Số lượng sản phẩm trong kho không đủ.\n");
+            } else {
+                sessionCart.put(productDetailId, newTotalQuantity);
+                session.setAttribute("sessionCart", sessionCart);
+
+                List<CartResponse> cartResponses = sessionCart.entrySet().stream()
+                        .map(entry -> {
+                            ProductDetail detail = productDetailRepository.findById(entry.getKey()).orElse(null);
+                            if (detail != null) {
+                                BigDecimal sessionDiscountedPrice = clientService.findDiscountedPriceByProductDetailId(detail.getId());
+                                return new CartResponse(
+                                        null,
+                                        null,
+                                        detail.getId(),
+                                        detail.getProduct().getNameProduct(),
+                                        productDetail.getColor().getNameColor(),
+                                        productDetail.getSize().getNameSize(),
+                                        entry.getValue(),
+                                        detail.getPrice(),
+                                        sessionDiscountedPrice,
+                                        detail.getProduct().getImages()
+                                );
+                            }
+                            return null;
+                        })
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList());
+
+                session.setAttribute("cartItems", cartResponses);
             }
+        }
 
-            sessionCart.put(productDetailId, newTotalQuantity);
-            session.setAttribute("sessionCart", sessionCart);
-
-            List<CartResponse> cartResponses = sessionCart.entrySet().stream()
-                    .map(entry -> {
-                        ProductDetail detail = productDetailRepository.findById(entry.getKey()).orElse(null);
-                        if (detail != null) {
-                            BigDecimal sessionDiscountedPrice = clientService.findDiscountedPriceByProductDetailId(detail.getId());
-                            return new CartResponse(
-                                    null,
-                                    null,
-                                    detail.getId(),
-                                    detail.getProduct().getNameProduct(),
-                                    productDetail.getColor().getNameColor(),
-                                    productDetail.getSize().getNameSize(),
-                                    entry.getValue(),
-                                    originalPrice,
-                                    discountedPrice,
-                                    productDetail.getProduct().getImages()
-                            );
-                        }
-                        return null;
-                    })
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
-
-            session.setAttribute("cartItems", cartResponses);
+        if (errorMessages.length() > 0) {
+            response.put("success", false);
+            response.put("message", errorMessages.toString().trim());
+            model.addAttribute("errorMessages", errorMessages.toString().trim());
+            return ResponseEntity.badRequest().body(response);
         }
 
         model.addAttribute("clientLogin", clientLoginResponse);
@@ -317,96 +339,119 @@ public class ClientRestController extends BaseEmail {
     }
 
     @PostMapping("/update-from-cart/{idProductDetailFromCart}")
-    public ResponseEntity<Map<String, String>> updateProductDetailFromCart(
+    public ResponseEntity<Map<String, Object>> updateProductDetailFromCart(
             HttpSession session,
             @PathVariable("idProductDetailFromCart") Integer idProductDetailFromCart,
             @RequestBody Map<String, Integer> request) {
 
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
         Integer quantityItem = request.get("quantityItem");
-        Map<String, String> messages = new HashMap<>();
-        List<CartResponse> cartItemResponse = (List<CartResponse>) session.getAttribute("cartItems");
-        Map<Integer, Integer> sessionCart = (Map<Integer, Integer>) session.getAttribute("sessionCart");
+        Map<String, Object> response = new HashMap<>();
+
+        if (quantityItem == null || quantityItem <= 0) {
+            response.put("check", "2");
+            response.put("message", "Số lượng sản phẩm phải lớn hơn 0.");
+            return ResponseEntity.badRequest().body(response);
+        }
+        if (quantityItem > 10) {
+            response.put("check", "2");
+            response.put("message", "Số lượng mua tối đa là 10 sản phẩm.");
+            return ResponseEntity.badRequest().body(response);
+        }
+
         boolean isUpdated = false;
 
+// Xử lý khi khách hàng đã đăng nhập
         if (clientLoginResponse != null) {
             Integer customerID = clientLoginResponse.getId();
-            Customer customer = customerService.getCustomerByID(customerID);
-            if (customer == null) {
-                messages.put("messages", "Khách hàng chưa đăng nhập");
-                return ResponseEntity.ok(messages);
-            }
             List<Cart> cartItems = clientService.findListCartByIdCustomer(customerID);
+
             for (Cart cart : cartItems) {
                 if (cart.getProductDetail().getId().equals(idProductDetailFromCart)) {
-                    if (quantityItem <= 0) {
-                        messages.put("messages", "Số lượng sản phẩm phải lớn hơn 0");
-                        return ResponseEntity.ok(messages);
-                    }
-                    if (quantityItem > 10) {
-                        messages.put("messages", "Số lượng mua tối đa là 10 sản phẩm");
-                        return ResponseEntity.ok(messages);
+                    if (quantityItem > cart.getProductDetail().getQuantity()) {
+                        response.put("check", "2");
+                        response.put("message", "Số lượng mua vượt quá số lượng còn trong kho.");
+                        return ResponseEntity.badRequest().body(response);
                     }
 
                     cart.setQuantity(quantityItem);
                     cartRepository.save(cart);
-                    System.out.println("Cập nhật số lượng khi đăng nhập thành công");
-
                     isUpdated = true;
                     break;
                 }
             }
 
             if (isUpdated) {
-                cartItemResponse = convertToCartResponseList(cartItems);
+                List<CartResponse> cartItemResponse = convertToCartResponseList(cartItems);
                 session.setAttribute("cartItems", cartItemResponse);
+                session.setAttribute("totalPrice", calculateTotalPrice(cartItemResponse));
 
-                BigDecimal totalPriceCartItem = calculateTotalPrice(cartItemResponse);
-                session.setAttribute("totalPrice", totalPriceCartItem);
-
-                messages.put("message", "Số lượng sản phẩm đã được cập nhật.");
-                messages.put("cartItems", cartItemResponse.toString());
-                messages.put("totalPrice", totalPriceCartItem.toString());
+                response.put("check", "1");
+                response.put("message", "Số lượng sản phẩm đã được cập nhật.");
+                response.put("cartItems", cartItemResponse);
+                response.put("totalPrice", session.getAttribute("totalPrice"));
             } else {
-                messages.put("messages", "Sản phẩm không được tìm thấy trong giỏ hàng.");
+                response.put("check", "2");
+                response.put("message", "Sản phẩm không được tìm thấy trong giỏ hàng.");
             }
         } else {
-            if (sessionCart.containsKey(idProductDetailFromCart)) {
-                if (quantityItem <= 0) {
-                    messages.put("messages", "Số lượng sản phẩm phải lớn hơn 0");
-                    return ResponseEntity.ok(messages);
-                }
-                if (quantityItem > 10) {
-                    messages.put("messages", "Số lượng mua tối đa là 10 sản phẩm");
-                    return ResponseEntity.ok(messages);
-                }
+            // Xử lý khi khách hàng chưa đăng nhập
+            Map<Integer, Integer> sessionCart = (Map<Integer, Integer>) session.getAttribute("sessionCart");
 
-                sessionCart.put(idProductDetailFromCart, quantityItem);
-                session.setAttribute("sessionCart", sessionCart);
+            if (sessionCart == null || !sessionCart.containsKey(idProductDetailFromCart)) {
+                response.put("check", "2");
+                response.put("message", "Sản phẩm không tồn tại trong giỏ hàng.");
+                return ResponseEntity.badRequest().body(response);
             }
 
-            if (cartItemResponse == null || cartItemResponse.isEmpty()) {
-                messages.put("messages", "Không có sản phẩm nào trong giỏ hàng");
-                return ResponseEntity.ok(messages);
+            Integer availableStock = clientService.getAvailableStockFromProductDetail(idProductDetailFromCart);
+
+            if (quantityItem <= 0) {
+                response.put("check", "2");
+                response.put("message", "Số lượng sản phẩm phải lớn hơn 0.");
+                return ResponseEntity.badRequest().body(response);
+            }
+            if (quantityItem > 10) {
+                response.put("check", "2");
+                response.put("message", "Số lượng mua tối đa là 10 sản phẩm.");
+                return ResponseEntity.badRequest().body(response);
             }
 
+            // Kiểm tra số lượng
+            if (quantityItem > availableStock) {
+                response.put("check", "2");
+                response.put("message", "Số lượng mua vượt quá số lượng còn trong kho.");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            sessionCart.put(idProductDetailFromCart, quantityItem);
+            session.setAttribute("sessionCart", sessionCart);
+
+            List<CartResponse> cartItemResponse = (List<CartResponse>) session.getAttribute("cartItems");
+            if (cartItemResponse == null) {
+                cartItemResponse = new ArrayList<>();
+            }
+
+            boolean isFound = false;
             for (CartResponse item : cartItemResponse) {
                 if (item.getProductDetailId().equals(idProductDetailFromCart)) {
                     item.setQuantity(quantityItem);
-                    isUpdated = true;
+                    isFound = true;
                     break;
                 }
             }
 
-            if (isUpdated) {
+            if (isFound) {
                 session.setAttribute("cartItems", cartItemResponse);
-                messages.put("message", "Số lượng sản phẩm đã được cập nhật.");
+                response.put("check", "1");
+                response.put("message", "Số lượng sản phẩm đã được cập nhật.");
             } else {
-                messages.put("messages", "Sản phẩm không được tìm thấy trong giỏ hàng.");
+                response.put("check", "2");
+                response.put("message", "Sản phẩm không được tìm thấy trong giỏ hàng.");
             }
         }
 
-        return ResponseEntity.ok(messages);
+        return ResponseEntity.ok(response);
     }
 
 
@@ -638,6 +683,16 @@ public class ClientRestController extends BaseEmail {
         }
         return responseListAddress;
     }
+
+    @GetMapping("/quantity-product-from-cart")
+    public Integer getQuantityFromCart(HttpSession session) {
+        List<CartResponse> cartItems = (List<CartResponse>) session.getAttribute("cartItems");
+        if (cartItems == null) {
+            return 0;
+        }
+        return cartItems.size();
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // danh sach hoa don cua khach hang

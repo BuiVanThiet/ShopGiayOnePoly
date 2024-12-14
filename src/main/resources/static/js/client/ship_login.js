@@ -317,7 +317,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     document.addEventListener('click', function (event) {
         if (event.target.closest('.change-address')) {
-            // Các xử lý tương tự như bạn đã làm
+            // Lấy radio button được chọn
             const selectedAddressElement = document.querySelector('.info-address-shipping input[type="radio"]:checked');
 
             if (!selectedAddressElement) {
@@ -325,12 +325,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
+            // Tìm phần tử cha chứa thông tin địa chỉ từ radio button được chọn
             const parentElement = selectedAddressElement.closest('.info-address-shipping');
             if (!parentElement) {
                 console.error("Không tìm thấy phần tử cha chứa địa chỉ.");
                 return;
             }
 
+            // Lấy thông tin tên và số điện thoại
             const nameAndPhoneNumber = parentElement.querySelector('.name-phoneNumber')?.textContent?.trim();
             const shortAddress = parentElement.querySelector('.short-address')?.textContent?.trim();
 
@@ -339,17 +341,20 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
+            // Hiển thị thông tin đã chọn
             document.getElementById('infoCustomer').textContent = 'Thông tin: ' + nameAndPhoneNumber + '.';
             document.getElementById('original-address').textContent = 'Địa chỉ: ' + shortAddress + '.';
 
-            const addressFull = document.getElementById('fullAddressInput');
-            if (addressFull) {
-                console.log('Địa chỉ đầy đủ:', addressFull.value);
-                document.getElementById('addressShip').value = addressFull.value;
+            // Lấy địa chỉ đầy đủ
+            const fullAddressInput = parentElement.querySelector('.full-address');
+            if (fullAddressInput) {
+                console.log('Địa chỉ đầy đủ:', fullAddressInput.value);
+                document.getElementById('addressShip').value = fullAddressInput.value;
             } else {
                 console.error('Không tìm thấy input chứa địa chỉ đầy đủ!');
             }
 
+            // Đóng modal
             const modalElement = document.getElementById('changeAddressModal');
             if (modalElement) {
                 modalElement.classList.remove('show');
@@ -359,11 +364,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 const backdrop = document.querySelector('.modal-backdrop');
                 if (backdrop) backdrop.remove();
             }
+
+            // Tính phí vận chuyển
             autoCalculateShippingFee();
+
             console.log("Cập nhật thành công: ", {nameAndPhoneNumber, shortAddress});
             createToast("1", "Cập nhật địa chỉ thành công");
         }
     });
+
 
 });
 document.addEventListener("DOMContentLoaded", function () {

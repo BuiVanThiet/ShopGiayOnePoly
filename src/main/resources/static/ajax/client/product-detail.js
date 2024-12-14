@@ -3,10 +3,19 @@ let selectedSizeId;
 const productId = document.getElementById("product-id").value;
 
 document.addEventListener("DOMContentLoaded", function () {
-    const firstColorButton = document.querySelector('.color-btn');
-    const firstSizeButton = document.querySelector('.size-btn');
+    const colorButtons = document.querySelectorAll('.color-btn');
+    const sizeButtons = document.querySelectorAll('.size-btn');
 
-    // Kiểm tra và xử lý nút màu và kích thước đầu tiên
+    // Kiểm tra danh sách màu sắc và kích thước
+    if (colorButtons.length === 0 || sizeButtons.length === 0) {
+        console.warn("Không có màu sắc hoặc kích thước hợp lệ để hiển thị.");
+        return;
+    }
+
+    // Thực hiện logic bình thường khi có màu sắc và kích thước hợp lệ
+    const firstColorButton = colorButtons[0];
+    const firstSizeButton = sizeButtons[0];
+
     if (firstColorButton && firstSizeButton) {
         const firstColor = firstColorButton.innerText.trim();
         selectedColorId = firstColorButton.getAttribute('data-color-id');
@@ -25,11 +34,8 @@ document.addEventListener("DOMContentLoaded", function () {
     } else {
         console.warn("Không tìm thấy màu hoặc kích thước đầu tiên.");
     }
-
-    // Đính kèm sự kiện click
-    attachClickEvent('.color-btn', setTemporaryColor, 'data-color-id');
-    attachClickEvent('.size-btn', setTemporarySize, 'data-size-id');
 });
+
 
 function attachClickEvent(selector, handler, dataAttr) {
     const buttons = document.querySelectorAll(selector);
@@ -98,7 +104,6 @@ function showPayNowModal() {
     $('#payNowModal').modal('show');
 }
 
-
 function getProductDetail(productId, colorId, sizeId) {
     console.log(`Gọi API với productId: ${productId}, colorId: ${colorId}, sizeId: ${sizeId}`);
     $.ajax({
@@ -110,7 +115,7 @@ function getProductDetail(productId, colorId, sizeId) {
             sizeId: sizeId
         },
         success: function (data) {
-            if (data) {
+            if (data && data.quantity !== undefined && data.price !== undefined) {
                 const quantity = data.quantity || 0;
                 $('#quantity-display').text(quantity);
                 $('#price-display').text(data.price.toLocaleString('en-US') + " ₫");
@@ -124,7 +129,6 @@ function getProductDetail(productId, colorId, sizeId) {
                 $('#color-modal-pay-now').text(data.colorName);
                 $('#size-modal').text(data.sizeName);
                 $('#size-modal-pay-now').text(data.sizeName);
-
                 $('#material-name').text(data.materialName);
                 $('#manufacturer-name').text(data.manufacturerName);
                 $('#origin-name').text(data.originName);
@@ -143,13 +147,29 @@ function getProductDetail(productId, colorId, sizeId) {
                     $('#btn-add-cart').prop('disabled', true);
                     $('#btn-pay-now').prop('disabled', true);
                 }
+            } else {
+                // Xử lý trường hợp sản phẩm không hợp lệ
+                handleInvalidProduct();
             }
         },
         error: function (xhr) {
-            console.log("Dữ liệu đầu vào không được cập nhật");
-            console.log("Error" + xhr.responseText);
+            console.error("Lỗi khi gọi API:", xhr.responseText);
+            handleInvalidProduct();
         }
     });
+}
+
+// Hàm xử lý khi không tìm thấy sản phẩm
+function handleInvalidProduct() {
+    console.warn("Không tìm thấy sản phẩm chi tiết phù hợp.");
+    $('#quantity-display').text("0");
+    $('#price-apply-discount').text("Không có sẵn").css('font-size', '14px !important');
+    $('#price-modal').text("Không có sẵn");
+    $('#price-modal-pay-now').text("Không có sẵn");
+    $('#product-name').text("Không tìm thấy sản phẩm");
+    $('#product-name-pay-now').text("Không tìm thấy sản phẩm");
+    $('#btn-add-cart').prop('disabled', true);
+    $('#btn-pay-now').prop('disabled', true);
 }
 
 

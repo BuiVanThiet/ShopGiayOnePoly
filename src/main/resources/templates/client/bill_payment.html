@@ -15,12 +15,12 @@
         <section class="cart-page">
             <div class="container">
                 <p class="fw-light mb-0" style="margin-left: 5px">Giỏ hàng > Thông tin thanh toán</p>
-                <div style="margin-left: 55%;">
-                    <p>Hiện tại có <span id="totalQuantity" th:text="${cartItems.size()}"></span> sản phẩm trong giỏ
-                        hàng</p>
-                    <hr>
-                </div>
-                <div class="cart-container d-flex" style="gap: 10px;">
+<!--                <div style="margin-left: 55%;">-->
+<!--                    <p>Hiện tại có <span id="totalQuantity" th:text="${cartItems.size()}"></span> sản phẩm trong giỏ-->
+<!--                        hàng</p>-->
+<!--                    <hr>-->
+<!--                </div>-->
+                <div class="cart-container d-flex" style="gap: 10px;margin-top: 20px">
                     <!-- Phần thông tin vận chuyển -->
                     <div class="info-pay" style="flex: 0 0 50%;margin-top: -20px">
                         <div th:if="${clientLogin == null}">
