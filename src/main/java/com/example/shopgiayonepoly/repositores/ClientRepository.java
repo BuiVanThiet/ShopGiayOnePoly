@@ -30,7 +30,8 @@ public interface ClientRepository extends JpaRepository<Bill, Integer> {
                    LEFT JOIN p.images i 
                    LEFT JOIN ProductDetail pd ON p.id = pd.product.id 
                    WHERE p.status = 1 AND pd.status = 1
-                   GROUP BY p.id, p.nameProduct
+                   GROUP BY p.id, p.nameProduct, p.createDate
+                   order by p.createDate desc 
             """)
     public List<ProductIClientResponse> getAllProduct();
 
@@ -102,32 +103,35 @@ public interface ClientRepository extends JpaRepository<Bill, Integer> {
     public List<ProductIClientResponse> GetTop12ProductWithPriceLowest();
 
     @Query(value = """
-               SELECT new com.example.shopgiayonepoly.dto.response.client.ProductDetailClientRespone(
-                   pd.id,
-                   p.id,
-                   p.nameProduct,
-                   pd.price,
-                   CASE
-                       WHEN pd.saleProduct IS NOT NULL AND pd.saleProduct.discountType = 1
-                           THEN pd.price - (pd.price * (CAST(pd.saleProduct.discountValue AS double) / 100))
-                       WHEN pd.saleProduct IS NOT NULL AND pd.saleProduct.discountType = 2
-                           THEN pd.price - CAST(pd.saleProduct.discountValue AS double)
-                       ELSE pd.price
-                   END,
-                   pd.quantity,
-                   p.describe,
-                   c.nameColor,
-                   s.nameSize,
-                   sp.id
-               )
-               FROM ProductDetail pd
-               JOIN pd.product p
-               LEFT JOIN pd.color c
-               LEFT JOIN pd.size s
-               LEFT JOIN pd.saleProduct sp
-               WHERE p.id = :productId
-            """)
+    SELECT new com.example.shopgiayonepoly.dto.response.client.ProductDetailClientRespone(
+        pd.id,
+        p.id,
+        p.nameProduct,
+        pd.price,
+        CASE
+            WHEN pd.saleProduct IS NOT NULL AND pd.saleProduct.discountType = 1
+                THEN pd.price - (pd.price * (CAST(pd.saleProduct.discountValue AS double) / 100))
+            WHEN pd.saleProduct IS NOT NULL AND pd.saleProduct.discountType = 2
+                THEN pd.price - CAST(pd.saleProduct.discountValue AS double)
+            ELSE pd.price
+        END,
+        pd.quantity,
+        p.describe,
+        c.nameColor,
+        s.nameSize,
+        sp.id
+    )
+    FROM ProductDetail pd
+    JOIN pd.product p
+    LEFT JOIN pd.color c
+    LEFT JOIN pd.size s
+    LEFT JOIN pd.saleProduct sp
+    WHERE p.id = :productId 
+      AND pd.status = 1 
+      AND pd.id IS NOT NULL
+""")
     public List<ProductDetailClientRespone> findProductDetailByProductId(@Param("productId") Integer productId);
+
 
 
     @Query(value = """

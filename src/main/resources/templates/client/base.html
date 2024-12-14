@@ -34,17 +34,20 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0" style="margin-left: 5px">
                 <li class="nav-item">
-                    <a  class="nav-link active" aria-current="page" href="/onepoly/home" style="color: black;text-decoration: none">
+                    <a class="nav-link active" aria-current="page" href="/onepoly/home"
+                       style="color: black;text-decoration: none">
                         <i class="bi bi-house-fill"></i> Trang chủ
                     </a>
                 </li>
                 <li class="nav-item" style="margin-left: 5px">
-                    <a class="nav-link active" aria-current="page" href="/onepoly/products" style="color: black;text-decoration: none">
+                    <a class="nav-link active" aria-current="page" href="/onepoly/products"
+                       style="color: black;text-decoration: none">
                         <i class="bi bi-bag"></i> Sản phẩm
                     </a>
                 </li>
                 <li class="nav-item" style="margin-left: 10px">
-                    <a class="nav-link active" aria-current="page" href="/contact" style="color: black;text-decoration: none">
+                    <a class="nav-link active" aria-current="page" href="/contact"
+                       style="color: black;text-decoration: none">
                         <i class="bi bi-telephone"></i> Liên hệ
                     </a>
                 </li>
@@ -52,28 +55,37 @@
             <!-- Thanh tìm kiếm -->
             <form style="width: 700px">
                 <div class="input-group">
-                    <input id="searchInput" type="text" class="form-control" placeholder="Search...">
+                    <input id="searchInput" type="text" class="form-control" placeholder="Bạn muốn mua gì hôm nay?">
                     <button type="button" onclick="searchProduct()" class="btn btn-light text-dark ms-1">
                         <i class="bi bi-search"></i> Search
                     </button>
                 </div>
             </form>
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                <li th:if="${clientLogin == null}" class="nav-item">
-                    <a class="navbar-brand" href="/onepoly/search-bill-by-code-bill" style="color: black; margin-right: 50px">
-                        <i class="bi bi-search"></i></a>
+                <li th:if="${clientLogin == null}" class="nav-item position-relative" style="margin-top: 10px">
+                    <a class="navbar-brand" href="/onepoly/search-bill-by-code-bill"
+                       style="color: black; margin-right: 50px">
+                        <i class="bi bi-search"></i>
+                    </a>
+                    <span class="hover-text">Tra cứu thông tin đơn hàng</span>
                 </li>
-                <li class="nav-item">
-                    <a class="navbar-brand" href="/onepoly/cart" style="color: black; margin-right: 50px"><i
-                            class="bi bi-cart4 fs-4"></i></a>
+
+                <li class="nav-item" style="margin-top: 8px; position: relative;">
+                    <a class="navbar-brand" href="/onepoly/cart" style="color: black; margin-right: 30px">
+                        <i class="bi bi-cart4 fs-4"></i>
+                    </a>
+                    <!-- Cart count with rounded border -->
+                    <span id="cart-count" class="cart-count">0</span>
                 </li>
-                <li class="nav-item" onmouseover="showDropdown()" onmouseout="hideDropdown()">
-                    <a class="nav-link" href="#" style="color: black;">
+
+                <li class="nav-item" onmouseover="showDropdown()" onmouseout="hideDropdown()" style="margin-top: 3px">
+                    <a class="nav-link account-container" href="#" style="color: black;">
                         <i class="bi bi-person-circle ts-5 fs-4"></i>
-                        <span th:if="${clientLogin != null}" style="font-size: 0.8rem; font-weight: 500;">
-                            <span th:text="${clientLogin.acount}"></span>
+                        <span th:if="${clientLogin != null}" class="account-name">
+                            <span style="text-decoration: none" th:text="${clientLogin.acount}"></span>
                         </span>
                     </a>
+
                     <div id="authDropdown" class="dropdown-content">
                         <button onclick="login()" class="dropdown-button" th:if="${clientLogin == null}">Đăng nhập
                         </button>
@@ -82,7 +94,8 @@
                         <button onclick="profile()" class="dropdown-button" th:if="${clientLogin != null}">Tài khoản của
                             tôi
                         </button>
-                        <a th:href="@{'/onepoly/listBillByClient/'+${clientLogin.id}}" class="dropdown-button btn" th:if="${clientLogin != null}">
+                        <a th:href="@{'/onepoly/listBillByClient/'+${clientLogin.id}}" class="dropdown-button btn"
+                           th:if="${clientLogin != null}">
                             Danh sác hóa đơn
                         </a>
                         <button onclick="register()" class="dropdown-button">Đăng ký</button>
@@ -92,26 +105,6 @@
         </div>
     </div>
 </nav>
-<!-- End navbar -->
-
-<!-- Modal for Login/Register -->
-<!--<div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">-->
-<!--    <div class="modal-dialog modal-dialog-centered">-->
-<!--        <div class="modal-content">-->
-<!--            <div class="modal-header">-->
-<!--                <h5 class="modal-title" id="authModalLabel" >Tài khoản</h5>-->
-<!--                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
-<!--            </div>-->
-<!--            <div class="modal-body">-->
-<!--                <div class="d-grid gap-2">-->
-<!--                    <a href="/onepoly/login" class="btn btn-primary">Đăng nhập</a>-->
-<!--                    <a href="/register" class="btn btn-secondary">Đăng ký</a>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</div>-->
-
 <div layout:fragment="content">
 </div>
 
@@ -142,7 +135,8 @@
             <div class="p-2 w-100 text-dark">
                 <label class="fw-bold d-block">Chính sách</label>
                 <p class="mb-2">
-                    <a href="/onepoly/policy-exchange-return-bill" class="btn"><i class="bi bi-arrow-repeat"></i> Đổi trả</a>
+                    <a href="/onepoly/policy-exchange-return-bill" class="btn"><i class="bi bi-arrow-repeat"></i> Đổi
+                        trả</a>
                 </p>
                 <p class="mb-2">
                     <i class="bi bi-box"></i> Khui hộp

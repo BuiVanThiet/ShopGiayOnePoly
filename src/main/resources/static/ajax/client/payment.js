@@ -293,8 +293,8 @@ function payBill() {
                 } else {
                     errorElement.textContent = "";
                 }
-            }
-
+            }   
+            console.log("Address customer login :"+addressShip)
             $.ajax({
                 url: '/onepoly/payment', type: 'POST', contentType: 'application/json', data: JSON.stringify({
                     addressShip: addressShip,

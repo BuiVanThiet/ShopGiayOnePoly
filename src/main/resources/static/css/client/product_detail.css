@@ -12,7 +12,7 @@
     /*margin-right: 10px;*/
     background-color: #f8f9fa;
     border: 1px solid #cccccc; /* Viền xám nhạt khi không chọn */
-    border-radius: 30px;
+    border-radius: 50%; /* Làm tròn nút */
     font-size: 10px;
     text-align: center;
     line-height: 56px;
@@ -178,16 +178,74 @@
     font-size: 14px; /* Giảm kích thước chữ các thông tin */
 }
 
-.item-quan button {
-    padding: 5px 10px;
-    font-size: 14px; /* Giảm kích thước nút */
+/* Container for the quantity buttons */
+.item-quan {
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 3px;
+    border-radius: 6px;
+    transition: background-color 0.3s ease; /* Smooth transition on hover */
+}
+
+/* Style for the quantity buttons */
+.quantity-btn {
+    background-color: #cecccc; /* Lighter button background */
+    color: #000000;
+    border: none;
+    padding: 6px 10px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Style for the input box */
+#quantity-pay-now {
+    width: 50px;
+    height: 30px;
+    text-align: center;
+    font-size: 16px;
+    border: 1px solid #ccc; /* Lighter border color */
+    /*background-color: #e0e0e0; !* Lighter background color *!*/
+    color: #333; /* Darker text color for better visibility */
+    margin: 0 8px;
+    /*border-radius: 4px;*/
+    font-weight: bold;
 }
 
 .item-quantity {
     width: 50px;
     height: 30px;
-    font-size: 14px; /* Giảm kích thước input */
+    text-align: center;
+    font-size: 16px;
+    border: 1px solid #ccc; /* Lighter border color */
+    background-color: #e0e0e0; /* Lighter background color */
+    color: #333; /* Darker text color for better visibility */
+    margin: 0 8px;
+    /*border-radius: 4px;*/
+    font-weight: bold;
 }
+
+.quantity-btn:hover {
+    background-color: #aaaaaa; /* Lighter button background on hover */
+    transform: scale(1.1); /* Slightly enlarge the button */
+}
+
+/* Focus effect for the input box */
+#quantity-pay-now:focus {
+    outline: none;
+    border-color: #bbb;
+    box-shadow: 0 0 5px rgba(187, 187, 187, 0.6);
+}
+
+.item-quantity:focus {
+    outline: none;
+    border-color: #bbb;
+    box-shadow: 0 0 5px rgba(187, 187, 187, 0.6);
+}
+
+
+/**/
 
 
 .message-error {

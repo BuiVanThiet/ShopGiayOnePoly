@@ -6,7 +6,10 @@ function applyVoucher() {
         icon: 'warning',
         showCancelButton: true,
         confirmButtonText: 'Xác nhận',
-        cancelButtonText: 'Hủy'
+        cancelButtonText: 'Hủy',
+        customClass: {
+            popup: 'swal-popup'
+        }
     }).then((result) => {
         if (result.isConfirmed) {
             const selectedRadio = document.querySelector('input[name="radioVoucher"]:checked');
@@ -75,7 +78,10 @@ function UnApplyVoucherForCart() {
         icon: 'warning',
         showCancelButton: true,
         confirmButtonText: 'Xác nhận',
-        cancelButtonText: 'Hủy'
+        cancelButtonText: 'Hủy',
+        customClass: {
+            popup: 'swal-popup'
+        }
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
@@ -268,30 +274,48 @@ document.addEventListener("DOMContentLoaded", function () {
     function updateQuantity(button, change) {
         const cartItem = button.closest(".cart-item");
         const quantityElem = cartItem.querySelector("#quantityProductFormCart");
-        let quantityItem = parseInt(quantityElem.innerText) || 0;
+        let currentQuantity = parseInt(quantityElem.innerText) || 0;
 
-        quantityItem = Math.max(1, Math.min(quantityItem + change, 10));
-        quantityElem.innerText = quantityItem;
+        // Tính toán số lượng sau khi thay đổi
+        let newQuantity = Math.max(1, Math.min(currentQuantity + change, 10));
+
+        // Cập nhật giao diện với số lượng tạm thời
+        quantityElem.innerText = newQuantity;
 
         const productDetailId = button.getAttribute('field');
-        updateQuantityInServer(productDetailId, quantityItem);
-        calculateTotalPrice();
+
+        // Cập nhật số lượng trên server và xử lý kết quả
+        updateQuantityInServer(productDetailId, newQuantity, currentQuantity, quantityElem);
     }
 
 // Cập nhật số lượng sản phẩm trên server
-    function updateQuantityInServer(productDetailId, quantityItem) {
+    function updateQuantityInServer(productDetailId, quantityItem, currentQuantity, quantityElem) {
         $.ajax({
             type: "POST",
             url: "/api-client/update-from-cart/" + productDetailId,
             contentType: "application/json",
-            data: JSON.stringify({quantityItem: quantityItem}),
-            success: function () {
-                console.log("Cập nhật thành công");
-                updateCartTotal();
+            data: JSON.stringify({ quantityItem: quantityItem }),
+            success: function (response) {
+                if (response.check === "1") {
+                    console.log("Cập nhật thành công");
+                    updateCartTotal();
+                    // createToast(response.check, response.message); // Gọi toast khi thành công
+                } else {
+                    console.error("Lỗi khi cập nhật: " + response.message);
+                    createToast(response.check, response.message); // Gọi toast khi có lỗi
+
+                    // Nếu có lỗi, khôi phục lại số lượng cũ
+                    quantityElem.innerText = currentQuantity;
+                }
             },
             error: function (xhr) {
-                console.error("Lỗi khi cập nhật:", xhr.responseText);
-                alert("Cập nhật thất bại, vui lòng thử lại.");
+                // Parse responseText để có thể sử dụng check và message
+                const response = JSON.parse(xhr.responseText);
+                console.error("Lỗi khi cập nhật:", response.message);
+                createToast(response.check, response.message); // Gọi toast khi có lỗi
+
+                // Nếu có lỗi, khôi phục lại số lượng cũ
+                quantityElem.innerText = currentQuantity;
             }
         });
     }
@@ -352,4 +376,13 @@ document.querySelectorAll('.cart-price-item').forEach(el => {
 document.querySelectorAll('.original-price').forEach(el => {
     const price = parseFloat(el.getAttribute('data-price'));
     el.textContent = Math.floor(price).toLocaleString('en-US') + " ₫";
+});
+
+document.querySelectorAll('.voucher-discount-voucher-apply').forEach(el => {
+    const price = parseFloat(el.getAttribute('data-price'));
+    if (!isNaN(price)) {
+        el.textContent = price.toLocaleString('en-US') + ' đ';
+    } else {
+        el.textContent = 'N/A';
+    }
 });
