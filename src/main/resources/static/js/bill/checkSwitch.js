@@ -83,6 +83,9 @@ if(flexSwitchCheckDefaultCheck) {
                         <span class="text-danger" id="error-addResDetail-customer-ship" style="display: none"></span>
                     </div>
                 </div>
+                <div style="float: right;">
+                    <img style="height: 100px" src="https://res.cloudinary.com/dfy4umpja/image/upload/v1734029128/phenkbeww9wjn9zyskdq.png">
+                </div>
             </div>
         `;
                     console.log('Thong tin sau khi chon api ' + provinceTransport + '-' + districtTransport + '-' + wardTransport)
