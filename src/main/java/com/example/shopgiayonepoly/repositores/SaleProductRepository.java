@@ -215,10 +215,34 @@ public interface SaleProductRepository extends JpaRepository<SaleProduct, Intege
               AND (:originList IS NULL OR o.id IN (:originList))
               -- Lọc theo đế giày
               AND (:soleList IS NULL OR so.id IN (:soleList))
-              AND  (
-                    (:statusCheckIdSale = 1 AND pd.id_sale_product IS NULL ) 
-                    OR (:statusCheckIdSale = 2 AND pd.id_sale_product IS NOT NULL) -- ngừng hoạt động
-                ) 
+              AND (
+                  (:statusCheckIdSale = 1 AND\s
+                      (
+                          pd.id_sale_product IS NULL\s
+                          OR (
+                              pd.id_sale_product IS NOT NULL\s
+                              AND (
+                                  sp.start_date > CAST(GETDATE() AS DATE)\s
+                                  OR sp.end_date < CAST(GETDATE() AS DATE)
+                              )
+                          )
+                      )
+                  )
+                  OR (
+                      :statusCheckIdSale = 2 AND
+                      (
+                          pd.id_sale_product IS NULL
+                          OR (
+                              pd.id_sale_product IS NOT NULL
+                              AND (
+                                  sp.start_date <= CAST(GETDATE() AS DATE)
+                                  AND sp.end_date >= CAST(GETDATE() AS DATE)
+                              )
+                          )
+                      )
+                  )
+              )
+            
               GROUP BY
                      pd.id,
                      p.id,                -- Thêm cột p.id vào GROUP BY

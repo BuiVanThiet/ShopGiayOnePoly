@@ -350,6 +350,11 @@ public class BillRestController extends BaseBill {
         System.out.println("Số lượng 1 trang la " + productDetails.size());
         return convertListToPage(productDetails,pageable).getContent();
     }
+    @GetMapping("/resetfilter-product")
+    public String getResetFilterProduct() {
+        this.productDetailCheckMark2Request = null;
+        return "done";
+    }
     @GetMapping("/image-product/{idProduct}")
     public List<ImageProductResponse> getImageByProduct(@PathVariable("idProduct") Integer idProduct,HttpSession session) {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
@@ -1118,9 +1123,6 @@ public class BillRestController extends BaseBill {
             String province = part[3];
             String district = part[4];
             String ward = part[5];
-            String ht = "http://localhost:8080/onepoly/status-bill/"+bill.getId();
-            String title = "Đơn hàng đã bị hủy";
-            this.templateEmailConfigmBill(email,ht,bill.getCodeBill(),title);
             if (billSave.getVoucher() != null) {
                 this.getSubtractVoucher(billSave.getVoucher(),-1);
             }
@@ -1133,7 +1135,11 @@ public class BillRestController extends BaseBill {
                     cashierInventoryService.getUpdateRevenue(billSave.getStaff().getId(),new BigDecimal(0).subtract(bill.getTotalAmount().subtract(billSave.getPriceDiscount())),new BigDecimal(0),new BigDecimal(0));
                 }
             }
+            System.out.println("bat dau gui mail");
             this.setBillStatus(bill.getId(),bill.getStatus(),session);
+//            String ht = "http://localhost:8080/onepoly/status-bill/"+bill.getId();
+//            String title = "Đơn hàng đã bị hủy";
+//            this.templateEmailConfigmBill(email,ht,bill.getCodeBill(),title);
         }else if (content.equals("agree")) {
             if(bill.getStatus() == 4 && bill.getPaymentStatus() == 0) {
                 mess = "Đơn hàng chưa được thanh toán!";
@@ -1186,12 +1192,6 @@ public class BillRestController extends BaseBill {
                 String ward = part[5];
                 String addRessDetail = String.join(", ", java.util.Arrays.copyOfRange(part, 6, part.length));
                 System.out.println("email de gui xac nhan " + email);
-                if(bill.getStatus() == 1) {
-                    String ht = "http://localhost:8080/onepoly/status-bill/"+bill.getId();
-                    System.out.println(ht);
-                    String title = "Đơn hàng đã được xác nhận";
-                    this.templateEmailConfigmBill(email,ht,bill.getCodeBill(),title);
-                }
                 bill.setUpdateDate(new Date());
                 bill.setStatus(bill.getStatus()+1);
 
@@ -1208,6 +1208,14 @@ public class BillRestController extends BaseBill {
                 }
 
                 this.setBillStatus(bill.getId(),bill.getStatus(),session);
+
+//                if(billSave.getStatus() == 2) {
+//                    System.out.println("bat dau gui mail");
+//                    String ht = "http://localhost:8080/onepoly/status-bill/"+bill.getId();
+//                    System.out.println(ht);
+//                    String title = "Đơn hàng đã được xác nhận";
+//                    this.templateEmailConfigmBill(email,ht,bill.getCodeBill(),title);
+//                }
             }
         }else if (content.equals("agreeReturnBill")) {
             if (bill.getStatus() != 7) {
@@ -1280,10 +1288,36 @@ public class BillRestController extends BaseBill {
             }
             this.setBillStatus(bill.getId(),203,session);
         }
+        System.out.println("gui thanh cong");
         thongBao.put("message",mess);
         thongBao.put("check",colorMess);
         return ResponseEntity.ok(thongBao);
     }
+
+    @GetMapping("/send-email")
+    public ResponseEntity<?> getSendEmail(HttpSession session) {
+        Integer idBill = (Integer) session.getAttribute("IdBill");
+
+        Bill bill = this.billService.findById(idBill).orElse(null);
+        String getAddRessDetail = bill.getAddRess();
+        String[] part = getAddRessDetail.split(",\\s*");
+        String email = part[2];
+        System.out.println("bat dau gui mail");
+        String ht = "http://localhost:8080/onepoly/status-bill/"+bill.getId();
+        System.out.println(ht);
+        String title = "";
+        if(bill.getStatus() == 2) {
+             title = "Đơn hàng đã được xác nhận";
+        }
+        if(bill.getStatus() == 6) {
+            title = "Đơn hàng đã được xác nhận";
+        }
+        if(bill.getStatus() == 2 || bill.getStatus() == 6) {
+            this.templateEmailConfigmBill(email,ht,bill.getCodeBill(),title);
+        }
+        return ResponseEntity.ok("done");
+    }
+
 
     @PostMapping("/payment-for-ship")
     public ResponseEntity<Map<String,String>> getPaymentForShip(@RequestBody Map<String, String> paymentData,HttpSession session, HttpServletRequest request) {
