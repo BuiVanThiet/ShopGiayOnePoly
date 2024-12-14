@@ -548,7 +548,7 @@ function confirmBill(content,checkConfirm) {
 
     if (checkConfirm === 1) {
         console.log('checkConfirm 2: ' + checkConfirm);
-        setupLoadingOnButtonClick(12000);
+        // setupLoadingOnButtonClick(12000);
     }
     $.ajax({
         type: "GET",
@@ -563,10 +563,24 @@ function confirmBill(content,checkConfirm) {
             loadInfomationHistoryByBillId();
             loadBillDetail(1);
             loadBillStatusByBillId();
+            sendEmailConfirm()
             // loadCustomerShipInBill();
         },
         error: function (xhr) {
             console.error('loi ' + xhr.responseText);
+        }
+    })
+}
+
+function sendEmailConfirm() {
+    $.ajax({
+        type: "GET",
+        url: "/bill-api/send-email",
+        success: function (response) {
+
+        },
+        error: function (xhr) {
+            console.error('loi ' + xhr.responseText)
         }
     })
 }
