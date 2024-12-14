@@ -92,6 +92,7 @@
                             </div>
                             <hr>
                         </div>
+
                     </div>
 
                     <!-- Phần danh sách Voucher -->
@@ -112,15 +113,14 @@
                         <div class="modal-dialog modal-dialog-scrollable">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="voucherModalLab el">Danh sách voucher dành cho đơn hàng
-                                        của bạn</h5>
+                                    <h5 class="modal-title" id="voucherModalLab el">Danh sách voucher dành cho bạn</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                             aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
                                     <!-- Danh sách voucher -->
                                     <div id="voucher-list">
-                                        <div th:if="${selectedVoucher != null}" class="voucher-apply">
+                                        <div th:if="${selectedVoucher != null}" class="voucher-apply" style="margin-bottom: 30px">
                                             <p class="voucher-title-voucher" style="color: #232222">Voucher đang áp
                                                 dụng</p>
                                             <hr>
@@ -151,16 +151,21 @@
                                             </div>
 
                                         </div>
-                                        <p class="voucher-title-voucher" style="color: #232222;margin-top: 30px">Những
+                                        <p class="voucher-title-voucher" style="color: #232222;">Những
                                             phiếu giảm giá dành cho bạn</p>
                                         <hr>
                                         <ul class="voucher-list-voucher">
                                             <li style="list-style: none" th:each="voucher : ${applicableVouchers}">
                                                 <div class="cart-voucher-item"
                                                      style="display: flex; align-items: center; padding: 10px;">
-                                                    <!-- Hình ảnh -->
+
+                                                    <div style="margin-right: 10px">
+                                                        <input type="radio" class="cart-voucher-radio"
+                                                               name="radioVoucher"
+                                                               style="transform: scale(1.2); cursor: pointer;">
+                                                    </div>                                                    <!-- Hình ảnh -->
                                                     <img src="/img/client/category/2.png" alt="Voucher Image"
-                                                         style="width: 70px; height: 70px; object-fit: cover; border-radius: 5px; margin-right: 15px;">
+                                                         style="width: 80px; height: 80px; object-fit: cover; border-radius: 5px; margin-right: 15px;">
 
                                                     <!-- Thông tin voucher -->
                                                     <div style="flex-grow: 1;">
@@ -181,11 +186,6 @@
                                                     </div>
 
                                                     <!-- Radio button -->
-                                                    <div>
-                                                        <input type="radio" class="cart-voucher-radio"
-                                                               name="radioVoucher"
-                                                               style="transform: scale(1.2); cursor: pointer;">
-                                                    </div>
                                                 </div>
                                                 <hr>
                                             </li>
@@ -231,18 +231,13 @@
                         </button>
                     </div>
                 </div>
+            </div>
+            <div class="empty-cart-container" th:if="${cartItems.size() <= 0}">
+                <img src="/img/client/category/null-cart.png" alt="Giỏ hàng trống" class="empty-cart-image" />
+                <p class="empty-cart-text">Không có sản phẩm nào trong giỏ hàng của bạn!</p>
+                <a href="/onepoly/home" class="btn-go-home">Tiếp tục mua sắm</a>
+            </div>
 
-            </div>
-            <div th:if="${cartItems.size() <= 0}"
-                 style="text-align: center; margin-top: 100px; border: 1px solid #d2d2d2; border-radius: 8px; padding: 20px; background-color: #f9f9f9;">
-                <img src="/img/client/category/null-cart.png" alt="Giỏ hàng trống"
-                     style="width: 500px; margin: auto; display: block;"/>
-                <p style="margin-top: 20px; font-size: 18px; color: #555;">Không có sản phẩm nào trong giỏ hàng của
-                    bạn!</p>
-                <a href="/onepoly/home" class="btn-go-home"
-                   style="display: inline-block; width: 400px; margin-top: 20px; padding: 10px 20px; background-color: #0b59a6; color: #fff; text-decoration: none; border-radius: 4px;">Tiếp
-                    tục mua sắm</a>
-            </div>
         </div>
         <!-- Các script của bạn -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/decimal.js/10.3.1/decimal.min.js"></script>

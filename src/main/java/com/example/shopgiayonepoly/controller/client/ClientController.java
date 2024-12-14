@@ -192,20 +192,22 @@ public class ClientController extends BaseBill {
                 if (discountedPrice == null) {
                     discountedPrice = productDetail.getPrice();
                 }
-                CartResponse cartResponse = new CartResponse(
-                        cartItem.getId(),
-                        cartItem.getCustomer().getId(),
-                        productDetail.getId(),
-                        productDetail.getProduct().getNameProduct(),
-                        productDetail.getColor().getNameColor(),
-                        productDetail.getSize().getNameSize(),
-                        cartItem.getQuantity(),
-                        productDetail.getPrice(),
-                        discountedPrice,
-                        productDetail.getProduct().getImages()
-                );
-                System.out.println("Name anh: " + productDetail.getProduct().getImages());
-                cartResponses.add(cartResponse);
+                if (cartItem.getProductDetail().getStatus() == 1) {
+                    CartResponse cartResponse = new CartResponse(
+                            cartItem.getId(),
+                            cartItem.getCustomer().getId(),
+                            productDetail.getId(),
+                            productDetail.getProduct().getNameProduct(),
+                            productDetail.getColor().getNameColor(),
+                            productDetail.getSize().getNameSize(),
+                            cartItem.getQuantity(),
+                            productDetail.getPrice(),
+                            discountedPrice,
+                            productDetail.getProduct().getImages()
+                    );
+                    System.out.println("Name anh: " + productDetail.getProduct().getImages());
+                    cartResponses.add(cartResponse);
+                }
             }
         } else {
             Map<Integer, Integer> sessionCart = (Map<Integer, Integer>) session.getAttribute("sessionCart");
@@ -217,22 +219,24 @@ public class ClientController extends BaseBill {
                     if (productDetail != null) {
                         BigDecimal discountedPrice = clientService.findDiscountedPriceByProductDetailId(productDetailId);
 
-                        if (discountedPrice == null) {
-                            discountedPrice = productDetail.getPrice();
+                        if (productDetail.getStatus() == 1) {
+                            if (discountedPrice == null) {
+                                discountedPrice = productDetail.getPrice();
+                            }
+                            CartResponse cartResponse = new CartResponse(
+                                    null,
+                                    null,
+                                    productDetail.getId(),
+                                    productDetail.getProduct().getNameProduct(),
+                                    productDetail.getColor().getNameColor(),
+                                    productDetail.getSize().getNameSize(),
+                                    quantity,
+                                    productDetail.getPrice(),
+                                    discountedPrice,
+                                    productDetail.getProduct().getImages()
+                            );
+                            cartResponses.add(cartResponse);
                         }
-                        CartResponse cartResponse = new CartResponse(
-                                null,
-                                null,
-                                productDetail.getId(),
-                                productDetail.getProduct().getNameProduct(),
-                                productDetail.getColor().getNameColor(),
-                                productDetail.getSize().getNameSize(),
-                                quantity,
-                                productDetail.getPrice(),
-                                discountedPrice,
-                                productDetail.getProduct().getImages()
-                        );
-                        cartResponses.add(cartResponse);
                     }
                 }
             }
@@ -323,14 +327,16 @@ public class ClientController extends BaseBill {
         if (clientLoginResponse != null) {
             model.addAttribute("clientLogin", clientLoginResponse);
             String addressCustomerLogin = clientLoginResponse.getAddRess();
+            System.out.println("addressCustomerLogin: " + addressCustomerLogin);
             String[] addressParts = addressCustomerLogin.split(",", 4);
 
             String idWard = addressParts.length > 0 ? addressParts[0].trim() : "";
             String idDistrict = addressParts.length > 1 ? addressParts[1].trim() : "";
             String idProvince = addressParts.length > 2 ? addressParts[2].trim() : "";
             String originalAddress = addressParts.length > 3 ? addressParts[3].trim() : "";
+            System.out.println("originalAddress: " + originalAddress);
             String infoCustomer = clientLoginResponse.getFullName() + ", " + clientLoginResponse.getNumberPhone() + ", " + clientLoginResponse.getEmail();
-            String fullAddressCustomerLogin = infoCustomer.trim() + ", " + originalAddress.trim();
+            String fullAddressCustomerLogin = infoCustomer.trim() + ", " + idProvince.trim() + "," + idDistrict.trim() + "," + idWard + "," + originalAddress.trim();
             model.addAttribute("infoCustomer", infoCustomer);
             model.addAttribute("originalAddress", originalAddress);
             model.addAttribute("fullAddressCustomerLogin", fullAddressCustomerLogin);
@@ -380,7 +386,6 @@ public class ClientController extends BaseBill {
             }
             model.addAttribute("listAddress", responseListAddress);
         }
-        // Cập nhật lại giỏ hàng và các thuộc tính vào model và session
         model.addAttribute("cartItems", cartItems);
         model.addAttribute("weight", weight);
         model.addAttribute("totalPrice", calculatedTotalPrice);
@@ -685,7 +690,18 @@ public class ClientController extends BaseBill {
     public String getLogoutClient(HttpSession session, Model model) {
         session.removeAttribute("clientLogin");
         model.addAttribute("errorMessage", "");
-//        return "login/loginClient";
+        ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
+        String codeOrder = (String) session.getAttribute("codeOrder");
+        String hostSuccess = (String) session.getAttribute("hostSuccess");
+        model.addAttribute("loginInfoClient", clientLoginResponse);
+        model.addAttribute("codeOrder", codeOrder);
+        model.addAttribute("hostSuccess", hostSuccess);
+        session.removeAttribute("cartItems");
+        session.removeAttribute("sessionCart");
+        session.removeAttribute("idVoucherApply");
+        session.removeAttribute("selectedVoucher");
+        session.removeAttribute("priceReduced");
+        session.removeAttribute("totalPrice");
         return "client/homepage";
     }
 
@@ -693,6 +709,7 @@ public class ClientController extends BaseBill {
     public String processLogin(@RequestParam String username,
                                @RequestParam String password,
                                HttpSession session, Model model) {
+
         if (username == null || username.trim().isEmpty()) {
             model.addAttribute("usernameError", "Tên tài khoản không được để trống");
         }
@@ -712,8 +729,30 @@ public class ClientController extends BaseBill {
             session.setAttribute("clientLogin", clientLoginResponse);
             session.setMaxInactiveInterval(24 * 60 * 60);
             System.out.println(clientLoginResponse.toString());
+            String codeOrder = (String) session.getAttribute("codeOrder");
+            String hostSuccess = (String) session.getAttribute("hostSuccess");
+            model.addAttribute("loginInfoClient", clientLoginResponse);
+            model.addAttribute("codeOrder", codeOrder);
+            model.addAttribute("hostSuccess", hostSuccess);
+            session.removeAttribute("cartItems");
+            session.removeAttribute("sessionCart");
+            session.removeAttribute("idVoucherApply");
+            session.removeAttribute("selectedVoucher");
+            session.removeAttribute("priceReduced");
+            session.removeAttribute("totalPrice");
             return "redirect:/onepoly/home";
         } else {
+            String codeOrder = (String) session.getAttribute("codeOrder");
+            String hostSuccess = (String) session.getAttribute("hostSuccess");
+            model.addAttribute("loginInfoClient", clientLoginResponse);
+            model.addAttribute("codeOrder", codeOrder);
+            model.addAttribute("hostSuccess", hostSuccess);
+            session.removeAttribute("cartItems");
+            session.removeAttribute("sessionCart");
+            session.removeAttribute("idVoucherApply");
+            session.removeAttribute("selectedVoucher");
+            session.removeAttribute("priceReduced");
+            session.removeAttribute("totalPrice");
             model.addAttribute("usernameLogin", username);
             model.addAttribute("errorMessage", "Sai tên tài khoản hoặc mật khẩu");
             return "login/loginClient";
@@ -741,6 +780,19 @@ public class ClientController extends BaseBill {
         session.removeAttribute("acount");
         session.removeAttribute("email");
         session.removeAttribute("errorMessage");
+
+        ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
+        String codeOrder = (String) session.getAttribute("codeOrder");
+        String hostSuccess = (String) session.getAttribute("hostSuccess");
+        model.addAttribute("loginInfoClient", clientLoginResponse);
+        model.addAttribute("codeOrder", codeOrder);
+        model.addAttribute("hostSuccess", hostSuccess);
+        session.removeAttribute("cartItems");
+        session.removeAttribute("sessionCart");
+        session.removeAttribute("idVoucherApply");
+        session.removeAttribute("selectedVoucher");
+        session.removeAttribute("priceReduced");
+        session.removeAttribute("totalPrice");
         return "client/register";
     }
 

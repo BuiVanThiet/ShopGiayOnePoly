@@ -6,7 +6,10 @@ function applyVoucher() {
         icon: 'warning',
         showCancelButton: true,
         confirmButtonText: 'Xác nhận',
-        cancelButtonText: 'Hủy'
+        cancelButtonText: 'Hủy',
+        customClass: {
+            popup: 'swal-popup'
+        }
     }).then((result) => {
         if (result.isConfirmed) {
             const selectedRadio = document.querySelector('input[name="radioVoucher"]:checked');
@@ -75,7 +78,10 @@ function UnApplyVoucherForCart() {
         icon: 'warning',
         showCancelButton: true,
         confirmButtonText: 'Xác nhận',
-        cancelButtonText: 'Hủy'
+        cancelButtonText: 'Hủy',
+        customClass: {
+            popup: 'swal-popup'
+        }
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({

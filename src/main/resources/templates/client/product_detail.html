@@ -84,10 +84,10 @@
                         </div>
 
                         <!-- Danh sách màu sắc -->
-                        <div class="d-flex mt-2 flex-wrap">
+                        <div class="container mt-2">
                             <div class="row">
-                                <div th:each="color : ${colors}" class="col-2 mb-2" style="margin-right: 20px">
-                                    <button class="btn-color-circle color-btn"
+                                <div th:each="color : ${colors}" class="col-2" style="margin-bottom: 10px">
+                                    <button class="btn-color-circle color-btn w-100"
                                             onclick="changeColor(this)"
                                             th:data-color-id="${color.idColor}">
                                         <span th:text="${color.nameColor}">Màu</span>
@@ -98,6 +98,7 @@
                                 </div>
                             </div>
                         </div>
+
 
                         <!-- Hiển thị kích thước đã chọn -->
                         <div class="d-flex mt-2">
@@ -110,8 +111,8 @@
                         </div>
 
                         <!-- Danh sách kích thước -->
-                        <div class="d-flex mt-2 row" style="margin-top: 20px">
-                            <div th:each="size: ${sizes}" class="col-3 mb-2">
+                        <div class="d-flex mt-2 row">
+                            <div th:each="size: ${sizes}" class="col-3" style="margin-top: -15px">
                                 <button class="btn-size-square size-btn"
                                         onclick="changeSize(this)"
                                         th:data-size-id="${size.idSize}">
