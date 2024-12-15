@@ -69,7 +69,7 @@ function loadShift(page) {
                             }
                             tbody.append(`
                                 <tr>
-                                    <th scope="row">${shift[0]}</th>
+                                    <td scope="row">${shift[0]}</td>
                                     <td>${shift[1]}</td>
                                     <td>${shift[2]}</td>
                                     <td>${status_shift}</td>
@@ -325,7 +325,7 @@ function listStaff(page) {
 
                     tbody.append(`
                     <tr onclick="toggleCheckboxProduct(${shift[0]},${page})">
-                        <th scope="row">${shift[1]}</th>
+                        <td scope="row">${shift[1]}</td>
                         <td>${shift[2]}</td>
                         <td>${timeShift}</td>
                         <td>${shift[11]}</td>
