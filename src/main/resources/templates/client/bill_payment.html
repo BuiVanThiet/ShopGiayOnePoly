@@ -14,12 +14,7 @@
         <input type="hidden" id="account-login" th:value="${accountLogin}">
         <section class="cart-page">
             <div class="container">
-                <p class="fw-light mb-0" style="margin-left: 5px">Giỏ hàng > Thông tin thanh toán</p>
-<!--                <div style="margin-left: 55%;">-->
-<!--                    <p>Hiện tại có <span id="totalQuantity" th:text="${cartItems.size()}"></span> sản phẩm trong giỏ-->
-<!--                        hàng</p>-->
-<!--                    <hr>-->
-<!--                </div>-->
+                <p class="fw-light mb-0" style="margin-left: 5px;margin-top: 100px"><a style="text-decoration: none;color: black" href="/onepoly/cart">Giỏ hàng</a> > Thông tin thanh toán</p>
                 <div class="cart-container d-flex" style="gap: 10px;margin-top: 20px">
                     <!-- Phần thông tin vận chuyển -->
                     <div class="info-pay" style="flex: 0 0 50%;margin-top: -20px">
@@ -416,7 +411,7 @@
                                     <div class="item-img">
                                         <img th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728725582/' + ${item.imageName.get(0).nameImage}"
                                              alt=""
-                                             style="width: 100px; height: auto; border-radius: 8px;">
+                                             style="width: 100px; height: 100px; border-radius: 8px;">
                                         <p class="tc line-item-qty text-center bg-light rounded-circle fw-bold position-absolute"
                                            style="width: 30px; height: 30px; top: -5px; right: -5px; font-size: 0.8rem; line-height: 30px; border: 1px solid #ddd;"
                                            th:text="${item.quantity}"></p>

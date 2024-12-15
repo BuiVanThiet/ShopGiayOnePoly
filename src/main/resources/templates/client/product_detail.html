@@ -128,26 +128,28 @@
                             <label style="color: #f30909">Số lượng hiện tại: </label>
                             <p id="quantity-display" style="color: #f10c0c" th:text="0"></p>
                         </div>
-                        <div class="box-show-sale">
-                            <ul class="list-show-sale">
-                                <li>
-                                    <span th:text="${saleProductNew.nameSale}"></span>
-                                    <span>-</span>
-                                    <span id="voucher-value-new" th:text="${saleProductNew.discountValue}"></span>
-                                    <span id="value-type"></span>
-                                    <input type="hidden" id="discount-type-new"
-                                           th:value="${saleProductNew.discountType}">
-                                </li>
-                                <li>Thời gian:
-                                    <span th:text="${saleProductNew.startDate}"></span>
-                                    <span>đến ngày</span>
-                                    <span th:text="${saleProductNew.endDate}"></span>
-                                </li>
-                                <li>Áp dụng tại cửa hàng và Website.</li>
-                                <li>Hãy tìm kiếm những sản phẩm đang áp dụng đợt giảm giá này để trải nghiệm ưu đãi
-                                    nhé!
-                                </li>
-                            </ul>
+                        <div th:if="${saleProductNew!=null}">
+                            <div class="box-show-sale">
+                                <ul class="list-show-sale">
+                                    <li>
+                                        <span th:text="${saleProductNew.nameSale}"></span>
+                                        <span>-</span>
+                                        <span id="voucher-value-new" th:text="${saleProductNew.discountValue}"></span>
+                                        <span id="value-type"></span>
+                                        <input type="hidden" id="discount-type-new"
+                                               th:value="${saleProductNew.discountType}">
+                                    </li>
+                                    <li>Thời gian:
+                                        <span th:text="${saleProductNew.startDate}"></span>
+                                        <span>đến ngày</span>
+                                        <span th:text="${saleProductNew.endDate}"></span>
+                                    </li>
+                                    <li>Áp dụng tại cửa hàng và Website.</li>
+                                    <li>Hãy tìm kiếm những sản phẩm đang áp dụng đợt giảm giá này để trải nghiệm ưu đãi
+                                        nhé!
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
 
                         <div class="add-cart">
@@ -165,8 +167,6 @@
                                             hàng</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 aria-label="Close">
-                                            <span class="material-icons"
-                                                  style="font-size: 24px;">close</span>
                                         </button>
                                     </div>
                                     <div class="modal-body">
@@ -233,8 +233,6 @@
                                             thành công</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 aria-label="Close">
-                                            <span class="material-icons"
-                                                  style="color:  white; font-size: 24px;">close</span>
                                         </button>
                                     </div>
                                     <div class="modal-body">
@@ -293,8 +291,6 @@
                                         <h5 class="modal-title text-center" id="payNowModalLabel">Mua ngay sản phẩm</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 aria-label="Close">
-                                            <span class="material-icons"
-                                                  style="color: white; font-size: 24px;">close</span>
                                         </button>
                                     </div>
                                     <div class="modal-body">

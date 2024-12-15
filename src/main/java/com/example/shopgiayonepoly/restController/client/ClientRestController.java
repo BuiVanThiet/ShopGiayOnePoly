@@ -10,6 +10,7 @@ import com.example.shopgiayonepoly.entites.*;
 import com.example.shopgiayonepoly.implement.CustomerRegisterImplement;
 import com.example.shopgiayonepoly.repositores.*;
 import com.example.shopgiayonepoly.service.*;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -102,8 +103,6 @@ public class ClientRestController extends BaseEmail {
                 return productDetails.get(0); // Lấy phần tử đầu tiên an toàn
             }
         }
-
-        // Nếu không tìm thấy sản phẩm phù hợp, trả về null hoặc thông báo lỗi
         return null;
     }
 
@@ -174,6 +173,7 @@ public class ClientRestController extends BaseEmail {
         } else if (quantity != Math.floor(quantity)) {
             errorMessages.append("Số lượng sản phẩm phải là số nguyên.\n");
         }
+
 
         if (errorMessages.length() > 0) {
             response.put("success", false);
@@ -353,11 +353,6 @@ public class ClientRestController extends BaseEmail {
             response.put("message", "Số lượng sản phẩm phải lớn hơn 0.");
             return ResponseEntity.badRequest().body(response);
         }
-        if (quantityItem > 10) {
-            response.put("check", "2");
-            response.put("message", "Số lượng mua tối đa là 10 sản phẩm.");
-            return ResponseEntity.badRequest().body(response);
-        }
 
         boolean isUpdated = false;
 
@@ -371,6 +366,11 @@ public class ClientRestController extends BaseEmail {
                     if (quantityItem > cart.getProductDetail().getQuantity()) {
                         response.put("check", "2");
                         response.put("message", "Số lượng mua vượt quá số lượng còn trong kho.");
+                        return ResponseEntity.badRequest().body(response);
+                    }
+                    if (quantityItem > 10) {
+                        response.put("check", "2");
+                        response.put("message", "Số lượng mua tối đa là 10 sản phẩm.");
                         return ResponseEntity.badRequest().body(response);
                     }
 
@@ -395,7 +395,6 @@ public class ClientRestController extends BaseEmail {
                 response.put("message", "Sản phẩm không được tìm thấy trong giỏ hàng.");
             }
         } else {
-            // Xử lý khi khách hàng chưa đăng nhập
             Map<Integer, Integer> sessionCart = (Map<Integer, Integer>) session.getAttribute("sessionCart");
 
             if (sessionCart == null || !sessionCart.containsKey(idProductDetailFromCart)) {
