@@ -22,7 +22,7 @@ function cashierInventoryList(page) {
                 response.forEach(function(cashierInventory, index) {
                     tbody.append(`
                         <tr>
-                            <th scope="row">${cashierInventory[2]}</th>
+                            <td scope="row">${cashierInventory[2]}</td>
                             <td>${cashierInventory[3]} -> ${cashierInventory[4]}</td>
                             <td>${Math.trunc(cashierInventory[5]).toLocaleString('en-US')} VNĐ</td>
                             <td>${Math.trunc(cashierInventory[6]).toLocaleString('en-US')} VNĐ</td>

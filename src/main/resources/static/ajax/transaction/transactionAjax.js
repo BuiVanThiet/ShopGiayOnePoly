@@ -93,7 +93,7 @@ function loadAllTransactionVNPay(page) {
                     var dateCreate = formatDate(transaction[6]);
                     tableTransactionVNPay.append(`
                     <tr>
-                        <th scope="row">${index+1}</th>
+                        <td scope="row">${index+1}</td>
                         <td>${transaction[0]}</td>
                         <td>${transaction[1]}</td>
                         <td>${transaction[2]}</td>

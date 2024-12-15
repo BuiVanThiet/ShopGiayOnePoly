@@ -129,7 +129,7 @@ function loadBillDetail(page)  {
 
                     tbody.append(`
                         <tr class="${rowClass}">
-                            <th scope="row" class="text-center align-middle">${index + 1}</th>
+                            <td scope="row" class="text-center align-middle">${index + 1}</td>
                             <td class="text-center align-middle">
                                 <div class="carousel slide d-flex justify-content-center align-items-center" data-bs-ride="carousel">
                                     <div style="width: 150px;" class="carousel-inner carousel-inner-bill-custom">
