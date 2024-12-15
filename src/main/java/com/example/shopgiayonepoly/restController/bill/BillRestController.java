@@ -1351,7 +1351,7 @@ public class BillRestController extends BaseBill {
             return ResponseEntity.ok(thongBao);
         }
 
-        String cashPay = paymentData.get("cashPay");
+        String cashPay = paymentData.get("cashPay").replace(".00", "");
         String cashAcountPay = paymentData.get("cashAcountPay").replace(".00", "");
         String cashBillPay = paymentData.get("cashBillPay");
         String notePay = paymentData.get("notePay");
@@ -1423,7 +1423,7 @@ public class BillRestController extends BaseBill {
             return ResponseEntity.ok(thongBao);
         }
 
-        mess = "Thanh toan thanh cong";
+        mess = "Thanh toán thành công";
         colorMess = "1";
         Integer checkPayMethod = Integer.parseInt(payMethod);
         if(checkPayMethod == 1) {

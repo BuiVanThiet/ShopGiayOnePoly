@@ -183,7 +183,7 @@ function loadInformationBillByIdBill() {
                 $('#btn-buy-product').hide();
                 $('#startCamera').hide();
                 $('#table-product-buy th:last-child').hide();
-                $('#nameBtnConfirm').text('Khách nhận đợc hàng');
+                $('#nameBtnConfirm').text('Khách nhận được hàng');
                 $('#confirm-button').attr('data-action', 'confirm3');
             }else if (response.status == 4) {
                 statusBill = 'Khách đã nhận được hàng';
