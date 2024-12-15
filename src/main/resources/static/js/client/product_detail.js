@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const icon = this.querySelector(".toggle-icon");
             if (content.classList.contains("content-hidden")) {
                 content.classList.remove("content-hidden");
+                content.classList.remove("content-hidden");
                 icon.classList.add("rotate");
             } else {
                 content.classList.add("content-hidden");
@@ -13,6 +14,4 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     });
-
-
 });

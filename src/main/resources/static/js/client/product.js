@@ -63,24 +63,19 @@ function collectFilters() {
 // Hàm cập nhật danh sách sản phẩm trong giao diện
 function updateProductList(products) {
     const productContainer = document.querySelector('.row.justify-content-between');
-    productContainer.innerHTML = ''; // Xóa danh sách cũ
-
+    productContainer.innerHTML = '';
     products.forEach(product => {
         const productHTML = `
             <div class="col-3">
                 <div class="product-item" style="position: relative;">
-                    <img id="imageProductClient"
-                        src="https://res.cloudinary.com/dfy4umpja/image/upload/v1728725582/${product.images}" 
-                        alt="Product Image">
+                    <a class="view-icon" href="/onepoly/product-detail/${product.id}">
+                        <img id="imageProductClient"
+                            src="https://res.cloudinary.com/dfy4umpja/image/upload/v1728725582/${product.images}" 
+                            alt="Product Image">
+                    </a>
                     <div class="info-product mt-2 d-flex justify-content-between">
                         <p>${product.nameProduct}</p>
-                        <p class="price-min fw-bold" style="margin-left: auto; color: #2f2a2a">${product.priceProduct}</p>
-                    </div>
-                    <div class="product-icons">
-                        <a href="#" class="cart-icon"><i class="fas fa-shopping-cart"></i></a>
-                        <a class="view-icon" href="/onepoly/product-detail/${product.id}">
-                            <i class="fas fa-eye"></i>
-                        </a>
+                        <p class="price-min fw-bold" style="margin-left: auto; color: #2f2a2a">${product.priceProduct.toLocaleString('en-US') + ' VNĐ'}</p>
                     </div>
                 </div>
             </div>
@@ -96,5 +91,5 @@ async function searchProduct() {
 
 document.querySelectorAll('.price-min').forEach(el => {
     const price = parseFloat(el.getAttribute('data-price'));
-    el.textContent = Math.floor(price).toLocaleString('en-US') + ' đ';
+    el.textContent = Math.floor(price).toLocaleString('en-US') + ' VNĐ';
 });

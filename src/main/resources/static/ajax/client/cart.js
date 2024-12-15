@@ -299,20 +299,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (response.check === "1") {
                     console.log("Cập nhật thành công");
                     updateCartTotal();
-                    // createToast(response.check, response.message); // Gọi toast khi thành công
                 } else {
                     console.error("Lỗi khi cập nhật: " + response.message);
-                    createToast(response.check, response.message); // Gọi toast khi có lỗi
-
-                    // Nếu có lỗi, khôi phục lại số lượng cũ
+                    createToast(response.check, response.message);
                     quantityElem.innerText = currentQuantity;
                 }
             },
             error: function (xhr) {
-                // Parse responseText để có thể sử dụng check và message
                 const response = JSON.parse(xhr.responseText);
                 console.error("Lỗi khi cập nhật:", response.message);
-                createToast(response.check, response.message); // Gọi toast khi có lỗi
+                createToast(response.check, response.message);
 
                 // Nếu có lỗi, khôi phục lại số lượng cũ
                 quantityElem.innerText = currentQuantity;
@@ -379,10 +375,16 @@ document.querySelectorAll('.original-price').forEach(el => {
 });
 
 document.querySelectorAll('.voucher-discount-voucher-apply').forEach(el => {
-    const price = parseFloat(el.getAttribute('data-price'));
-    if (!isNaN(price)) {
-        el.textContent = price.toLocaleString('en-US') + ' đ';
+    // Lấy nội dung giảm giá từ textContent
+    const text = el.textContent;
+
+    // Trích xuất giá trị số từ nội dung (loại bỏ chữ 'Giá trị giảm: ')
+    const match = text.match(/(\d+([.,]\d+)?)/);
+    if (match) {
+        const price = parseFloat(match[1].replace(',', '')); // Chuyển đổi sang số
+        el.textContent = text.replace(match[1], price.toLocaleString('en-US'));
     } else {
         el.textContent = 'N/A';
     }
 });
+
