@@ -22,7 +22,7 @@ function cashierInventoryListByIdStaff(page) {
                 response.forEach(function(cashierInventory, index) {
                     tbody.append(`
                         <tr>
-                            <th scope="row">${cashierInventory[2]}</th>
+                            <td scope="row">${cashierInventory[2]}</td>
                             <td>${cashierInventory[3]} -> ${cashierInventory[4]}</td>
                             <td>${Math.trunc(cashierInventory[5]).toLocaleString('en-US')} VNĐ</td>
                             <td>${Math.trunc(cashierInventory[6]).toLocaleString('en-US')} VNĐ</td>
@@ -190,7 +190,7 @@ function invoiceStatusByStaffByIdStaff(page) {
 
                     tbody.append(`
                         <tr>
-                            <th scope="row">${invoiceStatus[1]}</th>
+                            <td scope="row">${invoiceStatus[1]}</td>
                             <td>${statusBill}</td>
                             <td>${invoiceStatus[3]}</td>
                             <td>
@@ -270,7 +270,7 @@ function infoCheckInAndCheckOutByStaff(page) {
                 response.forEach(function(timekeeping, index) {
                     tbody.append(`
                         <tr>
-                            <th scope="row">${timekeeping[3]} -> ${timekeeping[4]}</th>
+                            <td scope="row">${timekeeping[3]} -> ${timekeeping[4]}</td>
                             <td>${timekeeping[8]}</td>
                             <td>${timekeeping[11]}</td>
                         </tr>

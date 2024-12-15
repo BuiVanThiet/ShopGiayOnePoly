@@ -22,8 +22,7 @@ body {
     display: flex;
     overflow-x: hidden;
     flex-direction: column;
-    background-color: #010b7d;
-    /*color: white;*/
+    background-color: #021691;
     padding: 25px 20px;
     transition: all 0.4s ease;
     z-index: 10000;

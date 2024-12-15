@@ -72,7 +72,7 @@ function getAllBilByStatus(value) {
                     }
                     tableBillManage.append(`
                      <tr>
-                            <th scope="row">${index+1}</th>
+                            <td scope="row">${index+1}</td>
                             <td>${bill.codeBill}</td>
                             <td>${bill.customer == null && bill.addRess == 'Không có' ? 'Khách lẻ' : (bill.customer == null ? nameCustomer : bill.customer.fullName)}</td>
                             <td>${bill.customer == null && bill.addRess == 'Không có' ? 'Không có' : (bill.customer == null ? numberPhone : bill.customer.numberPhone)}</td>

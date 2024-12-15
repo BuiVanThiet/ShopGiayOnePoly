@@ -348,6 +348,7 @@ function loadProduct(pageNumber) {
         type: "GET",
         url: "/return-exchange-bill-api/product-detaill-sell/" + pageNumber,
         success: function(response) {
+            console.log(response)
             updateProductTable(response);
         },
         error: function(xhr) {
@@ -601,7 +602,7 @@ function loadExchangeBill(page) {
                     }
                     tbody.append(`
                         <tr>
-                            <th scope="row" class="text-center align-middle">${index + 1}</th>
+                            <td scope="row" class="text-center align-middle">${index + 1}</td>
                             <td class="text-center align-middle">
                                 <div class="carousel slide d-flex justify-content-center align-items-center" data-bs-ride="carousel">
                                     <div style="width: 150px;" class="carousel-inner carousel-inner-bill-custom">
@@ -624,7 +625,7 @@ function loadExchangeBill(page) {
                                 ${price}
                             </td>
                             <td class="text-center align-middle">
-                                 <div class="pagination mb-3 custom-number-input" style="width: 130px;" data-id="${exchange.productDetail.id}">
+                                 <div class="pagination mb-3 custom-number-input" data-id="${exchange.productDetail.id}">
                                     <button class="button btn-decrement-exchange">-</button>
                                     <div class="number" id="pageNumber"> ${exchange.quantityExchange}</div>
                                     <button class="button btn-increment-exchange">+</button>
