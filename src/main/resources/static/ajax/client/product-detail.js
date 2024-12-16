@@ -116,12 +116,15 @@ function getProductDetail(productId, colorId, sizeId) {
         },
         success: function (data) {
             if (data && data.quantity !== undefined && data.price !== undefined) {
-                const quantity = data.quantity || 0;
+                const quantity = Math.max(0, data.quantity || 0);
+                const price = Math.max(0, data.price || 0);
+                const priceDiscount = Math.max(0, data.priceDiscount || 0);
+
                 $('#quantity-display').text(quantity);
-                $('#price-display').text(data.price.toLocaleString('en-US') + " ₫");
-                $('#price-apply-discount').text(data.priceDiscount.toLocaleString('en-US') + " ₫");
-                $('#price-modal').text(data.priceDiscount.toLocaleString('en-US') + " ₫");
-                $('#price-modal-pay-now').text(data.priceDiscount.toLocaleString('en-US') + " ₫");
+                $('#price-display').text(price.toLocaleString('en-US') + " ₫");
+                $('#price-apply-discount').text(priceDiscount.toLocaleString('en-US') + " ₫");
+                $('#price-modal').text(priceDiscount.toLocaleString('en-US') + " ₫");
+                $('#price-modal-pay-now').text(priceDiscount.toLocaleString('en-US') + " ₫");
                 $('#productDetailID-hidden').val(data.productDetailId);
                 $('#product-name-pay-now').text(data.productName);
                 $('#product-name').text(data.productName);
@@ -134,12 +137,14 @@ function getProductDetail(productId, colorId, sizeId) {
                 $('#origin-name').text(data.originName);
                 $('#description-product').text(data.productDetailDescription);
 
-                if (data.price === data.priceDiscount) {
+                // Kiểm tra hiển thị giá nếu không có giảm giá
+                if (price === priceDiscount) {
                     $('#price-display').hide();
                 } else {
                     $('#price-display').show();
                 }
 
+                // Kiểm tra số lượng để bật/tắt nút
                 if (quantity > 0) {
                     $('#btn-add-cart').prop('disabled', false);
                     $('#btn-pay-now').prop('disabled', false);
@@ -341,9 +346,9 @@ function addToCart() {
                 $('#success-color-modal').text(productColor);
                 $('#success-size-modal').text(productSize);
                 $('#success-quantity-modal').text(quantityBuy);
-
                 var successModal = new bootstrap.Modal(document.getElementById('addCartSuccessModal'));
                 successModal.show();
+                updateCartQuantity();
             } else {
                 messagesErrorAddToCart.text(data.message || 'Có lỗi xảy ra khi thêm vào giỏ hàng.');
             }
@@ -355,6 +360,16 @@ function addToCart() {
     });
 }
 
+
+function updateCartQuantity() {
+    fetch('/api-client/quantity-product-from-cart')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("cart-count").textContent = data;
+        })
+        .catch(error => console.error('Error fetching cart quantity:', error));
+}
+updateCartQuantity();
 
 $('#continue-shopping').click(function () {
     $('#successModal').modal('hide');

@@ -16,6 +16,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -75,6 +76,17 @@ public class ClientController extends BaseBill {
 
     @Autowired
     OriginService originService;
+
+
+    @RequestMapping
+    public String handleError(HttpServletRequest request, Model model) {
+        Integer statusCode = (Integer) request.getAttribute("javax.servlet.error.status_code");
+        model.addAttribute("errorCode", statusCode);
+        if (statusCode != null && statusCode == 404) {
+            return "error-404";
+        }
+        return "client/error";
+    }
 
     @GetMapping("/products")
     public String getFormProduct(HttpSession session, Model model) {
@@ -167,7 +179,6 @@ public class ClientController extends BaseBill {
             uniqueSizes.addAll(clientService.findDistinctSizesByProductDetailId(detail.getProductDetailId()));
         }
 
-        // Lấy thông tin về đợt giảm giá mới
         SaleProduct saleProductNew = saleProductService.getSaleProductNew();
 
         // Thêm dữ liệu vào model để gửi sang view

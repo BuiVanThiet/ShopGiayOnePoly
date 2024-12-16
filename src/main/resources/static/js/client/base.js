@@ -32,7 +32,5 @@ function updateCartQuantity() {
         })
         .catch(error => console.error('Error fetching cart quantity:', error));
 }
-
-// Gọi hàm để cập nhật giỏ hàng khi trang tải
 updateCartQuantity();
 

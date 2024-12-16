@@ -155,7 +155,7 @@
     position: absolute;
     top: -5px;  /* Move the count up */
     right: 12px;  /* Move the count to the right */
-    background-color: #525252;  /* Choose a color for the background */
+    background-color: #e50d0d;  /* Choose a color for the background */
     color: white;  /* Text color */
     font-size: 14px;
     width: 20px;  /* Set width of the badge */

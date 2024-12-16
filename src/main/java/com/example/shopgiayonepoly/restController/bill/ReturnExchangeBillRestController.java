@@ -394,6 +394,7 @@ public class ReturnExchangeBillRestController extends BaseBill {
         totalExchange = BigDecimal.valueOf(0);
         exchangeAndReturnFee =  BigDecimal.valueOf(0);
         discountedAmount =  BigDecimal.valueOf(0);
+        this.productDetailCheckMark2Request = null;
 
         session.setAttribute("exchangeBillDetailResponses", null); // Reset lại dữ liệu trong session mỗi lần tải trang
         session.setAttribute("totalMoneyExchange", 0); // Reset lại dữ liệu trong session mỗi lần tải trang
@@ -866,9 +867,9 @@ public class ReturnExchangeBillRestController extends BaseBill {
         if(this.productDetailCheckMark2Request == null) {
             this.productDetailCheckMark2Request = new ProductDetailCheckMark2Request("",null,null,null,null,null,null,null);
         }
-        if (this.productDetails == null) {
             this.productDetails = this.billDetailService.findProductDetailSaleTest(this.productDetailCheckMark2Request,(Integer) session.getAttribute("IdBill"));
-        }
+
+
         System.out.println("Số lượng 1 trang la " + productDetails.size());
         return convertListToPage(productDetails,pageable).getContent();
     }
@@ -892,7 +893,7 @@ public class ReturnExchangeBillRestController extends BaseBill {
         if(this.productDetailCheckMark2Request == null) {
             this.productDetailCheckMark2Request = new ProductDetailCheckMark2Request("",null,null,null,null,null,null,null);
         }
-        System.out.println("Thong tin loc " + productDetailCheckMark2Request.toString());
+        System.out.println("Thong tin loc cua mã page " + productDetailCheckMark2Request.toString());
         Integer maxPageProduct = (int) Math.ceil((double) this.billDetailService.findProductDetailSaleTest(this.productDetailCheckMark2Request,idBill).size() / 4);
         System.out.println("so trang cua san pham " + maxPageProduct);
         return maxPageProduct;
@@ -1339,10 +1340,6 @@ public class ReturnExchangeBillRestController extends BaseBill {
 
         // Tách dữ liệu và chuyển đổi thành danh sách các đối tượng
         ReturnBillExchangeBill returnBillExchangeBill = this.returnBillService.getReturnBillByIdBill(bill.getId());
-
-        if(returnBillExchangeBill.getStatus() != 1) {
-            return null;
-        }
 
         List<ReturnBillDetail> returnBillDetails = this.returnBillDetailService.getReturnBillDetailByIdReturnBill(returnBillExchangeBill.getId());
         System.out.println("vao luong tra kho");

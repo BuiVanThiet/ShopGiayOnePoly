@@ -28,7 +28,7 @@ function timekeepingList(page) {
                     }
                     tbody.append(`
                     <tr>
-                        <th scope="row">${timekeeping[2]}</th>
+                        <td scope="row">${timekeeping[2]}</td>
                         <td> ${timeShift}</td>
                         <td>${timekeeping[8]}</td>
                         <td>${timekeeping[6]}</td>

@@ -134,7 +134,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (data.code === 200) {
                     // Cập nhật phí vận chuyển
                     const shippingFee = data.data.total;
-                    document.getElementById("spanShippingFee").textContent = `${shippingFee} VND`;
+                    document.getElementById("spanShippingFee").textContent = `${shippingFee} VNĐ`;
 
                     // Tính lại tổng tiền sau khi cập nhật phí vận chuyển
                     calculateTotalPrice();

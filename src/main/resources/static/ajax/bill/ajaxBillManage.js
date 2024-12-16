@@ -183,7 +183,7 @@ function loadInformationBillByIdBill() {
                 $('#btn-buy-product').hide();
                 $('#startCamera').hide();
                 $('#table-product-buy th:last-child').hide();
-                $('#nameBtnConfirm').text('Khách nhận đợc hàng');
+                $('#nameBtnConfirm').text('Khách nhận được hàng');
                 $('#confirm-button').attr('data-action', 'confirm3');
             }else if (response.status == 4) {
                 statusBill = 'Khách đã nhận được hàng';
@@ -741,7 +741,7 @@ function loadInfomationPaymentByBillId() {
                     const formattedDateTime = formatDateTime(item[1]);
                     tableInfomationPayment.append(`
                     <tr>
-                        <th scope="row">${index+1}</th>
+                        <td scope="row">${index+1}</td>
                         <td>${Math.trunc(item[2]).toLocaleString('en-US')} VNĐ</td>
                         <td>${formattedDateTime}</td>
                         <td>${item[3]}</td>
@@ -785,7 +785,7 @@ function loadInfomationHistoryByBillId() {
                     var status = getBillStatus(item[0])
                     tableHistoryBill.append(`
                     <tr>
-                        <th scope="row">${index+1}</th>
+                        <td scope="row">${index+1}</td>
                         <td>${status}</td>
                         <td>${formattedDateTime}</td>
                         <td>${item[2]}</td>
@@ -960,7 +960,7 @@ function loadReturnBill(page) {
 
                     tbody.append(`
                         <tr data-id="${billReturn.productDetail.id}">
-                            <th scope="row" class="text-center align-middle">${index + 1}</th>
+                            <td scope="row" class="text-center align-middle">${index + 1}</td>
                             <td class="text-center align-middle">
                                 <div class="carousel slide d-flex justify-content-center align-items-center" data-bs-ride="carousel">
                                     <div style="width: 150px;" class="carousel-inner carousel-inner-bill-custom">
@@ -1192,7 +1192,7 @@ function loadExchangeBill(page) {
                     }
                     tbody.append(`
                         <tr>
-                            <th scope="row" class="text-center align-middle">${index + 1}</th>
+                            <td scope="row" class="text-center align-middle">${index + 1}</td>
                             <td class="text-center align-middle">
                                 <div class="carousel slide d-flex justify-content-center align-items-center" data-bs-ride="carousel">
                                     <div style="width: 150px;" class="carousel-inner carousel-inner-bill-custom">

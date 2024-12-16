@@ -92,18 +92,16 @@
                     <div th:each="product, stat : ${listProductHighest}" class="col-3 position-relative"
                          th:classappend="${stat.count} >= 5 ? 'hidden-product' : ''">
                         <div class="product-item" style="margin: 10px; position: relative;">
-                            <img th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728725582/' + ${product.images}"
-                                 class="jus" height="350px" alt="Image of ${product.nameProduct}">
+                            <a th:href="@{/onepoly/product-detail/{id}(id=${product.id})}">
+                                <img th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728725582/' + ${product.images}"
+                                     class="jus" height="350px" alt="Image of ${product.nameProduct}">
+                            </a>
                             <div class="info-product mt-2 d-flex justify-content-between">
                                 <p th:text="${product.nameProduct}"></p>
                                 <p class="price-min fw-bold" style="color: #2f2a2a"
                                    th:attr="data-price=${product.priceProduct}" th:text="${product.priceProduct}"></p>
                             </div>
-                            <div class="product-icons">
-                                <a th:href="@{/onepoly/product-detail/{id}(id=${product.id})}" class="view-icon">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                            </div>
+
                         </div>
                     </div>
 
@@ -229,17 +227,14 @@
                     <div th:each="product, stat : ${listProductLowest}" class="col-3 position-relative"
                          th:classappend="${stat.count} >= 5 ? 'hidden-product' : ''">
                         <div class="product-item" style="margin: 10px; position: relative;">
-                            <img th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728725582/' + ${product.images}"
-                                 class="jus" height="350px" alt="Image of ${product.nameProduct}">
+                            <a th:href="@{/onepoly/product-detail/{id}(id=${product.id})}">
+                                <img th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728725582/' + ${product.images}"
+                                     class="jus" height="350px" alt="Image of ${product.nameProduct}">
+                            </a>
                             <div class="info-product mt-2 d-flex justify-content-between">
                                 <p th:text="${product.nameProduct}"></p>
                                 <p class="price-min fw-bold" style="color: #2f2a2a"
                                    th:attr="data-price=${product.priceProduct}" th:text="${product.priceProduct}"></p>
-                            </div>
-                            <div class="product-icons">
-                                <a th:href="@{/onepoly/product-detail/{id}(id=${product.id})}" class="view-icon">
-                                    <i class="fas fa-eye"></i>
-                                </a>
                             </div>
                         </div>
                     </div>

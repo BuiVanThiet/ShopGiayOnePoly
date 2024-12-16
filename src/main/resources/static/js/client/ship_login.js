@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (data.code === 200) {
                     // Cập nhật phí vận chuyển
                     const shippingFee = data.data.total;
-                    document.getElementById("spanShippingFee").textContent = shippingFee.toLocaleString('en-US') + ' đ';
+                    document.getElementById("spanShippingFee").textContent = shippingFee.toLocaleString('en-US') + ' VNĐ';
                     console.log("Gia ship: " + shippingFee)
 
                     calculateTotalPrice();
@@ -116,10 +116,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const totalPriceBill = totalPriceCartItem - priceVoucher + shippingFee;
 
-        totalPriceCartItemElement.textContent = totalPriceCartItem.toLocaleString('en-US') + ' đ';
-        priceVoucherElement.textContent = priceVoucher.toLocaleString('en-US') + ' đ';
-        shippingFeeElement.textContent = shippingFee.toLocaleString('en-US') + ' đ';
-        totalPriceBillElement.textContent = totalPriceBill.toLocaleString('en-US') + ' đ';
+        totalPriceCartItemElement.textContent = totalPriceCartItem.toLocaleString('en-US') + ' VNĐ';
+        priceVoucherElement.textContent = priceVoucher.toLocaleString('en-US') + ' VNĐ';
+        shippingFeeElement.textContent = shippingFee.toLocaleString('en-US') + ' VNĐ';
+        totalPriceBillElement.textContent = totalPriceBill.toLocaleString('en-US') + ' VNĐ';
     }
 
     autoCalculateShippingFee();
@@ -197,7 +197,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(data => {
                 if (data.code === 200) {
                     const shippingFee = data.data.total;
-                    document.getElementById("spanShippingFee").textContent = `${shippingFee} ₫`;
+                    document.getElementById("spanShippingFee").textContent = `${shippingFee} VNĐ`;
                     calculateTotalPrice();
                     console.log("Phi ship sau khi doi: " + shippingFee)
                     shippingFeeCalculated = true;
@@ -286,9 +286,9 @@ document.addEventListener("DOMContentLoaded", function () {
         let shippingFee = parseFloat(shippingFeeElement.textContent.replace(/[^\d.-]/g, '')) || 0;
 
         // Định dạng lại các trường với toLocaleString và thêm ' đ'
-        totalPriceCartItemElement.textContent = totalPriceCartItem.toLocaleString('en-US') + ' đ';
-        priceVoucherElement.textContent = priceVoucher.toLocaleString('en-US') + ' đ';
-        shippingFeeElement.textContent = shippingFee.toLocaleString('en-US') + ' đ';
+        totalPriceCartItemElement.textContent = totalPriceCartItem.toLocaleString('en-US') + ' VNĐ';
+        priceVoucherElement.textContent = priceVoucher.toLocaleString('en-US') + ' VNĐ';
+        shippingFeeElement.textContent = shippingFee.toLocaleString('en-US') + ' VNĐ';
 
         // Tính tổng tiền
         const totalPriceBill = totalPriceCartItem - priceVoucher + shippingFee;
@@ -545,7 +545,7 @@ document.addEventListener("DOMContentLoaded", function () {
         function validatePhoneCreate() {
             const phone = phoneInput.value.trim();
             const errorPhone = document.getElementById("phone-create-err");
-            const phonePattern = /^[0-9]{10,11}$/; // Chỉ chấp nhận số có 10-11 chữ số
+            const phonePattern = /^[0-9]{10,11}$/;
             if (phone === "") {
                 errorPhone.textContent = "* Số điện thoại không được để trống.";
             } else if (!phonePattern.test(phone)) {
@@ -985,8 +985,6 @@ function getAddressDetails(buttonElement) {
         });
     }
 }
-
-
 // Hàm cập nhật địa chỉ khi ấn nút "Cập nhật"
 function updateAddress() {
     let isValid = true;
