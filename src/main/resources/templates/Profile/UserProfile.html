@@ -22,7 +22,7 @@
                 <input type="hidden" id="wardHiden" th:value="${userProfile.ward}">
                 <input type="hidden" name="account" th:value="${userProfile.account}">
                 <div class="row">
-                    <!-- Form bên trái -->
+
                     <div class="col-md-8">
                         <div class="row mb-3">
                             <label class="col-sm-4 col-form-label">Tên đăng nhập</label>
@@ -108,7 +108,7 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Form bên phải -->
+
                     <div class="col-md-4 d-flex flex-column justify-content-center align-items-center">
                         <img id="avatar-preview"
                              th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728721025/'+${userProfile.imageString}"
@@ -117,7 +117,7 @@
                         <input type="file" id="file-upload" name="nameImage" class="hidden-input d-none"
                                accept="image/*">
                     </div>
-                    <!-- form full-->
+
                     <div class="col-md-12">
                         <div class="row 4">
                             <div class="col-4 mb-3">
@@ -187,7 +187,7 @@
                         </div>
                     </div>
 
-                    <!-- Form đổi mật khẩu -->
+
                     <form id="passwordChangeForm" th:action="@{/profile/updatePassword}" method="post" th:object="${userProfile}"
                     class="item-change--pass form-labels-160" th:classappend="${showPasswordForm} ? '' : 'hidden'">
                         <div class="form-group">
@@ -270,24 +270,24 @@
     <script th:src="@{/js/profile/UserProfile.js}" type="text/javascript"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Xử lý hiển thị form đổi mật khẩu
+
             const editButton = document.getElementById('editButton');
             const closeButton = document.getElementById('closeButton');
             const passwordChangeForm = document.getElementById('passwordChangeForm');
 
             editButton.addEventListener('click', function () {
-                passwordChangeForm.classList.remove('hidden'); // Hiện form
-                editButton.classList.add('hidden'); // Ẩn nút Chỉnh sửa
-                closeButton.classList.remove('hidden'); // Hiện nút Đóng
+                passwordChangeForm.classList.remove('hidden');
+                editButton.classList.add('hidden');
+                closeButton.classList.remove('hidden');
             });
 
             closeButton.addEventListener('click', function () {
-                passwordChangeForm.classList.add('hidden'); // Ẩn form
-                editButton.classList.remove('hidden'); // Hiện nút Chỉnh sửa
-                closeButton.classList.add('hidden'); // Ẩn nút Đóng
+                passwordChangeForm.classList.add('hidden');
+                editButton.classList.remove('hidden');
+                closeButton.classList.add('hidden');
             });
 
-            // Xử lý hiển thị mật khẩu khi nhấn vào icon mắt
+
             function togglePasswordVisibility(toggleButtonId, inputId) {
                 const toggleButton = document.getElementById(toggleButtonId);
                 const input = document.getElementById(inputId);
@@ -303,7 +303,6 @@
                 });
             }
 
-            // Áp dụng toggle cho các trường mật khẩu
             togglePasswordVisibility('toggleCurrentPassword', 'currentPassword');
             togglePasswordVisibility('toggleNewPassword', 'newPassword');
             togglePasswordVisibility('toggleRetypePassword', 'confirmPassword');

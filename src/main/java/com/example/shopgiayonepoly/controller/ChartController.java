@@ -34,16 +34,10 @@ public class ChartController {
         Long billOfTheDay = chartService.billOfTheDay();
         Long totalPriceToday = chartService.totalPriceToday();
         List<Date> findLastBillDates = chartService.findLastBillDates();
-//        Long serviceFee = chartService.serviceFee();
-//        Long returnFee = chartService.returnFee();
-//        Long exchangeFee = chartService.exchangeFee();
-        // chuyển tiền sang VND
+
         NumberFormat numberFormat = NumberFormat.getInstance(new Locale("vi", "VN"));
         String formattedTotalMonthlyBill = numberFormat.format(totalMonthlyBill);
         String formattedTotalPriceToday = numberFormat.format(totalPriceToday);
-//        String formattedServiceFee = numberFormat.format(serviceFee);
-//        String formattedReturnFee = numberFormat.format(returnFee);
-//        String formattedExchangeFee = numberFormat.format(exchangeFee);
 
         List<String> findLastDates = new ArrayList<>();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -51,30 +45,20 @@ public class ChartController {
             findLastDates.add(sdf.format(date));
         }
 
-//        model.addAttribute("exchangeFee",formattedExchangeFee);
-//
-//        model.addAttribute("serviceFee",formattedServiceFee);
-//
-//        model.addAttribute("returnFee",formattedReturnFee);
-        // Hóa đơn tháng này
         model.addAttribute("monthlyBill", monthlyBill);
-        // Tổng tiền hóa đơn tháng này
+
         model.addAttribute("totalMonthlyBill",formattedTotalMonthlyBill);
-        // Số sản phẩm tháng này
+
         model.addAttribute("totalMonthlyInvoiceProducts",totalMonthlyInvoiceProducts);
-        // Số hóa đơn hôm nay
+
         model.addAttribute("billOfTheDay", billOfTheDay);
-        // Tổng giá sản phẩm đã bán trong hôm nay
+
         model.addAttribute("totalPriceToday",formattedTotalPriceToday);
 
         model.addAttribute("findLastDates", findLastDates);
-//danh sách sp chưa phân trang
+
         List<ProductInfoDto> productSales = chartService.getProductSales();
         model.addAttribute("productSales", productSales);
-////danh sách sp phân trang
-//
-//        Page<ProductInfoDto> productPage = chartService.getProductSalesPage(page, 3);
-//        model.addAttribute("productPage", productPage);
 
         return "Charts/index";
     }
