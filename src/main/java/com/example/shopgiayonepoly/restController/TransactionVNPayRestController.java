@@ -75,7 +75,6 @@ public class TransactionVNPayRestController {
         BigDecimal sum = BigDecimal.ZERO;
         Integer sl = 0;
         for (Object[] objects : transactions) {
-            System.out.println(objects[8]);
             Integer total = Integer.parseInt((String) objects[8]);
             sum = sum.add(BigDecimal.valueOf(total));
             sl++;
@@ -112,7 +111,6 @@ public class TransactionVNPayRestController {
             return null;
         }
 
-        System.out.println(transactionCheckRequest2.toString());
         transactionCheckRequest = transactionCheckRequest2;
         return transactionVNPayService.getAllTransactionVNPay(transactionCheckRequest);
     }

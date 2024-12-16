@@ -53,7 +53,6 @@ function validateAllFormAddCustomerShort() {
     validateProvince(provinceSelect);
     validateDistrict(districtSelect);
     validateWard(wardSelect);
-    console.log(provinceSelect.value)
     if(validateNameCustomer(nameCustomerInput.value.trim(),errorNameCustomer) == true &&
         validateNumberPhone(numberPhoneInput.value.trim(),errorNumberPhone) == true &&
         validateAddRessDetail(addResDetailInput.value.trim(),errorAddResDetail) == true &&

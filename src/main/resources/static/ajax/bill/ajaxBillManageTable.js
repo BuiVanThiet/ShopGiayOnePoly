@@ -147,8 +147,6 @@ function clickStatusBillManager() {
 }
 
 function searchBillManage() {
-    console.log('start: ' + $('#startDate-bill-manage').val())
-    console.log('end: ' + $('#endDate-bill-manage').val())
     $.ajax({
         type: "POST",
         url: "/bill-api/bill-manage-search",

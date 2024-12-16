@@ -3,7 +3,6 @@ function loadVoucher(page) {
         type: "GET",
         url: "/api_voucher/list/"+page,
         success: function (response) {
-            console.log(response)
             var tableVoucher = $('#tableVoucher');
             var noDataVoucherContainer = $('#noDataVoucherContainer');
             tableVoucher.empty();
@@ -139,7 +138,6 @@ function searchVoucher() {
             statusCheck: statusCheck // Gửi trạng thái
         }),
         success: function (response) {
-            console.log(response)
             loadVoucher(1);
             maxPageVoucher();
         },
@@ -192,7 +190,6 @@ function addVoucherNew() {
         }),
         success: function (response) {
             createToast(response.check, response.message);
-            console.log(response)
             loadVoucher(1);
             maxPageVoucher();
             resetFormAddVoucher();
@@ -206,7 +203,6 @@ function addVoucherNew() {
 // Lấy giá trị của radio button đã được chọn
 function getSelectedStatus() {
     var selectedValue = $("input[name='statusVoucher']:checked").val();
-    console.log(selectedValue); // In giá trị được chọn (1 hoặc 2)
     return selectedValue;
 }
 

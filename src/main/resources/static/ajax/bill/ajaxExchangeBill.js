@@ -28,7 +28,6 @@ function loadCategoryIntoSelect_exchangeBill() {
                 onChange: function(values) {
                     let selectedValues = values.map(item => item.value).join(',');
                     document.getElementById('categorySearch').value = selectedValues;
-                    console.log('category search: '+selectedValues)
                 }
             });
             selectCategory.clearAll();
@@ -72,7 +71,6 @@ function loadColorIntoSelect_exchangeBill() {
                 onChange: function(values) {
                     let selectedValues = values.map(item => item.value).join(',');
                     document.getElementById('colorSearch').value = selectedValues;
-                    console.log('color search: '+selectedValues)
                 }
             });
             selectColor.clearAll();
@@ -115,7 +113,6 @@ function loadSizeIntoSelect_exchangeBill() {
                 onChange: function(values) {
                     let selectedValues = values.map(item => item.value).join(',');
                     document.getElementById('sizeSearch').value = selectedValues;
-                    console.log('size search: '+selectedValues)
                 }
             });
             selectSize.clearAll();
@@ -158,7 +155,6 @@ function loadMaterialIntoSelect_exchangeBill() {
                 onChange: function(values) {
                     let selectedValues = values.map(item => item.value).join(',');
                     document.getElementById('materialSearch').value = selectedValues;
-                    console.log('material search: '+selectedValues)
                 }
             });
             selectMaterial.clearAll();
@@ -201,7 +197,6 @@ function loadManufacturerIntoSelect_exchangeBill() {
                 onChange: function(values) {
                     let selectedValues = values.map(item => item.value).join(',');
                     document.getElementById('manufacturerSearch').value = selectedValues;
-                    console.log('manufacturer search: '+selectedValues)
                 }
             });
             selectManufacturer.clearAll();
@@ -244,7 +239,6 @@ function loadOriginIntoSelect_exchangeBill() {
                 onChange: function(values) {
                     let selectedValues = values.map(item => item.value).join(',');
                     document.getElementById('originSearch').value = selectedValues;
-                    console.log('origin search: '+selectedValues)
                 }
             });
             selectOrigin.clearAll();
@@ -288,7 +282,6 @@ function loadSoleIntoSelect_exchangeBill() {
                 onChange: function(values) {
                     let selectedValues = values.map(item => item.value).join(',');
                     document.getElementById('soleSearch').value = selectedValues;
-                    console.log('sole search: '+selectedValues)
                 }
             });
             selectSole.clearAll();
@@ -317,7 +310,6 @@ function filterProduct() {
         success: function (response) {
             loadProduct(1); // Gọi hàm để tải sản phẩm với trang đầu tiên
             getMaxPageProduct(); // Gọi hàm để lấy số trang tối đa
-            console.log('Dữ liệu truyền về là:', response);
         },
         error: function (xhr) {
             console.log('Lỗi filter: ' + xhr.responseText);
@@ -348,7 +340,6 @@ function loadProduct(pageNumber) {
         type: "GET",
         url: "/return-exchange-bill-api/product-detaill-sell/" + pageNumber,
         success: function(response) {
-            console.log(response)
             updateProductTable(response);
         },
         error: function(xhr) {
@@ -763,7 +754,6 @@ function updateQuantityExchange(id, quantity,method) {
             method: method
         }),
         success: function (response) {
-            console.log('Cập nhật thành công: ' + response);
             loadProduct(1);
             getMaxPageProduct();
             loadExchangeBill(pageExchange);

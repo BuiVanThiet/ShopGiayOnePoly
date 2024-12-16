@@ -65,7 +65,6 @@ function formatDateTime(dateString) {
 function createBillPDF(id) {
     if(id == null) {
         id = parseInt($('#idBillCreatePDF').val());
-        console.log('id de tao oa don la ' + id)
     }
     $.ajax({
         type: "GET",
@@ -91,7 +90,6 @@ function createBillPDF(id) {
 function createBillPDFReturnExchange(id) {
     if(id == null) {
         id = parseInt($('#idBillCreatePDF').val());
-        console.log('id de tao oa don la ' + id)
     }
     $.ajax({
         type: "GET",
@@ -127,7 +125,6 @@ function isValidString(str) {
 function validateNameCustomer(value,inputError) {
     var nameCheck = value;
     if(nameCheck === '' || nameCheck.length < 1){
-        console.log('rong ne')
         inputError.style.display = 'block';
         inputError.innerText = '*Mời nhập tên khách hàng!';
         return false;
@@ -150,7 +147,6 @@ function validateNumberPhone(value,inputError) {
     var numberPhoneCheck = value.trim();
     var phoneRegex = /^(0[3|5|7|8|9])+([0-9]{8})$/;
     if(numberPhoneCheck === '' || numberPhoneCheck.length < 1){
-        console.log('rong ne')
         inputError.style.display = 'block';
         inputError.innerText = '*Mời nhập SĐT khách hàng!';
         return false;
@@ -169,7 +165,6 @@ function validateEmail(value,inputError) {
     var emailCheck = value.trim();
     var emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if(emailCheck === '' || emailCheck.length < 1){
-        console.log('rong ne')
         inputError.style.display = 'block';
         inputError.innerText = '*Mời nhập email khách hàng!';
         return false;
@@ -192,7 +187,6 @@ function validateEmail(value,inputError) {
 function validateAddRessDetail(value,inputError) {
     var addRessCheck = value.trim();
     if(addRessCheck === '' || addRessCheck.length < 1){
-        console.log('rong ne')
         inputError.style.display = 'block';
         inputError.innerText = '*Mời nhập địa chỉ chi tiết khách hàng!';
         return false;
@@ -236,15 +230,10 @@ function getPriceAfterDiscount(productDetail) {
         // endDate.setHours(0, 0, 0, 0);
         // today.setHours(0, 0, 0, 0);
 
-        console.log('Ngày bắt đầu:', formatDateCompare(startDate));
-        console.log('Ngày kết thúc:', formatDateCompare(endDate));
-        console.log('Ngày hiện tại:', formatDateCompare(endDate));
 
         if (productDetail.saleProduct.status === 1) {
-            console.log('dot giam gia dang con on');
             // Kiểm tra nếu ngày hiện tại nằm trong khoảng startDate và endDate
             if (formatDateCompare(today) >= formatDateCompare(startDate) && formatDateCompare(today) <= formatDateCompare(endDate)) {
-                console.log('dot giam gia dang con thoi gian');
 
                 const discountValue = productDetail.saleProduct.discountValue;
 
@@ -260,9 +249,7 @@ function getPriceAfterDiscount(productDetail) {
                 // Đảm bảo giá sau khi giảm không âm
                 priceBuy = Math.max(priceBuy, 0);
 
-                console.log('Giá sau khi giảm: ', priceBuy);
             } else {
-                console.log('Đợt giảm giá không còn thời gian hiệu lực');
             }
         }
     }

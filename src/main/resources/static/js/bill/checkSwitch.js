@@ -35,7 +35,6 @@ if(flexSwitchCheckDefaultCheck) {
                     emailCustomer = client.email;
                     numberPhoneCustomer = client.numberPhone;
                     addRessDetailCustomer = client.addressDetail;
-                    console.log(provinceID + '-' + districtID + '-' + wardID)
                     selectCheckProvince = client.city;
                     selectCheckDistrict = client.district;
                     selectCheckWard = client.commune;
@@ -88,7 +87,6 @@ if(flexSwitchCheckDefaultCheck) {
                 </div>
             </div>
         `;
-                    console.log('Thong tin sau khi chon api ' + provinceTransport + '-' + districtTransport + '-' + wardTransport)
                     attachInputListeners();
                     initializeLocationDropdowns('provinceSelect-transport','districtSelect-transport','wardSelect-transport','districtSelectContainer-transport','wardSelectContainer-transport',provinceID,districtID,wardID)
                     validateInformationShip();
@@ -130,30 +128,20 @@ if(flexSwitchCheckDefaultCheck) {
 
 function setClientShip(name,numberPhone,email,province,district,ward,addressDetail) {
     if(name) {
-        console.log(name)
     }
     if(numberPhone) {
-        console.log(numberPhone)
     }
     if(email) {
-        console.log(email)
     }
     if(province) {
-        console.log(province)
     }
     if(district) {
-        console.log(district)
     }
     if(ward) {
-        console.log(ward)
     }
     if(addressDetail) {
-        console.log(addressDetail)
         $('#customerShip').val(name+','+numberPhone+','+email+','+province+','+district+','+ward+','+addressDetail);
     }
-    // $('#idCity-staff').val(province)
-    // $('#idDistrict-staff').val(district)
-    // $('#idCommune-staff').val(ward)
 }
 
 function validateInformationShip() {
@@ -173,7 +161,6 @@ function validateInformationShip() {
     var errorEmailCustomerShipCheckSwitch = document.getElementById('error-email-customer-ship');
     var errorAddResDetailCustomerShipCheckSwitch = document.getElementById('error-addResDetail-customer-ship');
 
-    console.log(phoneInputCheckSwitch.value.trim())
     validateNameCustomer(nameInputCheckSwitch.value.trim(),errorNameCustomerShipCheckSwitch);
     validateNumberPhone(phoneInputCheckSwitch.value.trim(),errorNumberPhoneCustomerShipCheckSwitch);
     validateAddRessDetail(addressTextareaCheckSwitch.value.trim(),errorAddResDetailCustomerShipCheckSwitch);
@@ -182,10 +169,6 @@ function validateInformationShip() {
     validateProvinceCheckSwitch(selectCheckProvince);
     validateDistrictCheckSwitch(selectCheckDistrict);
     validateWardCheckSwitch(selectCheckWard);
-    console.log('da vao day')
-    console.log('provinceCheckSwitch ' + selectCheckProvince)
-    console.log('districtCheckSwitch ' + selectCheckDistrict)
-    console.log('wardCheckSwitch ' + selectCheckWard)
 
     if(validateNameCustomer(nameInputCheckSwitch.value.trim(),errorNameCustomerShipCheckSwitch) == true &&
         validateNumberPhone(phoneInputCheckSwitch.value.trim(),errorNumberPhoneCustomerShipCheckSwitch) == true &&
@@ -227,7 +210,6 @@ function attachInputListeners() {
             validateInformationShip();
             nameCustomer = this.value.trim();
             setClientShip(nameInputCheckSwitch.value.trim(),phoneInputCheckSwitch.value.trim(),emailInputCheckSwitch.value.trim(),provinceID,districtID,wardID,addressTextareaCheckSwitch.value.trim());
-            console.log('Tên khách hàng đã thay đổi: ' + this.value);
         });
     }
 
@@ -236,7 +218,6 @@ function attachInputListeners() {
             validateInformationShip();
             numberPhoneCustomer = this.value.trim();
             setClientShip(nameCustomer,numberPhoneCustomer,emailCustomer,provinceID,districtID,wardID,addRessDetailCustomer);
-            console.log('Số điện thoại đã thay đổi: ' + this.value);
         });
     }
 
@@ -245,7 +226,6 @@ function attachInputListeners() {
             validateInformationShip();
             emailCustomer = this.value.trim();
             setClientShip(nameCustomer,numberPhoneCustomer,emailCustomer,provinceID,districtID,wardID,addRessDetailCustomer);
-            console.log('email khách hàng đã thay đổi: ' + this.value);
         });
     }
 
@@ -254,7 +234,6 @@ function attachInputListeners() {
             validateInformationShip();
             addRessDetailCustomer = this.value.trim();
             setClientShip(nameCustomer,numberPhoneCustomer,emailCustomer,provinceID,districtID,wardID,addRessDetailCustomer)
-            console.log('Địa chỉ cụ thể đã thay đổi: ' + this.value);
         });
     }
 
@@ -264,7 +243,6 @@ function attachInputListeners() {
             selectCheckDistrict = '';
             selectCheckWard='';
             validateInformationShip();
-            console.log('Địa chỉ cụ thể đã thay đổi 1: ' + this.value);
         });
     }
     //
@@ -273,7 +251,6 @@ function attachInputListeners() {
             selectCheckDistrict = this.value.trim();
             selectCheckWard='';
             validateInformationShip();
-            console.log('Địa chỉ cụ thể đã thay đổi 2: ' + this.value);
         });
     }
     //
@@ -281,7 +258,6 @@ function attachInputListeners() {
         wardCheckSwitch.addEventListener("change", function() {
             selectCheckWard=this.value.trim();
             validateInformationShip();
-            console.log('Địa chỉ cụ thể đã thay đổi 3: ' + this.value);
         });
     }
 

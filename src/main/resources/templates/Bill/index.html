@@ -14,21 +14,7 @@
 <main>
     <div layout:fragment="content">
         <article class=" bd-gutter mt-5 my-md-4 bd-layout">
-            <!--            &lt;!&ndash; conten &ndash;&gt;-->
-            <!--            <ul class="nav nav-tabs" id="myTab" role="tablist">-->
-            <!--                <li class="nav-item" role="presentation">-->
-            <!--                    <button class="nav-link active" id="bill-tab" data-bs-toggle="tab" data-bs-target="#bill-tab-pane"-->
-            <!--                            type="button" role="tab" aria-controls="bill-tab-pane" aria-selected="true">-->
-            <!--                        Hóa đơn-->
-            <!--                    </button>-->
-            <!--                </li>-->
-            <!--                <li class="nav-item" role="presentation">-->
-            <!--                    <button class="nav-link" id="all-bill-tab" data-bs-toggle="tab" data-bs-target="#all-bill-tab-pane"-->
-            <!--                            type="button" role="tab" aria-controls="all-bill-tab-pane" aria-selected="false">-->
-            <!--                        Danh sách hóa đơn-->
-            <!--                    </button>-->
-            <!--                </li>-->
-            <!--            </ul>-->
+
             <div class="tab-content" id="myTabContent">
                 <div class="tab-pane fade show active" id="bill-tab-pane" role="tabpanel" aria-labelledby="bill-tab"
                      tabindex="0">
@@ -63,34 +49,7 @@
                             <ul class="nav nav-underline" id="billBody">
 
                             </ul>
-                            <!-- bang san pham muon mua  -->
-                            <!--                            <div id="noDataContainer" style="display:none; text-align:center;">-->
-                            <!--                                &lt;!&ndash; Ảnh sẽ được hiển thị ở đây nếu không có dữ liệu &ndash;&gt;-->
-                            <!--                            </div>-->
 
-                            <!--                            <table class="table table-bordered mt-2" style="display:none;">-->
-                            <!--                                <thead>-->
-                            <!--                                <tr>-->
-                            <!--                                    <th scope="col">STT</th>-->
-                            <!--                                    <th scope="col">Ảnh</th>-->
-                            <!--                                    <th scope="col">Sản phẩm</th>-->
-                            <!--                                    <th scope="col">Giá</th>-->
-                            <!--                                    <th scope="col">Số lượng</th>-->
-                            <!--                                    <th scope="col">Tổng tiền</th>-->
-                            <!--                                    <th scope="col">Hành động</th>-->
-                            <!--                                </tr>-->
-                            <!--                                </thead>-->
-                            <!--                                <tbody id="tableBillDetail">-->
-                            <!--                                &lt;!&ndash; Dữ liệu sẽ được tải ở đây &ndash;&gt;-->
-                            <!--                                </tbody>-->
-                            <!--                            </table>-->
-
-                            <!--                            <div class="pagination-section">-->
-                            <!--                                &lt;!&ndash; Phân trang 2 &ndash;&gt;-->
-                            <!--                                <div class="pagination-custom d-flex justify-content-center">-->
-                            <!--                                    <ul id="billDetailPageMax" class="pagination"></ul>-->
-                            <!--                                </div>-->
-                            <!--                            </div>-->
                             <div th:replace="~{Bill/listProductBuy :: listProductBuy}"></div>
 
                         </div>
@@ -295,71 +254,6 @@
             <!--            them so luong de mua-->
 
 
-            <!--            <div class="modal fade" id="exampleQuantity" aria-hidden="true" aria-labelledby="exampleQuantityLable" tabindex="-1">-->
-            <!--                <div class="modal-dialog modal-dialog-centered">-->
-            <!--                    <div class="modal-content">-->
-            <!--                        <div class="modal-header">-->
-            <!--                            <h1 class="modal-title fs-5" id="exampleQuantityLable">Số lượng</h1>-->
-            <!--                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
-            <!--                        </div>-->
-            <!--                        <div class="modal-body">-->
-            <!--                            <form id="formBuy" method="post" action="/staff/bill/buy-product-detail">-->
-
-            <!--                                <input type="hidden" id="quantityProduct" name="quantityProduct">-->
-            <!--                                <input type="hidden" id="idProductDetail" name="idProductDetail">-->
-            <!--                                <input type="hidden" id="nameProduct">-->
-
-            <!--                                <div class="mb-3 row g-3 align-items-center">-->
-
-            <!--                                    <div class="col-auto">-->
-            <!--                                        <label class="form-label">Số lượng mua:</label>-->
-            <!--                                    </div>-->
-
-            <!--                                    <div class="col-auto">-->
-            <!--                                        <input type="text" class="form-control" id="quantity" name="quantityDetail">-->
-            <!--                                    </div>-->
-
-            <!--                                    <div class="col-auto">-->
-            <!--                                        <button disabled type="submit" class="btn btn-outline-primary col-auto" id="btnBuy"><i class="bi bi-plus"></i> Xác nhận</button>-->
-            <!--                                    </div>-->
-
-            <!--                                    <div class="col-12" id="errorCard">-->
-            <!--                                        <div class="card">-->
-            <!--                                            <div class="card-body">-->
-            <!--                                                <span class="text-danger" id="erorrQuantity">Mời nhập số lượng!</span>-->
-            <!--                                            </div>-->
-            <!--                                        </div>-->
-            <!--                                    </div>-->
-
-            <!--                                </div>-->
-            <!--                            </form>-->
-            <!--                        </div>-->
-
-            <!--                        <div class="modal-footer">-->
-            <!--                            <button class="btn btn-outline-secondary" data-bs-target="#product-modal" data-bs-toggle="modal" id="comeBackProduct"><i class="bi bi-arrow-counterclockwise"></i> Quay lại</button>-->
-            <!--                        </div>-->
-            <!--                    </div>-->
-            <!--                </div>-->
-            <!--            </div>-->
-
-            <!-- modal phần nút quét sản phẩm  -->
-            <!--            <div class="modal fade" id="camera-Modal" tabindex="-1" aria-labelledby="cameraModalLabel"-->
-            <!--                 aria-hidden="true">-->
-            <!--                <div class="modal-dialog">-->
-            <!--                    <div class="modal-content">-->
-            <!--                        <div class="modal-header">-->
-            <!--                            <h1 class="modal-title fs-5" id="cameraModalLabel">-->
-            <!--                                Quét QR sản phẩm-->
-            <!--                            </h1>-->
-            <!--                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
-            <!--                        </div>-->
-            <!--                        <div class="modal-body text text-center">-->
-            <!--                            <video id="video" width="300" height="200" autoplay></video>-->
-            <!--                        </div>-->
-            <!--                    </div>-->
-            <!--                </div>-->
-            <!--            </div>-->
-
             <!-- phần thêm mới khách hàng nếu khách muốn thêm nhanh  -->
             <div class="modal fade" id="customer-Modal"  data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="clientModalLabel"
                  aria-hidden="true">
@@ -443,19 +337,6 @@
         </article>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script th:src="@{/js/bill/validateAddCustomerShort.js}" type="text/javascript"></script>
-        <!--        <script src="/ajax/bill/ajaxBill.js"></script>-->
-        <!--        <script th:src="@{/js/bill/variableBill.js}" type="text/javascript"></script>-->
-        <!--        <script th:src="@{/js/bill/actionSelect2tag.js}" type="text/javascript"></script>-->
-        <!--        <script th:src="@{/js/bill/validateCash.js}" type="text/javascript"></script>-->
-        <!--        <script th:src="@{/js/bill/validateQuantityWrite.js}" type="text/javascript"></script>-->
-        <!--        <script th:src="@{/js/bill/rollBackIndex.js}" type="text/javascript"></script>-->
-        <!--        <script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.18.1/umd/index.js"></script>-->
-        <!--        <script src="/js/bill/setupQr.js"></script>-->
-        <!--        <script src="/js/bill/checkSwitch.js"></script>-->
-        <!--        <script src="/js/bill/setActive.js"></script>-->
-        <!--        <script src="/js/bill/previewImage.js"></script>-->
-
-
 
         <script th:src="@{/js/bill/variableBill.js}" type="text/javascript"></script>
 
@@ -468,12 +349,9 @@
         <!--select 2 js-->
         <script th:src="@{/js/bill/actionSelect2tag.js}" type="text/javascript"></script>
         <script th:src="@{/js/select2/multiselect2.js}" type="text/javascript"></script>
-        <!--cai nay la ajax cua hien thi bill moi -->
         <!--ngay 3  thang 9-->
         <script src="/ajax/bill/ajaxBill.js"></script>
-        <!--        <script src="/ajax/Security/Register.js"></script>-->
-        <!--        <script th:src="@{/toast/action.js}" type="text/javascript"></script>-->
-        <!--select 2 js-->
+
         <script th:src="@{/js/bill/actionSelect2tag.js}" type="text/javascript"></script>
         <script th:src="@{/js/bill/validateCash.js}" type="text/javascript"></script>
         <script th:src="@{/js/bill/validateQuantityWrite.js}" type="text/javascript"></script>
@@ -483,10 +361,7 @@
 
         <script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.18.1/umd/index.js"></script>
         <script src="/js/bill/setupQr.js"></script>
-        <!--<script th:src="@{/ajax/bill/ajaxBillManage.js}" type="text/javascript"></script>-->
-        <!--<script th:src="@{/js/bill/rollBackIndex.js}" type="text/javascript"></script>-->
 
-        <!--        <script th:src="@{/js/onload.js}" type="text/javascript"></script>-->
         <input type="hidden" id="checkFormBill">
 
     </div>

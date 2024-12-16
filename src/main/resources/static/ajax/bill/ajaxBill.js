@@ -39,7 +39,6 @@ function loadBillDetail(page)  {
                 response.forEach(function(billDetail, index) {
                     var imagesHtml = '';
                     totalWeight += billDetail.productDetail.weight * billDetail.quantity;
-                    console.log('can nang cua san pham la ' + totalWeight)
 
                     billDetail.productDetail.product.images.forEach(function(image, imgIndex) {
                         imagesHtml += `
@@ -112,7 +111,6 @@ function loadBillDetail(page)  {
                         checkQuantityOrder = true;
                         textErrorQuantity = '';
                     }
-                    console.log('gia cua san pham dang trong quay ' + getPriceAfterDiscount(billDetail.productDetail))
                     if(getPriceAfterDiscount(billDetail.productDetail) != billDetail.price && billDetail.bill.status >= 1) {
                         btnBuyProduct =`
                                     <div class="number" id="pageNumber">${billDetail.quantity}</div>
@@ -166,7 +164,6 @@ function loadBillDetail(page)  {
                                
                         </tr>`);
                 });
-                console.log('swith dang: ' + checkSwitch)
                 if(checkSwitch == false) {
                     if(cashClient != null) {
                         cashClient.value='';
@@ -220,7 +217,6 @@ function paymentInformation() {
         type: 'GET',
         url: '/bill-api/payment-information',
         success: function(response) {
-            console.log(response)
 
             // Cập nhật thông tin vào các phần tử HTML
             $('#subTotal').text(Math.trunc(response.totalAmount).toLocaleString('en-US') + ' VNĐ');
@@ -314,7 +310,6 @@ function loadClientsIntoSelect() {
                                 bgColor: '#eaffe6',
                             },
                             onChange: function (values) {
-                                console.log(`${selectElement.id} selected values:`, values);  // Log ra ID của dropdown và các giá trị đã chọn
                             }
                         });
                         selectElement.classList.add('multi-select-initialized');
@@ -506,7 +501,6 @@ function updateProductTable(response) {
                       </div>
                      `;
             })
-            console.log(nameImage)
             if(nameImage.length === 0) {
                 imagesHtml = `
                       <div  data-bs-interval="10000" class="carousel-item active}">
@@ -650,7 +644,6 @@ function filterProduct() {
         success: function (response) {
             loadProduct(1); // Gọi hàm để tải sản phẩm với trang đầu tiên
             getMaxPageProduct(); // Gọi hàm để lấy số trang tối đa
-            console.log('Dữ liệu truyền về là:', response);
         },
         error: function (xhr) {
             console.log('Lỗi filter: ' + xhr.responseText);
@@ -687,7 +680,6 @@ function loadCategoryIntoSelect() {
                 onChange: function(values) {
                     let selectedValues = values.map(item => item.value).join(',');
                     document.getElementById('categorySearch').value = selectedValues;
-                    console.log('category search: '+selectedValues)
                 }
             });
             selectCategory.clearAll();
@@ -732,7 +724,6 @@ function loadColorIntoSelect() {
                 onChange: function(values) {
                     let selectedValues = values.map(item => item.value).join(',');
                     document.getElementById('colorSearch').value = selectedValues;
-                    console.log('color search: '+selectedValues)
                 }
             });
             selectColor.clearAll();
@@ -776,7 +767,6 @@ function loadSizeIntoSelect() {
                 onChange: function(values) {
                     let selectedValues = values.map(item => item.value).join(',');
                     document.getElementById('sizeSearch').value = selectedValues;
-                    console.log('size search: '+selectedValues)
                 }
             });
             selectSize.clearAll();
@@ -820,7 +810,6 @@ function loadMaterialIntoSelect() {
                 onChange: function(values) {
                     let selectedValues = values.map(item => item.value).join(',');
                     document.getElementById('materialSearch').value = selectedValues;
-                    console.log('material search: '+selectedValues)
                 }
             });
             selectMaterial.clearAll();
@@ -864,7 +853,6 @@ function loadManufacturerIntoSelect() {
                 onChange: function(values) {
                     let selectedValues = values.map(item => item.value).join(',');
                     document.getElementById('manufacturerSearch').value = selectedValues;
-                    console.log('manufacturer search: '+selectedValues)
                 }
             });
             selectManufacturer.clearAll();
@@ -908,7 +896,6 @@ function loadOriginIntoSelect() {
                 onChange: function(values) {
                     let selectedValues = values.map(item => item.value).join(',');
                     document.getElementById('originSearch').value = selectedValues;
-                    console.log('origin search: '+selectedValues)
                 }
             });
             selectOrigin.clearAll();
@@ -953,7 +940,6 @@ function loadSoleIntoSelect() {
                 onChange: function(values) {
                     let selectedValues = values.map(item => item.value).join(',');
                     document.getElementById('soleSearch').value = selectedValues;
-                    console.log('sole search: '+selectedValues)
                 }
             });
             selectSole.clearAll();
@@ -1029,7 +1015,6 @@ function updateQuantity(id, quantity,method) {
             method: method
         }),
         success: function (response) {
-            console.log('Cập nhật thành công: ' + response);
             createToast(response.check, response.message);
             // showToast(response.message,response.check)
             loadBillNew(); // Tải lại danh sách bill mới
@@ -1098,7 +1083,6 @@ function loadVoucherByBill(page) {
 
 function resetSearchVoucher() {
     document.getElementById('textVoucherSearch').value='';
-    console.log('da rết voucher')
     searchVoucher();
 }
 function searchVoucher() {
@@ -1119,7 +1103,6 @@ function searchVoucher() {
 }
 
 function getAddVoucherInBill(idVoucher) {
-    console.log(idVoucher)
     $.ajax({
         type: "POST",
         url: "/staff/bill/click-voucher-bill/"+idVoucher,
@@ -1132,7 +1115,6 @@ function getAddVoucherInBill(idVoucher) {
             // loadBillStatusByBillId();
             var checkFormStatus = document.getElementById('checkFormStatus');
             if(checkFormStatus != null) {
-                console.log('Phai vao duoc day')
                 loadInformationBillByIdBill();
                 loadCustomerShipInBill();
                 $('#btn-Remove-voucher').show();
@@ -1181,7 +1163,6 @@ function getUpdateTypeBill(type) {
         contentType: "application/json",
         data: JSON.stringify({ typeBill: type }),
         success: function (response) {
-            console.log("done type bill")
         },
         error: function (xhr) {
             console.error('loi update bill type ' + xhr.responseText);
@@ -1194,7 +1175,6 @@ function maxPageVoucher() {
         type: "GET",
         url:"/bill-api/max-page-voucher",
         success: function (response) {
-            console.log(response + 'Day la so trang toi da cua voucher')
             createPagination('voucherPageMax', response, 1); // Phân trang 1
         },
         error: function (xhr) {
@@ -1323,10 +1303,7 @@ $(document).ready(function () {
         event.preventDefault();
         searchVoucher()
     })
-    // $('#formSubmitFilterBill').submit(function (event) {
-    //     event.preventDefault();
-    //     searchBillManage();
-    // })
+
     // Xử lý sự kiện tăng/giảm số lượng
     $(document).on('click', '.btn-increment', function () {
         var $numberDiv = $(this).siblings('.number');
@@ -1346,8 +1323,7 @@ $(document).ready(function () {
         }
     });
     resetFillterProduct();
-    // Hàm cập nhật số lượng lên server
-    // Gọi các hàm tải dữ liệu ban đầu
+
     loadBillNew();
     loadClientsIntoSelect();
     paymentInformation();
@@ -1358,15 +1334,12 @@ $(document).ready(function () {
     loadManufacturerIntoSelect()
     loadOriginIntoSelect()
     loadSoleIntoSelect()
-    // pageNumber();
-    // clickStatusBillManager(999);
+
     loadProduct(1)
     loadBillDetail(pageBillDetail);
     getMaxPageProduct();
     loadVoucherByBill(1);
     maxPageBillDetailByIdBill();
     maxPageVoucher();
-    // getAllBilByStatus(1);
-    // getMaxPageBillManage();
-    console.log('can nang cua san pham la ' + totalWeight)
+
 });

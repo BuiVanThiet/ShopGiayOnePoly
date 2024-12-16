@@ -3,7 +3,6 @@ function timekeepingList(page) {
         type: "GET",
         url: "/api-timekeeping/list/" + page,
         success: function (response) {
-            console.log(response)
             var tbody = $('#tableTimekeeping');
             var noDataContainer = $('#noDataTimekeeping-manage');
             tbody.empty(); // Xóa các dòng cũ
