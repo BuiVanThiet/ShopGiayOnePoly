@@ -13,7 +13,6 @@ $('#quantityReturnProduct').on('input', function () {
     }else {
         if ($.isNumeric(inputElement)) {
             inputElement = parseFloat(inputElement); // Ensure the input is parsed as a float
-            console.log('Quantity purchased:', quantityProductByBill); // For debugging
 
             if (inputElement < 1) {
                 cardError.css('display', 'block');

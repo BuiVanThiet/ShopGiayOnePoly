@@ -432,7 +432,6 @@ public class ProductController extends BaseProduct {
         Map<String,String> thongBao = new HashMap<>();
         String checkLogin = getCheckStaffAttendanceYetBill(idStaff,1);
         String checkLogOut = getCheckStaffAttendanceYetBill(idStaff,2);
-        System.out.println(checkLogin);
         if(!checkLogin.equals("Có")) {
             thongBao.put("message","Mời bạn điểm danh trước khi làm việc!");
             return thongBao;

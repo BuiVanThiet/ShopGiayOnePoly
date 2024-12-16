@@ -11,7 +11,6 @@ function loadSaleProduct(page) {
         type: "GET",
         url: "/api-sale-product/list/"+page,
         success: function (response) {
-            console.log(response)
             var tableSaleProduct = $('#tableSaleProduct');
             var noDataSaleProductContainer = $('#noDataSaleProductContainer');
             tableSaleProduct.empty();
@@ -154,7 +153,6 @@ function searchSaleProduct() {
             statusCheck: statusCheck // Gửi trạng thái
         }),
         success: function (response) {
-            console.log(response)
             loadSaleProduct(1);
             maxPageSaleProduct();
         },
@@ -185,7 +183,6 @@ function startLoadAjaxSaleProduct() {
 }
 function getSelectedStatus() {
     var selectedValue = $("input[name='statusSaleProduct']:checked").val();
-    console.log(selectedValue); // In giá trị được chọn (1 hoặc 2)
     return selectedValue;
 }
 function addSaleProductNew() {
@@ -232,7 +229,6 @@ function loadProduct(pageNumber) {
         url: "/api-sale-product/all-product/" + pageNumber,
         success: function(response) {
             pageCheckedFast = pageNumber;
-            console.log(response)
             updateProductTable(response,pageNumber);
         },
         error: function(xhr) {
@@ -353,29 +349,6 @@ function updateProductTable(response,pageNumber) {
     }
 }
 
-// function toggleCheckboxProduct(productId2) {
-//     const checkbox = document.getElementById(`product_apply${productId2}`);
-//     checkbox.checked = !checkbox.checked;
-//
-//     let productId = checkbox.value;
-//
-//     // Kiểm tra nếu checkbox được chọn
-//     if (checkbox.checked) {
-//         // Nếu checkbox được chọn, thêm ID vào mảng nếu chưa có
-//         if (!selectedProductIds.includes(productId)) {
-//             selectedProductIds.push(productId);
-//         }
-//     } else {
-//         // Nếu checkbox bị bỏ chọn, xóa ID khỏi mảng
-//         selectedProductIds = selectedProductIds.filter(id => id !== productId);
-//     }
-//
-//     // Lưu mảng selectedProductIds vào localStorage
-//     localStorage.setItem('selectedProductIds', JSON.stringify(selectedProductIds));
-//
-//     console.log('Selected Product IDs:', selectedProductIds);
-// }
-
 function resetDataSale() {
     selectedProductIds = [];
     idSaleProduct = null;
@@ -384,21 +357,6 @@ function resetDataSale() {
 let selectedProductIds = [];
 let idSaleProduct = null;
 var pageCheckedFast = 0;
-
-// localStorage.setItem('selectedProducts', JSON.stringify(selectedProductIds));
-
-
-// Khôi phục trạng thái checkbox khi bảng được cập nhật hoặc trang được tải lại
-// function restoreCheckboxState() {
-//     $('input[name="selectedProducts"]').each(function() {
-//         let productId = $(this).val(); // Lấy giá trị ID của checkbox
-//         if (selectedProductIds.includes(productId)) {
-//             $(this).prop('checked', true); // Đánh dấu checkbox là đã chọn
-//         } else {
-//             $(this).prop('checked', false); // Bỏ chọn nếu không có trong mảng
-//         }
-//     });
-// }
 
 // Hàm chọn tất cả sản phẩm
 function selectAllProducts(pageNumber) {
@@ -438,7 +396,6 @@ function toggleCheckboxProduct(productId, pageNumber) {
     checkbox.checked = !checkbox.checked;
 
     let selectedProducts = JSON.parse(localStorage.getItem('selectedProducts')) || {};
-    console.log('Before toggle:', selectedProducts);
 
     let productsOnCurrentPage = selectedProducts[pageNumber] || [];
 
@@ -457,8 +414,6 @@ function toggleCheckboxProduct(productId, pageNumber) {
     selectedProducts[pageNumber] = productsOnCurrentPage;
 
     localStorage.setItem('selectedProducts', JSON.stringify(selectedProducts));
-    console.log('du lieu de giam ' + selectedProductIds)
-    console.log('After toggle:', selectedProducts);
 
     // Kiểm tra trạng thái của tất cả các checkbox trên trang
     const checkboxesOnCurrentPage = document.querySelectorAll(`#tableProduct input[type="checkbox"]`);
@@ -477,11 +432,8 @@ localStorage.setItem('selectedProducts', JSON.stringify([]));
 
 function restoreCheckboxState(pageNumber) {
     let selectedProducts = JSON.parse(localStorage.getItem('selectedProducts')) || {};
-    console.log('Restore data:', selectedProducts);
 
     let productsOnCurrentPage = selectedProducts[pageNumber] || [];
-
-    console.log(productsOnCurrentPage)
 
     document.getElementById('clickFastProduct').checked = false;
     $('input[name="selectedProducts"]').each(function() {
@@ -515,7 +467,6 @@ function filterProduct(statusCheckIdSale) {
         success: function (response) {
             loadProduct(1); // Gọi hàm để tải sản phẩm với trang đầu tiên
             getMaxPageProduct(); // Gọi hàm để lấy số trang tối đa
-            console.log('Dữ liệu truyền về là:', response);
         },
         error: function (xhr) {
             console.log('Lỗi filter: ' + xhr.responseText);
@@ -552,7 +503,6 @@ function loadCategoryIntoSelect() {
                 onChange: function(values) {
                     let selectedValues = values.map(item => item.value).join(',');
                     document.getElementById('categorySearch').value = selectedValues;
-                    console.log('category search: '+selectedValues)
                 }
             });
             selectCategory.clearAll();
@@ -597,7 +547,6 @@ function loadColorIntoSelect() {
                 onChange: function(values) {
                     let selectedValues = values.map(item => item.value).join(',');
                     document.getElementById('colorSearch').value = selectedValues;
-                    console.log('color search: '+selectedValues)
                 }
             });
             selectColor.clearAll();
@@ -641,7 +590,6 @@ function loadSizeIntoSelect() {
                 onChange: function(values) {
                     let selectedValues = values.map(item => item.value).join(',');
                     document.getElementById('sizeSearch').value = selectedValues;
-                    console.log('size search: '+selectedValues)
                 }
             });
             selectSize.clearAll();
@@ -685,7 +633,6 @@ function loadMaterialIntoSelect() {
                 onChange: function(values) {
                     let selectedValues = values.map(item => item.value).join(',');
                     document.getElementById('materialSearch').value = selectedValues;
-                    console.log('material search: '+selectedValues)
                 }
             });
             selectMaterial.clearAll();
@@ -729,7 +676,6 @@ function loadManufacturerIntoSelect() {
                 onChange: function(values) {
                     let selectedValues = values.map(item => item.value).join(',');
                     document.getElementById('manufacturerSearch').value = selectedValues;
-                    console.log('manufacturer search: '+selectedValues)
                 }
             });
             selectManufacturer.clearAll();
@@ -773,7 +719,6 @@ function loadOriginIntoSelect() {
                 onChange: function(values) {
                     let selectedValues = values.map(item => item.value).join(',');
                     document.getElementById('originSearch').value = selectedValues;
-                    console.log('origin search: '+selectedValues)
                 }
             });
             selectOrigin.clearAll();
@@ -818,7 +763,6 @@ function loadSoleIntoSelect() {
                 onChange: function(values) {
                     let selectedValues = values.map(item => item.value).join(',');
                     document.getElementById('soleSearch').value = selectedValues;
-                    console.log('sole search: '+selectedValues)
                 }
             });
             selectSole.clearAll();

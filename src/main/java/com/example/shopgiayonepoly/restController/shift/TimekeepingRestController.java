@@ -32,7 +32,6 @@ public class TimekeepingRestController {
 
     @GetMapping("/list/{page}")
     public List<Object[]> getListTimekeeping(@PathVariable("page") String page, HttpSession session) {
-        System.out.println(page + "day la so trang");
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if(staffLogin == null) {
             return null;
@@ -70,17 +69,11 @@ public class TimekeepingRestController {
                     return null;
                 }
             }
-            System.out.println("Start Date: " + timekeepingFilterRequest.getStartDate());
-            System.out.println("End Date: " + timekeepingFilterRequest.getEndDate());
-            System.out.println("Start Time: " + timekeepingFilterRequest.getStartTime());
-            System.out.println("End Time: " + timekeepingFilterRequest.getEndTime());
-            System.out.println("Timekeeping_typeCheck: " + timekeepingFilterRequest.getTimekeeping_typeCheck());
             int pageNumber = Integer.parseInt(page); // Nếu không phải số hợp lệ sẽ ném ra NumberFormatException
 
             Pageable pageable = PageRequest.of(pageNumber-1,5);
             return convertListToPage(timekeepingService.getAllTimekeeping(timekeepingFilterRequest),pageable).getContent();
         }catch (NumberFormatException e) {
-            System.out.println("Lỗi: Tham số 'page' không phải là số hợp lệ.");
             return null; // Hoặc trả về một thông báo lỗi nếu cần thiết
         }
     }
@@ -204,11 +197,9 @@ public class TimekeepingRestController {
         }
 
         String checkLogin = getCheckStaffAttendanceYet(staffLogin.getId(),1);
-        System.out.println(checkLogin);
         if(checkLogin.equals("Có")) {
             thongBao.put("message","Ca Làm này đã được điểm danh!");
             thongBao.put("check","3");
-            System.out.println("da co");
             return ResponseEntity.ok(thongBao);
         }else {
             if(staffLogin.getShift().getStatus() != 1) {
@@ -218,14 +209,12 @@ public class TimekeepingRestController {
             }
 
             Boolean checkTime = isShiftActive(staffLogin.getShift().getStartTime(),staffLogin.getShift().getEndTime());
-            System.out.println(checkTime);
 
             if(checkTime == false) {
                 thongBao.put("message","Ca làm của bạn đã qua, mời bạn báo cáo cho quản lý nếu bạn muốn làm việc!");
                 thongBao.put("check","3");
                 return ResponseEntity.ok(thongBao);
             }
-            System.out.println("ko co");
             String note = data.get("noteData");
             timekeepingService.getCheckIn(staffLogin.getId(), note.trim() == "" || note == null ? "Chấm công vào làm" : note);
             thongBao.put("message","Điểm danh vào làm thành công!");

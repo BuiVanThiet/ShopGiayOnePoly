@@ -2,7 +2,6 @@ function showAllProductsHighest() {
     const hiddenProducts = document.querySelectorAll('.hidden-product');
     const button = document.getElementById('view-all-btn');
     const buttonText = document.getElementById('view-all-text');
-    const icon = document.getElementById('view-all-icon');
 
     if (hiddenProducts.length > 0) {
         // Hiển thị tất cả sản phẩm
@@ -107,7 +106,7 @@ document.querySelectorAll('.price-min').forEach(el => {
     const price = parseFloat(el.getAttribute('data-price'));
     if (!isNaN(price)) {
         // Định dạng giá theo VNĐ
-        el.textContent = Math.floor(price).toLocaleString('vi-VN') + " ₫";
+        el.textContent = Math.floor(price).toLocaleString('vi-VN') + " VNĐ";
     }
 });
 
@@ -116,7 +115,7 @@ document.querySelectorAll('.price-min').forEach(el => {
     const price = parseFloat(el.getAttribute('data-price'));
     if (!isNaN(price)) {
         // Định dạng giá theo VNĐ
-        el.textContent = Math.floor(price).toLocaleString('vi-VN') + " ₫";
+        el.textContent = Math.floor(price).toLocaleString('vi-VN') + " VNĐ";
     }
 });
 

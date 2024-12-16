@@ -178,7 +178,6 @@ function OneSelectTag(el, customs = { shadow: false, rounded: true }) {
                         }
                     })
                     .then(data => {
-                        console.log(data); // Xóa khách hàng thành công!
                         window.location.href = `/staff/bill/bill-detail/${document.getElementById('idBill').value}`; // Chuyển hướng trang nếu cần
                     })
                     .catch(error => console.error('Lỗi:', error));
@@ -226,7 +225,6 @@ function OneSelectTag(el, customs = { shadow: false, rounded: true }) {
         itemLabel.style.color = tagColor.textColor || '#2c7a7b';
         itemLabel.innerHTML = option.label;
         itemLabel.dataset.value = option.value;
-        console.log('kh hang chon co id la ' + option.value)
 
         const itemClose = domParser.parseFromString(
             `<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="item-close-svg">
@@ -249,7 +247,6 @@ function OneSelectTag(el, customs = { shadow: false, rounded: true }) {
                     }
                 })
                 .then(data => {
-                    console.log(data); // Xóa khách hàng thành công!
                     window.location.href = `/staff/bill/bill-detail/${document.getElementById('idBill').value}`; // Chuyển hướng trang nếu cần
                 })
                 .catch(error => console.error('Lỗi:', error));

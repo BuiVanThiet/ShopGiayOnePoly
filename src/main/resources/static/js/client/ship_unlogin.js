@@ -23,8 +23,6 @@ document.addEventListener("DOMContentLoaded", function () {
         alert("Giá tổng tiền tại ship không hợp lệ.");
         return;
     }
-    console.log("Weight ship: " + weight)
-    console.log("Total amount ship: " + totalPriceCartItem)
 
     function fetchProvinces() {
         fetch('https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/province', {
@@ -199,7 +197,6 @@ document.addEventListener("DOMContentLoaded", function () {
         const address = `${fullName},${phone},${mail},${provinceId},${districtId},${wardCode},${fullAddress},${specificAddress}`;
         document.getElementById("addressShip").value = address;
 
-        console.log(address);
     }
 
     function calculateTotalPrice() {
@@ -214,19 +211,15 @@ document.addEventListener("DOMContentLoaded", function () {
         let priceVoucher = parseFloat(priceVoucherElement.textContent.replace(/[^\d.-]/g, '')) || 0;
         let shippingFee = parseFloat(shippingFeeElement.textContent.replace(/[^\d.-]/g, '')) || 0;
 
-        // Tính tổng tiền
-        const totalPriceBill = totalPriceCartItem - priceVoucher + shippingFee;
+        let totalPriceBill = totalPriceCartItem - priceVoucher + shippingFee;
 
-        // Định dạng lại các giá trị và hiển thị
-        totalPriceCartItemElement.textContent = totalPriceCartItem.toLocaleString('en-US')+ ' đ';
-        priceVoucherElement.textContent = priceVoucher.toLocaleString('en-US') + ' đ';
-        shippingFeeElement.textContent = shippingFee.toLocaleString('en-US') + ' đ';
-        totalPriceBillElement.textContent = totalPriceBill.toLocaleString('en-US') + ' đ';
+        totalPriceCartItemElement.textContent = Math.max(totalPriceCartItem, 0).toLocaleString('en-US') + ' VNĐ';
+        priceVoucherElement.textContent = Math.max(priceVoucher, 0).toLocaleString('en-US') + ' VNĐ';
+        shippingFeeElement.textContent = Math.max(shippingFee, 0).toLocaleString('en-US') + ' VNĐ';
+        totalPriceBillElement.textContent = Math.max(totalPriceBill, 0).toLocaleString('en-US') + ' VNĐ';
 
-        // Debug (nếu cần)
-        console.log("Shipping Fee:", shippingFee);
-        console.log("Total Price Bill:", totalPriceBill);
     }
+
 
     document.getElementById("FullName").addEventListener("input", updateAddress);
     document.getElementById("Phone").addEventListener("input", updateAddress);
@@ -256,6 +249,57 @@ document.addEventListener("DOMContentLoaded", function () {
     fetchProvinces();
 });
 
+function calculateTotalPrice() {
+    let totalPrice = 0;
+
+    // Lặp qua tất cả các item trong giỏ hàng
+    document.querySelectorAll("#cart-list .line-item").forEach(item => {
+        const priceElem = item.querySelector("#spanPriceCartItem");
+        const quantityElem = item.querySelector(".line-item-qty");
+
+        if (!priceElem || !quantityElem) {
+            console.warn("Dữ liệu sản phẩm không hợp lệ.");
+            return;
+        }
+
+        // Lấy giá và số lượng
+        const price = parseFloat(priceElem.getAttribute("data-price")) || 0;
+        const quantity = parseInt(quantityElem.innerText) || 0;
+
+        if (isNaN(price) || isNaN(quantity) || price < 0 || quantity < 0) {
+            console.warn("Giá hoặc số lượng không hợp lệ:", {price, quantity});
+            return;
+        }
+
+        const totalProductPrice = price * quantity;
+
+        totalPrice += totalProductPrice;
+
+        const totalProductPriceElem = item.querySelector(".item-total-price");
+        if (totalProductPriceElem) {
+            totalProductPriceElem.innerText = Math.max(0, totalProductPrice).toLocaleString('en-US') + " VNĐ";
+        }
+    });
+
+    // Giảm giá voucher
+    const priceVoucherReducedElement = document.getElementById("spanPriceVoucher");
+    const priceVoucherReduced = parseFloat(
+        priceVoucherReducedElement ? priceVoucherReducedElement.innerText.replace(/đ|,/g, "") : 0
+    ) || 0;
+
+    if (isNaN(priceVoucherReduced) || priceVoucherReduced < 0) {
+        console.warn("Giá trị giảm giá không hợp lệ:", priceVoucherReduced);
+    }
+
+    const finalPrice = Math.max(0, totalPrice - priceVoucherReduced);
+
+    // Cập nhật các thẻ HTML
+    document.getElementById("spanTotalPriceCartItem").innerText = totalPrice.toLocaleString('en-US') + " VNĐ";
+    document.getElementById("spanPriceVoucher").innerText = Math.max(0, priceVoucherReduced).toLocaleString('en-US') + " VNĐ";
+    document.getElementById("spanTotalPriceBill").innerText = Math.max(0, finalPrice).toLocaleString('en-US') + " VNĐ";
+
+}
+
 
 window.addEventListener('load', function () {
     const spanPriceVoucher = document.getElementById("spanPriceVoucher");
@@ -270,12 +314,15 @@ window.addEventListener('load', function () {
     calculateTotalPrice();
 
 });
-
 document.querySelectorAll('.item-price span').forEach(el => {
     // Lấy giá trị từ data-price
     const price = parseFloat(el.getAttribute('data-price'));
-    if (!isNaN(price)) {
-        el.textContent = price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+
+    // Đảm bảo giá trị không âm
+    const validPrice = Math.max(0, price);
+
+    if (!isNaN(validPrice)) {
+        el.textContent = validPrice.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'});
     }
 });
 

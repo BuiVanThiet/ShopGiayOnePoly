@@ -254,12 +254,15 @@ body-productDetail {
     margin-bottom: 20px;
 }
 .update-productDetail .btn-save-productDetail {
-    background-color: #6c63ff;
-    color: #fff;
+
+    color: #000;
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+}
+.update-productDetail .btn-save-productDetail:hover {
+    background-color: #6c63ff;
 }
 .update-productDetail .btn-cancel-productDetail {
     background-color: #e0e0e0;
@@ -273,14 +276,15 @@ body-productDetail {
     background-color: #00ffe1;
 }
 .update-productDetail .btn-saveQR-productDetail {
-    background-color: #ab73c5;
     color: #000;
     padding: 10px 20px;
     border: none;
     border-radius: 8px;
     cursor: pointer;
 }
-
+.update-productDetail .btn-saveQR-productDetail:hover {
+    background-color: #ab73c5;
+}
 .fa-list-productDetail{
     color: blue;
 }

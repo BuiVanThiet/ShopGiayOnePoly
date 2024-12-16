@@ -58,8 +58,6 @@ function validateAllFormAddCustomerShort() {
     validateProvince(provinceSelect);
     validateDistrict(districtSelect);
     validateWard(wardSelect);
-    var checkSameEmail =
-    console.log(provinceSelect.value)
     if(validateNameCustomerIsText(nameCustomerInput.value.trim(),errorNameCustomer) == true &&
         validateNumberPhone(numberPhoneInput.value.trim(),errorNumberPhone) == true &&
         validateEmail(emailInput.value.trim(),errorEmail) == true &&

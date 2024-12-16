@@ -14,5 +14,7 @@ public class VoucherClientResponse {
     private String codeVoucher;
     private Integer voucherType;
     private BigDecimal priceReduced;
+    private BigDecimal applyPrice;
+    private Integer status;
 
 }

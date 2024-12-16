@@ -52,9 +52,7 @@ public class ReturnExchangeBillRestController extends BaseBill {
         }
 
         Pageable pageable = PageRequest.of(Integer.parseInt(page)-1,2);
-        System.out.println("session la " + session.getAttribute("IdBill"));
         if(billDetailList == null) {
-            System.out.println("neu list null vao day");
             billDetailList = this.billDetailService.getBillDetailByIdBill(idBill);
         }
         return getConvertListToPageBillDetail(billDetailList,pageable).getContent();
@@ -75,9 +73,7 @@ public class ReturnExchangeBillRestController extends BaseBill {
             return null;
         }
 
-        System.out.println("session la " + session.getAttribute("IdBill"));
         if(billDetailList == null) {
-            System.out.println("neu list null vao day");
             billDetailList = this.billDetailService.getBillDetailByIdBill(idBill);
         }
         Integer page = (int) Math.ceil((double) this.billDetailList.size() / 2);
@@ -105,7 +101,6 @@ public class ReturnExchangeBillRestController extends BaseBill {
             returnBillDetailResponses =  new ArrayList<>();
         }
         if(returnBillDetailResponses.size() <= 0) {
-            System.out.println("khong co san pham tra!");
             for (int i = 0; i < this.exchangeBillDetailResponses.size(); i++) {
                 ExchangeBillDetailResponse responseProductExchange = this.exchangeBillDetailResponses.get(i);
                 getReduceProductDetail(responseProductExchange.getProductDetail().getId(),-responseProductExchange.getQuantityExchange());
@@ -117,9 +112,6 @@ public class ReturnExchangeBillRestController extends BaseBill {
             session.setAttribute("exchangeBillDetailResponses", null);
         }
 
-        for (ReturnBillDetailResponse returnBillDetailResponse:returnBillDetailResponses) {
-            System.out.println(returnBillDetailResponse.toString());
-        }
         Pageable pageable = PageRequest.of(Integer.parseInt(pageNumber)-1,2);
         return getConvertListToPageReturnBill(returnBillDetailResponses,pageable).getContent();
     }
@@ -172,7 +164,6 @@ public class ReturnExchangeBillRestController extends BaseBill {
             return ResponseEntity.ok(thongBao);
         }
 
-        System.out.println("so luong tra la " + request.getQuantityReturn());
         // Kiểm tra xem sản phẩm đã tồn tại trong danh sách trả lại hay chưa
         int index = getReturnBillDetailResponseIndex(productDetail.getId());
 
@@ -189,13 +180,11 @@ public class ReturnExchangeBillRestController extends BaseBill {
                 newReturnBillDetailResponse.setQuantityReturn(request.getQuantityReturn());
 
                 BigDecimal discountRatio = (BigDecimal) session.getAttribute("discountRatioPercentage");
-                System.out.println("gia truoc khi giam " + request.getPriceBuy());
                 // Tính giá sau khi giảm giá
                 BigDecimal priReturn = request.getPriceBuy().multiply(BigDecimal.valueOf(1).subtract(discountRatio));
                 // Làm tròn về bội số của 500
                 BigDecimal roundedPrice = priReturn.divide(BigDecimal.valueOf(500), 0)
                         .multiply(BigDecimal.valueOf(500));
-                System.out.println("gia sau khi giam " + roundedPrice);
                 // Set giá trị đã làm tròn vào đối tượng response
                 BigDecimal priceDiscountRoot = roundedPrice;
                 roundedPrice = roundedPrice.setScale(0, RoundingMode.DOWN); // Lấy phần nguyên
@@ -206,11 +195,9 @@ public class ReturnExchangeBillRestController extends BaseBill {
                 }
 
                 newReturnBillDetailResponse.setPriceBuy(roundedPrice);
-                System.out.println("gia giam cho moi san pham la " + request.getPriceBuy() + "-" + roundedPrice + "=" + request.getPriceBuy().subtract(roundedPrice));
                 newReturnBillDetailResponse.setPriceDiscount(request.getPriceBuy().subtract(roundedPrice));
                 newReturnBillDetailResponse.setTotalReturn(roundedPrice.multiply(BigDecimal.valueOf(request.getQuantityReturn())));
                 newReturnBillDetailResponse.setCreateDate(LocalDateTime.now());
-                System.out.println(newReturnBillDetailResponse.toString());
                 this.returnBillDetailResponses.add(newReturnBillDetailResponse);
                 session.setAttribute("returnBillDetailResponses", returnBillDetailResponses); // Cập nhật session
 
@@ -223,7 +210,6 @@ public class ReturnExchangeBillRestController extends BaseBill {
             // Nếu sản phẩm đã tồn tại, tính tổng số lượng mới trước khi cập nhật
             ReturnBillDetailResponse existingReturnBillDetailResponse = returnBillDetailResponses.get(index);
             int newQuantity = existingReturnBillDetailResponse.getQuantityReturn() + request.getQuantityReturn();
-            System.out.println("so luong tra vao hoa don la " + newQuantity);
             // Kiểm tra số lượng mới trước khi cộng dồn
             Boolean checkQuantity = returnBillDetailResponse(existingReturnBillDetailResponse.getProductDetail().getId(), quantity);
             if (checkQuantity == true) {
@@ -249,7 +235,6 @@ public class ReturnExchangeBillRestController extends BaseBill {
                     BillDetail detail = billDetailList.get(indexUpdateBill);
                     detail.setQuantity(detail.getQuantity()-quantity);
                     detail.setTotalAmount(detail.getPrice().multiply(BigDecimal.valueOf(detail.getQuantity())));
-                    System.out.println("da vao day de giam so luong");
                     billDetailList.set(indexUpdateBill,detail);
                 }
             }
@@ -306,7 +291,6 @@ public class ReturnExchangeBillRestController extends BaseBill {
                                 BillDetail detailUpdate = billDetailList.get(indexUpdateBill);
                                 detailUpdate.setQuantity(detail.getQuantity());
                                 detailUpdate.setTotalAmount(detail.getTotalAmount());
-                                System.out.println("da khoi phuc so luong");
                                 thongBao.put("message", "Xóa sản phẩm trả thành công!");
                                 thongBao.put("check", "1");
                                 billDetailList.set(indexUpdateBill,detailUpdate);
@@ -369,7 +353,6 @@ public class ReturnExchangeBillRestController extends BaseBill {
 
         response.setTotalReturn(totalReturn);
         response.setTotalExchange(totalExchange);
-        System.out.println(response.toString());
         return response;
     }
 
@@ -517,13 +500,11 @@ public class ReturnExchangeBillRestController extends BaseBill {
         Integer idBill = (Integer) session.getAttribute("IdBill");
         String validateIdBill = validateInteger(idBill != null ? idBill.toString() : "");
         if (!validateIdBill.trim().equals("")) {
-            System.out.println("bi vao day do id Bill ko ton tai");
             return ResponseEntity.ok(thongBao);
         }
 
         ReturnBillExchangeBill returnBill = new ReturnBillExchangeBill();
         if(note.trim().equals("")) {
-            System.out.println("bi vao day do chua dien ly do");
             thongBao.put("message", "Chưa điền lý do trả!");
             thongBao.put("check", "1");
             return ResponseEntity.ok(thongBao);
@@ -531,13 +512,11 @@ public class ReturnExchangeBillRestController extends BaseBill {
         //goi bill de tra
         Bill bill = this.billService.findById(idBill).orElse(null);
         if(bill == null || bill.getId() == null) {
-            System.out.println("bi vao day do bill ko ton tai: " + idBill);
             thongBao.put("message", "Hóa đơn không tồn tại!");
             thongBao.put("check", "1");
             return ResponseEntity.ok(thongBao);
         }
         if(bill.getStatus() != 5 || bill.getPaymentStatus() == 0) {
-            System.out.println("bi vao day do id Bill ko hop le");
             thongBao.put("message", "Hóa đơn không hợp lệ!");
             thongBao.put("check", "1");
             return ResponseEntity.ok(thongBao);
@@ -678,14 +657,9 @@ public class ReturnExchangeBillRestController extends BaseBill {
             Bill bill = this.billService.findById(rbd.getReturnBill().getBill().getId()).orElse(null);
             List<BillDetail> billDetails = this.billDetailService.getBillDetailByIdBill(bill.getId());
 
-            System.out.println("-tong hoa don:" + bill.getTotalAmount());
-            System.out.println("-gia cua voucher:" + bill.getPriceDiscount());
-            System.out.println("-gia duoc giam cho moi san pham: " + discountRatio);
-
             for (BillDetail billDetail: billDetails) {
                 if(rbd.getProductDetail().getId() == billDetail.getProductDetail().getId()) {
                     priceDiscount = billDetail.getPrice().multiply(BigDecimal.valueOf(1).subtract(discountRatio));
-                    System.out.println("-gia sau khi giam 2 " +billDetail.getPrice().subtract(priceDiscount));
                     priceDiscount = billDetail.getPrice().subtract(priceDiscount);
                 }
             }
@@ -697,7 +671,6 @@ public class ReturnExchangeBillRestController extends BaseBill {
                 // Nếu có phần dư thì +1
                 priceDiscount = priceDiscount.add(BigDecimal.ONE);
             }
-            System.out.println("-gia sau khi giam 3 " +priceDiscount);
 
             ReturnBillDetailResponse rbdr = new ReturnBillDetailResponse();
             rbdr.setId(rbd.getId());
@@ -715,13 +688,8 @@ public class ReturnExchangeBillRestController extends BaseBill {
             returnBillDetailResponses1.add(rbdr);
         }
 
-        for (ReturnBillDetailResponse returnBillDetailResponse:returnBillDetailResponses1) {
-            System.out.println(returnBillDetailResponse.toString());
-        }
-
 
         System.out.println(session.getAttribute("IdReturnBill"));
-//        return this.returnBillDetailService.getReturnBillDetailByIdReturnBill(idReturnBill,pageable).getContent();
         return getConvertListToPageReturnBill(returnBillDetailResponses1,pageable).getContent();
     }
 
@@ -772,19 +740,12 @@ public class ReturnExchangeBillRestController extends BaseBill {
             if (billDetail.getProductDetail().getId().equals(idProduct)) {
                 // Kiểm tra nếu số lượng trong kho ít hơn số lượng yêu cầu
                 if (billDetail.getQuantity() < quantity) {
-                    System.out.println("so luong trong bill " + billDetail.getQuantity());
-                    System.out.println("so luong nhap vao " + quantity);
-                    System.out.println("sai yeu cau!");
                     return true; // Vượt quá số lượng
                 } else {
-                    System.out.println("so luong trong bill " + billDetail.getQuantity());
-                    System.out.println("so luong nhap vao " + quantity);
-                    System.out.println("dung yeu cau tra!");
                     return false; // Số lượng hợp lệ (không vượt quá)
                 }
             }
         }
-        System.out.println("dung yeu cau tra!");
         // Trường hợp không tìm thấy sản phẩm trong danh sách
         return false;
     }
@@ -869,8 +830,6 @@ public class ReturnExchangeBillRestController extends BaseBill {
         }
             this.productDetails = this.billDetailService.findProductDetailSaleTest(this.productDetailCheckMark2Request,(Integer) session.getAttribute("IdBill"));
 
-
-        System.out.println("Số lượng 1 trang la " + productDetails.size());
         return convertListToPage(productDetails,pageable).getContent();
     }
 
@@ -893,9 +852,7 @@ public class ReturnExchangeBillRestController extends BaseBill {
         if(this.productDetailCheckMark2Request == null) {
             this.productDetailCheckMark2Request = new ProductDetailCheckMark2Request("",null,null,null,null,null,null,null);
         }
-        System.out.println("Thong tin loc cua mã page " + productDetailCheckMark2Request.toString());
         Integer maxPageProduct = (int) Math.ceil((double) this.billDetailService.findProductDetailSaleTest(this.productDetailCheckMark2Request,idBill).size() / 4);
-        System.out.println("so trang cua san pham " + maxPageProduct);
         return maxPageProduct;
     }
     @PostMapping("/filter-product-deatail")
@@ -1011,9 +968,6 @@ public class ReturnExchangeBillRestController extends BaseBill {
         }
 
 
-        System.out.println("gia giam "+priceSaleCheck);
-        System.out.println("gia goc "+priceRootCheck);
-
         if(priceSaleCheck.compareTo(new BigDecimal(priceProductSale)) != 0) {
             thongBao.put("message","Giá giảm không đúng!");
             thongBao.put("check","3");
@@ -1047,21 +1001,18 @@ public class ReturnExchangeBillRestController extends BaseBill {
             exchangeBillDetailResponse.setTotalExchange(exchangeBillDetailResponse.getPriceAtTheTimeOfExchange().multiply(BigDecimal.valueOf(exchangeBillDetailResponse.getQuantityExchange())));
             exchangeBillDetailResponse.setPriceRootAtTime(BigDecimal.valueOf(Long.parseLong(priceProductRoot)));
             exchangeBillDetailResponse.setCreateDate(LocalDateTime.now());
-            System.out.println(exchangeBillDetailResponse.toString()+"them cua exchange");
             this.exchangeBillDetailResponses.add(exchangeBillDetailResponse);
         }else {
             exchangeBillDetailResponse = exchangeBillDetailResponses.get(indexExchange);
             exchangeBillDetailResponse.setQuantityExchange(exchangeBillDetailResponse.getQuantityExchange()+Integer.parseInt(quantity));
             exchangeBillDetailResponse.setTotalExchange(exchangeBillDetailResponse.getPriceAtTheTimeOfExchange().multiply(BigDecimal.valueOf(exchangeBillDetailResponse.getQuantityExchange())));
             exchangeBillDetailResponse.setCreateDate(LocalDateTime.now());
-            System.out.println(exchangeBillDetailResponse.toString()+"them cua exchange");
             this.exchangeBillDetailResponses.set(indexExchange,exchangeBillDetailResponse);
         }
         //cap nhat lai so luong san pham
         getReduceProductDetail(productDetail.getId(),Integer.parseInt(quantity));
 
         session.setAttribute("exchangeBillDetailResponses", exchangeBillDetailResponses);
-        System.out.println("Số lượng đổi: " + quantity + ", ID sản phẩm chi tiết: " + idPDT);
 
         session.setAttribute("exchangeBillDetailResponses", exchangeBillDetailResponses);
 
@@ -1069,7 +1020,6 @@ public class ReturnExchangeBillRestController extends BaseBill {
         for (ExchangeBillDetailResponse response: exchangeBillDetailResponses) {
             totalExchange = totalExchange.add(response.getTotalExchange());
         }
-        System.out.println("tien doi la " + totalExchange);
 
         return ResponseEntity.ok(thongBao);
     }
@@ -1209,7 +1159,6 @@ public class ReturnExchangeBillRestController extends BaseBill {
             thongBao.put("check","1");
         }
 
-        System.out.println(billDetailAjax.toString());
 
         totalExchange = BigDecimal.valueOf(0);
         for (ExchangeBillDetailResponse response: exchangeBillDetailResponses) {
@@ -1242,7 +1191,6 @@ public class ReturnExchangeBillRestController extends BaseBill {
         }
 
         Pageable pageable = PageRequest.of(Integer.parseInt(page)-1,2);
-        System.out.println(session.getAttribute("IdReturnBill"));
         return this.exchangeBillDetailService.getExchangeBillDetailByIdReturnBill(idReturnBill,pageable).getContent();
     }
 
@@ -1264,7 +1212,6 @@ public class ReturnExchangeBillRestController extends BaseBill {
         }
 
         Integer page = (int) Math.ceil((double) this.exchangeBillDetailService.getExchangeBillDetailByIdReturnBill(idReturnBill).size() / 2);
-        System.out.println("so trang tra la " + page);
         return page;
     }
 
@@ -1342,7 +1289,6 @@ public class ReturnExchangeBillRestController extends BaseBill {
         ReturnBillExchangeBill returnBillExchangeBill = this.returnBillService.getReturnBillByIdBill(bill.getId());
 
         List<ReturnBillDetail> returnBillDetails = this.returnBillDetailService.getReturnBillDetailByIdReturnBill(returnBillExchangeBill.getId());
-        System.out.println("vao luong tra kho");
         for (ReturnBillDetail returnBillDetail:returnBillDetails) {
             for (Map.Entry<String, String> entry : data.entrySet()) {
                 Integer id = Integer.parseInt(entry.getKey());
@@ -1351,9 +1297,6 @@ public class ReturnExchangeBillRestController extends BaseBill {
                 if(returnBillDetail.getProductDetail().getId() == id) {
                     returnBillDetail.setQuantityInStock(quantity);
                     returnBillDetail.setUpdateDate(new Date());
-                    System.out.println("id san pham: " + returnBillDetail.getProductDetail().getId());
-                    System.out.println("so luong san pham ve kho: " + quantity);
-
                     this.returnBillDetailService.save(returnBillDetail);
                 }
             }
@@ -1375,7 +1318,6 @@ public class ReturnExchangeBillRestController extends BaseBill {
                 this.productDetails.set(i, objects);
                 // In ra giá trị các thuộc tính để kiểm tra
                 Object[] objects1 = this.productDetails.get(i);
-                System.out.println("Object sản phẩm là " + objects1[0] + " " + objects1[1] + " " + objects1[2] + " " + objects1[11]);
             }
             i++;
         }

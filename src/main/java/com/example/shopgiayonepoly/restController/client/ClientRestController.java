@@ -89,7 +89,6 @@ public class ClientRestController extends BaseEmail {
         List<ProductDetailClientRespone> productDetails = clientService.findByProductDetailColorAndSizeAndProductId(colorId, sizeId, productId);
 
         if (productDetails != null) {
-            // Lọc bỏ các phần tử null và các đối tượng có thuộc tính cần thiết bị null
             productDetails = productDetails.stream()
                     .filter(product -> product != null &&
                                        product.getProductDetailId() != null &&
@@ -120,12 +119,10 @@ public class ClientRestController extends BaseEmail {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(messages);
         }
 
-        // Lưu voucher vào session
         session.setAttribute("selectedVoucher", selectedVoucher);
         System.out.println("Voucher đã chọn: " + selectedVoucher);
 
-        // Trả về thông tin voucher cùng với check và message
-        messages.put("message", "Áp dụng voucher thành công!");
+        messages.put("message", "Áp dụng phiếu giảm giá thành công!");
         messages.put("check", "1");
         messages.put("voucherType", selectedVoucher.getVoucherType());
         messages.put("priceReduced", selectedVoucher.getPriceReduced());

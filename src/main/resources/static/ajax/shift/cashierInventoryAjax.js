@@ -3,7 +3,6 @@ function cashierInventoryList(page) {
         type: "GET",
         url: "/api-cashierInventory/list/" + page,
         success: function (response) {
-            console.log(response)
             var tbody = $('#tableCashierInventory');
             var noDataContainer = $('#noDataCashierInventory-manage');
             tbody.empty(); // Xóa các dòng cũ

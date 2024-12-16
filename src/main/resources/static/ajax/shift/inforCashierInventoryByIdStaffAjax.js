@@ -3,7 +3,6 @@ function cashierInventoryListByIdStaff(page) {
         type: "GET",
         url: "/api-cashierInventory/infor-detail-cashierInventory/" + page,
         success: function (response) {
-            console.log(response)
             var tbody = $('#tableCashierInventoryByIdBill');
             var noDataContainer = $('#noDataCashierInventoryByIdBill-manage');
             tbody.empty(); // Xóa các dòng cũ
@@ -137,7 +136,6 @@ function invoiceStatusByStaffByIdStaff(page) {
         type: "GET",
         url: "/bill-api/get-invoice-status-by-staff/" + page,
         success: function (response) {
-            console.log(response)
             var tbody = $('#tableInvoiceStatusByStaff');
             var noDataContainer = $('#noDataInvoiceStatusByStaff-manage');
             tbody.empty(); // Xóa các dòng cũ
@@ -251,7 +249,6 @@ function infoCheckInAndCheckOutByStaff(page) {
         type: "GET",
         url: "/api-cashierInventory/infor-check-in-and-check-out-by-staff/" + page,
         success: function (response) {
-            console.log(response)
             var tbody = $('#tableTimKeepingByStaff');
             var noDataContainer = $('#noDataTimKeepingByStaff-manage');
             tbody.empty(); // Xóa các dòng cũ

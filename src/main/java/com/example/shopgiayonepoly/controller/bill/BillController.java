@@ -75,16 +75,14 @@ public class BillController extends BaseBill {
         this.mess = "";
         this.colorMess = "";
 
-        System.out.println("nhung san pham  ap dung dot giam gia");
         for (ProductDetail productDetail: saleProductService.getAllProductDetailWithDiscount()) {
-            System.out.println("id" + productDetail.getId());
+
         }
 
-        System.out.println("nhung san pham chua ap dung dot giam gia");
         for (ProductDetail productDetail: saleProductService.getAllProductDetailByPage()) {
-            System.out.println("id" + productDetail.getId());
+
         }
-        System.out.println("id bill dau tien la " + session.getAttribute("IdBill"));
+
         this.productDetailCheckMark2Request = null;
         return "Bill/index";
 
@@ -131,7 +129,6 @@ public class BillController extends BaseBill {
 
         modelMap.addAttribute("message",mess);
         modelMap.addAttribute("check",colorMess);
-        System.out.println("mes hien len la " + mess);
         this.mess = "";
         this.colorMess  = "";
 
@@ -162,7 +159,6 @@ public class BillController extends BaseBill {
 
         Pageable pageable = PageRequest.of(0,10);
         List<Bill> listB = this.billService.getBillByStatusNew(pageable);
-        System.out.println(listB.size());
         if(listB.size() >= 10) {
             this.mess = "Thêm hóa đơn thất bại, chỉ được tồn tại 10 hóa đơn mới!";
             this.colorMess = "3";
@@ -185,7 +181,6 @@ public class BillController extends BaseBill {
 
         Bill bill = this.billService.save(billSave);
 
-        System.out.printf(bill.toString());
         bill.setCodeBill("HD"+bill.getId().toString());
         bill.setUpdateDate(bill.getUpdateDate());
         bill.setCreateDate(bill.getCreateDate());
@@ -435,15 +430,10 @@ public class BillController extends BaseBill {
             return "redirect:/404";
         }
 
-        if (cashNumber.compareTo(BigDecimal.ZERO) < 0 && bill.getPaymentMethod() == 3) { // cashNumber < 0
+        if (cashNumber.compareTo(BigDecimal.ZERO) < 0 && bill.getPaymentMethod() == 3) {
             return "redirect:/404";
         }
 
-//        if(bill.getTotalAmount().compareTo(new BigDecimal(20000000)) > 0) {
-//            this.mess = "Số tiền sản phẩm không được quá 20 triệu!";
-//            this.colorMess = "3";
-//            return "redirect:/staff/bill/bill-detail/"+bill.getId();
-//        }
 
         if(customerShip.trim().equals("Không có")) {
             bill.setAddRess(customerShip.trim());
@@ -482,8 +472,6 @@ public class BillController extends BaseBill {
                 return "redirect:"+validateWard;
             }
 
-            System.out.println("thong tin ship " + name+"-"+numberPhone+"-"+province+"-"+district+"-"+ward+"-"+addResDetail);
-
             bill.setAddRess(customerShip.trim());
         }
 
@@ -509,21 +497,12 @@ public class BillController extends BaseBill {
                     return "redirect:/404";
                 }
                 bill.setPaymentStatus(0);
-//                su dung cai nay khi can test nhanh ben online
-//                bill.setStatus(1);
 
                 bill.setStatus(2);
                 bill.setPaymentMethod(1);
                 if(bill.getNote().length() < 0 || bill.getNote() == null || bill.getNote().trim().equals("")) {
                     bill.setNote("Giao hàng!");
                 }
-                String getAddRessDetail = customerShip.trim();
-                String[] part = getAddRessDetail.split(",\\s*");
-
-                String ht = "http://localhost:8080/onepoly/status-bill/"+bill.getId();
-                System.out.println(ht);
-                String title = "Đơn hàng đã được xác nhận";
-                this.templateEmailConfigmBill(part[2],ht,bill.getCodeBill(),title);
             }else {
                 if (bill.getPaymentStatus() == 1) {
                     return "redirect:/404";
@@ -538,12 +517,10 @@ public class BillController extends BaseBill {
                     bill.setNote("Thanh toán bằng tiền mặt!");
                 }
             }
-            System.out.println("Thong tin bill(TM)" + bill.toString());
             if(bill.getBillType() == 1) {
                 this.setBillStatus(bill.getId(),101,session);
             }
             this.setBillStatus(bill.getId(),bill.getStatus(),session);
-            System.out.println("thong tin hoa don duoc tao " + bill.toString());
 
             this.billService.save(bill);
             modelMap.addAttribute("redirectBill",null);
@@ -561,7 +538,15 @@ public class BillController extends BaseBill {
                 cashierInventoryService.getUpdateRevenue(staffLogin.getId(),bill.getTotalAmount().subtract(bill.getPriceDiscount()),new BigDecimal(0),new BigDecimal(0));
             }
 
-//            this.getUpdateQuantityProduct(session);
+            if(bill.getBillType() == 2) {
+                String getAddRessDetail = customerShip.trim();
+                String[] part = getAddRessDetail.split(",\\s*");
+
+                String ht = "http://localhost:8080/onepoly/status-bill/"+bill.getId();
+                String title = "Đơn hàng đã được xác nhận";
+                this.templateEmailConfigmBill(part[2],ht,bill.getCodeBill(),title);
+            }
+
             return "Bill/successBill";
         }else if (bill.getPaymentMethod() == 2) {
             if(bill.getNote().length() < 0 || bill.getNote() == null || bill.getNote().trim().equals("")) {
@@ -580,8 +565,6 @@ public class BillController extends BaseBill {
             if(isGreaterThanZero == true) {
                 bill.setPaymentStatus(1);
                 bill.setUpdateDate(new Date());
-                System.out.println("Do nhap qua so tien mat nen khong the tao thanh toan online");
-                System.out.println("Thong tin Bill thanh toan bang tien va tk(1)" + this.billPay.toString());
                 this.billService.save(bill);
                 this.setBillStatus(bill.getId(),bill.getStatus(),session);
                 this.setBillStatus(bill.getId(),101,session);
@@ -600,14 +583,12 @@ public class BillController extends BaseBill {
                 this.billPay = bill;
                 String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
                 String vnpayUrl = vnPayService.createOrder((Integer.parseInt(cashAccount)+Integer.parseInt(shipMoney)), "chuyenKhoan", baseUrl);
-                System.out.println("Thong tin Bill thanh toan bang tien va tk(2)" + this.billPay.toString());
                 return "redirect:" + vnpayUrl;
             }
         }
     }
 
 
-    //thanh toan bang vnpay
     @GetMapping("/vnpay-payment")
     public String getVNpay(HttpServletRequest request, Model model, HttpSession session,ModelMap modelMap){
         int paymentStatus =vnPayService.orderReturn(request);
@@ -631,43 +612,10 @@ public class BillController extends BaseBill {
         model.addAttribute("totalPrice", totalPrice);
         model.addAttribute("paymentTime", paymentTime);
 
-        // In ra toàn bộ tham số
-        // Mã website của merchant trên hệ thống của VNPAY. Ví dụ: 2QXUI4J4
-        System.out.println("vnp_TmnCode: " + vnpTmnCode);
-        // mã ngân haàng
-        System.out.println("vnp_BankCode: " + vnpBankCode);
-        // loại thẻ
-        System.out.println("vnp_CardType: " + vnpCardType);
-        //Mã phản hồi kết quả thanh toán. Quy định mã trả lời 00 ứng với kết quả Thành công cho tất cả các API. Tham khảo thêm tại bảng mã lỗi
-        System.out.println("vnp_ResponseCode: " + vnpResponseCode);
-        //Mã phản hồi kết quả thanh toán. Tình trạng của giao dịch tại Cổng thanh toán VNPAY.
-        //-00: Giao dịch thanh toán được thực hiện thành công tại VNPAY
-        //-Khác 00: Giao dịch không thành công tại VNPAY Tham khảo thêm tại bảng mã lỗi
-        System.out.println("vnp_TransactionStatus: " + vnpTransactionStatus);
-        //Giống mã gửi sang VNPAY khi gửi yêu cầu thanh toán.
-        System.out.println("vnp_TxnRef: " + vnpTxnRef);
-        //mã băm
-        System.out.println("vnp_SecureHashType: " + vnpSecureHashType);
-        //Thông tin mô tả nội dung thanh toán
-        System.out.println("vnp_OrderInfo: " + orderInfo);
-        //Thời gian thanh toán. Định dạng: yyyyMMddHHmmss
-        System.out.println("vnp_PayDate: " + paymentTime);
-//Số tiền thanh toán. VNPAY phản hồi số tiền nhân thêm 100 lần.
-        System.out.println("vnp_Amount: " + totalPrice);
-//Mã giao dịch ghi nhận tại hệ thống VNPAY. Ví dụ: 20170829153052
-        System.out.println("vnp_TransactionNo: " + transactionNo);
-        //Mã giao dịch tại Ngân hàng
-        System.out.println("vnp_BankTranNo: " + bankTranNo);
-
-        System.out.println("vnp_RequestId: " + vnpRequestId);
-
-        System.out.println("tien tai khoan " + totalPrice);
         BigDecimal accountMoney = new BigDecimal(totalPrice);
 
         Integer returnFrom = (Integer) session.getAttribute("pageReturn");
-//        1 la cho trang ban hang
-//        2 la cho trang thanh toan khi nhan hang
-//        3 la thanh toan luon khi dat hang
+
         if(paymentStatus == 1) {
             TransactionVNPay transactionVNPay = new TransactionVNPay();
             transactionVNPay.setVnpTmnCode(vnpTmnCode);
@@ -691,15 +639,12 @@ public class BillController extends BaseBill {
 
         if(returnFrom == 1) {
             if (billPay == null) {
-                System.out.println("day la khong co bill");
                 return "redirect:/404";
             }
             if(billPay.getStatus() >= 5) {
-                System.out.println("day la trang thai da hoan thanh");
                 return "redirect:/404";
             }
             if (billPay.getPaymentStatus() == 1) {
-                System.out.println("day la bill da thanh toan");
                 return "redirect:/404";
             }
             if(paymentStatus == 1) {
@@ -726,11 +671,9 @@ public class BillController extends BaseBill {
                 }
 
                 this.billService.save(this.billPay);
-                System.out.println("vnpSecureHash: " + vnpSecureHash);
 
                 this.setBillStatus(this.billPay.getId(),101,session);
                 this.setBillStatus(this.billPay.getId(),this.billPay.getStatus(),session);
-//                this.getUpdateQuantityProduct(session);
                 this.mess = "";
                 this.colorMess = "";
                 modelMap.addAttribute("redirectBill",null);
@@ -741,7 +684,6 @@ public class BillController extends BaseBill {
                 modelMap.addAttribute("redirectBill",null);
                 modelMap.addAttribute("title","Tạo hóa đơn thất bại!");
                 session.removeAttribute("IdBill");
-                System.out.println("Bil bo thanh toan " + this.billPay.toString());
                 return "Bill/errorBill";
             }
         }else if (returnFrom == 2){
@@ -755,21 +697,17 @@ public class BillController extends BaseBill {
             if(checkBil.trim().equals("billShip")) {
                 this.billPay = (Bill) session.getAttribute("billPaymentRest");
                 if (billPay == null) {
-                    System.out.println("day la khong co bill");
                     return "redirect:/404";
                 }
                 if(billPay.getStatus() >= 5) {
-                    System.out.println("day la trang thai da hoan thanh");
                     return "redirect:/404";
                 }
                 if (billPay.getPaymentStatus() == 1) {
-                    System.out.println("day la bill da thanh toan");
                     return "redirect:/404";
                 }
             }else if (checkBil.trim().equals("exchangeBill")) {
                 paymentExchange = (PaymentExchange) session.getAttribute("exchangeBillPaymentRest");
                 if (paymentExchange == null) {
-                    System.out.println("day la khong co bill");
                     return "redirect:/404";
                 }
             }else {
@@ -786,15 +724,12 @@ public class BillController extends BaseBill {
                     this.billPay.setTransactionNo(transactionNo);
                     this.billPay.setBankTranNo(bankTranNo);
 
-                    //cho nay hoi thay da
-
                     this.billService.save(this.billPay);
                     this.setBillStatus(this.billPay.getId(),101,session);
                     this.billPay = null;
                     session.removeAttribute("billPaymentRest");
                     session.removeAttribute("pageReturn");
                     session.removeAttribute("checkBill");
-//                this.getUpdateQuantityProduct(session);
                     mess = "Thanh toán thành công!";
                     colorMess = "1";
                     return "redirect:/staff/bill/bill-status-index/"+session.getAttribute("IdBill");
@@ -850,7 +785,6 @@ public class BillController extends BaseBill {
                     this.billDetailService.deleteById(billDetail.getId());
                 }
                 this.billService.deleteById(payBillOrder.getId());
-                System.out.println("Delete thanh cong khi chua thanh toan");
                 return "redirect:/onepoly/payment";
             }
         }
@@ -929,7 +863,6 @@ public class BillController extends BaseBill {
         this.billDetailService.delete(billDetail);
         BigDecimal total = this.billDetailService.getTotalAmountByIdBill(bill.getId());
         bill.setUpdateDate(new Date());
-        System.out.println("tong tien hoa don khi xoas " + total);
         bill.setTotalAmount(total);
 
         this.billService.save(bill);
@@ -942,7 +875,6 @@ public class BillController extends BaseBill {
         return ResponseEntity.ok(thongBao);
     }
 
-    // xoa hoa don
     @GetMapping("/delete-bill/{idBill}")
     public String getDeleteBillByIdBill(@PathVariable("idBill") Integer idBill,HttpSession session) {
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
@@ -1015,7 +947,6 @@ public class BillController extends BaseBill {
         thongBao.put("message","Thêm sản phẩm vào hóa đơn thành công!");
         thongBao.put("check","1");
 
-        System.out.println("Số lượng mua: " + quantity + ", ID sản phẩm chi tiết: " + idPDT);
 
         ProductDetail productDetail = this.billDetailService.getProductDetailById(Integer.parseInt(idPDT));
 
@@ -1048,11 +979,6 @@ public class BillController extends BaseBill {
         }
 
         BillDetail billDetailSave = getBuyProduct(billById,productDetail,Integer.parseInt(quantity));
-//        if (billDetailSave.getQuantity() > 10) {
-//            thongBao.put("message","Số lượng mua sản phẩm này không được quá 10 số lượng!");
-//            thongBao.put("check","3");
-//            return ResponseEntity.ok(thongBao);
-//        }
 
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if(staffLogin == null) {
@@ -1083,7 +1009,6 @@ public class BillController extends BaseBill {
             this.getUpdateQuantityProduct(productDetail.getId(),Integer.parseInt(quantity));
         }
 
-        System.out.println("da mua san pham !");
         if(billById.getStatus() == 0) {
             getDeleteVoucherByBill((Integer) session.getAttribute("IdBill"));
         }
@@ -1152,7 +1077,6 @@ public class BillController extends BaseBill {
         bill.setStaff(staffLogin);
         Bill billSave = this.billService.save(bill);
         if(billSave.getStatus() == 1) {
-            System.out.println("gia duoc giam been xoa " + this.billService.getDiscountBill(billSave.getId()));
             billSave.setPriceDiscount(new BigDecimal(this.billService.getDiscountBill(billSave.getId())));
             this.billService.save(billSave);
         }
@@ -1229,14 +1153,12 @@ public class BillController extends BaseBill {
 
         LocalDate today = LocalDate.now();
 
-        // Kiểm tra xem voucher có hiệu lực trong ngày hôm nay không
         if (today.isBefore(voucher.getStartDate()) || today.isAfter(voucher.getEndDate())) {
             thongBao.put("message","Phiếu giảm giá không khả dụng!");
             thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }
 
-        // Kiểm tra tổng giá trị hóa đơn có đủ điều kiện áp dụng voucher không
         if (bill.getTotalAmount().compareTo(voucher.getPricesApply()) < 0) {
             thongBao.put("message","Phiếu giảm giá không khả dụng!");
             thongBao.put("check","3");
@@ -1258,7 +1180,6 @@ public class BillController extends BaseBill {
         bill.setStaff(staffLogin);
         Bill billSave = this.billService.save(bill);
         if(billSave.getStatus() == 1) {
-            System.out.println("gia duoc giam been them " + this.billService.getDiscountBill(billSave.getId()));
             billSave.setPriceDiscount(new BigDecimal(this.billService.getDiscountBill(billSave.getId())));
             this.billService.save(billSave);
         }
@@ -1269,7 +1190,6 @@ public class BillController extends BaseBill {
         return ResponseEntity.ok(thongBao);
     }
 
-    //danh cho quan ly hoa don
     @GetMapping("/bill-status-index/{idBill}")
     public String getStatusBill(@PathVariable("idBill") String idBill,HttpSession session, ModelMap modelMap) {
 
@@ -1378,7 +1298,6 @@ public class BillController extends BaseBill {
 
         Bill bill = this.billService.findById(idBill).orElse(null);
 
-        System.out.println("thong tin them nhanh la " + customerShortRequest.toString() + customerShortRequest.getStatus());
         if(bill.getStatus() > 1) {
             return "redirect:/404";
         }

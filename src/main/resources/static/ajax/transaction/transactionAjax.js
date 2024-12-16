@@ -44,7 +44,6 @@ function loadBankVietNam() {
                     onChange: function(values) {
                         let selectedValues = values.map(item => item.value);
                         document.getElementById('banksVNPAYSearch').value = selectedValues;
-                        console.log('banksVNPAYSearch search: ' + selectedValues);
                     }
                 });
 
@@ -110,7 +109,6 @@ function loadAllTransactionVNPay(page) {
                 `);
                 })
             }
-            console.log(response)
         },
         error: function (xhr) {
             console.log('Lỗi: ' + xhr.responseText);
@@ -165,7 +163,6 @@ function filterTransactionVNPay() {
         success: function (response) {
             loadAllTransactionVNPay(1);
             maxPageTransaction();
-            console.log('Dữ liệu truyền về là:', response);
         },
         error: function (xhr) {
             console.log('Lỗi filter: ' + xhr.responseText);
@@ -264,7 +261,6 @@ document.getElementById('starDateFilter').value = formatDate(today);
 $(document).ready(function () {
     $('#formFilterTransaction').submit(function (event) {
         event.preventDefault();
-        console.log('day roi')
         filterTransactionVNPay();
     })
     resetFilterTransactionVNPay();
