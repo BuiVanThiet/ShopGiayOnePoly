@@ -1341,10 +1341,6 @@ public class ReturnExchangeBillRestController extends BaseBill {
         // Tách dữ liệu và chuyển đổi thành danh sách các đối tượng
         ReturnBillExchangeBill returnBillExchangeBill = this.returnBillService.getReturnBillByIdBill(bill.getId());
 
-        if(returnBillExchangeBill.getStatus() != 1) {
-            return null;
-        }
-
         List<ReturnBillDetail> returnBillDetails = this.returnBillDetailService.getReturnBillDetailByIdReturnBill(returnBillExchangeBill.getId());
         System.out.println("vao luong tra kho");
         for (ReturnBillDetail returnBillDetail:returnBillDetails) {
