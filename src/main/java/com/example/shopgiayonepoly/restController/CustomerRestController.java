@@ -38,7 +38,6 @@ public class CustomerRestController {
 
     @GetMapping("/max-page-customer-status-dislike-0")
     public Integer getMaxPageCustomerDislike0() {
-        System.out.println("so du lieu la " + this.customerService.searchCustomerByKeyword(keyWord).size());
         Integer pageNumber = (int) Math.ceil((double) this.customerService.searchCustomerByKeyword(keyWord).size() / 5);
         return pageNumber;
     }

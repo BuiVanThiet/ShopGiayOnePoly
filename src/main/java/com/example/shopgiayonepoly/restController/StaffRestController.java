@@ -42,7 +42,6 @@ public class StaffRestController {
         if(staff == null || staff.getId() == null) {
             return null;
         }
-        System.out.println("so du lieu la " + this.staffService.searchStaffByKeyword(keyWord, staff.getId()).size());
         Integer pageNumber = (int) Math.ceil((double) this.staffService.searchStaffByKeyword(keyWord, staff.getId()).size() / 5);
         return pageNumber;
     }

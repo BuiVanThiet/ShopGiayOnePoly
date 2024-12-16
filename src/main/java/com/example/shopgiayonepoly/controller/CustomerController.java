@@ -195,8 +195,6 @@ public class CustomerController {
             model.addAttribute("mes", "Thêm thất bại");
             return "Customer/create"; // Trả về view để người dùng chỉnh sửa
         }
-
-        System.out.println("Du lieu khi them cua customer: " + customerRequest.toString());
         Customer customer = new Customer();
         customer.setFullName(customerRequest.getFullName());
         customer.setNumberPhone(customerRequest.getNumberPhone());
@@ -219,7 +217,7 @@ public class CustomerController {
         }
         //        this.customerService.save(customerSave);
 //        customer.setImage("fileName");
-        System.out.println(customer.toString());
+
         mess = "Thêm khách hàng thành công";
         check = "1";
 //        customerService.uploadFile(customerRequest.getNameImage(),customerSave.getId());
@@ -256,7 +254,7 @@ public class CustomerController {
         customerRequest.setWard(part[0]);
         customerRequest.setAddRessDetail(String.join(", ", java.util.Arrays.copyOfRange(part, 3, part.length)));
         customerRequest.setImageString(customer.getImage());
-        System.out.println(customerRequest.toString());
+
         model.addAttribute("customer", customerRequest);
         return "Customer/update";
     }
@@ -277,40 +275,6 @@ public class CustomerController {
             check = "3";
             return "redirect:/customer/list";
         }
-//        // Kiểm tra tên
-//        if (customerRequest.getFullName() == null || customerRequest.getFullName().trim().isEmpty()) {
-//            result.rejectValue("fullName", "error.customer", "Tên không được để trống!"); // Thông báo nếu tên rỗng hoặc chỉ chứa khoảng trắng
-//        } else if (customerRequest.getFullName().length() < 2 || customerRequest.getFullName().length() > 50) {
-//            result.rejectValue("fullName", "error.customer", "Tên phải có độ dài từ 2 đến 50 ký tự!");
-//        } else if (!customerRequest.getFullName().matches("^[\\p{L} ]+$")) {
-//            result.rejectValue("fullName", "error.customer", "Tên chỉ được chứa ký tự chữ cái và dấu cách!");
-//        }
-//        // Kiểm tra số điện thoại
-//        if (customerRequest.getNumberPhone() == null || customerRequest.getNumberPhone().isEmpty()) {
-//            result.rejectValue("numberPhone", "error.customer", "Số điện thoại không được để trống!");
-//        } else if (!customerRequest.getNumberPhone().matches("^(0[3|5|7|8|9])+([0-9]{8})$")) {
-//            result.rejectValue("numberPhone", "error.customer", "Số điện thoại không hợp lệ!");
-//        }
-//        // Kiểm tra email
-//        if (customerRequest.getEmail() == null || customerRequest.getEmail().isEmpty()) {
-//            result.rejectValue("email", "error.customer", "Email không được để trống!");
-//        } else {
-//            Customer existingCustomer = customerService.existsByEmail(customerRequest.getEmail());
-//            Staff existingStaff = staffService.existsByEmail(customerRequest.getEmail());
-//            System.out.println(existingCustomer == null ? "Dell co(khach)" : "co(khach)");
-//            System.out.println(existingStaff == null ? "Dell co(nhanvien)" : "co(nhanvien)");
-//            if (existingCustomer != null && !existingCustomer.getId().equals(customerRequest.getId())) {
-//                result.rejectValue("email", "error.customer", "Email đã được sử dụng!");
-//            } else if (staffService.existsByEmail(customerRequest.getEmail()) != null) {
-//                result.rejectValue("email", "error.customer", "Email đã được sử dụng trong hệ thống nhân viên!");
-//            }
-//        }
-//        // Kiểm tra ngày sinh
-//        if (customerRequest.getBirthDay() == null) {
-//            result.rejectValue("birthDay", "error.customer", "Ngày sinh không được để trống!");
-//        } else if (customerRequest.getBirthDay().isAfter(LocalDate.now())) {
-//            result.rejectValue("birthDay", "error.customer", "Ngày sinh không được lớn hơn ngày hiện tại!");
-//        }
         // Kiểm tra tên khách hàng
         if (customerRequest.getFullName() == null || customerRequest.getFullName().trim().isEmpty()) {
             result.rejectValue("fullName", "error.customer", "Tên không được để trống!");
@@ -337,8 +301,6 @@ public class CustomerController {
         } else{
             Customer existingCustomer = customerService.existsByEmail(customerRequest.getEmail());
             Staff existingStaff = staffService.existsByEmail(customerRequest.getEmail());
-            System.out.println(existingCustomer == null ? "Dell co(khach)" : "co(khach)");
-            System.out.println(existingStaff == null ? "Dell co(nhanvien)" : "co(nhanvien)");
             if (existingCustomer != null && !existingCustomer.getId().equals(customerRequest.getId())) {
                 result.rejectValue("email", "error.customer", "Email đã được sử dụng!");
             } else if (staffService.existsByEmail(customerRequest.getEmail()) != null) {
@@ -370,7 +332,6 @@ public class CustomerController {
         customer.setFullName(customerRequest.getFullName());
         customer.setNumberPhone(customerRequest.getNumberPhone());
         customer.setBirthDay(customerRequest.getBirthDay());
-//        customer.setImage(customerRequest.getNameImage());
         customer.setEmail(customerRequest.getEmail());
         customer.setAcount("");
         customer.setPassword("");
@@ -422,7 +383,6 @@ public class CustomerController {
         customerRequest.setWard(part[0]);
         customerRequest.setAddRessDetail(String.join(", ", java.util.Arrays.copyOfRange(part, 3, part.length)));
         customerRequest.setImageString(customer.getImage());
-        System.out.println(customerRequest.toString());
         model.addAttribute("customer", customerRequest);
         return "Customer/detail";
     }
@@ -460,7 +420,6 @@ public class CustomerController {
         Map<String,String> thongBao = new HashMap<>();
         String checkLogin = getCheckStaffAttendanceYetBill(idStaff,1);
         String checkLogOut = getCheckStaffAttendanceYetBill(idStaff,2);
-        System.out.println(checkLogin);
         if(!checkLogin.equals("Có")) {
             thongBao.put("message","Mời bạn điểm danh trước khi làm việc!");
             return thongBao;
