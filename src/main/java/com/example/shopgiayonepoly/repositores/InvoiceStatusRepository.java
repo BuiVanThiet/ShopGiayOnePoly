@@ -64,59 +64,59 @@ public interface InvoiceStatusRepository extends JpaRepository<InvoiceStatus,Int
 """,nativeQuery = true)
     List<Object[]> getBillClient(@Param("idCheck") Integer idCheck);
     @Query(value = """
-	   SELECT
-    b.code_bill,
-    CASE
-        WHEN b.address != N'Không có' THEN
-            TRIM(SUBSTRING(b.address, 1, CHARINDEX(',', b.address) - 1))
-        ELSE
+          SELECT
+            b.code_bill,
             CASE
-                WHEN b.id_customer IS NOT NULL THEN CAST(c.full_name AS NVARCHAR)
-                ELSE N'khách lẻ'
-            END
-    END AS name_customer,
-   \s
-    -- Số điện thoại: 2 ký tự đầu, 2 ký tự cuối, còn lại là *
-    CASE
-        WHEN b.address != N'Không có' THEN
-            TRIM(SUBSTRING(b.address, CHARINDEX(',', b.address) + 1, CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) - CHARINDEX(',', b.address) - 1))
-        ELSE
+                WHEN b.address != N'Không có' THEN
+                    TRIM(SUBSTRING(b.address, 1, CHARINDEX(',', b.address) - 1))
+                ELSE
+                    CASE
+                        WHEN b.id_customer IS NOT NULL THEN CAST(c.full_name AS NVARCHAR)
+                        ELSE N'khách lẻ'
+                    END
+            END AS name_customer,
+            -- Số điện thoại: 2 ký tự đầu, 2 ký tự cuối, còn lại là *
             CASE
-                WHEN b.id_customer IS NOT NULL THEN\s
-                    -- Ẩn phần giữa của số điện thoại, chỉ giữ lại 2 ký tự đầu và 2 ký tự cuối
-                    LEFT(c.number_phone, 2) + REPLICATE('*', LEN(c.number_phone) - 4) + RIGHT(c.number_phone, 2)
-                ELSE N'Không có'
-            END
-    END AS number_phone_customer,
-   \s
-    -- Email: 2 ký tự đầu, 2 ký tự cuối, còn lại là *
-    CASE
-        WHEN b.address != N'Không có' THEN
-            TRIM(SUBSTRING(b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) + 1, CHARINDEX(',', b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) + 1) - CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) - 1))
-        ELSE
+                WHEN b.address != N'Không có' THEN
+                   LEFT(TRIM(SUBSTRING(b.address, CHARINDEX(',', b.address) + 1, CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) - CHARINDEX(',', b.address) - 1)),2)+
+        		   REPLICATE('*',LEN(TRIM(SUBSTRING(b.address, CHARINDEX(',', b.address) + 1, CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) - CHARINDEX(',', b.address) - 1))) - 4) +
+        		   RIGHT(TRIM(SUBSTRING(b.address, CHARINDEX(',', b.address) + 1, CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) - CHARINDEX(',', b.address) - 1)),2)
+                ELSE
+                    CASE
+                        WHEN b.id_customer IS NOT NULL THEN
+                            -- Ẩn phần giữa của số điện thoại, chỉ giữ lại 2 ký tự đầu và 2 ký tự cuối
+                            LEFT(c.number_phone, 2) + REPLICATE('*', LEN(c.number_phone) - 4) + RIGHT(c.number_phone, 2)
+                        ELSE N'Không có'
+                    END
+            END AS number_phone_customer,
+            -- Email: 2 ký tự đầu, 2 ký tự cuối, còn lại là *
             CASE
-                WHEN b.id_customer IS NOT NULL THEN\s
-                    -- Ẩn phần giữa của email, chỉ giữ lại 2 ký tự đầu và 2 ký tự cuối
-                    LEFT(c.email, 2) + REPLICATE('*', LEN(c.email) - 4) + RIGHT(c.email, 2)
-                ELSE N'Không có'
-            END
-    END AS email_customer,
-   \s
-    CASE
-        WHEN b.address != N'Không có' THEN
-            TRIM(SUBSTRING(b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) + 1) + 1) + 1) + 1) + 1, LEN(b.address)))
-        ELSE
+                WHEN b.address != N'Không có' THEN
+        			LEFT(TRIM(SUBSTRING(b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) + 1, CHARINDEX(',', b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) + 1) - CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) - 1)), 2) +
+        			REPLICATE('*', LEN(TRIM(SUBSTRING(b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) + 1, CHARINDEX(',', b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) + 1) - CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) - 1))) - 4) +
+        			RIGHT(TRIM(SUBSTRING(b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) + 1, CHARINDEX(',', b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) + 1) - CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) - 1)), 2)
+                ELSE
+                    CASE
+                        WHEN b.id_customer IS NOT NULL THEN
+                            -- Ẩn phần giữa của email, chỉ giữ lại 2 ký tự đầu và 2 ký tự cuối
+                            LEFT(c.email, 2) + REPLICATE('*', LEN(c.email) - 4) + RIGHT(c.email, 2)
+                        ELSE N'Không có'
+                    END
+            END AS email_customer,
             CASE
-                WHEN b.id_customer IS NOT NULL THEN CAST(TRIM(SUBSTRING(c.address, CHARINDEX(',', c.address, CHARINDEX(',', c.address, CHARINDEX(',', c.address) + 1) + 1) + 1, LEN(c.address))) AS NVARCHAR)
-                ELSE N'Không có'
-            END
-    END AS add_ress,
-   \s
-    b.note
-            FROM bill b
-            LEFT JOIN customer c ON c.id = b.id_customer
-            LEFT JOIN voucher v ON v.id = b.id_voucher
-            WHERE b.id = :idCheck
+                WHEN b.address != N'Không có' THEN
+                    TRIM(SUBSTRING(b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address, CHARINDEX(',', b.address) + 1) + 1) + 1) + 1) + 1) + 1, LEN(b.address)))
+                ELSE
+                    CASE
+                        WHEN b.id_customer IS NOT NULL THEN CAST(TRIM(SUBSTRING(c.address, CHARINDEX(',', c.address, CHARINDEX(',', c.address, CHARINDEX(',', c.address) + 1) + 1) + 1, LEN(c.address))) AS NVARCHAR)
+                        ELSE N'Không có'
+                    END
+            END AS add_ress,
+            b.note
+                    FROM bill b
+                    LEFT JOIN customer c ON c.id = b.id_customer
+                    LEFT JOIN voucher v ON v.id = b.id_voucher
+                    WHERE b.id = :idCheck
 """,nativeQuery = true)
     List<Object[]> getInformationBillStatusClient(@Param("idCheck") Integer idCheck);
 

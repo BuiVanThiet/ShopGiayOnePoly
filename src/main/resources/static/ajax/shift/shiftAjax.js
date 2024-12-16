@@ -74,7 +74,7 @@ function loadShift(page) {
                                     <td>${shift[2]}</td>
                                     <td>${status_shift}</td>
                                     <td>${status}</td>
-                                    <td>${btn}</td>
+                                    <td class="text-start">${btn}</td>
                                 </tr>
                                `)
                         })

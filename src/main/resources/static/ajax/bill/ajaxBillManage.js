@@ -939,7 +939,7 @@ function loadReturnBill(page) {
                 tbody.closest('table').show();
 
                 let isColumnAdded = false;
-                $('#table-returnBill thead tr').append('<td scope="col" style="width: 10%">Số lượng về kho</td>');
+                $('#table-returnBill thead tr').append('<th scope="col" style="width: 10%">Số lượng về kho</th>');
 
                 response.forEach(function (billReturn, index) {
                     var imagesHtml = '';
