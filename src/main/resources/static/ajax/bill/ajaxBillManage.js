@@ -1089,7 +1089,6 @@ function handleQuantityInput() {
 
 function updateQuantityReturn() {
     let inputData = JSON.parse(localStorage.getItem('inputData')) || {};
-
     // Gửi dữ liệu dưới dạng chuỗi JSON
     $.ajax({
         type: "POST",
