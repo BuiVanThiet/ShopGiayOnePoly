@@ -18,9 +18,6 @@ public class CloudinaryConfig {
         config.put("cloud_name", CLOUD_NAME);
         config.put("api_key", API_KEY);
         config.put("api_secret", API_SECRET);
-
-        System.out.println("Cloudinary Config: " + config); // In ra cấu hình để kiểm tra
-
         return new Cloudinary(config);
     }
 

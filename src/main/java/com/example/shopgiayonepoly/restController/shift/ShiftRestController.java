@@ -421,7 +421,6 @@ public class ShiftRestController {
         if (!list.isEmpty() && list.get(0).length > 0) {
             // Lấy giá trị đầu tiên từ kết quả
             String mess = list.get(0)[0].toString();
-            System.out.println("mess check shift: " + mess);
             return mess;
         }
         return null;
@@ -437,7 +436,6 @@ public class ShiftRestController {
         Map<String,String> thongBao = new HashMap<>();
         String checkLogin = getCheckStaffAttendanceYetBill(idStaff,1);
         String checkLogOut = getCheckStaffAttendanceYetBill(idStaff,2);
-        System.out.println(checkLogin);
         if(!checkLogin.equals("Có")) {
             thongBao.put("message","Mời bạn điểm danh trước khi làm việc!");
             return thongBao;

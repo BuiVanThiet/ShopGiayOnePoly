@@ -431,27 +431,6 @@
                         var noteReturn = document.getElementById('node-return');
                         noteReturn.addEventListener('input', function () {
                             validateSuccessReturnExchange()
-
-                            // if(noteReturn.value.length >0) {
-                            //     if(noteReturn.value.length > 500000) {
-                            //         document.getElementById('errorReturn').innerText = 'Không được nhập quá 500 nghìn ký tự!';
-                            //         document.getElementById('errorReturn').style.display = 'block';
-                            //         document.getElementById('btnCreateReturnBill').style.display = 'none';
-                            //     } else {
-                            //         if(totalExchangeCheck > 20000000) {
-                            //             document.getElementById('errorReturn').style.display = 'none';
-                            //             document.getElementById('btnCreateReturnBill').style.display = 'none';
-                            //         }else {
-                            //             document.getElementById('errorReturn').style.display = 'none';
-                            //             document.getElementById('btnCreateReturnBill').style.display = 'block';
-                            //             console.log(this.value);
-                            //         }
-                            //     }
-                            // }else {
-                            //     document.getElementById('errorReturn').innerText = 'Mời nhập lí do!';
-                            //     document.getElementById('errorReturn').style.display = 'block';
-                            //     document.getElementById('btnCreateReturnBill').style.display = 'none';
-                            // }
                         });
                         function setActiveReturnAndExchangeBill(element) {
                             // Xóa lớp active khỏi tất cả các liên kết

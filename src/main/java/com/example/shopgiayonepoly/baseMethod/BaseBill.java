@@ -119,10 +119,8 @@ public abstract class BaseBill extends BaseEmail {
             bill.setUpdateDate(new Date());
             bill.setTotalAmount(BigDecimal.valueOf(0));
         }
-        System.out.println("Thong tin bill: " + bill.toString());
         Bill billSave = this.billService.save(bill);
         if (billSave.getStatus() == 1) {
-            System.out.println("gia duoc giam been xoa " + this.billService.getDiscountBill(billSave.getId()));
             billSave.setPriceDiscount(new BigDecimal(this.billService.getDiscountBill(billSave.getId())));
             this.billService.save(billSave);
         }
@@ -138,7 +136,6 @@ public abstract class BaseBill extends BaseEmail {
         } else {
             detail.setQuantity(quantityNew);
         }
-        System.out.println("da update so luong san pham");
         this.productDetailService.save(detail);
     }
     //update
@@ -232,9 +229,6 @@ public abstract class BaseBill extends BaseEmail {
         voucher.setUpdateDate(new Date());
         VoucherRequest voucherRequest = new VoucherRequest();
         BeanUtils.copyProperties(voucher, voucherRequest);
-        System.out.println(voucherRequest.toString());
-        System.out.println(voucherRequest.getId() + "" + voucherRequest.getCreateDate() + "" + voucherRequest.getUpdateDate());
-        System.out.println(voucher.getId() + "" + voucher.getCreateDate() + "" + voucher.getUpdateDate());
         this.voucherService.updateVoucher(voucherRequest);
     }
 
@@ -259,10 +253,8 @@ public abstract class BaseBill extends BaseEmail {
             // Kiểm tra nếu sản phẩm có giảm giá
             if (idProductDetail.getSaleProduct() != null) {
                 priceCheck = getPriceAfterDiscount(idProductDetail);
-                System.out.println("gia hien tai 1 la " + priceCheck);
             } else {
                 priceCheck = billDetail.getProductDetail().getPrice();
-                System.out.println("gia hien tai la 2 " + priceCheck);
             }
             // Kiểm tra sự thay đổi của giá
             if (priceCheck.compareTo(billDetail.getPrice() != null ? billDetail.getPrice() : BigDecimal.ZERO) != 0) {
@@ -350,19 +342,9 @@ public abstract class BaseBill extends BaseEmail {
                     if (billDetail.getProductDetail().getId().equals(productDetail.getId())) {
                         // Sử dụng compareTo() để so sánh giá
                         if (billDetail.getPrice().compareTo(currentPrice) == 0) {
-                            System.out.println("Bill ID: " + bill.getId() + ", BillDetail ID: " + billDetail.getId() +
-                                    ", Product ID: " + billDetail.getProductDetail().getId() +
-                                    ", Quantity: " + billDetail.getQuantity() +
-                                    ", Price(trong bill): " + billDetail.getPrice() +
-                                    ", Price(trong san pham): " + currentPrice +
-                                    ", ỔN");
+
                         } else {
-                            System.out.println("Bill ID: " + bill.getId() + ", BillDetail ID: " + billDetail.getId() +
-                                    ", Product ID: " + billDetail.getProductDetail().getId() +
-                                    ", Quantity: " + billDetail.getQuantity() +
-                                    ", Price(trong bill): " + billDetail.getPrice() +
-                                    ", Price(trong san pham): " + currentPrice +
-                                    ", ko ỔN");
+
                             BillDetail billDetailSave = billDetail;
                             billDetailSave.setPriceRoot(productDetail.getPrice());
                             billDetailSave.setUpdateDate(new Date());
@@ -406,14 +388,11 @@ public abstract class BaseBill extends BaseEmail {
 
     //xoa voucher khi giap ap dung khong hop ly
     protected void getDeleteVoucherByBill(Integer idBill) {
-        System.out.println("da vao day de quet voucher");
         if (idBill != null) {
             Bill bill = this.billService.findById(idBill).orElse(null);
-            System.out.println("day ne " + bill.toString());
             if (bill.getVoucher() != null) {
                 Voucher voucher = this.voucherService.getOne(bill.getVoucher().getId());
                 if (bill.getTotalAmount().compareTo(voucher.getPricesApply()) < 0) {
-                    System.out.println("phai xoa thoii");
                     this.getSubtractVoucher(bill.getVoucher(), -1);
                     bill.setVoucher(null);
                     bill.setPriceDiscount(new BigDecimal(0));
@@ -422,7 +401,6 @@ public abstract class BaseBill extends BaseEmail {
                 }
             }
         } else {
-            System.out.println("hoa don nay co");
         }
     }
 
@@ -541,7 +519,6 @@ public abstract class BaseBill extends BaseEmail {
         Map<String,String> thongBao = new HashMap<>();
         String checkLogin = getCheckStaffAttendanceYetBill(idStaff,1);
         String checkLogOut = getCheckStaffAttendanceYetBill(idStaff,2);
-        System.out.println(checkLogin);
         if(!checkLogin.equals("Có")) {
             thongBao.put("message","Mời bạn điểm danh trước khi làm việc!");
             return thongBao;

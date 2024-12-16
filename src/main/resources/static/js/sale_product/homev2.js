@@ -1,6 +1,5 @@
 var listCodeSaleProducts = [];
 document.getElementById('discountType').addEventListener('change',function () {
-    console.log(document.getElementById('discountType').value)
     var value = document.getElementById('discountType').value;
     if(value == '2') {
         document.getElementById('discountText').textContent = '₫';
@@ -186,7 +185,6 @@ function removeThousandSeparator(inputId) {
 
 //phai la so nguyen
 function isIntegerValue(value) {
-    console.log(value)
     // Kiểm tra nếu giá trị là số và không có phần dư khi chia 1
     return Number.isFinite(value) && value % 1 === 0;
 }
@@ -199,13 +197,11 @@ function checkSameCodeSaleProduct() {
            listCodeSaleProducts = response
             // Kiểm tra và xóa mã trong list nếu giống với mã cần cập nhật
            if (codeUpdate) {
-               console.log(codeUpdate)
                // Sử dụng filter để loại bỏ các mã trùng với codeUpdate
                listCodeSaleProducts = listCodeSaleProducts.filter(function(code) {
                    return code !== codeUpdate.value.trim();  // Giữ lại các mã không trùng
                });
            }
-           console.log(listCodeSaleProducts)
        },
        error: function (xhr) {
            console.error('loi ' + xhr.responseText)
@@ -215,7 +211,6 @@ function checkSameCodeSaleProduct() {
 checkSameCodeSaleProduct()
 
 function checkSame(inputValue,spanError,mess) {
-    console.log('da vao check some')
     if (listCodeSaleProducts.includes(inputValue)) {
         spanError.style.display = 'block';
         spanError.innerText = mess;
@@ -247,7 +242,6 @@ function checkNullInputSaleProduct(inputValue,spanError,lengthValue,mess) {
 
 //check Giá trị phai la so duong be hon 10tr
 function checkNumberLimitInputSaleProductCash(inputValue, spanError) {
-    console.log(inputValue)
     if(inputValue === '' || inputValue.length < 1) {
         spanError.style.display = 'block';
         spanError.innerText = '*Giá trị không được để trống!';

@@ -152,17 +152,6 @@ function validateAllVoucher() {
     var checkVoucherLogic = checkVoucherValues(value.value, applyValue.value,discountType.value === '1' ? maxDiscount.value : value.value);
 
 // In kết quả ra console
-    console.log("checkCodeVoucher: ", checkCodeVoucher);
-    console.log("checkNameVoucher: ", checkNameVoucher);
-    console.log("checkDiscountType: ", checkDiscountType); // Kiểm tra hàm cho discount type nếu có
-    console.log("checkValue: ", checkValue);
-    console.log("checkApplyValue: ", checkApplyValue);
-    console.log("checkMaxDiscount: ", checkMaxDiscount);
-    console.log("checkNote: ", checkNote);
-    console.log("checkStartDate: ", checkStartDate);
-    console.log("checkEndDate: ", checkEndDate);
-    console.log("checkQuantity: ", checkQuantity);
-    console.log("checkVoucherLogic: ", checkVoucherLogic);
     formatInputWithThousandSeparator('value')
     formatInputWithThousandSeparator('applyValue')
     formatInputWithThousandSeparator('maxDiscount')
@@ -184,13 +173,11 @@ function checkSameCodeVoucher() {
             listCodeVouchers = response
             // Kiểm tra và xóa mã trong list nếu giống với mã cần cập nhật
             if (codeVoucherUpdate) {
-                console.log(codeVoucherUpdate)
                 // Sử dụng filter để loại bỏ các mã trùng với codeUpdate
                 listCodeVouchers = listCodeVouchers.filter(function(code) {
                     return code !== codeVoucherUpdate.value.trim();  // Giữ lại các mã không trùng
                 });
             }
-            console.log(listCodeVouchers)
         },
         error: function (xhr) {
             console.error('loi ' + xhr.responseText)
@@ -199,7 +186,6 @@ function checkSameCodeVoucher() {
 }
 
 function checkSame(inputValue,spanError,mess) {
-    console.log('da vao check some')
     if (listCodeVouchers.includes(inputValue)) {
         spanError.style.display = 'block';
         spanError.innerText = mess;
@@ -261,7 +247,6 @@ function removeThousandSeparator(inputId) {
 
 //phai la so nguyen
 function isIntegerValue(value) {
-    console.log(value)
     // Kiểm tra nếu giá trị là số và không có phần dư khi chia 1
     return Number.isFinite(value) && value % 1 === 0;
 }
@@ -298,7 +283,6 @@ function checkVoucherValues(value, applyValue, maxDiscount) {
 
     // If there's any error message, log it and return false
     if (errorMessage) {
-        console.log(errorMessage); // Log the error message for debugging
         return false; // Return false if there's a business rule violation
     }
     return true; // Return true if all checks pass

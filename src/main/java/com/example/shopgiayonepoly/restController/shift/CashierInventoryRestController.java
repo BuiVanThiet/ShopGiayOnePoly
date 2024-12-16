@@ -79,7 +79,6 @@ public class CashierInventoryRestController {
                     cashierInventoryFilterByIdStaffRequest.getStartDate(),
                     cashierInventoryFilterByIdStaffRequest.getEndDate()),pageable).getContent();
         }catch (NumberFormatException e) {
-            System.out.println("Lỗi: Tham số 'page' không phải là số hợp lệ.");
             return null; // Hoặc trả về một thông báo lỗi nếu cần thiết
         }
     }
@@ -243,7 +242,6 @@ public class CashierInventoryRestController {
                     cashierInventoryFilterByIdStaffRequest.getStartTime(),
                     cashierInventoryFilterByIdStaffRequest.getEndTime()),pageable).getContent();
         }catch (NumberFormatException e) {
-            System.out.println("Lỗi: Tham số 'page' không phải là số hợp lệ.");
             return null; // Hoặc trả về một thông báo lỗi nếu cần thiết
         }
     }
@@ -426,7 +424,6 @@ public class CashierInventoryRestController {
                     cashierInventoryFilterByIdStaffRequest.getStartTime(),
                     cashierInventoryFilterByIdStaffRequest.getEndTime()),pageable).getContent();
         }catch (NumberFormatException e) {
-            System.out.println("Lỗi: Tham số 'page' không phải là số hợp lệ.");
             return null; // Hoặc trả về một thông báo lỗi nếu cần thiết
         }
     }

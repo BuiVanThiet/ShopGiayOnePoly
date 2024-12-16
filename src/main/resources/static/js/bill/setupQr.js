@@ -26,7 +26,6 @@ document.getElementById('startCamera').addEventListener('click', () => {
                 if (result) {
                     // Clone dữ liệu QR code nếu quét thành công
                     const qrData = JSON.parse(result.text);
-                    console.log('QR code detected: ', qrData);
 
                     // Gửi dữ liệu QR code đến server
                     fetch('/bill-api/addProductByQr', {

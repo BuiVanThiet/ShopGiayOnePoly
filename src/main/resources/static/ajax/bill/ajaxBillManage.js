@@ -327,7 +327,6 @@ function loadInformationBillByIdBill() {
                 $('#btn-payment-confirm').hide();
             }
 
-            console.log(checkQuantityOrder)
 
             $('#informationStatusBill').text(statusBill)
             $('#informationCodeBill').text(response.codeBill);
@@ -389,11 +388,9 @@ function loadCustomerShipInBill() {
                     url: "/bill-api/show-customer-in-bill-not-ship",
                     success: function (response) {
                         if(!response || Object.keys(response).length === 0) {
-                            console.log('Khong co khach hang thi vao day')
                             $('#customerNotSystem').show();
                             $('#customerSystem').hide();
                         }else {
-                            console.log('co thi vao day')
                             $('#customerNotSystem').hide();
                             $('#customerSystem').show();
                             $('#nameCustomerNotModal').text(response.fullName);
@@ -410,9 +407,7 @@ function loadCustomerShipInBill() {
                         $('#customerSystem').hide();
                     }
                 })
-                // console.log('Khong co khach hang thi vao day')
-                // $('#customerNotSystem').show();
-                // $('#customerSystem').remove();
+
             }else {
                 $('#customerNotSystem').hide();
                 $('#customerSystem').show();
@@ -515,7 +510,6 @@ function updateAddressShip() {
 }
 
 function updateMoneyShipWait(moneyShipWait) {
-    console.log('data cua cap nhat gia ship ' + moneyShipWait)
     $.ajax({
         type: "GET",
         url: "/bill-api/update-ship-money",
@@ -523,10 +517,8 @@ function updateMoneyShipWait(moneyShipWait) {
             money: moneyShipWait
         },
         success: function (response) {
-            console.log('data cua cap nhat gia ship ' + response.data)
             loadInformationBillByIdBill();
             loadBillStatusByBillId();
-            // loadCustomerShipInBill();
         },
         error: function (xhr) {
             console.error('loi ' + xhr.responseText);
@@ -539,7 +531,6 @@ function confirmBill(content,checkConfirm) {
     if (reasonConfirm === '') {
         reasonConfirm = 'trong';
     }
-    console.log('checkConfirm: ' + checkConfirm);
 
     if (checkConfirm !== 0 && checkConfirm !== 1) {
         console.error('Invalid value for checkConfirm: ' + checkConfirm);
@@ -547,7 +538,6 @@ function confirmBill(content,checkConfirm) {
     }
 
     if (checkConfirm === 1) {
-        console.log('checkConfirm 2: ' + checkConfirm);
         // setupLoadingOnButtonClick(12000);
     }
     $.ajax({
@@ -831,7 +821,6 @@ function loadInfomationReturnBillFromBillManage() {
             $('#node-return').val(response.noteReturn);
             $('#node-return').attr('disabled', true);
             $('#total-exchange').text(Math.trunc(response.totalExchange).toLocaleString('en-US') + ' VNĐ')
-            console.log(response.id + 'day la id return bill')
 
             if(response.status == 1) {
                 var buttonsPDFReturnExchange;
@@ -857,7 +846,6 @@ function loadInfomationReturnBillFromBillManage() {
             checkPaymentExchange().then(result => {
                 checkbtnPaymentExchange = result;
 
-            console.log('Kết quả:', checkbtnPaymentExchange);
 
             if((response.totalExchange-(response.totalReturn-response.exchangeAndReturnFee+response.discountedAmount)) < 1) {
                 totalExchangeCustomer = 0;
@@ -924,7 +912,6 @@ function loadReturnBill(page) {
             $('#table-returnBill th:last-child, #table-returnBill td:last-child').hide();
 
             if (response.length === 0) {
-                console.log('khong co san pham tra');
                 noDataContainer.html(`
                     <img src="https://res.cloudinary.com/dfy4umpja/image/upload/v1725477250/jw3etgwdqqxtkevcxisq.png"
                         alt="Lỗi ảnh" style="width: auto; height: 100px;">
@@ -934,7 +921,6 @@ function loadReturnBill(page) {
                 tbody.closest('table').hide();
             } else {
                 document.getElementById('errorReturn').style.display = 'none';
-                console.log('co san pham tra');
                 noDataContainer.hide();
                 tbody.closest('table').show();
 
@@ -1098,10 +1084,6 @@ function handleQuantityInput() {
             $('#block-confirm').html(''); // Xóa nút nếu có lỗi
         }
 
-
-        console.log('Sau khi lưu:', localStorage.getItem('inputData'));
-
-
     });
 }
 
@@ -1115,7 +1097,6 @@ function updateQuantityReturn() {
         contentType: "application/json",  // Đảm bảo dữ liệu được gửi dưới dạng JSON
         data: JSON.stringify({data: inputData}),  // Gửi dữ liệu dưới dạng đối tượng chứa key "data"
         success: function(response) {
-            console.log("Dữ liệu đã được gửi thành công:", response);
             loadInfomationReturnBillFromBillManage()
         },
         error: function(xhr, status, error) {
@@ -1242,7 +1223,6 @@ function maxPageExchangeBillFromBillManage() {
         type: "GET",
         url:"/return-exchange-bill-api/max-page-exchange-bill-detail-from-bill-manage",
         success: function (response) {
-            console.log('so trang tra ' + response)
             createPagination('billExchangePageMax-exchangeBill', response, 1);
         },
         error: function (xhr) {
@@ -1276,7 +1256,6 @@ function checkPaymentExchange() {
             type: "GET",
             url: "/bill-api/check-payment-exchange",
             success: function (response) {
-                console.log('check exchange pay: ' + response);
                 if (response === 'btnPayExchange') {
                     resolve(true);
                 } else {

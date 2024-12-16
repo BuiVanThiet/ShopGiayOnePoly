@@ -62,7 +62,6 @@ public class ExchangeBillRestController extends BaseBill {
         if(this.productDetails == null) {
             this.productDetails = this.billDetailService.findProductDetailSaleTest(this.productDetailCheckMark2Request,(Integer) session.getAttribute("IdBill"));
         }
-        System.out.println("Số lượng 1 trang la " + productDetails.size());
         return convertListToPage(productDetails,pageable).getContent();
     }
 
@@ -72,13 +71,11 @@ public class ExchangeBillRestController extends BaseBill {
             this.productDetailCheckMark2Request = new ProductDetailCheckMark2Request("",null,null,null,null,null,null,null);
         }
         Integer maxPageProduct = (int) Math.ceil((double) this.billDetailService.findProductDetailSaleTest(this.productDetailCheckMark2Request,(Integer) session.getAttribute("IdBill")).size() / 4);
-        System.out.println("so trang cua san pham " + maxPageProduct);
         return maxPageProduct;
     }
     @PostMapping("/filter-product-deatail")
     public ResponseEntity<?> getFilterProduct(@RequestBody ProductDetailCheckMark2Request productDetailCheckRequest2, HttpSession session) {
         this.productDetailCheckMark2Request = productDetailCheckRequest2;
-        System.out.println("Thong tin loc " + productDetailCheckRequest2.toString());
         return ResponseEntity.ok("Done");
     }
     @PostMapping("/exchange")
@@ -114,7 +111,6 @@ public class ExchangeBillRestController extends BaseBill {
         getReduceProductDetail(productDetail.getId(),Integer.parseInt(quantity));
 
         session.setAttribute("exchangeBillDetailResponses", exchangeBillDetailResponses);
-        System.out.println("Số lượng đổi: " + quantity + ", ID sản phẩm chi tiết: " + idPDT);
 
         session.setAttribute("exchangeBillDetailResponses", exchangeBillDetailResponses);
 
@@ -122,7 +118,6 @@ public class ExchangeBillRestController extends BaseBill {
         for (ExchangeBillDetailResponse response: exchangeBillDetailResponses) {
             totalExchange = totalExchange.add(response.getTotalExchange());
         }
-        System.out.println("tien doi la " + totalExchange);
 
         return ResponseEntity.ok(thongBao);
     }
@@ -183,7 +178,6 @@ public class ExchangeBillRestController extends BaseBill {
             thongBao.put("check","1");
         }
 
-        System.out.println(billDetailAjax.toString());
 
         totalExchange = BigDecimal.valueOf(0);
         for (ExchangeBillDetailResponse response: exchangeBillDetailResponses) {
@@ -206,7 +200,6 @@ public class ExchangeBillRestController extends BaseBill {
                 this.productDetails.set(i, objects);
                 // In ra giá trị các thuộc tính để kiểm tra
                 Object[] objects1 = this.productDetails.get(i);
-                System.out.println("Object sản phẩm là " + objects1[0] + " " + objects1[1] + " " + objects1[2] + " " + objects1[11]);
             }
             i++;
         }

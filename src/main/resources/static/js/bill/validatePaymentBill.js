@@ -61,7 +61,6 @@ $('#cashClient-billInfo-exchange').on('input', function() {
                 $('#erorrCash-billInfo').text('');
                 $('#btnPaymentInBill').attr('disabled', false);
                 $('#btnPaymentInBillExchange').attr('disabled', false);
-                console.log("Dữ liệu nhập vào là số: " + rawValue); // Giá trị thực không có dấu phẩy
                 if(rawValue > priceBill && payMethod == 1) {
                     $('#surplusMoneySpan-billInfo').css('display', 'block');
                     $('#surplusMoney-billInfo').text((priceNumber-priceBill).toLocaleString('en')+'VND');
@@ -93,7 +92,6 @@ $('#cashClient-billInfo-exchange').on('input', function() {
             $('#btnPaymentInBillExchange').attr('disabled', true);
             $('#surplusMoneySpan-billInfo').css('display', 'none');
             $('#surplusMoney-billInfo').text('');
-            console.log("Dữ liệu nhập vào không phải là số");
         }
     }
 $('#notePayment-billInfo').on('input', function() {

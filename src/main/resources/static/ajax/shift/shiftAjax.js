@@ -63,7 +63,6 @@ function loadShift(page) {
 
                     checkShiftStaffWorking(shift[0])
                         .then((isShiftClear) => {
-                            console.log('davao day: ' + isShiftClear)
                             if (isShiftClear == true && shift[6] == 1 && shift[3] != 2) {
                                 btn += `<button type="button" class="btn btn-outline-danger" onclick="deleteShift(${shift[0]})">Xóa</button>`;
                             }
@@ -123,7 +122,6 @@ function filterShift() {
             status: $('#statusFilter').val() === '' ? null : parseInt($('#statusFilter').val())
         }),
         success: function (response) {
-            // console.log(response)
             loadShift(1);
             maxPageShift();
 
@@ -168,7 +166,6 @@ function addShift(idStart,idEnd) {
     // Chuyển đổi thời gian bắt đầu và kết thúc sang định dạng 24 giờ
     var startTime = convertTo24HourFormat($('#' + idStart).val());
     var endTime = convertTo24HourFormat($('#' + idEnd).val());
-    console.log('startTime ' + startTime + '-'+'endTime '+endTime)
     $.ajax({
         type: "POST",
         url: "/shift-api/add-or-update-shift",
@@ -193,7 +190,6 @@ function addShift(idStart,idEnd) {
 }
 
 function setIdShift(id,start,end,status,statusShift) {
-    console.log(start, end);
     // Hiển thị thời gian trong định dạng AM/PM vào input
     $('#startTimeUpdate').val(start);
     $('#endTimeUpdate').val(end);
@@ -201,7 +197,6 @@ function setIdShift(id,start,end,status,statusShift) {
 
     $('#errorStatusShiftUpdate').hide()
     idShiftUpdate = id;
-    console.log(id, start, end, status); // Kiểm tra giá trị nhận được
 
     if(statusShift != 2 || status == 2) {
         checkShiftStaffWorking(idShiftUpdate)
@@ -240,7 +235,6 @@ function resetFormAddShift() {
 
 function getSelectedStatus() {
     var selectedValue = $("input[name='statusShiftAdd']:checked").val();
-    console.log(selectedValue); // In giá trị được chọn (1 hoặc 2)
     return selectedValue;
 }
 
@@ -340,7 +334,6 @@ function listStaff(page) {
 
             }
 
-            console.log(response)
         },
         error: function (xhr) {
             console.error('loi '+xhr.responseText)
@@ -353,7 +346,6 @@ function toggleCheckboxProduct(productId, pageNumber) {
     checkbox.checked = !checkbox.checked;
 
     let selectedProducts = JSON.parse(localStorage.getItem('selectedStaffs')) || {};
-    console.log('Before toggle:', selectedProducts);
 
     let productsOnCurrentPage = selectedProducts[pageNumber] || [];
 
@@ -372,8 +364,6 @@ function toggleCheckboxProduct(productId, pageNumber) {
     selectedProducts[pageNumber] = productsOnCurrentPage;
 
     localStorage.setItem('selectedStaffs', JSON.stringify(selectedProducts));
-    console.log('du lieu de giam ' + selectedStaffIds)
-    console.log('After toggle:', selectedProducts);
 
     // Kiểm tra trạng thái của tất cả các checkbox trên trang
     const checkboxesOnCurrentPage = document.querySelectorAll(`#tableStaff input[type="checkbox"]`);
@@ -410,7 +400,6 @@ function clearAllSelection(pageNumber) {
 
 document.getElementById('clickFastStaff').addEventListener('change', function() {
     const pageNumber = pageCheckedFastStaff; // Xác định trang hiện tại (có thể thay đổi theo yêu cầu)
-    console.log('hi')
     if (!this.checked) {
         selectAllStaffs(pageNumber); // Nếu checked, gọi hàm chọn tất cả
     } else {
@@ -420,11 +409,8 @@ document.getElementById('clickFastStaff').addEventListener('change', function() 
 
 function restoreCheckboxState(pageNumber) {
     let selectedProducts = JSON.parse(localStorage.getItem('selectedStaffs')) || {};
-    console.log('Restore data:', selectedProducts);
 
     let productsOnCurrentPage = selectedProducts[pageNumber] || [];
-
-    console.log(productsOnCurrentPage)
 
     document.getElementById('clickFastStaff').checked = false;
     $('input[name="selectedStaffs"]').each(function() {
@@ -443,7 +429,6 @@ function maxPageListStaff() {
         type: "GET",
         url: "/shift-api/max-page-list-staff",
         success: function (response) {
-            console.log(response)
             createPagination('maxStaff-manageShift', response, 1); // Phân trang 1
 
         },
@@ -543,13 +528,11 @@ function removeShiftStaffInStaff() {
 
 //check ca lam co nhan vien khong
 function checkShiftStaffWorking(idShift) {
-    console.log(idShift);
     return new Promise((resolve, reject) => {
         $.ajax({
             type: "GET",
             url: "/shift-api/check-shift-staff-working/" + idShift,
             success: function (response) {
-                console.log('mess ben js(check shift): ' + response);
                 if (response == 'Vẫn còn người chưa điểm danh ra') {
                     resolve(false); // Trả về false nếu còn người chưa điểm danh ra
                 } else if (response == 'Không còn người chưa điểm danh ra') {

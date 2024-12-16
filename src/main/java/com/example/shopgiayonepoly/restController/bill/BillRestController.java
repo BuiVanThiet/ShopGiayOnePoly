@@ -153,8 +153,6 @@ public class BillRestController extends BaseBill {
             return ResponseEntity.ok(thongBao);
         }
 
-        System.out.println("id billdetail la: " + billDetail.getId());
-        System.out.println("so luong moi la: " + billDetailAjax.getQuantity());
         ProductDetail productDetail   = this.billDetailService.getProductDetailById(billDetail.getProductDetail().getId());
         Bill bill = billDetail.getBill();
         if(bill == null || bill.getId() == null || bill.getStatus() > 2 || bill.getPaymentStatus() == 1) {
@@ -168,23 +166,16 @@ public class BillRestController extends BaseBill {
             return ResponseEntity.ok(thongBao);
         }
         if(billDetailAjax.getQuantity() <= 0) {
-            System.out.println("Sản phẩm không được giảm nhỏ hơn 0!");
             thongBao.put("message","Sản phẩm không được giảm nhỏ hơn 0!");
             thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }
         if(productDetail.getQuantity() ==  0 && billDetailAjax.getMethod().equals("cong")) {
-            System.out.println("Số lượng mua không được quá số lượng trong hệ thống!");
             thongBao.put("message","Hiện tại sản phẩm bạn mua đã hết!");
             thongBao.put("check","3");
             return ResponseEntity.ok(thongBao);
         }
-//        if(billDetailAjax.getQuantity() > 10 && billDetailAjax.getMethod().equals("cong")) {
-//            System.out.println("Hiện tại cửa hàng chỉ bán mỗi sản phẩm số lượng không quá 10!");
-//            thongBao.put("message","Số lượng mua mỗi món không được quá 10!");
-//            thongBao.put("check","3");
-//            return ResponseEntity.ok(thongBao);
-//        }
+
         if(productDetail.getStatus() == 0 || productDetail.getStatus() == 2 || productDetail.getProduct().getStatus() == 0 || productDetail.getProduct().getStatus() == 2) {
             thongBao.put("message","Sản phẩm đã bị xóa hoặc ngừng bán trên hệ thống!");
             thongBao.put("check","3");
@@ -206,7 +197,6 @@ public class BillRestController extends BaseBill {
         this.billDetailService.save(billDetail);
 
         this.setTotalAmount(billDetail.getBill());
-        System.out.println("dang o phuong thuc " + billDetailAjax.getMethod());
         if(bill.getStatus() == 0) {
             this.getUpdateQuantityProduct(productDetail.getId(),quantityUpdate);
         }
@@ -283,7 +273,6 @@ public class BillRestController extends BaseBill {
             thongBao.put("check","1");
         }
         this.billDetailService.save(billDetail);
-        System.out.println("Thong tin bill: " + billDetail.getBill().toString());
 
         this.setTotalAmount(billById);
         Bill bill = billDetail.getBill();
@@ -324,7 +313,6 @@ public class BillRestController extends BaseBill {
         }
         Integer idBill = (Integer) session.getAttribute("IdBill");
         Integer pageNumber = (int) Math.ceil((double) this.billDetailService.getBillDetailByIdBill(idBill).size() / 2);
-        System.out.println("Số trang là: " + pageNumber);
         return pageNumber;
     }
 
@@ -347,7 +335,6 @@ public class BillRestController extends BaseBill {
             this.productDetailCheckMark2Request = new ProductDetailCheckMark2Request("",null,null,null,null,null,null,null);
         }
         List<Object[]> productDetails = this.billDetailService.findProductDetailSaleTest(this.productDetailCheckMark2Request,(Integer) session.getAttribute("IdBill"));
-        System.out.println("Số lượng 1 trang la " + productDetails.size());
         return convertListToPage(productDetails,pageable).getContent();
     }
     @GetMapping("/resetfilter-product")
@@ -397,7 +384,6 @@ public class BillRestController extends BaseBill {
             return null;
         }
         Integer maxPageProduct = (int) Math.ceil((double) this.billDetailService.findProductDetailSaleTest(this.productDetailCheckMark2Request,idBill).size() / 4);
-        System.out.println("so trang cua san pham " + maxPageProduct);
         return maxPageProduct;
     }
 
@@ -411,7 +397,6 @@ public class BillRestController extends BaseBill {
             return null;
         }
         this.productDetailCheckMark2Request = productDetailCheckRequest2;
-        System.out.println("Thong tin loc " + productDetailCheckRequest2.toString());
         return ResponseEntity.ok("Done");
     }
 
@@ -542,7 +527,6 @@ public class BillRestController extends BaseBill {
         clientBillInformationResponse.setDistrict(part[1]);
         clientBillInformationResponse.setCity(part[2]);
         clientBillInformationResponse.setAddressDetail(String.join(", ", java.util.Arrays.copyOfRange(part, 3, part.length)));
-        System.out.println(clientBillInformationResponse.toString());
         return clientBillInformationResponse;
     }
 
@@ -594,11 +578,8 @@ public class BillRestController extends BaseBill {
             return null;
         }
         Pageable pageable = PageRequest.of(Integer.parseInt(pageNumber)-1,5);
-        System.out.println("da loc duoc " + this.keyVoucher);
-        System.out.println(idBill);
         Page<Voucher> vouchers = this.billService.getVouCherByBill(idBill,keyVoucher,pageable);
         return this.convertListToPage(this.billService.getVoucherByBillV2(idBill,keyVoucher),pageable).getContent();
-//        return vouchers.getContent();
     }
 
     @PostMapping("/voucher-search")
@@ -612,7 +593,6 @@ public class BillRestController extends BaseBill {
         }
         String keyword = voucherSearch.get("keyword");
         this.keyVoucher = keyword;
-        System.out.println("du lieu loc vc " + voucherSearch);
         return ResponseEntity.ok("Done v");
     }
 
@@ -631,13 +611,9 @@ public class BillRestController extends BaseBill {
         if (!validateIdBill.trim().equals("")) {
             return null;
         }
-        System.out.println("id bill vung page voucgher " + idBill);
 
-        // Đảm bảo danh sách không bị null
-//        List<Voucher> vouchers = this.billService.getVoucherByBill(idBill,this.keyVoucher);
         List<Object[]> voucher = this.billService.getVoucherByBillV2(idBill,keyVoucher);
         Integer maxPage = (int) Math.ceil((double) voucher.size() / 5);
-        System.out.println("Số trang tối đa của voucher: " + maxPage);
         return maxPage;
     }
 
@@ -710,7 +686,6 @@ public class BillRestController extends BaseBill {
         if(searchBillByStatusRequest == null) {
             searchBillByStatusRequest = new SearchBillByStatusRequest(null);
         }
-        System.out.println(searchBillByStatusRequest.getStatusSearch());
         return this.billService.getAllBillByStatusDiss0(keyBillmanage,searchBillByStatusRequest,keyStartDate,keyEndDate,pageable).getContent();
     }
 
@@ -727,7 +702,6 @@ public class BillRestController extends BaseBill {
             searchBillByStatusRequest = new SearchBillByStatusRequest();
         }
         Integer page = (int) Math.ceil((double) this.billService.getAllBillByStatusDiss0(keyBillmanage,searchBillByStatusRequest,keyStartDate,keyEndDate).size() / 5);
-        System.out.println("so trang toi da cua quan ly hoa don " + page);
         return page;
     }
 
@@ -740,7 +714,6 @@ public class BillRestController extends BaseBill {
         if(staffLogin.getStatus() != 1) {
             return null;
         }
-        System.out.println(status.toString());
         this.searchBillByStatusRequest = status;
         return ResponseEntity.ok("done");
     }
@@ -759,15 +732,10 @@ public class BillRestController extends BaseBill {
         String startDateStr = billSearch.get("startDate");
         String endDateStr = billSearch.get("endDate");
 
-        System.out.println("du lieu loc vc " + keyword);
-        System.out.println("starDate-bill-manage: "+billSearch.get("startDate"));
-        System.out.println("endDate-bill-manage: "+billSearch.get("endDate"));
         try {
-            // Định dạng để parse chuỗi thành đối tượng Date
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
             Calendar calendar = Calendar.getInstance();
 
-            // Chuyển đổi chuỗi startDateStr thành Date và đặt thời gian bắt đầu của ngày
             Date startDate = formatter.parse(startDateStr);
             calendar.setTime(startDate);
             calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -776,7 +744,6 @@ public class BillRestController extends BaseBill {
             calendar.set(Calendar.MILLISECOND, 0);
             this.keyStartDate = calendar.getTime();
 
-            // Chuyển đổi chuỗi endDateStr thành Date và đặt thời gian kết thúc của ngày
             Date endDate = formatter.parse(endDateStr);
             calendar.setTime(endDate);
             calendar.set(Calendar.HOUR_OF_DAY, 23);
@@ -835,7 +802,6 @@ public class BillRestController extends BaseBill {
         if(informationBillByIdBillResponse == null) {
             return null;
         }
-        System.out.println(informationBillByIdBillResponse.toString());
         return informationBillByIdBillResponse;
     }
     @GetMapping("/show-customer-in-bill-ship")
@@ -870,7 +836,6 @@ public class BillRestController extends BaseBill {
             String ward = part[5];
             String addRessDetail = String.join(", ", java.util.Arrays.copyOfRange(part, 6, part.length));
             ClientBillInformationResponse clientBillInformationResponse = new ClientBillInformationResponse(fullName,numberPhone,email,province,district,ward,addRessDetail);
-            System.out.println("thong tin cua doi tuong ship " + clientBillInformationResponse.toString());
             return clientBillInformationResponse;
         }
         return null;
@@ -1027,7 +992,6 @@ public class BillRestController extends BaseBill {
         if (bill.getStatus() != 1) {
             thongBao.put("message","Loi");
             thongBao.put("check","3");
-            System.out.println("khong duoc cap nhat tien ship");
             return ResponseEntity.ok(thongBao);
         }
 
@@ -1042,7 +1006,6 @@ public class BillRestController extends BaseBill {
         bill.setUpdateDate(new Date());
         bill.setShippingPrice(moneyNumber);
         this.billService.save(bill);
-        System.out.println("da cap nhat lai gia ship");
         thongBao.put("message","Sửa thông tin giao hàng thành công!");
         thongBao.put("check","1");
         return ResponseEntity.ok(thongBao);
@@ -1135,11 +1098,7 @@ public class BillRestController extends BaseBill {
                     cashierInventoryService.getUpdateRevenue(billSave.getStaff().getId(),new BigDecimal(0).subtract(bill.getTotalAmount().subtract(billSave.getPriceDiscount())),new BigDecimal(0),new BigDecimal(0));
                 }
             }
-            System.out.println("bat dau gui mail");
             this.setBillStatus(bill.getId(),bill.getStatus(),session);
-//            String ht = "http://localhost:8080/onepoly/status-bill/"+bill.getId();
-//            String title = "Đơn hàng đã bị hủy";
-//            this.templateEmailConfigmBill(email,ht,bill.getCodeBill(),title);
         }else if (content.equals("agree")) {
             if(bill.getStatus() == 4 && bill.getPaymentStatus() == 0) {
                 mess = "Đơn hàng chưa được thanh toán!";
@@ -1163,9 +1122,6 @@ public class BillRestController extends BaseBill {
                             for (ProductDetail productDetail: this.productDetailService.findAll()) {
                                 if (productDetail.getId() == billDetail.getProductDetail().getId()) {
                                     if((productDetail.getQuantity()-billDetail.getQuantity()) < 0) {
-                                        System.out.println(productDetail.toString());
-                                        System.out.println(productDetail.getProduct());
-                                        System.out.println((productDetail.getQuantity()-billDetail.getQuantity())+"khong hop le");
                                         thongBao.put("message","Hóa đơn không hợp lệ!");
                                         thongBao.put("check","3");
                                         return ResponseEntity.ok(thongBao);
@@ -1191,7 +1147,6 @@ public class BillRestController extends BaseBill {
                 String district = part[4];
                 String ward = part[5];
                 String addRessDetail = String.join(", ", java.util.Arrays.copyOfRange(part, 6, part.length));
-                System.out.println("email de gui xac nhan " + email);
                 bill.setUpdateDate(new Date());
                 bill.setStatus(bill.getStatus()+1);
 
@@ -1209,13 +1164,6 @@ public class BillRestController extends BaseBill {
 
                 this.setBillStatus(bill.getId(),bill.getStatus(),session);
 
-//                if(billSave.getStatus() == 2) {
-//                    System.out.println("bat dau gui mail");
-//                    String ht = "http://localhost:8080/onepoly/status-bill/"+bill.getId();
-//                    System.out.println(ht);
-//                    String title = "Đơn hàng đã được xác nhận";
-//                    this.templateEmailConfigmBill(email,ht,bill.getCodeBill(),title);
-//                }
             }
         }else if (content.equals("agreeReturnBill")) {
             if (bill.getStatus() != 7) {
@@ -1288,7 +1236,6 @@ public class BillRestController extends BaseBill {
             }
             this.setBillStatus(bill.getId(),203,session);
         }
-        System.out.println("gui thanh cong");
         thongBao.put("message",mess);
         thongBao.put("check",colorMess);
         return ResponseEntity.ok(thongBao);
@@ -1302,9 +1249,7 @@ public class BillRestController extends BaseBill {
         String getAddRessDetail = bill.getAddRess();
         String[] part = getAddRessDetail.split(",\\s*");
         String email = part[2];
-        System.out.println("bat dau gui mail");
         String ht = "http://localhost:8080/onepoly/status-bill/"+bill.getId();
-        System.out.println(ht);
         String title = "";
         if(bill.getStatus() == 2) {
              title = "Đơn hàng đã được xác nhận";
@@ -1358,7 +1303,6 @@ public class BillRestController extends BaseBill {
         String payStatus = paymentData.get("payStatus");
         String surplusMoneyPay = paymentData.get("surplusMoneyPay");
         String payMethod = paymentData.get("payMethod");
-        System.out.println("Du lieu khi thnah toan ");
         String billPay = paymentData.get("billPay");
 
         if(Integer.parseInt(cashAcountPay) > (20000000)) {
@@ -1373,13 +1317,6 @@ public class BillRestController extends BaseBill {
             return ResponseEntity.ok(thongBao);
         }
 
-        System.out.println("cashPay: " + cashPay);
-        System.out.println("cashAcountPay: " + cashAcountPay);
-        System.out.println("cashBillPay: " + cashBillPay);
-        System.out.println("notePay: " + notePay);
-        System.out.println("payStatus: " + payStatus);
-        System.out.println("surplusMoneyPay: " + surplusMoneyPay);
-        System.out.println("payMethod: " + payMethod);
         String validateCashPay = validateBigDecimal(cashPay);
 
         if(!validateCashPay.trim().equals("")) {
@@ -1535,7 +1472,6 @@ public class BillRestController extends BaseBill {
                 paymentExchange.setStaff(staffLogin);
                 paymentExchange.setSurplusMoney(new BigDecimal(surplusMoneyPay));
 
-                System.out.println("cai nay cua exhcange thanh toan: " + paymentExchange.toString());
                 thongBao.put("message","Thanh toán thành công(của đổi-trả sản phẩm)!");
                 thongBao.put("check","1");
                 thongBao.put("donePay","done");
@@ -1654,9 +1590,6 @@ public class BillRestController extends BaseBill {
                 paymentExchange.setExchangeBilll(returnBillExchangeBill);
                 paymentExchange.setSurplusMoney(new BigDecimal(0));
 
-                System.out.println("exxchange tk: "+ paymentExchange.toString() );
-//                thongBao.put("message","Hóa đơn này không thanh toán được!(exchange chuyen khoan)");
-//                thongBao.put("check","3");
                 session.setAttribute("exchangeBillPaymentRest",paymentExchange);
                 session.setAttribute("checkBill","exchangeBill");
                 String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
@@ -1705,14 +1638,6 @@ public class BillRestController extends BaseBill {
             return null;
         }
         List<Object[]> results = invoiceStatusService.getHistoryByBill((Integer) session.getAttribute("IdBill"));
-        for (Object[] row : results) {
-            // Duyệt qua các phần tử trong từng Object[] và in ra giá trị
-            System.out.println("Row data: ");
-            for (Object obj : row) {
-                System.out.print(obj + " "); // In từng giá trị trong Object[]
-            }
-            System.out.println(); // Xuống dòng sau khi in hết một hàng
-        }
         return results;
     }
 
@@ -1728,7 +1653,6 @@ public class BillRestController extends BaseBill {
 
         String validateIdBill = validateInteger(idBill);
         if (!validateIdBill.trim().equals("")) {
-            System.out.println("pdf: neu id khong dung vao day");
             return null;
         }
         // Lấy chi tiết hóa đơn và thông tin hóa đơn từ service
@@ -1787,7 +1711,6 @@ public class BillRestController extends BaseBill {
 
         String validateIdBill = validateInteger(idBill);
         if (!validateIdBill.trim().equals("")) {
-            System.out.println("pdf: neu id khong dung vao day");
             return null;
         }
         // Lấy chi tiết hóa đơn và thông tin hóa đơn từ service
@@ -1864,7 +1787,6 @@ public class BillRestController extends BaseBill {
             return "notBtnPayExchange";
         }
 
-        System.out.println("check exchange " + checkPayExchange);
         List<PaymentExchange> paymentExchanges = this.paymentExchangeService.getPaymentExchangeByIdBillExchange(returnBillExchangeBill.getId());
 
         if(checkPayExchange.equals("PhaiTraTien") && paymentExchanges.isEmpty()) {
@@ -1927,7 +1849,6 @@ public class BillRestController extends BaseBill {
                     cashierInventoryFilterByIdStaffRequest.getStartTime(),
                     cashierInventoryFilterByIdStaffRequest.getEndTime()),pageable).getContent();
         }catch (NumberFormatException e) {
-            System.out.println("Lỗi: Tham số 'page' không phải là số hợp lệ.");
             return null; // Hoặc trả về một thông báo lỗi nếu cần thiết
         }
     }
