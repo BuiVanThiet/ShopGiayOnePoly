@@ -20,7 +20,6 @@ public class ReturnBillController extends BaseBill {
     @GetMapping("/bill/{idBill}")
     public String getIndexReturnBill(@PathVariable("idBill") String idBill,HttpSession session) {
         this.productDetailCheckMark2Request = null;
-
         Staff staffLogin = (Staff) session.getAttribute("staffLogin");
         if(staffLogin == null) {
             return "redirect:/login";

@@ -70,25 +70,20 @@ function getMaxPageBillClient() {
         url: "/api-client/list-bill-max-page",
         success: function (response) {
             console.log(response)
-            createPagination('billClientPageMax', response, 1); // Phân trang 1
+            createPagination('billClientPageMax', response, 1);
         },
         error: function (xhr) {
             console.error('loi max page bill manage' + xhr.responseText)
         },
-        // complete: function() {
-        //     // Sau khi hoàn thành, lại tiếp tục gửi yêu cầu để giữ kết nối liên tục
-        //     setTimeout(getMaxPageBillManage, 5000);  // Gửi lại sau 5 giây
-        // }
     })
 }
 
 function clickStatusBillClient() {
-    let statusSearchVal = $('#statusSearch').val();  // Lấy giá trị từ input
+    let statusSearchVal = $('#statusSearch').val();
 
-    // Kiểm tra nếu giá trị không rỗng và là chuỗi, sau đó xử lý
     let statusSearch = (typeof statusSearchVal === 'string' && statusSearchVal.trim()) ?
         statusSearchVal.trim().replace(/\s+/g, '').split(',').filter(Boolean).map(Number)
-        : null; // Nếu không có giá trị thì gửi mảng rỗng
+        : null;
 
     $.ajax({
         type: "POST",
@@ -108,8 +103,7 @@ function clickStatusBillClient() {
 }
 
 function searchBillClient() {
-    console.log('start: ' + $('#startDate-bill-client').val())
-    console.log('end: ' + $('#endDate-bill-client').val())
+
     $.ajax({
         type: "POST",
         url: "/api-client/bill-client-search",
@@ -118,11 +112,10 @@ function searchBillClient() {
             keywordBill: $('#keywordBillClient').val().trim(),
             startDate: $('#startDate-bill-client').val().trim(),
             endDate: $('#endDate-bill-client').val().trim()
-        }),  // Gửi dữ liệu dạng JSON
+        }),
         success: function(response) {
             getMaxPageBillClient();
             getAllBillClientByStatus(1);
-            // clickStatusBillManager(999);
         },
         error: function(xhr) {
             console.error('Loi tim voucher ' + xhr.responseText);

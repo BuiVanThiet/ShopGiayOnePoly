@@ -70,6 +70,14 @@
     background-color: black; /* Màu nền cho nút đang được chọn */
     color: white; /* Màu chữ cho nút được chọn */
 }
+.image-section {
+    width: 100%;
+    height: auto;
+    max-height: 500px;
+    object-fit: cover;
+    border-radius: 30px;
+}
+
 
 .sale-background-text {
     transform: translate(-50%, -50%); /* Căn chỉnh giữa chính xác */

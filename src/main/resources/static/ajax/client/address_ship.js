@@ -19,7 +19,7 @@ function deleteAddressForCustomer(idAddress) {
                     listAddressForCustomer()
                 },
                 error: function (error) {
-                    console.log("Xóa thất bại: " + error.text());
+                   createToast("2","Xóa thất bại")
                 }
             })
         }

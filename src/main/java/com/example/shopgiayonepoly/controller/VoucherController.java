@@ -88,7 +88,6 @@ public class VoucherController extends BaseVoucherProduct{
         BigDecimal oneMillion = new BigDecimal("1000000");
         LocalDate dateNow = LocalDate.now();
 
-        // Kiểm tra priceReduced
         if (voucherRequest.getPriceReduced() == null) {
             result.rejectValue("priceReduced", "error.voucher", "Giá trị giảm không được để trống!");
         } else {
@@ -96,21 +95,19 @@ public class VoucherController extends BaseVoucherProduct{
                 if (voucherRequest.getPriceReduced().compareTo(zero) <= 0 || voucherRequest.getPriceReduced().compareTo(niceTeen) >= 0) {
                     result.rejectValue("priceReduced", "error.voucher", "Giá trị giảm phải lớn hơn 0% và nhỏ hơn 90%!");
                 }
-            } else { // Loại giảm giá là tiền mặt
+            } else {
                 if (voucherRequest.getPriceReduced().compareTo(tenHundred) < 0 || voucherRequest.getPriceReduced().compareTo(oneMillion) > 0) {
                     result.rejectValue("priceReduced", "error.voucher", "Giá trị giảm phải lớn hơn 10.000₫ và nhỏ hơn 1.000.000₫!");
                 }
             }
         }
 
-// Kiểm tra startDate
         if (voucherRequest.getStartDate() == null) {
             result.rejectValue("startDate", "error.voucher", "Ngày bắt đầu không được để trống!");
         } else if (voucherRequest.getStartDate().isBefore(dateNow)) {
             result.rejectValue("startDate", "error.voucher", "Ngày bắt đầu phải là ngày hiện tại hoặc sau ngày hiện tại: " + dateNow);
         }
 
-// Kiểm tra endDate
         if (voucherRequest.getEndDate() == null) {
             result.rejectValue("endDate", "error.voucher", "Ngày kết thúc không được để trống!");
         } else {
@@ -121,7 +118,6 @@ public class VoucherController extends BaseVoucherProduct{
             }
         }
 
-// Kiểm tra pricesApply và pricesMax
         if (voucherRequest.getPricesApply() != null && voucherRequest.getPricesMax() != null && voucherRequest.getPricesApply().compareTo(voucherRequest.getPricesMax()) < 0) {
             result.rejectValue("pricesApply", "error.voucher", "Giá trị áp dụng phải lớn hơn giá trị giảm tối đa!");
         }
@@ -242,8 +238,6 @@ public class VoucherController extends BaseVoucherProduct{
                     .filter(voucher -> voucher.getId() != voucherRequest.getId())
                     .collect(Collectors.toList());
 
-//            List<Voucher> vouchers = this.voucherService.getAll();
-//            vouchers.remove(existingVoucher);
             for (Voucher voucher: vouchers) {
                 if(voucher.getCodeVoucher().equals(voucherRequest.getCodeVoucher())) {
                     mess = "Mã phiếu giảm giá đã tồn tại!";
@@ -344,12 +338,6 @@ public class VoucherController extends BaseVoucherProduct{
         return "redirect:/voucher/list";
     }
 
-//    @Scheduled(cron = "0 0 0 * * ?", zone = "Asia/Ho_Chi_Minh")
-//    public void updateExpiredVouchersStatus() {
-//        System.out.println("Running scheduled task to update voucher status");
-//        voucherService.updateVoucherStatusForExpired();
-//    }
-
     @ModelAttribute("staffInfo")
     public Staff staff(HttpSession session) {
         Staff staff = (Staff) session.getAttribute("staffLogin");
@@ -368,13 +356,11 @@ public class VoucherController extends BaseVoucherProduct{
 
         Voucher voucher = voucherService.getOne(id);
         model.addAttribute("voucher", voucher);
-        // Định dạng các giá trị thành chuỗi với dấu phẩy ngăn cách hàng nghìn và thêm "VNĐ"
         NumberFormat currencyFormat = NumberFormat.getInstance(new Locale("vi", "VN"));
         String formattedPriceReduced = currencyFormat.format(voucher.getPriceReduced()) + (voucher.getDiscountType() == 1 ? " %" : " VNĐ");
         String formattedPricesApply = currencyFormat.format(voucher.getPricesApply()) + " VNĐ";
         String formattedPricesMax = currencyFormat.format(voucher.getPricesMax()) + " VNĐ";
 
-        // Thêm vào model
         model.addAttribute("formattedPriceReduced", formattedPriceReduced);
         model.addAttribute("formattedPricesApply", formattedPricesApply);
         model.addAttribute("formattedPricesMax", formattedPricesMax);

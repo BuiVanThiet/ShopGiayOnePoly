@@ -3,13 +3,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const btnDatHang = document.getElementById("btnDatHang");
 
     if (isNaN(quantityCart) || quantityCart <= 0) {
-        btnDatHang.disabled = true; // Vô hiệu hóa nút thanh toán
+        btnDatHang.disabled = true;
     } else {
-        btnDatHang.disabled = false; // Kích hoạt nút thanh toán
+        btnDatHang.disabled = false;
     }
 
     const accountLogin = document.getElementById("account-login").value;
-    console.log("Account login: " + accountLogin);
     const fullNameInput = document.getElementById("FullName");
     const emailInput = document.getElementById("Mail");
     const phoneInput = document.getElementById("Phone");
@@ -18,20 +17,15 @@ document.addEventListener("DOMContentLoaded", function () {
     const districtSelect = document.getElementById("district");
     const wardSelect = document.getElementById("ward");
     if (!fullNameInput || !emailInput || !phoneInput || !specificAddressInput) {
-        console.error("One or more input elements not found");
         return;
     }
 
-    console.log("Validate Unlogin");
-
-    // Loại bỏ dấu phẩy khi nhập
     [fullNameInput, emailInput, phoneInput, specificAddressInput].forEach((input) => {
         input.addEventListener("input", function () {
             input.value = input.value.replace(/,/g, ""); // Loại bỏ dấu phẩy
         });
     });
 
-    // Hàm validate Full Name
     function validateFullName() {
         const fullName = fullNameInput.value.trim();
         const errorFullName = document.getElementById("full-name-create-err");
@@ -111,7 +105,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function payBill() {
     const accountLogin = document.getElementById("account-login").value;
-    console.log("Account login: " + accountLogin);
     if (!accountLogin) {
         let isValid = true;
 
@@ -263,7 +256,7 @@ function payBill() {
             const addressShip = document.getElementById("addressShip").value;
             const shippingPriceText = $('#spanShippingFee').text().trim();
             const voucherPriceText = $('#spanPriceVoucher').text().trim();
-            const totalAmountBillText = $('#spanTotalPriceCartItem').text().trim();
+            const totalAmountBillText = $('#spanTotalPriceBill').text().trim();
             const noteBill = $('#noteBill').val();
             const selectedRadioPaymentMethod = document.querySelector('input[name="payment_method_id"]:checked');
             let shippingPrice = parseFloat(shippingPriceText.replace(/[^0-9.-]+/g, ''));
@@ -274,9 +267,16 @@ function payBill() {
             priceVoucher = isNaN(priceVoucher) ? 0 : priceVoucher;
             totalAmountBill = isNaN(totalAmountBill) ? 0 : totalAmountBill;
 
-            let payMethod = selectedRadioPaymentMethod.value;
-            console.log("Pay method value: " + payMethod);
+            if(totalAmountBill<0){
+                totalAmountBill=0;
+            }
 
+            if(!totalAmountBill || totalAmountBill<0){
+                createToast("2","Tổng tiền không hợp lệ, vui lòng kiểm tra lại.")
+                return;
+            }
+
+            let payMethod = selectedRadioPaymentMethod.value;
             const errorElement = document.getElementById("error-total-amount-bill");
 
             if (parseInt(payMethod) === 1) {
@@ -293,8 +293,8 @@ function payBill() {
                 } else {
                     errorElement.textContent = "";
                 }
-            }   
-            console.log("Address customer login :"+addressShip)
+            }
+
             $.ajax({
                 url: '/onepoly/payment', type: 'POST', contentType: 'application/json', data: JSON.stringify({
                     addressShip: addressShip,
@@ -304,7 +304,6 @@ function payBill() {
                     noteBill: noteBill,
                     payMethod: payMethod
                 }), success: function (response) {
-                    console.log(response);
                     window.location.href = response;
                 }, error: function (error) {
                     console.log(error);

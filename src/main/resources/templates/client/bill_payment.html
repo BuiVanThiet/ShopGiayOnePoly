@@ -14,7 +14,9 @@
         <input type="hidden" id="account-login" th:value="${accountLogin}">
         <section class="cart-page">
             <div class="container">
-                <p class="fw-light mb-0" style="margin-left: 5px;margin-top: 100px"><a style="text-decoration: none;color: black" href="/onepoly/cart">Giỏ hàng</a> > Thông tin thanh toán</p>
+                <p class="fw-light mb-0" style="margin-left: 5px;margin-top: 100px"><a
+                        style="text-decoration: none;color: black" href="/onepoly/cart">Giỏ hàng</a> > Thông tin thanh
+                    toán</p>
                 <div class="cart-container d-flex" style="gap: 10px;margin-top: 20px">
                     <!-- Phần thông tin vận chuyển -->
                     <div class="info-pay" style="flex: 0 0 50%;margin-top: -20px">
@@ -150,7 +152,7 @@
                                     <p style="font-size: 14px" id="infoCustomer"
                                        th:text="'Thông tin: '+${infoCustomer}+'.'"></p>
                                     <p style="font-size: 14px" id="original-address"
-                                       th:text="'Địa chỉ: '+ ${originalAddress}+'.'"></p>
+                                       th:text="'Địa chỉ: '+ ${originalAddress}"></p>
                                     <span class="text-danger" id="error-address-for-bill"></span>
                                 </div>
                             </div>
@@ -489,19 +491,19 @@
                                 </div>
                             </div>
                         </div>
+                        <div th:if="${cartItems.size()>0}">
+                            <div class="d-flex flex-row justify-content-between mt-3">
+                                <a href="/onepoly/cart" id="btnQuayLai" class="btn btn-return-cart"
+                                   style="padding: 5px 10px; font-size: 14px;height: 40px; line-height: 30px; text-align: center;">
+                                    <span>Quay lại giỏ hàng</span>
+                                </a>
 
-                        <div class="d-flex flex-row justify-content-between mt-3">
-                            <a href="/onepoly/cart" id="btnQuayLai" class="btn btn-return-cart"
-                               style="padding: 5px 10px; font-size: 14px;height: 40px; line-height: 30px; text-align: center;">
-                                <span>Quay lại giỏ hàng</span>
-                            </a>
-                            <button id="btnDatHang" onclick="payBill()" class="btn btn-dat-hang"
-                                    style="padding: 5px 10px; font-size: 14px;  height: 40px; line-height: 30px; text-align: center;">
-                                <span>Đặt hàng</span>
-                            </button>
+                                <button id="btnDatHang" onclick="payBill()" class="btn btn-dat-hang"
+                                        style="padding: 5px 10px; font-size: 14px;  height: 40px; line-height: 30px; text-align: center;">
+                                    <span>Đặt hàng</span>
+                                </button>
+                            </div>
                         </div>
-
-
                     </div>
                 </div>
             </div>

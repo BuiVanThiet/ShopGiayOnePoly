@@ -126,17 +126,18 @@
                                                     <img src="/img/client/category/2.png" alt="Voucher Image"
                                                          style="width: 70px;height: 70px;border-radius: 5px">
                                                     <div style="margin-left: 20px;margin-top:5px">
-                                                        <span class="voucher-code-apply"
+                                                        <span style="color: #000000;font-weight: bold" class="voucher-code-apply"
                                                               th:text="'Mã: ' + ${selectedVoucher.codeVoucher}">Voucher Code</span>
                                                         <br>
                                                         <span class="voucher-name-voucher-apply"
                                                               th:text="'Tên: ' + ${selectedVoucher.nameVoucher}">Voucher Name</span>
                                                         <br>
-                                                        <span id="price-reduced-voucher-apply"
-                                                              class="voucher-discount-voucher-apply"
+                                                        <span style="color: red;font-weight: bold" id="price-reduced-voucher-apply"
+                                                              class="voucher-apply-success"
                                                               th:attr="data-price=${selectedVoucher.priceReduced}">
                                                             Discount Value
                                                         </span>
+                                                        <input type="hidden" id="typeVoucherApply" th:value="${selectedVoucher.voucherType}">
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-2 text-end">
@@ -215,7 +216,7 @@
                                   th:text="${finalPrice}">₫</span>
                         </div>
                     </div>
-
+                    <input type="hidden" th:value="${applyPrice}" id="applyPriceVoucherHidden">
                     <!-- Nút hành động -->
                     <div class="cart-actions__btn cart-d-flex cart-align-items-center" style="margin-top: 20px;">
                         <!-- Nút Tiếp tục mua sắm -->
