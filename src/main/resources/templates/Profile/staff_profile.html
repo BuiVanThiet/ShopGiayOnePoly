@@ -20,7 +20,7 @@
                 <input type="hidden" id="wardHiden" th:value="${staffProfile.ward}">
 
                 <div class="row">
-                    <!-- Form bên trái -->
+
                     <div class="col-md-8">
                         <div class="row mb-3">
                             <label class="col-sm-4 col-form-label">Họ và tên</label>
@@ -65,7 +65,7 @@
                             <div class="col-sm-2">
                                 <select class="form-select" id="dob-day" name="dob-day">
                                     <option value="" disabled>Ngày</option>
-                                    <!-- Tạo tùy chọn cho ngày -->
+
                                     <th:block th:each="day : ${#numbers.sequence(1, 31)}">
                                         <option th:value="${day}" th:text="${day}" th:selected="${day == birthDayDay}"></option>
                                     </th:block>
@@ -74,7 +74,7 @@
                             <div class="col-sm-3">
                                 <select class="form-select" id="dob-month" name="dob-month">
                                     <option value="" disabled>Tháng</option>
-                                    <!-- Tạo tùy chọn cho tháng -->
+
                                     <th:block th:each="month : ${#numbers.sequence(1, 12)}">
                                         <option th:value="${month}" th:text="${month}" th:selected="${month == birthDayMonth}"></option>
                                     </th:block>
@@ -83,7 +83,7 @@
                             <div class="col-sm-3">
                                 <select class="form-select" id="dob-year" name="dob-year">
                                     <option value="" disabled>Năm</option>
-                                    <!-- Tạo tùy chọn cho năm -->
+
                                     <th:block th:each="year : ${#numbers.sequence(1900, 2024)}">
                                         <option th:value="${year}" th:text="${year}" th:selected="${year == birthDayYear}"></option>
                                     </th:block>
@@ -91,13 +91,13 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Form bên phải -->
+
                     <div class="col-md-4 d-flex flex-column justify-content-center align-items-center">
                         <img id="staff-avatar-preview" th:src="'https://res.cloudinary.com/dfy4umpja/image/upload/v1728721025/'+${staffProfile.imageStaffString}" class="img-fluid avatar-circle mb-3">
                         <label class="upload-btn btn btn-outline-secondary" for="staff-file-upload">Chọn Ảnh</label>
                         <input type="file" id="staff-file-upload" name="nameImageStaff" class="hidden-input d-none" accept="image/*">
                     </div>
-                    <!-- form full-->
+
                     <div class="col-md-12">
                         <div class="row 4">
                             <div class="col-4 mb-3">
@@ -211,7 +211,7 @@
                         </div>
                     </div>
                     <div id="noDataTimKeepingByStaff-manage" style="display:none; text-align:center;">
-                        <!-- Ảnh sẽ được hiển thị ở đây nếu không có dữ liệu -->
+
                     </div>
                     <table class="table-product"
                            style="margin-top: 30px; margin-bottom: 10px">
@@ -247,14 +247,14 @@
                         </tbody>
                     </table>
                     <div class="pagination-section">
-                        <!-- Phân trang 2 -->
+
                         <div class="pagination-custom d-flex justify-content-center">
                             <ul id="maxPageTimKeepingByStaff-manage" class="pagination"></ul>
                         </div>
                     </div>
 
                     <div id="noDataCashierInventoryByIdBill-manage" style="display:none; text-align:center;">
-                        <!-- Ảnh sẽ được hiển thị ở đây nếu không có dữ liệu -->
+
                     </div>
                     <table class="table-product"
                            style="margin-top: 30px; margin-bottom: 10px">
@@ -293,13 +293,13 @@
                         </tbody>
                     </table>
                     <div class="pagination-section">
-                        <!-- Phân trang 2 -->
+
                         <div class="pagination-custom d-flex justify-content-center">
                             <ul id="maxPageCashierInventoryByIdBill-manage" class="pagination"></ul>
                         </div>
                     </div>
                     <div id="noDataInvoiceStatusByStaff-manage" style="display:none; text-align:center;">
-                        <!-- Ảnh sẽ được hiển thị ở đây nếu không có dữ liệu -->
+
                     </div>
                     <table class="table-product"
                            style="margin-top: 30px; margin-bottom: 10px">
@@ -316,7 +316,7 @@
                         </tbody>
                     </table>
                     <div class="pagination-section">
-                        <!-- Phân trang 2 -->
+
                         <div class="pagination-custom d-flex justify-content-center">
                             <ul id="maxPageInvoiceStatusByStaff-manage" class="pagination"></ul>
                         </div>

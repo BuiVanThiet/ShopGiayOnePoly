@@ -38,9 +38,8 @@ public class UserProfileController {
     @GetMapping("/userProfile")
     public String formProfile(Model model, HttpSession session) {
         ClientLoginResponse clientLoginResponse = (ClientLoginResponse) session.getAttribute("clientLogin");
-//        System.out.println("ben profile clinet: " + clientLoginResponse.toString());
         if (clientLoginResponse == null) {
-            return "login/loginClient"; // Chuyển hướng đến trang đăng nhập nếu người dùng chưa đăng nhập
+            return "login/loginClient";
         }
 
         String account = clientLoginResponse.getAcount();
@@ -106,7 +105,6 @@ public class UserProfileController {
         String acount = clientLoginResponse.getAcount();
         Customer customer = customerRegisterRepository.findByAcount(acount);
 
-        // Kiểm tra hợp lệ cho fullName
         if (userProfile.getFullName() == null || userProfile.getFullName().trim().isEmpty()) {
             bindingResult.rejectValue("fullName", "error.userProfile", "Họ và tên không được để trống");
 
@@ -118,7 +116,6 @@ public class UserProfileController {
 
         }
 
-        // Kiểm tra hợp lệ cho email
         if (userProfile.getEmail() == null || userProfile.getEmail().isEmpty()) {
             bindingResult.rejectValue("email", "error.userProfile", "Email không được để trống");
         } else if (!userProfile.getEmail().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
@@ -126,7 +123,6 @@ public class UserProfileController {
         } else if (userProfile.getEmail().length() > 100) {
             bindingResult.rejectValue("email", "error.userProfile", "Email không vượt quá 100 ký tự");
         } else {
-            // Kiểm tra trùng lặp email trong bảng Staff và Customer, ngoại trừ email hiện tại
             boolean emailExistsInStaff = staffService.existsByEmail(userProfile.getEmail()) != null;
             boolean emailExistsInCustomer = customerService.existsByEmail(userProfile.getEmail()) != null;
             if (!userProfile.getEmail().equals(customer.getEmail()) && (emailExistsInStaff || emailExistsInCustomer)) {
@@ -134,8 +130,6 @@ public class UserProfileController {
             }
         }
 
-
-        // Kiểm tra hợp lệ cho số điện thoại
         if (userProfile.getNumberPhone() == null || userProfile.getNumberPhone().isEmpty()) {
             bindingResult.rejectValue("numberPhone", "error.userProfile", "Số điện thoại không được để trống");
         } else if (!userProfile.getNumberPhone().matches("^(0|\\+84)(\\d{9})$")) {
@@ -154,17 +148,15 @@ public class UserProfileController {
             model.addAttribute("birthDayDay", day);
             model.addAttribute("birthDayMonth", month);
             model.addAttribute("birthDayYear", year);
-            return "Profile/UserProfile";// Quay lại trang với các lỗi validation
+            return "Profile/UserProfile";
         }
         if (customer != null) {
-            // Cập nhật thông tin người dùng
             customer.setAcount(userProfile.getAccount());
             customer.setFullName(userProfile.getFullName());
             customer.setEmail(userProfile.getEmail());
             customer.setNumberPhone(userProfile.getNumberPhone());
             customer.setGender(userProfile.getGender());
 
-            // Cập nhật ngày sinh từ các giá trị `day`, `month`, `year`
             LocalDate birthDay = LocalDate.of(year, month, day);
             customer.setBirthDay(birthDay);
 
@@ -206,7 +198,6 @@ public class UserProfileController {
                 bindingResult.rejectValue("currentPassword", "error.userProfile", "Mật khẩu hiện tại không đúng");
             }
 
-            // Kiểm tra mật khẩu mới và xác nhận
             if (!userProfile.getNewPassword().equals(userProfile.getConfirmPassword())) {
                 bindingResult.rejectValue("confirmPassword", "error.userProfile", "Mật khẩu xác nhận không khớp");
             }
@@ -215,11 +206,9 @@ public class UserProfileController {
                 model.addAttribute("clientLogin", clientLoginResponse);
                 model.addAttribute("userProfile", userProfile);
                 model.addAttribute("showPasswordForm", true);
-                return "Profile/UserProfile"; // Quay lại trang với các lỗi validation
+                return "Profile/UserProfile";
             }
-
-            // Cập nhật mật khẩu
-            customer.setPassword(userProfile.getNewPassword()); // Lưu mật khẩu mới
+            customer.setPassword(userProfile.getNewPassword());
             customerRegisterRepository.save(customer);
             mess ="Cập nhật mật khẩu thành công";
             check ="1";
@@ -230,7 +219,7 @@ public class UserProfileController {
             model.addAttribute("errorMessage", "Không tìm thấy thông tin tài khoản.");
         }
 
-        return "redirect:/profile/userProfile"; // Chuyển hướng về trang thông tin tài khoản
+        return "redirect:/profile/userProfile";
     }
 
     @ModelAttribute("userProfile")
@@ -269,12 +258,12 @@ public class UserProfileController {
                 LocalDate birthDay = customer.getBirthDay();
                 model.addAttribute("birthDayDay", birthDay != null ? birthDay.getDayOfMonth() : null);
                 model.addAttribute("birthDayMonth", birthDay != null ? birthDay.getMonthValue() : null);
-                model.addAttribute("birthDayYear", birthDay != null ? birthDay.getYear() : null);// Thiết lập status từ customer
+                model.addAttribute("birthDayYear", birthDay != null ? birthDay.getYear() : null);
 
-                return userProfile; // Trả về userProfile
+                return userProfile;
             }
         }
-        return new UserProfileUpdateRequest(); // Trả về đối tượng rỗng nếu không tìm thấy
+        return new UserProfileUpdateRequest();
     }
     @ModelAttribute("clientLogin")
     public ClientLoginResponse populateClientLogin(HttpSession session) {

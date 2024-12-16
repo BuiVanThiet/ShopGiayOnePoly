@@ -47,16 +47,13 @@ public class StaffProfileController {
         Staff staff = (Staff) model.getAttribute("staffInfo");
 
         if (staff != null) {
-            // Bạn có thể sử dụng thông tin staff để thực hiện các thao tác khác
             StaffProfileRequest staffProfile = new StaffProfileRequest();
-//            staffProfile.setAccount(staff.getAcount());
             staffProfile.setFullName(staff.getFullName());
-//            staffProfile.setPassword(staff.getPassword());
             staffProfile.setEmail(staff.getEmail());
             staffProfile.setNumberPhone(staff.getNumberPhone());
             staffProfile.setGender(staff.getGender());
             staffProfile.setBirthDay(staff.getBirthDay());
-            staffProfile.setImageStaffString(staff.getImage()); // Đặt giá trị mặc định
+            staffProfile.setImageStaffString(staff.getImage());
 
             staffProfile.setStatus(staff.getStatus());
 
@@ -66,8 +63,6 @@ public class StaffProfileController {
             staffProfile.setWard(partStaff[0]);
             staffProfile.setAddRessDetail(String.join(", ", java.util.Arrays.copyOfRange(partStaff, 3, partStaff.length)));
 
-            System.out.println("hiển thị :"+ staff.toString());
-            System.out.println(staffProfile.toString());
             LocalDate birthDayStaff = staff.getBirthDay();
             if (birthDayStaff != null) {
                 model.addAttribute("birthDayDay", birthDayStaff.getDayOfMonth());
@@ -85,7 +80,7 @@ public class StaffProfileController {
             check ="";
         } else {
             model.addAttribute("errorMessage", "Không tìm thấy thông tin tài khoản nhân viên.");
-            return "login/login"; // Chuyển hướng về trang đăng nhập nếu chưa có thông tin
+            return "login/login";
         }
 
         return "Profile/staff_profile";
@@ -100,17 +95,15 @@ public class StaffProfileController {
         Staff staff = (Staff) session.getAttribute("staffLogin");
 
         if (staff == null) {
-            return "redirect:/login"; // Chuyển hướng về trang đăng nhập nếu không tìm thấy nhân viên
+            return "redirect:/login";
         }
 
         if(staff.getStatus() != 1) {
             return "redirect:/home_manage";
         }
 
-        System.out.println("Staff từ model: " + staff);
         staffProfile.setImageStaffString(staff.getImage());
 
-        // Kiểm tra hợp lệ cho fullName
         if (staffProfile.getFullName() == null || staffProfile.getFullName().trim().isEmpty()) {
             bindingResult.rejectValue("fullName", "error.staffProfile", "Họ và tên không được để trống");
 
@@ -122,7 +115,6 @@ public class StaffProfileController {
 
         }
 
-        // Kiểm tra hợp lệ cho email
         if (staffProfile.getEmail() == null || staffProfile.getEmail().isEmpty()) {
             bindingResult.rejectValue("email", "error.staffProfile", "Email không được để trống");
         } else if (!staffProfile.getEmail().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
@@ -130,7 +122,6 @@ public class StaffProfileController {
         } else if (staffProfile.getEmail().length() > 100) {
             bindingResult.rejectValue("email", "error.staffProfile", "Email không vượt quá 100 ký tự");
         } else {
-            // Kiểm tra trùng lặp email trong bảng Staff và Customer, ngoại trừ email hiện tại
             boolean emailExistsInStaff = staffService.existsByEmail(staffProfile.getEmail()) != null;
             boolean emailExistsInCustomer = customerService.existsByEmail(staffProfile.getEmail()) != null;
             if (!staffProfile.getEmail().equals(staff.getEmail()) && (emailExistsInStaff || emailExistsInCustomer)) {
@@ -138,7 +129,6 @@ public class StaffProfileController {
             }
         }
 
-        // Kiểm tra hợp lệ cho số điện thoại
         if (staffProfile.getNumberPhone() == null || staffProfile.getNumberPhone().isEmpty()) {
             bindingResult.rejectValue("numberPhone", "error.staffProfile", "Số điện thoại không được để trống");
         } else if (!staffProfile.getNumberPhone().matches("^(0|\\+84)(\\d{9})$")) {
@@ -152,9 +142,7 @@ public class StaffProfileController {
         }
 
         if(bindingResult.hasErrors()){
-            System.out.println("loi ne");
             model.addAttribute("staffProfile", staffProfile);
-            System.out.println(staffProfile);
 
             return "Profile/staff_profile";
         }
@@ -165,19 +153,13 @@ public class StaffProfileController {
             staff.setGender(staffProfile.getGender());
             staff.setBirthDay(staffProfile.getBirthDay());
             staff.setAddress(staffProfile.getWard() + "," + staffProfile.getDistrict() + "," + staffProfile.getProvince() + "," + staffProfile.getAddRessDetail());
-            // Lưu staff
             staffService.save(staff);
-            System.out.println("Sau khi lưu: " + staff.toString());
 
-            // Kiểm tra nếu có ảnh mới
             if (!nameImage.isEmpty()) {
-                // Tải ảnh mới lên
                 String imageId = staffService.uploadFile(nameImage, staff.getId());
-                String randomImageName = extractRandomImageName(imageId); // Lấy tên ngẫu nhiên từ đường dẫn
-                staff.setImage(randomImageName); // Cập nhật tên ảnh vào staff
-                System.out.println("Tên ảnh: " + randomImageName);
+                String randomImageName = extractRandomImageName(imageId);
+                staff.setImage(randomImageName);
             } else {
-                // Nếu không có ảnh mới, giữ nguyên ảnh cũ
                 System.out.println("Không có ảnh mới, giữ nguyên ảnh cũ: " + staff.getImage());
             }
 
@@ -189,17 +171,16 @@ public class StaffProfileController {
             model.addAttribute("errorMessage", "Không tìm thấy thông tin tài khoản nhân viên.");
         }
 
-        return "redirect:/profile/staffProfile"; // Chuyển hướng sau khi cập nhật
+        return "redirect:/profile/staffProfile";
     }
 
-    // Phương thức để trích xuất tên ngẫu nhiên từ URL
     private String extractRandomImageName(String url) {
-        // Tách phần cuối của URL để lấy tên ảnh
-        String[] parts = url.split("/");
-        String fileNameWithExtension = parts[parts.length - 1]; // lấy phần cuối
-        String fileName = fileNameWithExtension.split("\\.")[0]; // tách phần mở rộng
 
-        return fileName; // trả về tên ảnh ngẫu nhiên
+        String[] parts = url.split("/");
+        String fileNameWithExtension = parts[parts.length - 1];
+        String fileName = fileNameWithExtension.split("\\.")[0];
+
+        return fileName;
     }
 
     @PostMapping("/updatePasswordStaff")
@@ -210,19 +191,18 @@ public class StaffProfileController {
         Staff staff = (Staff) session.getAttribute("staffLogin");
 
         if (staff == null) {
-            return "redirect:/login"; // Chuyển hướng về trang đăng nhập nếu không tìm thấy nhân viên
+            return "redirect:/login";
         }
         if(staff.getStatus() != 1) {
             return "redirect:/home_manage";
         }
-        // Kiểm tra mật khẩu hiện tại
+
         if (staffProfile.getCurrentPassword() == null || staffProfile.getCurrentPassword().isEmpty()) {
             bindingResult.rejectValue("currentPassword", "error.userProfile", "Mật khẩu hiện tại không được để trống");
         } else if (!staffProfile.getCurrentPassword().equals(staff.getPassword())) {
             bindingResult.rejectValue("currentPassword", "error.userProfile", "Mật khẩu hiện tại không đúng");
         }
 
-        // Kiểm tra mật khẩu mới và xác nhận
         if (staffProfile.getNewPassword() == null || staffProfile.getNewPassword().isEmpty()) {
             bindingResult.rejectValue("newPassword", "error.userProfile", "Mật khẩu mới không được để trống");
         } else if (staffProfile.getNewPassword().length() > 250) {
@@ -240,17 +220,17 @@ public class StaffProfileController {
         if (bindingResult.hasErrors()) {
             model.addAttribute("staffProfile", staffProfile);
             model.addAttribute("showPasswordForm", true);
-            return "Profile/staff_profile"; // Quay lại trang với các lỗi validation
+            return "Profile/staff_profile";
         }
 
-        // Cập nhật mật khẩu mới
+
         staff.setPassword(staffProfile.getNewPassword());
-        staffService.save(staff); // Lưu thông tin nhân viên sau khi cập nhật
+        staffService.save(staff);
 
         model.addAttribute("successMessage", "Đã cập nhật mật khẩu thành công.");
         mess ="Cập nhật mật khẩu thành công";
         check ="1";
-        return "redirect:/profile/staffProfile"; // Chuyển hướng về trang hồ sơ sau khi cập nhật
+        return "redirect:/profile/staffProfile";
     }
 
     @ModelAttribute("staffProfile")
@@ -260,7 +240,7 @@ public class StaffProfileController {
         StaffProfileRequest staffProfile = new StaffProfileRequest();
 
         if (staff != null) {
-            // Gán giá trị từ staff cho staffProfile trước khi ràng buộc
+
             staffProfile.setStatus(staff.getStatus());
             staffProfile.setFullName(staff.getFullName());
             staffProfile.setEmail(staff.getEmail());
@@ -285,7 +265,6 @@ public class StaffProfileController {
             staffProfile.setDistrict(partStaff[1]);
             staffProfile.setWard(partStaff[0]);
             staffProfile.setAddRessDetail(String.join(", ", java.util.Arrays.copyOfRange(partStaff, 3, partStaff.length)));
-            // Gán các trường khác cần thiết từ staff vào staffProfile
         }
         return staffProfile;
     }
@@ -294,5 +273,4 @@ public class StaffProfileController {
         Staff staff = (Staff) session.getAttribute("staffLogin");
         return staff;
     }
-
 }

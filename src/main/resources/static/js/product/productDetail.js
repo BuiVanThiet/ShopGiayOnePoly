@@ -194,7 +194,6 @@ function displayPage(page) {
                     <div class="dropdown-productDetail">
                         <i class="fa fa-ellipsis-v fa-ellipsis-v-productDetail" aria-hidden="true" onclick="toggleDropdownproductDetail(event, this)"></i>
                         <div class="dropdown-menu-productDetail">
-                            <a href="#">Xóa</a>
                             <a href="#" onclick="downloadQRCode(${productDetail.id}, '${productDetail.color.nameColor}', '${productDetail.size.nameSize}')">Lưu QR</a>
                         </div>
                     </div>

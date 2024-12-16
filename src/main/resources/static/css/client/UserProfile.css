@@ -45,11 +45,11 @@ h2 {
 }
 
 #avatar-preview {
-    width: 200px;          /* Kích thước cố định chiều rộng */
-    height: 200px;         /* Kích thước cố định chiều cao */
-    border-radius: 50%;    /* Tạo hình tròn */
-    object-fit: cover;     /* Đảm bảo ảnh vừa khung mà không bị méo */
-    border: 2px solid #ddd; /* Đường viền xung quanh ảnh */
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #ddd;
 }
 .form-control-plaintext {
     margin-left: 12px;
@@ -63,10 +63,10 @@ h2 {
 }
 
 .row {
-    align-items: center; /* Giữ cho label và input thẳng hàng */
+    align-items: center;
 }
 
 .text-danger {
-    font-size: 0.81rem; /* Kích thước chữ nhỏ hơn cho thông báo lỗi */
+    font-size: 0.81rem;
 }
 

@@ -5,21 +5,13 @@ import com.example.shopgiayonepoly.dto.request.Statistics;
 import com.example.shopgiayonepoly.dto.request.StatusBill;
 import com.example.shopgiayonepoly.service.ChartService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.HashMap;
+
 import java.util.List;
 import java.util.Map;
 
@@ -52,21 +44,6 @@ public class chartRestController {
     public List<ProductInfoDto> getProductSales() {
         return chartService.getProductSales();
     }
-
-//    @GetMapping("/productSalesPage")
-//    public ResponseEntity<?> getProductSalesPage(
-//            @RequestParam(defaultValue = "0") int page,
-//            @RequestParam(defaultValue = "3") int size) {
-//        try {
-//            Pageable pageable = PageRequest.of(page, size);
-//            Page<ProductInfoDto> products = chartService.getProductSalesPage(pageable);
-//            return ResponseEntity.ok(products);
-//        } catch (Exception e) {
-//            e.printStackTrace(); // Ghi lại log chi tiết lỗi
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                    .body("Lỗi server: " + e.getMessage());
-//        }
-//    }
 
     @GetMapping("/topProductSalesRenge")
     public ResponseEntity<?> getTopProductsByDateRange(
@@ -129,8 +106,6 @@ public class chartRestController {
         String startDate = dateRange.get("startDate");
         String endDate = dateRange.get("endDate");
 
-
-        // Nếu hợp lệ, gọi service để lấy dữ liệu
         return ResponseEntity.ok(chartService.findStatisticsByDateRange(startDate, endDate));
     }
     @GetMapping("/statisticsByRange")
