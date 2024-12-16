@@ -58,13 +58,6 @@ public class StaffController extends BaseEmail {
     @Autowired
     CashierInventoryService cashierInventoryService;
 
-//    @GetMapping("/list")
-//    public String list(Model model) {
-//        List<StaffResponse> listStaff = staffService.getAllStaff();
-//        model.addAttribute("staffList", staffService.getAllStaff());
-//        return "Staff/list";
-//    }
-
     @GetMapping("/list")
     public String getListStaffByPage(@RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber, Model model,HttpSession session) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
@@ -89,16 +82,6 @@ public class StaffController extends BaseEmail {
         return "Staff/list";
     }
 
-//    @GetMapping("/search")
-//    public String searchStaffByKey(@RequestParam(name = "key") String key, @RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber, Model model) {
-//        String trimmedKey = key != null ? key.trim() : null;
-//        Pageable pageableSearch = PageRequest.of(pageNumber, pageSize);
-//        Page<StaffResponse> pageStaff = staffService.searchStaffByKeywordPage(trimmedKey, pageableSearch);
-////        model.addAttribute("staffList", searchStaff);
-//        model.addAttribute("pageStaff", pageStaff);
-//        model.addAttribute("staff", new StaffRequest());
-//        return "Staff/list";
-//    }
 
     @GetMapping("/create")
     public String createStaff(ModelMap modelMap) {
@@ -154,11 +137,6 @@ public class StaffController extends BaseEmail {
         if (staffRequest.getRole().getId() == null) {
             result.rejectValue("role", "error.staff", "Chức vụ không được để trống!");
         }
-
-//        // Kiểm tra email
-//        if (staffRequest.getEmail() == null || staffRequest.getEmail().isEmpty()) {
-//            result.rejectValue("email", "error.customer", "Email không được để trống!");
-//        }
         // Kiểm tra ngày sinh
         if (staffRequest.getBirthDay() == null) {
             result.rejectValue("birthDay", "error.customer", "Ngày sinh không được để trống!");
@@ -168,11 +146,6 @@ public class StaffController extends BaseEmail {
             result.rejectValue("birthDay", "error.customer", "Nhân viên phải đủ 18 tuổi trở lên!");
         }
         // Kiểm tra email
-//        if (staffRequest.getEmail() == null || staffRequest.getEmail().isEmpty()) {
-//            result.rejectValue("email", "error.staff", "Email không được để trống!");
-//        } else if (customerService.existsByEmail(staffRequest.getEmail()) != null || staffService.existsByEmail(staffRequest.getEmail()) != null) {
-//            result.rejectValue("email", "error.staff", "Email đã được sử dụng!");
-//        }
         if (staffRequest.getEmail() == null || staffRequest.getEmail().isEmpty()) {
             result.rejectValue("email", "error.staff", "Email không được để trống!");
         } else if (staffRequest.getEmail().length() > 100) {
@@ -193,7 +166,7 @@ public class StaffController extends BaseEmail {
             // Nếu có lỗi, trả về trang form để người dùng sửa lại
             return "Staff/create"; // Bạn có thể trả về tên view của form nhập liệu
         }
-        System.out.println("Du lieu khi them cua staff: " + staffRequest.toString());
+
         Staff staff = new Staff();
         staff.setCodeStaff(staffRequest.getCodeStaff());
         staff.setFullName(staffRequest.getFullName());
@@ -217,12 +190,8 @@ public class StaffController extends BaseEmail {
             // Đặt ảnh mặc định nếu không có ảnh được tải lên
             staff.setImage("Ảnh nhân viên");
         }
-//        staff.setImage("fileName");
-        System.out.println(staff.toString());
-        System.out.println("Hello");
         mess = "Thêm nhân viên thành công";
         check = "1";
-//        staffService.uploadFile(staffRequest.getNameImage(),staffSave.getId());
         return "redirect:/staff-manage/list";
     }
 
@@ -258,7 +227,6 @@ public class StaffController extends BaseEmail {
         staffRequest.setRole(staff.getRole());
         staffRequest.setStatus(staff.getStatus());
         staffRequest.setImageString(staff.getImage());
-        System.out.println(staffRequest.toString());
         model.addAttribute("staff", staffRequest);
         return "Staff/update";
     }
@@ -279,40 +247,6 @@ public class StaffController extends BaseEmail {
             check = "3";
             return "redirect:/staff-manage/list";
         }
-//        // Kiểm tra tên
-//        if (staffRequest.getFullName() == null || staffRequest.getFullName().trim().isEmpty()) {
-//            result.rejectValue("fullName", "error.staff", "Tên không được để trống!"); // Thông báo nếu tên rỗng hoặc chỉ chứa khoảng trắng
-//        } else if (staffRequest.getFullName().length() < 2 || staffRequest.getFullName().length() > 50) {
-//            result.rejectValue("fullName", "error.staff", "Tên phải có độ dài từ 2 đến 50 ký tự!");
-//        } else if (!staffRequest.getFullName().matches("^[\\p{L} ]+$")) {
-//            result.rejectValue("fullName", "error.staff", "Tên chỉ được chứa ký tự chữ cái và dấu cách!");
-//        }
-//// Kiểm tra số điện thoại
-//        if (staffRequest.getNumberPhone() == null || staffRequest.getNumberPhone().isEmpty()) {
-//            result.rejectValue("numberPhone", "error.staff", "Số điện thoại không được để trống!");
-//        } else if (!staffRequest.getNumberPhone().matches("^(0[3|5|7|8|9])+([0-9]{8})$")) {
-//            result.rejectValue("numberPhone", "error.staff", "Số điện thoại không hợp lệ!");
-//        }
-//        // Kiểm tra email
-//        if (staffRequest.getEmail() == null || staffRequest.getEmail().isEmpty()) {
-//            result.rejectValue("email", "error.customer", "Email không được để trống!");
-//        } else {
-//            Customer existingCustomer = customerService.existsByEmail(staffRequest.getEmail());
-//            Staff existingStaff = staffService.existsByEmail(staffRequest.getEmail());
-//            System.out.println(existingCustomer == null ? "Dell co(khach)" : "co(khach)");
-//            System.out.println(existingStaff == null ? "Dell co(nhanvien)" : "co(nhanvien)");
-//            if (existingStaff != null && !existingStaff.getId().equals(staffRequest.getId())) {
-//                result.rejectValue("email", "error.customer", "Email đã được sử dụng!");
-//            } else if (customerService.existsByEmail(staffRequest.getEmail()) != null) {
-//                result.rejectValue("email", "error.customer", "Email đã được sử dụng trong hệ thống khach hang!");
-//            }
-//        }
-//        // Kiểm tra ngày sinh
-//        if (staffRequest.getBirthDay() == null) {
-//            result.rejectValue("birthDay", "error.customer", "Ngày sinh không được để trống!");
-//        } else if (staffRequest.getBirthDay().isAfter(LocalDate.now())) {
-//            result.rejectValue("birthDay", "error.customer", "Ngày sinh không được lớn hơn ngày hiện tại!");
-//        }
         // Kiểm tra tên
         if (staffRequest.getFullName() == null || staffRequest.getFullName().trim().isEmpty()) {
             result.rejectValue("fullName", "error.staff", "Tên không được để trống!"); // Thông báo nếu tên rỗng hoặc chỉ chứa khoảng trắng
@@ -336,10 +270,6 @@ public class StaffController extends BaseEmail {
             result.rejectValue("role", "error.staff", "Chức vụ không được để trống!");
         }
 
-//        // Kiểm tra email
-//        if (staffRequest.getEmail() == null || staffRequest.getEmail().isEmpty()) {
-//            result.rejectValue("email", "error.customer", "Email không được để trống!");
-//        }
         // Kiểm tra ngày sinh
         if (staffRequest.getBirthDay() == null) {
             result.rejectValue("birthDay", "error.customer", "Ngày sinh không được để trống!");
@@ -358,8 +288,6 @@ public class StaffController extends BaseEmail {
         } else {
             Customer existingCustomer = customerService.existsByEmail(staffRequest.getEmail());
             Staff existingStaff = staffService.existsByEmail(staffRequest.getEmail());
-            System.out.println(existingCustomer == null ? "Dell co(khach)" : "co(khach)");
-            System.out.println(existingStaff == null ? "Dell co(nhanvien)" : "co(nhanvien)");
             if (existingStaff != null && !existingStaff.getId().equals(staffRequest.getId())) {
                 result.rejectValue("email", "error.customer", "Email đã được sử dụng!");
             } else if (customerService.existsByEmail(staffRequest.getEmail()) != null) {
@@ -428,7 +356,6 @@ public class StaffController extends BaseEmail {
         staffRequest.setRole(staff.getRole());
         staffRequest.setStatus(staff.getStatus());
         staffRequest.setImageString(staff.getImage());
-        System.out.println(staffRequest.toString());
         model.addAttribute("staff", staffRequest);
         return "Staff/detail";
     }
@@ -450,7 +377,6 @@ public class StaffController extends BaseEmail {
             return "redirect:/staff-manage/list";
         }
         staffService.deleteStaff(id);
-//        ra.addFlashAttribute("mes", "Xóa thành công nhan vien với ID là: " + id);
         mess = "Xoa nhan vien thanh cong";
         check = "1";
         return "redirect:/staff-manage/list";
@@ -472,17 +398,13 @@ public class StaffController extends BaseEmail {
     }
 
     protected String getCheckStaffAttendanceYetBill(
-//            @PathVariable("id") Integer idStaff,@PathVariable("type") Integer timekeepingTypeCheck
             Integer idStaff, Integer timekeepingTypeCheck
     ) {
         List<Object[]> checkLoginLogOut = this.timekeepingService.getCheckStaffAttendanceYet(idStaff, timekeepingTypeCheck);
 
-        // Kiểm tra nếu danh sách không rỗng và có kết quả
         if (!checkLoginLogOut.isEmpty() && checkLoginLogOut.get(0).length > 0) {
-            // Lấy giá trị đầu tiên từ kết quả
             return checkLoginLogOut.get(0)[0].toString();
         }
-        // Trường hợp không có dữ liệu
         return "Không";
     }
 
@@ -490,7 +412,6 @@ public class StaffController extends BaseEmail {
         Map<String,String> thongBao = new HashMap<>();
         String checkLogin = getCheckStaffAttendanceYetBill(idStaff,1);
         String checkLogOut = getCheckStaffAttendanceYetBill(idStaff,2);
-        System.out.println(checkLogin);
         if(!checkLogin.equals("Có")) {
             thongBao.put("message","Mời bạn điểm danh trước khi làm việc!");
             return thongBao;
