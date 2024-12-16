@@ -252,7 +252,6 @@ function fetchActiveCategorys() {
             console.error("Có lỗi xảy ra khi lấy danh sách danh mục:", error);
         });
 }
-
 async function add() {
 
     const formElement = document.getElementById('createAttribute');

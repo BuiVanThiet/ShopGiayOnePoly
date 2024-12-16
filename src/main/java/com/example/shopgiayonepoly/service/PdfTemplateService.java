@@ -74,7 +74,7 @@ public ByteArrayOutputStream fillPdfTemplate(Object[] bill,List<Object[]> produc
 // Thêm logo vào tài liệu (trước các nội dung khác để nó nằm phía sau)
     document.add(logoPDF);
     // Tạo tiêu đề với tên cửa hàng
-    Paragraph header = new Paragraph("OnePoly Sneaker")
+    Paragraph header = new Paragraph("OnePoly")
             .setFont(font)
             .setBold()
             .setFontSize(16)
@@ -254,7 +254,7 @@ public ByteArrayOutputStream fillPdfReturnExchangeTemplate(Object[] bill,List<Ob
 // Thêm logo vào tài liệu (trước các nội dung khác để nó nằm phía sau)
     document.add(logoPDF);
     // Tạo tiêu đề với tên cửa hàng
-    Paragraph header = new Paragraph("OnePoly Sneaker")
+    Paragraph header = new Paragraph("OnePoly")
             .setFont(font)
             .setBold()
             .setFontSize(16)
