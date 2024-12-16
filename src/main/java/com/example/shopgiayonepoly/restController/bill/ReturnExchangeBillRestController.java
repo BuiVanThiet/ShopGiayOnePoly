@@ -1289,6 +1289,7 @@ public class ReturnExchangeBillRestController extends BaseBill {
         ReturnBillExchangeBill returnBillExchangeBill = this.returnBillService.getReturnBillByIdBill(bill.getId());
 
         List<ReturnBillDetail> returnBillDetails = this.returnBillDetailService.getReturnBillDetailByIdReturnBill(returnBillExchangeBill.getId());
+        System.out.println();
         for (ReturnBillDetail returnBillDetail:returnBillDetails) {
             for (Map.Entry<String, String> entry : data.entrySet()) {
                 Integer id = Integer.parseInt(entry.getKey());
