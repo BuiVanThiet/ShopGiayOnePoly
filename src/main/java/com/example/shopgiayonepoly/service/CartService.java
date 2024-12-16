@@ -12,4 +12,8 @@ public interface CartService {
     List<Cart> getCartItemsForCustomer(@Param("customerId") Integer customerId);
 
     void deleteCartByCustomerID(Integer customerId);
+
+    public void updateCartItem(Cart cartItem);
+
+    public void deleteCartItem(Integer cartId);
 }

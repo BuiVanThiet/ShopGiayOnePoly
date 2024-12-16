@@ -112,14 +112,12 @@ public class SaleProductController extends BaseSaleProduct {
                 }
             }
         }
-        // Kiểm tra startDate
         if (saleProductRequest.getStartDate() == null) {
             result.rejectValue("startDate", "error.saleProduct", "Ngày bắt đầu không được để trống!");
         } else if (saleProductRequest.getStartDate().isBefore(dateNow)) {
             result.rejectValue("startDate", "error.saleProduct", "Ngày bắt đầu phải là ngày hiện tại hoặc sau ngày hiện tại: " + dateNow);
         }
 
-        // Kiểm tra endDate
         if (saleProductRequest.getEndDate() == null) {
             result.rejectValue("endDate", "error.saleProduct", "Ngày kết thúc không được để trống!");
         } else {
@@ -177,8 +175,6 @@ public class SaleProductController extends BaseSaleProduct {
 
 
         List<ProductDetail> listProductDetail = saleProductService.findProducDetailByIDDiscout(saleProduct.getId());
-        System.out.println(listProductDetail);
-        System.out.println("đến đây");
         for (ProductDetail productDetail : listProductDetail) {
             productDetail.setSaleProduct(null);
             productDetailService.save(productDetail);
@@ -305,8 +301,6 @@ public class SaleProductController extends BaseSaleProduct {
             List<SaleProduct> saleProducts = this.saleProductService.getAllSaleProducts().stream()
                     .filter(saleProduct1 -> saleProduct1.getId() != saleProductRequest.getId())
                     .collect(Collectors.toList());
-//            List<SaleProduct> saleProducts = this.saleProductService.getAllSaleProducts();
-//            saleProducts.remove(saleProduct);
 
             for (SaleProduct saleProductCheckSame : saleProducts) {
                 if (saleProductCheckSame.getCodeSale().equals(saleProductRequest.getCodeSale())) {
@@ -386,7 +380,6 @@ public class SaleProductController extends BaseSaleProduct {
         } catch (IllegalStateException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
-            // Xử lý các ngoại lệ khác
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Đã xảy ra lỗi khi áp dụng giảm giá.");
         }
     }
@@ -449,10 +442,4 @@ public class SaleProductController extends BaseSaleProduct {
         check = "1";
         return "redirect:/sale-product/list";
     }
-
-//    @Scheduled(cron = "0 0 0 * * ?", zone = "Asia/Ho_Chi_Minh")
-//    public void updateExpireSaleProductsStatus() {
-//        System.out.println("Running scheduled task to update voucher status");
-//        saleProductService.updateSaleProductStatusForExpiredAuto();
-//    }
 }

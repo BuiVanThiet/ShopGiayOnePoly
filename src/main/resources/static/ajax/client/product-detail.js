@@ -23,16 +23,10 @@ document.addEventListener("DOMContentLoaded", function () {
         const firstSize = firstSizeButton.innerText.trim();
         selectedSizeId = firstSizeButton.getAttribute('data-size-id');
 
-        console.log("Color ID:", selectedColorId);
-        console.log("Size ID:", selectedSizeId);
-        console.log("Product ID:", productId);
-
         setTemporaryColor(firstColor, selectedColorId);
         setTemporarySize(firstSize, selectedSizeId);
 
         getProductDetail(productId, selectedColorId, selectedSizeId);
-    } else {
-        console.warn("Không tìm thấy màu hoặc kích thước đầu tiên.");
     }
 });
 
@@ -55,12 +49,10 @@ function attachClickEvent(selector, handler, dataAttr) {
 function setTemporaryColor(color, colorId) {
     selectedColorId = colorId;
 
-    // Cập nhật giao diện
     updateUI('.temporary-color', color);
     updateTextById("selected-color", color);
     updateTextById("color-modal", color);
 
-    // Gọi API nếu đã chọn kích thước
     if (selectedSizeId) {
         getProductDetail(productId, selectedColorId, selectedSizeId);
     }
@@ -69,12 +61,10 @@ function setTemporaryColor(color, colorId) {
 function setTemporarySize(size, sizeId) {
     selectedSizeId = sizeId;
 
-    // Cập nhật giao diện
     updateUI('.temporary-size', size);
     updateTextById("selected-size", size);
     updateTextById("size-modal", size);
 
-    // Gọi API nếu đã chọn màu
     if (selectedColorId) {
         getProductDetail(productId, selectedColorId, selectedSizeId);
     }
@@ -105,7 +95,6 @@ function showPayNowModal() {
 }
 
 function getProductDetail(productId, colorId, sizeId) {
-    console.log(`Gọi API với productId: ${productId}, colorId: ${colorId}, sizeId: ${sizeId}`);
     $.ajax({
         url: '/api-client/products/product-detail',
         method: 'GET',
@@ -196,54 +185,44 @@ $(document).ready(function () {
     const discountValue = document.getElementById("voucher-value-new").innerText;
     const valueTypeSpan = document.getElementById("value-type");
     const voucherValueSpan = document.getElementById("voucher-value-new");
-    console.log("Type vouccher: " + discountType)
     if (discountType === "1") {
-        // Nếu discountType = 1 (giảm theo %)
         valueTypeSpan.innerText = "%";
         voucherValueSpan.innerText = Math.round(discountValue.toLocaleString("en-US"));
     } else if (discountType === "2") {
-        // Nếu discountType = 2 (giảm theo VND)
         valueTypeSpan.innerText = "₫";
         voucherValueSpan.innerText = parseFloat(discountValue).toLocaleString('en-US');
     }
-
     checkQuantity();
 });
 
 
 function changeColor(button) {
-    const color = button.innerText.trim(); // Lấy giá trị màu
-    const colorId = button.getAttribute('data-color-id'); // Lấy ID màu
+    const color = button.innerText.trim();
+    const colorId = button.getAttribute('data-color-id');
 
-    // Đảm bảo chỉ cập nhật nút trong nhóm màu sắc
     document.querySelectorAll('.btn-color-circle').forEach(btn => {
         btn.classList.remove('thumbnail-active');
     });
 
-    button.classList.add('thumbnail-active'); // Thêm lớp cho nút được nhấn
+    button.classList.add('thumbnail-active');
 
-    // Cập nhật màu sắc hiển thị
     document.getElementById('selected-color').textContent = color;
 
-    // Lưu giá trị tạm thời (nếu cần)
     setTemporaryColor(color, colorId);
 }
 
 function changeSize(button) {
     const size = button.innerText.trim();
-    const sizeId = button.getAttribute('data-size-id'); // Lấy ID kích thước
+    const sizeId = button.getAttribute('data-size-id');
 
-    // Đảm bảo chỉ cập nhật nút trong nhóm kích thước
     document.querySelectorAll('.btn-size-square').forEach(btn => {
         btn.classList.remove('thumbnail-active');
     });
 
     button.classList.add('thumbnail-active');
 
-    // Cập nhật kích thước hiển thị
     document.getElementById('selected-size').textContent = size;
 
-    // Lưu giá trị tạm thời (nếu cần)
     setTemporarySize(size, sizeId);
 }
 
@@ -252,12 +231,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const btnMinus = document.getElementById('qtyminus');
     const btnPlus = document.getElementById('qtyplus');
 
-    // Hàm hiển thị modal giỏ hàng (nếu cần)
     function showCartModal() {
         $('#cartModal').modal('show');
     }
 
-    // Giảm số lượng
     btnMinus.addEventListener("click", function () {
         let quantityBuy = parseInt(quantityInput.val());
         if (isNaN(quantityBuy) || quantityBuy <= 1) {
@@ -266,7 +243,6 @@ document.addEventListener("DOMContentLoaded", function () {
             quantityBuy -= 1;
         }
         quantityInput.val(quantityBuy);
-        // quantityDisplay.text(quantityBuy);  // Cập nhật lại số lượng hiển thị trong thẻ <p>
     });
 
     // Tăng số lượng

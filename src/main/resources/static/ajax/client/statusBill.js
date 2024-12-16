@@ -87,10 +87,6 @@ function loadBillStatusByBillId_webClient() {
         error: function (xhr) {
             console.error('Lỗi hiển thị trạng thái: ' + xhr.responseText);
         },
-        // complete: function() {
-        //     // Sau khi hoàn thành, lại tiếp tục gửi yêu cầu để giữ kết nối liên tục
-        //     setTimeout(loadBillStatusByBillId_webClient, 5000);  // Gửi lại sau 5 giây
-        // }
     });
 }
 
@@ -151,7 +147,6 @@ function loadMaxPageProductBuy() {
         type: "GET",
         url: "/api-client/max-page-bill-status",
         success: function (response) {
-            console.log('so trang la ' + response)
             createPagination('billClientPageMax-billStatus', response, 1);
         },
         error: function (xhr) {
@@ -165,7 +160,6 @@ function loadTotalBillStatus() {
         type: "GET",
         url: "/api-client/show-total-status-bill",
         success: function (response) {
-            console.log('so trang la ' + response)
             $('#totalAmountBillClient').text(Math.trunc(response[0]).toLocaleString('en-US') + ' VNĐ')
             $('#priceShipBillClient').text(Math.trunc(response[1]).toLocaleString('en-US') + ' VNĐ')
             $('#discountBillClient').text(Math.trunc(response[2]).toLocaleString('en-US') + ' VNĐ')
@@ -187,8 +181,6 @@ function loadInformationBillStatus() {
             $('#emailBillStatus').text('Email: '+response[3])
             $('#addResShipDetailBillStatus').text('Địa chỉ chi tiết: '+response[4])
             $('#noteBillClient').text(response[5])
-
-            console.log('so trang la ' + response)
         },
         error: function (xhr) {
             console.error('loi ' + xhr.responseText)
@@ -196,17 +188,13 @@ function loadInformationBillStatus() {
     })
 }
 
-
 function formatDateTime(dateString) {
     const createDate = new Date(dateString);
 
-    // Định dạng ngày theo "dd/MM/yyyy"
     const formattedDate = `${('0' + createDate.getDate()).slice(-2)}/${('0' + (createDate.getMonth() + 1)).slice(-2)}/${createDate.getFullYear()}`;
 
-    // Định dạng thời gian theo "HH:mm"
     const formattedTime = `${('0' + createDate.getHours()).slice(-2)}:${('0' + createDate.getMinutes()).slice(-2)}`;
 
-    // Kết hợp cả thời gian và ngày tháng
     return `${formattedTime} ${formattedDate}`;
 }
 function formSendEmailRequestBill() {
@@ -237,7 +225,7 @@ function openBill(id) {
         type: "GET",
         url: "/api-client/bill-pdf/"+id,
         xhrFields: {
-            responseType: 'blob'  // Nhận PDF dưới dạng blob
+            responseType: 'blob'
         },
         success: function (response) {
             const pdfUrl = URL.createObjectURL(response);

@@ -234,7 +234,9 @@ public interface ClientRepository extends JpaRepository<Bill, Integer> {
                 v.nameVoucher,
                 v.codeVoucher,
                 v.discountType,
-                v.priceReduced)
+                v.priceReduced,
+                v.pricesApply,
+                v.status)
                 from Voucher v
                 where v.id=:id
             """)
